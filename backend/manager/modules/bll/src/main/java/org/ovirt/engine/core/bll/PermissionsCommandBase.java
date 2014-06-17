@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
@@ -23,7 +24,11 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
     }
 
     public PermissionsCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public PermissionsCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected DbUser dbUser;

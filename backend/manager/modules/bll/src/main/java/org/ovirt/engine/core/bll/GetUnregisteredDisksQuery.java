@@ -50,7 +50,7 @@ public class GetUnregisteredDisksQuery<P extends GetUnregisteredDisksQueryParame
         for (Guid unregisteredDiskId : imagesList) {
             GetUnregisteredDiskQueryParameters unregQueryParams = new GetUnregisteredDiskQueryParameters(
                     unregisteredDiskId, getStorageDomainId(), getStoragePoolId());
-            VdcQueryReturnValue unregQueryReturn = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisk,
+            VdcQueryReturnValue unregQueryReturn = runInternalQuery(VdcQueryType.GetUnregisteredDisk,
                     unregQueryParams);
             if (unregQueryReturn.getSucceeded()) {
                 unregisteredDisks.add(unregQueryReturn.<Disk>getReturnValue());

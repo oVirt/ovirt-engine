@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.ClusterNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -24,8 +25,8 @@ public class NetworkClusterAttachmentActionRunner extends MultipleActionsRunner 
     public NetworkClusterAttachmentActionRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
             boolean isInternal,
-            VdcActionType massAction) {
-        super(actionType, parameters, isInternal);
+            CommandContext commandContext, VdcActionType massAction) {
+        super(actionType, parameters, commandContext, isInternal);
         this.massAction = massAction;
     }
 
@@ -54,7 +55,7 @@ public class NetworkClusterAttachmentActionRunner extends MultipleActionsRunner 
         // multiple networks can be either attached or detached from a single cluster
         if (!params.isEmpty()) {
             Backend.getInstance().runInternalAction(massAction,
-                    new ClusterNetworksParameters(params.get(0).getVdsGroupId(), params));
+                    new ClusterNetworksParameters(params.get(0).getVdsGroupId(), params), commandContext);
         }
     }
 }

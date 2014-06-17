@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -31,8 +33,8 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
         super(commandId);
     }
 
-    public AddVdsSpmIdCommand(T parameters) {
-        super(parameters);
+    public AddVdsSpmIdCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

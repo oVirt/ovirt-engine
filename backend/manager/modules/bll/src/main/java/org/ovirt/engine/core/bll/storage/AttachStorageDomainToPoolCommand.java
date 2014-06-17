@@ -28,8 +28,13 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     private StoragePoolIsoMap map;
 
     public AttachStorageDomainToPoolCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public AttachStorageDomainToPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -51,10 +56,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 parameters.setIsInternal(true);
                 parameters.setTransactionScopeOption(TransactionScopeOption.Suppress);
 
-                VdcReturnValueBase returnValue = getBackend().runInternalAction(
+                VdcReturnValueBase returnValue = runInternalAction(
                         VdcActionType.AddStoragePoolWithStorages,
-                        parameters,
-                        new CommandContext(getCompensationContext()));
+                        parameters);
                 setSucceeded(returnValue.getSucceeded());
                 if (!returnValue.getSucceeded()) {
                     getReturnValue().setFault(returnValue.getFault());

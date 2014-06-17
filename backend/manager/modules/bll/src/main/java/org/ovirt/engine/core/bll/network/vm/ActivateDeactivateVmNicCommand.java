@@ -6,6 +6,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -48,7 +49,11 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     private NetworkProviderProxy providerProxy;
 
     public ActivateDeactivateVmNicCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public ActivateDeactivateVmNicCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(parameters.getVmId());
     }
 

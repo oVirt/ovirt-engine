@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -49,7 +50,11 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public SetupNetworksCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVdsId(parameters.getVdsId());
     }
 

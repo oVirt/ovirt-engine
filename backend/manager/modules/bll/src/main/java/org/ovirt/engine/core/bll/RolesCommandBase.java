@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RolesParameterBase;
@@ -25,7 +26,11 @@ public abstract class RolesCommandBase<T extends RolesParameterBase> extends Com
     }
 
     public RolesCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RolesCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected Role getRole() {

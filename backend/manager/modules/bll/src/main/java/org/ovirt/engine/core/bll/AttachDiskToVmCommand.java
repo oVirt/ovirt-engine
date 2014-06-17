@@ -6,6 +6,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskValidator;
@@ -42,10 +43,15 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     private Disk disk;
 
     public AttachDiskToVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public AttachDiskToVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
         disk.setReadOnly(getParameters().isReadOnly());
     }
+
 
     @Override
     protected boolean canDoAction() {

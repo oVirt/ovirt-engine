@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -30,15 +30,13 @@ public class MultipleActionsRunner {
      */
     protected boolean isRunOnlyIfAllCanDoPass = false;
 
-    /**
-     * The context by which each command should be executed (monitored or non-monitored).
-     */
-    private ExecutionContext executionContext;
+    protected CommandContext commandContext;
 
-    public MultipleActionsRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, boolean isInternal) {
+    public MultipleActionsRunner(VdcActionType actionType, List<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
         this.actionType = actionType;
         this.parameters = parameters;
         this.isInternal = isInternal;
+        this.commandContext = commandContext;
     }
 
     protected List<VdcActionParametersBase> getParameters() {
@@ -63,7 +61,11 @@ public class MultipleActionsRunner {
                 parameter.setMultipleAction(true);
                 returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
                 if (returnValue == null) {
-                    CommandBase<?> command = CommandsFactory.createCommand(actionType, parameter);
+                    CommandBase<?> command = isInternal ?
+                            CommandsFactory.createCommand(actionType, parameter, commandContext.clone()
+                                    .withoutCompensationContext()) :
+                                    CommandsFactory.createCommand(actionType, parameter);
+
                     command.setInternalExecution(isInternal);
                     getCommands().add(command);
                 } else {
@@ -179,7 +181,7 @@ public class MultipleActionsRunner {
      */
 
     protected void executeValidatedCommand(CommandBase<?> command) {
-        if (executionContext == null || executionContext.isMonitored()) {
+        if (commandContext == null || commandContext.getExecutionContext() == null || commandContext.getExecutionContext().isMonitored()) {
             ExecutionHandler.prepareCommandForMonitoring(command,
                     command.getActionType(),
                     command.isInternalExecution());
@@ -187,10 +189,6 @@ public class MultipleActionsRunner {
         ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
         command.insertAsyncTaskPlaceHolders();
         command.executeAction();
-    }
-
-    public void setExecutionContext(ExecutionContext executionContext) {
-        this.executionContext = executionContext;
     }
 
     public void setIsRunOnlyIfAllCanDoPass(boolean isRunOnlyIfAllCanDoPass) {

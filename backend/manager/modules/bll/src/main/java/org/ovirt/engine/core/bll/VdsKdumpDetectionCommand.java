@@ -58,10 +58,15 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
 
     public VdsKdumpDetectionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public VdsKdumpDetectionCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         listenerTimeoutInterval = Config.<Integer>getValue(ConfigValues.FenceKdumpListenerTimeout) * 1000;
         kdumpDetectionResult = null;
     }
+
 
     private boolean isListenerAlive() {
         ExternalVariable fkAlive = getDbFacade().getExternalVariableDao().get(LISTENER_HEARTBEAT);
@@ -73,7 +78,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         List<VM> vms = getVmDAO().getAllRunningForVds(getVdsId());
         if (!vms.isEmpty()) {
             RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
-                    getExecutionContext(),
+                    getContext(),
                     getVds()
             );
             restartVmsOper.restartVms(vms);
@@ -97,14 +102,12 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         fenceVdsManuallyParams.setParentCommand(VdcActionType.RestartVds);
 
         // if fencing succeeded, call to reset irs in order to try select new spm
-        Backend.getInstance().runInternalAction(
+        runInternalAction(
                 VdcActionType.FenceVdsManualy,
                 fenceVdsManuallyParams,
-                new CommandContext(
-                        getExecutionContext(),
-                        new EngineLock(getExclusiveLocks(), null)
-                )
-        );
+                dupContext()
+                        .withoutCompensationContext()
+                        .withLock(new EngineLock(getExclusiveLocks(), null)));
     }
 
     private KdumpDetectionResult detectHostKdumping() {

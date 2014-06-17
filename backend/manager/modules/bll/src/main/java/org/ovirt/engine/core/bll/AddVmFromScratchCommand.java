@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -32,8 +32,13 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 @NonTransactiveCommandAttribute
 public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
-        super(parameters);
+        super(parameters, null);
     }
+
+    public AddVmFromScratchCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     protected AddVmFromScratchCommand(Guid commandId) {
         super(commandId);
@@ -109,10 +114,7 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
                 tempVar.setParentCommand(VdcActionType.AddVmFromScratch);
                 tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setParentParameters(getParameters());
-                tmpRetValue = runInternalAction(
-                                VdcActionType.AddImageFromScratch,
-                                tempVar,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                tmpRetValue = runInternalActionWithTasksContext(VdcActionType.AddImageFromScratch, tempVar);
                 if (!tmpRetValue.getSucceeded()) {
                     log.error("concreteAddVmImages: AddImageFromScratch Command failed.");
                     ret = false;

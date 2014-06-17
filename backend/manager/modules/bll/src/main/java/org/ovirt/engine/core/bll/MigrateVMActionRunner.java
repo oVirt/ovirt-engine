@@ -6,6 +6,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -17,8 +18,8 @@ public class MigrateVMActionRunner extends SortedMultipleActionsRunnerBase {
 
     public MigrateVMActionRunner(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
-            boolean isInternal) {
-        super(actionType, parameters, isInternal);
+            CommandContext commandContext, boolean isInternal) {
+        super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override

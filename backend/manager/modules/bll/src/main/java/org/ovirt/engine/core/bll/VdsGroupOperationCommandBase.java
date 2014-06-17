@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -26,11 +27,15 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
     public static final int GET_CPU_THRESHOLDS_FROM_CONFIGURATION = -1;
 
     public VdsGroupOperationCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     protected VdsGroupOperationCommandBase(Guid commandId) {
         super(commandId);
+    }
+
+    public VdsGroupOperationCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

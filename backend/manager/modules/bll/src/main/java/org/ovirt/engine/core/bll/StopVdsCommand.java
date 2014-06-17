@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__STOP;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -27,8 +28,13 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StopVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public StopVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {
@@ -82,7 +88,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
     protected void handleSpecificCommandActions() {
         if (mVmList.size() > 0) {
             RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
-                    getExecutionContext(),
+                    getContext(),
                     getVds()
             );
             restartVmsOper.restartVms(mVmList);

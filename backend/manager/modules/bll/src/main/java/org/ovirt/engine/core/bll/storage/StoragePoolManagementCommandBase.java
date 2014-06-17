@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -13,7 +14,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 public abstract class StoragePoolManagementCommandBase<T extends StoragePoolManagementParameter> extends
         StorageHandlingCommandBase<T> {
     public StoragePoolManagementCommandBase(T parameters) {
-        super(parameters);
+        super(parameters, null);
     }
 
     /**
@@ -24,6 +25,10 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
 
     protected StoragePoolManagementCommandBase(Guid commandId) {
         super(commandId);
+    }
+
+    public StoragePoolManagementCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

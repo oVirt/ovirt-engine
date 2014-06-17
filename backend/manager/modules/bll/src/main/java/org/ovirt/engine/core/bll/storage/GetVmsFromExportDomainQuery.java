@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.OvfHelper;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -15,7 +16,11 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         extends GetAllFromExportDomainQuery<List<VM>, P> {
 
     public GetVmsFromExportDomainQuery(P parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public GetVmsFromExportDomainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

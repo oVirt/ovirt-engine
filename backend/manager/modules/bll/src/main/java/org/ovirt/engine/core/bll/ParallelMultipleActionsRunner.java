@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -10,8 +11,8 @@ public class ParallelMultipleActionsRunner extends MultipleActionsRunner {
 
     public ParallelMultipleActionsRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
-            boolean isInternal) {
-        super(actionType, parameters, isInternal);
+            CommandContext commandContext, boolean isInternal) {
+        super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override

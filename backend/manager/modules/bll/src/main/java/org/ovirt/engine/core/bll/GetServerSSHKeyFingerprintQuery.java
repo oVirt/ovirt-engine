@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 
@@ -10,12 +11,12 @@ import org.ovirt.engine.core.common.queries.ServerParameters;
  */
 public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends QueriesCommandBase<P> {
 
-    protected EngineSSHClient getEngineSSHClient() {
-        return new EngineSSHClient();
-    }
-
     public GetServerSSHKeyFingerprintQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetServerSSHKeyFingerprintQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     public String getServerFingerprint(String serverName) {
@@ -37,4 +38,9 @@ public class GetServerSSHKeyFingerprintQuery<P extends ServerParameters> extends
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getServerFingerprint(getParameters().getServer()));
     }
+
+    protected EngineSSHClient getEngineSSHClient() {
+        return new EngineSSHClient();
+    }
+
 }

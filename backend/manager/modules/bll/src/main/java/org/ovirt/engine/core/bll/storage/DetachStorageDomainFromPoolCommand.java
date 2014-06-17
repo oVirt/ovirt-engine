@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -22,8 +23,13 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         StorageDomainCommandBase<T> {
 
     public DetachStorageDomainFromPoolCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public DetachStorageDomainFromPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     /**
      * Constructor for command creation when compensation is applied on startup

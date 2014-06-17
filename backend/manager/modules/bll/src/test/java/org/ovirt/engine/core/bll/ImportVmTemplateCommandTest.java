@@ -23,6 +23,7 @@ import javax.validation.ConstraintViolation;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.ImportVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -207,7 +208,7 @@ public class ImportVmTemplateCommandTest {
         result.setSucceeded(true);
 
         when(command.getBackend().runInternalQuery(eq(VdcQueryType.GetTemplatesFromExportDomain),
-                any(VdcQueryParametersBase.class))).thenReturn(result);
+                any(VdcQueryParametersBase.class), any(EngineContext.class))).thenReturn(result);
     }
 
     private static void mockStorageDomainStatic(

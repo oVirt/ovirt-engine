@@ -90,10 +90,10 @@ public class BackwardCompatibilityTaskCreationTest {
     @DataPoints
     public static CommandBase<? extends VdcActionParametersBase>[] data() {
         return new CommandBase<?>[] {
-                new CreateSnapshotCommand(new ImagesActionsParametersBase()),
-                new AddImageFromScratchCommand(new AddImageFromScratchParameters()),
-                new CreateImageTemplateCommand(new CreateImageTemplateParameters()),
-                new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters()),
+                new CreateSnapshotCommand(new ImagesActionsParametersBase(), null),
+                new AddImageFromScratchCommand(new AddImageFromScratchParameters(), null),
+                new CreateImageTemplateCommand(new CreateImageTemplateParameters(), null),
+                new CreateCloneOfTemplateCommand(new CreateCloneOfTemplateParameters(), null),
                 new RemoveVmCommand(new RemoveVmParameters()),
                 new HibernateVmCommand(new VmOperationParameterBase()) {
                     @Override
@@ -110,7 +110,7 @@ public class BackwardCompatibilityTaskCreationTest {
                         // No op for test
                     }
                 },
-                new RemoveImageCommand(new RemoveImageParameters()) {
+                new RemoveImageCommand(new RemoveImageParameters(), null) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test
@@ -132,19 +132,19 @@ public class BackwardCompatibilityTaskCreationTest {
                     }
 
                 },
-                new RemoveSnapshotSingleDiskCommand(new ImagesContainterParametersBase()) {
+                new RemoveSnapshotSingleDiskCommand(new ImagesContainterParametersBase(), null) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test
                     }
                 },
-                new RemoveTemplateSnapshotCommand(new ImagesContainterParametersBase()) {
+                new RemoveTemplateSnapshotCommand(new ImagesContainterParametersBase(), null) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test
                     }
                 },
-                new RestoreFromSnapshotCommand(new RestoreFromSnapshotParameters()) {
+                new RestoreFromSnapshotCommand(new RestoreFromSnapshotParameters(), null) {
                     @Override
                     protected void initContainerDetails(ImagesContainterParametersBase parameters) {
                         // No op for test

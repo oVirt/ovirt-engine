@@ -6,6 +6,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -72,8 +73,12 @@ public abstract class VmPoolCommandBase<T extends VmPoolParametersBase> extends 
     }
 
     public VmPoolCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
 
+    }
+
+    public VmPoolCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected static int getNumOfPrestartedVmsInPool(Guid poolId) {

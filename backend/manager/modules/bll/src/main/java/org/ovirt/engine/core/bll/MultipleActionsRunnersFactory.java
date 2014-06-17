@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.AttachStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.bll.storage.DeactivateStorageDomainsMultipleActionRunner;
 import org.ovirt.engine.core.common.action.RemoveVdsParameters;
@@ -17,28 +18,28 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 public final class MultipleActionsRunnersFactory {
     public static MultipleActionsRunner createMultipleActionsRunner(VdcActionType actionType,
                                                                     ArrayList<VdcActionParametersBase> parameters,
-                                                                    boolean isInternal) {
+                                                                    boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
         case DeactivateStorageDomain: {
-            runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, isInternal);
+            runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
         case AttachStorageDomainToPool: {
-            runner = new AttachStorageDomainsMultipleActionRunner(actionType, parameters, isInternal);
+            runner = new AttachStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
 
         case RunVm: {
-            runner = new RunVMActionRunner(actionType, parameters, isInternal);
+            runner = new RunVMActionRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
         case MigrateVm: {
-            runner = new MigrateVMActionRunner(actionType, parameters, isInternal);
+            runner = new MigrateVMActionRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
         case RemoveVmFromPool: {
-            runner = new RemoveVmFromPoolRunner(actionType, parameters, isInternal);
+            runner = new RemoveVmFromPoolRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
 
@@ -51,22 +52,22 @@ public final class MultipleActionsRunnersFactory {
         case RemoveGlusterServer:
         case EnableGlusterHook:
         case DisableGlusterHook: {
-            runner = new GlusterMultipleActionsRunner(actionType, parameters, isInternal);
+            runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
 
         case RemoveVds: {
             if (containsGlusterServer(parameters)) {
-                runner = new GlusterMultipleActionsRunner(actionType, parameters, isInternal);
+                runner = new GlusterMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             } else {
-                runner = new MultipleActionsRunner(actionType, parameters, isInternal);
+                runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             }
 
             break;
         }
 
         case PersistentSetupNetworks: {
-            runner = new ParallelMultipleActionsRunner(actionType, parameters, isInternal);
+            runner = new ParallelMultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
 
@@ -75,6 +76,7 @@ public final class MultipleActionsRunnersFactory {
                     new NetworkClusterAttachmentActionRunner(actionType,
                             parameters,
                             isInternal,
+                            commandContext,
                             VdcActionType.AttachNetworksToCluster);
             break;
 
@@ -83,12 +85,13 @@ public final class MultipleActionsRunnersFactory {
                     new NetworkClusterAttachmentActionRunner(actionType,
                             parameters,
                             isInternal,
+                            commandContext,
                             VdcActionType.DetachNetworksFromCluster);
             break;
         }
 
         default: {
-            runner = new MultipleActionsRunner(actionType, parameters, isInternal);
+            runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
         }
         }

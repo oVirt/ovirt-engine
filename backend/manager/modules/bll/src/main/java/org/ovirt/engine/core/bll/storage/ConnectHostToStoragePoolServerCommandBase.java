@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +22,8 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
     private List<StorageServerConnections> _connections;
     private Map<StorageType, List<StorageServerConnections>> connectionsTypeMap;
 
-    public ConnectHostToStoragePoolServerCommandBase(T parameters) {
-        super(parameters);
+    public ConnectHostToStoragePoolServerCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected Map<StorageType, List<StorageServerConnections>> getConnectionsTypeMap() {

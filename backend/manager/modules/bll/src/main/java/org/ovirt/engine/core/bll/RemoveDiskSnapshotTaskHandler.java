@@ -73,7 +73,7 @@ public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     private CommandContext getCommandContext() {
         CommandContext commandContext =
-                ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext());
+                ExecutionHandler.createDefaultContextForTasks(enclosingCommand.getContext());
         commandContext.getExecutionContext().setShouldEndJob(isLastTaskHandler());
 
         return commandContext;

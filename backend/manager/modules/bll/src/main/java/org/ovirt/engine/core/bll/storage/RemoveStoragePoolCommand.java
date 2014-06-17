@@ -10,7 +10,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -294,10 +293,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             tempVar.setDestroyingPool(true);
             tempVar.setDoFormat(true);
             tempVar.setVdsId(vds.getId());
-            if (!Backend.getInstance()
-                    .runInternalAction(VdcActionType.RemoveStorageDomain,
-                            tempVar,
-                            new CommandContext(getCompensationContext()))
+            if (!runInternalAction(VdcActionType.RemoveStorageDomain, tempVar, dupContext().withoutLock().withoutExecutionContext())
                     .getSucceeded()) {
                 return false;
             }

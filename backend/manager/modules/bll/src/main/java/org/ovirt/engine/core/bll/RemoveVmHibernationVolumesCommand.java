@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -19,8 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RemoveVmHibernationVolumesCommand<T extends RemoveVmHibernationVolumesParameters> extends CommandBase<T> implements TaskHandlerCommand<T> {
 
-    public RemoveVmHibernationVolumesCommand(T parameters) {
-        super(parameters);
+    public RemoveVmHibernationVolumesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVmId(parameters.getVmId());
     }
 

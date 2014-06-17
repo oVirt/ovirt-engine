@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.IStorageHelper;
 import org.ovirt.engine.core.bll.storage.StorageHelperBase;
@@ -42,11 +43,15 @@ import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
 public abstract class AbstractDiskVmCommand<T extends VmDiskOperationParameterBase> extends VmCommand<T> {
 
     public AbstractDiskVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     protected AbstractDiskVmCommand(Guid commandId) {
         super(commandId);
+    }
+
+    public AbstractDiskVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected void performPlugCommand(VDSCommandType commandType,

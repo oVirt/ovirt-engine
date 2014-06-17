@@ -23,6 +23,7 @@ import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.context.DefaultCompensationContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.context.NoOpCompensationContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -120,12 +121,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     /** Indicates whether the acquired locks should be released after the execute method or not */
     private boolean releaseLocksAtEndOfExecute = true;
     /** Object which is representing a lock that some commands will acquire */
-    private EngineLock commandLock;
 
     protected Log log = LogFactory.getLog(getClass());
 
     /** The context defines how to monitor the command and handle its compensation */
-    private final CommandContext context = new CommandContext();
+    private final CommandContext context;
 
     /** A map contains the properties for describing the job */
     protected Map<String, String> jobProperties;
@@ -160,23 +160,32 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected CommandBase() {
-        commandId = Guid.newGuid();
+        this(Guid.newGuid());
     }
 
     protected CommandBase(T parameters) {
+        this(parameters, null);
+    }
+
+    protected CommandBase(T parameters, CommandContext cmdContext) {
+        if (cmdContext == null) {
+            cmdContext =
+                    new CommandContext(new EngineContext().withSessionId(parameters.getSessionId()))
+                            .withExecutionContext(new ExecutionContext());
+        }
+        this.context = cmdContext;
         _parameters = parameters;
-        // get the user from the session if the user is logged in
-        DbUser user = SessionDataContainer.getInstance().getUser(parameters.getSessionId(), true);
+        DbUser user =
+                SessionDataContainer.getInstance().getUser(cmdContext.getEngineContext().getSessionId(), true);
         if (user != null) {
             setCurrentUser(user);
-        } else
-        // if the user is not logged in, get the user from the command parameters
-        // this is used for async task completion to get the user who initiated
-        // the task after the user has logged out.
-        if (parameters.getParametersCurrentUser() != null) {
-            setCurrentUser(parameters.getParametersCurrentUser());
         }
-        setCorrelationId(parameters.getCorrelationId());
+        ExecutionContext executionContext = cmdContext.getExecutionContext();
+        if (executionContext.getJob() != null) {
+            setJobId(executionContext.getJob().getId());
+        } else if (executionContext.getStep() != null) {
+            setJobId(executionContext.getStep().getJobId());
+        }
 
         Guid commandIdFromParameters = parameters.getCommandId();
         if (commandIdFromParameters == null) {
@@ -186,6 +195,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         commandId = commandIdFromParameters;
         taskHandlers = initTaskHandlers();
+        setCorrelationId(parameters.getCorrelationId());
     }
 
     /**
@@ -194,6 +204,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param commandId
      */
     protected CommandBase(Guid commandId) {
+        this.context = new CommandContext(new EngineContext());
         this.commandId = commandId;
     }
 
@@ -213,12 +224,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return result of the command execution
      */
     protected VdcReturnValueBase attemptRollback(VdcActionType commandType,
-            VdcActionParametersBase params,
-            CommandContext rollbackContext) {
+            VdcActionParametersBase params) {
         if (canPerformRollbackUsingCommand(commandType, params)) {
             params.setExecutionReason(CommandExecutionReason.ROLLBACK_FLOW);
             params.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            return getBackend().runInternalAction(commandType, params, rollbackContext);
+            return getBackend().runInternalAction(commandType, params, context.clone());
         }
         return new VdcReturnValueBase();
     }
@@ -238,7 +248,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      */
     protected VdcReturnValueBase checkAndPerformRollbackUsingCommand(VdcActionType commandType,
             VdcActionParametersBase params) {
-        return attemptRollback(commandType, params, null);
+        return attemptRollback(commandType, params);
     }
 
     /**
@@ -299,7 +309,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @param compensationContext the compensationContext to set
      */
     public void setCompensationContext(CompensationContext compensationContext) {
-        context.setCompensationContext(compensationContext);
+        context.withCompensationContext(compensationContext);
     }
 
     public VdcReturnValueBase canDoActionOnly() {
@@ -491,10 +501,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * The following method should initiate a lock , in order to release it at endAction()
      */
     private void initiateLockEndAction() {
-        if (commandLock == null) {
+        if (context.getLock() == null) {
             LockIdNameAttribute annotation = getClass().getAnnotation(LockIdNameAttribute.class);
             if (annotation != null && !annotation.isReleaseAtEndOfExecute()) {
-                commandLock = buildLock();
+                context.withLock(buildLock());
             }
 
         }
@@ -517,7 +527,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         if (getCompensationContext() == null) {
-            context.setCompensationContext(createCompensationContext(scope, forceCompensation));
+            context.withCompensationContext(createCompensationContext(scope, forceCompensation));
         }
     }
 
@@ -1310,7 +1320,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         for (Map.Entry<Guid, Pair<VdcActionType, VdcActionParametersBase>> entry : childCommandInfoMap.entrySet()) {
                             CommandBase<?> command =
                                     BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
-                                            entry.getValue().getSecond());
+                                            entry.getValue().getSecond(),
+                                            context);
                             command.insertAsyncTaskPlaceHolders();
                             childCommandsMap.put(entry.getKey(), command);
                         }
@@ -1683,11 +1694,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected EngineLock getLock() {
-        return commandLock;
+        return context.getLock();
     }
 
     protected void setLock(EngineLock lock) {
-        commandLock = lock;
+        context.withLock(null);
     }
 
     protected boolean acquireLock() {
@@ -1722,13 +1733,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected boolean acquireLockInternal() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
-        if (commandLock == null) {
+        if (context.getLock() == null) {
             EngineLock lock = buildLock();
             if (lock != null) {
                 Pair<Boolean, Set<String>> lockAcquireResult = getLockManager().acquireLock(lock);
                 if (lockAcquireResult.getFirst()) {
                     log.infoFormat("Lock Acquired to object {0}", lock);
-                    commandLock = lock;
+                    context.withLock(lock);
                 } else {
                     log.infoFormat("Failed to Acquire Lock to object {0}", lock);
                     getReturnValue().getCanDoActionMessages()
@@ -1771,12 +1782,12 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     private void acquireLockAndWait() {
         // if commandLock is null then we acquire new lock, otherwise probably we got lock from caller command.
-        if (commandLock == null) {
+        if (context.getLock() == null) {
             Map<String, Pair<String, String>> exclusiveLocks = getExclusiveLocks();
             if (exclusiveLocks != null) {
                 EngineLock lock = new EngineLock(exclusiveLocks, null);
                 getLockManager().acquireLockWait(lock);
-                commandLock = lock;
+                context.withLock(lock);
             }
         }
     }
@@ -1800,10 +1811,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected void freeLock() {
-        if (commandLock != null) {
-            getLockManager().releaseLock(commandLock);
-            log.infoFormat("Lock freed to object {0}", commandLock);
-            commandLock = null;
+        if (context.getLock() != null) {
+            getLockManager().releaseLock(context.getLock());
+            log.infoFormat("Lock freed to object {0}", context.getLock());
+            context.withLock(null);
         }
     }
 
@@ -1971,7 +1982,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     public void setExecutionContext(ExecutionContext executionContext) {
-        context.setExecutionContext(executionContext);
+        context.withExecutionContext(executionContext);
     }
 
     public ExecutionContext getExecutionContext() {
@@ -1982,29 +1993,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return commandId;
     }
 
-    public void setContext(CommandContext context) {
-        if (context == null) {
-            return;
-        }
-
-        CompensationContext compensationContext = context.getCompensationContext();
-        if (compensationContext != null) {
-            setCompensationContext(compensationContext);
-        }
-
-        ExecutionContext executionContext = context.getExecutionContext();
-        if (executionContext != null) {
-            setExecutionContext(executionContext);
-            if (executionContext.getJob() != null) {
-                setJobId(executionContext.getJob().getId());
-            } else if (executionContext.getStep() != null) {
-                setJobId(executionContext.getStep().getJobId());
-            }
-        }
-
-        if (commandLock == null) {
-            commandLock = context.getLock();
-        }
+    public CommandContext getContext() {
+        return context;
     }
 
     /**
@@ -2142,29 +2132,50 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected VdcReturnValueBase runInternalAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return Backend.getInstance().runInternalAction(actionType, parameters);
+        return getBackend().runInternalAction(actionType, parameters, context.clone());
     }
 
     protected VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
-            CommandContext context) {
-        return getBackend().runInternalAction(actionType, parameters, context);
+            CommandContext internalCommandContext) {
+        return getBackend().runInternalAction(actionType,
+                parameters,
+                internalCommandContext);
     }
 
     protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
-        return getBackend().runInternalMultipleActions(actionType, parameters);
+        return getBackend().runInternalMultipleActions(actionType, parameters, context.clone());
     }
 
     protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
-        return getBackend().runInternalMultipleActions(actionType, parameters, executionContext);
+        return getBackend().runInternalMultipleActions(actionType,
+                parameters,
+                context.clone().withExecutionContext(executionContext));
+    }
+
+    protected VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
+            VdcActionParametersBase parameters) {
+        return runInternalActionWithTasksContext(actionType, parameters, null);
+    }
+
+    protected VdcReturnValueBase runInternalActionWithTasksContext(VdcActionType actionType,
+            VdcActionParametersBase parameters, EngineLock lock) {
+        return runInternalAction(
+                actionType,
+                parameters,
+                ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
+    }
+
+
+    protected CommandContext dupContext() {
+        return getContext().clone();
     }
 
 
     protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {
-        return getBackend().runInternalQuery(type, queryParams);
+        return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
     }
-
 }

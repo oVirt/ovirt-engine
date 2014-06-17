@@ -7,7 +7,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -56,9 +56,13 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         _problematicVds = null;
     }
 
-    public FenceVdsManualyCommand(T parameters) {
-        super(parameters);
+    public FenceVdsManualyCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         _problematicVds = DbFacade.getInstance().getVdsDao().get(parameters.getVdsId());
+    }
+
+    public FenceVdsManualyCommand(T parameters) {
+        this(parameters, null);
     }
 
     public Guid getProblematicVdsId() {
@@ -98,9 +102,9 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
         if ((getParameters()).getClearVMs() && result) {
             VdsActionParameters tempVar = new VdsActionParameters(_problematicVds.getId());
             tempVar.setSessionId(getParameters().getSessionId());
-            runInternalAction(VdcActionType.ClearNonResponsiveVdsVms,
-                    tempVar,
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            runInternalActionWithTasksContext(
+                    VdcActionType.ClearNonResponsiveVdsVms,
+                    tempVar);
         }
         setSucceeded(result);
         if (getSucceeded()) {

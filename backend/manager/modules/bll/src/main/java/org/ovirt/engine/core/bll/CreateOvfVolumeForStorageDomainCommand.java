@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
@@ -26,8 +27,8 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
-    public CreateOvfVolumeForStorageDomainCommand(T parameters) {
-        super(parameters);
+    public CreateOvfVolumeForStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStorageDomainId(getParameters().getStorageDomainId());
         setStoragePoolId(getParameters().getStoragePoolId());
     }
@@ -45,8 +46,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         diskParameters.setParentCommand(getParameters().getParentCommand());
         diskParameters.setParentParameters(getParameters().getParentParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
-        VdcReturnValueBase vdcReturnValueBase = runInternalAction(VdcActionType.AddDisk, diskParameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        VdcReturnValueBase vdcReturnValueBase =
+                runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
         Guid createdId = (Guid)vdcReturnValueBase.getActionReturnValue();
 
         if (createdId != null) {

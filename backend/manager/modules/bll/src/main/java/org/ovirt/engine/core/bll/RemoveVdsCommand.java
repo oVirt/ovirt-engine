@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -39,8 +40,13 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     private VDS upServer;
 
     public RemoveVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public RemoveVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected void executeCommand() {

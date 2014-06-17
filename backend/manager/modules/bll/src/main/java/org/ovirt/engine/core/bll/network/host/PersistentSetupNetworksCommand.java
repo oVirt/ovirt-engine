@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.host.SetupNetworksCommand.SETUP_NETWORKS_RESOLUTION;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
@@ -15,9 +16,14 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksParameters> extends VdsCommand<T> {
 
     public PersistentSetupNetworksCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public PersistentSetupNetworksCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVdsId(parameters.getVdsId());
     }
+
 
     public int getSequence() {
         return getParameters().getSequence();

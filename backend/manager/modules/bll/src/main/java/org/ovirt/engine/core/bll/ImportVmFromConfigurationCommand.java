@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -38,10 +39,15 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         super(commandId);
     }
 
-    public ImportVmFromConfigurationCommand(T parameters) {
-        super(parameters);
+    public ImportVmFromConfigurationCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setCommandShouldBeLogged(false);
     }
+
+    public ImportVmFromConfigurationCommand(T parameters) {
+        this(parameters, null);
+    }
+
 
     @Override
     protected boolean canDoAction() {

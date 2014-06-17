@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -271,9 +270,8 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
     protected void executeCommand() {
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             VdcReturnValueBase vdcReturnValue =
-                            runInternalAction(VdcActionType.RemoveImage,
-                                    buildRemoveImageParameters(getDiskImage()),
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    runInternalActionWithTasksContext(VdcActionType.RemoveImage,
+                            buildRemoveImageParameters(getDiskImage()));
             if (vdcReturnValue.getSucceeded()) {
                 incrementVmsGeneration();
                 getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());

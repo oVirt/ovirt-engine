@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collections;
 import java.util.List;
 
@@ -25,8 +27,8 @@ public class MergeCommand<T extends MergeParameters>
         extends CommandBase<T> {
     private static final Log log = LogFactory.getLog(MergeCommand.class);
 
-    public MergeCommand(T parameters) {
-        super(parameters);
+    public MergeCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     public void executeCommand() {

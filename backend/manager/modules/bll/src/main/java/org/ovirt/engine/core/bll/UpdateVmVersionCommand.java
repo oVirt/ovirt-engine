@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -53,8 +55,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         super(commandId);
     }
 
-    public UpdateVmVersionCommand(T parameters) {
-        super(parameters);
+    public UpdateVmVersionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
 
         // vm should be filled in end action
@@ -107,9 +109,10 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             getParameters().setVmPoolId(getVm().getVmPoolId());
             RemoveVmFromPoolParameters removeVmFromPoolParas = new RemoveVmFromPoolParameters(getVmId(), false);
             removeVmFromPoolParas.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.RemoveVmFromPool,
+            VdcReturnValueBase result = runInternalActionWithTasksContext(
+                    VdcActionType.RemoveVmFromPool,
                     removeVmFromPoolParas,
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                    getLock());
             if (!result.getSucceeded()) {
                 log.errorFormat("Could not detach vm {0} ({1}) from vm-pool {2}.",
                         getVm().getName(),
@@ -123,8 +126,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         removeParams.setParentCommand(getActionType());
         removeParams.setParentParameters(getParameters());
         removeParams.setEntityInfo(getParameters().getEntityInfo());
-        VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.RemoveVm, removeParams,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+        VdcReturnValueBase result = runInternalActionWithTasksContext(VdcActionType.RemoveVm, removeParams, getLock());
 
         if (result.getSucceeded()) {
             if (result.getHasAsyncTasks()) {
@@ -180,7 +182,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             addVmParams.setSessionId(getParameters().getSessionId());
         }
         getBackend().runInternalAction(action, addVmParams,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }
 
     /**

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -21,8 +22,12 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         super(commandId);
     }
 
-    public VmOperationCommandBase(T parameters) {
-        super(parameters);
+    protected VmOperationCommandBase(T parameters) {
+        this(parameters, null);
+    }
+
+    protected VmOperationCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

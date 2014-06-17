@@ -1,12 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -29,8 +30,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> extends VmCommand<T> {
 
-    public RemoveAllVmImagesCommand(T parameters) {
-        super(parameters);
+    public RemoveAllVmImagesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override
@@ -54,9 +55,10 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
         for (final DiskImage image : images) {
             if (mImagesToBeRemoved.contains(image.getImageId())) {
                 VdcReturnValueBase vdcReturnValue =
-                        runInternalAction(VdcActionType.RemoveImage,
-                                buildRemoveImageParameters(image),
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                        runInternalActionWithTasksContext(
+                                VdcActionType.RemoveImage,
+                                buildRemoveImageParameters(image)
+                        );
 
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());

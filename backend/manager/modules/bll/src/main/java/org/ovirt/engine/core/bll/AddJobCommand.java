@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.action.AddJobParameters;
@@ -13,8 +14,12 @@ import org.ovirt.engine.core.dao.JobDao;
 
 public abstract class AddJobCommand<T extends AddJobParameters> extends CommandBase<T> {
 
-    public AddJobCommand(T parameters) {
-        super(parameters);
+    protected AddJobCommand(T parameters) {
+        this(parameters, null);
+    }
+
+    protected AddJobCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
 

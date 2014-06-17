@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -509,7 +510,10 @@ public class ExecutionHandler {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setJobRequired(true);
         executionContext.setMonitored(true);
-        return new CommandContext(executionContext, lock);
+        return new CommandContext(new EngineContext())
+                .withExecutionContext(executionContext)
+                .withLock(lock)
+                .withoutCompensationContext();
     }
 
     /**
@@ -521,34 +525,43 @@ public class ExecutionHandler {
      *            The context of the parent command
      * @return A context by which the internal command should be monitored.
      */
-    public static CommandContext createDefaultContexForTasks(ExecutionContext parentContext) {
-        return createDefaultContexForTasks(parentContext, null);
+    public static CommandContext createDefaultContextForTasks(CommandContext parentContext) {
+        return createDefaultContextForTasks(parentContext, null);
     }
 
     /**
      * Creates a default execution context for an inner command which creates VDSM tasks so the tasks will be monitored
      * under the parent {@code StepEnum.EXECUTING} step. If the parent command is an internal command, its parent task
      * step is passed to its internal command.
-     * @param parentContext
+     *
+     * @param parentExecutionContext
      *            The context of the parent command
      * @param lock
      *            The lock which should be released at child command
      * @return A context by which the internal command should be monitored.
      */
-    public static CommandContext createDefaultContexForTasks(ExecutionContext parentContext, EngineLock lock) {
-        ExecutionContext executionContext = new ExecutionContext();
+    public static CommandContext createDefaultContextForTasks(CommandContext commandContext, EngineLock lock) {
+        return commandContext.clone().withLock(lock).withoutCompensationContext();
+    }
 
-        if (parentContext != null) {
-            if (parentContext.getJob() != null) {
-                Step parentStep = parentContext.getParentTasksStep();
+    public static void setExecutionContextForTasks(CommandContext commandContext, ExecutionContext executionContext, EngineLock lock) {
+        commandContext.withExecutionContext(createDefaultContextForTasksImpl(executionContext))
+                .withLock(lock);
+    }
+
+    private static ExecutionContext createDefaultContextForTasksImpl(ExecutionContext parentExecutionContext) {
+        ExecutionContext executionContext = new ExecutionContext();
+        if (parentExecutionContext != null) {
+            if (parentExecutionContext.getJob() != null) {
+                Step parentStep = parentExecutionContext.getParentTasksStep();
                 if (parentStep != null) {
                     executionContext.setParentTasksStep(parentStep);
                 }
             } else {
-                executionContext.setParentTasksStep(parentContext.getParentTasksStep());
+                executionContext.setParentTasksStep(parentExecutionContext.getParentTasksStep());
             }
         }
-        return new CommandContext(executionContext, lock);
+        return executionContext;
     }
 
     /**

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Date;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -10,8 +12,8 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 @NonTransactiveCommandAttribute
 public class ConnectDomainToStorageCommand<T extends StorageDomainPoolParametersBase> extends StorageDomainCommandBase<T> {
 
-    public ConnectDomainToStorageCommand(T parameters) {
-        super(parameters);
+    public ConnectDomainToStorageCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

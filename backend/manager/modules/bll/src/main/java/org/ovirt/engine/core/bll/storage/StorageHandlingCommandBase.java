@@ -11,6 +11,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -58,10 +59,16 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public abstract class StorageHandlingCommandBase<T extends StoragePoolParametersBase> extends CommandBase<T> {
     private List<DiskImage> diskImagesForStorageDomain;
 
-    public StorageHandlingCommandBase(T parameters) {
-        super(parameters);
+    protected StorageHandlingCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         init(parameters);
+
     }
+
+    protected StorageHandlingCommandBase(T parameters) {
+        this(parameters, null);
+    }
+
 
     protected void init(T parameters) {
         setVdsId(parameters.getVdsId());

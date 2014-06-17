@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
@@ -24,8 +26,8 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
 
     private final ArrayList<Guid> _imagesToDelete = new ArrayList<Guid>();
 
-    public RestoreFromSnapshotCommand(T parameters) {
-        super(parameters);
+    public RestoreFromSnapshotCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

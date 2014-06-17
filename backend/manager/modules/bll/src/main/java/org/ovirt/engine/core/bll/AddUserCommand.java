@@ -9,6 +9,7 @@ import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,8 +27,13 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
     private DirectoryUser directoryUser;
 
     public AddUserCommand(T params) {
-        super(params);
+        this(params, null);
     }
+
+    public AddUserCommand(T params, CommandContext commandContext) {
+        super(params, commandContext);
+    }
+
 
     @Override
     public AuditLogType getAuditLogTypeValue() {

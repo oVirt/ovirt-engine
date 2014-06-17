@@ -8,7 +8,7 @@ import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
@@ -55,9 +55,14 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     public TryBackToAllSnapshotsOfVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public TryBackToAllSnapshotsOfVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
     }
+
 
     @Override
     public Map<String, String> getJobMessageProperties() {
@@ -174,9 +179,8 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
                 public Void runInTransaction() {
                     for (DiskImage image : filteredImages) {
                         VdcReturnValueBase vdcReturnValue =
-                                runInternalAction(VdcActionType.TryBackToSnapshot,
-                                        buildTryBackToSnapshotParameters(newActiveSnapshotId, image),
-                                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                                runInternalActionWithTasksContext(VdcActionType.TryBackToSnapshot,
+                                        buildTryBackToSnapshotParameters(newActiveSnapshotId, image));
 
                         if (vdcReturnValue.getSucceeded()) {
                             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());

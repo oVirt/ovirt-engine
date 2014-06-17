@@ -14,7 +14,8 @@ import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -243,11 +244,11 @@ public class VdsEventListener implements IVdsEventListener {
                         List<VmStatic> vmsToMigrate =
                                 DbFacade.getInstance().getVmStaticDao().getAllWithFailbackByVds(vds.getId());
                         if (!vmsToMigrate.isEmpty()) {
-                            ExecutionContext executionContext = new ExecutionContext();
-                            executionContext.setMonitored(true);
+                            CommandContext ctx = new CommandContext(new EngineContext());
+                            ctx.getExecutionContext().setMonitored(true);
                             Backend.getInstance().runInternalMultipleActions(VdcActionType.MigrateVmToServer,
                                     new ArrayList<>(createMigrateVmToServerParametersList(vmsToMigrate, vds)),
-                                    executionContext);
+                                    ctx);
                         }
                     } catch (RuntimeException e) {
                         log.errorFormat("Failed to initialize Vds on up. Error: {0}", e);

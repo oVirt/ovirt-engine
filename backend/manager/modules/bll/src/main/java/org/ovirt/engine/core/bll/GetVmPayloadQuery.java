@@ -4,6 +4,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -13,6 +14,10 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 
 
 public class GetVmPayloadQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
+
+    public GetVmPayloadQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
+    }
     public GetVmPayloadQuery(P parameters) {
         super(parameters);
     }

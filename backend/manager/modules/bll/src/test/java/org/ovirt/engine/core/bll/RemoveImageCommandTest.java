@@ -60,7 +60,7 @@ public class RemoveImageCommandTest {
     @Before
     public void setUp() {
         RemoveImageParameters params = new RemoveImageParameters(Guid.newGuid());
-        cmd = spy(new RemoveImageCommand<RemoveImageParameters>(params) {
+        cmd = spy(new RemoveImageCommand<RemoveImageParameters>(params, null) {
             @Override
             protected void initImage() {
                 // Stub implementation for testing

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
@@ -46,7 +47,11 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     private VdcBllErrors migrationErrorCode;
 
     public MigrateVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
+        super(migrateVmParameters, cmdContext);
     }
 
     /**

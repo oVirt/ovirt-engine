@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
@@ -13,12 +14,16 @@ import org.ovirt.engine.core.compat.Guid;
 public abstract class VdsGroupCommandBase<T extends VdsGroupParametersBase> extends CommandBase<T> {
     private VDSGroup _vdsGroup;
 
-    public VdsGroupCommandBase(T parameters) {
-        super(parameters);
+    protected VdsGroupCommandBase(T parameters) {
+        this(parameters, null);
     }
 
     protected VdsGroupCommandBase(Guid commandId) {
         super(commandId);
+    }
+
+    public VdsGroupCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -20,7 +21,11 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 public abstract class AbstractVmWatchdogCommand<T extends WatchdogParameters> extends CommandBase<T> {
 
     public AbstractVmWatchdogCommand(T parameters) {
-        super(parameters);
+        super(parameters, null);
+    }
+
+    public AbstractVmWatchdogCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected List<VmDevice> getWatchdogs() {

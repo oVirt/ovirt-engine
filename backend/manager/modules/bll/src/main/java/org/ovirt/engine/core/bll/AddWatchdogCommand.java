@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collection;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -16,6 +17,10 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
+
+    public AddWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
 
     public AddWatchdogCommand(WatchdogParameters parameters) {
         super(parameters);

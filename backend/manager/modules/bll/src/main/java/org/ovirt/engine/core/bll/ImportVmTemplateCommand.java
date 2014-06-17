@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -375,10 +374,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
                     MoveOrCopyImageGroupParameters p = tempVar;
                     p.setParentParameters(getParameters());
-                    VdcReturnValueBase vdcRetValue = runInternalAction(
+                    VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                             VdcActionType.CopyImageGroup,
-                            p,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            p);
 
                     if (!vdcRetValue.getSucceeded()) {
                         throw ((vdcRetValue.getFault() != null) ? new VdcBLLException(vdcRetValue.getFault().getError())
@@ -477,7 +475,9 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }
 

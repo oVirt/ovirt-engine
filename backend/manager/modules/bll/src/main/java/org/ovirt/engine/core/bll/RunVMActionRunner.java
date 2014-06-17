@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.compat.Guid;
@@ -11,8 +12,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RunVMActionRunner extends SortedMultipleActionsRunnerBase {
 
-    public RunVMActionRunner(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
-        super(actionType, parameters, isInternal);
+    public RunVMActionRunner(VdcActionType actionType, ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+        super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override

@@ -5,7 +5,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -19,11 +18,11 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPoolMap;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -188,7 +187,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
                 VdcReturnValueBase vdcReturnValueFromAddPerm = runInternalAction(VdcActionType.AddPermission,
                         permParams,
-                        new CommandContext(getCompensationContext()));
+                        dupContext().withoutExecutionContext().withoutLock());
                 if (!vdcReturnValueFromAddPerm.getSucceeded()) {
                     log.infoFormat("Failed to give user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
                     setActionReturnValue(vdcReturnValueFromAddPerm);
@@ -213,7 +212,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setRunAsStateless(true);
             ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
-                    runVmParams, new CommandContext(runVmContext));
+                    runVmParams, dupContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
 
             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             setSucceeded(vdcReturnValue.getSucceeded());
@@ -247,7 +246,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         if (getVm() != null) {
             if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
                 setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
-                        getParameters().getImagesParameters().get(0), new CommandContext(getCompensationContext())).getSucceeded());
+                        getParameters().getImagesParameters().get(0), dupContext().withoutLock().withExecutionContext(null)).getSucceeded());
 
                 if (!getSucceeded()) {
                     log.warn("EndSuccessfully: endAction of RunVm failed, detaching user from Vm");
@@ -275,7 +274,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     protected void endWithFailure() {
         setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
                 getParameters().getImagesParameters().get(0),
-                new CommandContext(getCompensationContext())).getSucceeded());
+                dupContext().withExecutionContext(null).withoutLock()).getSucceeded());
         if (!getSucceeded()) {
             log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: endAction of RunVm Failed");
         }

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -13,6 +14,10 @@ public class GetWatchdogQuery<P extends IdQueryParameters> extends QueriesComman
 
     public GetWatchdogQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetWatchdogQuery(P parameters, EngineContext context) {
+        super(parameters, context);
     }
 
     @Override

@@ -27,6 +27,7 @@ import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
@@ -404,8 +405,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             result.setSucceeded(false);
         }
         else {
-            CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
-            result = runAction(command, runAsInternal, context);
+            CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, context);
+            result = runAction(command, runAsInternal);
         }
         return result;
     }
@@ -415,14 +416,12 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
     protected VdcReturnValueBase runAction(CommandBase<?> command,
-            boolean runAsInternal,
-            CommandContext context) {
+            boolean runAsInternal) {
         VdcReturnValueBase returnValue = evaluateCorrelationId(command);
         if (returnValue != null) {
             return returnValue;
         }
         command.setInternalExecution(runAsInternal);
-        command.setContext(context);
         ExecutionHandler.prepareCommandForMonitoring(command, command.getActionType(), runAsInternal);
 
         command.insertAsyncTaskPlaceHolders();
@@ -447,34 +446,29 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-
-    @Override
-    public VdcReturnValueBase endAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return endAction(actionType, parameters, null);
-    }
-
     @Override
     public VdcReturnValueBase endAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context) {
-        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
-        command.setContext(context);
-        return command.endAction();
+        return CommandsFactory.createCommand(actionType, parameters, context).endAction();
     }
 
     @Override
     @ExcludeClassInterceptors
-    public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return runQueryImpl(actionType, parameters, false);
+    public VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
+        return runQueryImpl(actionType, parameters, false, engineContext);
     }
 
     @Override
     public VdcQueryReturnValue runQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return runQueryImpl(actionType, parameters, true);
+        return runQueryImpl(actionType,
+                parameters,
+                true,
+                null);
     }
 
     protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
-            boolean isPerformUserCheck) {
+            boolean isPerformUserCheck, EngineContext engineContext) {
         if (isPerformUserCheck) {
             String sessionId = parameters.getSessionId();
             if (StringUtils.isEmpty(sessionId)
@@ -491,11 +485,16 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 return getErrorQueryReturnValue(VdcBllMessages.ENGINE_IS_RUNNING_IN_MAINTENANCE_MODE);
             }
         }
-        QueriesCommandBase<?> command = createQueryCommand(actionType, parameters);
+        QueriesCommandBase<?> command = createQueryCommand(actionType, parameters, engineContext);
         command.setInternalExecution(!isPerformUserCheck);
         command.execute();
         return command.getQueryReturnValue();
 
+    }
+
+    protected VdcQueryReturnValue runQueryImpl(VdcQueryType actionType, VdcQueryParametersBase parameters,
+            boolean isPerformUserCheck) {
+        return runQueryImpl(actionType, parameters, isPerformUserCheck, null);
     }
 
     @Override
@@ -513,7 +512,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             list.add(returnValue);
             return list;
         } else {
-            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass, waitForResult);
+            return runMultipleActionsImpl(actionType, parameters, false, isRunOnlyIfAllCanDoPass, waitForResult, null);
         }
     }
 
@@ -521,38 +520,29 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     @ExcludeClassInterceptors
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
-        return runMultipleActionsImpl(actionType, parameters, true, false, false);
+        return runMultipleActionsImpl(actionType, parameters, true, false, false, null);
     }
 
-    public ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
-            boolean isInternal,
-            boolean isRunOnlyIfAllCanDoPass,
-            boolean isWaitForResult,
-            ExecutionContext executionContext) {
-        MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
-                parameters, isInternal);
-        runner.setExecutionContext(executionContext);
-        runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
-        runner.setIsWaitForResult(isWaitForResult);
-        return runner.execute();
-    }
 
     @Override
     @ExcludeClassInterceptors
     public ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
-            ExecutionContext executionContext) {
-        return runMultipleActionsImpl(actionType, parameters, true, false, false, executionContext);
+            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext) {
+        return runMultipleActionsImpl(actionType, parameters, true, false, false, commandContext);
+
     }
 
     private ArrayList<VdcReturnValueBase> runMultipleActionsImpl(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             boolean isInternal,
             boolean isRunOnlyIfAllCanDoPass,
-            boolean isWaitForResult) {
-        return runMultipleActionsImpl(actionType, parameters, isInternal, isRunOnlyIfAllCanDoPass, isWaitForResult,
-                null);
+            boolean isWaitForResult,
+            CommandContext commandContext) {
+        MultipleActionsRunner runner = MultipleActionsRunnersFactory.createMultipleActionsRunner(actionType,
+                parameters, isInternal, commandContext);
+        runner.setIsRunOnlyIfAllCanDoPass(isRunOnlyIfAllCanDoPass);
+        runner.setIsWaitForResult(isWaitForResult);
+        return runner.execute();
     }
 
     @Override
@@ -647,8 +637,8 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         return returnValue;
     }
 
-    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters) {
-        return CommandsFactory.createQueryCommand(actionType, parameters);
+    protected QueriesCommandBase<?> createQueryCommand(VdcQueryType actionType, VdcQueryParametersBase parameters, EngineContext engineContext) {
+        return CommandsFactory.createQueryCommand(actionType, parameters, engineContext);
     }
 
     @Override
@@ -671,14 +661,21 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
     }
 
    @Override
-    public CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters) {
-        return CommandsFactory.createCommand(actionType, parameters);
+    public CommandBase<?> createAction(VdcActionType actionType, VdcActionParametersBase parameters, CommandContext context) {
+        return CommandsFactory.createCommand(actionType, parameters, context);
     }
 
     @Override
     public VdcReturnValueBase runAction(CommandBase<?> action, ExecutionContext executionContext) {
-        return runAction(action, true, ExecutionHandler.createDefaultContexForTasks(executionContext));
+        ExecutionHandler.setExecutionContextForTasks(action.getContext(),
+                executionContext, null);
+        return runAction(action, true);
     }
 
     private static final Log log = LogFactory.getLog(Backend.class);
+
+    @Override
+    public VdcQueryReturnValue runInternalQuery(VdcQueryType queryType, VdcQueryParametersBase queryParameters) {
+        return runInternalQuery(queryType, queryParameters, null);
+    }
 }

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.List;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -20,8 +22,8 @@ import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 @NonTransactiveCommandAttribute
 public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresForStorageDomainCommandParameters> extends CommandBase<T> {
 
-    public CreateOvfStoresForStorageDomainCommand(T parameters) {
-        super(parameters);
+    public CreateOvfStoresForStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override
@@ -71,11 +73,15 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
                     continue;
                 }
 
-                getBackend().endAction(p.getCommandType(), p);
+                getBackend().endAction(p.getCommandType(),
+                        p,
+                        getContext().clone().withoutCompensationContext().withoutExecutionContext());
                 storageDomainOvfInfoDb.setStatus(StorageDomainOvfInfoStatus.OUTDATED);
                 getStorageDomainOvfInfoDao().update(storageDomainOvfInfoDb);
             } else {
-                getBackend().endAction(p.getCommandType(), p);
+                getBackend().endAction(p.getCommandType(),
+                        p,
+                        getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
                 AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             }
         }

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
@@ -15,6 +16,10 @@ public class GetVdsFenceStatusQuery<P extends VdsIdParametersBase> extends Fence
 
     public GetVdsFenceStatusQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetVdsFenceStatusQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

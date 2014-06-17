@@ -197,7 +197,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         getParameters().setVirtioScsiEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
         getParameters().setBalloonEnabled(containsDeviceWithType(devices, VmDeviceGeneralType.BALLOON));
 
-        VdcQueryReturnValue watchdogs = getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(oldVmId));
+        VdcQueryReturnValue watchdogs = runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(oldVmId));
         if (!((List<VmWatchdog>) watchdogs.getReturnValue()).isEmpty()) {
             VmWatchdog watchdog = ((List<VmWatchdog>) watchdogs.getReturnValue()).iterator().next();
             getParameters().setUpdateWatchdog(true);

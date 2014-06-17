@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.List;
 
@@ -16,8 +18,8 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 @InternalCommandAttribute
 public class AddInternalJobCommand<T extends AddInternalJobParameters> extends AddJobCommand<T> {
 
-    public AddInternalJobCommand(T parameters) {
-        super(parameters);
+    public AddInternalJobCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

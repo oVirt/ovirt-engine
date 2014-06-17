@@ -39,7 +39,11 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
     private boolean haMaintenanceFailed;
 
     public MaintenanceVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public MaintenanceVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         _isInternal = parameters.getIsInternal();
         haMaintenanceFailed = false;
     }
@@ -146,7 +150,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         } catch (RuntimeException e) {
             log.error("Failed to create ExecutionContext for MigrateVmCommand", e);
         }
-        return new CommandContext(ctx);
+        return dupContext().withExecutionContext(ctx).withoutCompensationContext().withoutLock();
     }
 
     @Override

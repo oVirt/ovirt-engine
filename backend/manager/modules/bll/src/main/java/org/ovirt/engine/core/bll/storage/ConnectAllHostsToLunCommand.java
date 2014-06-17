@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ExtendSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -28,8 +29,12 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
 
+    public ConnectAllHostsToLunCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
     public ConnectAllHostsToLunCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     public static class ConnectAllHostsToLunCommandReturnValue extends VdcReturnValueBase {

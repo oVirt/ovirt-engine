@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.List;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -9,8 +11,8 @@ public class GlusterMultipleActionsRunner extends MultipleActionsRunner {
 
     public GlusterMultipleActionsRunner(VdcActionType actionType,
             List<VdcActionParametersBase> parameters,
-            boolean isInternal) {
-        super(actionType, parameters, isInternal);
+            CommandContext commandContext, boolean isInternal) {
+        super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override

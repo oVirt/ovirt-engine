@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.NotImplementedException;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
@@ -41,8 +42,12 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     private Guid mImageId = Guid.Empty;
     private EngineLock snapshotsEngineLock;
 
-    public BaseImagesCommand(T parameters) {
-        super(parameters);
+    protected BaseImagesCommand(T parameters) {
+        this(parameters, null);
+    }
+
+    protected BaseImagesCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         mImageId = parameters.getImageId();
         if (parameters instanceof ImagesContainterParametersBase) {
             initContainerDetails((ImagesContainterParametersBase) parameters);

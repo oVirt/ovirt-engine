@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -116,9 +115,8 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
             tempVar2.setForceDelete(true);
             tempVar2.setParentParameters(getParameters());
             VdcReturnValueBase vdcRetValue =
-                    runInternalAction(VdcActionType.RemoveAllVmImages,
-                            tempVar2,
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    runInternalActionWithTasksContext(VdcActionType.RemoveAllVmImages,
+                            tempVar2);
             if (vdcRetValue.getSucceeded()) {
                 getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
             } else {

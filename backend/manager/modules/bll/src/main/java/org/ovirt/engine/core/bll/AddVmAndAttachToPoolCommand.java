@@ -1,9 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
@@ -20,8 +21,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameters> extends AddVmCommand<T> {
-    public AddVmAndAttachToPoolCommand(T parameters) {
-        super(parameters);
+    public AddVmAndAttachToPoolCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     /**
@@ -54,10 +55,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
                 .getDiskInfoList(), getParameters().getStorageDomainId());
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setDontAttachToDefaultTag(true);
-
-        return runInternalAction(VdcActionType.AddVmFromScratch,
-                        parameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        return runInternalActionWithTasksContext(VdcActionType.AddVmFromScratch, parameters);
     }
 
     private VdcReturnValueBase addVm(VmStatic vmStatic) {
@@ -78,9 +76,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
             parameters.setRngDevice(getParameters().getRngDevice());
         }
 
-        return runInternalAction(VdcActionType.AddVm,
-                        parameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+        return runInternalActionWithTasksContext(VdcActionType.AddVm, parameters);
     }
 
     private void addVmToPool(VmStatic vmStatic) {

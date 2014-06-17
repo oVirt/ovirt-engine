@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -162,10 +161,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(source.getImageId()).get(0);
 
             if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
-                VdcReturnValueBase vdcReturnValue = getBackend().runInternalAction(
+                VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
                         getSnapshotActionType(),
-                        buildRemoveSnapshotSingleDiskParameters(source, dest),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                        buildRemoveSnapshotSingleDiskParameters(source, dest));
                 if (vdcReturnValue != null && vdcReturnValue.getInternalVdsmTaskIdList() != null) {
                     getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 }

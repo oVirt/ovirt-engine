@@ -7,11 +7,13 @@ import java.util.Arrays;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.log.Log;
@@ -48,13 +50,23 @@ public final class CommandsFactory {
 
     @SuppressWarnings("unchecked")
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
-        try {
-            Constructor<CommandBase<? extends VdcActionParametersBase>> constructor =
-                    findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass());
+        return createCommand(action, parameters, null);
+    }
 
-            CommandBase<P> cmd = (CommandBase<P>) constructor.newInstance(new Object[] { parameters });
-            Injector.injectMembers(cmd);
-            return cmd;
+    @SuppressWarnings("unchecked")
+    public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters, CommandContext commandContext) {
+        try {
+            CommandBase<P> result = null;
+            if (commandContext == null) {
+                result = (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()).newInstance(parameters);
+            } else {
+                result =
+                        (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), CommandSuffix),
+                                parameters.getClass(),
+                                commandContext.getClass()).newInstance(parameters, commandContext);
+            }
+            Injector.injectMembers(result);
+            return result;
         }
         catch (InvocationTargetException ex) {
             log.error("Error in invocating CTOR of command " + action.name() + ". Exception is ", ex);
@@ -65,6 +77,7 @@ public final class CommandsFactory {
             return null;
         }
     }
+
 
     /**
      * Creates an instance of the given command class and passed the command id to it's constructor
@@ -100,12 +113,21 @@ public final class CommandsFactory {
         }
     }
 
-    public static QueriesCommandBase<?> createQueryCommand(VdcQueryType query, VdcQueryParametersBase parameters) {
+    public static QueriesCommandBase<?> createQueryCommand(VdcQueryType query, VdcQueryParametersBase parameters, EngineContext engineContext) {
         Class<?> type = null;
         try {
             type = getCommandClass(query.name(), QueryPrefix);
-            Constructor<?> info = findCommandConstructor(type, parameters.getClass());
-            return (QueriesCommandBase<?>) info.newInstance(parameters);
+            QueriesCommandBase<?> result = null;
+            if (engineContext == null) {
+                result =
+                        (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass()).newInstance(parameters);
+            } else {
+                result =
+                        (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass(), EngineContext.class).newInstance(parameters,
+                                engineContext);
+
+            }
+            return result;
         } catch (Exception e) {
             log.errorFormat("Command Factory: Failed to create command {0} using reflection\n. {1}", type, e);
             throw new RuntimeException(e);

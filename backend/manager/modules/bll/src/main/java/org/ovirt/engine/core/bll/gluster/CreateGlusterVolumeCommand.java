@@ -238,8 +238,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         ExecutionContext setOptionCtx = new ExecutionContext();
         setOptionCtx.setMonitored(true);
         setOptionCtx.setStep(setOptionStep);
-
-        return new CommandContext(setOptionCtx, getCompensationContext());
+        return dupContext().withExecutionContext(setOptionCtx).withoutLock();
     }
 
     private Map<String, String> getOptionValues(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {

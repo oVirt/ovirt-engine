@@ -1,10 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -23,8 +24,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 @InternalCommandAttribute
 public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParametersBase> extends VmTemplateCommand<T> {
-    public RemoveAllVmTemplateImageTemplatesCommand(T parameters) {
-        super(parameters);
+    public RemoveAllVmTemplateImageTemplatesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());
     }
 
@@ -48,10 +49,9 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                 tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
                 tempVar.setParentCommand(getActionType());
                 tempVar.setParentParameters(getParameters());
-                VdcReturnValueBase vdcReturnValue = runInternalAction(
+                VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
                                 VdcActionType.RemoveTemplateSnapshot,
-                                tempVar,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                                tempVar);
 
                 if (vdcReturnValue.getSucceeded()) {
                     getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());

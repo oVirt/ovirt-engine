@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collections;
 import java.util.Map;
 
@@ -24,8 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 public class UploadStreamCommand<T extends UploadStreamParameters> extends BaseImagesCommand<T> {
     Guid cachedSpmId;
 
-    public UploadStreamCommand(T parameters) {
-        super(parameters);
+    public UploadStreamCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePoolId(getParameters().getStoragePoolId());
     }
 

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import org.ovirt.engine.core.common.action.InternalMigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -10,8 +12,8 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 @NonTransactiveCommandAttribute
 public class InternalMigrateVmCommand<T extends InternalMigrateVmParameters> extends MigrateVmCommand<MigrateVmParameters> {
 
-    public InternalMigrateVmCommand(T parameters) {
-        super(new MigrateVmParameters(parameters));
+    public InternalMigrateVmCommand(T parameters, CommandContext cmdContext) {
+        super(new MigrateVmParameters(parameters), cmdContext);
     }
 
     @Override

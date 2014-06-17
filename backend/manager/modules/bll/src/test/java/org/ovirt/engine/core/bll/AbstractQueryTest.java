@@ -1,15 +1,16 @@
 package org.ovirt.engine.core.bll;
-
 import static org.junit.Assert.assertNotSame;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.ParameterizedType;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -29,6 +30,8 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
     /** Sets up a mock for {@link #params} */
     private void setUpMockQueryParameters() {
         params = mock(getParameterType());
+        when(params.getSessionId()).thenReturn("test");
+        when(params.getRefresh()).thenReturn(true);
     }
 
     /** Sets up a mock for {@link #query} */
@@ -41,6 +44,8 @@ public abstract class AbstractQueryTest<P extends VdcQueryParametersBase, Q exte
         query = spy(con.newInstance(parameters));
         DbFacade dbFacadeMock = mock(DbFacade.class);
         doReturn(dbFacadeMock).when(query).getDbFacade();
+        DbUser dbUserMock = mock(DbUser.class);
+        doReturn(dbUserMock).when(query).initUser();
         return query;
     }
 

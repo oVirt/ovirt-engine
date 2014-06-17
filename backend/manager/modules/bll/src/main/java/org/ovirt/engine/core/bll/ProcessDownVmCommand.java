@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -42,8 +44,8 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         super(commandId);
     }
 
-    public ProcessDownVmCommand(T parameters) {
-        super(parameters);
+    public ProcessDownVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVmId(getParameters().getId());
     }
 
@@ -87,9 +89,8 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         if (pool != null && pool.getVmPoolType() == VmPoolType.Automatic) {
             // should be only one user in the collection
             for (DbUser dbUser : users) {
-                Backend.getInstance().runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                        new VmPoolSimpleUserParameters(getVm().getVmPoolId(), dbUser.getId(), getVmId()),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
+                        new VmPoolSimpleUserParameters(getVm().getVmPoolId(), dbUser.getId(), getVmId()), getLock());
             }
 
             return true;
@@ -225,7 +226,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
             log.infoFormat("Deleting snapshot for stateless vm {0}", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                    ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         }
     }
 }

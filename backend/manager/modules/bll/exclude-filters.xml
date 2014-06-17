@@ -90,6 +90,24 @@
        <Bug pattern="BC_UNCONFIRMED_CAST" />
      </Match>
 
+     <!--
+      findbugs complains that object does not call super.clone()
+      the clone() method at the super class is abstract, so it cannot be called.
+
+      findbugs reason:
+      CN: clone method does not call super.clone() (CN_IDIOM_NO_SUPER_CALL)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.context.CommandContext" />
+       <Method name="clone" />
+       <Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
+     </Match>
+
+     <Match>
+       <Class name="org.ovirt.engine.core.bll.context.EngineContext" />
+       <Method name="clone" />
+       <Bug pattern="CN_IDIOM_NO_SUPER_CALL" />
+
      <Match>
        <Class name="org.ovirt.engine.core.bll.Backend" />
        <Method name="initialize" />

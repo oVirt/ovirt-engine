@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
@@ -36,8 +38,8 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     private List<PermissionSubject> permissionsList;
     private List<VM> vmsDiskPluggedTo;
 
-    public ExtendImageSizeCommand(T parameters) {
-        super(parameters);
+    public ExtendImageSizeCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

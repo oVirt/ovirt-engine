@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -14,8 +16,13 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class DisconnectStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
+
     public DisconnectStorageServerConnectionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public DisconnectStorageServerConnectionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

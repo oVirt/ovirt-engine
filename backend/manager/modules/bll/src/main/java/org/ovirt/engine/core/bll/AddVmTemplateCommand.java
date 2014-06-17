@@ -596,7 +596,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         getVmStaticDAO().incrementDbGeneration(getVmTemplateId());
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate, p);
+            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
+                    p,
+                    dupContext().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
@@ -672,7 +674,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
 
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(false);
-            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate, p);
+            Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
+                    p,
+                    dupContext().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
 
         // if template exist in db remove it

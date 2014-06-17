@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.GetVmTemplatesDisksQuery;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -20,7 +21,11 @@ public class GetStorageDomainsByVmTemplateIdQuery<P extends IdQueryParameters>
     private VmTemplate vmTemplate = null;
 
     public GetStorageDomainsByVmTemplateIdQuery(P parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public GetStorageDomainsByVmTemplateIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

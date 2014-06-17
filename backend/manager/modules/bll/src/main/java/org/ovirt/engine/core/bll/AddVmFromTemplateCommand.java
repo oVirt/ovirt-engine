@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -93,10 +92,10 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
             }
             VmHandler.lockVm(getVm().getDynamicData(), getCompensationContext());
             for (DiskImage disk : getVmTemplate().getDiskTemplateMap().values()) {
-                VdcReturnValueBase result = runInternalAction(
-                                VdcActionType.CreateCloneOfTemplate,
-                                buildCreateCloneOfTemplateParameters(disk),
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                VdcReturnValueBase result = runInternalActionWithTasksContext(
+                        VdcActionType.CreateCloneOfTemplate,
+                        buildCreateCloneOfTemplateParameters(disk)
+                );
 
                 // if couldn't create snapshot then stop the transaction and the command
                 if (!result.getSucceeded()) {

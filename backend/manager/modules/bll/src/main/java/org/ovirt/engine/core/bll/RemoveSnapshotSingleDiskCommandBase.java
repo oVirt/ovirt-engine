@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -13,10 +14,14 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
-    public RemoveSnapshotSingleDiskCommandBase(T parameters) {
-        super(parameters);
+    protected RemoveSnapshotSingleDiskCommandBase(T parameters) {
+        this(parameters, null);
     }
 
+
+    protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters);
+    }
 
     @Override
     public Map<String, String> getJobMessageProperties() {

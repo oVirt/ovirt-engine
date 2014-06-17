@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -25,8 +27,12 @@ import org.ovirt.engine.core.compat.Guid;
 
 @InternalCommandAttribute
 public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends BaseImagesCommand<T> {
+    public CopyImageGroupCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
+    }
+
     public CopyImageGroupCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     private DiskImage _diskImage;

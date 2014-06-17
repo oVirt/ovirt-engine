@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -9,8 +10,13 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 public class UpdateWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
     public UpdateWatchdogCommand(WatchdogParameters parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public UpdateWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected void executeCommand() {

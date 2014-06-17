@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.List;
+
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -11,6 +13,10 @@ public class GetRngDeviceQuery <P extends IdQueryParameters> extends QueriesComm
 
     public GetRngDeviceQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetRngDeviceQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

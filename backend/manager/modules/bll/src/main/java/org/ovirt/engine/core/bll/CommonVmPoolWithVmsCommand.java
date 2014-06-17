@@ -219,7 +219,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             ExecutionContext ctx = new ExecutionContext();
             ctx.setStep(addVmStep);
             ctx.setMonitored(true);
-            commandCtx = new CommandContext(ctx);
+            commandCtx = dupContext().withExecutionContext(ctx).withoutLock().withoutCompensationContext();
         } catch (RuntimeException e) {
             log.errorFormat("Failed to create command context of adding VM {0} to Pool {1}",
                     currentVmName,

@@ -10,6 +10,7 @@ import java.util.Objects;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -77,7 +78,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
     private VdcReturnValueBase setNumberOfCpusResult;
 
     public UpdateVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public UpdateVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         if (getVdsGroup() != null) {
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
@@ -89,6 +94,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
     }
+
 
     private VmPropertiesUtils getVmPropertiesUtils() {
         return VmPropertiesUtils.getInstance();

@@ -10,6 +10,7 @@ import java.util.Set;
 import java.util.concurrent.Callable;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -57,9 +58,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     private List<StorageDomainOvfInfo> ovfInfo;
 
-    public StorageDomainCommandBase(T parameters) {
+    protected StorageDomainCommandBase(T parameters) {
+        super(parameters, null);
+    }
+
+    protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
         super(parameters);
     }
+
 
     /**
      * Constructor for command creation when compensation is applied on startup

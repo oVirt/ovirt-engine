@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -24,8 +26,8 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters> extends CommandBase<T> implements TaskHandlerCommand<T> {
 
-    public RemoveMemoryVolumesCommand(T parameters) {
-        super(parameters);
+    public RemoveMemoryVolumesCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected RemoveMemoryVolumesCommand(Guid commandId) {

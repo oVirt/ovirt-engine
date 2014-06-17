@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -11,7 +13,11 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
     RemoveRngDeviceCommand(RngDeviceParameters parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    RemoveRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

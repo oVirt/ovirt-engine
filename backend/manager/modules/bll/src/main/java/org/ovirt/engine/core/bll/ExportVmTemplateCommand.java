@@ -5,7 +5,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -69,10 +68,8 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
                     p.setRevertDbOperationScope(ImageDbOperationScope.NONE);
                     p.setShouldLockImageOnRevert(false);
                     p.setSourceDomainId(imageFromSourceDomainMap.get(disk.getId()).getStorageIds().get(0));
-                    VdcReturnValueBase vdcRetValue = runInternalAction(
-                                    VdcActionType.CopyImageGroup,
-                                    p,
-                                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    VdcReturnValueBase vdcRetValue =
+                            runInternalActionWithTasksContext(VdcActionType.CopyImageGroup, p);
 
                     if (!vdcRetValue.getSucceeded()) {
                         throw new VdcBLLException(vdcRetValue.getFault().getError(), vdcRetValue.getFault()
@@ -141,7 +138,7 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
         // check if template (with no override option)
         if (retVal && !getParameters().getForceOverride()) {
             retVal = !ExportVmCommand.checkTemplateInStorageDomain(getVmTemplate().getStoragePoolId(),
-                    getParameters().getStorageDomainId(), getVmTemplateId());
+                    getParameters().getStorageDomainId(), getVmTemplateId(), getContext().getEngineContext());
             if (!retVal) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
             }
@@ -192,7 +189,9 @@ public class ExportVmTemplateCommand<T extends MoveOrCopyParameters> extends Mov
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }
 

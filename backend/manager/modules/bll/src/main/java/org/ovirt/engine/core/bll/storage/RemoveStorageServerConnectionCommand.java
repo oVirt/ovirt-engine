@@ -26,7 +26,7 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 public class RemoveStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends DisconnectStorageServerConnectionCommand<T> {
 
     public RemoveStorageServerConnectionCommand(T parameters) {
-        super(parameters);
+        super(parameters, null);
     }
 
     @Override

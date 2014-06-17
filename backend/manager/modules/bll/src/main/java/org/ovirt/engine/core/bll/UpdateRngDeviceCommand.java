@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
@@ -8,8 +9,13 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 public class UpdateRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
     public UpdateRngDeviceCommand(RngDeviceParameters parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public UpdateRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {

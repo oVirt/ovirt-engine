@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -15,8 +17,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 @InternalCommandAttribute
 public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> extends CreateSnapshotCommand<T> {
-    public TryBackToSnapshotCommand(T parameters) {
-        super(parameters);
+    public TryBackToSnapshotCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         super.setVmId(parameters.getContainerId());
     }
 

@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.IsoDomainListSyncronizer;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
@@ -47,7 +48,11 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         StorageDomainCommandBase<T> {
 
     public ActivateStorageDomainCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public ActivateStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     /**

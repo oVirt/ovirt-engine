@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
@@ -57,9 +58,14 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected final OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-    public VmCommand(T parameters) {
-        super(parameters);
+    public VmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVmId(parameters.getVmId());
+    }
+
+
+    public VmCommand(T parameters) {
+        this(parameters, null);
     }
 
     @Override
@@ -84,6 +90,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     public VmCommand() {
     }
+
 
     @Override
     protected void executeCommand() {
@@ -261,7 +268,9 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             }
 
             getBackend().endAction(
-                    p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(), p);
+                    p.getCommandType() == VdcActionType.Unknown ? getChildActionType() : p.getCommandType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }
 

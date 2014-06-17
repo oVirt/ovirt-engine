@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -9,9 +10,14 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class AddVmToPoolCommand<T extends AddVmToPoolParameters> extends VmPoolCommandBase<T> {
     public AddVmToPoolCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public AddVmToPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         super.setVmId(parameters.getVmId());
     }
+
 
     @Override
     protected boolean canDoAction() {

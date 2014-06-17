@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -17,12 +18,12 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
     protected Job job;
     protected Step parentStep;
 
-    public AddStepCommand() {
-        super();
+    protected AddStepCommand(T parameters) {
+        this(parameters, null);
     }
 
-    public AddStepCommand(T parameters) {
-        super(parameters);
+    protected AddStepCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

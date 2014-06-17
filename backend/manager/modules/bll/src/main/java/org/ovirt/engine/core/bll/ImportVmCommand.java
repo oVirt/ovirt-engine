@@ -12,7 +12,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -108,7 +108,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
     public ImportVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     @Override
@@ -155,6 +155,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     protected ImportVmCommand(Guid commandId) {
         super(commandId);
+    }
+
+    public ImportVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override
@@ -335,7 +339,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         GetAllFromExportDomainQueryParameters p =
                 new GetAllFromExportDomainQueryParameters
                 (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
-        VdcQueryReturnValue qRetVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
+        VdcQueryReturnValue qRetVal =
+                runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
         return qRetVal.getSucceeded() ? qRetVal.<List<VM>>getReturnValue() : null;
     }
 
@@ -568,7 +573,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return true;
         }
 
-        VdcQueryReturnValue qRetVal = Backend.getInstance().runInternalQuery(
+        VdcQueryReturnValue qRetVal = runInternalQuery(
                 VdcQueryType.GetTemplatesFromExportDomain,
                 new GetAllFromExportDomainQueryParameters(getParameters().getStoragePoolId(),
                         getParameters().getSourceDomainId()));
@@ -589,9 +594,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         boolean retValue = verifyDisksIfNeeded();
         if (retValue && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
-            List<StorageDomain> domains = Backend.getInstance()
-                    .runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                            new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
+            List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
+                    new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
             List<Guid> domainsId = LinqUtils.foreach(domains, new Function<StorageDomain, Guid>() {
                 @Override
                 public Guid eval(StorageDomain storageDomainStatic) {
@@ -723,22 +727,20 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             List<Guid> guids = GuidUtils.getGuidListFromString(memoryVolumes);
 
             // copy the memory dump image
-            VdcReturnValueBase vdcRetValue = runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
-                            containerId, guids.get(0), guids.get(2), guids.get(3)),
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            containerId, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
-            vdcRetValue = runInternalAction(
+            vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
-                            containerId, guids.get(0), guids.get(4), guids.get(5)),
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            containerId, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
@@ -790,10 +792,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            VdcReturnValueBase vdcRetValue = runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForDisk(disk, containerID),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    buildMoveOrCopyImageGroupParametersForDisk(disk, containerID));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(),
                         "ImportVmCommand::MoveOrCopyAllImageGroups: Failed to copy disk!");
@@ -1166,7 +1167,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }
 

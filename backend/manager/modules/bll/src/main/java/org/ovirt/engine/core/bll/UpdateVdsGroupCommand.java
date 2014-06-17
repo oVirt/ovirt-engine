@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -45,8 +46,13 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     private VDSGroup oldGroup;
 
     public UpdateVdsGroupCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public UpdateVdsGroupCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     protected UpdateVdsGroupCommand(Guid commandId) {
         super(commandId);

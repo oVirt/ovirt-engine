@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -44,7 +46,11 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
     private Map<String, Pair<String, String>> sharedLockMap;
 
     public MaintenanceNumberOfVdssCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public MaintenanceNumberOfVdssCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         Iterable<Guid> vdsIdList = getParameters().getVdsIdList();
         inspectedEntitiesMap = new ArrayList<PermissionSubject>();
         for (Guid g : vdsIdList) {

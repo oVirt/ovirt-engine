@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
@@ -18,8 +19,13 @@ import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 public abstract class GlusterVolumeCommandBase<T extends GlusterVolumeParameters> extends GlusterCommandBase<T> {
 
     public GlusterVolumeCommandBase(T params) {
-        super(params);
+        this(params, null);
+    }
+
+    public GlusterVolumeCommandBase(T params, CommandContext commandContext) {
+        super(params, commandContext);
         setGlusterVolumeId(getParameters().getVolumeId());
+
     }
 
     protected GlusterOptionDao getGlusterOptionDao() {

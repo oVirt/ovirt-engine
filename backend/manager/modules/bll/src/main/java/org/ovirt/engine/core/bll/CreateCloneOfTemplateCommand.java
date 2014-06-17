@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -22,8 +24,8 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParameters> extends
         CreateSnapshotFromTemplateCommand<T> {
-    public CreateCloneOfTemplateCommand(T parameters) {
-        super(parameters);
+    public CreateCloneOfTemplateCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

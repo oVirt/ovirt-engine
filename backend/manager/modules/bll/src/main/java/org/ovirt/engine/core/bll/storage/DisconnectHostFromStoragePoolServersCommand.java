@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -19,8 +21,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 public class DisconnectHostFromStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
 
-    public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
-        super(parameters);
+    public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePool(parameters.getStoragePool());
         setVds(parameters.getVds());
     }

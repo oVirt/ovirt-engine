@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -118,7 +118,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         // check if template exists only if asked for
         if (getParameters().getTemplateMustExists()) {
             if (!checkTemplateInStorageDomain(getVm().getStoragePoolId(), getParameters().getStorageDomainId(),
-                    getVm().getVmtGuid())) {
+                    getVm().getVmtGuid(), getContext().getEngineContext())) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_FOUND_ON_EXPORT_DOMAIN,
                         String.format("$TemplateName %1$s", getVm().getVmtName()));
             }
@@ -309,22 +309,20 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             List<Guid> guids = GuidUtils.getGuidListFromString(snapshot.getMemoryVolume());
 
             // copy the memory dump image
-            VdcReturnValueBase vdcRetValue = runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryDumpImage(
-                            containerID, guids.get(0), guids.get(2), guids.get(3)),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            containerID, guids.get(0), guids.get(2), guids.get(3)));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
 
             // copy the memory configuration (of the VM) image
-            vdcRetValue = runInternalAction(
+            vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
                     buildMoveOrCopyImageGroupParametersForMemoryConfImage(
-                            containerID, guids.get(0), guids.get(4), guids.get(5)),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            containerID, guids.get(0), guids.get(4), guids.get(5)));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
@@ -375,10 +373,9 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
     @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
-            VdcReturnValueBase vdcRetValue = runInternalAction(
+            VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                     VdcActionType.CopyImageGroup,
-                    buildMoveOrCopyImageGroupParametersForDisk(containerID, disk),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                    buildMoveOrCopyImageGroupParametersForDisk(containerID, disk));
             if (!vdcRetValue.getSucceeded()) {
                 throw new VdcBLLException(vdcRetValue.getFault().getError(), "Failed during ExportVmCommand");
             }
@@ -455,12 +452,15 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return retVal;
     }
 
-    public static boolean checkTemplateInStorageDomain(Guid storagePoolId, Guid storageDomainId, final Guid tmplId) {
+    public static boolean checkTemplateInStorageDomain(Guid storagePoolId,
+            Guid storageDomainId,
+            final Guid tmplId,
+            EngineContext engineContext) {
         boolean retVal = false;
         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(storagePoolId,
                 storageDomainId);
         VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetTemplatesFromExportDomain,
-                tempVar);
+                tempVar, engineContext);
 
         if (qretVal.getSucceeded()) {
             if (!VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(tmplId)) {

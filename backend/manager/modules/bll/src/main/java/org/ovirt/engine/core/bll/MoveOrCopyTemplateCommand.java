@@ -10,7 +10,7 @@ import java.util.Set;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
@@ -71,7 +71,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     }
 
     public MoveOrCopyTemplateCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public MoveOrCopyTemplateCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override
@@ -207,10 +211,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             @Override
             public Void runInTransaction() {
                 for (DiskImage disk : disks) {
-                    VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+                    VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                             getImagesActionType(),
-                            buildModeOrCopyImageGroupParameters(containerID, disk),
-                            ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                            buildModeOrCopyImageGroupParameters(containerID, disk));
 
                     getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());
                 }
@@ -331,7 +334,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
-            getBackend().endAction(getImagesActionType(), p);
+            getBackend().endAction(getImagesActionType(),
+                    p,
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
     }
 

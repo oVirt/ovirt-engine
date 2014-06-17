@@ -134,7 +134,9 @@ public class ImportRepoImageCopyTaskHandler
         }
 
         VdcReturnValueBase addVmTemplateReturnValue =
-                Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate, parameters, ExecutionHandler.createDefaultContexForTasks(getEnclosingCommand().getExecutionContext()));
+                Backend.getInstance().runInternalAction(VdcActionType.AddVmTemplate,
+                        parameters,
+                        ExecutionHandler.createDefaultContextForTasks(getEnclosingCommand().getContext()));
 
         // No reason for this to return null, but checking just to make sure, and returning the created template, or null if failed
         return addVmTemplateReturnValue.getActionReturnValue() != null ? (Guid) addVmTemplateReturnValue.getActionReturnValue() : null;

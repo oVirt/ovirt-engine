@@ -1,6 +1,13 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -36,14 +43,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
@@ -252,11 +251,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
      * @return
      */
     protected VdcReturnValueBase executeChildCopyingCommand(VdcActionParametersBase parameters) {
-        VdcReturnValueBase result = runInternalAction(
-                getChildActionType(),
-                        parameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
-        return result;
+        return runInternalActionWithTasksContext(getChildActionType(), parameters);
     }
 
     @Override

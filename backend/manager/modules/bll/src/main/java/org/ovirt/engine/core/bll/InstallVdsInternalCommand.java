@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -29,8 +30,13 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     private VDSStatus vdsInitialStatus;
 
     public InstallVdsInternalCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public InstallVdsInternalCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {

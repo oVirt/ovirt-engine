@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -236,10 +235,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     @Override
     protected void executeCommand() {
         overrideParameters();
-        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                 getImagesActionType(),
-                getParameters(),
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                getParameters());
         if (!vdcRetValue.getSucceeded()) {
             setSucceeded(false);
             getReturnValue().setFault(vdcRetValue.getFault());
@@ -250,7 +248,9 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
     }
 
     private void endCommandActions() {
-        getBackend().endAction(getImagesActionType(), getParameters());
+        getBackend().endAction(getImagesActionType(),
+                getParameters(),
+                getContext().clone().withoutCompensationContext().withoutLock());
         setSucceeded(true);
     }
 

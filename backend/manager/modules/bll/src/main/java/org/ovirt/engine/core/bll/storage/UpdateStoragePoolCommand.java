@@ -6,6 +6,7 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -42,7 +43,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T>  implements RenamedEntityInfoProvider{
     public UpdateStoragePoolCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     /**
@@ -53,6 +54,10 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     protected UpdateStoragePoolCommand(Guid commandId) {
         super(commandId);
+    }
+
+    public UpdateStoragePoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     private StoragePool _oldStoragePool;

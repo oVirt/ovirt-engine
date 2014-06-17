@@ -6,6 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -44,12 +45,16 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         super(commandId);
     }
 
-    public VmTemplateCommand(T parameters) {
-        super(parameters);
-        setVmTemplateId(parameters.getVmTemplateId());
+    protected VmTemplateCommand(T parameters) {
+        this(parameters, null);
     }
 
-    public VmTemplateCommand() {
+    protected VmTemplateCommand() {
+    }
+
+    protected VmTemplateCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
+        setVmTemplateId(parameters.getVmTemplateId());
     }
 
     @Override

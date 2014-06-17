@@ -6,6 +6,7 @@ import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -31,14 +32,20 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     // get correct return value type
     private final VdcQueryReturnValue returnValue;
     private final VdcQueryType queryType;
-    private final DbUser user;
+    private DbUser user;
     private final P parameters;
     private boolean isInternalExecution = false;
+    private final EngineContext engineContext;
 
     public QueriesCommandBase(P parameters) {
+        this(parameters, new EngineContext().withSessionId(parameters.getSessionId()));
+    }
+
+    public QueriesCommandBase(P parameters, EngineContext engineContext) {
         this.parameters = parameters;
         returnValue = new VdcQueryReturnValue();
         queryType = initQueryType();
+        this.engineContext = engineContext;
         user = initUser();
     }
 
@@ -52,8 +59,8 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         }
     }
 
-    protected final DbUser initUser() {
-        return SessionDataContainer.getInstance().getUser(parameters.getSessionId(),
+    protected DbUser initUser() {
+        return SessionDataContainer.getInstance().getUser(engineContext.getSessionId(),
                 parameters.getRefresh());
     }
 
@@ -135,6 +142,10 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         return returnValue;
     }
 
+    public EngineContext getEngineContext() {
+        return engineContext;
+    }
+
     public P getParameters() {
         return parameters;
     }
@@ -189,6 +200,10 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
 
     protected BackendInternal getBackend() {
         return Backend.getInstance();
+    }
+
+    protected VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters) {
+        return getBackend().runInternalQuery(actionType, parameters, getEngineContext());
     }
 
 }

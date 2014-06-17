@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -33,8 +34,13 @@ public class AddRoleWithActionGroupsCommand<T extends RoleWithActionGroupsParame
     }
 
     public AddRoleWithActionGroupsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public AddRoleWithActionGroupsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {

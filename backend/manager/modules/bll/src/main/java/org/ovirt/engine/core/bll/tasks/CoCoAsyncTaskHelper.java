@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -34,10 +37,6 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 
 public class CoCoAsyncTaskHelper {
 
@@ -314,7 +313,7 @@ public class CoCoAsyncTaskHelper {
         VdcActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
         CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
-        command.setContext(new CommandContext(context));
+        command.getContext().withExecutionContext(context);
         return new DecoratedCommand(command).endAction();
     }
 

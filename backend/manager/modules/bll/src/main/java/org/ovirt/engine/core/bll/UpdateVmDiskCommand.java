@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -410,11 +409,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private void extendDiskImageSize() {
         lockImageInDb();
 
-        VdcReturnValueBase ret = getBackend().runInternalAction(
+        VdcReturnValueBase ret = runInternalActionWithTasksContext(
                 VdcActionType.ExtendImageSize,
-                createExtendImageSizeParameters(),
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext())
-        );
+                createExtendImageSizeParameters());
 
         if (ret.getSucceeded()) {
             getReturnValue().getVdsmTaskIdList().addAll(ret.getInternalVdsmTaskIdList());
@@ -428,7 +425,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     @Override
     protected void endSuccessfully() {
         VdcReturnValueBase ret = getBackend().endAction(VdcActionType.ExtendImageSize,
-                createExtendImageSizeParameters());
+                        createExtendImageSizeParameters(),
+                getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
         if (ret.getSucceeded()) {
             performDiskUpdate(true);
@@ -469,7 +467,9 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
     private void endInternalCommandWithFailure() {
         ExtendImageSizeParameters params = createExtendImageSizeParameters();
         params.setTaskGroupSuccess(false);
-        getBackend().endAction(VdcActionType.ExtendImageSize, params);
+        getBackend().endAction(VdcActionType.ExtendImageSize,
+                params,
+                getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
     }
 
     @Override

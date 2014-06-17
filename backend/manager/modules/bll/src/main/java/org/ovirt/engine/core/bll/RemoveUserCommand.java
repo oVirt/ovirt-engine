@@ -3,9 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -49,9 +48,7 @@ public class RemoveUserCommand<T extends IdParameters> extends UserCommandBase<T
                 .getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters tempVar = new PermissionsOperationsParameters(permission);
             tempVar.setShouldBeLogged(false);
-            runInternalAction(VdcActionType.RemovePermission,
-                    tempVar,
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            runInternalActionWithTasksContext(VdcActionType.RemovePermission, tempVar);
         }
 
         // Delete the user itself:

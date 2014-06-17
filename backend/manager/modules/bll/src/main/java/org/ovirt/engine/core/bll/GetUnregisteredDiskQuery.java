@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -16,6 +17,10 @@ public class GetUnregisteredDiskQuery<P extends GetUnregisteredDiskQueryParamete
 
     public GetUnregisteredDiskQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetUnregisteredDiskQuery(P parameters, EngineContext context) {
+        super(parameters, context);
     }
 
     @Override

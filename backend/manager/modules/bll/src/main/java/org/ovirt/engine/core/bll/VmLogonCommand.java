@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -11,8 +13,8 @@ import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 @InternalCommandAttribute
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
-    public VmLogonCommand(T parameters) {
-        super(parameters);
+    public VmLogonCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

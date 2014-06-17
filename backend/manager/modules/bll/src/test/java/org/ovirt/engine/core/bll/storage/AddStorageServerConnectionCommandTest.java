@@ -48,7 +48,7 @@ public class AddStorageServerConnectionCommandTest {
     public void prepareParams() {
         parameters = new StorageServerConnectionParametersBase();
         parameters.setVdsId(Guid.newGuid());
-        command = spy(new AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
+        command = spy(new AddStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters, null));
         doReturn(storageConnDao).when(command).getStorageConnDao();
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }

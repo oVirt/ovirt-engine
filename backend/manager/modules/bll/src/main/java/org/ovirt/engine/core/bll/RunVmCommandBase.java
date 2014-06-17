@@ -10,6 +10,7 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
@@ -64,8 +65,13 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     public RunVmCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public RunVmCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     public SnapshotsValidator getSnapshotsValidator() {
         return snapshotsValidator;
@@ -147,9 +153,10 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                Backend.getInstance().runInternalAction(VdcActionType.ProcessDownVm,
-                        new IdParameters(getVm().getId()),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                runInternalActionWithTasksContext(
+                        VdcActionType.ProcessDownVm,
+                        new IdParameters(getVm().getId())
+                );
             }
         });
     }
@@ -200,10 +207,9 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         removeVmHibernationVolumesParameters.setEntityInfo(getParameters().getEntityInfo());
         removeVmHibernationVolumesParameters.setParentParameters(getParameters());
 
-        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                 VdcActionType.RemoveVmHibernationVolumes,
-                removeVmHibernationVolumesParameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                removeVmHibernationVolumesParameters);
 
         for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
             TaskManagerUtil.startPollingTask(taskId);

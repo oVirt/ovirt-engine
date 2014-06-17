@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -21,7 +22,11 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
         extends QueriesCommandBase<P> {
 
     public GetAllFromExportDomainQuery(P parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public GetAllFromExportDomainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     protected abstract T buildFromOVFs(List<String> ovfList);

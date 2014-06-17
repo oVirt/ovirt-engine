@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -37,6 +37,10 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
         super(parameters);
     }
 
+    public ClearNonResponsiveVdsVmsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
     @Override
     public AuditLogType getAuditLogTypeValue() {
         return getSucceeded() ? AuditLogType.USER_CLEAR_UNKNOWN_VMS : AuditLogType.USER_FAILED_CLEAR_UNKNOWN_VMS;
@@ -61,9 +65,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
                 LogSettingVmToDown(getVds().getId(), vm.getId());
             }
 
-            runInternalAction(VdcActionType.ProcessDownVm,
-                    new IdParameters(vm.getId()),
-                    ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new IdParameters(vm.getId()));
         }
 
         Backend.getInstance()

@@ -10,7 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -110,7 +110,15 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     private Map<Guid, Guid> srcVmNicIdToTargetVmNicIdMapping = new HashMap<>();
 
     public AddVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    protected AddVmCommand(Guid commandId) {
+        super(commandId);
+    }
+
+    public AddVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         // if we came from endAction the VmId is not null
         setVmId((parameters.getVmId().equals(Guid.Empty)) ? Guid.newGuid() : parameters.getVmId());
         setVmName(parameters.getVm().getName());
@@ -167,10 +175,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
-    }
-
-    protected AddVmCommand(Guid commandId) {
-        super(commandId);
     }
 
     @Override
@@ -960,10 +964,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 tempVar.setEntityInfo(getParameters().getEntityInfo());
                 tempVar.setParentParameters(getParameters());
                 tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
-                VdcReturnValueBase result =
-                        getBackend().runInternalAction(VdcActionType.CreateSnapshotFromTemplate,
-                                tempVar,
-                                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                VdcReturnValueBase result = runInternalActionWithTasksContext(VdcActionType.CreateSnapshotFromTemplate, tempVar);
 
                 /**
                  * if couldn't create snapshot then stop the transaction and the command

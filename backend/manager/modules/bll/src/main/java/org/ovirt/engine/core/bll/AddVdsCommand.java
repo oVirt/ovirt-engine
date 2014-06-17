@@ -12,8 +12,6 @@ import java.util.concurrent.TimeUnit;
 import javax.naming.AuthenticationException;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -138,11 +136,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VdsActionParameters tempVar = new VdsActionParameters(getVdsIdRef());
             tempVar.setSessionId(getParameters().getSessionId());
             tempVar.setCompensationEnabled(true);
-            CompensationContext compensationContext = getCompensationContext();
             VdcReturnValueBase addVdsSpmIdReturn =
                     runInternalAction(VdcActionType.AddVdsSpmId,
                             tempVar,
-                            new CommandContext(compensationContext));
+                            dupContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());
@@ -191,7 +188,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 public void run() {
                     runInternalAction(VdcActionType.InstallVdsInternal,
                             installVdsParameters,
-                            new CommandContext(installCtx));
+                            dupContext()
+                                    .withExecutionContext(installCtx)
+                                    .withLock(null)
+                                    .withCompensationContext(null));
                 }
             });
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);

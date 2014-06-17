@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -8,6 +9,10 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 public class GetVdsCertificateSubjectByVdsIdQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
     public GetVdsCertificateSubjectByVdsIdQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetVdsCertificateSubjectByVdsIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

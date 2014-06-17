@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -18,7 +19,11 @@ public abstract class VmPoolSimpleUserCommandBase<T extends VmPoolSimpleUserPara
     }
 
     public VmPoolSimpleUserCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public VmPoolSimpleUserCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     protected Guid getAdUserId() {

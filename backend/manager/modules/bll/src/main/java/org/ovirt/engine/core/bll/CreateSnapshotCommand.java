@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -37,8 +39,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
         super(commandId);
     }
 
-    public CreateSnapshotCommand(T parameters) {
-        super(parameters);
+    public CreateSnapshotCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setSnapshotName(parameters.getDescription());
     }
 

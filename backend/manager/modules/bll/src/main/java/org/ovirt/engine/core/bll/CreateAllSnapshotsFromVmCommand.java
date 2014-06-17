@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
@@ -75,11 +76,16 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     public CreateAllSnapshotsFromVmCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public CreateAllSnapshotsFromVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         setSnapshotName(parameters.getDescription());
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
     }
+
 
     @Override
     public Map<String, String> getJobMessageProperties() {

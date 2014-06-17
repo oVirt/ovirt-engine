@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.OvfHelper;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -19,6 +20,10 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
 
     public GetTemplatesFromExportDomainQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetTemplatesFromExportDomainQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

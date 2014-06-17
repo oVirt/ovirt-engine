@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -15,6 +16,10 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
         super(parameters);
     }
 
+    public GetAllVmsAndVmPoolsQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
+    }
+
     @Override
     protected void executeQueryCommand() {
         boolean isSucceeded = true;
@@ -22,7 +27,8 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
 
         // Add all VMs that the user has direct or indirect privileges on
         // that do not belong to a VM Pool
-        VdcQueryReturnValue queryResult = Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVms, getParameters());
+        VdcQueryReturnValue queryResult =
+                runInternalQuery(VdcQueryType.GetAllVms, getParameters());
         if (queryResult != null && queryResult.getSucceeded()) {
             for (VM vm : queryResult.<List<VM>>getReturnValue()) {
                 if (Guid.isNullOrEmpty(vm.getVmPoolId())) {
@@ -36,7 +42,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
 
         // Query for all VMs the user has direct permissions on, if
         // a user has taken a VM from VM Pool it should be returned here
-        queryResult = Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmsForUser, getParameters());
+        queryResult = runInternalQuery(VdcQueryType.GetAllVmsForUser, getParameters());
         if (queryResult != null && queryResult.getSucceeded()) {
             for (VM vm : queryResult.<List<VM>>getReturnValue()) {
                 if (!retValList.contains(vm)) {
@@ -49,7 +55,7 @@ public class GetAllVmsAndVmPoolsQuery<P extends VdcQueryParametersBase> extends 
 
         if (isSucceeded) {
             queryResult =
-                    Backend.getInstance().runInternalQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
+                    runInternalQuery(VdcQueryType.GetAllVmPoolsAttachedToUser,
                             new VdcQueryParametersBase());
             if (queryResult != null && queryResult.getSucceeded()) {
                 retValList.addAll(queryResult.<List<VmPool>>getReturnValue());

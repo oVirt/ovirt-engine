@@ -2,6 +2,8 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -27,8 +29,8 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
     private VmEntityType templateType = null;
     private List<VmDevice> cachedRngDevices = null;
 
-    protected AbstractRngDeviceCommand(T parameters) {
-        super(parameters);
+    protected AbstractRngDeviceCommand(T parameters, CommandContext context) {
+        super(parameters, context);
 
         if (parameters.getRngDevice() == null || parameters.getRngDevice().getVmId() == null) {
             return;
@@ -54,6 +56,10 @@ public abstract class AbstractRngDeviceCommand<T extends RngDeviceParameters> ex
         if (rngDevs != null) {
             cachedRngDevices.addAll(rngDevs);
         }
+    }
+
+    public AbstractRngDeviceCommand(T parameters) {
+        this(parameters, null);
     }
 
     @Override

@@ -125,9 +125,9 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         return runInternalAction(action, params, getContext());
     }
 
-    private CommandContext getContext() {
+    public CommandContext getContext() {
         if (commandContext == null) {
-            commandContext = new CommandContext(getExecutionContext(), new EngineLock(getExclusiveLocks(), null));
+            commandContext = dupContext().withExecutionContext(getExecutionContext()).withLock(new EngineLock(getExclusiveLocks(), null));
         }
         return commandContext;
     }

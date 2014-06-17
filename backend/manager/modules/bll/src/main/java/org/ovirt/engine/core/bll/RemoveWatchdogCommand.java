@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -7,8 +8,13 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 public class RemoveWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParameters> {
 
     public RemoveWatchdogCommand(WatchdogParameters parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public RemoveWatchdogCommand(WatchdogParameters parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected void executeCommand() {

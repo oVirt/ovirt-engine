@@ -9,7 +9,6 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -26,8 +25,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -267,10 +266,9 @@ public class RemoveVmTemplateCommand<T extends VmTemplateParametersBase> extends
         getParameters().setEntityInfo(getParameters().getEntityInfo());
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
-        VdcReturnValueBase vdcReturnValue = runInternalAction(
+        VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
                 VdcActionType.RemoveAllVmTemplateImageTemplates,
-                getParameters(),
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                getParameters());
 
         if (!vdcReturnValue.getSucceeded()) {
             setSucceeded(false);

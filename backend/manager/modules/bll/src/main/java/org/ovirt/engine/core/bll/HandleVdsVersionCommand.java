@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -24,8 +26,8 @@ import org.ovirt.engine.core.compat.Version;
 @NonTransactiveCommandAttribute
 public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsCommand<T> {
 
-    public HandleVdsVersionCommand(T parameters) {
-        super(parameters);
+    public HandleVdsVersionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

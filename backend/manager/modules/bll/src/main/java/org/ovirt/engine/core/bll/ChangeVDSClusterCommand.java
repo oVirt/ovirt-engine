@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -230,8 +229,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addVdsSpmIdParams.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
                     runInternalAction(VdcActionType.AddVdsSpmId,
-                            addVdsSpmIdParams,
-                            new CommandContext(getCompensationContext()));
+                            addVdsSpmIdParams, dupContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());

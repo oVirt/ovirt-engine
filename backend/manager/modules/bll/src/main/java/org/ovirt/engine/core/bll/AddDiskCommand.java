@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -73,8 +73,13 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     public AddDiskCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public AddDiskCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {
@@ -422,9 +427,9 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             getCompensationContext().stateChanged();
         }
         VdcReturnValueBase tmpRetValue =
-                runInternalAction(VdcActionType.AddImageFromScratch,
+                runInternalActionWithTasksContext(VdcActionType.AddImageFromScratch,
                         parameters,
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                        getLock());
         // Setting lock to null because the lock is released in the child command
         setLock(null);
         ArrayList<Guid> taskList = isExecutedAsChildCommand() ? getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();

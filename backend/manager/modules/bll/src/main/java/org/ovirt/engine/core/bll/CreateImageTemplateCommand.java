@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -25,8 +27,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 @InternalCommandAttribute
 public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters> extends BaseImagesCommand<T> {
-    public CreateImageTemplateCommand(T parameters) {
-        super(parameters);
+    public CreateImageTemplateCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         super.setVmTemplateId(parameters.getVmTemplateId());
         super.setVmTemplateName(parameters.getVmTemplateName());
     }

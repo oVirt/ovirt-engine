@@ -8,7 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -75,9 +75,14 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         super(commandId);
     }
 
-    public RestoreAllSnapshotsCommand(T parameters) {
-        super(parameters);
+    public RestoreAllSnapshotsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
+    }
+
+
+    public RestoreAllSnapshotsCommand(T parameters) {
+        this(parameters, null);
     }
 
     @Override
@@ -231,10 +236,9 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
         params.setParentCommand(getActionType());
         params.setParentParameters(getParameters());
         params.setCommandType(taskType);
-        returnValue = runInternalAction(
+        returnValue = runInternalActionWithTasksContext(
                 taskType,
-                params,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                params);
         getTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
         return returnValue;
     }

@@ -119,10 +119,16 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     public RunVmCommand(T runVmParams) {
-        super(runVmParams);
+        super(runVmParams, null);
+    }
+
+    public RunVmCommand(T runVmParams, CommandContext commandContext) {
+        super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
+
     }
+
 
     protected Guid getPredefinedVdsIdToRunOn() {
         return getVm().getDedicatedVmForVds();
@@ -391,8 +397,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getVm().getName(), getVm().getId());
             CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
-            VdcReturnValueBase vdcReturnValue =
-                    getBackend().runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
+            VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.CreateAllSnapshotsFromVm,
                             createAllSnapshotsFromVmParameters,
                             createContextForStatelessSnapshotCreation());
 
@@ -424,7 +429,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         ExecutionContext createSnapshotsCtx = new ExecutionContext();
         createSnapshotsCtx.setMonitored(true);
         createSnapshotsCtx.setStep(createSnapshotsStep);
-        return new CommandContext(createSnapshotsCtx, getCompensationContext(), getLock());
+        return dupContext().withExecutionContext(createSnapshotsCtx);
     }
 
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
@@ -467,7 +472,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void removeVmStatlessImages() {
         runInternalAction(VdcActionType.ProcessDownVm,
                 new IdParameters(getVm().getId()),
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
         // setting lock to null in order not to release lock twice
         setLock(null);
         setSucceeded(true);
@@ -899,7 +904,9 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     @Override
     protected void endSuccessfully() {
         if (isStatelessSnapshotExistsForVm()) {
-            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm, buildCreateSnapshotParametersForEndAction());
+            getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
+                    buildCreateSnapshotParametersForEndAction(),
+                    getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
 
             getParameters().setShouldBeLogged(false);
             getParameters().setRunAsStateless(false);
@@ -946,14 +953,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Since run stateless step involves invocation of command, we should set the run stateless vm step as
         // the "beginning step" of the child command.
         runStatelessVmCtx.setStep(runStatelessStep);
-        return new CommandContext(runStatelessVmCtx);
+        return dupContext().withExecutionContext(runStatelessVmCtx).withoutCompensationContext().withoutLock();
     }
 
     @Override
     protected void endWithFailure() {
         if (isStatelessSnapshotExistsForVm()) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    buildCreateSnapshotParametersForEndAction(), new CommandContext(getCompensationContext()));
+                    buildCreateSnapshotParametersForEndAction(), dupContext().withoutExecutionContext().withoutLock());
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,

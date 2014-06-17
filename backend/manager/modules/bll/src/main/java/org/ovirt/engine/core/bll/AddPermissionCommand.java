@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -25,8 +26,13 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddPermissionCommand<T extends PermissionsOperationsParameters> extends PermissionsCommandBase<T> {
 
     public AddPermissionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public AddPermissionCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     public AddPermissionCommand(Guid commandId) {
         super(commandId);

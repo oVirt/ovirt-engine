@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.List;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -27,16 +28,18 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         super(commandId);
     }
 
-    public RestoreStatelessVmCommand(T parameters) {
-        super(parameters);
+    public RestoreStatelessVmCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override
     protected void executeCommand() {
         VdcReturnValueBase result =
-                getBackend().runInternalAction(VdcActionType.UpdateVmVersion,
+                runInternalActionWithTasksContext(
+                        VdcActionType.UpdateVmVersion,
                         new UpdateVmVersionParameters(getVmId()),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
+                        getLock()
+                );
 
         // if it fail because of canDoAction, its safe to restore the snapshot
         // and the vm will still be usable with previous version
@@ -61,11 +64,9 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         }
 
         // restore all snapshots
-        VdcReturnValueBase vdcReturn =
-                runInternalAction(VdcActionType.RestoreAllSnapshots,
+        return runInternalActionWithTasksContext(VdcActionType.RestoreAllSnapshots,
                         buildRestoreAllSnapshotsParameters(imagesList),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-        return vdcReturn.getSucceeded();
+                getLock()).getSucceeded();
     }
 
     private RestoreAllSnapshotsParameters buildRestoreAllSnapshotsParameters(List<DiskImage> imagesList) {

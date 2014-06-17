@@ -6,9 +6,9 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -25,10 +25,14 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
         super(commandId);
     }
 
-    public DetachUserFromVmFromPoolCommand(T parameters) {
-        super(parameters);
+    public DetachUserFromVmFromPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 
+    }
+
+    public DetachUserFromVmFromPoolCommand(T parameters) {
+        this(parameters, null);
     }
 
     protected void detachVmFromUser() {
@@ -57,7 +61,7 @@ public class DetachUserFromVmFromPoolCommand<T extends VmPoolSimpleUserParameter
             // but still not affect this command, in order to keep permissions changes even on restore failure
             restoreParams.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             runInternalAction(VdcActionType.RestoreStatelessVm, restoreParams,
-                    new CommandContext(getExecutionContext(), getLock()));
+                    getContext().withCompensationContext(null));
         }
     }
 

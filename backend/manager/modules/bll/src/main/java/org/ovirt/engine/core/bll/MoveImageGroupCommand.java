@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -17,8 +18,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 @SuppressWarnings("serial")
 @InternalCommandAttribute
 public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> extends CopyImageGroupCommand<T> {
-    public MoveImageGroupCommand(T parameters) {
-        super(parameters);
+    public MoveImageGroupCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     private void removeImage(Guid storageDomainId) {
@@ -34,10 +35,9 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         // the remove done here is a "clenaup", either on the source domain or on the target - so
         // other operations on the image shouldn't be dependent and wait for it.
         removeImageParams.setEntityInfo(new EntityInfo(VdcObjectType.Disk, Guid.newGuid()));
-        VdcReturnValueBase returnValue = getBackend().runInternalAction(
+        VdcReturnValueBase returnValue = runInternalActionWithTasksContext(
                 VdcActionType.RemoveImage,
-                removeImageParams,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                removeImageParams);
         if (returnValue.getSucceeded()) {
             startPollingAsyncTasks(returnValue.getInternalVdsmTaskIdList());
         } else {

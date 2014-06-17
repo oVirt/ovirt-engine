@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -53,8 +55,8 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
     private String postUpdateDescription;
     private Date updateDate;
 
-    public ProcessOvfUpdateForStorageDomainCommand(T parameters) {
-        super(parameters);
+    public ProcessOvfUpdateForStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStorageDomainId(parameters.getStorageDomainId());
         setStoragePoolId(parameters.getStoragePoolId());
         populateStorageDomainOvfData();

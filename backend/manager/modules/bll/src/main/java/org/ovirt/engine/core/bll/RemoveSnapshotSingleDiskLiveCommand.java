@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -30,8 +32,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         extends RemoveSnapshotSingleDiskCommandBase<T> {
     private static final Log log = LogFactory.getLog(RemoveSnapshotSingleDiskLiveCommand.class);
 
-    public RemoveSnapshotSingleDiskLiveCommand(T parameters) {
-        super(parameters);
+    public RemoveSnapshotSingleDiskLiveCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

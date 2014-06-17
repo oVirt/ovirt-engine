@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.SystemUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -37,7 +38,11 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected VDS upServer;
 
     public GlusterCommandBase(T params) {
-        super(params);
+        this(params, null);
+    }
+
+    public GlusterCommandBase(T params, CommandContext commandContext) {
+        super(params, commandContext);
     }
 
     @Override

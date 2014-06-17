@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
@@ -34,9 +33,7 @@ public class RemoveGroupCommand<T extends IdParameters> extends AdGroupsHandling
         for (Permissions permission : getPermissionDAO().getAllDirectPermissionsForAdElement(id)) {
             PermissionsOperationsParameters param = new PermissionsOperationsParameters(permission);
             param.setSessionId(getParameters().getSessionId());
-            getBackend().runInternalAction(VdcActionType.RemovePermission,
-                param,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+            runInternalActionWithTasksContext(VdcActionType.RemovePermission, param);
         }
 
         // Remove the group itself:

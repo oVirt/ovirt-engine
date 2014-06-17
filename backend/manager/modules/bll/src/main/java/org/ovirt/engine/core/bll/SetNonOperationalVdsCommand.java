@@ -27,9 +27,14 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameters> extends MaintenanceVdsCommand<T> {
 
     public SetNonOperationalVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public SetNonOperationalVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setStorageDomainId(parameters.getStorageDomainId());
     }
+
 
     /**
      * Note: it's ok that this method isn't marked as async command even though it triggers

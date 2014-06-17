@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -34,8 +36,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseImagesCommand<T> {
 
-    public RemoveImageCommand(T parameters) {
-        super(parameters);
+    public RemoveImageCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         initImage();
         initStoragePoolId();
         initStorageDomainId();

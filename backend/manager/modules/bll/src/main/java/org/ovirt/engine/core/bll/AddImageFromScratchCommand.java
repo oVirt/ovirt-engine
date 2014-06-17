@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
@@ -20,8 +22,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters> extends CreateSnapshotCommand<T> {
 
-    public AddImageFromScratchCommand(T parameters) {
-        super(parameters);
+    public AddImageFromScratchCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(getParameters().getMasterVmId());
         getParameters().setCommandType(getActionType());
     }

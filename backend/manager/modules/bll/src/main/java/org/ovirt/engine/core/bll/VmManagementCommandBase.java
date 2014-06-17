@@ -9,6 +9,7 @@ import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -29,15 +30,19 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     public static final int MAXIMUM_CPU_SHARES = 262144;
 
     public VmManagementCommandBase(T parameters) {
+        super(parameters, null);
+    }
+
+    protected VmManagementCommandBase(Guid commandId) {
+        super(commandId);
+    }
+
+    public VmManagementCommandBase(T parameters, CommandContext commandContext) {
         super(parameters);
         if (parameters.getVmStaticData() != null) {
             setVmId(parameters.getVmStaticData().getId());
             setVdsGroupId(parameters.getVmStaticData().getVdsGroupId());
         }
-    }
-
-    protected VmManagementCommandBase(Guid commandId) {
-        super(commandId);
     }
 
     /**

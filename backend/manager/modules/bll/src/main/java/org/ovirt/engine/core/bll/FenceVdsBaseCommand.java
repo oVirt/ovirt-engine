@@ -11,6 +11,7 @@ import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -57,7 +58,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     public FenceVdsBaseCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public FenceVdsBaseCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         mVmList = getVmDAO().getAllRunningForVds(getVdsId());
     }
 

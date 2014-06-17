@@ -56,9 +56,9 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
                 String fingerprint = null;
                 VdcQueryReturnValue returnValue;
                 if (getParameters().isServerKeyFingerprintRequired()) {
-                    returnValue = getBackendInstance().
+                    returnValue =
                             runInternalQuery(VdcQueryType.GetServerSSHKeyFingerprint,
-                                             new ServerParameters(server.getHostnameOrIp()));
+                                    new ServerParameters(server.getHostnameOrIp()));
                     if (returnValue != null && returnValue.getSucceeded() && returnValue.getReturnValue() != null) {
                         fingerprint = returnValue.getReturnValue().toString();
                     }
@@ -86,16 +86,18 @@ public class GetAddedGlusterServersQuery<P extends AddedGlusterServersParameters
         return ClusterUtils.getInstance();
     }
 
+
     public VDSBrokerFrontend getResourceManager() {
         return Backend.getInstance()
                 .getResourceManager();
     }
 
-    public BackendInternal getBackendInstance() {
-        return Backend.getInstance();
-    }
-
     public VdsGroupDAO getVdsGroupDao() {
         return DbFacade.getInstance().getVdsGroupDao();
     }
+
+    protected BackendInternal getBackend() {
+        return Backend.getInstance();
+    }
+
 }

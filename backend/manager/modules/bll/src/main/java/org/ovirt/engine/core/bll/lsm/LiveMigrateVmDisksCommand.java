@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.lsm;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
@@ -53,8 +55,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private Map<Guid, DiskImage> diskImagesMap = new HashMap<Guid, DiskImage>();
     private Map<Guid, StorageDomain> storageDomainsMap = new HashMap<Guid, StorageDomain>();
 
-    public LiveMigrateVmDisksCommand(T parameters) {
-        super(parameters);
+    public LiveMigrateVmDisksCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
 
         getParameters().setCommandType(getActionType());
         setVmId(getParameters().getVmId());

@@ -1,17 +1,23 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
 public class RemoveVmFromPoolCommand<T extends RemoveVmFromPoolParameters> extends VmPoolCommandBase<T> {
-    public RemoveVmFromPoolCommand(T parameters) {
-        super(parameters);
+
+    public RemoveVmFromPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setVmId(parameters.getVmId());
         if (getVm() != null) {
             setVmPoolId(getVm().getVmPoolId());
         }
+    }
+
+    public RemoveVmFromPoolCommand(T parameters) {
+        this(parameters, null);
     }
 
     @Override

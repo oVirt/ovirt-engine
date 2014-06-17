@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -154,10 +153,10 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
 
-        VdcReturnValueBase vdcRetValue = getBackend().runInternalAction(
+        VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
                 VdcActionType.RemoveVmHibernationVolumes,
-                parameters,
-                ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                parameters
+                );
 
         if (vdcRetValue.getSucceeded()) {
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());

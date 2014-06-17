@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.ExecutionContext;
+import java.util.ArrayList;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -19,9 +22,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
-import java.util.ArrayList;
-import java.util.List;
-
 /**
  * Restart VMs running on Vds, that was stopped using PM or kdump was detected
  * on it
@@ -30,9 +30,9 @@ public class RestartVdsVmsOperation {
     private static final Log log = LogFactory.getLog(RestartVdsVmsOperation.class);
 
     /**
-     * Execution context of command, that instantiates this class
+     * Context of command, that instantiates this class
      */
-    private ExecutionContext executionContext;
+    private CommandContext commandContext;
 
     /**
      * VDS, that VMs was executed on
@@ -43,10 +43,10 @@ public class RestartVdsVmsOperation {
      * Creates instance with specified params
      */
     public RestartVdsVmsOperation(
-            ExecutionContext executionContext,
+            CommandContext commandContext,
             VDS vds
     ) {
-        this.executionContext = executionContext;
+        this.commandContext = commandContext;
         this.vds = vds;
     }
 
@@ -118,7 +118,7 @@ public class RestartVdsVmsOperation {
             Backend.getInstance().runInternalAction(
                     VdcActionType.ProcessDownVm,
                     new IdParameters(vm.getId()),
-                    ExecutionHandler.createDefaultContexForTasks(executionContext)
+                    ExecutionHandler.createDefaultContextForTasks(commandContext)
             );
 
             // Handle highly available VMs

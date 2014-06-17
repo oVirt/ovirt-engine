@@ -17,6 +17,7 @@ import org.junit.runner.RunWith;
 import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -97,7 +98,7 @@ public class GetUnregisteredDisksQueryTest
                 any(GetImagesListVDSCommandParameters.class));
 
         // Mock the get unregistered disk query
-        when(backendMock.runInternalQuery(eq(VdcQueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class)))
+        when(backendMock.runInternalQuery(eq(VdcQueryType.GetUnregisteredDisk), any(GetUnregisteredDiskQueryParameters.class), any(EngineContext.class)))
                 .thenAnswer(new Answer<VdcQueryReturnValue>() {
 
                     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -9,6 +10,10 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends QueriesCommandBase<P> {
     protected FenceQueryBase(P parameters) {
         super(parameters);
+    }
+
+    public FenceQueryBase(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     private Guid privateVdsId;

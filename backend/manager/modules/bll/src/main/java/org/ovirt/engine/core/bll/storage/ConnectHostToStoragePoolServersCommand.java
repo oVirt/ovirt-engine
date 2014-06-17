@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.List;
 import java.util.Map;
 
@@ -23,8 +25,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 public class ConnectHostToStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<ConnectHostToStoragePoolServersParameters> {
 
-    public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters) {
-        super(parameters);
+    public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters,
+            CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setStoragePool(parameters.getStoragePool());
         setVds(parameters.getVds());
     }

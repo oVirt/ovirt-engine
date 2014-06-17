@@ -7,6 +7,7 @@ import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -21,8 +22,12 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 
 public abstract class StorageServerConnectionCommandBase<T extends StorageServerConnectionParametersBase> extends
         CommandBase<T> {
-    public StorageServerConnectionCommandBase(T parameters) {
-        super(parameters);
+    protected StorageServerConnectionCommandBase(T parameters) {
+        this(parameters, null);
+    }
+
+    protected StorageServerConnectionCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
     }
 

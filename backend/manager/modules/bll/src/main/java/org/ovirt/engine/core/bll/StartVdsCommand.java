@@ -80,7 +80,7 @@ public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVd
     @Override
     protected void handleSpecificCommandActions() {
         RestartVdsVmsOperation restartVmsOper = new RestartVdsVmsOperation(
-                getExecutionContext(),
+                getContext(),
                 getVds()
         );
         restartVmsOper.restartVms(mVmList);

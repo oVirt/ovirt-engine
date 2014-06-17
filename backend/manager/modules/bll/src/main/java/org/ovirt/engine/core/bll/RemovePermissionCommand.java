@@ -1,14 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -24,7 +24,11 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
     }
 
     public RemovePermissionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RemovePermissionCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override
@@ -63,9 +67,8 @@ public class RemovePermissionCommand<T extends PermissionsOperationsParameters> 
                 && perms.getrole_id().equals(PredefinedRoles.ENGINE_USER.getId())) {
             VM vm = getVmDAO().get(perms.getObjectId());
             if (vm != null && vm.getVmPoolId() != null) {
-                runInternalAction(VdcActionType.DetachUserFromVmFromPool,
-                        new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId, vm.getId()),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                runInternalActionWithTasksContext(VdcActionType.DetachUserFromVmFromPool,
+                        new VmPoolSimpleUserParameters(vm.getVmPoolId(), userId, vm.getId()));
             }
         }
 

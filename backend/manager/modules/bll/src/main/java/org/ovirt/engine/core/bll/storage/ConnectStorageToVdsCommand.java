@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
@@ -20,8 +22,12 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
         StorageServerConnectionCommandBase<T> {
+    public ConnectStorageToVdsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
+    }
+
     public ConnectStorageToVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
 
     @Override

@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -13,6 +14,10 @@ public class GetAllDisksByStorageDomainIdQuery<P extends IdQueryParameters> exte
 
     public GetAllDisksByStorageDomainIdQuery(P parameters) {
         super(parameters);
+    }
+
+    public GetAllDisksByStorageDomainIdQuery(P parameters, EngineContext engineContext) {
+        super(parameters, engineContext);
     }
 
     @Override

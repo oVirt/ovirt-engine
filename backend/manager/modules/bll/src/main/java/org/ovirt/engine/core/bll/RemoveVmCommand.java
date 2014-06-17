@@ -9,7 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -60,12 +60,16 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         super(commandId);
     }
 
-    public RemoveVmCommand(T parameters) {
-        super(parameters);
+    public RemoveVmCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
         if (getVm() != null) {
             setStoragePoolId(getVm().getStoragePoolId());
         }
+    }
+
+    public RemoveVmCommand(T parameters) {
+        this(parameters, null);
     }
 
     @Override
@@ -245,9 +249,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     protected VdcReturnValueBase removeVmImages(List<DiskImage> images) {
         VdcReturnValueBase vdcRetValue =
-                runInternalAction(VdcActionType.RemoveAllVmImages,
-                        buildRemoveAllVmImagesParameters(images),
-                        ExecutionHandler.createDefaultContexForTasks(getExecutionContext()));
+                runInternalActionWithTasksContext(VdcActionType.RemoveAllVmImages,
+                        buildRemoveAllVmImagesParameters(images));
 
         if (vdcRetValue.getSucceeded()) {
             getReturnValue().getVdsmTaskIdList().addAll(vdcRetValue.getInternalVdsmTaskIdList());

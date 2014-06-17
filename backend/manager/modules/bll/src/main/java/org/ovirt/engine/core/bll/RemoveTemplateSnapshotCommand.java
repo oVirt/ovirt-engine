@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -14,8 +16,8 @@ import org.ovirt.engine.core.compat.Guid;
  */
 @InternalCommandAttribute
 public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersBase> extends BaseImagesCommand<T> {
-    public RemoveTemplateSnapshotCommand(T parameters) {
-        super(parameters);
+    public RemoveTemplateSnapshotCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

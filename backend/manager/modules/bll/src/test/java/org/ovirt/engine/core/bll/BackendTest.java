@@ -33,7 +33,7 @@ public class BackendTest {
         query = mock(QueriesCommandBase.class);
 
         backend = spy(new Backend());
-        doReturn(query).when(backend).createQueryCommand(any(VdcQueryType.class), any(VdcQueryParametersBase.class));
+        doReturn(query).when(backend).createQueryCommand(any(VdcQueryType.class), any(VdcQueryParametersBase.class), null);
     }
 
     @After

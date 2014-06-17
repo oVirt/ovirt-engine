@@ -100,7 +100,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
     private void endCreateAllSnapshots() {
         VdcReturnValueBase returnValue = Backend.getInstance().endAction(
                 VdcActionType.CreateAllSnapshotsFromVm, getCreateSnapshotParameters(),
-                ExecutionHandler.createDefaultContexForTasks(enclosingCommand.getExecutionContext()));
+                ExecutionHandler.createDefaultContextForTasks(enclosingCommand.getContext()));
         enclosingCommand.getReturnValue().setSucceeded(returnValue.getSucceeded());
     }
 

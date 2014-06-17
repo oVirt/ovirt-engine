@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.host;
 
 import org.ovirt.engine.core.bll.VdsCommand;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -9,8 +10,13 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 
 public class CommitNetworkChangesCommand<T extends VdsActionParameters> extends VdsCommand<T> {
     public CommitNetworkChangesCommand(T param) {
-        super(param);
+        this(param, null);
     }
+
+    public CommitNetworkChangesCommand(T param, CommandContext commandContext) {
+        super(param, commandContext);
+    }
+
 
     @Override
     protected void executeCommand() {

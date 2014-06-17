@@ -11,6 +11,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -72,8 +73,13 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     }
 
     public DeactivateStorageDomainCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public DeactivateStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -84,6 +90,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
     protected DeactivateStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
+
 
     @Override
     protected void setActionMessageParameters() {

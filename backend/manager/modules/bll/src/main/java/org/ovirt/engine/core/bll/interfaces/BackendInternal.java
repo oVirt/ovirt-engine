@@ -3,7 +3,7 @@ package org.ovirt.engine.core.bll.interfaces;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -48,20 +48,16 @@ public interface BackendInternal extends BackendLocal {
             VdcActionParametersBase parameters,
             CommandContext context);
 
-    VdcQueryReturnValue runInternalQuery(VdcQueryType actionType, VdcQueryParametersBase parameters);
+    VdcQueryReturnValue runInternalQuery(VdcQueryType actionType,
+            VdcQueryParametersBase parameters,
+            EngineContext context);
 
     ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters);
 
-    DateTime getStartedAt();
-
     /**
-     * Execute the pool monitoring job immediately
-     */
-    void triggerPoolMonitoringJob();
-
-    /**
-     * Invokes multiple actions of the same action type with different parameters under a given execution context which
+     * Invokes multiple actions of the same action type with different parameters under a given command context which if
+     * contains an execution context, determines the visibility of the action
      * determines the visibility of the action.<br>
      * The context determines the monitoring of the action:
      * <ul>
@@ -75,11 +71,20 @@ public interface BackendInternal extends BackendLocal {
      *            The type of the action
      * @param parameters
      *            A list containing the parameters for creating the command
-     * @param executionContext
+     * @param commandContext
      *            Determines the visibility of the actions.
      * @return A collection of the results of each action validation.
      */
     ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters,
-            ExecutionContext executionContext);
+            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext);
+
+    DateTime getStartedAt();
+
+    /**
+     * Execute the pool monitoring job immediately
+     */
+    void triggerPoolMonitoringJob();
+
+    VdcQueryReturnValue runInternalQuery(VdcQueryType queryType, VdcQueryParametersBase queryParameters);
+
 }

@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RolesOperationsParameters;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -20,7 +21,11 @@ public abstract class RolesOperationCommandBase<T extends RolesOperationsParamet
     }
 
     public RolesOperationCommandBase(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RolesOperationCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -14,8 +15,8 @@ import org.springframework.util.CollectionUtils;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase {
-    public RemoveSnapshotSingleDiskCommand(T parameters) {
-        super(parameters);
+    public RemoveSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

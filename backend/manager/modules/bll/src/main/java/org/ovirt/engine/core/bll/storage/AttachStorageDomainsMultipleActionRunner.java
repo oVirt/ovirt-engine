@@ -6,6 +6,7 @@ import java.util.Collections;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.SortedMultipleActionsRunnerBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -19,8 +20,8 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class AttachStorageDomainsMultipleActionRunner extends SortedMultipleActionsRunnerBase {
     public AttachStorageDomainsMultipleActionRunner(VdcActionType actionType,
-            ArrayList<VdcActionParametersBase> parameters, boolean isInternal) {
-        super(actionType, parameters, isInternal);
+            ArrayList<VdcActionParametersBase> parameters, CommandContext commandContext, boolean isInternal) {
+        super(actionType, parameters, commandContext, isInternal);
     }
 
     @Override

@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
+
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
@@ -25,8 +27,13 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class AddStorageServerConnectionCommand<T extends StorageServerConnectionParametersBase> extends
         ConnectStorageToVdsCommand<T> {
+
     public AddStorageServerConnectionCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public AddStorageServerConnectionCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

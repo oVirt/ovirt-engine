@@ -27,7 +27,7 @@ public class SyncLunsInfoForIscsiStorageDomainCommandTest {
         parameters = new StorageDomainParametersBase(Guid.newGuid());
         parameters.setVdsId(Guid.newGuid());
 
-        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase>(parameters));
+        command = spy(new SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase>(parameters, null));
     }
 
     @Test
