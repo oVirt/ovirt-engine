@@ -211,15 +211,15 @@ public class VmDeviceDAODbFacadeImpl extends
     @Override
     public void updateHotPlugDisk(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
-            .addValue("is_plugged", vmDevice.getIsPlugged());
-        getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk" , paramsForUpdate);
+                .addValue("is_plugged", vmDevice.getIsPlugged());
+        getCallsHandler().executeModification("UpdateVmDeviceForHotPlugDisk", paramsForUpdate);
     }
 
     @Override
     public void updateBootOrder(VmDevice vmDevice) {
         MapSqlParameterSource paramsForUpdate = createParameterSourceForUpdate(vmDevice)
                 .addValue("boot_order", vmDevice.getBootOrder());
-        getCallsHandler().executeModification("UpdateVmDeviceBootOrder" , paramsForUpdate);
+        getCallsHandler().executeModification("UpdateVmDeviceBootOrder", paramsForUpdate);
     }
 
     @Override
@@ -244,5 +244,23 @@ public class VmDeviceDAODbFacadeImpl extends
                 return paramValue;
             }
         };
+    }
+
+    public MapSqlParameterMapper<VmDevice> getBootOrderBatchMapper() {
+        return new MapSqlParameterMapper<VmDevice>() {
+            @Override
+            public MapSqlParameterSource map(VmDevice entity) {
+                MapSqlParameterSource paramValue = new MapSqlParameterSource()
+                        .addValue("device_id", entity.getDeviceId())
+                        .addValue("vm_id", entity.getVmId())
+                        .addValue("boot_order", entity.getBootOrder());
+                return paramValue;
+            }
+        };
+    }
+
+    @Override
+    public void updateBootOrderInBatch(List<VmDevice> vmDevices) {
+        updateAllInBatch("UpdateVmDeviceBootOrder", vmDevices, getBootOrderBatchMapper());
     }
 }

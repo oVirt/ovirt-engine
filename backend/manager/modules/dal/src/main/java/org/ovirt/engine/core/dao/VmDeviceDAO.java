@@ -66,4 +66,11 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
     void updateHotPlugDisk(VmDevice vmDevice);
 
     void updateBootOrder(VmDevice vmDevice);
+
+    /**
+     * Update the boot order of multiple devices
+     * @param vmDevices
+     *            The list of VM devices
+     */
+    void updateBootOrderInBatch(List<VmDevice> vmDevices);
 }
