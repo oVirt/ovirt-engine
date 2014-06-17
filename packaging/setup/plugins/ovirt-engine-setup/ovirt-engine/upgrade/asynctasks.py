@@ -193,6 +193,66 @@ class Plugin(plugin.PluginBase):
             ]
         )
 
+    def _getCommandEntitiesTableExists(self, dbstatement):
+
+        command_entities = dbstatement.execute(
+            statement="""
+                select relname
+                from pg_class
+                where relname = 'command_entities'
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+
+        return (
+            [
+                _(
+                    'Relname:           {relname:30}'
+                ).format(
+                    relname=entry['relname'],
+                )
+                for entry in command_entities
+            ]
+        )
+
+    def _getRunningCommands(self, dbstatement):
+
+        if not self._getCommandEntitiesTableExists(dbstatement):
+            return None
+
+        commands = dbstatement.execute(
+            statement="""
+                select
+                command_entities.command_type,
+                command_entities.command_id,
+                command_entities.created_at,
+                command_entities.status
+                from command_entities
+                where command_entities.callback_enabled = 'true'
+                  and command_entities.callback_notified = 'false'
+            """,
+            ownConnection=True,
+            transaction=False,
+        )
+
+        return (
+            [
+                _(
+                    'Command ID:           {command_id:30}\n'
+                    'Command Type:         {command_type:30}\n'
+                    'Created at:           {created_at:30}\n'
+                    'Status:               {status:30}'
+                ).format(
+                    command_id=entry['command_id'],
+                    command_type=entry['command_type'],
+                    created_at=entry['created_at'],
+                    status=entry['status'],
+                )
+                for entry in commands
+            ]
+        )
+
     def _getCompensations(self, dbstatement):
 
         compensations = dbstatement.execute(
@@ -211,7 +271,7 @@ class Plugin(plugin.PluginBase):
             ]
         )
 
-    def _askUserToStopTasks(self, runningTasks, compensations):
+    def _askUserToStopTasks(self, runningTasks, runningCommands, compensations):
         self.dialog.note(
             text=_(
                 'The following system tasks have been '
@@ -219,6 +279,15 @@ class Plugin(plugin.PluginBase):
                 '{tasks}'
             ).format(
                 tasks='\n'.join(runningTasks),
+            )
+        )
+        self.dialog.note(
+            text=_(
+                'The following commands have been '
+                'found running in the system:\n'
+                '{commands}'
+            ).format(
+                commands='\n'.join(runningCommands),
             )
         )
         self.dialog.note(
@@ -242,7 +311,7 @@ class Plugin(plugin.PluginBase):
             raise RuntimeError(
                 _(
                     'Upgrade cannot be completed; asynchronious tasks or '
-                    'compensations are still running. Please make sure '
+                    'commands or compensations are still running. Please make sure '
                     'that there are no running tasks before you '
                     'continue.'
                 )
@@ -255,6 +324,7 @@ class Plugin(plugin.PluginBase):
         )
         return (
             self._getRunningTasks(dbstatement),
+            self._getRunningCommands(dbstatement),
             self._getCompensations(dbstatement),
         )
 
@@ -264,9 +334,10 @@ class Plugin(plugin.PluginBase):
             parent=self,
         ):
             while True:
-                runningTasks, compensations = self._checkRunningTasks()
+                runningTasks, runningCommands, compensations = self._checkRunningTasks()
                 if (
                     not runningTasks and
+                    not runningCommands and
                     not compensations
                 ):
                     break
@@ -282,7 +353,7 @@ class Plugin(plugin.PluginBase):
                             oenginecons.AsyncTasksEnv.
                             CLEAR_TASKS_WAIT_PERIOD
                         ],
-                        number=len(runningTasks + compensations),
+                        number=len(runningTasks + runningCommands + compensations),
                     )
                 )
                 time.sleep(
@@ -346,9 +417,9 @@ class Plugin(plugin.PluginBase):
         self.logger.info(
             _('Cleaning async tasks and compensations')
         )
-        runningTasks, compensations = self._checkRunningTasks()
-        if runningTasks or compensations:
-            self._askUserToStopTasks(runningTasks, compensations)
+        runningTasks, runningCommands, compensations = self._checkRunningTasks()
+        if runningTasks or runningCommands or compensations:
+            self._askUserToStopTasks(runningTasks, runningCommands, compensations)
             dbstatement = database.Statement(
                 dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                 environment=self.environment,
@@ -359,7 +430,7 @@ class Plugin(plugin.PluginBase):
                 self.logger.error(
                     _(
                         'Upgrade cannot be completed; asynchronious tasks '
-                        'or compensations are still running. Please make '
+                        'or commands or compensations are still running. Please make '
                         'sure that there are no running tasks before you '
                         'continue.'
                     )
