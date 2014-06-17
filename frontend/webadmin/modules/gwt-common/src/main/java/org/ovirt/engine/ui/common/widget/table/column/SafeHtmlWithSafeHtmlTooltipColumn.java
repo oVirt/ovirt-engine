@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import org.ovirt.engine.ui.common.widget.TooltipPanel;
-
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.Cell.Context;
 import com.google.gwt.cell.client.ValueUpdater;
@@ -11,10 +9,11 @@ import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.DecoratedPopupPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Widget;
 
 public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, SafeHtml>{
-
-    private final TooltipPanel tooltipPanel = new TooltipPanel();
 
     public SafeHtmlWithSafeHtmlTooltipColumn() {
         super(new AbstractCell<SafeHtml>(BrowserEvents.MOUSEOVER, BrowserEvents.MOUSEOUT) {
@@ -37,7 +36,14 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
             }
 
         });
+
+        tooltipPanel.setWidget(tooltip);
+        tooltipPanel.getElement().getStyle().setZIndex(1);
     }
+
+    private final HTML tooltip = new HTML();
+    private final DecoratedPopupPanel tooltipPanel = new DecoratedPopupPanel();
+
 
     @Override
     public abstract SafeHtml getValue(T object);
@@ -49,12 +55,23 @@ public abstract class SafeHtmlWithSafeHtmlTooltipColumn<T> extends Column<T, Saf
         super.onBrowserEvent(context, elem, object, event);
 
         if (BrowserEvents.MOUSEOVER.equals(event.getType())) {
-            SafeHtml tooltipHtml = getTooltip(object);
-            if (tooltipHtml != null && !tooltipHtml.asString().isEmpty()) {
-                tooltipPanel.setText(getTooltip(object));
+            Widget widget = new Widget(){
+                @Override
+                public com.google.gwt.user.client.Element getElement() {
+                    return (com.google.gwt.user.client.Element) elem;
+                };
+            };
+
+            SafeHtml tooltipHtml= getTooltip(object);
+            if(tooltipHtml != null && !"".equals(tooltipHtml.asString())){ //$NON-NLS-1$
+                tooltip.setHTML(tooltipHtml);
+                tooltipPanel.showRelativeTo(widget);
             }
         }
-        tooltipPanel.handleNativeBrowserEvent(elem, event);
+        else if (BrowserEvents.MOUSEOUT.equals(event.getType())) {
+            tooltipPanel.hide(true);
+        }
+
     }
 
 }

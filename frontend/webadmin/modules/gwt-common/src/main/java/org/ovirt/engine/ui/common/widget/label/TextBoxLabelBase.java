@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.common.widget.label;
 
 import java.text.ParseException;
 
-import org.ovirt.engine.ui.common.widget.TooltipPanel;
-
 import com.google.gwt.dom.client.Document;
 import com.google.gwt.dom.client.NativeEvent;
 import com.google.gwt.dom.client.Style.Unit;
@@ -30,8 +28,6 @@ public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
 
     private T value;
     private String tooltipCaption;
-    private final TooltipPanel tooltipPanel = new TooltipPanel(true, this);
-
 
     private TextBoxLabelBase(Renderer<T> renderer, Parser<T> parser) {
         super(Document.get().createTextInputElement(), renderer, parser);
@@ -64,7 +60,7 @@ public abstract class TextBoxLabelBase<T> extends ValueBoxBase<T> {
         if (getTooltipCaption() != null) {
             renderedText = getTooltipCaption() + ": " + renderedText; //$NON-NLS-1$
         }
-        tooltipPanel.setText(renderedText);
+        setTitle(renderedText);
     }
 
     @Override
