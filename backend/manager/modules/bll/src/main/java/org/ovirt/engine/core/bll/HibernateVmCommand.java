@@ -251,24 +251,30 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         if (vmStatus == VMStatus.WaitForLaunch || vmStatus == VMStatus.NotResponding) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(vmStatus));
         }
+
         if (vmStatus != VMStatus.Up) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_UP);
         }
+
         if (TaskManagerUtil.entityHasTasks(getVmId())) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPENDE_HAS_RUNNING_TASKS);
         }
+
+        if (getVm().getVmPoolId() != null) {
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
+        }
+
         // check if vm has stateless images in db in case vm was run once as stateless
         // (then isStateless is false)
         if (getVm().isStateless() ||
                 DbFacade.getInstance().getSnapshotDao().exists(getVmId(), SnapshotType.STATELESS)) {
             return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_STATELESS_VM);
         }
-        if (getVm().getVmPoolId() != null) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_SUSPEND_VM_FROM_POOL);
-        }
+
         if (getStorageDomainId().equals(Guid.Empty)) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
         }
+
         return true;
     }
 
@@ -303,7 +309,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 // start here another tasks.
 
                 log.warnFormat(
-                        "HibernateVmCommand::EndSuccessfully: Vm '{0}' is not in 'PreparingForHibernate' status, but in '{1}' status - not performing Hibernate.",
+                        "VM '{0}' is not in 'PreparingForHibernate' status, but in '{1}' status - not performing Hibernate.",
                         getVm().getName(),
                         getVm().getStatus());
                 getReturnValue().setEndActionTryAgain(false);
@@ -311,7 +317,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             else if (getVm().getRunOnVds() == null) {
                 log.warnFormat(
-                        "HibernateVmCommand::EndSuccessfully: Vm '{0}' doesn't have 'run_on_vds' value - cannot Hibernate.",
+                        "VM '{0}' doesn't have 'run_on_vds' value - cannot Hibernate.",
                         getVm().getName());
                 getReturnValue().setEndActionTryAgain(false);
             }
@@ -339,7 +345,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
         }
 
         else {
-            log.warn("HibernateVmCommand::EndSuccessfully: Vm is null - not performing full endAction.");
+            log.warn("VM is null - not performing full endAction.");
             setSucceeded(true);
         }
     }
@@ -364,7 +370,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             else {
                 log.warnFormat(
-                        "HibernateVmCommand::endWithFailure: Vm '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
+                        "VM '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
                         getVm().getName());
 
                 getReturnValue().setEndActionTryAgain(false);
@@ -373,7 +379,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         else {
             setCommandShouldBeLogged(false);
-            log.warn("HibernateVmCommand::endWithFailure: Vm is null - not performing full endAction.");
+            log.warn("VM is null - not performing full endAction.");
             setSucceeded(true);
         }
     }
