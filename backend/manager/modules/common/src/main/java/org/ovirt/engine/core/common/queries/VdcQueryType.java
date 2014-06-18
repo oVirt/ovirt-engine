@@ -243,6 +243,8 @@ public enum VdcQueryType implements Serializable {
     GetAllStorageServerConnections,
     GetStorageServerConnectionsForDomain,
     GetStoragePoolById(VdcQueryAuthType.User),
+    GetMacPoolById,
+    GetMacPoolsByDataCenterId,
     GetStoragePoolByDatacenterName(VdcQueryAuthType.User),
     GetStorageDomainsByConnection,
     GetConnectionsByDataCenterAndStorageType,
