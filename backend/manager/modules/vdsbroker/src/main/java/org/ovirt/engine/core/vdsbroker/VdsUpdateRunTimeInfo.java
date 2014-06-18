@@ -1076,7 +1076,7 @@ public class VdsUpdateRunTimeInfo {
 
             if (vmInternalData.getValue().getVmStatistics().getVmJobs() == null) {
                 // If no vmJobs key was returned, we can't presume anything about the jobs; save them all
-                log.info("No vmJob data returned, preserving existing jobs");
+                log.debug("No vmJob data returned from VDSM, preserving existing jobs");
                 continue;
             }
 
@@ -1086,10 +1086,10 @@ public class VdsUpdateRunTimeInfo {
                         // Same data, no update needed.  It would be nice if a caching
                         // layer would take care of this for us.
                         vmJobIdsToIgnore.add(jobFromVds.getId());
-                        log.infoFormat("VM job {0}: Preserving (no change)", jobFromVds.getId());
+                        log.infoFormat("VM job {0}: In progress (no change)", jobFromVds.getId());
                     } else {
                         vmJobsToUpdate.put(jobFromVds.getId(), jobFromVds);
-                        log.infoFormat("VM job {0}: Updating", jobFromVds.getId());
+                        log.infoFormat("VM job {0}: In progress, updating", jobFromVds.getId());
                     }
                 }
             }
