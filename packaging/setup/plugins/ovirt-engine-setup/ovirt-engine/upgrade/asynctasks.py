@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -32,6 +32,7 @@ from otopi import base
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup import database
+from ovirt_engine_setup import dialog
 
 
 from async_tasks_map import ASYNC_TASKS_MAP
@@ -222,7 +223,7 @@ class Plugin(plugin.PluginBase):
                 compensations='\n'.join(compensations),
             )
         )
-        if not self.dialog.queryBoolean(
+        if not dialog.queryBoolean(
             dialog=self.dialog,
             name='OVESETUP_STOP_RUNNING_TASKS',
             note=_(
