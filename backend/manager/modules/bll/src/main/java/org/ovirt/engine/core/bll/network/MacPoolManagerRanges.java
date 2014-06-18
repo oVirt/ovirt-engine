@@ -49,7 +49,9 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
             List<VmNic> interfaces = getVmNicInterfacesFromDb();
 
             for (VmNic iface : interfaces) {
-                forceAddMacWithoutLocking(iface.getMacAddress());
+                if (iface.getMacAddress() != null) {
+                    forceAddMacWithoutLocking(iface.getMacAddress());
+                }
             }
             initialized = true;
             log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
