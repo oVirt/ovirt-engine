@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -28,6 +28,7 @@ from otopi import util
 from otopi import plugin
 
 
+from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common \
     import constants as oengcommcons
@@ -140,7 +141,7 @@ class Plugin(plugin.PluginBase):
                 )
                 self.environment[
                     oenginecons.EngineDBEnv.FIX_DB_VIOLATIONS
-                ] = self.dialog.queryBoolean(
+                ] = dialog.queryBoolean(
                     dialog=self.dialog,
                     name='OVESETUP_FIX_DB_VALIDATIONS',
                     note=_(
