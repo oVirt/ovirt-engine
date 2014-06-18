@@ -304,30 +304,23 @@ class Plugin(plugin.PluginBase):
             )
         )
 
-        rc, stdout, stderr = self.execute(
+        self.execute(
             args=(
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_PKCS12_EXTRACT,
                 '--name=websocket-proxy',
-                '--passin=%s' % self.environment[
-                    oenginecons.PKIEnv.STORE_PASS
-                ],
-                '--key=-',
+                '--passin=%s' % (
+                    self.environment[oenginecons.PKIEnv.STORE_PASS],
+                ),
+                '--key=%s' % (
+                    oenginecons.FileLocations.
+                    OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
+                ),
             ),
             logStreams=False,
         )
-
-        self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
-            filetransaction.FileTransaction(
-                oenginecons.FileLocations.
-                OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
-                mode=0o600,
-                owner=self.environment[osetupcons.SystemEnv.USER_ENGINE],
-                enforcePermissions=True,
-                content=stdout,
-                modifiedList=self.environment[
-                    otopicons.CoreEnv.MODIFIED_FILES
-                ],
-            )
+        uninstall_files.append(
+            oenginecons.FileLocations.
+            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY
         )
 
         self.execute(
