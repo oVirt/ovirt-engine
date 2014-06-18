@@ -158,11 +158,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
      * Update vm configuration with NEXT_RUN configuration, if exists
      * @param vmId
      */
-<<<<<<< HEAD
     private void applyNextRunConfiguration() {
-=======
-    private void ApplyNextRunConfiguration(Guid vmId) {
->>>>>>> core: Introducing runInternalXXX at CommandBase
         // Remove snpashot first, in case other update is in progress, it will block this one with exclusive lock
         // and any newer update should be preffered to this one.
         Snapshot runSnap = getSnapshotDAO().get(getVmId(), SnapshotType.NEXT_RUN);
@@ -173,12 +169,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
             // override creation date because the value in the config is the creation date of the config, not the vm
             getVm().setVmCreationDate(originalCreationDate);
 
-<<<<<<< HEAD
-            Backend.getInstance().runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters());
-=======
-                runInternalAction(VdcActionType.UpdateVm, updateVmParams);
-            }
->>>>>>> core: Introducing runInternalXXX at CommandBase
+            runInternalAction(VdcActionType.UpdateVm, updateVmParams);
         }
     }
 
@@ -229,21 +220,12 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         return updateVmParams;
     }
 
-<<<<<<< HEAD
     private void removeVmStatelessImages() {
         if (getSnapshotDAO().exists(getVmId(), SnapshotType.STATELESS)) {
             log.infoFormat("Deleting snapshot for stateless vm {0}", getVmId());
-            Backend.getInstance().runInternalAction(VdcActionType.RestoreStatelessVm,
+            runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),
                     ExecutionHandler.createDefaultContexForTasks(getExecutionContext(), getLock()));
-=======
-    private void removeVmStatelessImages(Guid vmId, CommandContext context) {
-        if (DbFacade.getInstance().getSnapshotDao().exists(vmId, SnapshotType.STATELESS)) {
-            log.infoFormat("Deleting snapshot for stateless vm {0}", vmId);
-            runInternalAction(VdcActionType.RestoreStatelessVm,
-                    new VmOperationParameterBase(vmId),
-                    context);
->>>>>>> core: Introducing runInternalXXX at CommandBase
         }
     }
 }
