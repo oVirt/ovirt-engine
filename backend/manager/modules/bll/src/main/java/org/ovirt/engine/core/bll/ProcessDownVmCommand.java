@@ -169,7 +169,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
             // override creation date because the value in the config is the creation date of the config, not the vm
             getVm().setVmCreationDate(originalCreationDate);
 
-            runInternalAction(VdcActionType.UpdateVm, updateVmParams);
+            runInternalAction(VdcActionType.UpdateVm, createUpdateVmParameters());
         }
     }
 
