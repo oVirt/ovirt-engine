@@ -1,8 +1,13 @@
 package org.ovirt.engine.core.bll.pm;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceExecutor;
 import org.ovirt.engine.core.bll.RestartVdsCommand;
+import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -25,9 +30,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
 /**
  * Responsible for checking PM enabled hosts by sending a status command to each host configured PM agent cards and
@@ -116,12 +118,21 @@ public class PmHealthCheckManager {
         }
     }
 
+    private void waitUntilFencingAllowed() {
+        // wait the quiet time from engine start in which we skip fencing operations
+        int mSecToWait = Config.<Integer>getValue(ConfigValues.DisableFenceAtStartupInSec) * 1000;
+        ThreadUtils.sleep(mSecToWait);
+    }
+
     /**
-     * recovers from engine crash
-     * @param hostsWithPMInReboot
+     * Recovers hosts with status Reboot or Kdumping from engine crash
+     *
+     * @param hosts
+     *            all existing hosts
      */
     public void recover(List<VDS> hosts) {
         startHostsWithPMInReboot(hosts);
+        recoverKdumpingHosts(hosts);
     }
 
     private void startHostsWithPMInReboot(List<VDS> hosts) {
@@ -136,9 +147,7 @@ public class PmHealthCheckManager {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    // wait the quiet time from engine start in which we skip fencing operations
-                    int mSecToWait = Config.<Integer>getValue(ConfigValues.DisableFenceAtStartupInSec) * 1000;
-                    ThreadUtils.sleep(mSecToWait);
+                    waitUntilFencingAllowed();
                     startHosts(hostsWithPMInReboot);
                 }
             });
@@ -167,6 +176,43 @@ public class PmHealthCheckManager {
                     log.infoFormat("PM Health Check Manager failed to start Host {0}", host.getName());
                 }
             }
+        }
+    }
+
+    private void recoverKdumpingHosts(List<VDS> hosts) {
+        final List<VDS> kdumpingHosts = new ArrayList<>();
+        for (VDS host : hosts) {
+            if (host.getStatus() == VDSStatus.Kdumping) {
+                kdumpingHosts.add(host);
+            }
+        }
+        if (!kdumpingHosts.isEmpty()) {
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    waitUntilFencingAllowed();
+                    executeNotRespondingTreatment(kdumpingHosts);
+                }
+            });
+        }
+    }
+
+    private void executeNotRespondingTreatment(List<VDS> hosts) {
+        for (VDS host : hosts) {
+            final FenceVdsActionParameters params = new FenceVdsActionParameters(
+                    host.getId(),
+                    FenceActionType.Restart
+            );
+            ThreadPoolUtil.execute(new Runnable() {
+                @Override
+                public void run() {
+                    Backend.getInstance().runInternalAction(
+                            VdcActionType.VdsNotRespondingTreatment,
+                            params,
+                            ExecutionHandler.createInternalJobContext()
+                    );
+                }
+            });
         }
     }
 

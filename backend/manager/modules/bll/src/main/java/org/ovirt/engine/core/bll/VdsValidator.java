@@ -44,6 +44,7 @@ public class VdsValidator {
         case Maintenance:
         case NonOperational:
         case NonResponsive:
+        case Kdumping:  // it should happen only after restart when host is stuck in status Kdumping
             result = true;
             break;
 
