@@ -10,7 +10,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public abstract class ImportEntityData extends EntityModel {
-    protected Object entity;
     boolean isExistsInSystem;
     private EntityModel clone;
     private ListModel<VDSGroup> cluster;
@@ -20,14 +19,6 @@ public abstract class ImportEntityData extends EntityModel {
         setClone(new EntityModel(false));
         setCluster(new ListModel());
         setClusterQuota(new ListModel());
-    }
-
-    public Object getEntity() {
-        return entity;
-    }
-
-    public void setEntity(Object entity) {
-        this.entity = entity;
     }
 
     public boolean isExistsInSystem() {
