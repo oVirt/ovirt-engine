@@ -11,6 +11,7 @@ import com.google.gwt.event.logical.shared.SelectionHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.Element;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.HasConstrainedValue;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
@@ -158,6 +159,10 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
      */
     protected abstract T asEntity(String value);
 
+    protected void scrollSelectedItemIntoView() {
+
+    }
+
     @Override
     public T getValue() {
         return value;
@@ -183,13 +188,21 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
         private Widget suggestionMenu;
 
         public ListModelSuggestionDisplay(int maxSuggestionPanelHeightInPx) {
-            // not be hidden under the panel
             getPopupPanel().getElement().getStyle().setZIndex(1);
 
-            Style suggestPopupContentStyle = getPopupPanel().getWidget().getElement().getParentElement().getStyle();
+            Element popupPanelElement = getPopupPanel().getWidget().getElement();
+            Style popupPanel = popupPanelElement.getStyle();
+            popupPanel.setDisplay(Style.Display.BLOCK);
+            popupPanel.setHeight(100, Unit.PCT);
+            popupPanel.setPropertyPx("maxHeight", maxSuggestionPanelHeightInPx); //$NON-NLS-1$
+            popupPanel.setOverflowY(Overflow.SCROLL);
+            popupPanel.setOverflowX(Overflow.HIDDEN);
+
+            Style suggestPopupContentStyle = popupPanelElement.getParentElement().getStyle();
             suggestPopupContentStyle.setHeight(100, Unit.PCT);
             suggestPopupContentStyle.setPropertyPx("maxHeight", maxSuggestionPanelHeightInPx); //$NON-NLS-1$
             suggestPopupContentStyle.setOverflowX(Overflow.HIDDEN);
+            suggestPopupContentStyle.setProperty("display", "table"); //$NON-NLS-1$ //$NON-NLS-2$
         }
 
         // just to make it public
@@ -215,5 +228,20 @@ public abstract class BaseListModelSuggestBox<T> extends Composite implements Ed
             this.suggestionMenu = suggestionList;
             return super.decorateSuggestionList(suggestionList);
         }
+
+        @Override
+        protected void moveSelectionUp() {
+            super.moveSelectionUp();
+
+            scrollSelectedItemIntoView();
+        }
+
+        @Override
+        protected void moveSelectionDown() {
+            super.moveSelectionDown();
+
+            scrollSelectedItemIntoView();
+        }
+
     }
 }
