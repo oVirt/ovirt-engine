@@ -34,6 +34,7 @@ from ovirt_engine_setup import dialog
 from ovirt_engine_setup.engine import constants as oenginecons
 from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.engine_common import database
+from ovirt_engine_setup.engine import vdcoption
 
 
 from async_tasks_map import ASYNC_TASKS_MAP
@@ -55,8 +56,11 @@ class Plugin(plugin.PluginBase):
             self._dbstatement = dbstatement
 
         def _getCurrentTimeout(self):
-            return self._dbstatement.getVDCOptions(
+            return vdcoption.VdcOption(
+                statement=self._dbstatement,
+            ).getVdcOption(
                 name='AsyncTaskZombieTaskLifeInMinutes',
+                ownConnection=True,
             )
 
         def _setEngineMode(self, maintenance, timeout=0):
@@ -65,23 +69,29 @@ class Plugin(plugin.PluginBase):
                 else 'ACTIVE'
             )
             try:
-                self.logger.debug(
+                self._parent.logger.debug(
                     'Setting engine into {mode} mode'.format(
-                        value=mode,
+                        mode=mode,
                     )
                 )
-                self._dbstatement.updateVDCOptions(
-                    {
-                        'name': 'EngineMode',
-                        'value': mode,
-                    },
-                    {
-                        'name': 'AsyncTaskZombieTaskLifeInMinutes',
-                        'value': timeout,
-                    },
+
+                vdcoption.VdcOption(
+                    statement=self._dbstatement,
+                ).updateVdcOptions(
+                    options=(
+                        {
+                            'name': 'EngineMode',
+                            'value': mode,
+                        },
+                        {
+                            'name': 'AsyncTaskZombieTaskLifeInMinutes',
+                            'value': timeout,
+                        },
+                    ),
+                    ownConnection=True,
                 )
             except Exception as e:
-                self.logger.debug(
+                self._parent.logger.debug(
                     'Cannot set engine mode',
                     exc_info=True,
                 )
@@ -104,17 +114,13 @@ class Plugin(plugin.PluginBase):
             )
 
             self._parent.services.state(
-                name=self.environment[
-                    oenginecons.Const.ENGINE_SERVICE_NAME
-                ],
+                name=oenginecons.Const.ENGINE_SERVICE_NAME,
                 state=True,
             )
 
         def __exit__(self, exc_type, exc_value, traceback):
             self._parent.services.state(
-                name=self.environment[
-                    oenginecons.Const.ENGINE_SERVICE_NAME
-                ],
+                name=oenginecons.Const.ENGINE_SERVICE_NAME,
                 state=False,
             )
             self._setEngineMode(

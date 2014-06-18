@@ -91,6 +91,7 @@ class VdcOption():
     def updateVdcOptions(
         self,
         options,
+        ownConnection=False,
     ):
         for option in options:
             name = option['name']
@@ -127,6 +128,7 @@ class VdcOption():
                     name=name,
                     version=version,
                 ),
+                ownConnection=ownConnection,
             )
             if res[0]['count'] == 0:
                 self._statement.execute(
@@ -147,6 +149,7 @@ class VdcOption():
                         version=version,
                         value=value,
                     ),
+                    ownConnection=ownConnection,
                 )
             else:
                 self._statement.execute(
@@ -163,6 +166,7 @@ class VdcOption():
                         version=version,
                         value=value,
                     ),
+                    ownConnection=ownConnection,
                 )
 
 
