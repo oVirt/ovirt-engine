@@ -277,10 +277,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                             return null;
                         }
                     });
-        }
 
-        if (!getParameters().isInactive() && spm != null) {
-            getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
+            if (spm != null) {
+                getStorageHelper(getStorageDomain()).disconnectStorageFromDomainByVdsId(getStorageDomain(), spm.getId());
+            }
         }
 
         executeInNewTransaction(new TransactionMethod<Object>() {
