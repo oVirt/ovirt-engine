@@ -2,8 +2,10 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.LinkedList;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -17,7 +19,7 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
 
     private final Collection<VdsNetworkInterface> srcIfaces; // original interfaces composing this interface (more than one in case this is a bond)
     private final Set<String> containedIfaces; // names of the original interfaces
-    private final Collection<String> originalLabels; // union of labels attached originally to original interface(s)
+    private final List<String> originalLabels; // union of labels attached originally to original interface(s)
     private final Collection<String> suggestedLabels; // pre-existing DC labels that aren't yet assigned to an interface
     private final Map<String, String> labelToIface; // map from each label to the name of the interface that uses it (possibly null)
     private final Set<String> flushedLabels; // actual labels, as edited in the view
@@ -44,6 +46,7 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
             containedIfaces.add(iface.getName());
         }
 
+        Collections.sort(originalLabels);
         LinkedList<ListModel<String>> items = new LinkedList<ListModel<String>>();
         for (String label : originalLabels) {
             ListModel<String> labelModel = new ListModel<String>();

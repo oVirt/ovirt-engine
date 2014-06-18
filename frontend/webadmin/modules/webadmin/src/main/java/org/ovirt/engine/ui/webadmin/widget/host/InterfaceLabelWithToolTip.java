@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.host;
 
+import java.util.Arrays;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -45,7 +46,10 @@ public class InterfaceLabelWithToolTip {
             return null;
         }
 
-        for (String label : labels) {
+        String[] sortedLabels = labels.toArray(new String[] {});
+        Arrays.sort(sortedLabels);
+
+        for (String label : sortedLabels) {
             if (isFirst) {
                 isFirst = false;
             } else {
