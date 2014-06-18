@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -53,6 +54,11 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         }
 
         return true;
+    }
+
+    @Override
+    protected AuditLogType getAuditLogForMigrationFailure() {
+        return AuditLogType.VM_MIGRATION_TO_SERVER_FAILED;
     }
 
     /**

@@ -49,6 +49,7 @@ public final class VdcEventNotificationUtils {
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_FAILURE);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_MIGRATION_START);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_MIGRATION_FAILED);
+        AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_MIGRATION_TO_SERVER_FAILED);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_NOT_RESPONDING);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.VM_STATUS_RESTORED);
         AddEventNotificationEntry(EventNotificationEntity.Vm, AuditLogType.HA_VM_RESTART_FAILED);

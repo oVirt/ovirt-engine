@@ -279,7 +279,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 : AuditLogType.VM_MIGRATION_START;
     }
 
-    private AuditLogType getAuditLogForMigrationFailure() {
+    protected AuditLogType getAuditLogForMigrationFailure() {
         if (getVds().getStatus() == VDSStatus.PreparingForMaintenance) {
             return AuditLogType.VM_MIGRATION_FAILED_DURING_MOVE_TO_MAINTENANCE;
         }
