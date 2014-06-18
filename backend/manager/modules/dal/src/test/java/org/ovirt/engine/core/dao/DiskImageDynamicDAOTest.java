@@ -11,14 +11,17 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 
 
 public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     private static final Guid EXISTING_IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
-    private static final int TOTAL_DYNAMIC_DISK_IMAGES = 4;
+    private static final int TOTAL_DYNAMIC_DISK_IMAGES = 5;
     private static final Guid EXISTING_IMAGE_DISK_TEMPLATE = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
 
 
@@ -153,16 +156,34 @@ public class DiskImageDynamicDAOTest extends BaseDAOTestCase{
     }
 
     @Test
-    public void testUpdateWithDiskId() throws Exception {
-        Guid imageId = new Guid("52058975-3d5e-484a-80c1-01c31207f578");
-        Guid imageGroupId = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
-        DiskImageDynamic existingDynamic2 = dao.get(imageId);
-        existingDynamic2.setId(imageGroupId);
-        existingDynamic2.setread_rate(120);
-        existingDynamic2.setReadLatency(0.00001d);
+    public void updateAllDiskImageDynamicWithDiskIdByVmId() throws Exception {
+        Guid imageId = FixturesTool.IMAGE_ID_2;
+        Guid imageGroupId = FixturesTool.IMAGE_GROUP_ID_2;
 
-        dao.updateAllDiskImageDynamicWithDiskId(Arrays.asList(new DiskImageDynamic[] { existingDynamic2 }));
+        DiskImageDynamic existingDynamic2 = dao.get(imageId);
+        assertFalse(existingDynamic2.getread_rate().equals(120));
+
+        VmDevice device = dbFacade.getVmDeviceDao().get(new VmDeviceId(imageGroupId, FixturesTool.VM_RHEL5_POOL_57));
+        assertNull(device.getSnapshotId());
+
+        existingDynamic2.setId(imageGroupId);
+        Integer readRate = new Integer(120);
+        existingDynamic2.setread_rate(readRate);
+
+        // test that the record is updated when the active disk is attached to the vm
+        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.<Pair<Guid, DiskImageDynamic>> asList(new Pair(FixturesTool.VM_RHEL5_POOL_57,
+                existingDynamic2)));
+
         existingDynamic2.setId(imageId);
         assertEquals(existingDynamic2, dao.get(imageId));
+
+        // test that the record isn't updated when a snapshot of the disk is attached to the vm
+        device.setSnapshotId(FixturesTool.EXISTING_SNAPSHOT_ID);
+        dbFacade.getVmDeviceDao().update(device);
+
+        existingDynamic2.setread_rate(150);
+        dao.updateAllDiskImageDynamicWithDiskIdByVmId(Arrays.<Pair<Guid, DiskImageDynamic>>asList(new Pair(FixturesTool.VM_RHEL5_POOL_57,
+                existingDynamic2)));
+        assertEquals(readRate, dao.get(imageId).getread_rate());
     }
 }

@@ -46,7 +46,8 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION Updatedisk_image_dynamic_by_disk_id(v_image_group_id UUID,
+Create or replace FUNCTION Updatedisk_image_dynamic_by_disk_id_and_vm_id(v_image_group_id UUID,
+  v_vm_id UUID,
 	v_read_rate INTEGER ,
 	v_write_rate INTEGER ,
 	v_actual_size BIGINT ,
@@ -62,7 +63,9 @@ BEGIN
       SET read_rate = v_read_rate,write_rate = v_write_rate,actual_size = v_actual_size,read_latency_seconds = v_read_latency_seconds,write_latency_seconds = v_write_latency_seconds,flush_latency_seconds = v_flush_latency_seconds, _update_date = LOCALTIMESTAMP
       WHERE image_id in (SELECT distinct image_guid
     		FROM   images
-    		WHERE  image_group_id = v_image_group_id and active = true);
+    		WHERE  image_group_id = v_image_group_id and active = true)
+    		AND EXISTS (SELECT 1 FROM vm_device vmd
+    		            WHERE vmd.vm_id = v_vm_id AND vmd.device_id = v_image_group_id AND vmd.snapshot_id is NULL);
 END; $procedure$
 LANGUAGE plpgsql;
 

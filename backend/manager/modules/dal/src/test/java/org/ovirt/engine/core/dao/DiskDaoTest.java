@@ -190,7 +190,7 @@ public class DiskDaoTest extends BaseReadDaoTestCase<Guid, Disk, DiskDao> {
      *            The result to check
      */
     private static void assertFullGetAllForVMResult(List<Disk> disks) {
-        assertEquals("VM should have five disks", 5, disks.size());
+        assertEquals("VM should have six disks", 6, disks.size());
     }
 
     /**

@@ -4529,6 +4529,13 @@
             <null />
         </row>
         <row>
+            <value>c9a559d9-8666-40d1-9967-759502b19f0c</value>
+            <value>0</value>
+            <value>0</value>
+            <value>1073741824</value>
+            <null />
+        </row>
+        <row>
             <value>42058975-3d5e-484a-80c1-01c31207f579</value>
             <value>0</value>
             <value>0</value>
@@ -5509,6 +5516,21 @@
         </row>
         <row>
             <value>e14ed6f0-3b12-11e1-b614-63d00126418d</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
+            <value>disk</value>
+            <value>disk</value>
+            <value>sample</value>
+            <value>1</value>
+            <value></value>
+            <value>true</value>
+            <value>false</value>
+            <value>false</value>
+            <value>alias</value>
+            <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <null />
+        </row>
+        <row>
+            <value>1b26a52b-b60f-44cb-9f46-3ef333b04a38</value>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
             <value>disk</value>
             <value>disk</value>

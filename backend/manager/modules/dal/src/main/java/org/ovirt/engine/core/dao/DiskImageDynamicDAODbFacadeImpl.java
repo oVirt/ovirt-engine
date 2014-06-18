@@ -5,6 +5,7 @@ import java.sql.SQLException;
 import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
@@ -86,19 +87,22 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
         };
     }
 
-    public MapSqlParameterMapper<DiskImageDynamic> getBatchImageGroupMapper() {
-        return new MapSqlParameterMapper<DiskImageDynamic>() {
+    public MapSqlParameterMapper<Pair<Guid, DiskImageDynamic>> getBatchImageGroupMapper() {
+        return new MapSqlParameterMapper<Pair<Guid, DiskImageDynamic>>() {
 
             @Override
-            public MapSqlParameterSource map(DiskImageDynamic entity) {
+            public MapSqlParameterSource map(Pair<Guid, DiskImageDynamic> entity) {
+                Guid vmId = entity.getFirst();
+                DiskImageDynamic diskImageDynamic = entity.getSecond();
                 MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("image_group_id", entity.getId())
-                        .addValue("read_rate", entity.getread_rate())
-                        .addValue("write_rate", entity.getwrite_rate())
-                        .addValue("actual_size", entity.getactual_size())
-                        .addValue("read_latency_seconds", entity.getReadLatency())
-                        .addValue("write_latency_seconds", entity.getWriteLatency())
-                        .addValue("flush_latency_seconds", entity.getFlushLatency());
+                        .addValue("vm_id", vmId)
+                        .addValue("image_group_id", diskImageDynamic.getId())
+                        .addValue("read_rate", diskImageDynamic.getread_rate())
+                        .addValue("write_rate", diskImageDynamic.getwrite_rate())
+                        .addValue("actual_size", diskImageDynamic.getactual_size())
+                        .addValue("read_latency_seconds", diskImageDynamic.getReadLatency())
+                        .addValue("write_latency_seconds", diskImageDynamic.getWriteLatency())
+                        .addValue("flush_latency_seconds", diskImageDynamic.getFlushLatency());
 
                 return paramValue;
             }
@@ -106,7 +110,8 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
     }
 
     @Override
-    public void updateAllDiskImageDynamicWithDiskId(Collection<DiskImageDynamic> diskImageDynamic) {
-        updateAllInBatch("Updatedisk_image_dynamic_by_disk_id", diskImageDynamic, getBatchImageGroupMapper());
+    public void updateAllDiskImageDynamicWithDiskIdByVmId(Collection<Pair<Guid, DiskImageDynamic>> diskImageDynamicForVm) {
+        getCallsHandler().executeStoredProcAsBatch("Updatedisk_image_dynamic_by_disk_id_and_vm_id",
+                diskImageDynamicForVm, getBatchImageGroupMapper());
     }
 }

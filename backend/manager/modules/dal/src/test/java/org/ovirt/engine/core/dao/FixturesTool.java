@@ -302,6 +302,14 @@ public class FixturesTool {
     protected static final Guid IMAGE_ID = new Guid("42058975-3d5e-484a-80c1-01c31207f578");
 
     /**
+     * Predefined image with the following properties :
+     * <ul>
+     * <li>disk id: 1b26a52b-b60f-44cb-9f46-3ef333b04a38</li>
+     * </ul>
+     */
+    protected static final Guid IMAGE_ID_2 = new Guid("c9a559d9-8666-40d1-9967-759502b19f0c");
+
+    /**
      * Predefined disk for testing.
      */
     protected static final Guid DISK_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a34");
@@ -326,6 +334,8 @@ public class FixturesTool {
      * </ul>
      */
     protected static final Guid IMAGE_GROUP_ID = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a35");
+
+    protected static final Guid IMAGE_GROUP_ID_2 = new Guid("1b26a52b-b60f-44cb-9f46-3ef333b04a38");
 
     /**
      * Predefined floating disk for testing.

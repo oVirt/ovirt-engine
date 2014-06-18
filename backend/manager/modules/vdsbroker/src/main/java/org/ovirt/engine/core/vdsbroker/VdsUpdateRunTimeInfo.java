@@ -2,6 +2,7 @@ package org.ovirt.engine.core.vdsbroker;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -57,6 +58,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
@@ -96,7 +98,7 @@ public class VdsUpdateRunTimeInfo {
     private final Map<Guid, VmDynamic> _vmDynamicToSave = new HashMap<>();
     private final Map<Guid, VmStatistics> _vmStatisticsToSave = new HashMap<>();
     private final Map<Guid, List<VmNetworkInterface>> _vmInterfaceStatisticsToSave = new HashMap<>();
-    private final Set<DiskImageDynamic> _vmDiskImageDynamicToSave = new HashSet<>();
+    private final Collection<Pair<Guid, DiskImageDynamic>> _vmDiskImageDynamicToSave = new LinkedList<>();
     private final List<LUNs> vmLunDisksToSave = new ArrayList<>();
     private final Map<VmDeviceId, VmDevice> vmDeviceToSave = new HashMap<>();
     private final List<VmDevice> newVmDevices = new ArrayList<>();
@@ -192,7 +194,7 @@ public class VdsUpdateRunTimeInfo {
 
         getDbFacade().getVmNetworkStatisticsDao().updateAllInBatch(allVmInterfaceStatistics);
 
-        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskId(_vmDiskImageDynamicToSave);
+        getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(_vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
         saveVmDevicesToDb();
         saveVmJobsToDb();
@@ -2039,7 +2041,11 @@ public class VdsUpdateRunTimeInfo {
             addVmStatisticsToList(vmToUpdate.getStatisticsData());
             updateInterfaceStatistics(vmToUpdate, vmStatistics);
 
-            _vmDiskImageDynamicToSave.addAll(_runningVms.get(vmToUpdate.getId()).getVmDynamic().getDisks());
+            Guid vmId = vmToUpdate.getId();
+            Collection<DiskImageDynamic> vmDisksDynamic = _runningVms.get(vmId).getVmDynamic().getDisks();
+            for (DiskImageDynamic diskImageDynamic : vmDisksDynamic) {
+                _vmDiskImageDynamicToSave.add(new Pair<>(vmId, diskImageDynamic));
+            }
         }
     }
 
