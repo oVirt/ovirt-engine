@@ -1137,6 +1137,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } finally {
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
             if (exceptionOccurred || !getSucceeded()) {
+                setSucceeded(false);
                 compensate();
             } else {
                 cleanUpCompensationData();
