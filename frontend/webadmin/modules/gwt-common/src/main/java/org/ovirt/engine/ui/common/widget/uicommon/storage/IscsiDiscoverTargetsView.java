@@ -129,8 +129,6 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
         chapUserEditor.addLabelStyleName(style.chapLabel());
         chapPassEditor.addLabelStyleName(style.chapLabel());
 
-        discoverTargetsImageButton.setStylePrimaryName("discoverTargetsButton"); //$NON-NLS-1$
-
         SafeHtml expanderImage = SafeHtmlUtils
                 .fromTrustedString(AbstractImagePrototype.create(
                         resources.expanderImage()).getHTML());
