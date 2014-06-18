@@ -133,7 +133,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         Guid destImageId = getDestinationDiskImage().getImageId();
         RemoveImageParameters p =
                 new RemoveImageParameters(destImageId);
-        p.setEntityInfo(new EntityInfo(VdcObjectType.VM, destImageId));
+        p.setEntityInfo(new EntityInfo(VdcObjectType.Disk, destImageId));
         p.setParentParameters(p);
         p.setParentCommand(VdcActionType.RemoveImage);
         VdcReturnValueBase returnValue =
