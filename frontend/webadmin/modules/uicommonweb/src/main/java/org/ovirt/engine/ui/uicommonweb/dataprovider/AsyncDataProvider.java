@@ -18,7 +18,6 @@ import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
-import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.VdcEventNotificationUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -118,7 +117,6 @@ import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
-import org.ovirt.engine.core.common.queries.TimeZoneQueryParams;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -1090,23 +1088,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getStorageDomainListByTemplate(AsyncQuery aQuery, Guid templateId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null)
-                {
-                    return new ArrayList<StorageDomain>();
-                }
-                return source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
-                new IdQueryParameters(templateId),
-                aQuery);
-    }
-
     public static void getStorageDomainList(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -1140,24 +1121,6 @@ public final class AsyncDataProvider {
                 new GetConfigurationValueParameters(ConfigurationValues.VmPriorityMaxValue,
                         getDefaultConfigurationVersion()),
                 aQuery);
-    }
-
-    public static void getDefaultTimeZone(AsyncQuery aQuery, TimeZoneType timeZoneType) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source != null)
-                {
-                    return source;
-                }
-                return ""; //$NON-NLS-1$
-            }
-        };
-
-        TimeZoneQueryParams params = new TimeZoneQueryParams();
-        params.setTimeZoneType(timeZoneType);
-        Frontend.getInstance().runQuery(VdcQueryType.GetDefaultTimeZone, params, aQuery);
     }
 
     public static void getHostById(AsyncQuery aQuery, Guid id) {
@@ -1225,54 +1188,6 @@ public final class AsyncDataProvider {
 
     public static HashMap<Integer, String> getOsUniqueOsNames() {
         return uniqueOsNames;
-    }
-
-    public final static class GetSnapshotListQueryResult {
-        private Guid privatePreviewingImage = Guid.Empty;
-
-        public Guid getPreviewingImage() {
-            return privatePreviewingImage;
-        }
-
-        private void setPreviewingImage(Guid value) {
-            privatePreviewingImage = value;
-        }
-
-        private ArrayList<DiskImage> privateSnapshots;
-
-        public ArrayList<DiskImage> getSnapshots() {
-            return privateSnapshots;
-        }
-
-        private void setSnapshots(ArrayList<DiskImage> value) {
-            privateSnapshots = value;
-        }
-
-        private DiskImage privateDisk;
-
-        public DiskImage getDisk() {
-            return privateDisk;
-        }
-
-        private void setDisk(DiskImage value) {
-            privateDisk = value;
-        }
-
-        private Guid privateVmId = Guid.Empty;
-
-        public Guid getVmId() {
-            return privateVmId;
-        }
-
-        public void setVmId(Guid value) {
-            privateVmId = value;
-        }
-
-        public GetSnapshotListQueryResult(Guid previewingImage, ArrayList<DiskImage> snapshots, DiskImage disk) {
-            setPreviewingImage(previewingImage);
-            setSnapshots(snapshots);
-            setDisk(disk);
-        }
     }
 
     public static void getAAAProfilesList(AsyncQuery aQuery) {
@@ -1828,17 +1743,6 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetClustersWithPermittedAction, getEntitiesWithPermittedActionParameters, aQuery);
     }
 
-    public static void getVmTemplatesWithPermittedAction(AsyncQuery aQuery, ActionGroup actionGroup) {
-        aQuery.converterCallback = new TemplateConverter();
-
-        GetEntitiesWithPermittedActionParameters getEntitiesWithPermittedActionParameters =
-                new GetEntitiesWithPermittedActionParameters();
-        getEntitiesWithPermittedActionParameters.setActionGroup(actionGroup);
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesWithPermittedAction,
-                getEntitiesWithPermittedActionParameters,
-                aQuery);
-    }
-
     public static void getAllVmTemplates(AsyncQuery aQuery, final boolean refresh) {
         aQuery.converterCallback = new TemplateConverter();
         VdcQueryParametersBase params = new VdcQueryParametersBase();
@@ -2358,42 +2262,6 @@ public final class AsyncDataProvider {
             searchParameters.setMaxCount(maxCount);
         }
         Frontend.getInstance().runQuery(VdcQueryType.Search, searchParameters, aQuery);
-    }
-
-    public static void getClusterListByStorageDomain(AsyncQuery _AsyncQuery,
-            Guid storageDomainId) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetStoragePoolsByStorageDomainId,
-                new IdQueryParameters(storageDomainId),
-                new AsyncQuery(_AsyncQuery, new INewAsyncCallback() {
-
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        List<StoragePool> pools =
-                                ((VdcQueryReturnValue) returnValue).getReturnValue();
-                        if (pools != null && !pools.isEmpty()) {
-                            StoragePool pool = pools.get(0);
-                            getClusterList((AsyncQuery) model, pool.getId());
-                        }
-                    }
-                }));
-    }
-
-    public static void getDataDomainsListByDomain(AsyncQuery _asyncQuery,
-            Guid storageDomainId) {
-        getDataCentersByStorageDomain(new AsyncQuery(_asyncQuery,
-                new INewAsyncCallback() {
-
-                    @Override
-                    public void onSuccess(Object model, Object returnValue) {
-                        ArrayList<StoragePool> pools = (ArrayList<StoragePool>) returnValue;
-                        StoragePool pool = pools.get(0);
-                        if (pool != null) {
-                            getStorageDomainList((AsyncQuery) model,
-                                    pool.getId());
-                        }
-
-                    }
-                }), storageDomainId);
     }
 
     public static void getVmNicList(AsyncQuery aQuery, Guid id) {
