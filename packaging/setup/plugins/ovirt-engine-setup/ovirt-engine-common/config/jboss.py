@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -49,9 +49,16 @@ class Plugin(plugin.PluginBase):
         )
 
     @plugin.event(
-        stage=plugin.Stages.STAGE_VALIDATION,
+        stage=plugin.Stages.STAGE_MISC,
+        priority=plugin.Stages.PRIORITY_FIRST,
     )
-    def _validation(self):
+    def _jboss(self):
+        """
+        Check JBOSS_HOME after ovirt-engine upgrade since jboss may be
+        upgraded as well and JBOSS_HOME may become invalid.
+        This can't be done at package stage since yum transaction is committed
+        as last action in that stage.
+        """
         if not os.path.exists(
             self.environment[
                 oengcommcons.ConfigEnv.JBOSS_HOME
