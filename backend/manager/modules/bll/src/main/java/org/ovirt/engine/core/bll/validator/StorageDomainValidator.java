@@ -61,10 +61,22 @@ public class StorageDomainValidator {
         return String.format("$%1$s %2$s", "storageName", storageDomain.getStorageName());
     }
 
+    /**
+     * @deprecated
+     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
+     * hasSpaceForNewDisk, according to the situation.
+     */
+    @Deprecated
     public ValidationResult isDomainHasSpaceForRequest(final long requestedSize) {
         return isDomainHasSpaceForRequest(requestedSize, true);
     }
 
+    /**
+     * @deprecated
+     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
+     * hasSpaceForNewDisk, according to the situation.
+     */
+    @Deprecated
     public ValidationResult isDomainHasSpaceForRequest(final long requestedSize, final boolean useThresHold) {
         long size = useThresHold ? getLowDiskSpaceThreshold() : 0L;
         if (storageDomain.getAvailableDiskSize() != null &&
@@ -158,6 +170,12 @@ public class StorageDomainValidator {
                 storageName());
     }
 
+    /**
+     * @deprecated
+     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
+     * hasSpaceForNewDisk, according to the situation.
+     */
+    @Deprecated
     public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
             Map<Guid, StorageDomain> storageDomains, Map<Guid, DiskImage> imageToDestinationDomainMap) {
         Map<DiskImage, StorageDomain> spaceMap = new HashMap<DiskImage, StorageDomain>();
@@ -172,6 +190,12 @@ public class StorageDomainValidator {
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
     }
 
+    /**
+     * @deprecated
+     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
+     * hasSpaceForNewDisk, according to the situation.
+     */
+    @Deprecated
     public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Map<DiskImage, StorageDomain> imageToDomainMap) {
         Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
         if (!imageToDomainMap.isEmpty()) {
