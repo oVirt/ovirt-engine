@@ -1766,8 +1766,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.comment: 'xs:string', cluster.data_center.id: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
-        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
-        cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
+        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy--DEPRECATED: 'xs:string',
+        cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int',
+        cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean'}
         description: update the specified cluster in the system. The capabilities like virt service, cluster service, tarnsparent huge pages etc can be changed.
@@ -1783,8 +1784,8 @@ actions:
       signatures:
       - mandatoryArguments: {cluster.data_center.id|name: 'xs:string', cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
         optionalArguments: {cluster.description: 'xs:string', cluster.comment: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
-        cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
-        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
+        cluster.scheduling_policy.policy--DEPRECATED: 'xs:string', cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int',
+        cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int', cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}, cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
         cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean',  cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string',
         cluster.ksm.enabled: 'xs:boolean'}
         description: add a new cluster to the system
@@ -2115,8 +2116,9 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {cluster.name: 'xs:string', cluster.description: 'xs:string', cluster.cpu.id: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int',
-        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy: 'xs:string',
-        cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int', cluster.scheduling_policy.thresholds.duration: 'xs:int',
+        cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean', cluster.scheduling_policy.policy--DEPRECATED: 'xs:string',
+        cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int',
+        cluster.scheduling_policy.id: 'xs:string', cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'},
         cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean', cluster.tunnel_migration: 'xs:boolean', cluster.trusted_service: 'xs:boolean', cluster.ha_reservation: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean',
         cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',}
         description: update specified cluster in the data center
@@ -2132,8 +2134,10 @@ actions:
       signatures:
       - mandatoryArguments: {cluster.name: 'xs:string', cluster.version.major: 'xs:int', cluster.version.minor: 'xs:int', cluster.cpu.id: 'xs:string'}
         optionalArguments: {cluster.description: 'xs:string', cluster.memory_policy.overcommit.percent: 'xs:double', cluster.memory_policy.transparent_hugepages.enabled: 'xs:boolean',
-        cluster.scheduling_policy.policy: 'xs:string', cluster.scheduling_policy.thresholds.low: 'xs:int', cluster.scheduling_policy.thresholds.high: 'xs:int',
-        cluster.scheduling_policy.thresholds.duration: 'xs:int', cluster.error_handling.on_error: 'xs:string', cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
+        cluster.scheduling_policy.policy--DEPRECATED: 'xs:string', cluster.scheduling_policy.thresholds.low--DEPRECATED: 'xs:int', cluster.scheduling_policy.thresholds.high--DEPRECATED: 'xs:int',
+        cluster.scheduling_policy.thresholds.duration--DEPRECATED: 'xs:int', cluster.scheduling_policy.id: 'xs:string',
+        cluster.scheduling_policy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}, cluster.error_handling.on_error: 'xs:string',
+        cluster.virt_service: 'xs:boolean', cluster.gluster_service: 'xs:boolean', cluster.threads_as_cores: 'xs:boolean',
         cluster.tunnel_migration: 'xs:boolean', cluster.ballooning_enabled: 'xs:boolean', cluster.cpu.architecture: 'xs:string', cluster.display.proxy: 'xs:string', cluster.ksm.enabled: 'xs:boolean',}
         description: add a new cluster to the data center
     urlparams: {}
@@ -5227,4 +5231,254 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
-
+- name: /schedulingpolicyunits|rel=get
+  description: get a list of scheduling policy units in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=get
+  description: get the details of the specified scheduling policy unit in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicyunits/{schedulingpolicyunit:id}|rel=delete
+  description: delete the specified disabled and external scheduling policy unit in the system
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        description: delete the specified scheduling policy unit in the system
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}|rel=update
+  description: update the specified user defined scheduling policy in the system
+  request:
+    body:
+      parameterType: SchedulingPolicy
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          schedulingpolicy.name: xs:string
+          schedulingpolicy.description: xs:string
+          schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
+        description: update the specified user defined scheduling policy in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies|rel=get
+  description: get a list of scheduling policies in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}|rel=get
+  description: get the details of the specified scheduling policy in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}|rel=delete
+  description: delete the specified user defined scheduling policy in the system
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        description: delete the specified user defined scheduling policy in the system
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies|rel=add
+  description: add a new scheduling policy to the system
+  request:
+    body:
+      parameterType: SchedulingPolicy
+      signatures:
+      - mandatoryArguments: {schedulingpolicy.name: 'xs:string'}
+        optionalArguments:
+          schedulingpolicy.description: xs:string
+          schedulingpolicy.properties.property--COLLECTION: {property.name: 'xs:string', property.value: 'xs:string'}
+        description: add a new scheduling policy to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=get
+  description: get a list of specified scheduling policy filters
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/filters/{filter:id}|rel=get
+  description: get a specified scheduling policy filter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/filters/{filter:id}|rel=delete
+  description: delete a filter from specified user defined scheduling policy
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        description: delete the specified scheduling policy in the system
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/filters|rel=add
+  description: add a filter to a specified user defined scheduling policy
+  request:
+    body:
+      parameterType: Filter
+      signatures:
+      - mandatoryArguments: {filter.scheduling_policy_unit.id: 'xs:string'}
+        optionalArguments:
+          filter.scheduling_policy_unit.position: 'xs:int'
+        description: add a new scheduling policy to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=get
+  description: get a list of specified scheduling policy weights
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/weights/{weight:id}|rel=get
+  description: get a specified scheduling policy weight
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/weights/{weight:id}|rel=delete
+  description: delete a weight from specified user defined scheduling policy
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        description: delete a weight from specified user defined scheduling policy
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/weights|rel=add
+  description: add a weight to a specified user defined scheduling policy
+  request:
+    body:
+      parameterType: Weight
+      signatures:
+      - mandatoryArguments: {weight.scheduling_policy_unit.id: 'xs:string'}
+        optionalArguments:
+          weight.scheduling_policy_unit.factor: 'xs:int'
+        description: add a weight to a specified user defined scheduling policy
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=get
+  description: get a list of specified scheduling policy balance modules
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/balances/{balance:id}|rel=get
+  description: get a specified scheduling policy balance module
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      case_sensitive: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers:
+      Filter: {value: true|false, required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/balances/{balance:id}|rel=delete
+  description: delete a balance module from specified user defined scheduling policy
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        description: delete a balance module from specified user defined scheduling policy
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /schedulingpolicies/{schedulingpolicy:id}/balances|rel=add
+  description: add a balance module to a specified user defined scheduling policy
+  request:
+    body:
+      parameterType: Balance
+      signatures:
+      - mandatoryArguments: {balance.scheduling_policy_unit.id: 'xs:string'}
+        description: add a balance module to a specified user defined scheduling policy
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
