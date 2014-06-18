@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.common.widget.editor;
 
 import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.event.dom.client.FocusHandler;
 import com.google.gwt.event.dom.client.MouseDownEvent;
 import com.google.gwt.event.dom.client.MouseDownHandler;
@@ -122,10 +123,10 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             }
         });
 
-        getSuggestionMenu().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType());
+        getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseDownEvent.getType());
 
         // no need to do additional switchSuggestions() - it is processed by MenuBar itself
-        getSuggestionMenu().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType());
+        getSuggestionMenu().getParent().addDomHandler(new FocusHandlerEnablingMouseHandlers(handlers), MouseUpEvent.getType());
 
         asSuggestBox().addValueChangeHandler(new ValueChangeHandler<String>() {
             @Override
@@ -197,6 +198,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             if (acceptableValueReplacement != null && acceptableValueReplacement.equals(selectedReplacementString)) {
                 if (items.size() > selectedItemIndex) {
                     menuBar.selectItem(items.get(selectedItemIndex));
+                    scrollSelectedItemIntoView();
                 }
 
                 break;
@@ -204,9 +206,27 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         }
     }
 
+    protected void scrollSelectedItemIntoView() {
+        if (!(getSuggestionMenu() instanceof MenuBar)) {
+            // can not select if it is not a menu bar
+            return;
+        }
+
+        MenuBar menuBar = (MenuBar) getSuggestionMenu();
+        MenuItem item = getSelectedItem(menuBar);
+        if (item != null) {
+            Element toSelect = item.getElement().getParentElement();
+            toSelect.scrollIntoView();
+        }
+    }
+
     // extremely ugly - there is just no better way how to find the items as MenuItems
     private native List<MenuItem> getItems(MenuBar menuBar) /*-{
         return menuBar.@com.google.gwt.user.client.ui.MenuBar::getItems()();
+    }-*/;
+
+    private native MenuItem getSelectedItem(MenuBar menuBar) /*-{
+        return menuBar.@com.google.gwt.user.client.ui.MenuBar::getSelectedItem()();
     }-*/;
 
     private void adjustSelectedValue() {
