@@ -171,7 +171,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     protected void TestVdsPowerManagementStatus(VdsStatic vdsStatic) {
         if (vdsStatic.isPmEnabled()) {
-            Backend.getInstance().runInternalQuery(VdcQueryType.GetVdsFenceStatus,
+            runInternalQuery(VdcQueryType.GetVdsFenceStatus,
                     new VdsIdParametersBase(vdsStatic.getId()));
         }
     }

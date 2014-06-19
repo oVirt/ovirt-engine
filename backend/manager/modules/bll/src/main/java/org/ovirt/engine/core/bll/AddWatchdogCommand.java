@@ -46,7 +46,7 @@ public class AddWatchdogCommand extends AbstractVmWatchdogCommand<WatchdogParame
             return failCanDoAction(VdcBllMessages.WATCHDOG_MODEL_REQUIRED);
         }
         VdcQueryReturnValue returnValue =
-                getBackend().runInternalQuery(VdcQueryType.GetWatchdog,
+                runInternalQuery(VdcQueryType.GetWatchdog,
                         new IdQueryParameters(getParameters().getId()));
         Collection<VmWatchdog> watchdogs = returnValue.getReturnValue();
         if (!watchdogs.isEmpty()) {

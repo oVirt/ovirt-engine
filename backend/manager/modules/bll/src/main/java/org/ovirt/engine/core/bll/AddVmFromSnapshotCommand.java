@@ -136,7 +136,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
     protected VM getVmFromConfiguration() {
         VM result = null;
         VdcQueryReturnValue queryReturnValue =
-                Backend.getInstance().runInternalQuery(VdcQueryType.GetVmConfigurationBySnapshot,
+                runInternalQuery(VdcQueryType.GetVmConfigurationBySnapshot,
                         new IdQueryParameters(snapshot.getId()));
         if (queryReturnValue.getSucceeded()) {
             result = queryReturnValue.getReturnValue();

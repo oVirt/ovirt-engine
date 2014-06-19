@@ -152,7 +152,7 @@ public class RemoveVmFromImportExportCommand<T extends RemoveVmFromImportExportP
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
                     getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
             tempVar.setIds(new ArrayList<Guid>(Collections.singletonList(getVmId())));
-            VdcQueryReturnValue qretVal = Backend.getInstance().runInternalQuery(
+            VdcQueryReturnValue qretVal = runInternalQuery(
                     VdcQueryType.GetVmsFromExportDomain, tempVar);
 
             if (qretVal != null && qretVal.getSucceeded()) {

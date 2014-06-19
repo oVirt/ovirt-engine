@@ -157,16 +157,15 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         addVmParams.setSoundDeviceEnabled(deviceExists(VmDeviceGeneralType.SOUND, VmDeviceType.SOUND));
         addVmParams.setVirtioScsiEnabled(deviceExists(VmDeviceGeneralType.CONTROLLER, VmDeviceType.VIRTIOSCSI));
 
-        List<VmWatchdog> watchdogs = getBackend().runInternalQuery(VdcQueryType.GetWatchdog,
+        List<VmWatchdog> watchdogs = runInternalQuery(VdcQueryType.GetWatchdog,
                 new IdQueryParameters(getVmTemplateId())).getReturnValue();
         if (!watchdogs.isEmpty()) {
             addVmParams.setWatchdog(watchdogs.get(0));
         }
 
         if (!StringUtils.isEmpty(getParameters().getSessionId())) {
-            IdQueryParameters p = new IdQueryParameters(getVmTemplateId());
-            p.setSessionId(getParameters().getSessionId());
-            VmPayload payload = getBackend().runInternalQuery(VdcQueryType.GetVmPayload, p).getReturnValue();
+            VmPayload payload = runInternalQuery(VdcQueryType.GetVmPayload,
+                    new IdQueryParameters(getVmTemplateId())).getReturnValue();
 
             if (payload != null) {
                 addVmParams.setVmPayload(payload);

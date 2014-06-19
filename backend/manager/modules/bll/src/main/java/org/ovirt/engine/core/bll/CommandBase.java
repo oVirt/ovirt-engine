@@ -66,6 +66,9 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -2146,4 +2149,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             ExecutionContext executionContext) {
         return getBackend().runInternalMultipleActions(actionType, parameters, executionContext);
     }
+
+
+    protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {
+        return getBackend().runInternalQuery(type, queryParams);
+    }
+
 }

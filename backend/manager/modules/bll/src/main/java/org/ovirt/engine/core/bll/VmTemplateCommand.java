@@ -207,7 +207,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
             VdcQueryReturnValue query =
-                    getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
+                    runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(templateId));
             List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {
                 if (getParameters().getWatchdog() != null) {
@@ -243,7 +243,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
         // do not update if this flag is not set
         if (getParameters().isUpdateRngDevice()) {
             VdcQueryReturnValue query =
-                    getBackend().runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId));
+                    runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(templateId));
 
             List<VmRngDevice> rngDevs = query.getReturnValue();
 

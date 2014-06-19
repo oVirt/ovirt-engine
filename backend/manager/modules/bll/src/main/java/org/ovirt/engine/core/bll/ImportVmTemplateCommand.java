@@ -109,7 +109,7 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             // Set the template images from the Export domain and change each image id storage is to the import domain
             GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(getParameters()
                     .getStoragePoolId(), getParameters().getSourceDomainId());
-            VdcQueryReturnValue qretVal = getBackend().runInternalQuery(
+            VdcQueryReturnValue qretVal = runInternalQuery(
                     VdcQueryType.GetTemplatesFromExportDomain, tempVar);
             retVal = qretVal.getSucceeded();
             if (retVal) {

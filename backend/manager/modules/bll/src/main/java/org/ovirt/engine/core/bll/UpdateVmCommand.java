@@ -147,7 +147,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // do not update if this flag is not set
         if (getParameters().isUpdateRngDevice()) {
             VdcQueryReturnValue query =
-                    getBackend().runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
+                    runInternalQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(getParameters().getVmId()));
 
             @SuppressWarnings("unchecked")
             List<VmRngDevice> rngDevs = query.getReturnValue();
@@ -248,7 +248,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // do not update if this flag is not set
         if (getParameters().isUpdateWatchdog()) {
             VdcQueryReturnValue query =
-                    getBackend().runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
+                    runInternalQuery(VdcQueryType.GetWatchdog, new IdQueryParameters(getParameters().getVmId()));
             List<VmWatchdog> watchdogs = query.getReturnValue();
             if (watchdogs.isEmpty()) {
                 if (getParameters().getWatchdog() == null) {

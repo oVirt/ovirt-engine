@@ -163,7 +163,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
 
         // check that nic have no vlans
         if (vmNetworkNonVlan(logicalNetwork)) {
-            VdcQueryReturnValue ret = Backend.getInstance().runInternalQuery(
+            VdcQueryReturnValue ret = runInternalQuery(
                     VdcQueryType.GetAllChildVlanInterfaces,
                     new InterfaceAndIdQueryParameters(params.getVdsId(), params
                             .getInterface()));

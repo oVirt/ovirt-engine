@@ -83,7 +83,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     protected Collection<DiskImage> getDiskImagesFromConfiguration() {
-        VdcQueryReturnValue vdcReturnValue = getBackend().runInternalQuery(
+        VdcQueryReturnValue vdcReturnValue = runInternalQuery(
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
 
@@ -160,7 +160,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     private void attachDisks() {
 
-        VdcQueryReturnValue vdcReturnValue = getBackend().runInternalQuery(
+        VdcQueryReturnValue vdcReturnValue = runInternalQuery(
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
 
@@ -174,7 +174,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     private void attachDisk(Disk disk) {
-        getBackend().runInternalAction(
+        runInternalAction(
                 VdcActionType.AttachDiskToVm,
                 new AttachDetachVmDiskParameters(
                         getParameters().getNewVmGuid(),
