@@ -346,9 +346,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             }
         } finally {
             freeLockExecute();
-            if (!getReturnValue().getSucceeded()) {
-                clearAsyncTasksWithOutVdsmId();
-            }
+            clearAsyncTasksWithOutVdsmId();
         }
         return getReturnValue();
     }
