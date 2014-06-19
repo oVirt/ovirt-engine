@@ -85,7 +85,7 @@
 		.messageLabel {
 			color: red;
 			font-size: 9px;
-			width: 500px;
+			width: 100%;
 			padding-left: 5px;
 			padding-right: 5px;
 			padding-top: 1px;
@@ -100,7 +100,11 @@
 			width: 225px;
 			text-align: right;
 		}
-	</ui:style>	
+
+        .discoverTargetsButton {
+            margin: 2px;
+        }
+    </ui:style>
 
 	<g:FlowPanel>
 		<g:HorizontalPanel ui:field="discoverTargetsLabelPanel" addStyleNames="{style.discoverTargetsLabelPanel}">
