@@ -9,12 +9,14 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -67,8 +69,14 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
-                DbFacade.getInstance().getStorageDomainStaticDao().save(getStorageDomain().getStorageStaticData());
-                getCompensationContext().snapshotNewEntity(getStorageDomain().getStorageStaticData());
+                StorageDomainStatic storageStaticData = getStorageDomain().getStorageStaticData();
+                DbFacade.getInstance().getStorageDomainStaticDao().save(storageStaticData);
+                // create default disk profile for type master or data storage domains
+                if (storageStaticData.getStorageDomainType().isDataDomain()) {
+                    getDiskProfileDao().save(DiskProfileHelper.createDiskProfile(storageStaticData.getId(),
+                            storageStaticData.getStorageName()));
+                }
+                getCompensationContext().snapshotNewEntity(storageStaticData);
                 StorageDomainDynamic newStorageDynamic =
                         new StorageDomainDynamic(null, getStorageDomain().getId(), null);
                 getReturnValue().setActionReturnValue(getStorageDomain().getId());

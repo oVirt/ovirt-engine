@@ -90,3 +90,13 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION nullifyQosForStorageDomain(v_storage_domain_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+UPDATE disk_profiles
+   SET qos_id = NULL
+   WHERE storage_domain_id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;

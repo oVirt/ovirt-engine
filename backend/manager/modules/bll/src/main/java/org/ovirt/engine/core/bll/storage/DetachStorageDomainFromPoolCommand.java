@@ -70,6 +70,9 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
                         .getStoragePoolIsoMapDao()
                         .remove(new StoragePoolIsoMapId(mapToRemove.getstorage_id(),
                                 mapToRemove.getstorage_pool_id()));
+                // when detaching SD for data center, we should remove any attachment to qos, which is part of the old
+                // data center
+                DbFacade.getInstance().getDiskProfileDao().nullifyQosForStorageDomain(getStorageDomain().getId());
                 getCompensationContext().stateChanged();
                 return null;
             }
