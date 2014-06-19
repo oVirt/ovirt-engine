@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -387,14 +386,6 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     public VdcReturnValueBase getReturnValue() {
         return super.getReturnValue();
-    }
-
-    public ExecutionContext getExecutionContext() {
-        return super.getExecutionContext();
-    }
-
-    public void setExecutionContext(ExecutionContext executionContext) {
-        super.setExecutionContext(executionContext);
     }
 
     public Guid createTask(Guid taskId,

@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.NullableMemoryImageBuilder;
@@ -616,16 +615,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return super.getReturnValue();
     }
 
-    public ExecutionContext getExecutionContext() {
-        return super.getExecutionContext();
-    }
-
     public void preventRollback() {
         throw new NotImplementedException();
-    }
-
-    public void setExecutionContext(ExecutionContext executionContext) {
-        super.setExecutionContext(executionContext);
     }
 
     public Guid createTask(Guid taskId,

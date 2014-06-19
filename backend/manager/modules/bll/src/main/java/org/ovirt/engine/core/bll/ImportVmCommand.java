@@ -12,7 +12,6 @@ import java.util.Set;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
@@ -336,7 +335,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         GetAllFromExportDomainQueryParameters p =
                 new GetAllFromExportDomainQueryParameters
                 (getParameters().getStoragePoolId(), getParameters().getSourceDomainId());
-        VdcQueryReturnValue qRetVal = getBackend().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
+        VdcQueryReturnValue qRetVal = Backend.getInstance().runInternalQuery(VdcQueryType.GetVmsFromExportDomain, p);
         return qRetVal.getSucceeded() ? qRetVal.<List<VM>>getReturnValue() : null;
     }
 
@@ -1319,16 +1318,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     @Override
     public VdcReturnValueBase getReturnValue() {
         return super.getReturnValue();
-    }
-
-    @Override
-    public ExecutionContext getExecutionContext() {
-        return super.getExecutionContext();
-    }
-
-    @Override
-    public void setExecutionContext(ExecutionContext executionContext) {
-        super.setExecutionContext(executionContext);
     }
 
     @Override
