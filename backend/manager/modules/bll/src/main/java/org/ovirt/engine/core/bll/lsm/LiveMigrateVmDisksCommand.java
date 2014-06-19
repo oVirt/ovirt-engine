@@ -343,9 +343,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     }
 
     private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
-        StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
-
-        if (sourceDomain.getId().equals(parameters.getTargetStorageDomainId())) {
+        if (parameters.getSourceStorageDomainId().equals(parameters.getTargetStorageDomainId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
 
