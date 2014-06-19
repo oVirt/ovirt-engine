@@ -149,7 +149,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
                 || MIGRATION_PROGRESS_PERCENT.equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         } else if (TAG.equals(fieldName)) {
-            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
+            return StringConditionRelationAutoCompleter.INSTANCE;
         } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
         }

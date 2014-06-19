@@ -95,9 +95,7 @@ public class VdsConditionFieldAutoCompleter extends BaseConditionFieldAutoComple
                 || "COMMITTED_MEM".equals(fieldName)) {
             return NumericConditionRelationAutoCompleter.INSTANCE;
         }
-        else if ("TAG".equals(fieldName)) {
-            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
-        } else {
+        else {
             return StringConditionRelationAutoCompleter.INSTANCE;
         }
     }

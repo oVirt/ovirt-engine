@@ -60,11 +60,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if ("TAG".equals(fieldName)) {
-            return StringOnlyEqualConditionRelationAutoCompleter.INSTANCE;
-        } else {
             return StringConditionRelationAutoCompleter.INSTANCE;
-        }
     }
 
     @Override
