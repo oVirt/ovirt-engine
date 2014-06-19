@@ -883,22 +883,6 @@ public final class AsyncDataProvider {
                 aQuery);
     }
 
-    public static void getAllQuotasByClusterId(AsyncQuery aQuery, Guid clusterId) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null) {
-                    return new ArrayList<Quota>();
-                }
-                return (ArrayList<Quota>) source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
-                new IdQueryParameters(clusterId),
-                aQuery);
-    }
-
     public static void isSoundcardEnabled(AsyncQuery aQuery, Guid vmId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
@@ -3018,20 +3002,6 @@ public final class AsyncDataProvider {
         getConfigFromCache(tempVar, aQuery);
     }
 
-    public static void isMTUOverrideSupported(AsyncQuery aQuery, String version) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? ((Boolean) source).booleanValue() : true;
-            }
-        };
-        GetConfigurationValueParameters tempVar =
-                new GetConfigurationValueParameters(ConfigurationValues.MTUOverrideSupported);
-        tempVar.setVersion(version);
-        getConfigFromCache(tempVar, aQuery);
-    }
-
     public static void fillTagsRecursive(Tags tagToFill, List<Tags> children)
     {
         ArrayList<Tags> list = new ArrayList<Tags>();
@@ -3423,16 +3393,6 @@ public final class AsyncDataProvider {
                 asyncQuery);
     }
 
-    public static ArchitectureType getArchitectureTypeByOsId(Integer osId) {
-        if ((osId != null)
-                && (osArchitectures != null)
-                && (!osArchitectures.isEmpty())) {
-            return osArchitectures.get(osId);
-        } else {
-            return ArchitectureType.undefined;
-        }
-    }
-
     public static void getVmWatchdogTypes(int osId, Version version,
             AsyncQuery asyncQuery) {
         Frontend.getInstance().runQuery(VdcQueryType.OsRepository, new OsQueryParameters(
@@ -3509,21 +3469,6 @@ public final class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetVmGuestAgentInterfacesByVmId, new IdQueryParameters(vmId), aQuery);
-    }
-
-    public static void getAllVnicProfiles(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                if (source == null)
-                {
-                    return new ArrayList<VnicProfileView>();
-                }
-                return source;
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAllVnicProfiles, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getVnicProfilesByNetworkId(AsyncQuery aQuery, Guid networkId) {
