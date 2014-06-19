@@ -34,7 +34,7 @@ public class Utils {
                 throw new RuntimeException(e);
             }
         }
-        if (StringUtils.isBlank(conf.getProperty("config.LDAPServers"))) {
+        if (StringUtils.isBlank(conf.getProperty("config.LdapServers"))) {
             try {
 
                 LdapSRVLocator locator = new LdapSRVLocator();
@@ -48,7 +48,7 @@ public class Utils {
                         String ldapURI = locator.constructURI("ldap", address, "389").toString();
                         ldapServers.add(ldapURI);
                     }
-                    conf.setProperty("config.LDAPServers", StringUtils.join(ldapServers, ","));
+                    conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ","));
                 }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
