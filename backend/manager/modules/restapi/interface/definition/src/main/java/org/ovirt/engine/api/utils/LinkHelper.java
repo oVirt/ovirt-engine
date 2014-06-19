@@ -59,6 +59,7 @@ import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.LinkCapabilities;
+import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NumaNode;
@@ -139,6 +140,8 @@ import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.LabelResource;
 import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.MacPoolResource;
+import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
@@ -270,6 +273,9 @@ public class LinkHelper {
 
         map = new ParentToCollectionMap(DataCenterResource.class, DataCentersResource.class);
         TYPES.put(DataCenter.class, map);
+
+        map = new ParentToCollectionMap(MacPoolResource.class, MacPoolsResource.class);
+        TYPES.put(MacPool.class, map);
 
         map = new ParentToCollectionMap(MovableCopyableDiskResource.class, DisksResource.class);
         map.add(VmDiskResource.class, VmDisksResource.class, VM.class);

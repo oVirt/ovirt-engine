@@ -1914,6 +1914,74 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /macpools|rel=get
+  description: get a list of mac pools in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /macpools/{macpool:id}|rel=get
+  description: get the details of the specified mac pool in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /macpools|rel=add
+  description: add the specified mac pool into the system
+  request:
+    body:
+      parameterType: MacPool
+      signatures:
+      - mandatoryArguments:
+          macpool.name: xs:string
+          macpool.ranges.range--COLLECTION: {range.from: 'xs:string', range.to: 'xs:string'}
+        optionalArguments:
+          macpool.description: xs:string
+          macpool.allow_duplicates: xs:boolean
+          macpool.default_pool: xs:boolean
+        description: add the specified mac pool into the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /macpools/{macpool:id}|rel=delete
+  description: delete the specified mac pool from the system
+  request:
+    body:
+      required: false
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+        description: delete the specified data center from the system
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /macpools/{macpool:id}|rel=update
+  description: update the specified mac pool in the system
+  request:
+    body:
+      parameterType: MacPool
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          macpool.name: xs:string
+          macpool.description: xs:string
+          macpool.allow_duplicates: xs:boolean
+          macpool.default_pool: xs:boolean
+          macpool.ranges.range--COLLECTION: {range.from: 'xs:string', range.to: 'xs:string'}
+        description: update the specified mac pool in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /datacenters/{datacenter:id}|rel=update
   description: update the specified data center in the system
   request:
@@ -1931,6 +1999,7 @@ actions:
           datacenter.version.minor: xs:int
           datacenter.description: xs:string
           datacenter.storage_format: xs:string
+          datacenter.mac_pool.id: xs:string
         description: update the specified data center in the system
     urlparams: {}
     headers:
@@ -1988,6 +2057,7 @@ actions:
           datacenter.storage_type--DEPRECATED: xs:string
           datacenter.version.major: xs:int
           datacenter.version.minor: xs:int
+          datacenter.mac_pool.id: xs:string
         description: add a new data center to the system
     urlparams: {}
     headers:

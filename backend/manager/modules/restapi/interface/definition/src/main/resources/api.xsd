@@ -1225,6 +1225,59 @@
     </xs:sequence>
   </xs:complexType>
 
+  <!-- Mac Pools-->
+  <xs:element name="mac_pool" type="MacPool"/>
+  <xs:element name="mac_pools" type="MacPools"/>
+
+  <xs:complexType name="MacPool">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="allow_duplicates" type="xs:boolean" minOccurs="1"/>
+          <xs:element name="default_pool" type="xs:boolean" minOccurs="0"/>
+          <xs:element ref="ranges" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="MacPools">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:annotation>
+            <xs:appinfo>
+              <jaxb:property name="MacPools"/>
+            </xs:appinfo>
+          </xs:annotation>
+          <xs:element ref="mac_pool" minOccurs="0" maxOccurs="unbounded"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="range" type="Range"/>
+  <xs:element name="ranges" type="Ranges"/>
+
+  <xs:complexType name="Range">
+    <xs:sequence>
+      <xs:element name="from" type="xs:string"/>
+      <xs:element name="to" type="xs:string"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="Ranges">
+    <xs:sequence>
+      <xs:element ref="range" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="Ranges"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Data Centers -->
 
   <xs:element name="data_center" type="DataCenter"/>
@@ -1242,6 +1295,7 @@
             <xs:element name="version" type="Version" minOccurs="0" />
             <xs:element name="supported_versions" type="SupportedVersions" minOccurs="0" />
             <xs:element ref="status" minOccurs="0" maxOccurs="1" />
+            <xs:element ref="mac_pool" minOccurs="0" />
             <!-- also rel="files" and rel="storagedomains" links -->
         </xs:sequence>
       </xs:extension>

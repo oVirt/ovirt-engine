@@ -42,6 +42,7 @@ transfers:
   link: org.ovirt.engine.api.model.Link
   logical_unit: org.ovirt.engine.api.model.LogicalUnit
   mac: org.ovirt.engine.api.model.MAC
+  mac_pool: org.ovirt.engine.api.model.MacPool
   memory_statistics: org.ovirt.engine.api.model.MemoryStatistics
   network: org.ovirt.engine.api.model.Network
   networks: org.ovirt.engine.api.model.Networks
@@ -151,6 +152,7 @@ handlers:
   org.ovirt.engine.api.model.Link: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.LogicalUnit: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.MAC: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
+  org.ovirt.engine.api.model.MacPool: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.MemoryStatistics: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Network: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper
   org.ovirt.engine.api.model.Networks: org.ovirt.engine.api.resteasy.yaml.CustomBeanWrapper

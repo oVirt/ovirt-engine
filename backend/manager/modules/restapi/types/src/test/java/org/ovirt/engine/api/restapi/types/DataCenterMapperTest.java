@@ -1,12 +1,11 @@
 package org.ovirt.engine.api.restapi.types;
 
 import org.junit.Test;
-
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 
 public class DataCenterMapperTest extends
         AbstractInvertibleMappingTest<DataCenter, StoragePool, StoragePool> {
@@ -30,6 +29,7 @@ public class DataCenterMapperTest extends
         assertEquals(model.getComment(), transform.getComment());
         assertEquals(model.isLocal(), transform.isLocal());
         assertEquals(model.getStorageFormat(), transform.getStorageFormat());
+        assertEquals(model.getMacPool().getId(), transform.getMacPool().getId());
     }
 
     @Test

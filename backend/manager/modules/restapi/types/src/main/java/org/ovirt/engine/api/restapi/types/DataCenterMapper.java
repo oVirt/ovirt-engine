@@ -4,12 +4,13 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.DataCenterStatus;
+import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.StorageType;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.model.StorageFormat;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 
 public class DataCenterMapper {
 
@@ -47,6 +48,11 @@ public class DataCenterMapper {
             entity.setcompatibility_version(new org.ovirt.engine.core.compat.Version(model.getVersion().getMajor(),
                                                                                 model.getVersion().getMinor()));
         }
+
+        if (model.isSetMacPool() && model.getMacPool().isSetId()) {
+            entity.setMacPoolId(GuidUtils.asGuid(model.getMacPool().getId()));
+        }
+
         return entity;
     }
 
@@ -77,6 +83,12 @@ public class DataCenterMapper {
                 model.setStorageFormat(storageFormat.value());
             }
         }
+
+        if (entity.getMacPoolId() != null) {
+            model.setMacPool(new MacPool());
+            model.getMacPool().setId(entity.getMacPoolId().toString());
+        }
+
         return model;
     }
 

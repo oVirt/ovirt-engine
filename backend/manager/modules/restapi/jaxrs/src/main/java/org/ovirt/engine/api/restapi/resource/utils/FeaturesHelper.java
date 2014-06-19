@@ -87,6 +87,7 @@ public class FeaturesHelper {
             addFeatureDiskSnapshotsResourceInStorageDomainContext(features);
             addInstanceTypesFeature(features);
             addNumaNodesFeature(features);
+            addMacPoolsFeature(features);
         }
         return features;
     }
@@ -484,6 +485,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("NumaNodes");
         feature.setDescription("Add/modify/remove numanodes.");
+        features.getFeature().add(feature);
+    }
+
+    private void addMacPoolsFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Mac Pools");
+        feature.setDescription("Configuring MAC address pools for data centers");
         features.getFeature().add(feature);
     }
 }

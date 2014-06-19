@@ -55,6 +55,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("schedulingpolicyunits", baseUri));
         links.add(createLink("schedulingpolicies", baseUri));
         links.add(createLink("permissions", baseUri));
+        links.add(createLink("macpools", baseUri));
         return links;
     }
 
