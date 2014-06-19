@@ -213,7 +213,7 @@ public class AddDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
     }
 
     /**
@@ -419,7 +419,7 @@ public class AddDiskToVmCommandTest {
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
         when(storageDomainValidator.hasSpaceForNewDisk(any(DiskImage.class))).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN));
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         return storageDomainValidator;
     }
 

@@ -98,7 +98,7 @@ public class LiveMigrateVmDisksCommandTest {
         command = spy(new LiveMigrateVmDisksCommand<LiveMigrateVmDisksParameters>(
                 new LiveMigrateVmDisksParameters(new ArrayList<LiveMigrateDiskParameters>(), vmId), null));
 
-        doReturn(true).when(command).isValidSpaceRequirements();
+        doReturn(true).when(command).validateSpaceRequirements();
         doReturn(true).when(command).checkImagesStatus();
     }
 

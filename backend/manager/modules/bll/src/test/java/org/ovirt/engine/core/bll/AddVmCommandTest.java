@@ -150,7 +150,7 @@ public class AddVmCommandTest {
         assertTrue("canDoAction failed for the wrong reason",
                 cmd.getReturnValue()
                         .getCanDoActionMessages()
-                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
+                        .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
     }
 
     protected void mockOsRepository() {
@@ -258,7 +258,7 @@ public class AddVmCommandTest {
     public void validateSpaceNotEnough() throws Exception {
         AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN)).
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());
@@ -269,7 +269,7 @@ public class AddVmCommandTest {
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
         AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
-        doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN))).
+        doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
                when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());

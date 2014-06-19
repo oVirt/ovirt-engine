@@ -286,7 +286,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     protected boolean canDoAction() {
         setStoragePoolId(getVm().getStoragePoolId());
 
-        if (!isValidParametersList() || !checkImagesStatus() || !isValidSpaceRequirements()
+        if (!isValidParametersList() || !checkImagesStatus() || !validateSpaceRequirements()
                 || !performVmRelatedChecks()) {
             return false;
         }
@@ -386,7 +386,12 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         return validate(validator.isDomainExistAndActive()) && validate(validator.domainIsValidDestination());
     }
 
-    protected boolean isValidSpaceRequirements() {
+    protected boolean validateSpaceRequirements() {
+        return validateDestDomainsSpaceRequirements()
+            && validateSourceDomainsSpaceRequirements();
+    }
+
+    protected boolean validateDestDomainsSpaceRequirements() {
         Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<Guid, List<DiskImage>>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
@@ -413,7 +418,33 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                 diskImage.getSnapshots().addAll(allImageSnapshots);
             }
 
-            if (!doesStorageDomainHaveSpaceForRequest(destDomain, disksList)) {
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(destDomain);
+            if (!validate(storageDomainValidator.hasSpaceForClonedDisks(disksList))) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    protected boolean validateSourceDomainsSpaceRequirements() {
+        Map<Guid, List<DiskImage>> storageDomainsActiveImagesMap = new HashMap<>();
+
+        for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
+            DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
+            MultiValueMapUtils.addToMap(parameters.getSourceStorageDomainId(),
+                    diskImage,
+                    storageDomainsActiveImagesMap);
+        }
+
+        for (Map.Entry<Guid, List<DiskImage>> entry : storageDomainsActiveImagesMap.entrySet()) {
+            Guid sourceDomainId = entry.getKey();
+            List<DiskImage> disksList = entry.getValue();
+            Guid storagePoolId = disksList.get(0).getStoragePoolId();
+            StorageDomain sourceDomain = getStorageDomainById(sourceDomainId, storagePoolId);
+
+            StorageDomainValidator storageDomainValidator = createStorageDomainValidator(sourceDomain);
+            if (!validate(storageDomainValidator.hasSpaceForNewDisks(disksList))) {
                 return false;
             }
         }
@@ -427,11 +458,6 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     protected boolean isStorageDomainWithinThresholds(StorageDomain storageDomain) {
         return validate(new StorageDomainValidator(storageDomain).isDomainWithinThresholds());
-    }
-
-    protected boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, List<DiskImage> disksList) {
-        StorageDomainValidator storageDomainValidator = createStorageDomainValidator(storageDomain);
-        return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
     private boolean performVmRelatedChecks() {

@@ -97,7 +97,7 @@ public class MultipleStorageDomainsValidatorTest {
         ValidationResult result = validator.allDomainsWithinThresholds();
         assertFalse("domain2 should not be within thresholds", result.isValid());
         assertEquals("Wrong validation error",
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 result.getMessage());
     }
 }

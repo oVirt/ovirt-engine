@@ -256,12 +256,12 @@ public class CreateAllSnapshotsFromVmCommandTest {
         setUpGeneralValidations();
         setUpDiskValidations();
         doReturn(getNonEmptyDiskList()).when(cmd).getDisksList();
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
                 .allDomainsExistAndActive();
         assertFalse(cmd.canDoAction());
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.name()));
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.name()));
     }
 
     private void setUpDiskValidations() {

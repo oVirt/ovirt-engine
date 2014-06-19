@@ -183,7 +183,7 @@ public class MoveOrCopyDiskCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     @Test
@@ -234,7 +234,7 @@ public class MoveOrCopyDiskCommandTest {
     private static StorageDomainValidator mockStorageDomainValidatorWithoutSpace() {
         StorageDomainValidator storageDomainValidator = mockStorageDomainValidator();
         when(storageDomainValidator.hasSpaceForClonedDisk(any(DiskImage.class))).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN));
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         return storageDomainValidator;
     }
 

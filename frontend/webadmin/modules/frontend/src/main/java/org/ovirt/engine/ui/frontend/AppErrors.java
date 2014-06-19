@@ -553,8 +553,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Data Center's Storage Pool Manager has changed.")
     String ACTION_TYPE_FAILED_SPM_CHANGED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Low disk space on target Storage Domain ${storageName}.")
-    String ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN();
+    @DefaultStringValue("Cannot ${action} ${type}. Low disk space on Storage Domain ${storageName}.")
+    String ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN();
 
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to a specific host. The host's cluster must be the same as the selected VM cluster.")
     String ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER();

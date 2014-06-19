@@ -51,7 +51,7 @@ public class StorageDomainValidator {
     public ValidationResult isDomainWithinThresholds() {
         StorageDomainDynamic dynamic = storageDomain.getStorageDynamicData();
         if (dynamic != null && dynamic.getfreeDiskInGB() < getLowDiskSpaceThreshold()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                     storageName());
         }
         return ValidationResult.VALID;
@@ -81,7 +81,7 @@ public class StorageDomainValidator {
         long size = useThresHold ? getLowDiskSpaceThreshold() : 0L;
         if (storageDomain.getAvailableDiskSize() != null &&
                 storageDomain.getAvailableDiskSize() - requestedSize < size) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                     storageName());
         }
         return ValidationResult.VALID;
@@ -166,7 +166,7 @@ public class StorageDomainValidator {
             return ValidationResult.VALID;
         }
 
-        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+        return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 storageName());
     }
 

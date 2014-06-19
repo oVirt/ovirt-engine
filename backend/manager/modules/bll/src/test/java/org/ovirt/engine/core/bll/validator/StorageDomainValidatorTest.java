@@ -64,7 +64,7 @@ public class StorageDomainValidatorTest {
     public void testDomainWithNotEnoughSpaceForRequest() {
         validator = new StorageDomainValidator(mockStorageDomain(12, 748, StorageType.NFS));
         assertEquals("Wrong failure for not enough space for request",
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.isDomainHasSpaceForRequest(10).getMessage());
     }
 
@@ -72,7 +72,7 @@ public class StorageDomainValidatorTest {
     public void testDomainWithNotEnoughSpace() {
         validator = new StorageDomainValidator(mockStorageDomain(3, 756, StorageType.NFS));
         assertEquals("Wrong failure for not enough space",
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.isDomainWithinThresholds().getMessage());
     }
 
@@ -80,7 +80,7 @@ public class StorageDomainValidatorTest {
     public void testDomainWithNotEnoughSpaceForRequestWithoutThreshold() {
         validator = new StorageDomainValidator(mockStorageDomain(12, 748, StorageType.NFS));
         assertEquals("Wrong failure for not enough space for request",
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 validator.isDomainHasSpaceForRequest(13, false).getMessage());
     }
 
