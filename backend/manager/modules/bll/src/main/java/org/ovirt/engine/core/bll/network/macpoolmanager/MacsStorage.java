@@ -64,8 +64,7 @@ class MacsStorage {
         final List<Long> result = new ArrayList<>(numberOfMacs);
         int remainingMacs = numberOfMacs;
         while (remainingMacs > 0) {
-            final Range rangeWithAvailableMac = getRangeWithAvailableMac();
-            final List<Long> allocatedMacs = rangeWithAvailableMac.allocateMacs(remainingMacs);
+            final List<Long> allocatedMacs = getRangeWithAvailableMac().allocateMacs(remainingMacs);
 
             remainingMacs -= allocatedMacs.size();
             result.addAll(allocatedMacs);
