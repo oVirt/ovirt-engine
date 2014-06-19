@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Size;
 
@@ -99,7 +100,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
-    private Set<VmRngDevice.Source> requiredRngSources;
+    private final Set<VmRngDevice.Source> requiredRngSources;
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
@@ -350,18 +351,22 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         this.spiceProxy = spiceProxy;
     }
 
+    @Override
     public String getCustomSerialNumber() {
         return customSerialNumber;
     }
 
+    @Override
     public void setCustomSerialNumber(String customSerialNumber) {
         this.customSerialNumber = customSerialNumber;
     }
 
+    @Override
     public SerialNumberPolicy getSerialNumberPolicy() {
         return serialNumberPolicy;
     }
 
+    @Override
     public void setSerialNumberPolicy(SerialNumberPolicy serialNumberPolicy) {
         this.serialNumberPolicy = serialNumberPolicy;
     }
@@ -424,6 +429,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
             return false;
         }
         VDSGroup other = (VDSGroup) obj;
+        // *ATTENTION* when adding fields to this, please make sure that equals still works, if not this will
+        // cause all kinds of havoc in the UI when clusters are refreshed.
         return (ObjectUtils.objectsEqual(id, other.id)
                 && ObjectUtils.objectsEqual(compatVersion, other.compatVersion)
                 && ObjectUtils.objectsEqual(compatibility_version, other.compatibility_version)

@@ -36,4 +36,42 @@ public class VDSGroupHostsAndVMs extends IVdcQueryable implements Serializable {
         this.vms = vms;
     }
 
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + hosts;
+        result = prime * result + ((vdsGroupId == null) ? 0 : vdsGroupId.hashCode());
+        result = prime * result + vms;
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        VDSGroupHostsAndVMs other = (VDSGroupHostsAndVMs) obj;
+        if (hosts != other.hosts) {
+            return false;
+        }
+        if (vdsGroupId == null) {
+            if (other.vdsGroupId != null) {
+                return false;
+            }
+        } else if (!vdsGroupId.equals(other.vdsGroupId)) {
+            return false;
+        }
+        if (vms != other.vms) {
+            return false;
+        }
+        return true;
+    }
+
 }
