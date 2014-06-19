@@ -8,7 +8,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
-
 import javax.naming.spi.DirectoryManager;
 import javax.security.auth.login.Configuration;
 
@@ -34,26 +33,33 @@ public class Utils {
                 throw new RuntimeException(e);
             }
         }
-        if (StringUtils.isBlank(conf.getProperty("config.LdapServers"))) {
-            try {
 
-                LdapSRVLocator locator = new LdapSRVLocator();
+        List<String> ldapServers = new ArrayList<>();
+        LdapSRVLocator locator = new LdapSRVLocator();
+        try {
+            if (StringUtils.isBlank(conf.getProperty("config.LdapServers"))) {
+                // list of LDAP servers is empty, find LDAP servers using DNS SRV records and convert them
+                // into the list of URIs
                 DnsSRVResult results = locator.getLdapServers(domain);
                 if (results == null || results.getNumOfValidAddresses() == 0) {
                     throw new Exception(String.format("No ldap servers  were found for domain %1$s", domain));
                 } else {
-                    List<String> ldapServers = new ArrayList<>();
                     for (int counter = 0; counter < results.getNumOfValidAddresses(); counter++) {
                         String address = results.getAddresses()[counter];
                         String ldapURI = locator.constructURI("ldap", address, "389").toString();
                         ldapServers.add(ldapURI);
                     }
-                    conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ";"));
                 }
-            } catch (Exception ex) {
-                throw new RuntimeException(ex);
+            } else {
+                // list of LDAP servers was entered, convert them to URIs
+                for (String server : conf.getProperty("config.LdapServers").split(";")) {
+                    ldapServers.add(locator.constructURI("ldap", server, "389").toString());
+                }
             }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
+        conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ";"));
     }
 
     private static void putIfAbsent(Properties props, String key, String value) {
