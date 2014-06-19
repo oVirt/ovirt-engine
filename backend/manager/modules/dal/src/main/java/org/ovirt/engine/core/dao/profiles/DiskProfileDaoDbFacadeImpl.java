@@ -24,6 +24,12 @@ public class DiskProfileDaoDbFacadeImpl extends ProfileBaseDaoFacadeImpl<DiskPro
     }
 
     @Override
+    public void nullifyQosForStorageDomain(Guid storageDomainId) {
+        getCallsHandler().executeModification("nullifyQosForStorageDomain",
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId.getUuid()));
+    }
+
+    @Override
     protected RowMapper<DiskProfile> createEntityRowMapper() {
         return MAPPER;
     }

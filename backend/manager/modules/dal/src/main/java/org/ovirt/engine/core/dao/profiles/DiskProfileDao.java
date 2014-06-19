@@ -16,4 +16,15 @@ public interface DiskProfileDao extends ProfilesDao<DiskProfile>, GenericDao<Dis
      * @return the list of disk profiles
      */
     List<DiskProfile> getAllForStorageDomain(Guid storageDomainId);
+
+    /**
+     * set null in qos field for all disk profiles attached to storage domain
+     * (when detaching SD for data center, we should remove any attachment to qos, which is part of the
+     * old data center)
+     *
+     * @param storageDomainId
+     *            Detached storage domain id
+     */
+    void nullifyQosForStorageDomain(Guid storageDomainId);
+
 }
