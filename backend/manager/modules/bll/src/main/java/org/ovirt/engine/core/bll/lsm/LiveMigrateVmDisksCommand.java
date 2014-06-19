@@ -161,7 +161,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                         VdcObjectType.Disk,
                         ActionGroup.CONFIGURE_DISK_STORAGE));
             }
-            permissionList.add(new PermissionSubject(parameters.getStorageDomainId(),
+            permissionList.add(new PermissionSubject(parameters.getTargetStorageDomainId(),
                     VdcObjectType.Storage,
                     ActionGroup.CREATE_DISK));
         }
@@ -267,7 +267,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
                     parameters.getQuotaId(),
                     null,
                     QuotaConsumptionParameter.QuotaAction.CONSUME,
-                    parameters.getStorageDomainId(),
+                    parameters.getTargetStorageDomainId(),
                     (double) diskImage.getSizeInGigabytes()));
 
             if (diskImage.getQuotaId() != null && !Guid.Empty.equals(diskImage.getQuotaId())) {
@@ -294,7 +294,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
             getReturnValue().setCanDoAction(isDiskNotShareable(parameters.getImageId())
                     && isDiskSnapshotNotPluggedToOtherVmsThatAreNotDown(parameters.getImageId())
-                    && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getStorageDomainId())
+                    && isTemplateInDestStorageDomain(parameters.getImageId(), parameters.getTargetStorageDomainId())
                     && performStorageDomainsChecks(parameters)
                     && isSameSourceAndDest(parameters));
 
@@ -308,7 +308,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean performStorageDomainsChecks(LiveMigrateDiskParameters parameters) {
         StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
-        StorageDomain destDomain = getStorageDomainById(parameters.getStorageDomainId(), getStoragePoolId());
+        StorageDomain destDomain = getStorageDomainById(parameters.getTargetStorageDomainId(), getStoragePoolId());
 
         return validateSourceStorageDomain(sourceDomain)
                 && validateDestStorage(destDomain)
@@ -345,7 +345,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     private boolean isSameSourceAndDest(LiveMigrateDiskParameters parameters) {
         StorageDomain sourceDomain = getImageSourceDomain(parameters.getImageId());
 
-        if (sourceDomain.getId().equals(parameters.getStorageDomainId())) {
+        if (sourceDomain.getId().equals(parameters.getTargetStorageDomainId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_SOURCE_AND_TARGET_SAME);
         }
 
@@ -395,7 +395,7 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         Map<Guid, List<DiskImage>> storageDomainsImagesMap = new HashMap<Guid, List<DiskImage>>();
 
         for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
-            MultiValueMapUtils.addToMap(parameters.getStorageDomainId(),
+            MultiValueMapUtils.addToMap(parameters.getTargetStorageDomainId(),
                     getDiskImageByImageId(parameters.getImageId()),
                     storageDomainsImagesMap);
         }
