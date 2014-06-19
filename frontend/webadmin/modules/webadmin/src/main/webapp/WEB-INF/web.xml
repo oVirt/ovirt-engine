@@ -47,7 +47,7 @@
     <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
     <init-param>
       <param-name>capabilities</param-name>
-      <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTITATE_NON_INTERACTIVE</param-value>
+      <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
     </init-param>
  </filter>
  <filter-mapping>
