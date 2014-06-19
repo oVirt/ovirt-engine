@@ -35,7 +35,8 @@ public class EngineExtensionsManager extends ExtensionsManager {
             "AdUserId",
             "AdUserPassword",
             "LDAPProviderTypes",
-            "LDAPSecurityAuthentication"
+            "LDAPSecurityAuthentication",
+            "LdapServers"
             ));
 
     public static EngineExtensionsManager getInstance() {
@@ -219,21 +220,23 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     private String getValue(String domain, String val) {
-        String[] domainPairs = val.split(",");
-        String result = null;
-        for (String pair : domainPairs) {
-            String[] nameValue = pair.split(":");
-            if (nameValue.length != 2) {
-                throw new RuntimeException(
+        String result = "";
+        if (val != null && val.length() > 0) {
+            String[] domainPairs = val.split(",");
+            for (String pair : domainPairs) {
+                String[] nameValue = pair.split(":");
+                if (nameValue.length != 2) {
+                    throw new RuntimeException(
                             String.format(
                                     "Domain information should be in format of DomainName:Value. The string %1$s does not match this format",
                                     pair
                             )
-                );
-            }
-            if (nameValue[0].equals(domain)) {
-                result = nameValue[1];
-                break;
+                    );
+                }
+                if (nameValue[0].equals(domain)) {
+                    result = nameValue[1];
+                    break;
+                }
             }
         }
         return result;
