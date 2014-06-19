@@ -10,6 +10,7 @@ import java.util.Map;
 import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -169,7 +170,8 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
-                validate(diskValidator.areBootableAndSharableCompatibleWithDisk());
+                validate(diskValidator.areBootableAndSharableCompatibleWithDisk()) &&
+                setAndValidateDiskProfiles();
     }
 
     @Override
@@ -519,6 +521,17 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
             return ((DiskImage) getNewDisk()).getQuotaId();
         }
         return null;
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (isDiskImage()) {
+            DiskImage diskImage = (DiskImage) getNewDisk();
+            Map<DiskImage, Guid> map = new HashMap<>();
+            map.put(diskImage, diskImage.getStorageIds().get(0));
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
+        return true;
     }
 
     @Override

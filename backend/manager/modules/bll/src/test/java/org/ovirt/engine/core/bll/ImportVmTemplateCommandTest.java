@@ -160,6 +160,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(Mockito.mock(MacPoolManagerStrategy.class)).when(command).getMacPool();
         mockStoragePool(command);
         mockStorageDomains(command);
+        doReturn(true).when(command).setAndValidateDiskProfiles();
 
         return command;
     }

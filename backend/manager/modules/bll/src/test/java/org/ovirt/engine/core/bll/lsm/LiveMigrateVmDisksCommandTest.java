@@ -101,6 +101,7 @@ public class LiveMigrateVmDisksCommandTest {
 
         doReturn(true).when(command).validateSpaceRequirements();
         doReturn(true).when(command).checkImagesStatus();
+        doReturn(true).when(command).setAndValidateDiskProfiles();
     }
 
     private List<LiveMigrateDiskParameters> createLiveMigrateVmDisksParameters() {

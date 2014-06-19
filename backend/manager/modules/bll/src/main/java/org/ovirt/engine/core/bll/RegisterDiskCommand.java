@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Collections;
+import java.util.List;
+
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -11,10 +17,6 @@ import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
 
 public class RegisterDiskCommand <T extends RegisterDiskParameters> extends BaseImagesCommand<T> implements QuotaStorageDependent {
 
@@ -54,6 +56,10 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             return false;
         }
 
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
         return true;
     }
 
@@ -78,6 +84,11 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getParameters().getDiskImage(),
+                getStorageDomainId()), getStoragePool().getcompatibility_version()));
     }
 
     @Override

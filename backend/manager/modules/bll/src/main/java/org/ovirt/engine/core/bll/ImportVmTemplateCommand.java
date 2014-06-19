@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -209,6 +210,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_IMPORT_TEMPLATE_VERSION_MISSING_BASE);
             }
         }
+
+        if (retVal && !setAndValidateDiskProfiles()) {
+            return false;
+        }
+
         if (!retVal) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__IMPORT);
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
@@ -539,6 +545,18 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
             jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getStoragePoolName());
         }
         return jobProperties;
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (getParameters().getVmTemplate().getDiskList() != null) {
+            Map<DiskImage, Guid> map = new HashMap<>();
+            for (DiskImage diskImage : getParameters().getVmTemplate().getDiskList()) {
+                map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
+            }
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
+        return true;
     }
 
     @Override

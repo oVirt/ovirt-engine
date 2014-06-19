@@ -276,8 +276,8 @@ public class MoveOrCopyDiskCommandTest {
                 operation)));
 
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
-
         doReturn(false).when(command).acquireLock();
+        doReturn(true).when(command).setAndValidateDiskProfiles();
     }
 
     private void initTemplateDiskImage() {

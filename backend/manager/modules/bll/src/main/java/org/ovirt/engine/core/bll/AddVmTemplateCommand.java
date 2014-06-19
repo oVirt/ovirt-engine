@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -397,11 +398,27 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
         }
 
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
         if (isInstanceType) {
             return true;
         } else {
             return doClusterRelatedChecks();
         }
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
+            Map<DiskImage, Guid> map = new HashMap<>();
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                map.put(diskImage, diskImage.getStorageIds().get(0));
+            }
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
+        return true;
     }
 
     private VmTemplate getBaseTemplate() {

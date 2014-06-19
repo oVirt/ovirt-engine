@@ -113,6 +113,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).canAddVm();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
+        doReturn(true).when(cmd).setAndValidateDiskProfiles();
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
@@ -289,6 +290,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).canAddVm();
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
+        doReturn(true).when(cmd).setAndValidateDiskProfiles();
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));
