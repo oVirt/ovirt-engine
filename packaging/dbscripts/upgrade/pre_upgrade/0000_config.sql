@@ -169,7 +169,7 @@ select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'gener
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
 
-select fn_db_add_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_','general');
+select fn_db_add_config_value('GuestToolsSetupIsoPrefix','ovirt-guest-tools-','general');
 select fn_db_add_config_value('HardwareInfoEnabled','false','3.0');
 select fn_db_add_config_value('HardwareInfoEnabled','false','3.1');
 select fn_db_add_config_value('HighUtilizationForEvenlyDistribute','75','general');
@@ -926,6 +926,7 @@ select fn_db_update_default_config_value('LDAPSecurityAuthentication','GSSAPI','
 select fn_db_update_default_config_value('LDAPSecurityAuthentication','SIMPLE','default:SIMPLE','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','500','general',false);
 select fn_db_update_default_config_value('VdsLocalDisksLowFreeSpace','500', '1000','general',false);
+select fn_db_update_default_config_value('GuestToolsSetupIsoPrefix','RHEV-toolsSetup_', 'ovirt-guest-tools-','general', false);
 
 -- Reduce the host connection timeout from 180 seconds to 2 seconds and
 -- disable retries for more predictable HA timing:

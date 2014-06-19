@@ -399,7 +399,7 @@ public enum ConfigValues {
     SpiceDriverNameInGuest,
     @Reloadable
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("RHEV-toolsSetup_")
+    @DefaultValueAttribute("ovirt-guest-tools-")
     GuestToolsSetupIsoPrefix,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
