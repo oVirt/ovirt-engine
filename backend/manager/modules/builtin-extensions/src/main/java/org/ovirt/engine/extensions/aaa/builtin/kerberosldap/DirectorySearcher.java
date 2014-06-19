@@ -57,7 +57,7 @@ public class DirectorySearcher {
     public List<?> find(final LdapQueryData queryData, final long resultCount) {
         final String domainName = queryData.getDomain();
         List<String> ldapServerURIs =
-                Arrays.asList(configuration.getProperty("config.LdapServers").split(","));
+                Arrays.asList(configuration.getProperty("config.LdapServers").split(";"));
         List<String> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);
         if (log.isDebugEnabled()) {
             log.debug("Ldap server list: " + StringUtils.join(ldapServerURIs, ", "));
@@ -75,7 +75,7 @@ public class DirectorySearcher {
                 return null;
             }
         }
-        configuration.setProperty("config.LdapServers", StringUtils.join(editableLdapServerURIs, ","));
+        configuration.setProperty("config.LdapServers", StringUtils.join(editableLdapServerURIs, ";"));
         return response;
     }
 

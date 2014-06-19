@@ -48,7 +48,7 @@ public class Utils {
                         String ldapURI = locator.constructURI("ldap", address, "389").toString();
                         ldapServers.add(ldapURI);
                     }
-                    conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ","));
+                    conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ";"));
                 }
             } catch (Exception ex) {
                 throw new RuntimeException(ex);
