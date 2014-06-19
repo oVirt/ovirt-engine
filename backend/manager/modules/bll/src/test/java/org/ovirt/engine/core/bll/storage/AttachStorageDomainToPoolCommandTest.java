@@ -3,9 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doAnswer;
-import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doNothing;
+import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -26,18 +27,21 @@ import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -97,15 +101,16 @@ public class AttachStorageDomainToPoolCommandTest {
         doReturn(backendInternal).when(cmd).getBackend();
         when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
-        VDSReturnValue returnValue = new VDSReturnValue();
-        returnValue.setSucceeded(true);
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
         when(backendInternal.runInternalAction(any(VdcActionType.class),
                 any(VdcActionParametersBase.class),
                 any(CommandContext.class))).thenReturn(vdcReturnValue);
-        when(vdsBrokerFrontend.RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class)))
-                .thenReturn(returnValue);
+        StorageDomainStatic storageDomain = new StorageDomainStatic();
+        storageDomain.setId(Guid.newGuid());
+        storageDomain.setStorageDomainType(StorageDomainType.ImportExport);
+        mockGetStorageDomainInfoVdsCommand(storageDomain);
+        mockAttachStorageDomainVdsCommand();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
         doAnswer(new Answer<Object>() {
             @Override
@@ -119,5 +124,21 @@ public class AttachStorageDomainToPoolCommandTest {
         cmd.executeCommand();
         assertNotNull(map);
         assertEquals(StorageDomainStatus.Maintenance, map.getStatus());
+    }
+
+    private void mockAttachStorageDomainVdsCommand() {
+        VDSReturnValue returnValue = new VDSReturnValue();
+        returnValue.setSucceeded(true);
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.AttachStorageDomain),
+                any(AttachStorageDomainVDSCommandParameters.class))).thenReturn(returnValue);
+    }
+
+    private void mockGetStorageDomainInfoVdsCommand(StorageDomainStatic storageDomain) {
+        Pair<StorageDomainStatic, Guid> pairResult = new Pair<>(storageDomain, null);
+        VDSReturnValue returnValueForGetStorageDomainInfo = new VDSReturnValue();
+        returnValueForGetStorageDomainInfo.setSucceeded(true);
+        returnValueForGetStorageDomainInfo.setReturnValue(pairResult);
+        when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
+                any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValueForGetStorageDomainInfo);
     }
 }

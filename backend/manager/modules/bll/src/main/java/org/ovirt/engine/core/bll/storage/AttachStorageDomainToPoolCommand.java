@@ -10,14 +10,21 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -80,6 +87,45 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                         }
                     });
                     connectAllHostsToPool();
+
+                    // Forcibly detach only data storage domains.
+                    if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+                        @SuppressWarnings("unchecked")
+                        Pair<StorageDomainStatic, Guid> domainFromIrs =
+                                (Pair<StorageDomainStatic, Guid>) runVdsCommand(
+                                        VDSCommandType.HSMGetStorageDomainInfo,
+                                        new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(),
+                                                getParameters().getStorageDomainId())
+                                ).getReturnValue();
+                        // If the storage domain is already related to another Storage Pool, detach it by force.
+                        Guid storagePoolId = domainFromIrs.getSecond();
+                        if (storagePoolId != null) {
+                            // Master domain version is not relevant since force remove at
+                            // DetachStorageDomainVdsCommand
+                            // does not use it.
+                            // Storage pool id can be empty
+                            DetachStorageDomainVDSCommandParameters detachParams =
+                                    new DetachStorageDomainVDSCommandParameters(getVds().getStoragePoolId(),
+                                            getParameters().getStorageDomainId(),
+                                            Guid.Empty,
+                                            0);
+                            detachParams.setForce(true);
+                            VDSReturnValue returnValue =
+                                    runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
+                            if (!returnValue.getSucceeded()) {
+                                log.warnFormat("Detaching Storage Domain {0} from it's previous storage pool {1} has failed. "
+                                        +
+                                        "The meta data of the Storage Domain might still indicate that it is attached to a different Storage Pool.",
+                                        getParameters().getStorageDomainId(),
+                                        storagePoolId);
+                                throw new VdcBLLException(
+                                        returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
+                                                : VdcBllErrors.ENGINE,
+                                        returnValue.getExceptionString());
+                            }
+                        }
+                    }
+
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
