@@ -3093,6 +3093,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Profile is in use.")
     String ACTION_TYPE_FAILED_PROFILE_IN_USE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Disk Profile wasn't found.")
+    String ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain wasn't provided.")
+    String ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Disk Profile doesn't match provided Storage Domain.")
+    String ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN();
+
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
 

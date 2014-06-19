@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -116,6 +117,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
+            if (!setAndValidateDiskProfiles()) {
+                return false;
+            }
+
             return checkIfImageDiskCanBeAdded(vm, diskValidator);
         }
 
@@ -585,6 +590,11 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
                 AuditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
             }
         }
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getDiskImageInfo(),
+                getStorageDomainId()), getStoragePool().getcompatibility_version()));
     }
 
     @Override

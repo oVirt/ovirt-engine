@@ -157,6 +157,7 @@ public class ImportVmTemplateCommandTest {
         doReturn(mock(VmTemplateDAO.class)).when(command).getVmTemplateDAO();
         mockStoragePool(command);
         mockStorageDomains(command);
+        doReturn(true).when(command).setAndValidateDiskProfiles();
 
         return command;
     }

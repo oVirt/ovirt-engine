@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -297,7 +298,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 !FeatureSupported.virtIoScsi(getVdsGroup().getcompatibility_version())) {
             return failCanDoAction(VdcBllMessages.VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL);
         }
-
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
         return checkFreeSpaceAndTypeOnDestDomains();
     }
 
@@ -392,6 +395,18 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     public String getVmsCount() {
         return Integer.toString(getParameters().getVmsCount());
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
+            Map<DiskImage, Guid> map = new HashMap<>();
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                map.put(diskImage, diskImage.getStorageIds().get(0));
+            }
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
+        return true;
     }
 
     @Override

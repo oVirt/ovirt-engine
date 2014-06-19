@@ -10,18 +10,26 @@ import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 
 public class DiskProfileValidator {
 
-    private final DiskProfile diskProfile;
+    private final Guid diskProfileId;
+    private DiskProfile diskProfile;
     private DiskProfile diskProfileFromDb;
     private StorageDomain storageDomain;
     private List<DiskProfile> diskProfiles;
 
     public DiskProfileValidator(DiskProfile diskProfile) {
+        this(diskProfile != null ? diskProfile.getId() : null);
         this.diskProfile = diskProfile;
+    }
+
+    public DiskProfileValidator(Guid diskProfileId) {
+        this.diskProfileId = diskProfileId;
     }
 
     protected DbFacade getDbFacade() {
@@ -29,7 +37,7 @@ public class DiskProfileValidator {
     }
 
     public ValidationResult diskProfileIsSet() {
-        return diskProfile == null
+        return getDiskProfile() == null
                 ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_PROFILE_NOT_EXISTS)
                 : ValidationResult.VALID;
     }
@@ -45,15 +53,16 @@ public class DiskProfileValidator {
     }
 
     public ValidationResult qosExistsOrNull() {
-        return diskProfile.getQosId() == null
-                || getDbFacade().getStorageQosDao().get(diskProfile.getQosId()) != null
+        return getDiskProfile().getQosId() == null
+                || getDbFacade().getStorageQosDao().get(getDiskProfile().getQosId()) != null
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND);
     }
 
     public ValidationResult diskProfileNameNotUsed() {
         for (DiskProfile profile : getDiskProfiles()) {
-            if (profile.getName().equals(diskProfile.getName()) && !profile.getId().equals(diskProfile.getId())) {
+            if (profile.getName().equals(getDiskProfile().getName())
+                    && !profile.getId().equals(getDiskProfile().getId())) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_PROFILE_NAME_IN_USE);
             }
         }
@@ -62,7 +71,7 @@ public class DiskProfileValidator {
     }
 
     public ValidationResult storageDomainNotChanged() {
-        if (ObjectUtils.equals(diskProfile.getStorageDomainId(), getDiskProfileFromDb().getStorageDomainId())) {
+        if (ObjectUtils.equals(getDiskProfile().getStorageDomainId(), getDiskProfileFromDb().getStorageDomainId())) {
             return ValidationResult.VALID;
         }
 
@@ -81,15 +90,22 @@ public class DiskProfileValidator {
 
     protected StorageDomain getStorageDomain() {
         if (storageDomain == null) {
-            storageDomain = getDbFacade().getStorageDomainDao().get(diskProfile.getStorageDomainId());
+            storageDomain = getDbFacade().getStorageDomainDao().get(getDiskProfile().getStorageDomainId());
         }
 
         return storageDomain;
     }
 
+    public DiskProfile getDiskProfile() {
+        if (diskProfile == null) {
+            diskProfile = getDiskProfileDao().get(diskProfileId);
+        }
+        return diskProfile;
+    }
+
     protected List<DiskProfile> getDiskProfiles() {
         if (diskProfiles == null) {
-            diskProfiles = getDbFacade().getDiskProfileDao().getAllForStorageDomain(diskProfile.getStorageDomainId());
+            diskProfiles = getDiskProfileDao().getAllForStorageDomain(getDiskProfile().getStorageDomainId());
         }
 
         return diskProfiles;
@@ -101,5 +117,26 @@ public class DiskProfileValidator {
         }
 
         return diskProfileFromDb;
+    }
+
+    public ValidationResult isStorageDomainValid(Guid storageDomainId) {
+        if (storageDomainId == null) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_STORAGE_DOMAIN_NOT_PROVIDED);
+        }
+        if (diskProfileId == null) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_EMPTY);
+        }
+        DiskProfile fetchedDiskProfile = getDiskProfileDao().get(diskProfileId);
+        if (fetchedDiskProfile == null) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_PROFILE_NOT_FOUND);
+        }
+        if (!storageDomainId.equals(fetchedDiskProfile.getStorageDomainId())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN);
+        }
+        return ValidationResult.VALID;
+    }
+
+    private DiskProfileDao getDiskProfileDao() {
+        return getDbFacade().getDiskProfileDao();
     }
 }

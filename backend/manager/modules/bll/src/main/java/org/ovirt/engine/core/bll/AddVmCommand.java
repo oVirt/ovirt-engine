@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -587,6 +588,22 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
+        if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
+        return true;
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (diskInfoDestinationMap != null && !diskInfoDestinationMap.isEmpty()) {
+            Map<DiskImage, Guid> map = new HashMap<>();
+            for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+                map.put(diskImage, diskImage.getStorageIds().get(0));
+            }
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
         return true;
     }
 

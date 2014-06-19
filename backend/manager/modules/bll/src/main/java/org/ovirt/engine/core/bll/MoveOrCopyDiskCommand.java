@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -95,7 +96,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
                 && checkTemplateInDestStorageDomain()
                 && validateSpaceRequirements()
                 && checkCanBeMoveInVm()
-                && checkIfNeedToBeOverride();
+                && checkIfNeedToBeOverride()
+                && setAndValidateDiskProfiles();
     }
 
     protected boolean isSourceAndDestTheSame() {
@@ -328,6 +330,7 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         getParameters().setCopyVolumeType(CopyVolumeType.SharedVol);
         getParameters().setParentCommand(getActionType());
         getParameters().setParentParameters(getParameters());
+        getParameters().setDiskProfileId(getImage().getDiskProfileId());
     }
 
     /**
@@ -384,6 +387,12 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     public String getDiskAlias() {
         return getImage().getDiskAlias();
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        getImage().setDiskProfileId(getParameters().getDiskProfileId());
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(Collections.singletonMap(getImage(),
+                getParameters().getStorageDomainId()), getStoragePool().getcompatibility_version()));
     }
 
     @Override

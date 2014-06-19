@@ -361,6 +361,7 @@ public class AddDiskToVmCommandTest {
         doReturn(false).when(command).hasWatchdog(any(Guid.class));
         doReturn(false).when(command).isBalloonEnabled(any(Guid.class));
         doReturn(false).when(command).isSoundDeviceEnabled(any(Guid.class));
+        doReturn(true).when(command).setAndValidateDiskProfiles();
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
     }
 

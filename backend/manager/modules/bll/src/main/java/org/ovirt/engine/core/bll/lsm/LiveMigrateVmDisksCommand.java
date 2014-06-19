@@ -14,6 +14,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -256,6 +257,16 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_DISK);
     }
 
+    protected boolean setAndValidateDiskProfiles() {
+        Map<DiskImage, Guid> map = new HashMap<>();
+        for (LiveMigrateDiskParameters parameters : getParameters().getParametersList()) {
+            DiskImage diskImage = getDiskImageByImageId(parameters.getImageId());
+            map.put(diskImage, diskImage.getStorageIds().get(0));
+        }
+        return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                getStoragePool().getcompatibility_version()));
+    }
+
     @Override
     public List<QuotaConsumptionParameter> getQuotaStorageConsumptionParameters() {
         List<QuotaConsumptionParameter> list = new ArrayList<QuotaConsumptionParameter>();
@@ -301,6 +312,10 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             if (!getReturnValue().getCanDoAction()) {
                 return false;
             }
+        }
+
+        if (!setAndValidateDiskProfiles()) {
+            return false;
         }
 
         return true;

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -441,6 +442,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
 
         if (!validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVm().getInterfaces()))) {
+            return false;
+        }
+
+        if (!setAndValidateDiskProfiles()) {
             return false;
         }
 
@@ -1277,6 +1282,21 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             jobProperties.put(VdcObjectType.VdsGroups.name().toLowerCase(), getVdsGroupName());
         }
         return jobProperties;
+    }
+
+    protected boolean setAndValidateDiskProfiles() {
+        if (getParameters().getVm().getDiskMap() != null) {
+            Map<DiskImage, Guid> map = new HashMap<>();
+            for (Disk disk : getParameters().getVm().getDiskMap().values()) {
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) disk;
+                    map.put(diskImage, imageToDestinationDomainMap.get(diskImage.getId()));
+                }
+            }
+            return validate(DiskProfileHelper.setAndValidateDiskProfiles(map,
+                    getStoragePool().getcompatibility_version()));
+        }
+        return true;
     }
 
     @Override
