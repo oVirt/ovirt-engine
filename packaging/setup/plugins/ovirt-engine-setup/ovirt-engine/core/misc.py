@@ -58,18 +58,25 @@ class Plugin(plugin.PluginBase):
     )
     def _customization(self):
         if self.environment[oenginecons.CoreEnv.ENABLE] is None:
-            self.environment[
-                oenginecons.CoreEnv.ENABLE
-            ] = dialog.queryBoolean(
-                dialog=self.dialog,
-                name='OVESETUP_ENGINE_ENABLE',
-                note=_(
-                    'Configure Engine on this host '
-                    '(@VALUES@) [@DEFAULT@]: '
-                ),
-                prompt=True,
-                default=True,
-            )
+            if not self.environment[oenginecons.EngineDBEnv.NEW_DATABASE]:
+                # we are upgrading from 3.4 that doesn't ask about it
+                # but we need to upgrade the engine cause has been configured
+                # in the past
+                # It can be removed in future release ( > 3.5)
+                self.environment[oenginecons.CoreEnv.ENABLE] = True
+            else:
+                self.environment[
+                    oenginecons.CoreEnv.ENABLE
+                ] = dialog.queryBoolean(
+                    dialog=self.dialog,
+                    name='OVESETUP_ENGINE_ENABLE',
+                    note=_(
+                        'Configure Engine on this host '
+                        '(@VALUES@) [@DEFAULT@]: '
+                    ),
+                    prompt=True,
+                    default=True,
+                )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
