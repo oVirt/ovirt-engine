@@ -1448,10 +1448,10 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         if (rngSupported) {
             getRngRandomSourceRequired().setEntity(getIsNew()
-                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.toString())
+                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.RANDOM.name().toLowerCase())
                     : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.RANDOM));
             getRngHwrngSourceRequired().setEntity(getIsNew()
-                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.toString())
+                    ? defaultRequiredRngSourcesCsv.contains(VmRngDevice.Source.HWRNG.name().toLowerCase())
                     : getEntity().getRequiredRngSources().contains(VmRngDevice.Source.HWRNG));
         } else { // reset
             getRngRandomSourceRequired().setEntity(false);
