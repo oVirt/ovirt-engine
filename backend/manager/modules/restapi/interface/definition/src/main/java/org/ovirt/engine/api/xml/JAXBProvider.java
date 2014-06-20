@@ -18,17 +18,23 @@ package org.ovirt.engine.api.xml;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.lang.annotation.Annotation;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.lang.reflect.Type;
 import javax.ws.rs.Consumes;
+import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.ext.MessageBodyReader;
+import javax.ws.rs.ext.MessageBodyWriter;
 import javax.ws.rs.ext.Provider;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBElement;
 import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
 import javax.xml.bind.Unmarshaller;
 import javax.xml.bind.ValidationEventHandler;
 import javax.xml.stream.XMLInputFactory;
@@ -36,20 +42,28 @@ import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
 import org.ovirt.engine.api.model.API;
+import org.ovirt.engine.api.model.ObjectFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This class is responsible for converting XML documents into model objects. Note that it can't be a generic class
- * because if it is then the JAX-RS framework will select other builtin classes that are more specific.
+ * This class is responsible for converting XML documents into model objects, and the other way around. Note that it
+ * can't be a generic class because if it is then the JAX-RS framework will select other builtin classes that are more
+ * specific.
  */
 @Provider
 @Consumes(MediaType.APPLICATION_XML)
-public class JAXBMessageBodyReader implements MessageBodyReader<Object> {
+@Produces(MediaType.APPLICATION_XML)
+public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWriter<Object> {
     /**
      * The logger used by this class.
      */
-    private Logger log = LoggerFactory.getLogger(JAXBMessageBodyReader.class);
+    private Logger log = LoggerFactory.getLogger(JAXBProvider.class);
+
+    /**
+     * The factory used to create JAXB elements.
+     */
+    private ObjectFactory objectFactory;
 
     /**
      * The factory used to create XML document readers.
@@ -66,7 +80,10 @@ public class JAXBMessageBodyReader implements MessageBodyReader<Object> {
      */
     private ValidationEventHandler jaxbHandler = new JAXBValidationEventHandler();
 
-    public JAXBMessageBodyReader() {
+    public JAXBProvider() {
+        // Create the object factory:
+        objectFactory = new ObjectFactory();
+
         // Create a factory that will produce XML parsers that ignore entity references and DTDs:
         parserFactory = XMLInputFactory.newFactory();
         parserFactory.setProperty(XMLInputFactory.IS_REPLACING_ENTITY_REFERENCES, false);
@@ -87,8 +104,24 @@ public class JAXBMessageBodyReader implements MessageBodyReader<Object> {
      * {@inheritDoc}
      */
     @Override
-    public boolean isReadable(Class<?> type, Type genericType, Annotation annotations[], MediaType mediaType) {
+    public boolean isReadable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
         return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isWriteable(Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return true;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public long getSize(Object o, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType) {
+        return -1;
     }
 
     /**
@@ -142,6 +175,45 @@ public class JAXBMessageBodyReader implements MessageBodyReader<Object> {
                 throw new IOException(cause);
             }
             throw new IOException(exception);
+        }
+    }
+
+    @Override
+    public void writeTo(Object object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
+            MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
+            throws IOException, WebApplicationException {
+        // In order to create the JAXB element that wraps the object we need to iterate the object factory and find the
+        // method that creates it:
+        Method factoryMethod = null;
+        for (Method currentMethod : ObjectFactory.class.getDeclaredMethods()) {
+            Class<?>[] parameterTypes = currentMethod.getParameterTypes();
+            if (parameterTypes.length == 1 && parameterTypes[0] == type) {
+                factoryMethod = currentMethod;
+                break;
+            }
+        }
+        if (factoryMethod == null) {
+            throw new IOException("Can't find factory method for type \"" + type.getName() + "\".");
+        }
+
+        // Invoke the method to create the JAXB element:
+        JAXBElement<Object> element;
+        try {
+            element = (JAXBElement<Object>) factoryMethod.invoke(objectFactory, object);
+        }
+        catch (IllegalAccessException|InvocationTargetException exception) {
+            throw new IOException("Error invoking factory method for type \"" +  type.getName() + "\".", exception);
+        }
+
+        // Marshal the element:
+        try {
+            Marshaller marshaller = jaxbContext.createMarshaller();
+            marshaller.setProperty(Marshaller.JAXB_ENCODING, "UTF-8");
+            marshaller.setProperty(Marshaller.JAXB_FORMATTED_OUTPUT, Boolean.TRUE);
+            marshaller.marshal(element, entityStream);
+        }
+        catch (JAXBException exception) {
+            throw new IOException("Can't marshall JAXB element of type \"" + type.getName() + "\".", exception);
         }
     }
 }
