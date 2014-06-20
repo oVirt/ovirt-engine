@@ -14,6 +14,7 @@
 
         .suggestBoxStyle {
             border-width: 0px;
+            width: 100%;
             vertical-align: top;
             height: 15px;
         }
@@ -27,8 +28,8 @@
         }
 
         .suggestBoxWrapperStyle {
-            float: left;
             height: 17px;
+            margin-right: 15px;
         }
 
         .enabledMainPanel {
@@ -41,11 +42,12 @@
     </ui:style>
 
     <g:FlowPanel ui:field="mainPanel" addStyleNames="{style.enabledMainPanel}">
-        <g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle} lmtalb_suggestboxWrapper_pfly_fix">
-            <g:SuggestBox addStyleNames="{style.suggestBoxStyle} lmtalb_suggestbox_pfly_fix" ui:field="suggestBox" />
-        </g:FlowPanel>
         <g:FlowPanel addStyleNames="{style.imagesWrapper}">
             <g:Image ui:field="dropDownImage" addStyleNames="{style.dropDownStyle}" resource='{resources.comboBoxDropDownIcon}' />
+        </g:FlowPanel>
+
+        <g:FlowPanel addStyleNames="{style.suggestBoxWrapperStyle} lmtalb_suggestboxWrapper_pfly_fix">
+            <g:SuggestBox addStyleNames="{style.suggestBoxStyle} lmtalb_suggestbox_pfly_fix gwt-ListBox" ui:field="suggestBox" />
         </g:FlowPanel>
     </g:FlowPanel>
 
