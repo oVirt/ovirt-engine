@@ -93,6 +93,11 @@ public abstract class AbstractSanStorageView extends AbstractStorageView<SanStor
     }
 
     @Override
+    public boolean isValid() {
+        return contentPanel.isValid();
+    }
+
+    @Override
     public SanStorageModelBase flush() {
         return driver.flush();
     }

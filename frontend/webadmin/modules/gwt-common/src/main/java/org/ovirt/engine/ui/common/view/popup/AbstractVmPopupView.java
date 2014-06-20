@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
+import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
@@ -10,6 +11,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmBasedWidgetSwitchModeCommand
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+
+import java.util.Collections;
+import java.util.List;
 
 public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupView<UnitVmModel> implements AbstractVmBasedPopupPresenterWidget.ViewDef {
 
@@ -60,5 +64,14 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
         }
 
         return super.createCommandButton(label, uniqueId);
+    }
+
+    @Override
+    public List<HasValidation> getInvalidWidgets() {
+        if (getContentWidget() instanceof AbstractVmPopupWidget) {
+            return ((AbstractVmPopupWidget) getContentWidget()).getInvalidWidgets();
+        }
+
+        return Collections.EMPTY_LIST;
     }
 }

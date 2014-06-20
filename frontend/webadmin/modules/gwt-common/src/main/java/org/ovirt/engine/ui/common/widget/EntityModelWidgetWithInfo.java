@@ -13,7 +13,9 @@ import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class EntityModelWidgetWithInfo<T> extends Composite {
+import java.util.List;
+
+public class EntityModelWidgetWithInfo<T> extends Composite implements HasValidation {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelWidgetWithInfo> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -43,4 +45,26 @@ public class EntityModelWidgetWithInfo<T> extends Composite {
         infoIcon.setText(text);
     }
 
+    @Override
+    public void markAsValid() {
+        if (contentWidget instanceof HasValidation) {
+            ((HasValidation) contentWidget).markAsValid();
+        }
+    }
+
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        if (contentWidget instanceof HasValidation) {
+            ((HasValidation) contentWidget).markAsInvalid(validationHints);
+        }
+    }
+
+    @Override
+    public boolean isValid() {
+        if (contentWidget instanceof HasValidation) {
+            return ((HasValidation) contentWidget).isValid();
+        }
+
+        return true;
+    }
 }

@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
+import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -1584,6 +1585,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                     } else {
                         systemTab.markAsInvalid(null);
                     }
+                } else if ("IsFirstRunTabValid".equals(propName)) { //$NON-NLS-1$
+                    if (vm.getIsFirstRunTabValid()) {
+                        initialRunTab.markAsValid();
+                    } else {
+                        initialRunTab.markAsInvalid(null);
+                    }
                 } else if ("IsDisplayTabValid".equals(propName)) { //$NON-NLS-1$
                     if (vm.getIsDisplayTabValid()) {
                         consoleTab.markAsValid();
@@ -2008,17 +2015,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     }
 
     protected void disableAllTabs() {
-        generalTab.disableContent();
-        poolTab.disableContent();
-        initialRunTab.disableContent();
-        consoleTab.disableContent();
-        hostTab.disableContent();
-        highAvailabilityTab.disableContent();
-        resourceAllocationTab.disableContent();
-        bootOptionsTab.disableContent();
-        customPropertiesTab.disableContent();
-        systemTab.disableContent();
-        rngDeviceTab.disableContent();
+        for (DialogTab dialogTab : allDialogTabs()) {
+            dialogTab.disableContent();
+        }
+
         oSTypeEditor.setEnabled(false);
         quotaEditor.setEnabled(false);
         dataCenterWithClusterEditor.setEnabled(false);
@@ -2026,6 +2026,22 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         baseTemplateEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
         instanceTypesEditor.setEnabled(false);
+    }
+
+    private List<DialogTab> allDialogTabs() {
+        return Arrays.asList(
+            generalTab,
+            poolTab,
+            initialRunTab,
+            consoleTab,
+            hostTab,
+            highAvailabilityTab,
+            resourceAllocationTab,
+            bootOptionsTab,
+            customPropertiesTab,
+            systemTab,
+            rngDeviceTab
+        );
     }
 
     protected void updateOrAddToWidgetConfiguration(PopupWidgetConfigMap configuration, List<Widget> widgets, WidgetConfigurationUpdater updater) {
@@ -2083,5 +2099,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         for (Widget adminOnlyField : getWidgetConfiguration().getVisibleForAdminOnly().keySet()) {
             adminOnlyField.setVisible(false);
         }
+    }
+
+    public List<HasValidation> getInvalidWidgets() {
+        List<HasValidation> hasValidations = new ArrayList<HasValidation>();
+        for (DialogTab dialogTab : allDialogTabs()) {
+            hasValidations.addAll(dialogTab.getInvalidWidgets());
+        }
+
+        return hasValidations;
     }
 }

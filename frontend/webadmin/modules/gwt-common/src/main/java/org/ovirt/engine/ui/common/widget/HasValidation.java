@@ -20,4 +20,8 @@ public interface HasValidation {
      */
     void markAsInvalid(List<String> validationHints);
 
+    /**
+     * Returns true/false according to the markAsValid/markAsInvalid
+     */
+    boolean isValid();
 }

@@ -239,6 +239,11 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     }
 
     @Override
+    public boolean isValid() {
+        return storageDomainsPanel.isValid();
+    }
+
+    @Override
     public boolean isSubViewFocused() {
         return iscsiDiscoverTargetsView.isDiscoverPanelFocused();
     }

@@ -76,6 +76,16 @@ public class UnitVmModel extends Model {
 
     private boolean privateIsNew;
 
+    private EntityModel<Boolean> valid;
+
+    public EntityModel<Boolean> getValid() {
+        return valid;
+    }
+
+    public void setValid(EntityModel<Boolean> valid) {
+        this.valid = valid;
+    }
+
     /**
      * All dialogs which want to have the previous advanced/basic mode remembered in local storage need to have
      * a key to local storage set.
@@ -1425,6 +1435,7 @@ public class UnitVmModel extends Model {
 
         setNicsWithLogicalNetworks(new VnicInstancesModel());
         setAdvancedMode(new EntityModel<Boolean>(false));
+        setValid(new EntityModel<Boolean>(true));
         setAttachedToInstanceType(new EntityModel<Boolean>(true));
         setStorageDomain(new NotChangableForVmInPoolListModel<StorageDomain>());
         setName(new NotChangableForVmInPoolEntityModel<String>());
@@ -1590,16 +1601,9 @@ public class UnitVmModel extends Model {
 
         setIsTemplatePublic(new NotChangableForVmInPoolEntityModel<Boolean>());
         getIsTemplatePublic().getEntityChangedEvent().addListener(this);
-
-        setIsHostTabValid(true);
         setIsCustomPropertiesTabAvailable(true);
-        setRngTabValid(true);
-        setIsCustomPropertiesTabValid(getIsHostTabValid());
-        setIsBootSequenceTabValid(getIsCustomPropertiesTabValid());
-        setIsAllocationTabValid(getIsBootSequenceTabValid());
-        setIsDisplayTabValid(getIsAllocationTabValid());
-        setIsFirstRunTabValid(getIsDisplayTabValid());
-        setIsGeneralTabValid(getIsFirstRunTabValid());
+
+        resetTabsValidity();
 
         // NOTE: This is because currently the auto generated view code tries to register events of
         // pooltype for
@@ -2594,7 +2598,6 @@ public class UnitVmModel extends Model {
         getInstanceTypes().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         getDataCenterWithClustersList().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-        setIsSystemTabValid(true);
 
         getOSType().validateSelectedItem(new NotEmptyValidation[] { new NotEmptyValidation() });
 
@@ -2675,8 +2678,9 @@ public class UnitVmModel extends Model {
         setIsAllocationTabValid(getIsAllocationTabValid() && getCpuSharesAmount().getIsValid());
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         boolean vmInitIsValid = getVmInitModel().validate();
+        setIsFirstRunTabValid(vmInitIsValid);
 
-        return hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid()
+        boolean isValid = hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid()
                 && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
                 && getDefaultHost().getIsValid()
                 && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
@@ -2685,9 +2689,14 @@ public class UnitVmModel extends Model {
                 && getKernel_parameters().getIsValid()
                 && getCpuSharesAmount().getIsValid()
                 && getQuota().getIsValid();
+
+        getValid().setEntity(isValid);
+        return isValid;
     }
 
     public boolean validateHwPart() {
+        resetTabsValidity();
+
         getName().validateEntity(new IValidation[] {new NotEmptyValidation()});
         getMigrationDowntime().validateEntity(new IValidation[] { new NotNullIntegerValidation(0, Integer.MAX_VALUE) });
 
@@ -2716,12 +2725,6 @@ public class UnitVmModel extends Model {
             getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
         }
 
-        setIsBootSequenceTabValid(true);
-        setIsAllocationTabValid(getIsBootSequenceTabValid());
-        setIsDisplayTabValid(getIsAllocationTabValid());
-        setIsFirstRunTabValid(getIsDisplayTabValid());
-        setIsGeneralTabValid(getIsFirstRunTabValid());
-
         boolean behaviorValid = behavior.validate();
         setIsGeneralTabValid(getName().getIsValid() && getDescription().getIsValid() && getComment().getIsValid()
         && getMinAllocatedMemory().getIsValid());
@@ -2746,12 +2749,31 @@ public class UnitVmModel extends Model {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
 
-        return behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
+
+
+        boolean isValid = behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
                 && getMinAllocatedMemory().getIsValid()
                 && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
                 && getMigrationDowntime().getIsValid()
                 && getRngBytes().getIsValid()
-                && getRngPeriod().getIsValid();
+                && getRngPeriod().getIsValid()
+                && getTotalCPUCores().getIsValid();
+
+        getValid().setEntity(isValid);
+        return isValid;
+    }
+
+    private void resetTabsValidity() {
+        setIsGeneralTabValid(true);
+        setIsSystemTabValid(true);
+        setIsFirstRunTabValid(true);
+        setIsDisplayTabValid(true);
+        setIsHostTabValid(true);
+        setIsAllocationTabValid(true);
+        setIsBootSequenceTabValid(true);
+        setRngTabValid(true);
+        setIsCustomPropertiesTabValid(true);
+        getValid().setEntity(true);
     }
 
     private class RngDevValidation implements IValidation {

@@ -352,4 +352,9 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
     public void markAsInvalid(List<String> validationHints) {
         // not implemented
     }
+
+    @Override
+    public boolean isValid() {
+        return true;
+    }
 }
