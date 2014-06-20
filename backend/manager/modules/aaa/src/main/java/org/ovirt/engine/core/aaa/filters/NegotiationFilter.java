@@ -33,22 +33,21 @@ import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 public class NegotiationFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(NegotiationFilter.class);
+
+    private static final String CAPABILITIES_PARAMETER = "capabilities";
+
+    /**
+     * In order to support several alternative authentication extension we
+     * store their associated profiles in a stack inside the HTTP session,
+     * this is the key for that stack.
+     */
+    private static final String STACK_ATTR = NegotiationFilter.class.getName() + ".stack";
+
     /**
      * The authentication profiles used to perform the authentication process.
      */
     private volatile List<AuthenticationProfile> profiles;
     private long caps = 0;
-
-
-
-    /**
-     * In order to support several alternative authentication extension we store their associated profiles in a stack inside the HTTP session,
-     * this is the key for that stack.
-     */
-    private static final String STACK_ATTR = NegotiationFilter.class.getName() + ".stack";
-
-
-    private static final String CAPABILITIES_PARAMETER = "capabilities";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -62,7 +61,6 @@ public class NegotiationFilter implements Filter {
                 }
             }
         }
-
     }
 
     @Override
@@ -84,7 +82,7 @@ public class NegotiationFilter implements Filter {
                     for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
                         if (profile != null) {
                             ExtMap authnContext = profile.getAuthn().getContext();
-                            if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) == caps) {
+                            if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) != 0) {
                                 profiles.add(0, profile);
                                 schemes.addAll(authnContext.<List<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
                             }
@@ -99,87 +97,82 @@ public class NegotiationFilter implements Filter {
     @Override
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain)
             throws IOException, ServletException {
-        // If there are no authentication profiles supporting negotiation then we don't do anything, as there is no
-        // authentication to perform:
-        findNegotiatingProfiles(req);
-        if (!profiles.isEmpty()) {
-            // Perform the authentication:
-            doAuth((HttpServletRequest) req, (HttpServletResponse) rsp, chain);
-        } else {
+
+        HttpServletRequest httpreq = (HttpServletRequest)req;
+
+        if (FiltersHelper.isAuthenticated(httpreq) || httpreq.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY) != null) {
             chain.doFilter(req, rsp);
-        }
-    }
-
-    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, FilterChain chain)
-            throws IOException, ServletException {
-        HttpSession session = req.getSession(false);
-        if (session != null) {
-            if (!FiltersHelper.isAuthenticated(req) && req.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY) == null) {
-                // We need to remember which of the profiles was managing the negotiation with the client, so we store a
-                // stack
-                // of the available authenticators in the session:
-                @SuppressWarnings("unchecked")
-                Deque<String> stack = (Deque<String>) session.getAttribute(STACK_ATTR);
-                if (stack == null) {
-                    stack = new ArrayDeque<String>();
-                    for (AuthenticationProfile profile : profiles) {
-                        stack.push(profile.getName());
-                    }
-                    session.setAttribute(STACK_ATTR, stack);
+        } else {
+            findNegotiatingProfiles(httpreq);
+            HttpSession session = httpreq.getSession(false);
+            Deque<String> stack = null;
+            if (session != null) {
+                stack = (Deque<String>)session.getAttribute(STACK_ATTR);
+            }
+            if (stack == null) {
+                stack = new ArrayDeque<String>();
+                for (AuthenticationProfile profile : profiles) {
+                    stack.push(profile.getName());
                 }
-
-                while (!stack.isEmpty()) {
-                    // Resume the negotiation with the profile at the top of the stack:
-                    AuthenticationProfile profile =
-                            AuthenticationProfileRepository.getInstance().getProfile(stack.peek());
-                    if (profile == null) {
-                        continue;
-                    }
-
-                    ExtMap output = profile.getAuthn().invoke(
-                                new ExtMap().mput(
-                                        Base.InvokeKeys.COMMAND,
-                                        Authn.InvokeCommands.AUTHENTICATE_NEGOTIATE
-                                        ).mput(
-                                                Authn.InvokeKeys.HTTP_SERVLET_REQUEST,
-                                                req
-                                        ).mput(
-                                                Authn.InvokeKeys.HTTP_SERVLET_RESPONSE,
-                                                rsp
-                                        )
-                                );
-
-                    switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
-                        case Authn.AuthResult.SUCCESS:
-                            ExtMap authRecord = output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
-                            req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY, authRecord);
-                            req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY,
-                                AuthType.NEGOTIATION);
-                            req.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, profile);
-                            session.removeAttribute(STACK_ATTR);
-                        stack.clear();
-                            break;
-
-                        case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
-                            moveToNextProfile(session, stack);
-                            break;
-
-                    case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
-                        break;
-
-                        default:
-                        log.error("Unexpected authentication result. AuthResult code is {}",
-                                output.<Integer> get(Authn.InvokeKeys.RESULT));
-                            moveToNextProfile(session, stack);
-                    }
+            }
+            doAuth(httpreq, (HttpServletResponse) rsp, stack);
+            if (!stack.isEmpty()) {
+                httpreq.getSession(true).setAttribute(STACK_ATTR, stack);
+            } else {
+                if (session != null) {
+                    session.removeAttribute(STACK_ATTR);
                 }
+                chain.doFilter(req, rsp);
             }
         }
     }
 
-    private void moveToNextProfile(HttpSession session, Deque<String> stack) {
-        stack.pop();
-        session.setAttribute(STACK_ATTR, stack);
+    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<String> stack)
+            throws IOException, ServletException {
+
+        boolean stop = false;
+        while (!stop && !stack.isEmpty()) {
+            AuthenticationProfile profile =
+                    AuthenticationProfileRepository.getInstance().getProfile(stack.peek());
+
+            ExtMap output = profile.getAuthn().invoke(
+                new ExtMap().mput(
+                    Base.InvokeKeys.COMMAND,
+                    Authn.InvokeCommands.AUTHENTICATE_NEGOTIATE
+                ).mput(
+                    Authn.InvokeKeys.HTTP_SERVLET_REQUEST,
+                    req
+                ).mput(
+                    Authn.InvokeKeys.HTTP_SERVLET_RESPONSE,
+                    rsp
+                )
+            );
+
+            switch (output.<Integer> get(Authn.InvokeKeys.RESULT)) {
+            case Authn.AuthResult.SUCCESS:
+                req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY,
+                    output.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD));
+                req.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY,
+                    AuthType.NEGOTIATION);
+                req.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, profile.getName());
+                stack.clear();
+                break;
+
+            case Authn.AuthResult.NEGOTIATION_UNAUTHORIZED:
+                stack.pop();
+                break;
+
+            case Authn.AuthResult.NEGOTIATION_INCOMPLETE:
+                stop = true;
+                break;
+
+            default:
+                log.error("Unexpected authentication result. AuthResult code is {}",
+                    output.<Integer> get(Authn.InvokeKeys.RESULT));
+                stack.pop();
+                break;
+            }
+        }
     }
 
 }
