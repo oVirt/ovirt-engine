@@ -28,13 +28,18 @@ public class AuthzUtils {
     }
 
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
-        return extension.invoke(new ExtMap().mput(
+        ExtMap ret = null;
+        ExtMap output = extension.invoke(new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
                 Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                 ).mput(
                         Authn.InvokeKeys.AUTH_RECORD,
                         authRecord
-                )).<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+                ));
+        if (output.<Integer>get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
+            ret = output.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
+        }
+        return ret;
     }
 
     public static List<DirectoryUser> findPrincipalsByQuery(
