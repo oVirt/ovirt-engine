@@ -159,6 +159,10 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIKEYSDIR,
         'jboss.p12',
     )
+    OVIRT_ENGINE_PKI_JBOSS_CERT = os.path.join(
+        OVIRT_ENGINE_PKICERTSDIR,
+        'jboss.cer',
+    )
     OVIRT_ENGINE_PKI_ENGINE_CA_CERT = os.path.join(
         OVIRT_ENGINE_PKIDIR,
         'ca.pem',

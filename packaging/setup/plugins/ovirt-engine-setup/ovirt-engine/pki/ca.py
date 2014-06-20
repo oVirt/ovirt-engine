@@ -291,6 +291,7 @@ class Plugin(plugin.PluginBase):
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_TRUST_STORE,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
+                oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_CERT,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CA_CERT_CONF,
                 oenginecons.FileLocations.OVIRT_ENGINE_PKI_CERT_CONF,
                 (
