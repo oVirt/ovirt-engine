@@ -14,20 +14,20 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resteasy.json;
+package org.ovirt.engine.api.json;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.ext.Provider;
 
-import org.jboss.resteasy.plugins.providers.jackson.ResteasyJacksonProvider;
+import org.codehaus.jackson.jaxrs.JacksonJsonProvider;
 
 @Provider
 @Consumes(MediaType.APPLICATION_JSON)
 @Produces(MediaType.APPLICATION_JSON)
-public class JsonProvider extends ResteasyJacksonProvider {
-    public JsonProvider() {
+public class JSONProvider extends JacksonJsonProvider {
+    public JSONProvider() {
         super();
         setMapper(CustomObjectMapper.get());
     }

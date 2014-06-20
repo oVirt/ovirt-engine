@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.resteasy.json;
+package org.ovirt.engine.api.json;
 
 import java.util.List;
 
