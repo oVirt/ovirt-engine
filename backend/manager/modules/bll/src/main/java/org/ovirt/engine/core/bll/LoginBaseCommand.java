@@ -225,6 +225,23 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             return false;
         }
 
+        ExtensionProxy mapper = profile.getMapper();
+        if (mapper != null) {
+            authRecord = mapper.invoke(
+                    new ExtMap().mput(
+                            Base.InvokeKeys.COMMAND,
+                            Mapping.InvokeCommands.MAP_AUTH_RECORD
+                    ).mput(
+                            Authn.InvokeKeys.AUTH_RECORD,
+                            authRecord
+                    ),
+                    true
+                ).<ExtMap> get(
+                    Authn.InvokeKeys.AUTH_RECORD,
+                    authRecord
+                );
+        }
+
         ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
         if (principalRecord == null) {
             log.infoFormat(
@@ -407,21 +424,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 addCanDoActionMessage(msg);
             }
 
-        } else {
-            authRecord = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
-            if (mapper != null) {
-                authRecord = mapper.invoke(new ExtMap().mput(
-                                Base.InvokeKeys.COMMAND,
-                                Mapping.InvokeCommands.MAP_AUTH_RECORD
-                                ).mput(
-                                        Authn.InvokeKeys.AUTH_RECORD,
-                                authRecord
-                        )
-                        , true).<ExtMap> get(
-                        Authn.InvokeKeys.AUTH_RECORD,
-                        authRecord
-                        );
-            }
         }
     }
 
