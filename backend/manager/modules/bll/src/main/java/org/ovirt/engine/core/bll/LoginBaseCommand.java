@@ -221,87 +221,85 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             authenticate(loginName, password);
         }
         // Perform the actual authentication:
-        if (authRecord != null) {
-            ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
+        if (authRecord == null) {
+            return false;
+        }
 
-            if (principalRecord == null) {
-                log.infoFormat(
-                        "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the "
-                                +
-                                "directory.",
-                        authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
-                        profile.getName()
-                        );
-                addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-                AcctUtils.reportRecords(
-                        Acct.ReportReason.PRINCIPAL_NOT_FOUND,
-                        loginName,
-                        authRecord,
-                        null,
-                        "Principal record was not found. User name is %1$s",
-                        loginName
-                        );
-
-                return false;
-            }
-            DirectoryUser directoryUser = AuthzUtils.mapPrincipalRecord(profile.getAuthz(), principalRecord);
-
-            // Check that the user exists in the database, if it doesn't exist then we need to add it now:
-            DbUser dbUser =
-                    getDbUserDAO().getByExternalId(
-                            AuthzUtils.getName(profile.getAuthz()),
-                            directoryUser.getId());
-            if (dbUser == null) {
-                dbUser = new DbUser(directoryUser);
-                dbUser.setId(Guid.newGuid());
-            }
-            dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
-            getDbUserDAO().saveOrUpdate(dbUser);
-
-            // Check login permissions. We do it here and not via the
-            // getPermissionCheckSubjects mechanism, because we need the user to be logged in to
-            // the system in order to perform this check. The user is indeed logged in when running every command
-            // except the login command
-            if (!checkUserAndGroupsAuthorization(dbUser.getId(),
-                    dbUser.getGroupIds(),
-                    getActionType().getActionGroup(),
-                    MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID,
-                    VdcObjectType.Bottom,
-                    true)) {
-                AcctUtils.reportRecords(
-                        Acct.ReportReason.PRINCIPAL_LOGIN_NO_PERMISSION,
-                        dbUser.getLoginName(),
-                        authRecord,
-                        principalRecord,
-
-                        "The user %1$s is not authorized to perform login",
-                        dbUser.getLoginName()
-                        );
-                addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
-                return false;
-            }
-
-            // Retrieve the MLA admin status of the user.
-            // This may be redundant in some use-cases, but looking forward to Single Sign On,
-            // we will want this info
-            boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
-            log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
-            dbUser.setAdmin(isAdmin);
-            setCurrentUser(dbUser);
+        ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
+        if (principalRecord == null) {
+            log.infoFormat(
+                    "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the "
+                            +
+                            "directory.",
+                    authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
+                    profile.getName()
+                    );
+            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             AcctUtils.reportRecords(
-                    reportReason,
+                    Acct.ReportReason.PRINCIPAL_NOT_FOUND,
+                    loginName,
+                    authRecord,
+                    null,
+                    "Principal record was not found. User name is %1$s",
+                    loginName
+                    );
+
+            return false;
+        }
+        DirectoryUser directoryUser = AuthzUtils.mapPrincipalRecord(profile.getAuthz(), principalRecord);
+
+        // Check that the user exists in the database, if it doesn't exist then we need to add it now:
+        DbUser dbUser =
+                getDbUserDAO().getByExternalId(
+                        AuthzUtils.getName(profile.getAuthz()),
+                        directoryUser.getId());
+        if (dbUser == null) {
+            dbUser = new DbUser(directoryUser);
+            dbUser.setId(Guid.newGuid());
+        }
+        dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
+        getDbUserDAO().saveOrUpdate(dbUser);
+
+        // Check login permissions. We do it here and not via the
+        // getPermissionCheckSubjects mechanism, because we need the user to be logged in to
+        // the system in order to perform this check. The user is indeed logged in when running every command
+        // except the login command
+        if (!checkUserAndGroupsAuthorization(dbUser.getId(),
+                dbUser.getGroupIds(),
+                getActionType().getActionGroup(),
+                MultiLevelAdministrationHandler.BOTTOM_OBJECT_ID,
+                VdcObjectType.Bottom,
+                true)) {
+            AcctUtils.reportRecords(
+                    Acct.ReportReason.PRINCIPAL_LOGIN_NO_PERMISSION,
                     dbUser.getLoginName(),
                     authRecord,
                     principalRecord,
-                    "User %1$s which has princnipal name %2$s logged in ",
-                    dbUser.getLoginName(),
-                    principalRecord.<String> get(Authz.PrincipalRecord.NAME)
-                    );
-            return true;
-        }
-        return false;
 
-        // Check that the user exists in the directory associated to the authentication profile:
+                    "The user %1$s is not authorized to perform login",
+                    dbUser.getLoginName()
+                    );
+            addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+            return false;
+        }
+
+        // Retrieve the MLA admin status of the user.
+        // This may be redundant in some use-cases, but looking forward to Single Sign On,
+        // we will want this info
+        boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
+        log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
+        dbUser.setAdmin(isAdmin);
+        setCurrentUser(dbUser);
+        AcctUtils.reportRecords(
+                reportReason,
+                dbUser.getLoginName(),
+                authRecord,
+                principalRecord,
+                "User %1$s which has princnipal name %2$s logged in ",
+                dbUser.getLoginName(),
+                principalRecord.<String> get(Authz.PrincipalRecord.NAME)
+                );
+        return true;
     }
 
     private void logEventForUser(String userName, AuditLogType auditLogType) {
