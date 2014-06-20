@@ -13,6 +13,8 @@ import com.google.gwt.user.client.ui.Widget;
  */
 public abstract class AbstractValidatedWidget extends Composite implements HasValidation {
 
+    private boolean valid = true;
+
     @Override
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
@@ -22,6 +24,7 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
 
     @Override
     public void markAsValid() {
+        valid = true;
         applyCommonValidationStyles();
         getValidatedWidgetStyle().setBorderColor("gray"); //$NON-NLS-1$
         getValidatedWidget().setTitle(null);
@@ -29,6 +32,7 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
 
     @Override
     public void markAsInvalid(List<String> validationHints) {
+        valid = false;
         applyCommonValidationStyles();
         getValidatedWidgetStyle().setBorderColor("red"); //$NON-NLS-1$
         getValidatedWidget().setTitle(getValidationTitle(validationHints));
@@ -49,4 +53,8 @@ public abstract class AbstractValidatedWidget extends Composite implements HasVa
 
     protected abstract Widget getValidatedWidget();
 
+    @Override
+    public boolean isValid() {
+        return valid;
+    }
 }

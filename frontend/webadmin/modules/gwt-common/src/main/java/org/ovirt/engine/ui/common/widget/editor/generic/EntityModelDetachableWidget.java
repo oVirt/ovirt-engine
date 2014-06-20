@@ -12,12 +12,16 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.HasValidation;
+
+import java.util.List;
+
 import static com.google.gwt.dom.client.Style.Unit;
 
 /**
  * Takes a AbstractValidatedWidgetWithLabel, decorates it with the detachable icon but does not render it's label
  */
-public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget implements HasEnabled {
+public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget implements HasEnabled, HasValidation {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelDetachableWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -76,5 +80,20 @@ public class EntityModelDetachableWidget extends BaseEntityModelDetachableWidget
 
     public void addContentWrapperStypeName(String styleName) {
         contentWrapper.addStyleName(styleName);
+    }
+
+    @Override
+    public void markAsValid() {
+        decorated.markAsValid();
+    }
+
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        decorated.markAsInvalid(validationHints);
+    }
+
+    @Override
+    public boolean isValid() {
+        return decorated.isValid();
     }
 }

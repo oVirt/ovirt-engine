@@ -66,6 +66,4 @@ public abstract class BaseEntityModelDetachableWidget extends Composite implemen
         attachedSeparatedImage.setResource(attached ? resource.joinedIcon() : resource.separatedIcon());
         attachedSeparatedImage.setTitle(attached ? constants.attachedToInstanceType() : constants.detachedFromInstanceType());
     }
-
-
 }

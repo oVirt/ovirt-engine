@@ -65,6 +65,11 @@ public class WidgetWithLabelEditor<T, W extends AbstractValidatedWidgetWithLabel
     }
 
     @Override
+    public boolean isValid() {
+        return widgetWithLabel.isValid();
+    }
+
+    @Override
     public void setEnabled(boolean enabled) {
         widgetWithLabel.setEnabled(enabled);
     }

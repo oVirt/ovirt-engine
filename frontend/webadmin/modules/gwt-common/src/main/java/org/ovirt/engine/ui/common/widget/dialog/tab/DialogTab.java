@@ -21,6 +21,10 @@ import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.IndexedPanel;
 import com.google.gwt.user.client.ui.InlineLabel;
 import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.common.widget.HasValidation;
+
+import java.util.ArrayList;
+import java.util.List;
 
 public class DialogTab extends AbstractValidatedWidget implements HasClickHandlers, HasLabel, HasElementId, HasKeyUpHandlers, FocusableComponentsContainer {
 
@@ -129,6 +133,23 @@ public class DialogTab extends AbstractValidatedWidget implements HasClickHandle
         } else if (content instanceof HasEnabled) {
             ((HasEnabled) content).setEnabled(false);
         }
+    }
+
+    public List<HasValidation> getInvalidWidgets() {
+        return getInvalidWidgets(getContent());
+    }
+
+    private List<HasValidation> getInvalidWidgets(Widget content) {
+        List<HasValidation> hasValidations = new ArrayList<HasValidation>();
+        if (content instanceof IndexedPanel) {
+            for (int i = 0; i < ((IndexedPanel) content).getWidgetCount(); i++) {
+                hasValidations.addAll(getInvalidWidgets(((IndexedPanel) content).getWidget(i)));
+            }
+        } else if (content instanceof HasValidation && !((HasValidation) content).isValid()) {
+            hasValidations.add((HasValidation) content);
+        }
+
+        return hasValidations;
     }
 
     @Override

@@ -115,6 +115,11 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
     }
 
     @Override
+    public boolean isValid() {
+        return storageDomainsPanel.isValid();
+    }
+
+    @Override
     public ImportFcpStorageModel flush() {
         return driver.flush();
     }

@@ -11,11 +11,14 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import org.ovirt.engine.ui.common.widget.AbstractValidatedWidgetWithLabel;
 import org.ovirt.engine.ui.common.widget.HasLabel;
+import org.ovirt.engine.ui.common.widget.HasValidation;
+
+import java.util.List;
 
 /**
  * Takes an AbstractValidatedWidgetWithLabel and decorates it with a detachable icon
  */
-public class EntityModelDetachableWidgetWithLabel extends BaseEntityModelDetachableWidget implements HasLabel, HasEnabled {
+public class EntityModelDetachableWidgetWithLabel extends BaseEntityModelDetachableWidget implements HasLabel, HasEnabled, HasValidation {
 
     interface WidgetUiBinder extends UiBinder<Widget, EntityModelDetachableWidgetWithLabel> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
@@ -82,5 +85,20 @@ public class EntityModelDetachableWidgetWithLabel extends BaseEntityModelDetacha
 
     public void addContentWrapperStypeName(String styleName) {
         contentWrapper.addStyleName(styleName);
+    }
+
+    @Override
+    public void markAsValid() {
+        decorated.markAsValid();
+    }
+
+    @Override
+    public void markAsInvalid(List<String> validationHints) {
+        decorated.markAsInvalid(validationHints);
+    }
+
+    @Override
+    public boolean isValid() {
+        return decorated.isValid();
     }
 }

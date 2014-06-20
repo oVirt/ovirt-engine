@@ -213,6 +213,11 @@ public class IscsiStorageView extends AbstractStorageView<IscsiStorageModel> imp
     }
 
     @Override
+    public boolean isValid() {
+        return lunsListPanel.isValid() && targetsToLunsPanel.isValid();
+    }
+
+    @Override
     public boolean isSubViewFocused() {
         return iscsiTargetToLunView.isDiscoverPanelFocused();
     }
