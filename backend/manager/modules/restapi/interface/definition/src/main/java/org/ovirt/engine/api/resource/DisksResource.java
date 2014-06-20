@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Disks;
 
@@ -21,7 +20,6 @@ public interface DisksResource extends ReadOnlyDevicesResource<Disk, Disks> {
     public MovableCopyableDiskResource getDeviceSubResource(@PathParam("identity") String id);
 
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(Disk device);
 

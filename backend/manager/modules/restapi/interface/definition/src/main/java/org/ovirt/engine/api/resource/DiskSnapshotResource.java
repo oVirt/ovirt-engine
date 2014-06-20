@@ -15,7 +15,6 @@
 */
 package org.ovirt.engine.api.resource;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.DiskSnapshot;
 
 import javax.ws.rs.GET;
@@ -25,7 +24,6 @@ import javax.ws.rs.Produces;
 public interface DiskSnapshotResource extends ReadOnlyResource<DiskSnapshot> {
 
     @GET
-    @Formatted
     @Override
     public DiskSnapshot get();
 

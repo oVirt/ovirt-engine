@@ -9,18 +9,15 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.AffinityGroup;
 import org.ovirt.engine.api.model.AffinityGroups;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface AffinityGroupsResource {
     @GET
-    @Formatted
     public AffinityGroups list();
 
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(AffinityGroup affinityGroup);
 

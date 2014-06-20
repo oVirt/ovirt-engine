@@ -19,14 +19,12 @@ package org.ovirt.engine.api.resource;
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import org.ovirt.engine.api.model.Domain;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import javax.ws.rs.Path;
 
 @Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface DomainResource {
 
     @GET
-    @Formatted
     public Domain get();
 
     @Path("users")

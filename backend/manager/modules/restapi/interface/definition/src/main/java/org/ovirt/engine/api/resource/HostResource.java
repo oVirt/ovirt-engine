@@ -21,12 +21,10 @@ import javax.ws.rs.POST;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.Host;
-
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface HostResource extends UpdatableResource<Host>, MeasurableResource {
@@ -35,55 +33,46 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     public ActionResource getActionSubresource(@PathParam("action")String action, @PathParam("oid")String oid);
 
     @POST
-    @Formatted
     @Actionable
     @Path("approve")
     public Response approve(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("install")
     public Response install(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("fence")
     public Response fence(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("activate")
     public Response activate(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("deactivate")
     public Response deactivate(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("commitnetconfig")
     public Response commitNetConfig(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("iscsidiscover")
     public Response iscsiDiscover(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("iscsilogin")
     public Response iscsiLogin(Action action);
 
     @POST
-    @Formatted
     @Actionable
     @Path("forceselectspm")
     public Response forceSelectSPM(Action action);

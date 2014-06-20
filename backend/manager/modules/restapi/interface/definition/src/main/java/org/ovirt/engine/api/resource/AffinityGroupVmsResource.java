@@ -9,7 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VMs;
 
@@ -17,11 +16,9 @@ import org.ovirt.engine.api.model.VMs;
 public interface AffinityGroupVmsResource {
 
     @GET
-    @Formatted
     public VMs list();
 
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(VM vm);
 

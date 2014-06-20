@@ -12,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.GlusterVolume;
 import org.ovirt.engine.api.model.GlusterVolumes;
 import org.ovirt.engine.api.resource.ApiMediaType;
@@ -23,7 +22,6 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterVolumesResource {
     @GET
-    @Formatted
     public GlusterVolumes list();
 
     /**
@@ -36,7 +34,6 @@ public interface GlusterVolumesResource {
      * @return the new newly created Gluster Volume
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(GlusterVolume volume);
 

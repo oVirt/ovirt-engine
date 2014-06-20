@@ -24,11 +24,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.Role;
 import org.ovirt.engine.api.model.Roles;
-
 
 /**
  * Provides read-only access to the global set of roles
@@ -38,11 +36,9 @@ import org.ovirt.engine.api.model.Roles;
 public interface RolesResource {
 
     @GET
-    @Formatted
     public Roles list();
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Role role);
 

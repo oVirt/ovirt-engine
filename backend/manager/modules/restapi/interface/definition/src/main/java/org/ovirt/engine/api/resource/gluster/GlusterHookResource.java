@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterHook;
@@ -21,7 +20,6 @@ import org.ovirt.engine.api.resource.ApiMediaType;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterHookResource {
     @GET
-    @Formatted
     public GlusterHook get();
 
     @Path("{action: (enable|disable|resolve)}/{oid}")
@@ -34,7 +32,6 @@ public interface GlusterHookResource {
      * @return
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("enable")
@@ -47,7 +44,6 @@ public interface GlusterHookResource {
      * @return
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("disable")
@@ -68,11 +64,8 @@ public interface GlusterHookResource {
      * @return
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("resolve")
     public Response resolve(Action action);
-
-
 }

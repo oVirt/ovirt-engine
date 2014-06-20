@@ -12,7 +12,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBricks;
@@ -26,7 +25,6 @@ import org.ovirt.engine.api.resource.RsdlIgnore;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface GlusterBricksResource {
     @GET
-    @Formatted
     public GlusterBricks list();
 
     @Path("{action: (migrate|stopmigrate)}/{oid}")
@@ -42,7 +40,6 @@ public interface GlusterBricksResource {
      * @return
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(GlusterBricks bricks);
 
@@ -69,21 +66,18 @@ public interface GlusterBricksResource {
     public Response remove(@PathParam("brick_id") String id);
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("migrate")
     public Response migrate(Action action);
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("stopmigrate")
     public Response stopMigrate(Action action);
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     @Actionable
     @Path("activate")
@@ -99,5 +93,4 @@ public interface GlusterBricksResource {
      */
     @Path("{brick_id}")
     public GlusterBrickResource getGlusterBrickSubResource(@PathParam("brick_id") String id);
-
 }

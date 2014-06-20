@@ -18,15 +18,12 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.BaseDevice;
-
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface ReadOnlyDeviceResource<D extends BaseDevice> extends AsynchronouslyCreatedResource {
 
     @GET
-    @Formatted
     public D get();
 }

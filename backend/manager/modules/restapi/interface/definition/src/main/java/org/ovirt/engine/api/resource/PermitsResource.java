@@ -24,7 +24,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.Permits;
@@ -33,7 +32,6 @@ import org.ovirt.engine.api.model.Permits;
 public interface PermitsResource {
 
     @GET
-    @Formatted
     public Permits list();
 
     /**
@@ -44,7 +42,6 @@ public interface PermitsResource {
      * @return        the new newly added Permit
      */
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Permit permit);
 

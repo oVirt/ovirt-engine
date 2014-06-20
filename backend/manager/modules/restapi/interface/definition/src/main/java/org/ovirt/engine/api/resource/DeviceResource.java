@@ -19,16 +19,13 @@ package org.ovirt.engine.api.resource;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.PUT;
 import javax.ws.rs.Produces;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.BaseDevice;
-
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface DeviceResource<D extends BaseDevice> extends ReadOnlyDeviceResource<D> {
 
     @PUT
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public D update(D device);
 

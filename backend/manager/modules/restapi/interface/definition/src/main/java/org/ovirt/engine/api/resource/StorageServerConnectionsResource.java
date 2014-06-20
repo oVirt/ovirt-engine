@@ -9,7 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
@@ -18,7 +17,6 @@ import org.ovirt.engine.api.model.StorageConnections;
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface StorageServerConnectionsResource {
     @GET
-    @Formatted
     public StorageConnections list();
 
     /**
@@ -27,7 +25,6 @@ public interface StorageServerConnectionsResource {
      * @return the new newly added storage connection
      */
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     public Response add(StorageConnection storageConnection);
 

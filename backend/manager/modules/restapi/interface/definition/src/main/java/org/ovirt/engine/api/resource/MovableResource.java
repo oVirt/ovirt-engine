@@ -1,6 +1,5 @@
 package org.ovirt.engine.api.resource;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 
@@ -14,7 +13,6 @@ import javax.ws.rs.core.Response;
 public interface MovableResource {
 
     @POST
-    @Formatted
     @Actionable
     @Path("move")
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})

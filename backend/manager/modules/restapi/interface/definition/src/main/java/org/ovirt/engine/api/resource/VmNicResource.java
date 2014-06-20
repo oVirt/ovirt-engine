@@ -9,11 +9,9 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.NIC;
-
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface VmNicResource extends NicResource {
@@ -24,7 +22,6 @@ public interface VmNicResource extends NicResource {
     // TODO remove on 4.1
     @Deprecated
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("activate")
@@ -33,20 +30,17 @@ public interface VmNicResource extends NicResource {
     // TODO remove on 4.1
     @Deprecated
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("deactivate")
     public Response deactivate(Action action);
 
     @PUT
-    @Formatted
     @Override
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public NIC update(NIC device);
 
     @GET
-    @Formatted
     @Override
     public NIC get();
 

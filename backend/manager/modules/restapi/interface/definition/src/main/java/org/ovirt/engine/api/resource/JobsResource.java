@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Jobs;
 
@@ -17,11 +16,9 @@ import org.ovirt.engine.api.model.Jobs;
 public interface JobsResource {
 
     @GET
-    @Formatted
     public Jobs list();
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Job job);
 

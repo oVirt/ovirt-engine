@@ -18,7 +18,6 @@ package org.ovirt.engine.api.resource;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
 import org.ovirt.engine.api.model.Storage;
 
@@ -26,6 +25,5 @@ import org.ovirt.engine.api.model.Storage;
 public interface StorageResource {
 
     @GET
-    @Formatted
     public Storage get();
 }

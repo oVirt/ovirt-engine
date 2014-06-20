@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Step;
 import org.ovirt.engine.api.model.Steps;
 
@@ -16,11 +15,9 @@ import org.ovirt.engine.api.model.Steps;
 public interface StepsResource {
 
     @GET
-    @Formatted
     public Steps list();
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(Step step);
 

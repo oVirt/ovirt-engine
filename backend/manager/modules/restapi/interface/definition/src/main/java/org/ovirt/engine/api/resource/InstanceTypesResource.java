@@ -16,7 +16,6 @@
 
 package org.ovirt.engine.api.resource;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.InstanceType;
 import org.ovirt.engine.api.model.InstanceTypes;
 
@@ -29,17 +28,14 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-
 @Path("/instancetypes")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
 public interface InstanceTypesResource {
 
     @GET
-    @Formatted
     public InstanceTypes list();
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(InstanceType template);
 

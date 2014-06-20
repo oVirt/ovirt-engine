@@ -9,7 +9,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.VirtualNumaNode;
 import org.ovirt.engine.api.model.VirtualNumaNodes;
 
@@ -17,11 +16,9 @@ import org.ovirt.engine.api.model.VirtualNumaNodes;
 public interface VmNumaNodesResource {
 
     @GET
-    @Formatted
     public VirtualNumaNodes list();
 
     @POST
-    @Formatted
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
     public Response add(VirtualNumaNode node);
 

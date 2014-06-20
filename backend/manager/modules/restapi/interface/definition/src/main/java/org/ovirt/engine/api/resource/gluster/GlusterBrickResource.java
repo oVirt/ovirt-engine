@@ -8,7 +8,6 @@ import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Actionable;
 import org.ovirt.engine.api.model.GlusterBrick;
@@ -26,7 +25,6 @@ public interface GlusterBrickResource extends MeasurableResource{
     public ActionResource getActionSubresource(@PathParam("action") String action, @PathParam("oid") String oid);
 
     @GET
-    @Formatted
     public GlusterBrick get();
 
     /**
@@ -37,7 +35,6 @@ public interface GlusterBrickResource extends MeasurableResource{
      */
     @Deprecated
     @POST
-    @Formatted
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Actionable
     @Path("replace")
