@@ -1,6 +1,6 @@
 @import url("gwt_common.css");
 @import url("patternfly-custom.css");
-@import url("patternfly-custom-hacks.css");
+@import url("ovirt-patternfly-compat.css");
 
 /* LoginPopupView.ui.xml:
 These classes allow you to modify the logo used in the login form. */
