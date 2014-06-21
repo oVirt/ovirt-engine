@@ -7,6 +7,7 @@ import java.util.Map;
 import org.codehaus.jackson.JsonFactory;
 import org.codehaus.jackson.JsonGenerator;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.type.MapType;
 
 public class JsonHelper {
     private JsonHelper() {
@@ -28,5 +29,12 @@ public class JsonHelper {
     public static String mapToJson(Map<String, Object> input)
             throws IOException {
         return mapToJson(input, true);
+    }
+
+    public static Map<String, Object> jsonToMap(String jsonString) throws IOException {
+        ObjectMapper mapper = new ObjectMapper();
+        MapType type = mapper.getTypeFactory().constructMapType(Map.class, String.class, Object.class);
+        Map<String, Object> data = mapper.readValue(jsonString, type);
+        return data;
     }
 }
