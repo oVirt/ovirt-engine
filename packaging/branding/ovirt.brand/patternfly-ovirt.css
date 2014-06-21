@@ -1,0 +1,155 @@
+/*
+   This CSS file overrides classes in PatternFly. Only classes already
+   defined in PatternFly should be placed in here.
+*/
+
+.login-pf .container {
+  background-color: rgba(0, 0, 0, 0.25);
+}
+
+.navbar-pf {
+  background: #393f45;
+  border-top: 3px solid #43a103;
+}
+
+.navbar-pf .navbar-header {
+  border-bottom: 1px solid #5c656f;
+}
+
+.navbar-pf .navbar-nav > .active > a,
+.navbar-pf .navbar-nav > .active > a:hover,
+.navbar-pf .navbar-nav > .active > a:focus {
+  background-color: #565f68;
+ }
+
+.navbar-pf .navbar-nav > .open > a,
+.navbar-pf .navbar-nav > .open > a:hover,
+.navbar-pf .navbar-nav > .open > a:focus {
+  background-color: #565f68;
+}
+
+@media (max-width: 767px) {
+  .navbar-pf .navbar-nav .active .navbar-persistent,
+  .navbar-pf .navbar-nav .active .dropdown-menu,
+  .navbar-pf .navbar-nav .open .dropdown-menu {
+    background-color: #4b535b !important;
+  }
+
+  .navbar-pf .navbar-nav .active .navbar-persistent > .active > a,
+  .navbar-pf .navbar-nav .active .dropdown-menu > .active > a,
+  .navbar-pf .navbar-nav .open .dropdown-menu > .active > a,
+  .navbar-pf .navbar-nav .active .navbar-persistent .dropdown-submenu.open > a,
+  .navbar-pf .navbar-nav .active .dropdown-menu .dropdown-submenu.open > a,
+  .navbar-pf .navbar-nav .open .dropdown-menu .dropdown-submenu.open > a,
+  .navbar-pf .navbar-nav .active .navbar-persistent > .active > a:hover,
+  .navbar-pf .navbar-nav .active .dropdown-menu > .active > a:hover,
+  .navbar-pf .navbar-nav .open .dropdown-menu > .active > a:hover,
+  .navbar-pf .navbar-nav .active .navbar-persistent .dropdown-submenu.open > a:hover,
+  .navbar-pf .navbar-nav .active .dropdown-menu .dropdown-submenu.open > a:hover,
+  .navbar-pf .navbar-nav .open .dropdown-menu .dropdown-submenu.open > a:hover,
+  .navbar-pf .navbar-nav .active .navbar-persistent > .active > a:focus,
+  .navbar-pf .navbar-nav .active .dropdown-menu > .active > a:focus,
+  .navbar-pf .navbar-nav .open .dropdown-menu > .active > a:focus,
+  .navbar-pf .navbar-nav .active .navbar-persistent .dropdown-submenu.open > a:focus,
+  .navbar-pf .navbar-nav .active .dropdown-menu .dropdown-submenu.open > a:focus,
+  .navbar-pf .navbar-nav .open .dropdown-menu .dropdown-submenu.open > a:focus {
+    background-color: #525b64 !important;
+  }
+
+  .navbar-pf .navbar-nav .active .navbar-persistent .divider,
+  .navbar-pf .navbar-nav .active .dropdown-menu .divider,
+  .navbar-pf .navbar-nav .open .dropdown-menu .divider {
+    background-color: #5c656f;
+  }
+}
+
+.navbar-pf .navbar-primary .context {
+  border-bottom: 1px solid #5c656f;
+}
+
+.navbar-pf .navbar-utility {
+  border-bottom: 1px solid #5c656f;
+}
+
+@media (max-width: 767px) {
+  .navbar-pf .navbar-utility > li + li {
+    border-top: 1px solid #5c656f;
+  }
+}
+
+@media (min-width: 768px) {
+  .navbar-pf .navbar-brand {
+    padding: 4px 0 6px;
+  }
+
+  .navbar-pf .navbar-primary {
+    background-image: -webkit-linear-gradient(top, #505961 0%, #393f45 100%);
+    background-image: linear-gradient(to bottom, #505961 0%, #393f45 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff505961', endColorstr='#ff393f45', GradientType=0);
+  }
+
+  .navbar-pf .navbar-primary > li > a:hover {
+    background-color: #505961;
+    border-top-color: #8e98a2;
+    background-image: -webkit-linear-gradient(top, #67727d 0%, #505961 100%);
+    background-image: linear-gradient(to bottom, #67727d 0%, #505961 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff67727d', endColorstr='#ff505961', GradientType=0);
+  }
+
+  .navbar-pf .navbar-primary > .active > a,
+  .navbar-pf .navbar-primary > .active > a:hover,
+  .navbar-pf .navbar-primary > .active > a:focus,
+  .navbar-pf .navbar-primary > .open > a,
+  .navbar-pf .navbar-primary > .open > a:hover,
+  .navbar-pf .navbar-primary > .open > a:focus {
+    background-color: #616c76;
+    border-bottom-color: #616c76;
+    border-top-color: #9ca5ae;
+    background-image: -webkit-linear-gradient(top, #737f8b 0%, #616c76 100%);
+    background-image: linear-gradient(to bottom, #737f8b 0%, #616c76 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff737f8b', endColorstr='#ff616c76', GradientType=0);
+  }
+
+  .navbar-pf .navbar-primary li.dropdown.context > a {
+    background-color: #525b64;
+    border-bottom-color: #6e7a85;
+    border-right: 1px solid #6e7a85;
+    border-top-color: #6c7782;
+    background-image: -webkit-linear-gradient(top, #646e79 0%, #525b64 100%);
+    background-image: linear-gradient(to bottom, #646e79 0%, #525b64 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff646e79', endColorstr='#ff525b64', GradientType=0);
+  }
+
+  .navbar-pf .navbar-primary li.dropdown.context.open > a {
+    background-color: #75818d;
+    border-bottom-color: #89939d;
+    border-right-color: #89939d;
+    border-top-color: #8c96a0;
+    background-image: -webkit-linear-gradient(top, #7c8893 0%, #75818d 100%);
+    background-image: linear-gradient(to bottom, #7c8893 0%, #75818d 100%);
+    filter: progid:DXImageTransform.Microsoft.gradient(startColorstr='#ff7c8893', endColorstr='#ff75818d', GradientType=0);
+  }
+
+  .navbar-pf .navbar-utility > .active > a,
+  .navbar-pf .navbar-utility > .active > a:hover,
+  .navbar-pf .navbar-utility > .active > a:focus,
+  .navbar-pf .navbar-utility > .open > a,
+  .navbar-pf .navbar-utility > .open > a:hover,
+  .navbar-pf .navbar-utility > .open > a:focus {
+    background: #67727d;
+  }
+
+  .navbar-pf .navbar-utility > li > a {
+    border-left: 1px solid #5d6770;
+  }
+
+  .navbar-pf .navbar-utility > li > a:hover {
+    background: #565f68;
+    border-left-color: #68737e;
+  }
+
+  .navbar-pf .navbar-utility > li.open > a {
+    border-left-color: #74808c;
+  }
+}
+

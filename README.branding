@@ -155,6 +155,9 @@ The branding directory is treated as a standard conf.d, in which directories
 are sorted by name, each package is read by order and overrides
 the previous ones.
 
+Note: the default ovirt brand requires PatternFly and expects it to be installed
+in /usr/share/patternfly.
+
 MAINTENANCE - CSS
 -----------------
 

@@ -37,6 +37,7 @@ DEV_REBUILD=1
 DEV_BUILD_GWT_DRAFT=0
 DEV_EXTRA_BUILD_FLAGS=
 DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS=-D gwt.userAgent=gecko1_8
+PATTERNFLY_DIR=/usr/share/patternfly1/resources
 
 PACKAGE_NAME=ovirt-engine
 ENGINE_NAME=$(PACKAGE_NAME)
@@ -454,6 +455,10 @@ install-layout: \
 	install -d -m 755 "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding"
 	-rm -f "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
 	ln -s "$(DATA_DIR)/branding/ovirt.brand" "$(DESTDIR)$(PKG_SYSCONF_DIR)/branding/00-ovirt.brand"
+
+	-rm -f "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/patternfly"
+	ln -s "$(PATTERNFLY_DIR)" "$(DESTDIR)$(DATA_DIR)/branding/ovirt.brand/patternfly"
+
 	ln -sf "$(DATA_DIR)/conf/osinfo-defaults.properties" "$(DESTDIR)$(PKG_SYSCONF_DIR)/osinfo.conf.d/00-defaults.properties"
 
 gwt-debug:

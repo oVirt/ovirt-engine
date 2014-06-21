@@ -1,5 +1,6 @@
 @import url("gwt_common.css");
-@import url("patternfly-custom.css");
+@import url("patternfly/css/styles.min.css");
+@import url("patternfly-ovirt.css");
 @import url("ovirt-patternfly-compat.css");
 
 /* LoginPopupView.ui.xml:

@@ -202,6 +202,7 @@ Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.3.0
 Requires:	ovirt-iso-uploader >= 3.3.0
 Requires:	ovirt-log-collector >= 3.3.0
+Requires:	patternfly1
 Requires:	postgresql-server >= 8.4.7
 Requires:	ws-commons-util
 Requires:	yum-plugin-versionlock

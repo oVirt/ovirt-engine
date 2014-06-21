@@ -24,6 +24,7 @@ Install the following system components:
  - maven-3 (optional)
  - pyflakes (optional)
  - python-pep8 / pep8 (optional)
+ - patternfly1 (optional)
 
 Maven-3 is required, download and extract if not installed using
 distribution package management, and add to PATH.
@@ -112,6 +113,9 @@ customization:
 
 PREFIX [/usr/local]
     Installation root directory.
+
+PATTERNFLY_DIR [/usr/share/patternfly1/resources]
+    The location of the PatternFly installation.
 
 BUILD_GWT [1]
     Build GWT.
