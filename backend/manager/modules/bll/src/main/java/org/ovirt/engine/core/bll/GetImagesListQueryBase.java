@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.RepoImage;
-import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.queries.GetImagesListParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -18,10 +17,6 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
     protected void executeQueryCommand() {
         // Fetch all the Iso files of a given type for storage pool with active storage domain of this domain Id.
         getQueryReturnValue().setReturnValue(getUserRequestForStorageDomainRepoFileList());
-        if (getQueryReturnValue().getReturnValue() == null) {
-            getQueryReturnValue().setSucceeded(false);
-            getQueryReturnValue().setExceptionString(VdcBllErrors.IRS_REPOSITORY_NOT_FOUND.toString());
-        }
     }
 
     /**

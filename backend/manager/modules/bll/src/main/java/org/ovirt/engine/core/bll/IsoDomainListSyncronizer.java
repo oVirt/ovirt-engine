@@ -31,6 +31,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.constants.StorageConstants;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetFileStatsParameters;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
@@ -166,7 +168,7 @@ public class IsoDomainListSyncronizer {
 
     /**
      * Returns a RepoFilesMetaData list with Iso file names for storage domain Id and with file type extension.<BR>
-     * If user choose to refresh the cache, and a problem occurs, then returns null.
+     * If user choose to refresh the cache, and a problem occurs, then throws VdcBLLException.
      *
      * @param storageDomainId
      *            - The storage domain Id, which we fetch the Iso list from.
@@ -174,7 +176,8 @@ public class IsoDomainListSyncronizer {
      *            - The imageType we want to fetch the files from the cache.
      * @param forceRefresh
      *            - Indicates if the domain should be refreshed from VDSM.
-     * @return List of RepoFilesMetaData files or null (If fetch from VDSM failed).
+     * @throws VdcBLLException - if a problem occurs when refreshing the image repo cache.
+     * @return List of RepoFilesMetaData files.
      */
     public List<RepoImage> getUserRequestForStorageDomainRepoFileList(Guid storageDomainId,
             ImageFileType imageType,
@@ -182,7 +185,7 @@ public class IsoDomainListSyncronizer {
         // The result list we send back.
         List<RepoImage> repoList = null;
         if (!isStorageDomainValid(storageDomainId, imageType, forceRefresh)) {
-            return null;
+            throw new VdcBLLException(VdcBllErrors.GetIsoListError);
         }
         // At any case, if refreshed or not, get Iso list from the cache.
         repoList = getCachedIsoListByDomainId(storageDomainId, imageType);

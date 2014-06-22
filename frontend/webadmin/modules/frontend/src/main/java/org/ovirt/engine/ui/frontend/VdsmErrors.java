@@ -265,8 +265,6 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String GetiSCSISessionListError();
 
-    String GetIsoListError();
-
     String GetLogicalVolumeDevError();
 
     String GetLogicalVolumesByTagError();
@@ -815,4 +813,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();
+
+    @DefaultStringValue("Cannot get list of images in ISO domain. " +
+            "Please check that the storage domain status is Active")
+    String GetIsoListError();
 }
