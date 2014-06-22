@@ -358,6 +358,11 @@ public class FixturesTool {
      */
     protected static final String LUN_ID_FOR_DISK = "1IET_00180002";
 
+
+    protected static final String LUN_ID1= "1IET_00180001";
+
+    protected static final String LUN_ID2= "1IET_00180003";
+
     /**
      * Predefined boot LUN disk attached to VM_RHEL5_POOL_57
      */

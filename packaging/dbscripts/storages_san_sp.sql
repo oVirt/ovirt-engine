@@ -517,7 +517,7 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION Getstorage_server_connectionsByVolumeGroupId(v_volume_group_id VARCHAR(50)) RETURNS SETOF storage_server_connections STABLE
    AS $procedure$
 BEGIN
-   RETURN QUERY SELECT storage_server_connections.*
+   RETURN QUERY SELECT DISTINCT storage_server_connections.*
    FROM
    LUN_storage_server_connection_map  LUN_storage_server_connection_map
    INNER JOIN

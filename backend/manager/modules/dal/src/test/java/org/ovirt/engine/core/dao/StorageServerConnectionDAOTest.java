@@ -10,11 +10,14 @@ import static org.junit.Assert.assertTrue;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.EnumSet;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -206,17 +209,33 @@ public class StorageServerConnectionDAOTest extends BaseDAOTestCase {
         assertTrue("the connections loaded by the given dao function should match the connections loaded separately",
                 CollectionUtils.isEqualCollection(domainConnections, result));
     }
+
+    private Set<String> getLunConnections(List<LUN_storage_server_connection_map> lunConns) {
+        Set<String> conns = new HashSet<>();
+        for (LUN_storage_server_connection_map lun_storage_server_connection_map1 : lunConns) {
+            conns.add(lun_storage_server_connection_map1.getstorage_server_connection());
+        }
+        return conns;
+    }
     /**
      * Retrieves all connections for the given volume group.
      *
      */
     @Test
     public void testgetAllForVolumeGroup() {
+        Set<String> lunConns1 = getLunConnections(dbFacade.getStorageServerConnectionLunMapDao().getAll(FixturesTool.LUN_ID1));
+        Set<String> lunConns2 = getLunConnections(dbFacade.getStorageServerConnectionLunMapDao().getAll(FixturesTool.LUN_ID2));
+        assertTrue("Both LUNs should have at least one mutual connection",
+                CollectionUtils.containsAny(lunConns1, lunConns2));
+
         List<StorageServerConnections> result =
                 dao.getAllForVolumeGroup(EXISTING_DOMAIN_STORAGE_NAME);
-
-        assertNotNull(result);
         assertFalse(result.isEmpty());
+        Set<String> connections  = new HashSet<>();
+        for (StorageServerConnections connection : result) {
+            assertFalse(connections.contains(connection.getid()));
+            connections.add(connection.getid());
+        }
     }
 
     /**
