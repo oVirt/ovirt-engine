@@ -113,9 +113,9 @@ public final class SysprepHandler {
                 }
             }
 
-            sysPrepContent = replace(sysPrepContent, "$SetupUiLanguageUiLanguage$", inputLocale);
+            sysPrepContent = replace(sysPrepContent, "$SetupUiLanguageUiLanguage$", uiLanguage);
             sysPrepContent = replace(sysPrepContent, "$InputLocale$", inputLocale);
-            sysPrepContent = replace(sysPrepContent, "$UiLanguage$", uiLanguage);
+            sysPrepContent = replace(sysPrepContent, "$UILanguage$", uiLanguage);
             sysPrepContent = replace(sysPrepContent, "$SystemLocale$", systemLocale);
             sysPrepContent = replace(sysPrepContent, "$UserLocale$", userLocale);
             sysPrepContent = replace(sysPrepContent, "$MachineObjectOU$", activeDirectoryOU);
