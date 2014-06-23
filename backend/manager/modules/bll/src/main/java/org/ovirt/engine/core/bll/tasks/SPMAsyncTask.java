@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll.tasks;
 
-import static org.ovirt.engine.core.common.config.ConfigValues.UknownTaskPrePollingLapse;
+import static org.ovirt.engine.core.common.config.ConfigValues.UnknownTaskPrePollingLapse;
 
 import java.util.Map;
 
@@ -135,7 +135,7 @@ public class SPMAsyncTask implements SPMTask {
      * AsyncTaskManager and CommandBase.
      * @TODO remove this and re-factor {@link org.ovirt.engine.core.bll.tasks.AsyncTaskManager}
      * @return true when the time passed after creating the task is bigger than
-     *         <code>ConfigValues.UknownTaskPrePollingLapse</code>
+     *         <code>ConfigValues.UnknownTaskPrePollingLapse</code>
      * @see org.ovirt.engine.core.bll.tasks.AsyncTaskManager
      * @see org.ovirt.engine.core.bll.CommandBase
      * @since 3.0
@@ -143,7 +143,7 @@ public class SPMAsyncTask implements SPMTask {
     boolean isTaskOverPrePollingLapse() {
         AsyncTaskParameters parameters = getParameters();
         long taskStartTime = parameters.getDbAsyncTask().getStartTime().getTime();
-        Integer prePollingPeriod = Config.<Integer> getValue(UknownTaskPrePollingLapse);
+        Integer prePollingPeriod = Config.<Integer> getValue(UnknownTaskPrePollingLapse);
         boolean idlePeriodPassed =
                 System.currentTimeMillis() - taskStartTime > prePollingPeriod;
 

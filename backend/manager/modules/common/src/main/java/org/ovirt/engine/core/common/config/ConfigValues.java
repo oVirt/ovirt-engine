@@ -795,7 +795,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("60000")
-    UknownTaskPrePollingLapse,
+    UnknownTaskPrePollingLapse,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")

@@ -33,6 +33,7 @@ select fn_db_rename_config_key('SSHInactivityHardTimoutSeconds', 'SSHInactivityH
 select fn_db_rename_config_key('StorageDomainFalureTimeoutInMinutes', 'StorageDomainFailureTimeoutInMinutes', 'general');
 select fn_db_rename_config_key('VdsLoadBalancingeIntervalInMinutes', 'VdsLoadBalancingIntervalInMinutes', 'general');
 select fn_db_rename_config_key('VdsRecoveryTimeoutInMintues', 'VdsRecoveryTimeoutInMinutes', 'general');
+select fn_db_rename_config_key('UknownTaskPrePollingLapse', 'UnknownTaskPrePollingLapse', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -592,7 +593,7 @@ select fn_db_add_config_value('DelayResetPerVmInSeconds','0.5','general');
 --Handling Use Secure Connection with Hosts
 select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
-select fn_db_add_config_value('UknownTaskPrePollingLapse','60000','general');
+select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserSessionHardLimit','600','general');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
 select fn_db_add_config_value('UserDefinedVMProperties','','3.1');
@@ -1070,6 +1071,7 @@ select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
 select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general');
 select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general');
 select fn_db_delete_config_value('VdsRecoveryTimeoutInMintues','general');
+select fn_db_delete_config_value('UknownTaskPrePollingLapse','general');
 
 
 ------------------------------------------------------------------------------------
