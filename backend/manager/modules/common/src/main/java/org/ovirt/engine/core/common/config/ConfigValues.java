@@ -420,7 +420,7 @@ public enum ConfigValues {
     EnableVdsHaReservation,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    VdsLoadBalancingeIntervalInMinutes,
+    VdsLoadBalancingIntervalInMinutes,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("5")
     VdsHaReservationIntervalInMinutes,

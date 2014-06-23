@@ -776,8 +776,8 @@ public class SchedulingManager {
                     "performLoadBalancing",
                     new Class[] {},
                     new Object[] {},
-                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
-                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingeIntervalInMinutes),
+                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
+                    Config.<Integer> getValue(ConfigValues.VdsLoadBalancingIntervalInMinutes),
                     TimeUnit.MINUTES);
             log.info("Finished scheduling to enable vds load balancer");
         }

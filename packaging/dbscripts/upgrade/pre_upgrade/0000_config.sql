@@ -31,6 +31,7 @@ select fn_db_rename_config_key('SpiceToggleFullScreenKeys', 'ConsoleToggleFullSc
 select fn_db_rename_config_key('SSHInactivityTimoutSeconds', 'SSHInactivityTimeoutSeconds', 'general');
 select fn_db_rename_config_key('SSHInactivityHardTimoutSeconds', 'SSHInactivityHardTimeoutSeconds', 'general');
 select fn_db_rename_config_key('StorageDomainFalureTimeoutInMinutes', 'StorageDomainFailureTimeoutInMinutes', 'general');
+select fn_db_rename_config_key('VdsLoadBalancingeIntervalInMinutes', 'VdsLoadBalancingIntervalInMinutes', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -624,7 +625,7 @@ select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs
 select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.4');
 select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.5');
 select fn_db_add_config_value('CustomVdsFenceType','','general');
-select fn_db_add_config_value('VdsLoadBalancingeIntervalInMinutes','1','general');
+select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
 select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','general');
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
 select fn_db_add_config_value('VdsRecoveryTimeoutInMintues','3','general');
@@ -1066,6 +1067,7 @@ select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
 select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
 select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general');
+select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general');
 
 
 ------------------------------------------------------------------------------------
