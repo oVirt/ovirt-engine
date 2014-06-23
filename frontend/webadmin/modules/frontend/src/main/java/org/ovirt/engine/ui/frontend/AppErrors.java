@@ -3105,6 +3105,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The specified iSCSI bond doesn't exist.")
     String ISCSI_BOND_NOT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. iSCSI Bond is only supported on Data Center compatibility versions 3.4 and higher.")
+    String ISCSI_BOND_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. An IDE disk can't be read-only.")
     String ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
 
@@ -3113,4 +3116,17 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Memory size exceeds supported limit for given cluster version.")
     String ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The following storage connections ${connectionIds} cannot be added to the specified iSCSI bond.\n" +
+            "Possible reasons:\n" +
+            "- They are not of type iSCSI.\n" +
+            "- Their status is not one of the following: Unknown, Active. Inactive.\n" +
+            "- They do not belong to the same Data Center as the specified iSCSI bond.\n")
+    String ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Required network cannot be a part of an iSCSI bond.")
+    String ACTION_TYPE_FAILED_ISCSI_BOND_NETWORK_CANNOT_BE_REQUIRED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. ${interface} disks can't be read-only.")
+    String ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
 }

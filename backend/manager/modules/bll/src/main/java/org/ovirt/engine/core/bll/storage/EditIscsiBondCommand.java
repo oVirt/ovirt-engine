@@ -45,7 +45,8 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
             return false;
         }
 
-        return true;
+        return validate(validator.validateAddedLogicalNetworks(getIscsiBond(), getExistingIscsiBond())) &&
+                validate(validator.validateAddedStorageConnections(getIscsiBond(), getExistingIscsiBond()));
     }
 
     @Override
