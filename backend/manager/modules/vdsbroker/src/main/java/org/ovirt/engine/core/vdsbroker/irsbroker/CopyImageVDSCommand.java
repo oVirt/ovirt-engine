@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 
 public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extends IrsCreateCommand<P> {
     public CopyImageVDSCommand(P parameters) {
@@ -14,6 +15,7 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
 
     @Override
     protected void executeIrsBrokerCommand() {
+        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getDstStorageDomainId());
         /**
          * TODO: EINAV: - Consider 'RunAsync' parameter (pass it to IRS too). - Add 'description' parameter. - we should
          * provide 'volumeUUID'. - TaskID should be provided by IRS.

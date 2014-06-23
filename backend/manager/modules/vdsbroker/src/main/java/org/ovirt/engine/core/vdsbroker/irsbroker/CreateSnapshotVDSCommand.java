@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParamete
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 
 public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParameters> extends IrsCreateCommand<P> {
     public CreateSnapshotVDSCommand(P parameters) {
@@ -14,6 +15,7 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
 
     @Override
     protected void executeIrsBrokerCommand() {
+        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");

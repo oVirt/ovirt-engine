@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.vdscommands.CreateImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
 
 public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> extends IrsCreateCommand<P> {
     public CreateImageVDSCommand(P parameters) {
@@ -14,6 +15,7 @@ public class CreateImageVDSCommand<P extends CreateImageVDSCommandParameters> ex
 
     @Override
     protected void executeIrsBrokerCommand() {
+        StorageDomainHelper.checkNumberOfLVsForBlockDomain(getParameters().getStorageDomainId());
         setReturnValue(Guid.Empty);
 
         log.info("-- executeIrsBrokerCommand: calling 'createVolume' with two new parameters: description and UUID");
