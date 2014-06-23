@@ -105,4 +105,10 @@
        <Class name="org.ovirt.engine.core.bll.VdsDeploy" />
        <Bug pattern="ST_WRITE_TO_STATIC_FROM_INSTANCE_METHOD" />
     </Match>
+
+    <Match>
+       <Class name="org.ovirt.engine.core.bll.utils.BllCDIAdapter" />
+       <Field name="dbFacade" />
+       <Bug pattern="URF_UNREAD_FIELD" />
+    </Match>
 </FindBugsFilter>
