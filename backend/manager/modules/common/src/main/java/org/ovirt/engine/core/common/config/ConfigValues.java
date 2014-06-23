@@ -1374,7 +1374,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    GlusterAysncTasksSupport,
+    GlusterAsyncTasksSupport,
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")

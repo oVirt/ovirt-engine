@@ -34,6 +34,10 @@ select fn_db_rename_config_key('StorageDomainFalureTimeoutInMinutes', 'StorageDo
 select fn_db_rename_config_key('VdsLoadBalancingeIntervalInMinutes', 'VdsLoadBalancingIntervalInMinutes', 'general');
 select fn_db_rename_config_key('VdsRecoveryTimeoutInMintues', 'VdsRecoveryTimeoutInMinutes', 'general');
 select fn_db_rename_config_key('UknownTaskPrePollingLapse', 'UnknownTaskPrePollingLapse', 'general');
+select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.0');
+select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.1');
+select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.2');
+select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.3');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -164,10 +168,10 @@ select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','genera
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
 select fn_db_add_config_value('GlusterRefreshRateTasks', '60', 'general');
-select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.0');
-select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.1');
-select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.2');
-select fn_db_add_config_value('GlusterAysncTasksSupport', 'false', '3.3');
+select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.0');
+select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.1');
+select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.2');
+select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.3');
 select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
 select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'general');
 
@@ -1072,6 +1076,7 @@ select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general'
 select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general');
 select fn_db_delete_config_value('VdsRecoveryTimeoutInMintues','general');
 select fn_db_delete_config_value('UknownTaskPrePollingLapse','general');
+select fn_db_delete_config_value('GlusterAysncTasksSupport','3.0,3.1,3.2,3.3');
 
 
 ------------------------------------------------------------------------------------

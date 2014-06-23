@@ -64,7 +64,7 @@ public class GlusterFeatureSupported {
      *         <code>false</code> if it's not.
      */
     public static boolean glusterAsyncTasks(Version version) {
-        return supportedInConfig(ConfigValues.GlusterAysncTasksSupport, version);
+        return supportedInConfig(ConfigValues.GlusterAsyncTasksSupport, version);
     }
 
     /**
