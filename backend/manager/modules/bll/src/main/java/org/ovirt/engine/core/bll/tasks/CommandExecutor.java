@@ -1,5 +1,13 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.Map;
+import java.util.concurrent.Callable;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
@@ -18,14 +26,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
-
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
 
 public class CommandExecutor {
 
@@ -121,15 +121,6 @@ public class CommandExecutor {
             callBack.executed(result);
         }
         return result;
-    }
-
-    private void clearCompletedCommands() {
-        for (Guid cmdId : cmdCallBackMap.keySet()) {
-            if (CommandStatus.SUCCEEDED.equals(coco.getCommandStatus(cmdId)) ||
-                    CommandStatus.FAILED.equals(coco.getCommandStatus(cmdId))) {
-                cmdCallBackMap.remove(cmdId);
-            }
-        }
     }
 
     private void updateCommand(final CommandBase<?> command,
