@@ -48,7 +48,7 @@ class Plugin(plugin.PluginBase):
             ) and
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
-            ],
+            ]
         ),
     )
     def _misc(self):
