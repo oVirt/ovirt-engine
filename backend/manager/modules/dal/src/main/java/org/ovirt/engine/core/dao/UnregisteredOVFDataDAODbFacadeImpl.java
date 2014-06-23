@@ -41,14 +41,19 @@ public class UnregisteredOVFDataDAODbFacadeImpl extends BaseDAODbFacade implemen
     @Override
     public void saveOVFData(OvfEntityData ovfEntityData) {
         // OVF data is not included since it is being updated in the stored procedure.
-        getCallsHandler().executeModification("InsertOVFDataForEntities", getCustomMapSqlParameterSource()
-                .addValue("entity_guid", ovfEntityData.getEntityId())
-                .addValue("entity_name", ovfEntityData.getEntityName())
-                .addValue("entity_type", ovfEntityData.getEntityType().name())
-                .addValue("architecture", ovfEntityData.getArchitecture().getValue())
-                .addValue("lowest_comp_version", ovfEntityData.getLowestCompVersion().getValue())
-                .addValue("storage_domain_id", ovfEntityData.getStorageDomainId())
-                .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData()));
+        getCallsHandler().executeModification("InsertOVFDataForEntities",
+                getCustomMapSqlParameterSource()
+                        .addValue("entity_guid", ovfEntityData.getEntityId())
+                        .addValue("entity_name", ovfEntityData.getEntityName())
+                        .addValue("entity_type", ovfEntityData.getEntityType().name())
+                        .addValue("architecture",
+                                ovfEntityData.getArchitecture() != null ? ovfEntityData.getArchitecture().getValue()
+                                        : null)
+                        .addValue("lowest_comp_version",
+                                ovfEntityData.getLowestCompVersion() != null ? ovfEntityData.getLowestCompVersion()
+                                        .getValue() : null)
+                        .addValue("storage_domain_id", ovfEntityData.getStorageDomainId())
+                        .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData()));
     }
 
     private static class OvfEntityDataRowMapper implements RowMapper<OvfEntityData> {
