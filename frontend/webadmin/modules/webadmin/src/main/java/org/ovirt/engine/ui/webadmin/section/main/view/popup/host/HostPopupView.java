@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -157,17 +158,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     @Path(value = "externalDiscoveredHosts.selectedItem")
     @WithElementId("externalDiscoveredHosts")
-    ListModelListBoxEditor<Object> externalDiscoveredHostsEditor;
+    ListModelTypeAheadListBoxEditor<Object> externalDiscoveredHostsEditor;
 
     @UiField(provided = true)
     @Path(value = "externalHostGroups.selectedItem")
     @WithElementId("externalHostGroups")
-    ListModelListBoxEditor<Object> externalHostGroupsEditor;
+    ListModelTypeAheadListBoxEditor<Object> externalHostGroupsEditor;
 
     @UiField(provided = true)
     @Path(value = "externalComputeResource.selectedItem")
     @WithElementId("externalComputeResource")
-    ListModelListBoxEditor<Object> externalComputeResourceEditor;
+    ListModelTypeAheadListBoxEditor<Object> externalComputeResourceEditor;
 
     @UiField
     @Path(value = "host.entity")
@@ -560,26 +561,65 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         pmSecondaryTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
 
-        externalDiscoveredHostsEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            public String renderNullSafe(Object object) {
-                return ((ExternalDiscoveredHost) object).getName();
-            }
-        });
+        externalDiscoveredHostsEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
 
-        externalHostGroupsEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return ((ExternalHostGroup) object).getName();
-            }
-        });
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        ExternalDiscoveredHost host = (ExternalDiscoveredHost) data;
+                        return host.getName();
+                    }
 
-        externalComputeResourceEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
-            @Override
-            protected String renderNullSafe(Object object) {
-                return ((ExternalComputeResource) object).getName();
-            }
-        });
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        ExternalDiscoveredHost host = (ExternalDiscoveredHost) data;
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                host.getName(),
+                                host.getDescription()
+                        );
+                    }
+                }
+                );
+
+        externalHostGroupsEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        ExternalHostGroup hg = (ExternalHostGroup) data;
+                        return hg.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        ExternalHostGroup hg = (ExternalHostGroup) data;
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                hg.getName(),
+                                hg.getDescription()
+                        );
+                    }
+                }
+                );
+
+        externalComputeResourceEditor = new ListModelTypeAheadListBoxEditor<Object>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
+
+                    @Override
+                    public String getReplacementStringNullSafe(Object data) {
+                        ExternalComputeResource cr = (ExternalComputeResource) data;
+                        return cr.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(Object data) {
+                        ExternalComputeResource cr = (ExternalComputeResource) data;
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                cr.getName(),
+                                cr.getDescription()
+                        );
+                    }
+                }
+                );
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -589,6 +629,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
         rbDiscoveredHost = new RadioButton("2"); //$NON-NLS-1$
         rbProvisionedHost = new RadioButton("2"); //$NON-NLS-1$
+    }
+
+    private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
+        return applicationTemplates.typeAheadNameDescription(
+                name != null ? name : constants.empty(),
+                description != null ? description : constants.empty())
+                .asString();
     }
 
     void localize(ApplicationConstants constants) {

@@ -17,7 +17,19 @@ public class ExternalHostGroup implements Serializable {
     private int mediumId;
     private int architectureId;
     private Map<String, String> parameters;
+    private String subnetName;
+    private String operatingsystemName;
+    private String domainName;
+    private String architectureName;
 
+    public String getArchitectureName() { return architectureName; }
+    public void setArchitectureName(String architectureName) { this.architectureName = architectureName; }
+    public String getDomainName() { return domainName; }
+    public void setDomainName(String domainName) { this.domainName = domainName; }
+    public String getOperatingsystemName() { return operatingsystemName; }
+    public void setOperatingsystemName(String operatingsystemName) { this.operatingsystemName = operatingsystemName; }
+    public String getSubnetName() { return subnetName; }
+    public void setSubnetName(String subnetName) { this.subnetName = subnetName; }
     public int getHostgroupId() {
         return hostgroupId;
     }
@@ -77,5 +89,12 @@ public class ExternalHostGroup implements Serializable {
     }
     public void setArchitectureId(int architectureId) {
         this.architectureId = architectureId;
+    }
+
+    public String getDescription() {
+        return "OS: " + operatingsystemName + "\n" +
+               " | Subnet: " + subnetName + "\n" +
+               " | Domain: " + domainName + "\n" +
+               " | Arch: " + architectureName;
     }
 }

@@ -7,7 +7,13 @@ public class ExternalComputeResource implements Serializable {
     private String name;
     private int id;
     private String url;
+    private String provider;
+    private String user;
 
+    public String getProvider() { return provider; }
+    public void setProvider(String provider) { this.provider = provider; }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
     public String getName() {
         return name;
     }
@@ -23,5 +29,11 @@ public class ExternalComputeResource implements Serializable {
     public int getId() { return id; }
     public void setId(int id) {
         this.id = id;
+    }
+
+    public String getDescription() {
+        return "URL: " + url +
+               " | Provider: " + provider + "\n" +
+               " | User: " + user;
     }
 }

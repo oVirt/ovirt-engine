@@ -133,6 +133,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             computeResource.setName(cr.getName());
             computeResource.setUrl(cr.getUrl());
             computeResource.setId(cr.getId());
+            computeResource.setProvider(cr.getProvider());
+            computeResource.setUser(cr.getUser());
             crs.add(computeResource);
         }
         return crs;
@@ -156,6 +158,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             dhost.setName(host.getName());
             dhost.setIp(host.getIp());
             dhost.setMac(host.getMac());
+            dhost.setLastReport(host.getLast_report());
+            dhost.setSubnetName(host.getSubnet_name());
             hosts.add(dhost);
         }
         return hosts;
@@ -187,6 +191,10 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             hostgroup.setMediumId(hostGroup.getMedium_id());
             hostgroup.setArchitectureId(hostGroup.getArchitecture_id());
             hostgroup.setPtableId(hostGroup.getPtable_id());
+            hostgroup.setOperatingsystemName(hostGroup.getOperatingsystem_name());
+            hostgroup.setDomainName(hostGroup.getDomain_name());
+            hostgroup.setSubnetName(hostGroup.getSubnet_name());
+            hostgroup.setArchitectureName(hostGroup.getArchitecture_name());
             hostGroups.add(hostgroup);
         }
         return hostGroups;

@@ -275,9 +275,9 @@
                                         </g:FlowPanel>
                                     </g:FlowPanel>
                                     <g:FlowPanel ui:field="discoveredHostsPanel">
-                                        <e:ListModelListBoxEditor ui:field="externalDiscoveredHostsEditor"/>
-                                        <e:ListModelListBoxEditor ui:field="externalHostGroupsEditor"/>
-                                        <e:ListModelListBoxEditor ui:field="externalComputeResourceEditor"/>
+                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalDiscoveredHostsEditor"/>
+                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalHostGroupsEditor"/>
+                                        <e:ListModelTypeAheadListBoxEditor ui:field="externalComputeResourceEditor"/>
                                     </g:FlowPanel>
                                 </g:FlowPanel>
                                 <g:FlowPanel>

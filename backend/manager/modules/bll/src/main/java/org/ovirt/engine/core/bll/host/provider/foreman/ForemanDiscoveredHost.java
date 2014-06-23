@@ -7,7 +7,13 @@ public class ForemanDiscoveredHost implements Serializable {
     private String ip;
     private String name;
     private String mac;
+    private String last_report;
+    private String subnet_name;
 
+    public String getSubnet_name() { return subnet_name; }
+    public void setSubnet_name(String subnet_name) { this.subnet_name = subnet_name; }
+    public String getLast_report() { return last_report; }
+    public void setLast_report(String last_report) { this.last_report = last_report; }
     public String getMac() {
         return mac;
     }

@@ -17,7 +17,19 @@ public class ForemanHostGroup implements Serializable {
     private int architecture_id;
     private int[] puppetclass_ids;
     private Map<String, String> parameters;
+    private String subnet_name;
+    private String operatingsystem_name;
+    private String domain_name;
+    private String architecture_name;
 
+    public String getSubnet_name() { return subnet_name; }
+    public void setSubnet_name(String subnet_name) { this.subnet_name = subnet_name; }
+    public String getOperatingsystem_name() { return operatingsystem_name; }
+    public void setOperatingsystem_name(String operatingsystem_name) { this.operatingsystem_name = operatingsystem_name; }
+    public String getDomain_name() { return domain_name; }
+    public void setDomain_name(String domain_name) { this.domain_name = domain_name; }
+    public String getArchitecture_name() { return architecture_name; }
+    public void setArchitecture_name(String architecture_name) { this.architecture_name = architecture_name; }
     public int getPtable_id() {
         return ptable_id;
     }
@@ -30,9 +42,7 @@ public class ForemanHostGroup implements Serializable {
     public void setMedium_id(int medium_id) {
         this.medium_id = medium_id;
     }
-    public int getArchitecture_id() {
-        return architecture_id;
-    }
+    public int getArchitecture_id() { return architecture_id; }
     public void setArchitecture_id(int architecture_id) {
         this.architecture_id = architecture_id;
     }

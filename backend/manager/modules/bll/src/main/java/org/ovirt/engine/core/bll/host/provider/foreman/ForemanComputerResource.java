@@ -7,7 +7,13 @@ public class ForemanComputerResource implements Serializable {
     private String name;
     private String url;
     private int id;
+    private String provider;
+    private String user;
 
+    public String getProvider() { return provider; }
+    public void setProvider(String provider) { this.provider = provider; }
+    public String getUser() { return user; }
+    public void setUser(String user) { this.user = user; }
     public String getName() {
         return name;
     }
