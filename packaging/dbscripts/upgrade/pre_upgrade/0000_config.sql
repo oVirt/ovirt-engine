@@ -29,6 +29,7 @@ select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCom
 select fn_db_rename_config_key('SpiceReleaseCursorKeys', 'ConsoleReleaseCursorKeys', 'general');
 select fn_db_rename_config_key('SpiceToggleFullScreenKeys', 'ConsoleToggleFullScreenKeys', 'general');
 select fn_db_rename_config_key('SSHInactivityTimoutSeconds', 'SSHInactivityTimeoutSeconds', 'general');
+select fn_db_rename_config_key('SSHInactivityHardTimoutSeconds', 'SSHInactivityHardTimeoutSeconds', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -548,7 +549,7 @@ select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');
 select fn_db_add_config_value('SSHInactivityTimeoutSeconds','300','general');
-select fn_db_add_config_value('SSHInactivityHardTimoutSeconds','1800','general');
+select fn_db_add_config_value('SSHInactivityHardTimeoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
 select fn_db_add_config_value('SSLEnabled','true','general');
 select fn_db_add_config_value('StorageDomainFalureTimeoutInMinutes','5','general');
@@ -1062,6 +1063,9 @@ select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
 select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
 select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
+select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
+
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

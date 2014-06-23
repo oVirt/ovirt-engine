@@ -1175,7 +1175,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1800")
-    SSHInactivityHardTimoutSeconds,
+    SSHInactivityHardTimeoutSeconds,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("virt")

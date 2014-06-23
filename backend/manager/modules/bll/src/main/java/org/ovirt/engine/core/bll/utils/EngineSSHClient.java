@@ -32,7 +32,7 @@ public class EngineSSHClient extends SSHClient {
         super();
         setHardTimeout(
             Config.<Integer>getValue(
-                ConfigValues.SSHInactivityHardTimoutSeconds
+                ConfigValues.SSHInactivityHardTimeoutSeconds
             ) * 1000
         );
         setSoftTimeout(
