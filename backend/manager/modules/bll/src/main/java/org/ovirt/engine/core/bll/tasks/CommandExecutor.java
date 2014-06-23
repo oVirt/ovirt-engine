@@ -69,6 +69,8 @@ public class CommandExecutor {
                 case ACTIVE_ASYNC:
                     callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
                     break;
+            default:
+                break;
             }
         }
     }
