@@ -319,7 +319,9 @@ public final class AsyncTaskManager {
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
         AsyncTasks task = coco.getAsyncTaskFromDb(asyncTaskId);
-        logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+        if (task != null) {
+            logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
+        }
     }
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task, String message) {
