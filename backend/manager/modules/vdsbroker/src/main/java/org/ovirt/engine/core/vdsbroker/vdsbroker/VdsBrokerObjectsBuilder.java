@@ -405,6 +405,9 @@ public class VdsBrokerObjectsBuilder {
     private static VmJob buildVmJobData(Guid vmId, Map<String, Object> xmlRpcStruct) {
         VmJob ret;
         VmJobType jobType = VmJobType.getByName(AssignStringValue(xmlRpcStruct, VdsProperties.vmJobType));
+        if (jobType == null) {
+            jobType = VmJobType.UNKNOWN;
+        }
 
         switch (jobType) {
         case BLOCK:
