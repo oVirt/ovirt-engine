@@ -25,7 +25,6 @@ public class BllCDIAdapter {
     @Produces
     DbFacade dbFacade = DbFacade.getInstance();
 
-
     /**
      * this producer enables injection of Log instance. Its not
      * intended to be used as protected instance as the runtime instance is the declaring class so

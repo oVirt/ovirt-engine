@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.common.utils;
+package org.ovirt.engine.core.bll.utils;
 
 import javax.annotation.PostConstruct;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -59,7 +59,7 @@ public class Injector {
     /**
      * convenience method, good for mocking and whoever holds a direct instance of Injector in hand.<br>
      * after all its a jdk "bug" to call a static method on an instance.<br>
-     *{@link org.ovirt.engine.core.common.utils.Injector#get(Class)} should supply the same behaiour exactly
+     *{@link Injector#get(Class)} should supply the same behaiour exactly
      * @param clazz
      * @param <T>
      * @return instance of T
