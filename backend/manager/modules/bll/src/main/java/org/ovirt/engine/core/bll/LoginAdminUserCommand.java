@@ -20,9 +20,6 @@ public class LoginAdminUserCommand<T extends LoginUserParameters> extends LoginU
             if (!autheticated) {
                 addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
             }
-            else {
-                autheticated = attachUserToSession();
-            }
         }
         if (! autheticated) {
             logAutheticationFailure();

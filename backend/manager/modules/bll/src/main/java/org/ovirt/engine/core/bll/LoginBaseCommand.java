@@ -70,15 +70,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, VdcBllMessages.USER_PASSWORD_EXPIRED);
     }
 
-    private ExtensionProxy authnExtension;
-
-    private AuthenticationProfile profile;
-
-    private ExtMap authRecord;
-
     private String engineSessionId;
-
-    private String principal;
 
     public LoginBaseCommand(T parameters) {
         super(parameters);
@@ -111,21 +103,20 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
    @Override
     protected boolean canDoAction() {
-        boolean result = isUserCanBeAuthenticated() && attachUserToSession();
+        boolean result = isUserCanBeAuthenticated();
         if (! result) {
             logAutheticationFailure();
         }
         return result;
     }
 
-    protected boolean attachUserToSession() {
+    private boolean attachUserToSession(AuthenticationProfile profile, ExtMap authRecord) {
         engineSessionId = UUID.randomUUID().toString();
         SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
         SessionDataContainer.getInstance().refresh(engineSessionId);
-        SessionDataContainer.getInstance().setAuthn(engineSessionId, authnExtension);
-        if (principal != null) {
-            SessionDataContainer.getInstance().setPrincipal(engineSessionId, principal);
-        }
+        SessionDataContainer.getInstance().setAuthn(engineSessionId, profile.getAuthn());
+        SessionDataContainer.getInstance().setPrincipal(engineSessionId, authRecord.<String>get(Authn.AuthRecord.PRINCIPAL));
+
         // Add the user password to the session, as it will be needed later
         // when trying to log on to virtual machines:
         if (getParameters().getPassword() != null) {
@@ -153,7 +144,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     }
 
     protected boolean isUserCanBeAuthenticated() {
-        profile = AuthenticationProfileRepository.getInstance().getProfile(getParameters().getProfileName());
+        AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(getParameters().getProfileName());
         if (profile == null) {
             log.errorFormat(
                     "Can't login because authentication profile \"{1}\" doesn't exist.",
@@ -163,8 +154,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             return false;
         }
 
-        authnExtension = profile.getAuthn();
-        authRecord = (ExtMap) getParameters().getAuthRecord();
+        ExtensionProxy authnExtension = profile.getAuthn();
+        ExtMap authRecord = (ExtMap) getParameters().getAuthRecord();
         int reportReason = Acct.ReportReason.PRINCIPAL_LOGIN_CREDENTIALS;
         if (getParameters().getAuthType() != null) {
             if (AuthType.NEGOTIATION == getParameters().getAuthType()) {
@@ -193,7 +184,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 return false;
             }
 
-            if (!isPasswordAuth()) {
+            if (!isPasswordAuth(authnExtension)) {
                 log.errorFormat(
                         "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password "
                                 +
@@ -218,7 +209,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 loginName = curUser.getLoginName();
                 password = curPassword;
             }
-            authenticate(loginName, password);
+            authRecord = authenticate(profile, loginName, password);
         }
         // Perform the actual authentication:
         if (authRecord == null) {
@@ -316,7 +307,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 dbUser.getLoginName(),
                 principalRecord.<String> get(Authz.PrincipalRecord.NAME)
                 );
-        return true;
+
+        return attachUserToSession(profile, authRecord);
     }
 
     private void logEventForUser(String userName, AuditLogType auditLogType) {
@@ -355,12 +347,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
-    private boolean isPasswordAuth() {
+    private boolean isPasswordAuth(ExtensionProxy authnExtension) {
         return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
                 Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
     }
 
-    private void authenticate(String user, String password) {
+    private ExtMap authenticate(AuthenticationProfile profile, String user, String password) {
+        ExtensionProxy authnExtension = profile.getAuthn();
+        ExtMap authRecord = null;
         ExtensionProxy mapper = profile.getMapper();
         if (mapper != null) {
             user = mapper.invoke(new ExtMap().mput(
@@ -383,7 +377,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         password
                 ));
 
-        principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
+        String principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {
             log.infoFormat(
@@ -423,8 +417,11 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 }
                 addCanDoActionMessage(msg);
             }
-
+        } else {
+            authRecord = outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
         }
+
+        return authRecord;
     }
 
 }
