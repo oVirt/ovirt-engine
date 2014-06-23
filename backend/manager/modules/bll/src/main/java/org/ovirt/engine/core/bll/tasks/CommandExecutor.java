@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.bll.tasks;
 
+import java.util.Iterator;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
@@ -48,19 +50,21 @@ public class CommandExecutor {
     @OnTimerMethodAnnotation("invokeCallbackMethods")
     public synchronized void invokeCallbackMethods() {
         initCommandExecutor();
-        for (Guid cmdId : cmdCallBackMap.keySet()) {
-            CommandCallBack callBack = cmdCallBackMap.get(cmdId);
+        for (Iterator<Entry<Guid, CommandCallBack>> iterator = cmdCallBackMap.entrySet().iterator(); iterator.hasNext();) {
+            Entry<Guid, CommandCallBack> entry = iterator.next();
+            Guid cmdId = entry.getKey();
+            CommandCallBack callBack = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
             switch(status) {
                 case FAILED:
                     callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
                     coco.updateCallBackNotified(cmdId);
-                    cmdCallBackMap.remove(cmdId);
+                    iterator.remove();
                     break;
                 case SUCCEEDED:
                     callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
                     coco.updateCallBackNotified(cmdId);
-                    cmdCallBackMap.remove(cmdId);
+                    iterator.remove();
                     break;
                 case ACTIVE_SYNC:
                     coco.retrieveCommand(cmdId).setCommandStatus(CommandStatus.FAILED_RESTARTED);
