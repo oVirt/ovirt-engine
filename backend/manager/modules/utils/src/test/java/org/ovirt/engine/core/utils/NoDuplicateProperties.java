@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils;
 
 import java.util.Properties;
 
+@SuppressWarnings("serial")
 public class NoDuplicateProperties extends Properties {
     /**
      * This method overrides the put method of Map in order to add the validation
