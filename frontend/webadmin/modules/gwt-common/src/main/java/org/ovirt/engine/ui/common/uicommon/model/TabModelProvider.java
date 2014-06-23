@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -15,19 +14,19 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
- * Basic {@link ModelProvider} implementation that uses {@link CommonModelManager} for accessing the CommonModel
- * instance.
- *
- * @param <M>
- *            Model type.
+ * Basic {@link ModelProvider} implementation
+ * @param <M> Model type.
  */
 public abstract class TabModelProvider<M extends EntityModel> implements ModelProvider<M>, ModelBoundPopupResolver<M>, HasHandlers {
 
     private final EventBus eventBus;
     private final ModelBoundPopupHandler<M> popupHandler;
+
+    protected Provider<M> modelProvider;
 
     public TabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
@@ -36,39 +35,38 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         // Configure UiCommon dialog handler
         this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus);
         this.popupHandler.setDefaultConfirmPopupProvider(defaultConfirmPopupProvider);
-
-        // Handle UiCommon model initialization to attach appropriate listeners
-        eventBus.addHandler(ModelInitializedEvent.getType(), new ModelInitializedEvent.ModelInitializedHandler() {
-            @Override
-            public void onModelInitialized(ModelInitializedEvent event) {
-                initializeModelHandlers();
-            }
-        });
     }
 
-    protected boolean hasModel() {
-        return getCommonModel() != null && getModel() != null;
+    @Override
+    public M getModel() {
+        M model = modelProvider.get();
+        if (!model.isInitialized()) {
+            model.initialize();
+            initializeModelHandlers(model);
+        }
+        return model;
+    }
+
+
+    @Inject
+    public void setModelProvider(Provider<M> modelProvider) {
+        this.modelProvider = modelProvider;
     }
 
     protected EventBus getEventBus() {
         return eventBus;
     }
 
-    protected CommonModel getCommonModel() {
-        return CommonModelManager.instance();
-    }
-
     /**
-     * Callback fired when the {@link CommonModel} reference changes.
      * <p>
      * Override this method to register custom listeners on the corresponding model.
      */
-    protected void initializeModelHandlers() {
+    protected void initializeModelHandlers(M model) {
         // Register dialog model property change listener
-        popupHandler.addDialogModelListener(getModel());
+        popupHandler.addDialogModelListener(model);
 
         // Register WidgetModel property change listener
-        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
@@ -78,11 +76,6 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
                 }
             }
         });
-
-        // Initialize model if necessary
-        if (!reusesModel()) {
-            getModel().setEventBus(getEventBus());
-        }
     }
 
     /**

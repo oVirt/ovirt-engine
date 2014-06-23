@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOption
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -17,6 +16,7 @@ import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -26,7 +26,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
@@ -44,6 +43,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 public class VolumeModule extends AbstractGinModule {
 
@@ -56,8 +56,12 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<VolumePopupPresenterWidget> popupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<VolumeRebalanceStatusPopupPresenterWidget> rebalanceStatusPopupProvider,
-            final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider) {
-        return new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class) {
+            final Provider<VolumeProfileStatisticsPopupPresenterWidget> volumeProfileStatsPopupProvider,
+            final Provider<VolumeListModel> modelProvider,
+            final Provider<CommonModel> commonModelProvider) {
+        MainTabModelProvider<GlusterVolumeEntity, VolumeListModel> result =
+                new MainTabModelProvider<GlusterVolumeEntity, VolumeListModel>(eventBus, defaultConfirmPopupProvider,
+                        commonModelProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -86,16 +90,8 @@ public class VolumeModule extends AbstractGinModule {
                 }
             }
         };
-    }
-
-    @Provides
-    @Singleton
-    public DetailModelProvider<VolumeListModel, VolumeGeneralModel> getVolumeGeneralProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>(
-                eventBus, defaultConfirmPopupProvider,
-                VolumeListModel.class,
-                VolumeGeneralModel.class);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -107,11 +103,12 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<RemoveBrickPopupPresenterWidget> removeBrickPopupProvider,
             final Provider<RemoveBrickStatusPopupPresenterWidget> removeBricksStatusPopupProvider,
             final Provider<ReplaceBrickPopupPresenterWidget> replaceBrickPopupProvider,
-            final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                VolumeListModel.class,
-                VolumeBrickListModel.class) {
+            final Provider<BrickAdvancedDetailsPopupPresenterWidget> brickDetailsPopupProvider,
+            final Provider<VolumeListModel> mainModelProvider,
+            final Provider<VolumeBrickListModel> modelProvider) {
+        SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel> result =
+                new SearchableDetailTabModelProvider<GlusterBrickEntity, VolumeListModel, VolumeBrickListModel>(
+                eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeBrickListModel source,
                     UICommand lastExecutedCommand,
@@ -144,17 +141,9 @@ public class VolumeModule extends AbstractGinModule {
             }
 
         };
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class, VolumeGeoRepListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source, UICommand lastExecutedCommand, Model windowModel) {
-                return null;
-            }
-        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -162,11 +151,12 @@ public class VolumeModule extends AbstractGinModule {
     public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumeParameterPopupPresenterWidget> addParameterPopupProvider,
-            final Provider<VolumeParameterPopupPresenterWidget> editParameterPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                VolumeListModel.class,
-                VolumeParameterListModel.class) {
+            final Provider<VolumeParameterPopupPresenterWidget> editParameterPopupProvider,
+            final Provider<VolumeListModel> mainModelProvider,
+            final Provider<VolumeParameterListModel> modelProvider) {
+        SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> result =
+                new SearchableDetailTabModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel>(
+                eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeParameterListModel source,
                     UICommand lastExecutedCommand,
@@ -180,31 +170,21 @@ public class VolumeModule extends AbstractGinModule {
                 }
             }
         };
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel> getVolumePermissionListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-
-        return new PermissionModelProvider<VolumeListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                removeConfirmPopupProvider,
-                popupProvider,
-                VolumeListModel.class);
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> getVolumeEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                VolumeListModel.class,
-                VolumeEventListModel.class) {
+            final Provider<EventPopupPresenterWidget> eventPopupProvider,
+            final Provider<VolumeListModel> mainModelProvider,
+            final Provider<VolumeEventListModel> modelProvider) {
+        SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel> result =
+                new SearchableDetailTabModelProvider<AuditLog, VolumeListModel, VolumeEventListModel>(
+                eventBus, defaultConfirmPopupProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeEventListModel source,
                     UICommand lastExecutedCommand,
@@ -216,10 +196,30 @@ public class VolumeModule extends AbstractGinModule {
                 }
             }
         };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Override
     protected void configure() {
+        bind(VolumeListModel.class).in(Singleton.class);
+        bind(VolumeGeneralModel.class).in(Singleton.class);
+        bind(VolumeBrickListModel.class).in(Singleton.class);
+        bind(VolumeParameterListModel.class).in(Singleton.class);
+        bind(VolumeEventListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<VolumeListModel>>(){}).in(Singleton.class);
+
+        // Form Detail Models
+        bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>>(){}).in(Singleton.class);
+        // Search-able Detail Models
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>>(){})
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>>(){})
+           .in(Singleton.class);
+        // Permission Detail Model
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel<VolumeListModel>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<VolumeListModel>>(){}).in(Singleton.class);
     }
 
 }

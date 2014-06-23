@@ -13,11 +13,17 @@ import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.users.AdElementListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class QuotaPermissionListModel extends PermissionListModel {
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
-    public QuotaPermissionListModel() {
+public class QuotaPermissionListModel extends PermissionListModel<QuotaListModel> {
+
+    @Inject
+    public QuotaPermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
+        super(adElementListModelProvider);
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
         setHelpTag(HelpTag.permissions);
         setHashName("permissions"); //$NON-NLS-1$

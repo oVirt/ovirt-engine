@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePop
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotCustomPreviewPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmSnapshotPreviewPopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -30,23 +29,15 @@ public class VmSnapshotListModelProvider extends UserPortalSearchableDetailModel
     public VmSnapshotListModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             CurrentUser user,
-            UserPortalListProvider parentModelProvider,
-            UserPortalModelResolver resolver,
             Provider<VmSnapshotCreatePopupPresenterWidget> createPopupProvider,
             Provider<VmSnapshotPreviewPopupPresenterWidget> previewPopupProvider,
             Provider<VmSnapshotCustomPreviewPopupPresenterWidget> customPreviewPopupProvider,
             Provider<VmClonePopupPresenterWidget> cloneVmPopupProvider) {
-        super(eventBus, defaultConfirmPopupProvider, user,
-                parentModelProvider, UserPortalVmSnapshotListModel.class, resolver);
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.createPopupProvider = createPopupProvider;
         this.cloneVmPopupProvider = cloneVmPopupProvider;
         this.previewPopupProvider = previewPopupProvider;
         this.customPreviewPopupProvider = customPreviewPopupProvider;
-    }
-
-    @Override
-    protected UserPortalVmSnapshotListModel createModel() {
-        return new UserPortalVmSnapshotListModel();
     }
 
     @Override

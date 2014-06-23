@@ -51,7 +51,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
@@ -88,9 +87,10 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 public class UserPortalListModel extends AbstractUserPortalListModel {
 
@@ -224,39 +224,35 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         privateNewTemplateCommand = value;
     }
 
-    private EntityModel vmGeneralModel;
-    private EntityModel vmSessionsModel;
-    private ListModel vmSnapshotListModel;
-    private EntityModel vmMonitorModel;
-    private ListModel vmDiskListModel;
-    private ListModel vmInterfaceListModel;
-    private ListModel permissionListModel;
-    private ListModel vmEventListModel;
-    private ListModel vmAppListModel;
-    private EntityModel poolGeneralModel;
-    private ListModel poolDiskListModel;
-    private ListModel poolInterfaceListModel;
-    private ArrayList<VM> privatevms;
+    private final VmGeneralModel vmGeneralModel;
+    private final VmSessionsModel vmSessionsModel;
+    private final UserPortalVmSnapshotListModel vmSnapshotListModel;
+    private final VmMonitorModel vmMonitorModel;
+    private final VmDiskListModel vmDiskListModel;
+    private final VmInterfaceListModel vmInterfaceListModel;
+    private final UserPortalPermissionListModel permissionListModel;
+    private final UserPortalVmEventListModel vmEventListModel;
+    private final VmAppListModel vmAppListModel;
+    private final PoolGeneralModel poolGeneralModel;
+    private final PoolDiskListModel poolDiskListModel;
+    private final PoolInterfaceListModel poolInterfaceListModel;
+    private List<VM> privatevms;
 
-    public ArrayList<VM> getvms()
-    {
+    public List<VM> getvms() {
         return privatevms;
     }
 
-    public void setvms(ArrayList<VM> value)
-    {
+    public void setvms(List<VM> value) {
         privatevms = value;
     }
 
-    private ArrayList<VmPool> privatepools;
+    private List<VmPool> privatepools;
 
-    public ArrayList<VmPool> getpools()
-    {
+    public List<VmPool> getpools() {
         return privatepools;
     }
 
-    public void setpools(ArrayList<VmPool> value)
-    {
+    public void setpools(List<VmPool> value) {
         privatepools = value;
     }
 
@@ -289,8 +285,28 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         searchCompletedEventDefinition = new EventDefinition("SearchCompleted", UserPortalListModel.class); //$NON-NLS-1$
     }
 
-    public UserPortalListModel()
-    {
+    @Inject
+    public UserPortalListModel(final VmGeneralModel vmGeneralModel, final VmSessionsModel vmSessionsModel,
+            final UserPortalVmSnapshotListModel userPortalVmSnapshotListModel, final VmMonitorModel vmMonitorModel,
+            final VmDiskListModel vmDiskListModel, final VmInterfaceListModel vmInterfaceListModel,
+            final UserPortalPermissionListModel userPortalPermissionListModel,
+            final UserPortalVmEventListModel userPortalVmEventListModel, final VmAppListModel vmAppListModel,
+            final PoolGeneralModel poolGeneralModel, final PoolDiskListModel poolDiskListModel,
+            final PoolInterfaceListModel poolInterfaceListModel) {
+        this.vmGeneralModel = vmGeneralModel;
+        this.vmSessionsModel = vmSessionsModel;
+        this.vmSnapshotListModel = userPortalVmSnapshotListModel;
+        this.vmMonitorModel = vmMonitorModel;
+        this.vmDiskListModel = vmDiskListModel;
+        this.vmInterfaceListModel = vmInterfaceListModel;
+        this.permissionListModel = userPortalPermissionListModel;
+        this.vmEventListModel = userPortalVmEventListModel;
+        this.vmAppListModel = vmAppListModel;
+        this.poolGeneralModel = poolGeneralModel;
+        this.poolDiskListModel = poolDiskListModel;
+        this.poolInterfaceListModel = poolInterfaceListModel;
+        setDetailList();
+
         setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
@@ -306,6 +322,37 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         updateActionAvailability();
 
         consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_EXTENDED, this);
+    }
+
+    private void setDetailList() {
+        vmGeneralModel.setIsAvailable(false);
+        vmSnapshotListModel.setIsAvailable(false);
+        vmMonitorModel.setIsAvailable(false);
+        vmDiskListModel.setIsAvailable(false);
+        vmInterfaceListModel.setIsAvailable(false);
+        poolGeneralModel.setIsAvailable(false);
+        poolDiskListModel.setIsAvailable(false);
+        poolInterfaceListModel.setIsAvailable(false);
+        permissionListModel.setIsAvailable(true);
+        vmEventListModel.setIsAvailable(true);
+        vmAppListModel.setIsAvailable(true);
+        vmSessionsModel.setIsAvailable(true);
+
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(vmGeneralModel);
+        list.add(poolGeneralModel);
+        list.add(vmInterfaceListModel);
+        list.add(poolInterfaceListModel);
+        list.add(vmDiskListModel);
+        list.add(poolDiskListModel);
+        list.add(vmSnapshotListModel);
+        list.add(permissionListModel);
+        list.add(vmEventListModel);
+        list.add(vmAppListModel);
+        list.add(vmMonitorModel);
+        list.add(vmSessionsModel);
+
+        setDetailModels(list);
     }
 
     @Override
@@ -366,69 +413,6 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                         userPortalListModel.onVmAndPoolLoad();
                     }
                 }));
-    }
-
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        vmGeneralModel = new VmGeneralModel();
-        vmGeneralModel.setIsAvailable(false);
-
-        vmSessionsModel = new VmSessionsModel();
-        vmSessionsModel.setIsAvailable(false);
-
-        vmSnapshotListModel = new UserPortalVmSnapshotListModel();
-        vmSnapshotListModel.setIsAvailable(false);
-
-        vmMonitorModel = new VmMonitorModel();
-        vmMonitorModel.setIsAvailable(false);
-
-        vmDiskListModel = new VmDiskListModel();
-        vmDiskListModel.setIsAvailable(false);
-
-        vmInterfaceListModel = new VmInterfaceListModel();
-        vmInterfaceListModel.setIsAvailable(false);
-
-        permissionListModel = new UserPortalPermissionListModel();
-        permissionListModel.setIsAvailable(false);
-
-        vmEventListModel = new UserPortalVmEventListModel();
-        vmEventListModel.setIsAvailable(false);
-
-        vmAppListModel = new VmAppListModel();
-        vmAppListModel.setIsAvailable(false);
-
-        poolGeneralModel = new PoolGeneralModel();
-        poolGeneralModel.setIsAvailable(false);
-
-        poolDiskListModel = new PoolDiskListModel();
-        poolDiskListModel.setIsAvailable(false);
-
-        poolInterfaceListModel = new PoolInterfaceListModel();
-        poolInterfaceListModel.setIsAvailable(false);
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(vmGeneralModel);
-        list.add(poolGeneralModel);
-        list.add(vmInterfaceListModel);
-        list.add(poolInterfaceListModel);
-        list.add(vmDiskListModel);
-        list.add(poolDiskListModel);
-        list.add(vmSnapshotListModel);
-        list.add(permissionListModel);
-        list.add(vmEventListModel);
-        list.add(vmAppListModel);
-        list.add(vmMonitorModel);
-        list.add(vmSessionsModel);
-
-        setDetailModels(list);
-
-        permissionListModel.setIsAvailable(true);
-        vmEventListModel.setIsAvailable(true);
-        vmAppListModel.setIsAvailable(true);
-        vmSessionsModel.setIsAvailable(true);
     }
 
     @Override

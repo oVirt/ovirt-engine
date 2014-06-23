@@ -10,20 +10,39 @@ import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.UserPortalPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.TemplateVmModelBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalTemplateVmModelBehavior;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-public class UserPortalTemplateListModel extends TemplateListModel
-{
+import com.google.inject.Inject;
+
+public class UserPortalTemplateListModel extends TemplateListModel {
+    @Inject
+    public UserPortalTemplateListModel(TemplateGeneralModel templateGeneralModel,
+            TemplateVmListModel templateVmListModel,
+            TemplateInterfaceListModel templateInterfaceListModel,
+            TemplateStorageListModel templateStorageListModel,
+            UserPortalTemplateDiskListModel templateDiskListModel,
+            UserPortalTemplateEventListModel templateEventListModel,
+            UserPortalPermissionListModel permissionListModel) {
+        super(templateGeneralModel,
+                templateVmListModel,
+                templateInterfaceListModel,
+                templateStorageListModel,
+                templateDiskListModel,
+                templateEventListModel,
+                permissionListModel, 2);
+    }
+
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -33,11 +52,9 @@ public class UserPortalTemplateListModel extends TemplateListModel
     }
 
     @Override
-    protected void updateActionAvailability()
-    {
+    protected void updateActionAvailability() {
         VmTemplate item = (VmTemplate) getSelectedItem();
-        if (item != null)
-        {
+        if (item != null) {
             ArrayList items = new ArrayList();
             items.add(item);
             getEditCommand().setIsExecutionAllowed(
@@ -48,23 +65,15 @@ public class UserPortalTemplateListModel extends TemplateListModel
                             VdcActionType.RemoveVmTemplate) &&
                             !isBlankTemplateSelected()
                     );
-        }
-        else
-        {
+        } else {
             getEditCommand().setIsExecutionAllowed(false);
             getRemoveCommand().setIsExecutionAllowed(false);
         }
     }
 
+    @Override
     protected String getEditTemplateAdvancedModelKey() {
         return "up_template_dialog"; //$NON-NLS-1$
-    }
-
-    @Override
-    protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
-        list.add(2, new UserPortalTemplateDiskListModel());
-        list.add(new UserPortalTemplateEventListModel());
-        list.add(new UserPortalPermissionListModel());
     }
 
     @Override

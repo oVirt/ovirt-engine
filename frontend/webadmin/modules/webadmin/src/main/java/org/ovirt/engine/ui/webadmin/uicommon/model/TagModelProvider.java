@@ -65,17 +65,17 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     }
 
     @Override
-    protected void initializeModelHandlers() {
-        super.initializeModelHandlers();
+    protected void initializeModelHandlers(final TagListModel model) {
+        super.initializeModelHandlers(model);
 
         // Add model reset handler
-        getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
             @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                Iterator<TagModel> iterator = getModel().getItems().iterator();
+                Iterator<TagModel> iterator = model.getItems().iterator();
                 if (iterator.hasNext()) {
-                    TagModel root = getModel().cloneTagModel(iterator.next());
+                    TagModel root = model.cloneTagModel(iterator.next());
                     updateDataProvider(Arrays.asList(root));
                 }
             }
@@ -88,11 +88,6 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         if (!items.isEmpty()) {
             super.updateDataProvider(items);
         }
-    }
-
-    @Override
-    public TagListModel getModel() {
-        return getCommonModel().getTagList();
     }
 
     @Override

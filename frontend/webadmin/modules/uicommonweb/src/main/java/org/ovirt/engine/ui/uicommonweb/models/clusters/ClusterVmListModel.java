@@ -4,12 +4,42 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class ClusterVmListModel extends VmListModel
-{
+import com.google.inject.Inject;
+
+public class ClusterVmListModel extends VmListModel {
+
+    @Inject
+    public ClusterVmListModel(VmGeneralModel vmGeneralModel,
+            VmInterfaceListModel vmInterfaceListModel,
+            VmDiskListModel vmDiskListModel,
+            VmSnapshotListModel vmSnapshotListModel,
+            VmEventListModel vmEventListModel,
+            VmAppListModel vmAppListModel,
+            PermissionListModel permissionListModel,
+            VmAffinityGroupListModel vmAffinityGroupListModel,
+            VmSessionsModel vmSessionsModel) {
+        super(vmGeneralModel,
+                vmInterfaceListModel,
+                vmDiskListModel,
+                vmSnapshotListModel,
+                vmEventListModel,
+                vmAppListModel,
+                permissionListModel,
+                vmAffinityGroupListModel,
+                vmSessionsModel);
+    }
 
     @Override
     public VDSGroup getEntity()

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
@@ -54,12 +55,11 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
-public class ClusterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext
-{
+import com.google.inject.Inject;
+
+public class ClusterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 
@@ -152,58 +152,50 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         privateGuideContext = value;
     }
 
-    private ClusterServiceModel clusterServiceModel;
+    private final ClusterServiceModel clusterServiceModel;
 
     public ClusterServiceModel getClusterServiceModel() {
         return clusterServiceModel;
     }
 
-    public void setClusterServiceModel(ClusterServiceModel clusterServiceModel) {
-        this.clusterServiceModel = clusterServiceModel;
-    }
-
-    private ClusterVmListModel clusterVmListModel;
+    private final ClusterVmListModel clusterVmListModel;
 
     public ClusterVmListModel getClusterVmListModel() {
         return clusterVmListModel;
     }
 
-    public void setClusterVmListModel(ClusterVmListModel clusterVmListModel) {
-        this.clusterVmListModel = clusterVmListModel;
-    }
-
-    private ClusterGlusterHookListModel clusterGlusterHookListModel;
+    private final ClusterGlusterHookListModel clusterGlusterHookListModel;
 
     public ClusterGlusterHookListModel getClusterGlusterHookListModel() {
         return clusterGlusterHookListModel;
     }
 
-    public void setClusterGlusterHookListModel(ClusterGlusterHookListModel clusterGlusterHookListModel) {
-        this.clusterGlusterHookListModel = clusterGlusterHookListModel;
-    }
-
-    private ClusterAffinityGroupListModel affinityGroupListModel;
+    private final ClusterAffinityGroupListModel affinityGroupListModel;
 
     public ClusterAffinityGroupListModel getAffinityGroupListModel() {
         return affinityGroupListModel;
     }
 
-    public void setAffinityGroupListModel(ClusterAffinityGroupListModel affinityGroupListModel) {
-        this.affinityGroupListModel = affinityGroupListModel;
-    }
-
-    private CpuProfileListModel cpuProfileListModel;
+    private final CpuProfileListModel cpuProfileListModel;
 
     public CpuProfileListModel getCpuProfileListModel() {
         return cpuProfileListModel;
     }
 
-    public void setCpuProfileListModel(CpuProfileListModel cpuProfileListModel) {
+    @Inject
+    public ClusterListModel(final ClusterVmListModel clusterVmListModel, final ClusterServiceModel clusterServiceModel,
+            final ClusterGlusterHookListModel clusterGlusterHookListModel,
+            final ClusterAffinityGroupListModel clusterAffinityGroupListModel,
+            final CpuProfileListModel cpuProfileListModel, final ClusterGeneralModel clusterGeneralModel,
+            final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
+            final PermissionListModel permissionListModel) {
+        this.clusterVmListModel = clusterVmListModel;
+        this.clusterServiceModel = clusterServiceModel;
+        this.clusterGlusterHookListModel = clusterGlusterHookListModel;
+        this.affinityGroupListModel = clusterAffinityGroupListModel;
         this.cpuProfileListModel = cpuProfileListModel;
-    }
+        setDetailList(clusterGeneralModel, clusterNetworkListModel, clusterHostListModel, permissionListModel);
 
-    public ClusterListModel()
-    {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
         setHelpTag(HelpTag.clusters);
         setHashName("clusters"); //$NON-NLS-1$
@@ -224,8 +216,7 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    public void guide()
-    {
+    public void guide() {
         ClusterGuideModel model = new ClusterGuideModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newClusterGuideMeTitle());
@@ -254,27 +245,19 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                 }), (Guid) getGuideContext());
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        setClusterVmListModel(new ClusterVmListModel());
-        setClusterServiceModel(new ClusterServiceModel());
-        setClusterGlusterHookListModel(new ClusterGlusterHookListModel());
-        setAffinityGroupListModel(new ClusterAffinityGroupListModel());
-        setCpuProfileListModel(new CpuProfileListModel());
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new ClusterGeneralModel());
-        list.add(new ClusterNetworkListModel());
-        list.add(new ClusterHostListModel());
-        list.add(getClusterVmListModel());
-        list.add(getClusterServiceModel());
-        list.add(getClusterGlusterHookListModel());
-        list.add(getCpuProfileListModel());
-        list.add(new PermissionListModel());
-        list.add(getAffinityGroupListModel());
+    private void setDetailList(final ClusterGeneralModel clusterGeneralModel,
+            final ClusterNetworkListModel clusterNetworkListModel, final ClusterHostListModel clusterHostListModel,
+            final PermissionListModel permissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(clusterGeneralModel);
+        list.add(clusterNetworkListModel);
+        list.add(clusterHostListModel);
+        list.add(clusterVmListModel);
+        list.add(clusterServiceModel);
+        list.add(clusterGlusterHookListModel);
+        list.add(cpuProfileListModel);
+        list.add(permissionListModel);
+        list.add(affinityGroupListModel);
         setDetailModels(list);
     }
 

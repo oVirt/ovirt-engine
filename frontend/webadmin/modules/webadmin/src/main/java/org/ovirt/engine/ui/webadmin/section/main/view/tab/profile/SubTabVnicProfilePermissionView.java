@@ -23,10 +23,9 @@ public class SubTabVnicProfilePermissionView extends AbstractSubTabPermissionsVi
     }
 
     @Inject
-    public SubTabVnicProfilePermissionView(SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> modelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage,
-            ApplicationConstants constants) {
+    public SubTabVnicProfilePermissionView(SearchableDetailModelProvider<Permissions, VnicProfileListModel,
+            PermissionListModel<VnicProfileListModel>> modelProvider, EventBus eventBus,
+            ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
         getTable().enableColumnResizing();
     }

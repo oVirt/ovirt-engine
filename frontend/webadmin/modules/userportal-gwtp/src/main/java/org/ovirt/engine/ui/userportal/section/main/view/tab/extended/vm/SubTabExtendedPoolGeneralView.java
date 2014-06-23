@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolGeneralPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -16,8 +16,9 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.inject.Inject;
 
-public class SubTabExtendedPoolGeneralView extends AbstractSubTabFormView<UserPortalItemModel, UserPortalListModel, PoolGeneralModel>
-        implements SubTabExtendedPoolGeneralPresenter.ViewDef {
+public class SubTabExtendedPoolGeneralView extends
+    AbstractSubTabFormView<UserPortalItemModel, UserPortalListModel, PoolGeneralModel> implements
+    SubTabExtendedPoolGeneralPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedPoolGeneralView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -31,7 +32,9 @@ public class SubTabExtendedPoolGeneralView extends AbstractSubTabFormView<UserPo
     PoolGeneralModelForm form;
 
     @Inject
-    public SubTabExtendedPoolGeneralView(PoolGeneralModelProvider modelProvider, ApplicationConstants constants) {
+    public SubTabExtendedPoolGeneralView(
+            UserPortalDetailModelProvider<UserPortalListModel, PoolGeneralModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
         form = new PoolGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

@@ -11,7 +11,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationTemplates;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedPoolNetworkInterfacePresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -25,7 +25,8 @@ public class SubTabExtendedPoolNetworkInterfaceView extends AbstractSubTabTableW
     }
 
     @Inject
-    public SubTabExtendedPoolNetworkInterfaceView(PoolInterfaceListModelProvider modelProvider,
+    public SubTabExtendedPoolNetworkInterfaceView(
+            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants, ApplicationTemplates templates) {
         super(new PoolInterfaceListModelTable(modelProvider, eventBus, clientStorage, templates));
         ViewIdHandler.idHandler.generateAndSetIds(this);

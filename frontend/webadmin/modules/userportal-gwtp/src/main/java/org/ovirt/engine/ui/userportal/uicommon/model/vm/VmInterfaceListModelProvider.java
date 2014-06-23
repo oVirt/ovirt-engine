@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -27,19 +26,11 @@ public class VmInterfaceListModelProvider extends UserPortalSearchableDetailMode
     public VmInterfaceListModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             CurrentUser user,
-            UserPortalListProvider parentModelProvider,
-            UserPortalModelResolver resolver,
             Provider<VmInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(eventBus, defaultConfirmPopupProvider, user,
-                parentModelProvider, VmInterfaceListModel.class, resolver);
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.newTemplateInterfacePopupProvider = newTemplateInterfacePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-    }
-
-    @Override
-    protected VmInterfaceListModel createModel() {
-        return new VmInterfaceListModel();
     }
 
     @Override

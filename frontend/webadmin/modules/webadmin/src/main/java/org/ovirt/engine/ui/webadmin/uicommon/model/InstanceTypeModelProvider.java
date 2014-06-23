@@ -1,8 +1,5 @@
 package org.ovirt.engine.ui.webadmin.uicommon.model;
 
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -13,6 +10,10 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
+
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class InstanceTypeModelProvider extends SearchableTabModelProvider<InstanceType, InstanceTypeListModel> {
 
@@ -28,11 +29,6 @@ public class InstanceTypeModelProvider extends SearchableTabModelProvider<Instan
         super(eventBus, defaultConfirmPopupProvider);
         this.instanceTypePopupProvider = instanceTypePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-    }
-
-    @Override
-    public InstanceTypeListModel getModel() {
-        return getCommonModel().getInstanceTypeListModel();
     }
 
     @Override

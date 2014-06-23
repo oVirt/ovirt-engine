@@ -5,15 +5,13 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
-import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent;
-import org.ovirt.engine.ui.common.auth.UserLoginChangeEvent.UserLoginChangeHandler;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelInitEvent.UserPortalModelInitHandler;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
@@ -25,7 +23,7 @@ import com.google.inject.Provider;
  * @param <M>
  *            List model type.
  */
-public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableListModel> extends DataBoundTabModelProvider<T, M> implements UserPortalModelInitHandler, UserLoginChangeHandler {
+public class UserPortalDataBoundModelProvider<T, M extends SearchableListModel> extends DataBoundTabModelProvider<T, M> {
 
     public interface DataChangeListener<T> {
 
@@ -33,19 +31,17 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
 
     }
 
-    private M model;
     private DataChangeListener<T> dataChangeListener;
 
     private List<T> selectedItems;
     private final CurrentUser user;
 
+    @Inject
     public UserPortalDataBoundModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             CurrentUser user) {
         super(eventBus, defaultConfirmPopupProvider);
         this.user = user;
-        getEventBus().addHandler(UserPortalModelInitEvent.getType(), this);
-        getEventBus().addHandler(UserLoginChangeEvent.getType(), this);
     }
 
     @Override
@@ -59,21 +55,6 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
         return super.getKey(item);
     }
 
-    @Override
-    public M getModel() {
-        return model;
-    }
-
-    @Override
-    public void onUserPortalModelInit(UserPortalModelInitEvent event) {
-        this.model = createModel();
-    }
-
-    /**
-     * Creates the model instance.
-     */
-    protected abstract M createModel();
-
     public void setDataChangeListener(DataChangeListener<T> changeListener) {
         this.dataChangeListener = changeListener;
     }
@@ -86,11 +67,6 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
         if (dataChangeListener != null) {
             dataChangeListener.onDataChange(items);
         }
-    }
-
-    @Override
-    protected boolean hasModel() {
-        return getModel() != null;
     }
 
     /**
@@ -119,12 +95,4 @@ public abstract class UserPortalDataBoundModelProvider<T, M extends SearchableLi
     protected boolean rememberModelItemSelection() {
         return true;
     }
-
-    @Override
-    public void onUserLoginChange(UserLoginChangeEvent event) {
-        if (!user.isLoggedIn()) {
-            getModel().stopRefresh();
-        }
-    }
-
 }

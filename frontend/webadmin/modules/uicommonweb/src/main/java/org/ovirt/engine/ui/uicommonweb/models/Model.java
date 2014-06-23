@@ -26,6 +26,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
+import com.google.inject.Inject;
 
 public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers
 {
@@ -533,9 +534,8 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
      * Set the GWT event bus.
      * @param eventBus The {@code EventBus}, can be null.
      */
+    @Inject
     public final void setEventBus(EventBus eventBus) {
-        assert eventBus != null : "EventBus cannot be null"; //$NON-NLS-1$
-        assert this.eventBus == null : "EventBus is already set"; //$NON-NLS-1$
         this.eventBus = eventBus;
         registerHandlers();
     }
@@ -599,7 +599,7 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        getEventBus().fireEvent(event);
+        getEventBus().fireEventFromSource(event, this);
     }
 
     public Set<TabName> getInvalidTabs() {

@@ -16,16 +16,33 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.HostGlusterSwiftListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostEventListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class ClusterHostListModel extends HostListModel
-{
+import com.google.inject.Inject;
 
-    public ClusterHostListModel() {
+public class ClusterHostListModel extends HostListModel {
+
+    @Inject
+    public ClusterHostListModel(final HostGeneralModel hostGeneralModel,
+            final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
+            final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
+            final HostInterfaceListModel hostInterfaceListModel,
+            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+            final PermissionListModel permissionListModel) {
+        super(hostGeneralModel, hostGlusterSwiftListModel, hostBricksListModel, hostVmListModel, hostEventListModel,
+                hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
         setUpdateMomPolicyCommand(new UICommand("updateMomPolicyCommand", this)); //$NON-NLS-1$
         getUpdateMomPolicyCommand().setAvailableInModes(ApplicationMode.VirtOnly);
     }
@@ -33,48 +50,40 @@ public class ClusterHostListModel extends HostListModel
     private UICommand updateMomPolicyCommand;
 
     @Override
-    public VDSGroup getEntity()
-    {
+    public VDSGroup getEntity() {
         return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
     }
 
-    public void setEntity(VDSGroup value)
-    {
+    public void setEntity(VDSGroup value) {
         super.setEntity(value);
     }
 
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
 
     @Override
-    public void search()
-    {
-        if (getEntity() != null)
-        {
+    public void search() {
+        if (getEntity() != null) {
             setSearchString("hosts: cluster=" + getEntity().getName()); //$NON-NLS-1$
             super.search();
         }
     }
 
     @Override
-    protected void syncSearch()
-    {
+    protected void syncSearch() {
         SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.VDS);
         tempVar.setRefresh(getIsQueryFirstTime());
         super.syncSearch(VdcQueryType.Search, tempVar);
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }

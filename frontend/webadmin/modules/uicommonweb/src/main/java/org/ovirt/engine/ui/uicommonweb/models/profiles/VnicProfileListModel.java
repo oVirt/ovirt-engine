@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.profiles;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -29,7 +30,9 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RemoveVnicProfileModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class VnicProfileListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
@@ -38,8 +41,15 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     private UICommand removeCommand;
 
     private SystemTreeItemModel systemTreeSelectedItem;
+    private final Provider<CommonModel> commonModelProvider;
 
-    public VnicProfileListModel() {
+    @Inject
+    public VnicProfileListModel(final Provider<CommonModel> commonModelProvider,
+            final VnicProfileVmListModel vNicProfileVmListModel,
+            final VnicProfileTemplateListModel vNicProfileTemplateListModel,
+            final PermissionListModel permissionListModel) {
+        this.commonModelProvider = commonModelProvider;
+        setDetailList(vNicProfileVmListModel, vNicProfileTemplateListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().vnicProfilesTitle());
         setHelpTag(HelpTag.vnicProfiles);
         setHashName("vnicProfiles"); //$NON-NLS-1$)
@@ -59,6 +69,18 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+    }
+
+    private void setDetailList(final VnicProfileVmListModel vNicProfileVmListModel,
+            final VnicProfileTemplateListModel vNicProfileTemplateListModel,
+            final PermissionListModel permissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+
+        list.add(vNicProfileVmListModel);
+        list.add(vNicProfileTemplateListModel);
+        list.add(permissionListModel);
+
+        setDetailModels(list);
     }
 
     public void newProfile() {
@@ -93,7 +115,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private StoragePool getSelectedDc() {
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                commonModelProvider.get().getSystemTree().getSelectedItem();
         SystemTreeItemModel treeSelectedDc = SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter, treeSelectedItem);
         return (StoragePool) treeSelectedDc.getEntity();
     }
@@ -110,7 +132,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
 
     private void initNetworkList(final VnicProfileModel profileModel) {
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                commonModelProvider.get().getSystemTree().getSelectedItem();
 
         SystemTreeItemModel treeSelectedNetwork =
                 treeSelectedItem.getType() == SystemTreeItemType.Network ? treeSelectedItem : null;
@@ -168,19 +190,6 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
     }
 
     @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-
-        list.add(new VnicProfileVmListModel());
-        list.add(new VnicProfileTemplateListModel());
-        list.add(new PermissionListModel());
-
-        setDetailModels(list);
-    }
-
-    @Override
     public boolean isSearchStringMatch(String searchString) {
         return searchString.trim().toLowerCase().startsWith("profile"); //$NON-NLS-1$
     }
@@ -193,7 +202,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
         // super.syncSearch(VdcQueryType.Search, tempVar);
 
         SystemTreeItemModel treeSelectedItem =
-                (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem();
+                commonModelProvider.get().getSystemTree().getSelectedItem();
 
         if (treeSelectedItem == null) {
             return;

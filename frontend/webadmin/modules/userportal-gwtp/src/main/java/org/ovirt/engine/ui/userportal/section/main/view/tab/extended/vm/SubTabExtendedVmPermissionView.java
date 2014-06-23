@@ -16,7 +16,8 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class SubTabExtendedVmPermissionView extends AbstractSubTabTableWidgetView<UserPortalItemModel, Permissions, UserPortalListModel, UserPortalPermissionListModel>
+public class SubTabExtendedVmPermissionView extends AbstractSubTabTableWidgetView<UserPortalItemModel, Permissions,
+    UserPortalListModel, UserPortalPermissionListModel<UserPortalListModel>>
         implements SubTabExtendedVmPermissionPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmPermissionView> {
@@ -26,7 +27,8 @@ public class SubTabExtendedVmPermissionView extends AbstractSubTabTableWidgetVie
     @Inject
     public SubTabExtendedVmPermissionView(VmPermissionListModelProvider modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
-        super(new PermissionListModelTable<UserPortalPermissionListModel>(modelProvider, eventBus, clientStorage));
+        super(new PermissionListModelTable<UserPortalPermissionListModel<UserPortalListModel>>(modelProvider, eventBus,
+                clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getModelBoundTableWidget());

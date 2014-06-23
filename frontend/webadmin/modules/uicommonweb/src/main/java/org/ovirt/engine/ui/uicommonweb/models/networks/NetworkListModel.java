@@ -33,8 +33,10 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NewNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.RemoveNetworksModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
@@ -48,9 +50,20 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
-    private NetworkExternalSubnetListModel networkExternalSubnetListModel;
+    private final NetworkExternalSubnetListModel networkExternalSubnetListModel;
+    private final Provider<ImportNetworksModel> importNetworkModelProvider;
 
-    public NetworkListModel() {
+    @Inject
+    public NetworkListModel(final Provider<ImportNetworksModel> importNetworkModelProvider,
+            final NetworkExternalSubnetListModel networkExternalSubnetListModel,
+            final NetworkGeneralModel networkGeneralModel, final NetworkProfileListModel networkProfileListModel,
+            final NetworkClusterListModel networkClusterListModel,
+            final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
+            final NetworkTemplateListModel networkTemplateListModel, final PermissionListModel permissionListModel) {
+        this.networkExternalSubnetListModel = networkExternalSubnetListModel;
+        this.importNetworkModelProvider = importNetworkModelProvider;
+        setDetailList(networkGeneralModel, networkProfileListModel, networkClusterListModel, networkHostListModel,
+                networkVmListModel, networkTemplateListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().networksTitle());
         setHelpTag(HelpTag.networks);
         setHashName("networks"); //$NON-NLS-1$
@@ -71,6 +84,25 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
+    private void setDetailList(final NetworkGeneralModel networkGeneralModel,
+            final NetworkProfileListModel networkProfileListModel,
+            final NetworkClusterListModel networkClusterListModel,
+            final NetworkHostListModel networkHostListModel, final NetworkVmListModel networkVmListModel,
+            final NetworkTemplateListModel networkTemplateListModel, final PermissionListModel permissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+
+        list.add(networkGeneralModel);
+        list.add(networkProfileListModel);
+        list.add(networkExternalSubnetListModel);
+        list.add(networkClusterListModel);
+        list.add(networkHostListModel);
+        list.add(networkVmListModel);
+        list.add(networkTemplateListModel);
+        list.add(permissionListModel);
+
+        setDetailModels(list);
+    }
+
     public void newNetwork() {
         if (getWindow() != null)
         {
@@ -88,7 +120,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             return;
         }
 
-        setWindow(new ImportNetworksModel(this));
+        setWindow(importNetworkModelProvider.get());
     }
 
     public void edit() {
@@ -165,26 +197,6 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
             }
         }
         return null;
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        networkExternalSubnetListModel = new NetworkExternalSubnetListModel();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-
-        list.add(new NetworkGeneralModel());
-        list.add(new NetworkProfileListModel());
-        list.add(networkExternalSubnetListModel);
-        list.add(new NetworkClusterListModel());
-        list.add(new NetworkHostListModel());
-        list.add(new NetworkVmListModel());
-        list.add(new NetworkTemplateListModel());
-        list.add(new PermissionListModel());
-
-        setDetailModels(list);
     }
 
     @Override

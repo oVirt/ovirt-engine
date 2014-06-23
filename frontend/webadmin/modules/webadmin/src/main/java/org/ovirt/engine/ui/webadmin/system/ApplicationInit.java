@@ -7,14 +7,13 @@ import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
-import org.ovirt.engine.ui.common.uicommon.model.ModelInitializedEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -50,9 +49,10 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
             PlaceManager placeManager,
             RestApiSessionManager restApiSessionManager,
             ApplicationDynamicMessages dynamicMessages,
-            CurrentUserRole currentUserRole) {
+            CurrentUserRole currentUserRole, Provider<CommonModel> commonModelProvider) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend, currentUserRole,
+                commonModelProvider);
         this.placeManager = placeManager;
         this.restApiSessionManager = restApiSessionManager;
         this.dynamicMessages = dynamicMessages;
@@ -82,8 +82,6 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
 
     @Override
     protected void beforeLogin(LoginModel loginModel) {
-        CommonModelManager.init(eventBus);
-        ModelInitializedEvent.fire(eventBus);
     }
 
     @Override

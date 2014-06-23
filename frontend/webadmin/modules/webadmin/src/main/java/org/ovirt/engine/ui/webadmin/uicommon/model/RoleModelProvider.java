@@ -31,11 +31,6 @@ public class RoleModelProvider extends SearchableTabModelProvider<Role, RoleList
     }
 
     @Override
-    public RoleListModel getModel() {
-        return getCommonModel().getRoleListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(RoleListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getNewCommand())

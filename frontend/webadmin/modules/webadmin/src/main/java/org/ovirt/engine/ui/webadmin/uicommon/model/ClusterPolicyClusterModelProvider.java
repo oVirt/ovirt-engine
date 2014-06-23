@@ -16,10 +16,4 @@ public class ClusterPolicyClusterModelProvider extends SearchableTabModelProvide
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
     }
-
-    @Override
-    public ClusterPolicyClusterListModel getModel() {
-        return (ClusterPolicyClusterListModel) getCommonModel().getClusterPolicyListModel().getDetailModels().get(0);
-    }
-
 }

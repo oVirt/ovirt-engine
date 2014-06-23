@@ -5,6 +5,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
@@ -17,24 +18,16 @@ import com.google.inject.Provider;
  */
 public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends EntityModel> extends TabModelProvider<D> implements DetailModelProvider<M, D> {
 
-    private final Class<M> mainModelClass;
-    private final Class<D> detailModelClass;
+    private Provider<M> mainModelProvider;
 
+    @Inject
     public DetailTabModelProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            Class<M> mainModelClass, Class<D> detailModelClass) {
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-        this.mainModelClass = mainModelClass;
-        this.detailModelClass = detailModelClass;
-    }
-
-    @Override
-    public D getModel() {
-        return UiCommonModelResolver.getDetailListModel(getCommonModel(), mainModelClass, detailModelClass);
     }
 
     protected M getMainModel() {
-        return UiCommonModelResolver.getMainListModel(getCommonModel(), mainModelClass);
+        return mainModelProvider.get();
     }
 
     @Override
@@ -45,5 +38,10 @@ public class DetailTabModelProvider<M extends ListWithDetailsModel, D extends En
     @Override
     public void onSubTabDeselected() {
         getMainModel().setActiveDetailModel(null);
+    }
+
+    @Inject
+    public void setMainModelProvider(Provider<M> mainModelProvider) {
+        this.mainModelProvider = mainModelProvider;
     }
 }

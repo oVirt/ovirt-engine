@@ -1,12 +1,29 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
+import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.uicommonweb.models.SystemTreeModel;
+import org.ovirt.engine.ui.uicommonweb.models.autocomplete.SearchSuggestModel;
+import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.SystemPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RoleListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.roles_ui.RolePermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ClusterPolicyClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.ClusterPolicyListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.AlertListModel;
+import org.ovirt.engine.ui.uicommonweb.models.events.TaskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ClusterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DataCenterModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.DiskModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.EventModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.HostModule;
+import org.ovirt.engine.ui.webadmin.gin.uicommon.MacPoolModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.NetworkModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.PoolModule;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ProviderModule;
@@ -28,12 +45,9 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProv
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MacPoolPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
@@ -41,6 +55,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
 
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 /**
  * GIN module containing WebAdmin UiCommon model and integration bindings.
@@ -72,6 +87,9 @@ public class UiCommonModule extends BaseUiCommonModule {
         install(new NetworkModule());
         install(new ProviderModule());
         install(new VnicProfileModule());
+        install(new MacPoolModule());
+
+        bindCommonModels();
 
         // SystemTreeModel
         bind(SystemTreeModelProvider.class).asEagerSingleton();
@@ -91,43 +109,55 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(TaskFirstRowModelProvider.class).asEagerSingleton();
 
         // EventListModel
-        bind(EventModelProvider.class).asEagerSingleton();
-        bind(EventFirstRowModelProvider.class).asEagerSingleton();
+        bind(EventModelProvider.class).in(Singleton.class);
+        bind(EventFirstRowModelProvider.class).in(Singleton.class);
 
         // RoleListModel
-        bind(RoleModelProvider.class).asEagerSingleton();
+        bind(RoleModelProvider.class).in(Singleton.class);
 
         // RolePermissionListModel
-        bind(RolePermissionModelProvider.class).asEagerSingleton();
+        bind(RolePermissionModelProvider.class).in(Singleton.class);
 
         // SystemPermissionListModel
-        bind(SystemPermissionModelProvider.class).asEagerSingleton();
+        bind(SystemPermissionModelProvider.class).in(Singleton.class);
 
         // ClusterPolicyListModel
-        bind(ClusterPolicyModelProvider.class).asEagerSingleton();
+        bind(ClusterPolicyModelProvider.class).in(Singleton.class);
 
         // ClusterPolicyClusterListModel
-        bind(ClusterPolicyClusterModelProvider.class).asEagerSingleton();
+        bind(ClusterPolicyClusterModelProvider.class).in(Singleton.class);
 
-        bind(InstanceTypeModelProvider.class).asEagerSingleton();
-        bind(InstanceTypeGeneralModelProvider.class).asEagerSingleton();
-
-        // SharedMacPoolListModel
-        bind(SharedMacPoolModelProvider.class).asEagerSingleton();
-
-        // MacPoolPermissionModelProvider
-        bind(MacPoolPermissionModelProvider.class).asEagerSingleton();
+        bind(InstanceTypeModelProvider.class).in(Singleton.class);
+        bind(new TypeLiteral<DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel>>(){}).in(Singleton.class);
 
         // disk profiles permissions
-        bind(DiskProfilePermissionModelProvider.class).asEagerSingleton();
+        bind(DiskProfilePermissionModelProvider.class).in(Singleton.class);
 
         // cpu profiles permissions
-        bind(CpuProfilePermissionModelProvider.class).asEagerSingleton();
+        bind(CpuProfilePermissionModelProvider.class).in(Singleton.class);
     }
 
     void bindIntegration() {
         bindCommonIntegration();
         bindConfiguratorIntegration(WebAdminConfigurator.class);
         bind(LoginModel.class).in(Singleton.class);
+    }
+
+    void bindCommonModels() {
+        bind(CommonModel.class).in(Singleton.class);
+        bind(PermissionListModel.class).in(Singleton.class);
+        bind(RoleListModel.class).in(Singleton.class);
+        bind(RolePermissionListModel.class).in(Singleton.class);
+        bind(SystemPermissionListModel.class).in(Singleton.class);
+        bind(ClusterPolicyListModel.class).in(Singleton.class);
+        bind(ClusterPolicyClusterListModel.class).in(Singleton.class);
+        bind(InstanceTypeListModel.class).in(Singleton.class);
+        bind(InstanceTypeGeneralModel.class).in(Singleton.class);
+        bind(SearchSuggestModel.class).in(Singleton.class);
+        bind(BookmarkListModel.class).in(Singleton.class);
+        bind(TagListModel.class).in(Singleton.class);
+        bind(SystemTreeModel.class).in(Singleton.class);
+        bind(AlertListModel.class).in(Singleton.class);
+        bind(TaskListModel.class).in(Singleton.class);
     }
 }

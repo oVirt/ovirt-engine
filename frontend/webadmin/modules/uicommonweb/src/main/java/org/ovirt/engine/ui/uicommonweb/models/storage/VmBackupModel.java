@@ -54,6 +54,9 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
 public class VmBackupModel extends ManageBackupModel {
 
     private VmAppListModel privateAppListModel;
@@ -64,12 +67,19 @@ public class VmBackupModel extends ManageBackupModel {
     protected Map<Guid, Object> cloneObjectMap;
     protected ImportVmFromExportDomainModel importModel;
 
+    protected Provider<ImportVmFromExportDomainModel> importModelProvider;
+
     public VmAppListModel getAppListModel() {
         return privateAppListModel;
     }
 
     protected void setAppListModel(VmAppListModel value) {
         privateAppListModel = value;
+    }
+
+    @Inject
+    protected void setModelProvider(Provider<ImportVmFromExportDomainModel> importModelProvider) {
+        this.importModelProvider = importModelProvider;
     }
 
     public VmBackupModel() {
@@ -220,7 +230,7 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        ImportVmFromExportDomainModel model = getImportModel();
+        ImportVmFromExportDomainModel model = importModelProvider.get();
         setWindow(model);
         model.startProgress(null);
         UICommand restoreCommand;
@@ -241,15 +251,6 @@ public class VmBackupModel extends ManageBackupModel {
         closeCommand.setIsDefault(true);
         closeCommand.setIsCancel(true);
         model.setCloseCommand(closeCommand);
-    }
-
-    protected ImportVmFromExportDomainModel getImportModel() {
-        ImportVmFromExportDomainModel model = new ImportVmFromExportDomainModel();
-        model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        model.setHelpTag(HelpTag.import_virtual_machine);
-        model.setHashName("import_virtual_machine"); //$NON-NLS-1$
-        model.setEntity(getEntity());
-        return model;
     }
 
     public void onRestore() {

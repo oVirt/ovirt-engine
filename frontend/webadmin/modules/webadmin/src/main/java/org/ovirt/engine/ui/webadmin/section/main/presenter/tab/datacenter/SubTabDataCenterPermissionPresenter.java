@@ -23,7 +23,9 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel, PermissionListModel, SubTabDataCenterPermissionPresenter.ViewDef, SubTabDataCenterPermissionPresenter.ProxyDef> {
+public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel,
+    PermissionListModel<DataCenterListModel>, SubTabDataCenterPermissionPresenter.ViewDef,
+    SubTabDataCenterPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.dataCenterPermissionSubTabPlace)
@@ -35,14 +37,16 @@ public class SubTabDataCenterPermissionPresenter extends AbstractSubTabPresenter
 
     @TabInfo(container = DataCenterSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DataCenterListModel,
+            PermissionListModel<DataCenterListModel>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.dataCenterPermissionSubTabLabel(), 5, modelProvider);
     }
 
     @Inject
     public SubTabDataCenterPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, DataCenterListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, DataCenterListModel,
+            PermissionListModel<DataCenterListModel>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
     }

@@ -18,7 +18,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabExtendedTemplatePermissionsPresenter
-        extends AbstractSubTabExtendedTemplatePresenter<UserPortalPermissionListModel, SubTabExtendedTemplatePermissionsPresenter.ViewDef, SubTabExtendedTemplatePermissionsPresenter.ProxyDef> {
+        extends AbstractSubTabExtendedTemplatePresenter<UserPortalPermissionListModel<VmTemplate>,
+        SubTabExtendedTemplatePermissionsPresenter.ViewDef, SubTabExtendedTemplatePermissionsPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedTempplatePersmissionsSubTabPlace)

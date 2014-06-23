@@ -34,7 +34,8 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
 public class RoleListModel extends ListWithDetailsModel
@@ -166,8 +167,9 @@ public class RoleListModel extends ListWithDetailsModel
         privateItemsFilter = value;
     }
 
-    public RoleListModel()
-    {
+    @Inject
+    public RoleListModel(final RolePermissionListModel rolePermissionListModel) {
+        setDetailList(rolePermissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().rolesTitle());
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -183,13 +185,9 @@ public class RoleListModel extends ListWithDetailsModel
         updateActionAvailability();
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new RolePermissionListModel());
+    private void setDetailList(final RolePermissionListModel rolePermissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(rolePermissionListModel);
 
         setDetailModels(list);
     }
@@ -351,7 +349,7 @@ public class RoleListModel extends ListWithDetailsModel
         RoleModel model = (RoleModel) getWindow();
         ArrayList<SelectionTreeNodeModel> selectionTree =
                 RoleTreeView.getRoleTreeView((model.getIsNew() ? false : role.getis_readonly()),
-                        (Boolean) model.getIsAdminRole().getEntity());
+                        model.getIsAdminRole().getEntity());
         for (SelectionTreeNodeModel sm : selectionTree)
         {
             for (SelectionTreeNodeModel smChild : sm.getChildren())
@@ -476,7 +474,7 @@ public class RoleListModel extends ListWithDetailsModel
         }
 
         role = commandType != CommandType.Edit ? new Role() : (Role) getSelectedItem();
-        role.setType(((Boolean) model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
+        role.setType((model.getIsAdminRole().getEntity() ? RoleType.ADMIN : RoleType.USER));
 
         if (!model.validate())
         {
@@ -490,8 +488,8 @@ public class RoleListModel extends ListWithDetailsModel
         // return;
         // }
 
-        role.setname((String) model.getName().getEntity());
-        role.setdescription((String) model.getDescription().getEntity());
+        role.setname(model.getName().getEntity());
+        role.setdescription(model.getDescription().getEntity());
 
         ArrayList<ActionGroup> actions = new ArrayList<ActionGroup>();
         HashMap<ActionGroup, ActionGroup> actionDistinctSet =

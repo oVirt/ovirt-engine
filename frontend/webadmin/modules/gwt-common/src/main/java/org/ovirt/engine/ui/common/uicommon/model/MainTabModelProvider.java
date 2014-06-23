@@ -1,9 +1,11 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
 /**
@@ -16,23 +18,19 @@ import com.google.inject.Provider;
  */
 public class MainTabModelProvider<T, M extends SearchableListModel> extends SearchableTabModelProvider<T, M> implements MainModelProvider<T, M> {
 
-    private final Class<M> mainModelClass;
+    private final Provider<CommonModel> commonModelProvider;
 
+    @Inject
     public MainTabModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            Class<M> mainModelClass) {
+            Provider<CommonModel> commonModelProvider) {
         super(eventBus, defaultConfirmPopupProvider);
-        this.mainModelClass = mainModelClass;
-    }
-
-    @Override
-    public M getModel() {
-        return UiCommonModelResolver.getMainListModel(getCommonModel(), mainModelClass);
+        this.commonModelProvider = commonModelProvider;
     }
 
     @Override
     public void onMainTabSelected() {
-        getCommonModel().setSelectedItem(getModel());
+        commonModelProvider.get().setSelectedItem(getModel());
     }
 
 }

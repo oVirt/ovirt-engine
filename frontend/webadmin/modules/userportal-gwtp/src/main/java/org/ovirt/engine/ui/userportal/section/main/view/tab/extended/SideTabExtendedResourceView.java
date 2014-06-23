@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.QuotaUsagePerUser;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.SubTableResources;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -19,7 +20,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.SideTabExtendedResourcePresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.widget.QuotaCPUProgressBar;
 import org.ovirt.engine.ui.userportal.widget.QuotaMemoryProgressBar;
 import org.ovirt.engine.ui.userportal.widget.QuotaProgressBar;
@@ -154,7 +155,7 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public SideTabExtendedResourceView(ResourcesModelProvider modelProvider,
+    public SideTabExtendedResourceView(UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage,
             SubTableResources headerResources, ApplicationResources resources,
             ApplicationConstants constants) {

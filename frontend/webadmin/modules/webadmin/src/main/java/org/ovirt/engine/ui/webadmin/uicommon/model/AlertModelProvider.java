@@ -40,9 +40,4 @@ public class AlertModelProvider extends SearchableTabModelProvider<AuditLog, Ale
         super.updateDataProvider(items);
     }
 
-    @Override
-    public AlertListModel getModel() {
-        return getCommonModel().getAlertList();
-    }
-
 }

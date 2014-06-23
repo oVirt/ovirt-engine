@@ -17,7 +17,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.resources.ResourcesModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
-import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 
 import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
@@ -53,7 +53,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     private HandlerRegistration closeHandler = null;
 
-    private final ResourcesModelProvider modelProvider;
+    private final UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider;
 
     @UiField(provided = true)
     ActionCellTable<VM> tableHeader;
@@ -63,15 +63,15 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
 
     private final ApplicationResources resources;
 
-    private VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
+    private final VmSingleSelectionModel vmSelectionModel = new VmSingleSelectionModel();
 
-    private ApplicationConstants constants;
+    private final ApplicationConstants constants;
 
     interface WidgetUiBinder extends UiBinder<Widget, VmTable> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
-    public VmTable(ResourcesModelProvider modelProvider,
+    public VmTable(UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider,
             SubTableResources headerResources,
             ApplicationResources resources, ApplicationConstants constants) {
         this.modelProvider = modelProvider;
@@ -135,7 +135,7 @@ public class VmTable extends Composite implements HasEditorDriver<ResourcesModel
         for (int i = 0; i < nodeCount; i++) {
             TreeItem child = node.getChild(i);
             if (child instanceof VmTreeItem) {
-                clearTreeItems((VmTreeItem) child);
+                clearTreeItems(child);
             }
         }
         if (node instanceof VmTreeItem) {

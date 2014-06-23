@@ -13,21 +13,16 @@ import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
 public class EntityModel<T> extends Model implements HasHandlers {
 
-    /**
-     * The GWT event bus.
-     */
-    private EventBus eventBus;
-
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
     public static final EventDefinition entityChangedEventDefinition;
     private Event<EventArgs> privateEntityChangedEvent;
+    private boolean initialized = false;
 
     public Event<EventArgs> getEntityChangedEvent()
     {
@@ -174,4 +169,12 @@ public class EntityModel<T> extends Model implements HasHandlers {
         return new Convertible(this);
     }
 
+    public boolean isInitialized() {
+        return initialized;
+    }
+
+    @Override
+    public void initialize() {
+        initialized = true;
+    }
 }

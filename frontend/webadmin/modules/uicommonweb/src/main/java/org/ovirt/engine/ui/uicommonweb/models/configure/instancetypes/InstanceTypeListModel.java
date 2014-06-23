@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -44,22 +49,18 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewInstanceTypeM
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
+import com.google.inject.Inject;
 
 public class InstanceTypeListModel extends ListWithDetailsModel {
 
-    private UICommand newInstanceTypeCommand;
+    private final UICommand newInstanceTypeCommand;
 
-    private UICommand editInstanceTypeCommand;
+    private final UICommand editInstanceTypeCommand;
 
-    private UICommand deleteInstanceTypeCommand;
+    private final UICommand deleteInstanceTypeCommand;
 
-    private InstanceTypeInterfaceCreatingManager addInstanceTypeNetworkManager =
+    private final InstanceTypeInterfaceCreatingManager addInstanceTypeNetworkManager =
             new InstanceTypeInterfaceCreatingManager(new BaseInterfaceCreatingManager.PostVnicCreatedCallback() {
                 @Override
                 public void vnicCreated(Guid vmId) {
@@ -75,7 +76,9 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
                 }
             });
 
-    public InstanceTypeListModel() {
+    @Inject
+    public InstanceTypeListModel(final InstanceTypeGeneralModel instanceTypeGeneralModel) {
+        setDetailList(instanceTypeGeneralModel);
         setDefaultSearchString("Instancetypes:"); //$NON-NLS-1$
         setSearchString(getDefaultSearchString());
         this.newInstanceTypeCommand = new UICommand("NewInstanceType", this); //$NON-NLS-1$
@@ -85,6 +88,12 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         setSearchPageSize(1000);
 
         updateActionAvailability();
+    }
+
+    private void setDetailList(final InstanceTypeGeneralModel instanceTypeGeneralModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(instanceTypeGeneralModel);
+        setDetailModels(list);
     }
 
     @Override
@@ -371,15 +380,6 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         } else if (ObjectUtils.objectsEqual(command.getName(), "Cancel")) { //$NON-NLS-1$
             cancel();
         }
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new InstanceTypeGeneralModel());
-        setDetailModels(list);
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmTemplateParametersBase updateVmParams) {

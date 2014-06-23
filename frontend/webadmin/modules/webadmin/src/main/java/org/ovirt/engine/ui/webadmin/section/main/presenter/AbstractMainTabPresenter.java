@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.presenter.AbstractTabPresenter;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.MainModelSelectionChangeEvent;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
+import org.ovirt.engine.ui.uicommonweb.models.MainModelSelectionChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
@@ -30,6 +32,9 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
+
+    @Inject
+    private Provider<CommonModel> commonModelProvider;
 
     public AbstractMainTabPresenter(EventBus eventBus, V view, P proxy,
             PlaceManager placeManager, MainModelProvider<T, M> modelProvider) {
@@ -91,7 +96,7 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
     }
 
     void revealActiveMainModelPresenter() {
-        MainModelSelectionChangeEvent.fire(this, CommonModelManager.instance().getSelectedItem());
+        MainModelSelectionChangeEvent.fire(this, commonModelProvider.get().getSelectedItem());
     }
 
     /**

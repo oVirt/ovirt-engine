@@ -100,6 +100,8 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
+import com.google.inject.Inject;
+
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
@@ -452,8 +454,14 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             });
 
-    public VmListModel()
-    {
+    @Inject
+    public VmListModel(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
+            final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
+            final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
+            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final VmSessionsModel vmSessionsModel) {
+        setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);
         setHashName("virtual_machines"); //$NON-NLS-1$
@@ -507,6 +515,25 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     public void onSuccess(Object target, Object returnValue) {
                     }
                 }), null, null, null);
+    }
+
+    private void setDetailList(final VmGeneralModel vmGeneralModel, final VmInterfaceListModel vmInterfaceListModel,
+            final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
+            final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
+            final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
+            final VmSessionsModel vmSessionsModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(vmGeneralModel);
+        list.add(vmInterfaceListModel);
+        vmDiskListModel.setSystemTreeContext(this);
+        list.add(vmDiskListModel);
+        list.add(vmSnapshotListModel);
+        list.add(vmEventListModel);
+        list.add(vmAppListModel);
+        list.add(permissionListModel);
+        list.add(vmAffinityGroupListModel);
+        list.add(vmSessionsModel);
+        setDetailModels(list);
     }
 
     private void setConsoleHelpers() {
@@ -678,26 +705,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                            model.getCommands().add(tempVar);
                                                        }
                                                    }), (Guid) getGuideContext());
-    }
-
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new VmGeneralModel());
-        list.add(new VmInterfaceListModel());
-        VmDiskListModel diskListModel = new VmDiskListModel();
-        diskListModel.setSystemTreeContext(this);
-        list.add(diskListModel);
-        list.add(new VmSnapshotListModel());
-        list.add(new VmEventListModel());
-        list.add(new VmAppListModel());
-        list.add(new PermissionListModel());
-        list.add(new VmAffinityGroupListModel());
-        list.add(new VmSessionsModel());
-        setDetailModels(list);
     }
 
     @Override

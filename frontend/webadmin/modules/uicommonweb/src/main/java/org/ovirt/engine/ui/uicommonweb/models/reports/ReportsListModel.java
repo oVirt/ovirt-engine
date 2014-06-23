@@ -20,6 +20,7 @@ import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.LocaleInfo;
+import com.google.inject.Provider;
 
 public class ReportsListModel extends SearchableListWithReportsModel {
 
@@ -29,9 +30,12 @@ public class ReportsListModel extends SearchableListWithReportsModel {
     private String uri;
     private boolean reportsTabSelected = false;
 
-    public ReportsListModel(String baseUrl, String ssoToken) {
+    private final Provider<CommonModel> commonModelProvider;
+
+    public ReportsListModel(String baseUrl, String ssoToken, final Provider<CommonModel> commonModelProvider) {
         reportUrl = baseUrl;
         htmlParams.setParameter("sessionID", ssoToken); //$NON-NLS-1$
+        this.commonModelProvider = commonModelProvider;
 
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
@@ -94,8 +98,7 @@ public class ReportsListModel extends SearchableListWithReportsModel {
     }
 
     public void refreshReportModel() {
-        SystemTreeItemModel treeItemModel =
-                (CommonModel.getInstance().getSystemTree().getSelectedItem());
+        SystemTreeItemModel treeItemModel = commonModelProvider.get().getSystemTree().getSelectedItem();
         if (treeItemModel == null) {
             return;
         }

@@ -18,6 +18,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.dispatch.annotation.GenEvent;
 import com.gwtplatform.mvp.client.TabData;
 import com.gwtplatform.mvp.client.annotations.NameToken;
@@ -63,6 +64,9 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     }
 
     @Inject
+    private Provider<CommonModel> commonModelProvider;
+
+    @Inject
     public MainTabDiskPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager, MainModelProvider<Disk, DiskListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
@@ -86,7 +90,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
         }
 
         Event<EventArgs> systemTreeSelectedItemChangedEvent =
-                CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
+                commonModelProvider.get().getSystemTree().getSelectedItemChangedEvent();
         systemTreeSelectedItemChangedEvent.addListener(systemTreeListener);
 
         super.onReveal();
@@ -97,7 +101,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     protected void onHide() {
         super.onHide();
         Event<EventArgs> systemTreeSelectedItemChangedEvent =
-                CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
+                commonModelProvider.get().getSystemTree().getSelectedItemChangedEvent();
         systemTreeSelectedItemChangedEvent.removeListener(systemTreeListener);
     }
 }

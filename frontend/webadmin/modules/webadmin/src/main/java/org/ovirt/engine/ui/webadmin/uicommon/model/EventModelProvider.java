@@ -17,9 +17,4 @@ public class EventModelProvider extends SearchableTabModelProvider<AuditLog, Eve
         super(eventBus, defaultConfirmPopupProvider);
     }
 
-    @Override
-    public EventListModel getModel() {
-        return (EventListModel) getCommonModel().getEventList();
-    }
-
 }

@@ -56,9 +56,10 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 public class PoolListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
@@ -130,8 +131,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         }
     }
 
-    public PoolListModel()
-    {
+    @Inject
+    public PoolListModel(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
+            final PermissionListModel permissionListModel) {
+        setDetailList(poolGeneralModel, poolVmListModel, permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().poolsTitle());
 
         setDefaultSearchString("Pools:"); //$NON-NLS-1$
@@ -149,15 +152,12 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new PoolGeneralModel());
-        list.add(new PoolVmListModel());
-        list.add(new PermissionListModel());
+    private void setDetailList(final PoolGeneralModel poolGeneralModel, final PoolVmListModel poolVmListModel,
+            final PermissionListModel permissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(poolGeneralModel);
+        list.add(poolVmListModel);
+        list.add(permissionListModel);
         setDetailModels(list);
     }
 

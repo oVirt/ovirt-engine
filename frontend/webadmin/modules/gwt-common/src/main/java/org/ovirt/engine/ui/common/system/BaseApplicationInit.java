@@ -7,7 +7,6 @@ import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.SSOTokenData;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -15,6 +14,7 @@ import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -48,6 +48,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     private final Provider<T> loginModelProvider;
 
     private final LockInteractionManager lockInteractionManager;
+    private final Provider<CommonModel> commonModelProvider;
 
     public BaseApplicationInit(ITypeResolver typeResolver,
             FrontendEventsHandlerImpl frontendEventsHandler,
@@ -55,7 +56,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
             CurrentUser user, EventBus eventBus,
             Provider<T> loginModelProvider,
             LockInteractionManager lockInteractionManager,
-            Frontend frontend, CurrentUserRole currentUserRole) {
+            Frontend frontend, CurrentUserRole currentUserRole,
+            Provider<CommonModel> commonModelProvider) {
+        this.commonModelProvider = commonModelProvider;
         this.typeResolver = typeResolver;
         this.frontendEventsHandler = frontendEventsHandler;
         this.frontendFailureEventListener = frontendFailureEventListener;
@@ -145,9 +148,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     }
 
     protected void updateReportsAvailability() {
-        if (CommonModelManager.instance() != null) {
-            CommonModelManager.instance().updateReportsAvailability();
-        }
+        commonModelProvider.get().updateReportsAvailability();
     }
 
     /**

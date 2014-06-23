@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.gwtplatform.dispatch.annotation.GenEvent;
-
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
@@ -31,6 +29,7 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
+import com.gwtplatform.dispatch.annotation.GenEvent;
 
 public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTreeItemModel, SystemTreeModel>
         implements SearchableTreeModelProvider<SystemTreeItemModel, SystemTreeModel>, TreeModelWithElementId {
@@ -68,14 +67,14 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     }
 
     @Override
-    protected void initializeModelHandlers() {
-        super.initializeModelHandlers();
+    protected void initializeModelHandlers(final SystemTreeModel model) {
+        super.initializeModelHandlers(model);
 
         // Add model reset handler
-        getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                ArrayList<SystemTreeItemModel> items = getModel().getItems();
+                ArrayList<SystemTreeItemModel> items = model.getItems();
                 if (items != null && !items.isEmpty()) {
                     // Select first (root) tree item
                     selectionModel.setSelected(items.get(0), true);
@@ -91,11 +90,6 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
             super.updateDataProvider(items);
             selectionModel.setSelected(getModel().getSelectedItem(), true);
         }
-    }
-
-    @Override
-    public SystemTreeModel getModel() {
-        return getCommonModel().getSystemTree();
     }
 
     public SingleSelectionModel<SystemTreeItemModel> getSelectionModel() {

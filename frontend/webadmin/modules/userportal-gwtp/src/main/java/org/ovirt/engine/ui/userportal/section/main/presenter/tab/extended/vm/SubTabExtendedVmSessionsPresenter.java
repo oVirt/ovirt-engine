@@ -3,10 +3,11 @@ package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSessionsModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -33,7 +34,7 @@ public class SubTabExtendedVmSessionsPresenter
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            VmSessionsModelProvider modelProvider) {
+            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.extendedVirtualMachineSessionsSubTabLabel(), 11, modelProvider);
     }
 
@@ -42,7 +43,7 @@ public class SubTabExtendedVmSessionsPresenter
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            VmSessionsModelProvider modelProvider) {
+            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

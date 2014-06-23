@@ -60,13 +60,13 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
-@SuppressWarnings("unused")
-public class DataCenterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext
-{
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+public class DataCenterListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext {
 
     private UICommand privateNewCommand;
 
@@ -180,11 +180,29 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         privateGuideContext = value;
     }
 
-    DataCenterQuotaListModel quotaListModel;
-    DataCenterIscsiBondListModel iscsiBondListModel;
+    final DataCenterQuotaListModel quotaListModel;
+    final DataCenterIscsiBondListModel iscsiBondListModel;
 
-    public DataCenterListModel()
-    {
+    private final Provider<CommonModel> commonModelProvider;
+
+    @Inject
+    public DataCenterListModel(Provider<CommonModel> commonModelProvider,
+            final DataCenterIscsiBondListModel dataCenterIscsiBondListModel,
+            final DataCenterQuotaListModel dataCenterQuotaListModel,
+            final DataCenterStorageListModel dataCenterStorageListModel,
+            final DataCenterNetworkListModel dataCenterNetworkListModel,
+            final DataCenterClusterListModel dataCenterClusterListModel,
+            final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
+            final DataCenterStorageQosListModel dataCenterStorageQosListModel,
+            final DataCenterCpuQosListModel dataCenterCpuQosListModel,
+            final PermissionListModel permissionListModel,
+            final DataCenterEventListModel dataCenterEventListModel) {
+        this.commonModelProvider = commonModelProvider;
+        iscsiBondListModel = dataCenterIscsiBondListModel;
+        quotaListModel = dataCenterQuotaListModel;
+        setDetailList(dataCenterStorageListModel, dataCenterNetworkListModel, dataCenterClusterListModel,
+                dataCenterNetworkQoSListModel, dataCenterStorageQosListModel, dataCenterCpuQosListModel,
+                permissionListModel, dataCenterEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
@@ -238,25 +256,26 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                 }), (Guid) getGuideContext());
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new DataCenterStorageListModel());
-        iscsiBondListModel = new DataCenterIscsiBondListModel();
+    private void setDetailList(final DataCenterStorageListModel dataCenterStorageListModel,
+            final DataCenterNetworkListModel dataCenterNetworkListModel,
+            final DataCenterClusterListModel dataCenterClusterListModel,
+            final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
+            final DataCenterStorageQosListModel dataCenterStorageQosListModel,
+            final DataCenterCpuQosListModel dataCenterCpuQosListModel,
+            final PermissionListModel permissionListModel,
+            final DataCenterEventListModel dataCenterEventListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(dataCenterStorageListModel);
         list.add(iscsiBondListModel);
-        list.add(new DataCenterNetworkListModel());
-        list.add(new DataCenterClusterListModel());
-        quotaListModel = new DataCenterQuotaListModel();
+        list.add(dataCenterNetworkListModel);
+        list.add(dataCenterClusterListModel);
         quotaListModel.setIsAvailable(false);
         list.add(quotaListModel);
-        list.add(new DataCenterNetworkQoSListModel());
-        list.add(new DataCenterStorageQosListModel());
-        list.add(new DataCenterCpuQosListModel());
-        list.add(new PermissionListModel());
-        list.add(new DataCenterEventListModel());
+        list.add(dataCenterNetworkQoSListModel);
+        list.add(dataCenterStorageQosListModel);
+        list.add(dataCenterCpuQosListModel);
+        list.add(permissionListModel);
+        list.add(dataCenterEventListModel);
         setDetailModels(list);
     }
 
@@ -796,7 +815,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         } else {
             // Update the Quota at the corresponding DC object at the system tree.
             // The DC Quota value from the tree is used at MainTabDiskView.
-            SystemTreeItemModel itemModel = CommonModel.getInstance().getSystemTree().getItemById(dataCenter.getId());
+            SystemTreeItemModel itemModel = commonModelProvider.get().getSystemTree().getItemById(dataCenter.getId());
             itemModel.setEntity(dataCenter);
 
             // Otherwise use async action in order to close dialog immediately.

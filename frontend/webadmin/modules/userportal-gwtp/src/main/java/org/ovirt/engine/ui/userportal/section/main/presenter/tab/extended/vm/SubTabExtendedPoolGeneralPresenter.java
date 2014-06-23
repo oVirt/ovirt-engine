@@ -4,9 +4,10 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -33,13 +34,14 @@ public class SubTabExtendedPoolGeneralPresenter
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            PoolGeneralModelProvider modelProvider) {
+            UserPortalDetailModelProvider<UserPortalListModel, PoolGeneralModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.extendedVirtualMachineGeneralSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
     public SubTabExtendedPoolGeneralPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, PoolGeneralModelProvider modelProvider) {
+            PlaceManager placeManager,
+            UserPortalDetailModelProvider<UserPortalListModel, PoolGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

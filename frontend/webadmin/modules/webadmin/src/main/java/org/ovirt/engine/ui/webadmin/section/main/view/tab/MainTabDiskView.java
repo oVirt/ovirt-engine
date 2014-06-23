@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -14,6 +13,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
@@ -34,6 +34,7 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, DiskListModel> implements MainTabDiskPresenter.ViewDef {
 
@@ -62,6 +63,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private static TextColumnWithTooltip<Disk> descriptionColumn;
 
     @Inject
+    Provider<CommonModel> commonModelProvider;
+
+    @Inject
     public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
 
@@ -87,7 +91,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             EntityModel diskViewType = (EntityModel) sender;
             disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
-            if (CommonModelManager.instance().getSelectedItem() instanceof DiskListModel) {
+            if (commonModelProvider.get().getSelectedItem() instanceof DiskListModel) {
                 onDiskViewTypeChanged();
             }
         }
@@ -98,10 +102,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         return diskTypeChangedEventListener;
     }
 
+    @Override
     public void handleQuotaColumnVisibility() {
         isQuotaVisible = false;
         SystemTreeItemModel treeItem =
-                (SystemTreeItemModel) CommonModelManager.instance().getSystemTree().getSelectedItem();
+                commonModelProvider.get().getSystemTree().getSelectedItem();
         if (treeItem != null
                 && SystemTreeItemType.DataCenter == treeItem.getType()) {
             StoragePool storagePool = (StoragePool) treeItem.getEntity();
@@ -290,8 +295,8 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         String diskTypeClause = diskTypePostfix != null ?
                 diskTypeSearchPrefix + diskTypePostfix : empty;
 
-        String inputSearchString = CommonModelManager.instance().getSearchString().trim();
-        String inputSearchStringPrefix = CommonModelManager.instance().getSearchStringPrefix().trim();
+        String inputSearchString = commonModelProvider.get().getSearchString().trim();
+        String inputSearchStringPrefix = commonModelProvider.get().getSearchStringPrefix().trim();
 
         if (!inputSearchString.isEmpty() && inputSearchStringPrefix.isEmpty()) {
             int indexOfColon = inputSearchString.indexOf(colon);
@@ -328,12 +333,12 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         else {
             searchString = searchConjunctionAnd + inputSearchString;
         }
-        CommonModelManager.instance().setSearchStringPrefix(searchStringPrefix);
-        CommonModelManager.instance().setSearchString(searchString);
+        commonModelProvider.get().setSearchStringPrefix(searchStringPrefix);
+        commonModelProvider.get().setSearchString(searchString);
 
         getTable().getSelectionModel().clear();
         getMainModel().setItems(null);
-        getMainModel().setSearchString(CommonModelManager.instance().getEffectiveSearchString());
+        getMainModel().setSearchString(commonModelProvider.get().getEffectiveSearchString());
         getMainModel().search();
     }
 }

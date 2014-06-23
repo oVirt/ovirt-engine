@@ -15,7 +15,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public abstract class AbstractSubTabExtendedVmPresenter<D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<UserPortalItemModel>, P extends TabContentProxyPlace<?>>
+public abstract class AbstractSubTabExtendedVmPresenter<D extends EntityModel, V
+    extends AbstractSubTabPresenter.ViewDef<UserPortalItemModel>, P extends TabContentProxyPlace<?>>
         extends AbstractSubTabPresenter<UserPortalItemModel, UserPortalListModel, D, V, P> {
 
     public AbstractSubTabExtendedVmPresenter(EventBus eventBus, V view, P proxy,

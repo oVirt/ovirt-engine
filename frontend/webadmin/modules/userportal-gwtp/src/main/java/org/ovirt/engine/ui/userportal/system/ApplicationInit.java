@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.ModelInitializedEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
@@ -47,7 +46,7 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
             ClientAgentType clientAgentType,
             ApplicationDynamicMessages dynamicMessages) {
         super(typeResolver, frontendEventsHandler, frontendFailureEventListener,
-                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole);
+                user, eventBus, loginModelProvider, lockInteractionManager, frontend, userRole, null);
         this.placeManager = placeManager;
         this.userRole = userRole;
         this.connectAutomaticallyManager = connectAutomaticallyManager;
@@ -67,7 +66,6 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     @Override
     protected void beforeLogin(UserPortalLoginModel loginModel) {
         UserPortalModelInitEvent.fire(eventBus);
-        ModelInitializedEvent.fire(eventBus);
     }
 
     @Override

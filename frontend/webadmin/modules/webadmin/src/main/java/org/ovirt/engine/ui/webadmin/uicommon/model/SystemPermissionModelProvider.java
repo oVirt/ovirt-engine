@@ -31,11 +31,6 @@ public class SystemPermissionModelProvider extends SearchableTabModelProvider<Pe
     }
 
     @Override
-    public SystemPermissionListModel getModel() {
-        return getCommonModel().getSystemPermissionListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(SystemPermissionListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getAddCommand()) {

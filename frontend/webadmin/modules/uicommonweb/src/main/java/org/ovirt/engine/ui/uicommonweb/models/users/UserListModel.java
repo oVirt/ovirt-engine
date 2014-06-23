@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -36,7 +37,8 @@ import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 public class UserListModel extends ListWithDetailsModel
 {
@@ -93,8 +95,15 @@ public class UserListModel extends ListWithDetailsModel
         }
     }
 
-    public UserListModel()
-    {
+    @Inject
+    public UserListModel(final UserGroupListModel userGroupListModel,
+            final UserEventNotifierListModel userEventNotifierListModel, final UserGeneralModel userGeneralModel,
+            final UserQuotaListModel userQuotaListModel, final UserPermissionListModel userPermissionListModel,
+            final UserEventListModel userEventListModel) {
+        this.userGroupListModel = userGroupListModel;
+        this.userEventNotifierListModel = userEventNotifierListModel;
+        setDetailList(userGeneralModel, userQuotaListModel, userPermissionListModel, userEventListModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().usersTitle());
 
         setDefaultSearchString("Users:"); //$NON-NLS-1$
@@ -109,6 +118,20 @@ public class UserListModel extends ListWithDetailsModel
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+    }
+
+    private void setDetailList(final UserGeneralModel userGeneralModel, final UserQuotaListModel userQuotaListModel,
+            final UserPermissionListModel userPermissionListModel, final UserEventListModel userEventListModel) {
+
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(userGeneralModel);
+        list.add(userQuotaListModel);
+        list.add(userPermissionListModel);
+        list.add(userEventListModel);
+        userGroupListModel.setIsAvailable(false);
+        list.add(userGroupListModel);
+        list.add(userEventNotifierListModel);
+        setDetailModels(list);
     }
 
     public void assignTags()
@@ -393,26 +416,8 @@ public class UserListModel extends ListWithDetailsModel
         return true;
     }
 
-    private EntityModel userGroupListModel;
-    private EntityModel userEventNotifierListModel;
-
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new UserGeneralModel());
-        list.add(new UserQuotaListModel());
-        list.add(new UserPermissionListModel());
-        list.add(new UserEventListModel());
-        userGroupListModel = new UserGroupListModel();
-        userGroupListModel.setIsAvailable(false);
-        list.add(userGroupListModel);
-        userEventNotifierListModel = new UserEventNotifierListModel();
-        list.add(userEventNotifierListModel);
-        setDetailModels(list);
-    }
+    private final UserGroupListModel userGroupListModel;
+    private final UserEventNotifierListModel userEventNotifierListModel;
 
     @Override
     protected void updateDetailsAvailability()

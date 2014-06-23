@@ -12,34 +12,40 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaPermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaStorageListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaTemplateListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaUserListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaVmListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-@SuppressWarnings("unused")
-public class DataCenterQuotaListModel extends QuotaListModel
-{
-    public DataCenterQuotaListModel() {
+import com.google.inject.Inject;
+
+public class DataCenterQuotaListModel extends QuotaListModel {
+    @Inject
+    public DataCenterQuotaListModel(final QuotaClusterListModel quotaClusterListModel,
+            final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
+            final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
+            final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
+        super(quotaClusterListModel, quotaStorageListModel, quotaVmListModel, quotaTemplateListModel,
+                quotaUserListModel, quotaPermissionListModel, quotaEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
         setHelpTag(HelpTag.quota);
         setHashName("quota"); //$NON-NLS-1$
     }
 
     @Override
-    public StoragePool getEntity()
-    {
+    public StoragePool getEntity() {
         return (StoragePool) ((super.getEntity() instanceof StoragePool) ? super.getEntity() : null);
     }
 
-    public void setEntity(StoragePool value)
-    {
-        super.setEntity(value);
-    }
-
     @Override
-    protected void onEntityChanged()
-    {
+    protected void onEntityChanged() {
         super.onEntityChanged();
         getSearchCommand().execute();
     }
@@ -68,12 +74,10 @@ public class DataCenterQuotaListModel extends QuotaListModel
     }
 
     @Override
-    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e)
-    {
+    protected void entityPropertyChanged(Object sender, PropertyChangedEventArgs e) {
         super.entityPropertyChanged(sender, e);
 
-        if (e.propertyName.equals("name")) //$NON-NLS-1$
-        {
+        if (e.propertyName.equals("name")) { //$NON-NLS-1$
             getSearchCommand().execute();
         }
     }
@@ -88,7 +92,6 @@ public class DataCenterQuotaListModel extends QuotaListModel
         super.createQuota(false);
 
         QuotaModel quotaModel = (QuotaModel) getWindow();
-
 
         quotaModel.getDataCenter().setItems(Arrays.asList(getEntity()));
         quotaModel.getDataCenter().setSelectedItem(getEntity());

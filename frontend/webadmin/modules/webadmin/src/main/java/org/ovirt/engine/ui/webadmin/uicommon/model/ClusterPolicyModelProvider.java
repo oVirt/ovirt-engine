@@ -35,11 +35,6 @@ public class ClusterPolicyModelProvider extends SearchableTabModelProvider<Clust
     }
 
     @Override
-    public ClusterPolicyListModel getModel() {
-        return getCommonModel().getClusterPolicyListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterPolicyListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand.equals(getModel().getNewCommand())

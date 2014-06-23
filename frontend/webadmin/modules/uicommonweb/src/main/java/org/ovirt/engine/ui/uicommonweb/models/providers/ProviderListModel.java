@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -18,7 +19,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 public class ProviderListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
@@ -30,11 +32,17 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
     private UICommand editCommand;
     private UICommand removeCommand;
 
-    private ProviderNetworkListModel providerNetworkListModel;
+    private final ProviderNetworkListModel providerNetworkListModel;
 
     private SystemTreeItemModel systemTreeSelectedItem;
 
-    public ProviderListModel() {
+    @Inject
+    public ProviderListModel(final ProviderGeneralModel providerGeneralModel,
+            final ProviderNetworkListModel providerNetworkListModel) {
+
+        this.providerNetworkListModel = providerNetworkListModel;
+        setModelList(providerGeneralModel, providerNetworkListModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().providersTitle());
         setHelpTag(HelpTag.providers);
         setHashName("providers"); //$NON-NLS-1$
@@ -52,6 +60,15 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+
+    }
+
+    private void setModelList(final ProviderGeneralModel providerGeneralModel,
+            final ProviderNetworkListModel providerNetworkListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(providerGeneralModel);
+        list.add(providerNetworkListModel);
+        setDetailModels(list);
     }
 
     public UICommand getAddCommand() {
@@ -62,6 +79,7 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
         addCommand = value;
     }
 
+    @Override
     public UICommand getEditCommand() {
         return editCommand;
     }
@@ -76,19 +94,6 @@ public class ProviderListModel extends ListWithDetailsModel implements ISupportS
 
     private void setRemoveCommand(UICommand value) {
         removeCommand = value;
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-
-        list.add(new ProviderGeneralModel());
-        providerNetworkListModel = new ProviderNetworkListModel();
-        list.add(providerNetworkListModel);
-
-        setDetailModels(list);
     }
 
     @Override

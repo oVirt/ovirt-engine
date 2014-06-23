@@ -41,7 +41,8 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 public class QuotaListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
@@ -77,7 +78,13 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         this.editCommand = editQuotaCommand;
     }
 
-    public QuotaListModel() {
+    @Inject
+    public QuotaListModel(final QuotaClusterListModel quotaClusterListModel,
+            final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
+            final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
+            final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
+        setDetailList(quotaClusterListModel, quotaStorageListModel, quotaVmListModel, quotaTemplateListModel,
+                quotaUserListModel, quotaPermissionListModel, quotaEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().quotaTitle());
 
         setDefaultSearchString("Quota:"); //$NON-NLS-1$
@@ -96,6 +103,22 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
+    private void setDetailList(final QuotaClusterListModel quotaClusterListModel,
+            final QuotaStorageListModel quotaStorageListModel, final QuotaVmListModel quotaVmListModel,
+            final QuotaTemplateListModel quotaTemplateListModel, final QuotaUserListModel quotaUserListModel,
+            final QuotaPermissionListModel quotaPermissionListModel, final QuotaEventListModel quotaEventListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(quotaClusterListModel);
+        list.add(quotaStorageListModel);
+        list.add(quotaVmListModel);
+        list.add(quotaTemplateListModel);
+        list.add(quotaUserListModel);
+        list.add(quotaPermissionListModel);
+        list.add(quotaEventListModel);
+
+        setDetailModels(list);
+    }
+
     @Override
     protected void onEntityChanged() {
         super.onEntityChanged();
@@ -112,21 +135,6 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
     protected void selectedItemsChanged() {
         super.selectedItemsChanged();
         updateActionAvailability();
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new QuotaClusterListModel());
-        list.add(new QuotaStorageListModel());
-        list.add(new QuotaVmListModel());
-        list.add(new QuotaTemplateListModel());
-        list.add(new QuotaUserListModel());
-        list.add(new QuotaPermissionListModel());
-        list.add(new QuotaEventListModel());
-
-        setDetailModels(list);
     }
 
     @Override

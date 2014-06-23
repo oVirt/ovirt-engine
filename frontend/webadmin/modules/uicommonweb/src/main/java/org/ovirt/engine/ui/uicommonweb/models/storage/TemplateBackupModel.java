@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -49,8 +48,7 @@ public class TemplateBackupModel extends VmBackupModel
 {
     private ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> extendedItems;
 
-    public TemplateBackupModel()
-    {
+    public TemplateBackupModel() {
         setTitle(ConstantsManager.getInstance().getConstants().templateImportTitle());
         setHelpTag(HelpTag.template_import);
         setHashName("template_import"); //$NON-NLS-1$
@@ -119,15 +117,6 @@ public class TemplateBackupModel extends VmBackupModel
         }),
                 getEntity().getId());
         cancel();
-    }
-
-    @Override
-    protected ImportVmFromExportDomainModel getImportModel() {
-        ImportTemplateModel model = new ImportTemplateModel();
-        model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
-        model.setHelpTag(HelpTag.import_template);
-        model.setHashName("import_template"); //$NON-NLS-1$
-        return model;
     }
 
     @Override
@@ -379,6 +368,7 @@ public class TemplateBackupModel extends VmBackupModel
         return "TemplateBackupModel"; //$NON-NLS-1$
     }
 
+    @Override
     protected String getImportConflictTitle() {
         return ConstantsManager.getInstance().getConstants().importTemplateConflictTitle();
     }

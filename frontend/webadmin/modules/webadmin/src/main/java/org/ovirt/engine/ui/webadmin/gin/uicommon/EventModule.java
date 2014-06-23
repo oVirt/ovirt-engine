@@ -6,6 +6,7 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
@@ -24,8 +25,12 @@ public class EventModule extends AbstractGinModule {
     @Singleton
     public MainModelProvider<AuditLog, EventListModel> getEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<EventPopupPresenterWidget> popupProvider) {
-        return new MainTabModelProvider<AuditLog, EventListModel>(eventBus, defaultConfirmPopupProvider, EventListModel.class) {
+            final Provider<EventPopupPresenterWidget> popupProvider,
+            final Provider<EventListModel> modelProvider,
+            final Provider<CommonModel> commonModelProvider) {
+        MainTabModelProvider<AuditLog, EventListModel> result =
+                new MainTabModelProvider<AuditLog, EventListModel>(eventBus, defaultConfirmPopupProvider,
+                        commonModelProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(EventListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -36,10 +41,13 @@ public class EventModule extends AbstractGinModule {
                 }
             }
         };
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Override
     protected void configure() {
+        bind(EventListModel.class).in(Singleton.class);
     }
 
 }

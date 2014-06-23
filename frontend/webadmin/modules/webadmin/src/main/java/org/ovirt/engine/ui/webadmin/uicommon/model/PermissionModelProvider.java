@@ -13,19 +13,20 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
 import com.google.inject.Provider;
 
-public class PermissionModelProvider<M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permissions, M, PermissionListModel> {
+public class PermissionModelProvider<M extends ListWithDetailsModel> extends SearchableDetailTabModelProvider<Permissions, M, PermissionListModel<M>> {
 
     private final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider;
     private final Provider<PermissionsPopupPresenterWidget> permissionPopupProvider;
 
+    @Inject
     public PermissionModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            Provider<PermissionsPopupPresenterWidget> permissionPopupProvider,
-            Class<M> mainModelClass) {
-        super(eventBus, defaultConfirmPopupProvider, mainModelClass, PermissionListModel.class);
+            Provider<PermissionsPopupPresenterWidget> permissionPopupProvider) {
+        super(eventBus, defaultConfirmPopupProvider);
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
         this.permissionPopupProvider = permissionPopupProvider;
     }

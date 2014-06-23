@@ -23,7 +23,9 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel, PermissionListModel, SubTabVnicProfilePermissionPresenter.ViewDef, SubTabVnicProfilePermissionPresenter.ProxyDef> {
+public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresenter<VnicProfileView, VnicProfileListModel,
+    PermissionListModel<VnicProfileListModel>, SubTabVnicProfilePermissionPresenter.ViewDef,
+    SubTabVnicProfilePermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.vnicProfilePermissionSubTabPlace)
@@ -35,7 +37,8 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
 
     @TabInfo(container = VnicProfileSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VnicProfileListModel,
+            PermissionListModel<VnicProfileListModel>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.vnicProfilePermissionSubTabLabel(), 2,
                 modelProvider);
     }
@@ -43,7 +46,8 @@ public class SubTabVnicProfilePermissionPresenter extends AbstractSubTabPresente
     @Inject
     public SubTabVnicProfilePermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, VnicProfileListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, VnicProfileListModel,
+            PermissionListModel<VnicProfileListModel>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider, VnicProfileSubTabPanelPresenter.TYPE_SetTabContent);
     }
 

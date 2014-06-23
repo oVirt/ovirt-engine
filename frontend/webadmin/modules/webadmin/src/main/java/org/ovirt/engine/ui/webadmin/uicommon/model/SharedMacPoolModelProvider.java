@@ -31,11 +31,6 @@ public class SharedMacPoolModelProvider extends SearchableTabModelProvider<MacPo
     }
 
     @Override
-    public SharedMacPoolListModel getModel() {
-        return getCommonModel().getSharedMacPoolListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(SharedMacPoolListModel source,
             UICommand lastExecutedCommand,
             Model windowModel) {

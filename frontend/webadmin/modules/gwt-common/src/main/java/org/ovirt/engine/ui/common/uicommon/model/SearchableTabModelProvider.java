@@ -26,18 +26,18 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
     }
 
     @Override
-    protected void initializeModelHandlers() {
-        super.initializeModelHandlers();
+    protected void initializeModelHandlers(final M model) {
+        super.initializeModelHandlers(model);
 
         // Add necessary property change handlers
-        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 // For EventListModel classes: update data whenever the last event changes
-                if (getModel() instanceof EventListModel && "LastEvent".equals(args.propertyName)) { //$NON-NLS-1$
-                    EventListModel model = (EventListModel) getModel();
+                if (model instanceof EventListModel && "LastEvent".equals(args.propertyName)) { //$NON-NLS-1$
+                    EventListModel eventListModel = (EventListModel) model;
 
-                    if (model.getLastEvent() == null && model.isRequestingData()) {
+                    if (eventListModel.getLastEvent() == null && eventListModel.isRequestingData()) {
                         // Tell data provider we await further data
                         clearData();
                     } else {

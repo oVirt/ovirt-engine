@@ -1,5 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -45,13 +51,9 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
+import com.google.inject.Inject;
 
 public class TemplateListModel extends VmBaseListModel<VmTemplate> implements ISupportSystemTreeContext
 {
@@ -110,8 +112,26 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         }
     }
 
-    public TemplateListModel()
-    {
+    @Inject
+    public TemplateListModel(final TemplateGeneralModel templateGeneralModel,
+            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
+            final TemplateStorageListModel templateStorageListModel,
+            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
+            final PermissionListModel permissionListModel) {
+        this(templateGeneralModel, templateVmListModel, templateInterfaceListModel, templateStorageListModel,
+                templateDiskListModel, templateEventListModel, permissionListModel, 3);
+    }
+
+    public TemplateListModel(final TemplateGeneralModel templateGeneralModel,
+            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
+            final TemplateStorageListModel templateStorageListModel,
+            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
+            final PermissionListModel permissionListModel, int customPosition) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        setDetailList(list, templateGeneralModel, templateVmListModel, templateInterfaceListModel,
+                templateStorageListModel);
+        addCustomModelsDetailModelList(list, customPosition, templateDiskListModel, templateEventListModel, permissionListModel);
+        setDetailModels(list);
         setTitle(ConstantsManager.getInstance().getConstants().templatesTitle());
 
         setDefaultSearchString("Template:"); //$NON-NLS-1$
@@ -127,6 +147,15 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+    }
+
+    private void setDetailList(final List<EntityModel> list, final TemplateGeneralModel templateGeneralModel,
+            final TemplateVmListModel templateVmListModel, final TemplateInterfaceListModel templateInterfaceListModel,
+            final TemplateStorageListModel templateStorageListModel) {
+        list.add(templateGeneralModel);
+        list.add(templateVmListModel);
+        list.add(templateInterfaceListModel);
+        list.add(templateStorageListModel);
     }
 
     @Override
@@ -351,26 +380,13 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 }, model);
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new TemplateGeneralModel());
-        list.add(new TemplateVmListModel());
-        list.add(new TemplateInterfaceListModel());
-        list.add(new TemplateStorageListModel());
-        addCustomModelsDetailModelList(list);
-        setDetailModels(list);
-    }
-
-    protected void addCustomModelsDetailModelList(ObservableCollection<EntityModel> list) {
-        TemplateDiskListModel diskListModel = new TemplateDiskListModel();
-        diskListModel.setSystemTreeContext(this);
-        list.add(3, diskListModel);
-        list.add(new TemplateEventListModel());
-        list.add(new PermissionListModel());
+    protected void addCustomModelsDetailModelList(final List<EntityModel> list, int customPosition,
+            final TemplateDiskListModel templateDiskListModel, final TemplateEventListModel templateEventListModel,
+            final PermissionListModel permissionListModel) {
+        templateDiskListModel.setSystemTreeContext(this);
+        list.add(customPosition, templateDiskListModel);
+        list.add(templateEventListModel);
+        list.add(permissionListModel);
     }
 
     @Override

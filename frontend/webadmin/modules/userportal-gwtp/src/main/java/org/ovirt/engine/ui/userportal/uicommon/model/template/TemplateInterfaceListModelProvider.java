@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalModelResolver;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
@@ -28,19 +27,11 @@ public class TemplateInterfaceListModelProvider
     public TemplateInterfaceListModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             CurrentUser user,
-            UserPortalTemplateListProvider parentProvider,
-            UserPortalModelResolver resolver,
             Provider<TemplateInterfacePopupPresenterWidget> newTemplateInterfacePopupProvider,
             Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(eventBus, defaultConfirmPopupProvider, user,
-                parentProvider, TemplateInterfaceListModel.class, resolver);
+        super(eventBus, defaultConfirmPopupProvider, user);
         this.newTemplateInterfacePopupProvider = newTemplateInterfacePopupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-    }
-
-    @Override
-    protected TemplateInterfaceListModel createModel() {
-        return new TemplateInterfaceListModel();
     }
 
     @Override

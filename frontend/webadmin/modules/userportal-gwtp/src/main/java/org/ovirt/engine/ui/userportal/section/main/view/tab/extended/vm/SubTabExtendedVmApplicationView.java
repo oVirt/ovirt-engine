@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmAppListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -23,7 +23,8 @@ public class SubTabExtendedVmApplicationView extends AbstractSubTabTableWidgetVi
     }
 
     @Inject
-    public SubTabExtendedVmApplicationView(VmAppListModelProvider modelProvider,
+    public SubTabExtendedVmApplicationView(
+            UserPortalSearchableDetailModelProvider<String, UserPortalListModel, VmAppListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new VmAppListModelTable(modelProvider, eventBus, clientStorage, constants));
         ViewIdHandler.idHandler.generateAndSetIds(this);

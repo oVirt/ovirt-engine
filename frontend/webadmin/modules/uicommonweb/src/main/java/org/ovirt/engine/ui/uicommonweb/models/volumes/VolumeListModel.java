@@ -64,8 +64,9 @@ import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 public class VolumeListModel extends ListWithDetailsModel implements ISupportSystemTreeContext {
 
@@ -154,24 +155,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.optimizeForVirtStoreCommand = optimizeForVirtStoreCommand;
     }
 
-    private VolumeBrickListModel brickListModel;
+    private final VolumeBrickListModel brickListModel;
 
     public VolumeBrickListModel getBrickListModel() {
         return this.brickListModel;
     }
 
-    public void setBrickListModel(VolumeBrickListModel brickListModel) {
-        this.brickListModel = brickListModel;
-    }
-
-    private VolumeGeoRepListModel geoRepListModel;
+    private final VolumeGeoRepListModel geoRepListModel;
 
     public VolumeGeoRepListModel getGeoRepListModel() {
         return geoRepListModel;
-    }
-
-    public void setGeoRepListModel(VolumeGeoRepListModel geoRepListModel) {
-        this.geoRepListModel = geoRepListModel;
     }
 
     public UICommand getStartVolumeProfilingCommand() {
@@ -198,7 +191,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.stopVolumeProfilingCommand = stopVolumeProfilingCommand;
     }
 
-    public VolumeListModel() {
+    @Inject
+    public VolumeListModel(final VolumeBrickListModel volumeBrickListModel, final VolumeGeneralModel volumeGeneralModel,
+            final VolumeParameterListModel volumeParameterListModel, final PermissionListModel permissionListModel,
+            final VolumeEventListModel volumeEventListModel, final VolumeGeoRepListModel geoRepListModel) {
+        this.brickListModel = volumeBrickListModel;
+        this.geoRepListModel = geoRepListModel;
+        setDetailList(volumeGeneralModel, volumeParameterListModel, permissionListModel, volumeEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().volumesTitle());
 
         setDefaultSearchString("Volumes:"); //$NON-NLS-1$
@@ -231,20 +230,17 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
+    private void setDetailList(final VolumeGeneralModel volumeGeneralModel,
+            final VolumeParameterListModel volumeParameterListModel, final PermissionListModel permissionListModel,
+            final VolumeEventListModel volumeEventListModel) {
 
-        setBrickListModel(new VolumeBrickListModel());
-        setGeoRepListModel(new VolumeGeoRepListModel());
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new VolumeGeneralModel());
-        list.add(new VolumeParameterListModel());
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(volumeGeneralModel);
+        list.add(volumeParameterListModel);
         list.add(getBrickListModel());
         list.add(getGeoRepListModel());
-        list.add(new PermissionListModel());
-        list.add(new VolumeEventListModel());
+        list.add(permissionListModel);
+        list.add(volumeEventListModel);
         setDetailModels(list);
     }
 

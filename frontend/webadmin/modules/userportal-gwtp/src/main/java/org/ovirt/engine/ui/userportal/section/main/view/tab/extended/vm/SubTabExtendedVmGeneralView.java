@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmGeneralModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -31,7 +31,8 @@ public class SubTabExtendedVmGeneralView extends AbstractSubTabFormView<UserPort
     VmGeneralModelForm form;
 
     @Inject
-    public SubTabExtendedVmGeneralView(VmGeneralModelProvider modelProvider, ApplicationConstants constants) {
+    public SubTabExtendedVmGeneralView(UserPortalDetailModelProvider<UserPortalListModel, VmGeneralModel> modelProvider,
+            ApplicationConstants constants) {
         super(modelProvider);
         form = new VmGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));

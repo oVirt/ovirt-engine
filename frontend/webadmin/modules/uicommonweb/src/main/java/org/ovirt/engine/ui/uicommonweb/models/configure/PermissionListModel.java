@@ -42,7 +42,10 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class PermissionListModel extends SearchableListModel
+import com.google.inject.Inject;
+import com.google.inject.Provider;
+
+public class PermissionListModel<T> extends SearchableListModel<T>
 {
 
     private UICommand privateAddCommand;
@@ -69,8 +72,11 @@ public class PermissionListModel extends SearchableListModel
         privateRemoveCommand = value;
     }
 
-    public PermissionListModel()
-    {
+    private final Provider<AdElementListModel> adElementListModelProvider;
+
+    @Inject
+    public PermissionListModel(Provider<AdElementListModel> adElementListModelProvider) {
+        this.adElementListModelProvider = adElementListModelProvider;
         setTitle(ConstantsManager.getInstance().getConstants().permissionsTitle());
         setHelpTag(HelpTag.permissions);
         setHashName("permissions"); //$NON-NLS-1$
@@ -124,7 +130,7 @@ public class PermissionListModel extends SearchableListModel
             return;
         }
 
-        AdElementListModel model = createAdElementListModel();
+        AdElementListModel model = adElementListModelProvider.get();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().addPermissionToUserTitle());
         model.setHelpTag(HelpTag.add_permission_to_user);
@@ -138,10 +144,6 @@ public class PermissionListModel extends SearchableListModel
         tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
         tempVar2.setIsCancel(true);
         model.getCommands().add(tempVar2);
-    }
-
-    protected AdElementListModel createAdElementListModel() {
-        return new AdElementListModel();
     }
 
     private void remove()

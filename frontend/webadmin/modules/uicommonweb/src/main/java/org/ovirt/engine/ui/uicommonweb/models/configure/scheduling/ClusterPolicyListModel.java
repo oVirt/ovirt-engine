@@ -28,7 +28,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 public class ClusterPolicyListModel extends ListWithDetailsModel {
     public static final String COPY_OF = "Copy_of_"; //$NON-NLS-1$
@@ -40,7 +41,9 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
     private UICommand cloneCommand;
     private UICommand managePolicyUnitCommand;
 
-    public ClusterPolicyListModel() {
+    @Inject
+    public ClusterPolicyListModel(final ClusterPolicyClusterListModel clusterPolicyClusterListModel) {
+        setDetailList(clusterPolicyClusterListModel);
         setTitle(ConstantsManager.getInstance().getConstants().clusterPolicyTitle());
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
@@ -52,6 +55,13 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
         setSearchPageSize(1000);
 
         updateActionAvailability();
+    }
+
+    private void setDetailList(final ClusterPolicyClusterListModel clusterPolicyClusterListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(clusterPolicyClusterListModel);
+
+        setDetailModels(list);
     }
 
     public List<PolicyUnit> getBalancePolicyUnits() {
@@ -92,16 +102,6 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
             }
         }
         return false;
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new ClusterPolicyClusterListModel());
-
-        setDetailModels(list);
     }
 
     @Override

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -21,6 +20,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -40,7 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageVmListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.TemplateBackupModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
@@ -63,6 +62,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 public class StorageModule extends AbstractGinModule {
 
@@ -76,72 +76,52 @@ public class StorageModule extends AbstractGinModule {
             final Provider<StorageRemovePopupPresenterWidget> removePopupProvider,
             final Provider<StorageDestroyPopupPresenterWidget> destroyConfirmPopupProvider,
             final Provider<StorageForceCreatePopupPresenterWidget> forceCreateConfirmPopupProvider,
-            final Provider<ReportPresenterWidget> reportWindowProvider) {
-        return new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider, StorageListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewDomainCommand()
-                        || lastExecutedCommand == getModel().getImportDomainCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()) {
-                    return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removePopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<ReportPresenterWidget> reportWindowProvider,
+            final Provider<StorageListModel> modelProvider,
+            final Provider<CommonModel> commonModelProvider) {
+        MainTabModelProvider<StorageDomain, StorageListModel> result =
+                new MainTabModelProvider<StorageDomain, StorageListModel>(eventBus, defaultConfirmPopupProvider,
+                        commonModelProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewDomainCommand()
+                                || lastExecutedCommand == getModel().getImportDomainCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
+                            return popupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getDestroyCommand()) {
-                    return destroyConfirmPopupProvider.get();
-                }
-                else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
-                    return forceCreateConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getDestroyCommand()) {
+                            return destroyConfirmPopupProvider.get();
+                        } else if (lastExecutedCommand.getName().equals("OnSave")) { //$NON-NLS-1$
+                            return forceCreateConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
 
-            @Override
-            protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
-                if (lastExecutedCommand instanceof ReportCommand) {
-                    return reportWindowProvider.get();
-                } else {
-                    return super.getModelBoundWidget(lastExecutedCommand);
-                }
-            }
-        };
-    }
-
-    // Form Detail Models
-
-    @Provides
-    @Singleton
-    public DetailModelProvider<StorageListModel, StorageGeneralModel> getStorageGeneralProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new DetailTabModelProvider<StorageListModel, StorageGeneralModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageGeneralModel.class);
+                    @Override
+                    protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand instanceof ReportCommand) {
+                            return reportWindowProvider.get();
+                        } else {
+                            return super.getModelBoundWidget(lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     // Searchable Detail Models
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-
-        return new PermissionModelProvider<StorageListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                removeConfirmPopupProvider,
-                popupProvider,
-                StorageListModel.class);
-    }
 
     @Provides
     @Singleton
@@ -149,121 +129,120 @@ public class StorageModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<FindSingleDcPopupPresenterWidget> singlePopupProvider,
             final Provider<FindMultiDcPopupPresenterWidget> multiPopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageDataCenterListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDataCenterListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                StorageDataCenterListModel model = getModel();
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageDataCenterListModel> modelProvider) {
+        SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> result =
+                new SearchableDetailTabModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageDataCenterListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        StorageDataCenterListModel model = getModel();
 
-                if (lastExecutedCommand == model.getAttachCommand()) {
-                    if (model.getAttachMultiple()) {
-                        return multiPopupProvider.get();
-                    } else {
-                        return singlePopupProvider.get();
+                        if (lastExecutedCommand == model.getAttachCommand()) {
+                            if (model.getAttachMultiple()) {
+                                return multiPopupProvider.get();
+                            } else {
+                                return singlePopupProvider.get();
+                            }
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
                     }
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDataCenterListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getDetachCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDataCenterListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getDetachCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> getStorageIsoListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<ImportExportImagePopupPresenterWidget> importExportPopupProvider) {
-        return new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageIsoListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageIsoListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getImportImagesCommand()) {
-                    return importExportPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+            final Provider<ImportExportImagePopupPresenterWidget> importExportPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageIsoListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel> result =
+                new SearchableDetailTabModelProvider<RepoImage, StorageListModel, StorageIsoListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageIsoListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getImportImagesCommand()) {
+                            return importExportPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<Disk, StorageListModel, StorageDiskListModel> getStorageDiskListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageDiskListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDiskListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+            final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageDiskListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel> result =
+                new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageDiskListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageDiskListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<Disk, StorageListModel, StorageSnapshotListModel> getStorageSnapshotListProvider(EventBus eventBus,
-          Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-          final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageSnapshotListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageSnapshotListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageSnapshotListModel source,
-                   UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
-    }
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageSnapshotListModel> modelProvider) {
 
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel> getStorageTemplateListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageTemplateListModel.class);
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel> getStorageVmListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageVmListModel.class);
+        SearchableDetailTabModelProvider<Disk, StorageListModel, StorageSnapshotListModel> result =
+                new SearchableDetailTabModelProvider<Disk, StorageListModel, StorageSnapshotListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(StorageSnapshotListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -272,76 +251,91 @@ public class StorageModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportTemplatePopupPresenterWidget> importTemplatePopupProvider,
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                TemplateBackupModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateBackupModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getRestoreCommand()) {
-                    return importTemplatePopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<TemplateBackupModel> modelProvider) {
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(TemplateBackupModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
-                    return importClonePopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+        SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel> result =
+                new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, TemplateBackupModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(TemplateBackupModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getRestoreCommand()) {
+                            return importTemplatePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(TemplateBackupModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
+                            return importClonePopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> getStorageRegisterVmListProvider(
             EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<RegisterVmPopupPresenterWidget> registerEntityPopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, StorageListModel, StorageRegisterVmListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageRegisterVmListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
-                    StorageRegisterVmListModel source, UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getImportCommand()) {
-                    return registerEntityPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+            final Provider<RegisterVmPopupPresenterWidget> registerEntityPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageRegisterVmListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<VM, StorageListModel, StorageRegisterVmListModel> result =
+                new SearchableDetailTabModelProvider<VM, StorageListModel, StorageRegisterVmListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
+                            StorageRegisterVmListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getImportCommand()) {
+                            return registerEntityPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> getStorageRegisterTemplateListProvider(
             EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<RegisterTemplatePopupPresenterWidget> registerEntityPopupProvider) {
-        return new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageRegisterTemplateListModel.class) {
-        @Override
-        public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
-                StorageRegisterTemplateListModel source, UICommand lastExecutedCommand, Model windowModel) {
-            if (lastExecutedCommand == getModel().getImportCommand()) {
-                return registerEntityPopupProvider.get();
-            } else {
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
-            }
-        }
-    };
-}
+            final Provider<RegisterTemplatePopupPresenterWidget> registerEntityPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageRegisterTemplateListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> result =
+                new SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(
+                            StorageRegisterTemplateListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getImportCommand()) {
+                            return registerEntityPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
 
     @Provides
     @Singleton
@@ -349,55 +343,65 @@ public class StorageModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmPopupProvider,
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                VmBackupModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmBackupModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getRestoreCommand()) {
-                    return importVmPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<VmBackupModel> modelProvider) {
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmBackupModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
-                    return importClonePopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+        SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel> result =
+                new SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VmBackupModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getRestoreCommand()) {
+                            return importVmPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(VmBackupModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
+                            return importClonePopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<AuditLog, StorageListModel, StorageEventListModel> getStorageEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, StorageListModel, StorageEventListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                StorageListModel.class,
-                StorageEventListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageEventListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
-                    return eventPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+            final Provider<EventPopupPresenterWidget> eventPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<StorageEventListModel> modelProvider) {
+
+        SearchableDetailTabModelProvider<AuditLog, StorageListModel, StorageEventListModel> result =
+                new SearchableDetailTabModelProvider<AuditLog, StorageListModel, StorageEventListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(StorageEventListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                            return eventPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -406,39 +410,72 @@ public class StorageModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DiskProfilePopupPresenterWidget> newProfilePopupProvider,
             final Provider<DiskProfilePopupPresenterWidget> editProfilePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<DiskProfile, StorageListModel, DiskProfileListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                StorageListModel.class,
-                DiskProfileListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskProfileListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()) {
-                    return newProfilePopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getEditCommand()) {
-                    return editProfilePopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<StorageListModel> mainModelProvider,
+            final Provider<DiskProfileListModel> modelProvider) {
+        SearchableDetailTabModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> result =
+                new SearchableDetailTabModelProvider<DiskProfile, StorageListModel, DiskProfileListModel>(eventBus,
+                        defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskProfileListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()) {
+                            return newProfilePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                            return editProfilePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DiskProfileListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DiskProfileListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
 
-        };
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Override
     protected void configure() {
+        bind(StorageListModel.class).in(Singleton.class);
+        bind(StorageGeneralModel.class).in(Singleton.class);
+        bind(StorageDataCenterListModel.class).in(Singleton.class);
+        bind(StorageIsoListModel.class).in(Singleton.class);
+        bind(StorageDiskListModel.class).in(Singleton.class);
+        bind(StorageSnapshotListModel.class).in(Singleton.class);
+        bind(StorageTemplateListModel.class).in(Singleton.class);
+        bind(StorageVmListModel.class).in(Singleton.class);
+        bind(TemplateBackupModel.class).in(Singleton.class);
+        bind(StorageRegisterVmListModel.class).in(Singleton.class);
+        bind(StorageRegisterTemplateListModel.class).in(Singleton.class);
+        bind(VmBackupModel.class).in(Singleton.class);
+        bind(StorageEventListModel.class).in(Singleton.class);
+        bind(DiskProfileListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<StorageListModel>>(){}).in(Singleton.class);
+
+        // Form Detail Models
+        bind(new TypeLiteral<DetailModelProvider<StorageListModel, StorageGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<StorageListModel, StorageGeneralModel>>(){}).in(Singleton.class);
+        // Search-able Detail Models
+        bind(new TypeLiteral<SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>(){})
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<VmTemplate, StorageListModel, StorageTemplateListModel>>(){})
+           .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
+           .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, StorageListModel, StorageVmListModel>>(){})
+           .in(Singleton.class);
+        // Permission Detail Model
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, StorageListModel, PermissionListModel<StorageListModel>>>(){})
+           .to(new TypeLiteral<PermissionModelProvider<StorageListModel>>(){}).in(Singleton.class);
     }
 
 }

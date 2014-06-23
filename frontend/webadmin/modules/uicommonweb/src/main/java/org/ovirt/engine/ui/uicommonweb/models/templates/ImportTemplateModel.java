@@ -17,36 +17,38 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportDiskListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportInterfaceListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-@SuppressWarnings("unused")
-public class ImportTemplateModel extends ImportVmFromExportDomainModel
-{
+public class ImportTemplateModel extends ImportVmFromExportDomainModel {
 
-    private TemplateImportDiskListModel templateImportDiskListModel;
+    private final TemplateImportDiskListModel templateImportDiskListModel;
 
-    public ImportTemplateModel() {
-        super();
+    public ImportTemplateModel(final VmImportDiskListModel vmImportDiskListModel,
+            final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
+            final VmGeneralModel vmGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final VmAppListModel vmAppListModel, final TemplateImportDiskListModel templateImportDiskListModel,
+            final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
+        super(vmImportDiskListModel, storageDomain, cluster, clusterQuota, vmGeneralModel, vmImportInterfaceListModel,
+                vmAppListModel);
+        this.templateImportDiskListModel = templateImportDiskListModel;
         disksToConvert = null;
+        setDetailList(vmGeneralModel, templateImportInterfaceListModel);
     }
 
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new TemplateGeneralModel() {
-            @Override
-            public void setEntity(Object value) {
-                super.setEntity(value == null ? null : ((ImportTemplateData) value).getTemplate());
-            }
-        });
-        list.add(new TemplateImportInterfaceListModel());
-        this.templateImportDiskListModel = new TemplateImportDiskListModel();
+    private void setDetailList(final VmGeneralModel vmGeneralModel,
+            final TemplateImportInterfaceListModel templateImportInterfaceListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(vmGeneralModel);
+        list.add(templateImportInterfaceListModel);
         list.add(templateImportDiskListModel);
         setDetailModels(list);
     }

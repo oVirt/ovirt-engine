@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateEventL
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateEventsPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateEventListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -24,7 +24,9 @@ public class SubTabExtendedTemplateEventsView extends AbstractSubTabTableWidgetV
     }
 
     @Inject
-    public SubTabExtendedTemplateEventsView(TemplateEventListModelProvider modelProvider,
+    public SubTabExtendedTemplateEventsView(
+            UserPortalSearchableDetailModelProvider<AuditLog, UserPortalTemplateListModel,
+                UserPortalTemplateEventListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new EventListModelTable<UserPortalTemplateEventListModel>(modelProvider, eventBus, clientStorage));
         ViewIdHandler.idHandler.generateAndSetIds(this);

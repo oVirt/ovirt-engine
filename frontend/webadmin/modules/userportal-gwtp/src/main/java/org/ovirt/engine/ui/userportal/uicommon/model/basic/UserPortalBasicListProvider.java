@@ -36,11 +36,6 @@ public class UserPortalBasicListProvider extends AbstractUserPortalListProvider<
     }
 
     @Override
-    protected UserPortalBasicListModel createModel() {
-        return new UserPortalBasicListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalBasicListModel source,
             UICommand lastExecutedCommand,
             Model windowModel) {

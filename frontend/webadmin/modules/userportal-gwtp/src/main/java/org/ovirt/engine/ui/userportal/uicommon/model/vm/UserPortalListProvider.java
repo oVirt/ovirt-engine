@@ -65,11 +65,6 @@ public class UserPortalListProvider extends AbstractUserPortalListProvider<UserP
     }
 
     @Override
-    protected UserPortalListModel createModel() {
-        return new UserPortalListModel();
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UserPortalListModel source,
             UICommand lastExecutedCommand, Model windowModel) {
         if (lastExecutedCommand == getModel().getNewTemplateCommand()) {

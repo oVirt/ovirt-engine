@@ -1,12 +1,14 @@
 package org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm;
 
+import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
+import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.PoolInterfaceListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -30,13 +32,14 @@ public class SubTabExtendedPoolNetworkInterfacePresenter
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            PoolInterfaceListModelProvider modelProvider) {
+            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider) {
         return new ModelBoundTabData(applicationConstants.extendedVirtualMachineNetworkInterfaceSubTabLabel(), 3, modelProvider);
     }
 
     @Inject
     public SubTabExtendedPoolNetworkInterfacePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            PlaceManager placeManager, PoolInterfaceListModelProvider modelProvider) {
+            PlaceManager placeManager,
+            UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel, PoolInterfaceListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

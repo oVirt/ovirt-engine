@@ -26,19 +26,9 @@ public class DiskProfilePermissionModelProvider extends SearchableDetailTabModel
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(eventBus, defaultConfirmPopupProvider, DiskProfileListModel.class, PermissionListModel.class);
+        super(eventBus, defaultConfirmPopupProvider);
         this.popupProvider = popupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-    }
-
-    @Override
-    public PermissionListModel getModel() {
-        return getCommonModel().getStorageList().getDiskProfileListModel().getPermissionListModel();
-    }
-
-    @Override
-    protected DiskProfileListModel getMainModel() {
-        return getCommonModel().getStorageList().getDiskProfileListModel();
     }
 
     @Override

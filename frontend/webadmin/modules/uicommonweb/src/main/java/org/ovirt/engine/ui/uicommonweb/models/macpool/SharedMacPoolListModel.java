@@ -18,16 +18,17 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
+
+import com.google.inject.Inject;
 
 public class SharedMacPoolListModel extends ListWithDetailsModel {
 
     private static final String CMD_REMOVE = "OnRemove"; //$NON-NLS-1$
     private static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
 
-    private UICommand newCommand;
-    private UICommand editCommand;
-    private UICommand removeCommand;
+    private final UICommand newCommand;
+    private final UICommand editCommand;
+    private final UICommand removeCommand;
 
     public UICommand getNewCommand() {
         return newCommand;
@@ -42,13 +43,22 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         return removeCommand;
     }
 
-    public SharedMacPoolListModel() {
+    @Inject
+    public SharedMacPoolListModel(final PermissionListModel<SharedMacPoolListModel> permissionListModel) {
+        setDetailList(permissionListModel);
         newCommand = new UICommand("New", this); //$NON-NLS-1$
         editCommand = new UICommand("Edit", this); //$NON-NLS-1$
         removeCommand = new UICommand("Remove", this); //$NON-NLS-1$
         setComparator(new Linq.SharedMacPoolComparator());
 
         updateActionAvailability();
+    }
+
+    private void setDetailList(final PermissionListModel<SharedMacPoolListModel> permissionListModel) {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(permissionListModel);
+
+        setDetailModels(list);
     }
 
     @Override
@@ -75,12 +85,6 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
             }
         }
         getRemoveCommand().setIsExecutionAllowed(removeAllowed);
-    }
-
-    @Override
-    protected void selectedItemsChanged() {
-        super.selectedItemsChanged();
-        updateActionAvailability();
     }
 
     private void newMacPool() {
@@ -150,13 +154,5 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         } else if (CMD_CANCEL.equals(command.getName())) {
             cancel();
         }
-    }
-
-    @Override
-    protected void initDetailModels() {
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new PermissionListModel());
-
-        setDetailModels(list);
     }
 }

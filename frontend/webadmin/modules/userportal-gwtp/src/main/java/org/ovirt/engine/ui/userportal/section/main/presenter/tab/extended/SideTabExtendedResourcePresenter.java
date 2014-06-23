@@ -9,8 +9,8 @@ import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.place.ApplicationPlaces;
 import org.ovirt.engine.ui.userportal.section.main.presenter.AbstractModelActivationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.MainTabExtendedPresenter;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider.DataChangeListener;
-import org.ovirt.engine.ui.userportal.uicommon.model.resources.ResourcesModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
@@ -22,9 +22,11 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SideTabExtendedResourcePresenter extends AbstractModelActivationPresenter<VM, ResourcesModel, SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef> implements DataChangeListener<VM> {
+public class SideTabExtendedResourcePresenter extends AbstractModelActivationPresenter<VM, ResourcesModel,
+    SideTabExtendedResourcePresenter.ViewDef, SideTabExtendedResourcePresenter.ProxyDef>
+    implements DataChangeListener<VM> {
 
-    private final ResourcesModelProvider modelProvider;
+    private final UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider;
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.extendedResourceSideTabPlace)
@@ -41,7 +43,7 @@ public class SideTabExtendedResourcePresenter extends AbstractModelActivationPre
 
     @Inject
     public SideTabExtendedResourcePresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
-            ResourcesModelProvider modelProvider) {
+            UserPortalDataBoundModelProvider<VM, ResourcesModel> modelProvider) {
         super(eventBus, view, proxy, modelProvider, MainTabExtendedPresenter.TYPE_SetTabContent);
         this.modelProvider = modelProvider;
         modelProvider.setDataChangeListener(this);

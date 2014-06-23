@@ -23,8 +23,8 @@ public class SubTabVirtualMachinePermissionView extends AbstractSubTabPermission
     }
 
     @Inject
-    public SubTabVirtualMachinePermissionView(SearchableDetailModelProvider<Permissions, VmListModel, PermissionListModel> modelProvider,
-            EventBus eventBus,
+    public SubTabVirtualMachinePermissionView(SearchableDetailModelProvider<Permissions, VmListModel,
+            PermissionListModel<VmListModel>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
     }

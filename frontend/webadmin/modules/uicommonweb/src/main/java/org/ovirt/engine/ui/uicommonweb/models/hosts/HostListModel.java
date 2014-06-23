@@ -90,16 +90,17 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ReversibleFlow;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
 
+import com.google.inject.Inject;
+
 @SuppressWarnings("unused")
 public class HostListModel extends ListWithDetailsAndReportsModel implements ISupportSystemTreeContext
 {
-    private HostGeneralModel generalModel;
+    private final HostGeneralModel generalModel;
 
     private UICommand privateNewCommand;
 
@@ -316,16 +317,11 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         this.numaSupportCommand = numaSupportCommand;
     }
 
-    private HostEventListModel privateHostEventListModel;
+    private final HostEventListModel privateHostEventListModel;
 
     private HostEventListModel getHostEventListModel()
     {
         return privateHostEventListModel;
-    }
-
-    private void setHostEventListModel(HostEventListModel value)
-    {
-        privateHostEventListModel = value;
     }
 
     private boolean isPowerManagementEnabled;
@@ -344,34 +340,22 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
     }
 
-    private HostGlusterSwiftListModel glusterSwiftModel;
+    private final HostGlusterSwiftListModel glusterSwiftModel;
 
     public HostGlusterSwiftListModel getGlusterSwiftModel() {
         return glusterSwiftModel;
     }
 
-    public void setGlusterSwiftModel(HostGlusterSwiftListModel glusterSwiftModel) {
-        this.glusterSwiftModel = glusterSwiftModel;
-    }
-
-    private HostBricksListModel hostBricksListModel;
+    private final HostBricksListModel hostBricksListModel;
 
     public HostBricksListModel getHostBricksListModel() {
         return hostBricksListModel;
     }
 
-    public void setHostBricksListModel(HostBricksListModel hostBricksListModel) {
-        this.hostBricksListModel = hostBricksListModel;
-    }
-
-    private HostVmListModel hostVmListModel;
+    private final HostVmListModel hostVmListModel;
 
     public HostVmListModel getHostVmListModel(){
         return this.hostVmListModel;
-    }
-
-    public void setHostVmListModel(HostVmListModel hostVmListModel){
-        this.hostVmListModel = hostVmListModel;
     }
 
     protected Object[] getSelectedKeys()
@@ -391,8 +375,20 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
     }
 
-    public HostListModel()
-    {
+    @Inject
+    public HostListModel(final HostGeneralModel hostGeneralModel,
+            final HostGlusterSwiftListModel hostGlusterSwiftListModel, final HostBricksListModel hostBricksListModel,
+            final HostVmListModel hostVmListModel, final HostEventListModel hostEventListModel,
+            final HostInterfaceListModel hostInterfaceListModel,
+            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+            final PermissionListModel permissionListModel) {
+        this.generalModel = hostGeneralModel;
+        this.glusterSwiftModel = hostGlusterSwiftListModel;
+        this.hostBricksListModel = hostBricksListModel;
+        this.hostVmListModel = hostVmListModel;
+        this.privateHostEventListModel = hostEventListModel;
+        setDetailList(hostInterfaceListModel, hostHardwareGeneralModel, hostHooksListModel, permissionListModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().hostsTitle());
         setHelpTag(HelpTag.hosts);
         setHashName("hosts"); //$NON-NLS-1$
@@ -425,6 +421,25 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
+    }
+
+    private void setDetailList(final HostInterfaceListModel hostInterfaceListModel,
+            final HostHardwareGeneralModel hostHardwareGeneralModel, final HostHooksListModel hostHooksListModel,
+            final PermissionListModel permissionListModel) {
+        generalModel.getRequestEditEvent().addListener(this);
+        generalModel.getRequestGOToEventsTabEvent().addListener(this);
+
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(generalModel);
+        list.add(hostHardwareGeneralModel);
+        list.add(getHostVmListModel());
+        list.add(hostInterfaceListModel);
+        list.add(getHostEventListModel());
+        list.add(hostHooksListModel);
+        list.add(getGlusterSwiftModel());
+        list.add(getHostBricksListModel());
+        list.add(permissionListModel);
+        setDetailModels(list);
     }
 
     public void assignTags()
@@ -1007,7 +1022,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             }
 
             if (Boolean.TRUE.equals(model.getIsDiscoveredHosts().getEntity())) {
-                Provider<?> provider = (Provider<?>) model.getProviders().getSelectedItem();
+                Provider<?> provider = model.getProviders().getSelectedItem();
                 ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
                 ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
                 ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost)model.getExternalDiscoveredHosts().getSelectedItem();
@@ -1838,32 +1853,6 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
                     }
                 }, null);
-    }
-
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        generalModel = new HostGeneralModel();
-        generalModel.getRequestEditEvent().addListener(this);
-        generalModel.getRequestGOToEventsTabEvent().addListener(this);
-
-        setGlusterSwiftModel(new HostGlusterSwiftListModel());
-        setHostBricksListModel(new HostBricksListModel());
-        setHostVmListModel(new HostVmListModel());
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(generalModel);
-        list.add(new HostHardwareGeneralModel());
-        list.add(getHostVmListModel());
-        list.add(new HostInterfaceListModel());
-        setHostEventListModel(new HostEventListModel());
-        list.add(getHostEventListModel());
-        list.add(new HostHooksListModel());
-        list.add(getGlusterSwiftModel());
-        list.add(getHostBricksListModel());
-        list.add(new PermissionListModel());
-        setDetailModels(list);
     }
 
     @Override

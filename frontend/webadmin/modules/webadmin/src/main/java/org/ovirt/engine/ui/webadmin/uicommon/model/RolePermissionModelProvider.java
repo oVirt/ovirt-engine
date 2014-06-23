@@ -26,11 +26,6 @@ public class RolePermissionModelProvider extends SearchableTabModelProvider<Perm
     }
 
     @Override
-    public RolePermissionListModel getModel() {
-        return (RolePermissionListModel) getCommonModel().getRoleListModel().getDetailModels().get(0);
-    }
-
-    @Override
     public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(RolePermissionListModel source,
             UICommand lastExecutedCommand) {
         if (lastExecutedCommand == getModel().getRemoveCommand()) {

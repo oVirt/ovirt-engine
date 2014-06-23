@@ -63,8 +63,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     private ManualRefreshCallback manualRefreshCallback;
     private HandlerRegistration statusUpdateHandlerRegistration;
 
-    private GridController controller;
-
     public AbstractRefreshManager(ModelProvider<? extends GridController> modelProvider,
             EventBus eventBus, ClientStorage clientStorage) {
         this.modelProvider = modelProvider;
@@ -84,8 +82,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
     }
 
     private void updateController() {
-        this.controller = modelProvider.getModel();
-
         updateTimer();
     }
 
@@ -112,7 +108,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
      * Returns the refresh timer used by the {@link GridController}.
      */
     GridTimer getModelTimer() {
-        return controller.getTimer();
+        return modelProvider.getModel().getTimer();
     }
 
     /**
@@ -144,7 +140,7 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
                     manualRefreshCallback.onManualRefresh();
                 }
                 ManualRefreshEvent.fire(AbstractRefreshManager.this);
-                controller.refresh();
+                modelProvider.getModel().refresh();
             }
         });
     }

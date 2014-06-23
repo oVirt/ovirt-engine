@@ -40,6 +40,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicommonweb.models.quota.QuotaListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -48,14 +51,15 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.inject.Inject;
 
 public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
     ArchitectureType targetArchitecture;
-    private VmImportDiskListModel importDiskListModel;
+    private final VmImportDiskListModel importDiskListModel;
     private StoragePool storagePool;
     private boolean hasQuota;
     private final Map<Guid, List<Disk>> missingTemplateDiskMap = new HashMap<Guid, List<Disk>>();
@@ -80,24 +84,16 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         this.targetArchitecture = targetArchitecture;
     }
 
-    private ListModel storage;
+    private final StorageDiskListModel storageDiskListModel;
 
-    public ListModel getStorage() {
-        return storage;
+    public StorageDiskListModel getStorage() {
+        return storageDiskListModel;
     }
 
-    public void setStorage(ListModel storage) {
-        this.storage = storage;
-    }
+    private final ClusterListModel cluster;
 
-    private ListModel cluster;
-
-    public ListModel getCluster() {
+    public ClusterListModel getCluster() {
         return cluster;
-    }
-
-    private void setCluster(ListModel value) {
-        cluster = value;
     }
 
     private ListModel<CpuProfile> cpuProfiles;
@@ -110,14 +106,17 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         cpuProfiles = value;
     }
 
-    private ListModel clusterQuota;
+// TODO: should the above be a CpuProfileListModel?
+//    private final CpuProfileListModel cpuProfiles;
+//
+//    public CpuProfileListModel getCpuProfiles() {
+//        return cpuProfiles;
+//    }
 
-    public ListModel getClusterQuota() {
+    private final QuotaListModel clusterQuota;
+
+    public QuotaListModel getClusterQuota() {
         return clusterQuota;
-    }
-
-    public void setClusterQuota(ListModel clusterQuota) {
-        this.clusterQuota = clusterQuota;
     }
 
     protected List<VM> disksToConvert = new ArrayList<VM>();
@@ -172,12 +171,28 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
         onEntityChanged();
     }
 
-    public ImportVmFromExportDomainModel() {
-        setStorage(new ListModel());
-        setCluster(new ListModel());
-        setClusterQuota(new ListModel());
-        getClusterQuota().setIsAvailable(false);
+    @Inject
+    public ImportVmFromExportDomainModel(final VmImportDiskListModel vmImportDiskListModel,
+            final StorageDiskListModel storageDomain, final ClusterListModel cluster, final QuotaListModel clusterQuota,
+            final VmGeneralModel vmGeneralModel, final VmImportInterfaceListModel vmImportInterfaceListModel,
+            final VmAppListModel vmAppListModel) {
+        importDiskListModel = vmImportDiskListModel;
+        storageDiskListModel = storageDomain;
+        this.cluster = cluster;
+        this.clusterQuota = clusterQuota;
         setCpuProfiles(new ListModel<CpuProfile>());
+        setDetailList(vmGeneralModel, vmImportInterfaceListModel, vmAppListModel);
+    }
+
+    private void setDetailList(final VmGeneralModel vmGeneralModel,
+            final VmImportInterfaceListModel vmImportInterfaceListModel, final VmAppListModel vmAppListModel) {
+        getClusterQuota().setIsAvailable(false);
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(vmGeneralModel);
+        list.add(vmImportInterfaceListModel);
+        list.add(importDiskListModel);
+        list.add(vmAppListModel);
+        setDetailModels(list);
     }
 
     public void init(List items, final Guid storageDomainId) {
@@ -529,8 +544,8 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     public ImportDiskData getDiskImportData(Guid diskId) {
         ImportDiskData importData = diskImportDataMap.get(diskId);
         if (importData != null) {
-            if (storage.getSelectedItem() == null) {
-                importData.setSelectedStorageDomain((StorageDomain) storage.getSelectedItem());
+            if (storageDiskListModel.getSelectedItem() == null) {
+                importData.setSelectedStorageDomain((StorageDomain) storageDiskListModel.getSelectedItem());
             }
         }
         return importData;
@@ -552,30 +567,6 @@ public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     @Override
     protected void activeDetailModelChanged() {
         super.activeDetailModelChanged();
-    }
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-
-        importDiskListModel = new VmImportDiskListModel();
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(new VmGeneralModel() {
-            @Override
-            public void setEntity(Object value) {
-                super.setEntity(value == null ? null : ((ImportVmData) value).getVm());
-            }
-        });
-        list.add(new VmImportInterfaceListModel());
-        list.add(importDiskListModel);
-        list.add(new VmAppListModel() {
-            @Override
-            public void setEntity(Object value) {
-                super.setEntity(value == null ? null : ((ImportVmData) value).getVm());
-            }
-        });
-        setDetailModels(list);
     }
 
     public boolean validate() {

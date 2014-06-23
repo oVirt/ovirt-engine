@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
@@ -23,6 +22,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
@@ -44,7 +44,6 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostVmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.ConfigureLocalStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostBondPopupPresenterWidget;
@@ -67,6 +66,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 public class HostModule extends AbstractGinModule {
 
@@ -83,50 +83,56 @@ public class HostModule extends AbstractGinModule {
             final Provider<ReportPresenterWidget> reportWindowProvider,
             final Provider<ConfigureLocalStoragePopupPresenterWidget> configureLocalStoragePopupProvider,
             final Provider<HostInstallPopupPresenterWidget> installPopupProvider,
-            final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider) {
-        return new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider, HostListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()
-                        || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
-                        || lastExecutedCommand == getModel().getApproveCommand()) {
-                    return popupProvider.get();
-                }  else if (lastExecutedCommand == getModel().getInstallCommand()
+            final Provider<NumaSupportPopupPresenterWidget> numaSupportPopupProvider,
+            final Provider<HostListModel> modelProvider,
+            final Provider<CommonModel> commonModelProvider) {
+        MainTabModelProvider<VDS, HostListModel> result =
+                new MainTabModelProvider<VDS, HostListModel>(eventBus, defaultConfirmPopupProvider,
+                        commonModelProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()
+                                || lastExecutedCommand == getModel().getEditWithPMemphasisCommand()
+                                || lastExecutedCommand == getModel().getApproveCommand()) {
+                            return popupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getInstallCommand()
                                 || lastExecutedCommand == getModel().getUpgradeCommand()) {
-                    return installPopupProvider.get();
-                }  else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
-                    return assignTagsPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
-                    return configureLocalStoragePopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getNumaSupportCommand()) {
-                    return numaSupportPopupProvider.get();
-                }
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
-            }
+                            return installPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getAssignTagsCommand()) {
+                            return assignTagsPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getConfigureLocalStorageCommand()) {
+                            return configureLocalStoragePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getNumaSupportCommand()) {
+                            return numaSupportPopupProvider.get();
+                        }
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
-                    return manualFenceConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getManualFenceCommand()) {
+                            return manualFenceConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
 
-            @Override
-            protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
-                if (lastExecutedCommand instanceof ReportCommand) {
-                    return reportWindowProvider.get();
-                } else {
-                    return super.getModelBoundWidget(lastExecutedCommand);
-                }
-            }
-        };
+                    @Override
+                    protected ModelBoundPresenterWidget<? extends Model> getModelBoundWidget(UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand instanceof ReportCommand) {
+                            return reportWindowProvider.get();
+                        } else {
+                            return super.getModelBoundWidget(lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     // Form Detail Models
@@ -134,50 +140,25 @@ public class HostModule extends AbstractGinModule {
     @Provides
     @Singleton
     public DetailModelProvider<HostListModel, HostGeneralModel> getHostGeneralProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new DetailTabModelProvider<HostListModel, HostGeneralModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostGeneralModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGeneralModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
-            }
-        };
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostGeneralModel> modelProvider) {
+        DetailTabModelProvider<HostListModel, HostGeneralModel> result =
+                new DetailTabModelProvider<HostListModel, HostGeneralModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostGeneralModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
-    @Provides
-    @Singleton
-    public DetailModelProvider<HostListModel, HostHardwareGeneralModel> getHostHardwareProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostHardwareGeneralModel.class);
-    }
+    // Search-able Detail Models
 
-    // Searchable Detail Models
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel> getHostHooksListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Map<String, String>, HostListModel, HostHooksListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostHooksListModel.class);
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> getHostBricksListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostBricksListModel.class);
-    }
     @Provides
     @Singleton
     public SearchableDetailModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> getHostInterfaceListProvider(EventBus eventBus,
@@ -191,140 +172,157 @@ public class HostModule extends AbstractGinModule {
             final Provider<HostBondPopupPresenterWidget> hostBondPopupProvider,
             final Provider<SetupNetworksBondPopupPresenterWidget> setupNetworksBondPopupProvider,
             final Provider<HostNicPopupPresenterWidget> hostNicPopupProvider,
-            final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider) {
-        return new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostInterfaceListModel.class) {
-           @Override
-                public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
-                        UICommand lastExecutedCommand) {
-                   if ("OnEditManagementNetworkConfirmation".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
-                       return hostManagementConfirmationdetachConfirmPopupProvider.get();
-                   }
-                   return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostInterfaceListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (source.getWindow() instanceof HostSetupNetworksModel){
-                    // Resolve by dialog model
-                    if (windowModel instanceof HostBondInterfaceModel) {
-                        return setupNetworksBondPopupProvider.get();
-                    } else if (windowModel instanceof HostManagementNetworkModel) {
-                        HostManagementNetworkModel hostManagementNetworkModel  = (HostManagementNetworkModel) windowModel;
-
-                        if (hostManagementNetworkModel.isSetupNetworkMode()){
-                            return setupNetworksManagementPopupProvider.get();
-                        } else {
-                            return hostManagementPopupProvider.get();
+            final Provider<HostSetupNetworksPopupPresenterWidget> hostSetupNetworksPopupProvider,
+            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostInterfaceListModel> modelProvider) {
+        SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel> result =
+                new SearchableDetailTabModelProvider<HostInterfaceLineModel, HostListModel, HostInterfaceListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(HostInterfaceListModel source,
+                            UICommand lastExecutedCommand) {
+                        if ("OnEditManagementNetworkConfirmation".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
+                            return hostManagementConfirmationdetachConfirmPopupProvider.get();
                         }
-                    } else if (windowModel instanceof HostInterfaceModel) {
-                        HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
-
-                        if (hostInterfaceModel.isSetupNetworkMode()){
-                            return setupNetworksInterfacePopupProvider.get();
-                        } else {
-                            return hostInterfacePopupProvider.get();
-                        }
-                    } else if (windowModel instanceof HostNicModel) {
-                        return hostNicPopupProvider.get();
+                        return super.getConfirmModelPopup(source, lastExecutedCommand);
                     }
-                }
 
-                // Resolve by last executed command
-                if (lastExecutedCommand == getModel().getEditCommand()) {
-                    return hostInterfacePopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
-                    return hostManagementPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getBondCommand()) {
-                    return hostBondPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
-                    return hostSetupNetworksPopupProvider.get();
-                } else if (lastExecutedCommand == getModel().getDetachCommand()) {
-                    return detachConfirmPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostInterfaceListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (source.getWindow() instanceof HostSetupNetworksModel) {
+                            // Resolve by dialog model
+                            if (windowModel instanceof HostBondInterfaceModel) {
+                                return setupNetworksBondPopupProvider.get();
+                            } else if (windowModel instanceof HostManagementNetworkModel) {
+                                HostManagementNetworkModel hostManagementNetworkModel = (HostManagementNetworkModel) windowModel;
 
-            @Override
-            protected void updateData() {
-                // Pass empty data to data provider, since Host NIC table is used as header-only table
-                updateDataProvider(new ArrayList<HostInterfaceLineModel>());
-            }
-        };
-    };
+                                if (hostManagementNetworkModel.isSetupNetworkMode()) {
+                                    return setupNetworksManagementPopupProvider.get();
+                                } else {
+                                    return hostManagementPopupProvider.get();
+                                }
+                            } else if (windowModel instanceof HostInterfaceModel) {
+                                HostInterfaceModel hostInterfaceModel = (HostInterfaceModel) windowModel;
+
+                                if (hostInterfaceModel.isSetupNetworkMode()) {
+                                    return setupNetworksInterfacePopupProvider.get();
+                                } else {
+                                    return hostInterfacePopupProvider.get();
+                                }
+                            } else if (windowModel instanceof HostNicModel) {
+                                return hostNicPopupProvider.get();
+                            }
+                        }
+
+                        // Resolve by last executed command
+                        if (lastExecutedCommand == getModel().getEditCommand()) {
+                            return hostInterfacePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getEditManagementNetworkCommand()) {
+                            return hostManagementPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getBondCommand()) {
+                            return hostBondPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getSetupNetworksCommand()) {
+                            return hostSetupNetworksPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getDetachCommand()) {
+                            return detachConfirmPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+
+                    @Override
+                    protected void updateData() {
+                        // Pass empty data to data provider, since Host NIC table is used as header-only table
+                        updateDataProvider(new ArrayList<HostInterfaceLineModel>());
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> getHostVmListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostVmListModel.class) {
+            final Provider<VmMigratePopupPresenterWidget> migratePopupProvider,
+            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostVmListModel> modelProvider) {
+        SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel> result =
+                new SearchableDetailTabModelProvider<VM, HostListModel, HostVmListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostVmListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getMigrateCommand()) {
-                    return migratePopupProvider.get();
-                }
-                return super.getModelPopup(source, lastExecutedCommand, windowModel);
-            }
-        };
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> getHostGlusterSwiftListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostGlusterSwiftListModel.class);
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-
-        return new PermissionModelProvider<HostListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                removeConfirmPopupProvider,
-                popupProvider,
-                HostListModel.class);
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostVmListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getMigrateCommand()) {
+                            return migratePopupProvider.get();
+                        }
+                        return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<AuditLog, HostListModel, HostEventListModel> getHostEventListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<EventPopupPresenterWidget> eventPopupProvider) {
-        return new SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                HostListModel.class,
-                HostEventListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostEventListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
-                    return eventPopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+            final Provider<EventPopupPresenterWidget> eventPopupProvider,
+            final Provider<HostListModel> mainModelProvider,
+            final Provider<HostEventListModel> modelProvider) {
+        SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel> result =
+                new SearchableDetailTabModelProvider<AuditLog, HostListModel, HostEventListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(HostEventListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand.equals(getModel().getDetailsCommand())) {
+                            return eventPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Override
     protected void configure() {
+        bind(HostListModel.class).in(Singleton.class);
+        bind(HostGeneralModel.class).in(Singleton.class);
+        bind(HostHardwareGeneralModel.class).in(Singleton.class);
+        bind(HostHooksListModel.class).in(Singleton.class);
+        bind(HostBricksListModel.class).in(Singleton.class);
+        bind(HostInterfaceListModel.class).in(Singleton.class);
+        bind(HostVmListModel.class).in(Singleton.class);
+        bind(HostGlusterSwiftListModel.class).in(Singleton.class);
+        bind(HostEventListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<HostListModel>>(){}).in(Singleton.class);
+
+        // Form Detail Models
+        bind(new TypeLiteral<DetailModelProvider<HostListModel, HostHardwareGeneralModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<HostListModel, HostHardwareGeneralModel>>(){}).in(Singleton.class);
+
+        // Search-able Detail Models
+        bind(new TypeLiteral<SearchableDetailModelProvider<Map<String, String>, HostListModel, HostHooksListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<Map<String, String>, HostListModel, HostHooksListModel>>(){})
+            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel>>(){})
+            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel>>(){})
+            .in(Singleton.class);
+        // Permission Detail Model
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, HostListModel, PermissionListModel<HostListModel>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<HostListModel>>(){}).in(Singleton.class);
     }
 
 }

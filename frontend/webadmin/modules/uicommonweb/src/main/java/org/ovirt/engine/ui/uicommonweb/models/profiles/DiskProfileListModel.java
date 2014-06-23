@@ -7,11 +7,16 @@ import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+
+import com.google.inject.Inject;
 
 public class DiskProfileListModel extends ProfileListModel<DiskProfile, StorageQos, StorageDomain> {
 
-    public DiskProfileListModel() {
+    @Inject
+    public DiskProfileListModel(final PermissionListModel permissionListModel) {
+        super(permissionListModel);
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
         setHelpTag(HelpTag.disk_profiles);
         setHashName("disk_profiles"); //$NON-NLS-1$

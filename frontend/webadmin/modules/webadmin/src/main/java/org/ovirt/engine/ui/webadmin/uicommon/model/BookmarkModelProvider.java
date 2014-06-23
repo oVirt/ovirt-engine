@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DataBoundTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.bookmarks.BookmarkListModel;
@@ -38,6 +39,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     private final TagModelProvider tagModelProvider;
 
     @Inject
+    private Provider<CommonModel> commonModelProvider;
+
+    @Inject
     public BookmarkModelProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             Provider<BookmarkPopupPresenterWidget> bookmarkPopupPresenterWidgetProvider,
@@ -64,8 +68,8 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     }
 
     @Override
-    protected void initializeModelHandlers() {
-        super.initializeModelHandlers();
+    protected void initializeModelHandlers(BookmarkListModel model) {
+        super.initializeModelHandlers(model);
 
         // Clear selection when a system tree node is selected
         treeModelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -89,19 +93,20 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         });
 
         // Clear selection when a new tab is selected
-        getCommonModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+        commonModelProvider.get().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (getCommonModel().getSelectedItem() != null) {
+                if (commonModelProvider.get().getSelectedItem() != null) {
                     clearSelection();
                 }
             }
         });
 
         // Clear selection when the search string is updated
-        getCommonModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+        commonModelProvider.get().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender,
+                    PropertyChangedEventArgs args) {
                 if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                     clearSelection();
                 }
@@ -109,7 +114,7 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         });
 
         // Clear tag selection when a tag is saved/edited/deleted
-        getModel().getItemSavedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getItemSavedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clearSelection();
@@ -127,11 +132,6 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     @Override
     protected void updateDataProvider(List<Bookmark> items) {
         super.updateDataProvider(items);
-    }
-
-    @Override
-    public BookmarkListModel getModel() {
-        return getCommonModel().getBookmarkList();
     }
 
     public SingleSelectionModel<Bookmark> getSelectionModel() {

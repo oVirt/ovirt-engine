@@ -44,15 +44,6 @@ public abstract class ListWithDetailsModel extends SearchableListModel
         }
     }
 
-    public ListWithDetailsModel()
-    {
-        initDetailModels();
-    }
-
-    protected void initDetailModels()
-    {
-    }
-
     protected void updateDetailsAvailability()
     {
     }

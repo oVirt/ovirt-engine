@@ -39,12 +39,15 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
+import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderNetworkListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+
+import com.google.inject.Inject;
 
 public class ImportNetworksModel extends Model {
 
@@ -60,10 +63,11 @@ public class ImportNetworksModel extends Model {
     private final ListModel<ExternalNetwork> importedNetworks = new ListModel<ExternalNetwork>();
     private final ListModel<String> errors = new ListModel<String>();
 
-    private UICommand addImportCommand = new UICommand(null, this);
-    private UICommand cancelImportCommand = new UICommand(null, this);
+    private final UICommand addImportCommand = new UICommand(null, this);
+    private final UICommand cancelImportCommand = new UICommand(null, this);
 
     private Map<Guid, Collection<VDSGroup>> dcClusters;
+    private final com.google.inject.Provider<CommonModel> commonModelProvider;
 
     public ListModel<ExternalNetwork> getProviderNetworks() {
         return providerNetworks;
@@ -89,7 +93,10 @@ public class ImportNetworksModel extends Model {
         return cancelImportCommand;
     }
 
-    public ImportNetworksModel(SearchableListModel sourceListModel) {
+    @Inject
+    public ImportNetworksModel(ProviderNetworkListModel sourceListModel,
+            final com.google.inject.Provider<CommonModel> commonModelProvider) {
+        this.commonModelProvider = commonModelProvider;
         this.sourceListModel = sourceListModel;
 
         setTitle(ConstantsManager.getInstance().getConstants().importNetworksTitle());
@@ -108,7 +115,7 @@ public class ImportNetworksModel extends Model {
 
         SystemTreeItemModel treeSelectedDcItem =
                 SystemTreeItemModel.findAncestor(SystemTreeItemType.DataCenter,
-                        (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem());
+                        commonModelProvider.get().getSystemTree().getSelectedItem());
         treeSelectedDc = (treeSelectedDcItem == null) ? null : (StoragePool) treeSelectedDcItem.getEntity();
 
         providers.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
@@ -240,7 +247,7 @@ public class ImportNetworksModel extends Model {
 
         for (final ExternalNetwork externalNetwork : importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();
-            final Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
+            final Guid dcId = externalNetwork.getDataCenters().getSelectedItem().getId();
             network.setName(externalNetwork.getDisplayName());
             network.setDataCenterId(dcId);
             AddNetworkStoragePoolParameters params =

@@ -43,7 +43,6 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
@@ -64,11 +63,12 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
 import org.ovirt.engine.ui.uicompat.NotifyCollectionChangedEventArgs;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Task;
 import org.ovirt.engine.ui.uicompat.TaskContext;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import com.google.inject.Inject;
 
 @SuppressWarnings("unused")
 public class StorageListModel extends ListWithDetailsAndReportsModel implements ITaskTarget, ISupportSystemTreeContext
@@ -165,8 +165,31 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
     }
 
-    public StorageListModel()
-    {
+    @Inject
+    public StorageListModel(final StorageGeneralModel storageGeneralModel,
+            final StorageDataCenterListModel storageDataCenterListModel,
+            final VmBackupModel storageVmBackupModel, final TemplateBackupModel storageTemplateBackupModel,
+            final StorageRegisterVmListModel storageRegisterVmListModel,
+            final StorageRegisterTemplateListModel storageRegisterTemplateListModel,
+            final StorageVmListModel storageVmListModel, final StorageTemplateListModel storageTemplateListModel,
+            final StorageIsoListModel storageIsoListModel, final StorageDiskListModel storageDiskListModel,
+            final StorageSnapshotListModel storageSnapshotListModel, final DiskProfileListModel diskProfileListModel,
+            final StorageEventListModel storageEventListModel, final PermissionListModel permissionListModel) {
+        generalModel = storageGeneralModel;
+        dcListModel = storageDataCenterListModel;
+        vmBackupModel = storageVmBackupModel;
+        templateBackupModel = storageTemplateBackupModel;
+        vmRegisterListModel = storageRegisterVmListModel;
+        templateRegisterListModel = storageRegisterTemplateListModel;
+        vmListModel = storageVmListModel;
+        templateListModel = storageTemplateListModel;
+        isoListModel = storageIsoListModel;
+        diskListModel = storageDiskListModel;
+        snapshotListModel = storageSnapshotListModel;
+        this.diskProfileListModel = diskProfileListModel;
+
+        setDetailList(storageEventListModel, permissionListModel);
+
         setTitle(ConstantsManager.getInstance().getConstants().storageTitle());
 
         setDefaultSearchString("Storage:"); //$NON-NLS-1$
@@ -186,18 +209,51 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         getSearchPreviousPageCommand().setIsAvailable(true);
     }
 
-    private EntityModel generalModel;
-    private EntityModel vmBackupModel;
-    private EntityModel templateBackupModel;
-    private ListModel dcListModel;
-    private ListModel vmRegisterListModel;
-    private ListModel templateRegisterListModel;
-    private ListModel vmListModel;
-    private ListModel templateListModel;
-    private ListModel isoListModel;
-    private ListModel diskListModel;
-    private ListModel snapshotListModel;
-    private DiskProfileListModel diskProfileListModel;
+    private void setDetailList(final StorageEventListModel storageEventListModel,
+            final PermissionListModel permissionListModel) {
+        generalModel.setIsAvailable(false);
+        dcListModel.setIsAvailable(false);
+        this.vmBackupModel.setIsAvailable(false);
+        this.templateBackupModel.setIsAvailable(false);
+        vmRegisterListModel.setIsAvailable(false);
+        templateRegisterListModel.setIsAvailable(false);
+        vmListModel.setIsAvailable(false);
+        templateListModel.setIsAvailable(false);
+        isoListModel.setIsAvailable(false);
+        diskListModel.setIsAvailable(false);
+        snapshotListModel.setIsAvailable(false);
+        this.diskProfileListModel.setIsAvailable(false);
+
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(generalModel);
+        list.add(dcListModel);
+        list.add(vmBackupModel);
+        list.add(templateBackupModel);
+        list.add(vmRegisterListModel);
+        list.add(templateRegisterListModel);
+        list.add(vmListModel);
+        list.add(templateListModel);
+        list.add(isoListModel);
+        list.add(diskListModel);
+        list.add(snapshotListModel);
+        list.add(this.diskProfileListModel);
+        list.add(storageEventListModel);
+        list.add(permissionListModel);
+        setDetailModels(list);
+    }
+
+    private final StorageGeneralModel generalModel;
+    private final VmBackupModel vmBackupModel;
+    private final TemplateBackupModel templateBackupModel;
+    private final StorageDataCenterListModel dcListModel;
+    private final StorageRegisterVmListModel vmRegisterListModel;
+    private final StorageRegisterTemplateListModel templateRegisterListModel;
+    private final StorageVmListModel vmListModel;
+    private final StorageTemplateListModel templateListModel;
+    private final StorageIsoListModel isoListModel;
+    private final StorageDiskListModel diskListModel;
+    private final StorageSnapshotListModel snapshotListModel;
+    private final DiskProfileListModel diskProfileListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -210,65 +266,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     public StorageDomainType domainType = StorageDomainType.values()[0];
     public StorageType storageType;
     public boolean removeConnection;
-
-    @Override
-    protected void initDetailModels()
-    {
-        super.initDetailModels();
-
-        generalModel = new StorageGeneralModel();
-        generalModel.setIsAvailable(false);
-
-        dcListModel = new StorageDataCenterListModel();
-        dcListModel.setIsAvailable(false);
-
-        vmBackupModel = new VmBackupModel();
-        vmBackupModel.setIsAvailable(false);
-
-        templateBackupModel = new TemplateBackupModel();
-        templateBackupModel.setIsAvailable(false);
-
-        vmRegisterListModel = new StorageRegisterVmListModel();
-        vmRegisterListModel.setIsAvailable(false);
-
-        templateRegisterListModel = new StorageRegisterTemplateListModel();
-        templateRegisterListModel.setIsAvailable(false);
-
-        vmListModel = new StorageVmListModel();
-        vmListModel.setIsAvailable(false);
-
-        templateListModel = new StorageTemplateListModel();
-        templateListModel.setIsAvailable(false);
-
-        isoListModel = new StorageIsoListModel();
-        isoListModel.setIsAvailable(false);
-
-        diskListModel = new StorageDiskListModel();
-        diskListModel.setIsAvailable(false);
-
-        snapshotListModel = new StorageSnapshotListModel();
-        snapshotListModel.setIsAvailable(false);
-
-        diskProfileListModel = new DiskProfileListModel();
-        diskProfileListModel.setIsAvailable(false);
-
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(generalModel);
-        list.add(dcListModel);
-        list.add(vmBackupModel);
-        list.add(templateBackupModel);
-        list.add(vmRegisterListModel);
-        list.add(templateRegisterListModel);
-        list.add(vmListModel);
-        list.add(templateListModel);
-        list.add(isoListModel);
-        list.add(diskListModel);
-        list.add(snapshotListModel);
-        list.add(diskProfileListModel);
-        list.add(new StorageEventListModel());
-        list.add(new PermissionListModel());
-        setDetailModels(list);
-    }
 
     @Override
     public boolean isSearchStringMatch(String searchString)
@@ -2302,9 +2299,5 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
     public DiskProfileListModel getDiskProfileListModel() {
         return diskProfileListModel;
-    }
-
-    public void setDiskProfileListModel(DiskProfileListModel diskProfileListModel) {
-        this.diskProfileListModel = diskProfileListModel;
     }
 }

@@ -8,7 +8,7 @@ import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSessionsPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.vm.VmSessionsModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -32,7 +32,9 @@ public class SubTabExtendedVmSessionsView
     VmSessionsModelForm form;
 
     @Inject
-    public SubTabExtendedVmSessionsView(VmSessionsModelProvider modelProvider, CommonApplicationConstants constants) {
+    public SubTabExtendedVmSessionsView(
+            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider,
+            CommonApplicationConstants constants) {
         super(modelProvider);
 
         form = new VmSessionsModelForm(modelProvider, constants);

@@ -10,7 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.UserPortalTemplateDiskLi
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.template.SubTabExtendedTemplateVirtualDisksPresenter;
-import org.ovirt.engine.ui.userportal.uicommon.model.template.TemplateDiskListModelProvider;
+import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalSearchableDetailModelProvider;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
@@ -24,7 +24,9 @@ public class SubTabExtendedTemplateVirtualDisksView extends AbstractSubTabTableW
     }
 
     @Inject
-    public SubTabExtendedTemplateVirtualDisksView(TemplateDiskListModelProvider modelProvider,
+    public SubTabExtendedTemplateVirtualDisksView(
+            UserPortalSearchableDetailModelProvider<DiskImage, UserPortalTemplateListModel,
+                UserPortalTemplateDiskListModel> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
         super(new TemplateDiskListModelTable<UserPortalTemplateDiskListModel>(modelProvider,
                 eventBus,

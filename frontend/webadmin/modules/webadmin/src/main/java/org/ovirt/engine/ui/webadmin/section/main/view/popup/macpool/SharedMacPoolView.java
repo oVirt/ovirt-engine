@@ -11,9 +11,10 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.permissions.PermissionListModelTable;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.uicommon.model.MacPoolPermissionModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceColumn;
@@ -27,7 +28,7 @@ import com.google.inject.Inject;
 
 public class SharedMacPoolView extends Composite {
 
-    private final MacPoolPermissionModelProvider permissionModelProvider;
+    private final PermissionModelProvider<SharedMacPoolListModel> permissionModelProvider;
     private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
 
     private final SimpleActionTable<MacPool> macPoolTable;
@@ -43,7 +44,7 @@ public class SharedMacPoolView extends Composite {
 
     @Inject
     public SharedMacPoolView(final SharedMacPoolModelProvider sharedMacPoolModelProvider,
-            final MacPoolPermissionModelProvider permissionModelProvider,
+            final PermissionModelProvider<SharedMacPoolListModel> permissionModelProvider,
             final EventBus eventBus,
             final ClientStorage clientStorage,
             final MainTableHeaderlessResources headerlessResources,

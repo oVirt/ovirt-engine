@@ -23,8 +23,8 @@ public class SubTabNetworkPermissionView extends AbstractSubTabPermissionsView<N
     }
 
     @Inject
-    public SubTabNetworkPermissionView(SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel> modelProvider,
-            EventBus eventBus,
+    public SubTabNetworkPermissionView(SearchableDetailModelProvider<Permissions, NetworkListModel,
+            PermissionListModel<NetworkListModel>> modelProvider, EventBus eventBus,
             ClientStorage clientStorage, ApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, constants);
         getTable().enableColumnResizing();

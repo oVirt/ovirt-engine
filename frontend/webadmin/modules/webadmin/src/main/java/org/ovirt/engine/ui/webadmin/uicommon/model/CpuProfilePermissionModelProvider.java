@@ -26,19 +26,9 @@ public class CpuProfilePermissionModelProvider extends SearchableDetailTabModelP
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        super(eventBus, defaultConfirmPopupProvider, CpuProfileListModel.class, PermissionListModel.class);
+        super(eventBus, defaultConfirmPopupProvider);
         this.popupProvider = popupProvider;
         this.removeConfirmPopupProvider = removeConfirmPopupProvider;
-    }
-
-    @Override
-    public PermissionListModel getModel() {
-        return getCommonModel().getClusterList().getCpuProfileListModel().getPermissionListModel();
-    }
-
-    @Override
-    protected CpuProfileListModel getMainModel() {
-        return getCommonModel().getClusterList().getCpuProfileListModel();
     }
 
     @Override

@@ -1,5 +1,20 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes;
 
+import org.ovirt.engine.core.common.businessentities.InstanceType;
+import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
+import org.ovirt.engine.ui.common.MainTableResources;
+import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
+import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypeGeneralModelForm;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.instancetypes.InstanceTypeListModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
+import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
+
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.uibinder.client.UiBinder;
@@ -11,18 +26,6 @@ import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.google.inject.Inject;
-import org.ovirt.engine.core.common.businessentities.InstanceType;
-import org.ovirt.engine.ui.common.MainTableHeaderlessResources;
-import org.ovirt.engine.ui.common.MainTableResources;
-import org.ovirt.engine.ui.common.system.ClientStorage;
-import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.instancetypes.InstanceTypeGeneralModelForm;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvider;
-import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
-import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 public class InstanceTypesView extends Composite {
 
@@ -38,7 +41,7 @@ public class InstanceTypesView extends Composite {
     private SplitLayoutPanel splitLayoutPanel;
 
     private final InstanceTypeModelProvider instanceTypeModelProvider;
-    private final InstanceTypeGeneralModelProvider instanceTypeGeneralModelProvider;
+    private final DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider;
 
     private final EventBus eventBus;
 
@@ -48,7 +51,7 @@ public class InstanceTypesView extends Composite {
     public InstanceTypesView(ApplicationConstants constants,
             InstanceTypeModelProvider instanceTypeModelProvider,
             EventBus eventBus, ClientStorage clientStorage,
-            InstanceTypeGeneralModelProvider instanceTypeGeneralModelProvider) {
+            DetailTabModelProvider<InstanceTypeListModel, InstanceTypeGeneralModel> instanceTypeGeneralModelProvider) {
         this.instanceTypeModelProvider = instanceTypeModelProvider;
         this.eventBus = eventBus;
         this.clientStorage = clientStorage;

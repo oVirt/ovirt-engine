@@ -61,7 +61,6 @@ public class ClusterPolicyView extends Composite {
         this.clientStorage = clientStorage;
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        //        localize(constants);
 
         initSplitLayoutPanel();
 
@@ -82,9 +81,6 @@ public class ClusterPolicyView extends Composite {
             splitLayoutPanel.addSouth(clusterTable, 150);
         }
         splitLayoutPanel.add(table);
-    }
-
-    private void localize(ApplicationConstants constants) {
     }
 
     private void initClusterPolicyTable(ApplicationConstants constants) {

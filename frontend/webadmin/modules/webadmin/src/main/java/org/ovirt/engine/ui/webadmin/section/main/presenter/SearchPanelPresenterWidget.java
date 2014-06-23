@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
-import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -15,6 +14,7 @@ import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
@@ -49,17 +49,19 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
     }
 
     private CommonModel commonModel;
+    private final Provider<CommonModel> commonProvider;
 
     @Inject
-    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef view) {
+    public SearchPanelPresenterWidget(EventBus eventBus, ViewDef view, Provider<CommonModel> commonProvider) {
         super(eventBus, view);
+        this.commonProvider = commonProvider;
 
         updateCommonModel();
         addCommonModelListeners();
     }
 
     void updateCommonModel() {
-        this.commonModel = CommonModelManager.instance();
+        commonModel = commonProvider.get();
         getView().setCommonModel(commonModel);
     }
 

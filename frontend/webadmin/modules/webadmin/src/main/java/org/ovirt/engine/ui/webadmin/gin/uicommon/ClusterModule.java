@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidg
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.RemoveConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.presenter.popup.RolePermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.DetailTabModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
@@ -21,6 +20,7 @@ import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailTabModelProvider;
 import org.ovirt.engine.ui.uicommonweb.ReportCommand;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterGeneralModel;
@@ -34,7 +34,6 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.ClusterAffinityGroupListModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.GlusterHookContentPopupPresenterWidget;
@@ -53,6 +52,7 @@ import com.google.gwt.inject.client.AbstractGinModule;
 import com.google.inject.Provider;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
+import com.google.inject.TypeLiteral;
 
 public class ClusterModule extends AbstractGinModule {
 
@@ -66,8 +66,11 @@ public class ClusterModule extends AbstractGinModule {
             final Provider<GuidePopupPresenterWidget> guidePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
-            final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider) {
-        return new MainTabModelProvider<VDSGroup, ClusterListModel>(eventBus, defaultConfirmPopupProvider, ClusterListModel.class) {
+            final Provider<MultipleHostsPopupPresenterWidget> addMultipleHostsPopupProvider,
+            final Provider<ClusterListModel> clusterProvider,
+            final Provider<CommonModel> commonModelProvider) {
+        MainTabModelProvider<VDSGroup, ClusterListModel> result = new MainTabModelProvider<VDSGroup, ClusterListModel>
+                (eventBus, defaultConfirmPopupProvider, commonModelProvider) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterListModel source,
                     UICommand lastExecutedCommand, Model windowModel) {
@@ -102,6 +105,8 @@ public class ClusterModule extends AbstractGinModule {
                 }
             }
         };
+        result.setModelProvider(clusterProvider);
+        return result;
     }
 
     // Form Detail Models
@@ -112,86 +117,61 @@ public class ClusterModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<MultipleHostsPopupPresenterWidget> multipleHostsProvider,
             final Provider<DetachGlusterHostsPopupPresenterWidget> detachHostsProvider,
-            final Provider<ManageGlusterSwiftPopupPresenterWidget> manageGlusterSwiftProvider) {
-        return new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterGeneralModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGeneralModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getImportNewGlusterHostsCommand()) {
-                    return multipleHostsProvider.get();
-                }
-                else if (lastExecutedCommand == getModel().getDetachNewGlusterHostsCommand()) {
-                    return detachHostsProvider.get();
-                }
-                else if (lastExecutedCommand == getModel().getManageGlusterSwiftCommand()) {
-                    return manageGlusterSwiftProvider.get();
-                }
-                else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
+            final Provider<ManageGlusterSwiftPopupPresenterWidget> manageGlusterSwiftProvider,
+            final Provider<ClusterListModel> clusterProvider,
+            final Provider<ClusterGeneralModel> detailProvider) {
+        DetailTabModelProvider<ClusterListModel, ClusterGeneralModel> result =
+                new DetailTabModelProvider<ClusterListModel, ClusterGeneralModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGeneralModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getImportNewGlusterHostsCommand()) {
+                            return multipleHostsProvider.get();
+                        } else if (lastExecutedCommand == getModel().getDetachNewGlusterHostsCommand()) {
+                            return detachHostsProvider.get();
+                        } else if (lastExecutedCommand == getModel().getManageGlusterSwiftCommand()) {
+                            return manageGlusterSwiftProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setModelProvider(detailProvider);
+        result.setMainModelProvider(clusterProvider);
+        return result;
     }
 
-    // Searchable Detail Models
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel> getClusterHostListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VDS, ClusterListModel, ClusterHostListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterHostListModel.class);
-    }
+    // Search-able Detail Models
 
     @Provides
     @Singleton
     public SearchableDetailModelProvider<Network, ClusterListModel, ClusterNetworkListModel> getClusterNetworkListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<NewClusterNetworkPopupPresenterWidget> popupProvider,
-            final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider) {
-        return new SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterNetworkListModel.class) {
+            final Provider<ClusterManageNetworkPopupPresenterWidget> managePopupProvider,
+            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterNetworkListModel> modelProvider) {
+        SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel> result =
+                new SearchableDetailTabModelProvider<Network, ClusterListModel, ClusterNetworkListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterNetworkListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewNetworkCommand()) {
-                    return popupProvider.get();
-                } else if (lastExecutedCommand == getModel().getManageCommand()) {
-                    return managePopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
-        };
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> getClusterVmListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<VM, ClusterListModel, ClusterVmListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterVmListModel.class);
-    }
-
-    @Provides
-    @Singleton
-    public DetailModelProvider<ClusterListModel, ClusterServiceModel> getClusterServiceProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
-        return new DetailTabModelProvider<ClusterListModel, ClusterServiceModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterServiceModel.class);
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterNetworkListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewNetworkCommand()) {
+                            return popupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getManageCommand()) {
+                            return managePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
+                };
+        result.setModelProvider(modelProvider);
+        result.setMainModelProvider(mainModelProvider);
+        return result;
     }
 
     @Provides
@@ -200,36 +180,37 @@ public class ClusterModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<DefaultConfirmationPopupPresenterWidget> confirmPopupProvider,
             final Provider<GlusterHookContentPopupPresenterWidget> contentPopupProvider,
-            final Provider<GlusterHookResolveConflictsPopupPresenterWidget> resolveConflictsPopupProvider) {
-        return new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterGlusterHookListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup( ClusterGlusterHookListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getViewHookCommand()) {
-                    return contentPopupProvider.get();
-                }
-                else if (lastExecutedCommand == getModel().getResolveConflictsCommand()) {
-                    return resolveConflictsPopupProvider.get();
-                }
-                else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<GlusterHookResolveConflictsPopupPresenterWidget> resolveConflictsPopupProvider,
+            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterGlusterHookListModel> modelProvider) {
+        SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel> result =
+                new SearchableDetailTabModelProvider<GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterGlusterHookListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getViewHookCommand()) {
+                            return contentPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getResolveConflictsCommand()) {
+                            return resolveConflictsPopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterGlusterHookListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getDisableHookCommand()) {
-                    return confirmPopupProvider.get();
-                }
-                else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterGlusterHookListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getDisableHookCommand()) {
+                            return confirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -237,46 +218,36 @@ public class ClusterModule extends AbstractGinModule {
     public SearchableDetailModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> getAffinityGroupListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<AffinityGroupPopupPresenterWidget> popupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                ClusterAffinityGroupListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterAffinityGroupListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()) {
-                    return popupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<ClusterAffinityGroupListModel> modelProvider) {
+        SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel> result =
+                new SearchableDetailTabModelProvider<AffinityGroup, ClusterListModel, ClusterAffinityGroupListModel>(
+                        eventBus, defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(ClusterAffinityGroupListModel source,
+                            UICommand lastExecutedCommand, Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
+                            return popupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterAffinityGroupListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
-    }
-
-    @Provides
-    @Singleton
-    public SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel> getPermissionListProvider(EventBus eventBus,
-            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<PermissionsPopupPresenterWidget> popupProvider,
-            final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-
-        return new PermissionModelProvider<ClusterListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                removeConfirmPopupProvider,
-                popupProvider,
-                ClusterListModel.class);
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(ClusterAffinityGroupListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) {
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Provides
@@ -284,38 +255,67 @@ public class ClusterModule extends AbstractGinModule {
     public SearchableDetailModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> getStorageCpuProfileListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<CpuProfilePopupPresenterWidget> profilePopupProvider,
-            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel>(eventBus,
-                defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                CpuProfileListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(CpuProfileListModel source,
-                    UICommand lastExecutedCommand,
-                    Model windowModel) {
-                if (lastExecutedCommand == getModel().getNewCommand()
-                        || lastExecutedCommand == getModel().getEditCommand()) {
-                    return profilePopupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<ClusterListModel> mainModelProvider,
+            final Provider<CpuProfileListModel> modelProvider) {
+        SearchableDetailTabModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel> result =
+                new SearchableDetailTabModelProvider<CpuProfile, ClusterListModel, CpuProfileListModel>(eventBus,
+                        defaultConfirmPopupProvider) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(CpuProfileListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getNewCommand()
+                                || lastExecutedCommand == getModel().getEditCommand()) {
+                            return profilePopupProvider.get();
+                        } else {
+                            return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                        }
+                    }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(CpuProfileListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(CpuProfileListModel source,
+                            UICommand lastExecutedCommand) {
+                        if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                            return removeConfirmPopupProvider.get();
+                        } else {
+                            return super.getConfirmModelPopup(source, lastExecutedCommand);
+                        }
+                    }
 
-        };
+                };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
     }
 
     @Override
     protected void configure() {
+        bind(ClusterListModel.class).in(Singleton.class);
+        bind(ClusterGeneralModel.class).in(Singleton.class);
+        bind(ClusterHostListModel.class).in(Singleton.class);
+        bind(ClusterNetworkListModel.class).in(Singleton.class);
+        bind(ClusterVmListModel.class).in(Singleton.class);
+        bind(ClusterServiceModel.class).in(Singleton.class);
+        bind(ClusterGlusterHookListModel.class).in(Singleton.class);
+        bind(ClusterAffinityGroupListModel.class).in(Singleton.class);
+        bind(CpuProfileListModel.class).in(Singleton.class);
+        bind(new TypeLiteral<PermissionListModel<ClusterListModel>>(){}).in(Singleton.class);
+
+        // Form Detail Models
+        bind(new TypeLiteral<DetailModelProvider<ClusterListModel, ClusterServiceModel>>(){})
+            .to(new TypeLiteral<DetailTabModelProvider<ClusterListModel, ClusterServiceModel>>(){}).in(Singleton.class);
+        // Search-able Detail Models
+        bind(new TypeLiteral<SearchableDetailModelProvider<VDS, ClusterListModel, ClusterHostListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VDS, ClusterListModel, ClusterHostListModel>>(){})
+            .in(Singleton.class);
+        bind(new TypeLiteral<SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel>>(){})
+            .to(new TypeLiteral<SearchableDetailTabModelProvider<VM, ClusterListModel, ClusterVmListModel>>(){})
+            .in(Singleton.class);
+        // Permission Detail Model
+        bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, ClusterListModel, PermissionListModel<ClusterListModel>>>(){})
+            .to(new TypeLiteral<PermissionModelProvider<ClusterListModel>>(){}).in(Singleton.class);
+
     }
 
 }

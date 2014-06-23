@@ -12,13 +12,13 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableWidgetView<I, Permissions, M, PermissionListModel> {
+public abstract class AbstractSubTabPermissionsView<I, M extends ListWithDetailsModel> extends AbstractSubTabTableWidgetView<I, Permissions, M, PermissionListModel<M>> {
 
     @Inject
     public AbstractSubTabPermissionsView(
-            SearchableDetailModelProvider<Permissions, M, PermissionListModel> modelProvider,
+            SearchableDetailModelProvider<Permissions, M, PermissionListModel<M>> modelProvider,
             EventBus eventBus, ClientStorage clientStorage, ApplicationConstants constants) {
-        super(new PermissionWithInheritedPermissionListModelTable<PermissionListModel>(
+        super(new PermissionWithInheritedPermissionListModelTable<PermissionListModel<M>>(
                 modelProvider, eventBus, clientStorage));
         generateIds();
         initTable(constants);

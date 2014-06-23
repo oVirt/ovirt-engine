@@ -12,8 +12,8 @@ import java.util.Set;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 import org.ovirt.engine.core.common.businessentities.MacPool;
@@ -930,7 +930,7 @@ public final class Linq
 
     public final static class DataCenterWithClusterAccordingClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
-        private Guid clusterId;
+        private final Guid clusterId;
 
         public DataCenterWithClusterAccordingClusterPredicate(Guid clusterId) {
             this.clusterId = clusterId;
@@ -949,9 +949,9 @@ public final class Linq
 
     public final static class DataCenterWithClusterPredicate implements IPredicate<DataCenterWithCluster> {
 
-        private Guid dataCenterId;
+        private final Guid dataCenterId;
 
-        private Guid clusterId;
+        private final Guid clusterId;
 
         public DataCenterWithClusterPredicate(Guid dataCenterId, Guid clusterId) {
             this.dataCenterId = dataCenterId;
@@ -1108,7 +1108,7 @@ public final class Linq
 
     public final static class StorageNamePredicate implements IPredicate<StorageDomain> {
 
-        private String name;
+        private final String name;
 
         public StorageNamePredicate(String name) {
             this.name = name;
@@ -1193,6 +1193,8 @@ public final class Linq
             String targetName = target.getName();
             if (!StringHelper.isNullOrEmpty(targetName)) {
                 targetName = targetName.toLowerCase();
+            } else if (targetName == null) {
+                targetName = "";
             }
             int lastIndex = groupName.lastIndexOf("/"); //$NON-NLS-1$
             if (lastIndex != -1) {
@@ -1260,7 +1262,7 @@ public final class Linq
 
     public final static class StorageDomainComparator implements Comparator<StorageDomain>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(StorageDomain domain1, StorageDomain domain2) {
@@ -1270,7 +1272,7 @@ public final class Linq
 
     public final static class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
         private static final long serialVersionUID = 990203400356561666L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(StorageDomain domain1, StorageDomain domain2) {
@@ -1280,7 +1282,7 @@ public final class Linq
 
     public final static class VDSGroupComparator implements Comparator<VDSGroup>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(VDSGroup cluster1, VDSGroup cluster2) {
@@ -1291,7 +1293,7 @@ public final class Linq
     public final static class NetworkComparator implements Comparator<Network>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(Network net1, Network net2) {
@@ -1309,7 +1311,7 @@ public final class Linq
     public final static class VnicProfileViewComparator implements Comparator<VnicProfileView>, Serializable {
 
         private static final long serialVersionUID = 990203400356561587L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(VnicProfileView vnicProfile1, VnicProfileView vnicProfile2) {
@@ -1328,7 +1330,7 @@ public final class Linq
     public final static class ClusterNetworkModelComparator implements Comparator<ClusterNetworkModel>, Serializable {
 
         private static final long serialVersionUID = -8571840939180248617L;
-        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
         @Override
         public int compare(ClusterNetworkModel model1, ClusterNetworkModel model2) {
@@ -1345,7 +1347,7 @@ public final class Linq
 
     public final static class ExternalNetworkComparator implements Comparator<ExternalNetwork>, Serializable {
         private static final long serialVersionUID = 4987035011384708563L;
-        private NameableComparator comparator = new NameableComparator();
+        private final NameableComparator comparator = new NameableComparator();
 
         @Override
         public int compare(ExternalNetwork net1, ExternalNetwork net2) {

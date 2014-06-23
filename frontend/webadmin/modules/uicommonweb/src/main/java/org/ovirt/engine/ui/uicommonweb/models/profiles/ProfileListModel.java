@@ -24,17 +24,21 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.inject.Inject;
 
 public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase, R extends BusinessEntity<Guid>> extends ListWithDetailsModel {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
     private Map<Guid, Q> qosMap;
-    PermissionListModel permissionListModel;
+    final PermissionListModel permissionListModel;
 
-    public ProfileListModel() {
+    @Inject
+    public ProfileListModel(final PermissionListModel permissionListModel) {
+        this.permissionListModel = permissionListModel;
+        setDetailList();
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
         setHelpTag(HelpTag.disk_profiles);
         setHashName("disk_profiles"); //$NON-NLS-1$
@@ -44,6 +48,12 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
+    }
+
+    private void setDetailList() {
+        List<EntityModel> list = new ArrayList<EntityModel>();
+        list.add(permissionListModel);
+        setDetailModels(list);
     }
 
     protected abstract ProfileBaseModel<P, Q, R> getNewProfileModel();
@@ -59,15 +69,6 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     protected abstract Guid getStoragePoolId();
 
     protected abstract VdcQueryType getQueryType();
-
-    @Override
-    protected void initDetailModels() {
-        super.initDetailModels();
-        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        permissionListModel = new PermissionListModel();
-        list.add(permissionListModel);
-        setDetailModels(list);
-    }
 
     public void newProfile() {
         if (getWindow() != null) {
@@ -248,9 +249,4 @@ public abstract class ProfileListModel<P extends ProfileBase, Q extends QosBase,
     public PermissionListModel getPermissionListModel() {
         return permissionListModel;
     }
-
-    public void setPermissionListModel(PermissionListModel permissionListModel) {
-        this.permissionListModel = permissionListModel;
-    }
-
 }

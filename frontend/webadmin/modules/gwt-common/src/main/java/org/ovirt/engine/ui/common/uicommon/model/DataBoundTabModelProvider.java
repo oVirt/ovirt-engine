@@ -49,19 +49,19 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
     }
 
     @Override
-    protected void initializeModelHandlers() {
-        super.initializeModelHandlers();
+    protected void initializeModelHandlers(M model) {
+        super.initializeModelHandlers(model);
 
         // Add model items change handler
-        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+        model.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                if (hasModel() && handleItemsChangedEvent()) {
+                if (handleItemsChangedEvent()) {
                     updateData();
                 }
             }
         });
-        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {

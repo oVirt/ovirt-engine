@@ -23,7 +23,9 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel, PermissionListModel, SubTabNetworkPermissionPresenter.ViewDef, SubTabNetworkPermissionPresenter.ProxyDef> {
+public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<NetworkView, NetworkListModel,
+    PermissionListModel<NetworkListModel>, SubTabNetworkPermissionPresenter.ViewDef,
+    SubTabNetworkPermissionPresenter.ProxyDef> {
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.networkPermissionSubTabPlace)
@@ -35,14 +37,16 @@ public class SubTabNetworkPermissionPresenter extends AbstractSubTabPresenter<Ne
 
     @TabInfo(container = NetworkSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, NetworkListModel,
+            PermissionListModel<NetworkListModel>> modelProvider) {
         return new ModelBoundTabData(applicationConstants.networkPermissionSubTabLabel(), 7, modelProvider);
     }
 
     @Inject
     public SubTabNetworkPermissionPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<Permissions, NetworkListModel, PermissionListModel> modelProvider) {
+            SearchableDetailModelProvider<Permissions, NetworkListModel,
+            PermissionListModel<NetworkListModel>> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 NetworkSubTabPanelPresenter.TYPE_SetTabContent);
     }
