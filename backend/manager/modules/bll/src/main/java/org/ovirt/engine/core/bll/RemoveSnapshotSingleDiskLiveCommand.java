@@ -111,20 +111,21 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         log.infoFormat("Executing Live Merge command step {0}", getParameters().getCommandStep());
 
-        Pair<VdcActionType, VdcActionParametersBase> nextCommand = null;
+        Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
         case MERGE:
-            nextCommand = new Pair(VdcActionType.Merge, buildMergeParameters());
+            nextCommand = new Pair<>(VdcActionType.Merge, buildMergeParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE_STATUS);
             break;
         case MERGE_STATUS:
             getParameters().setMergeCommandComplete(true);
-            nextCommand = new Pair(VdcActionType.MergeStatus, buildMergeParameters());
+            nextCommand = new Pair<>(VdcActionType.MergeStatus, buildMergeParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE);
             break;
         case DESTROY_IMAGE:
             getParameters().setMergeStatusReturnValue((MergeStatusReturnValue) vdcReturnValue.getActionReturnValue());
-            nextCommand = new Pair(VdcActionType.DestroyImage, buildDestroyImageParameters());
+            nextCommand =
+                    new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.COMPLETE);
             break;
         case COMPLETE:
