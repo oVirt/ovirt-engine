@@ -205,6 +205,13 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
                         .addValue("active_only", !includeSnapshotDisks));
     }
 
+    @Override
+    public long getNumberOfImagesInStorageDomain(Guid storageDomainId) {
+        return getCallsHandler().executeRead("GetNumberOfImagesInStorageDomain",
+                getLongMapper(),
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId));
+    }
+
     /**
      * Gets the storage domain id of the given type for the given storage pool
      *

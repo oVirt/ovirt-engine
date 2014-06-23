@@ -194,4 +194,13 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
      * Retrieves all ids of vms and templates that has image disks on the given domain
      */
     List<Guid> getVmAndTemplatesIdsByStorageDomainId(Guid storageDomainId, boolean includeShareableDisks, boolean includeSnapshotDisks);
+
+    /**
+     * Retrieves the number of images in the specified storage domain.
+     *
+     * @param storageId
+     *            The storage domain ID
+     * @return the number of images in the specified storage domain, 0 for a domain that does not exist
+     */
+    long getNumberOfImagesInStorageDomain(Guid storageDomainId);
 }

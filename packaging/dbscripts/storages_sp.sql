@@ -882,3 +882,18 @@ BEGIN
    AND    storage_domain_type IN (0,1);  -- 0 = MASTER, 1 = DATA
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+
+
+-- This SP returns the number of images in the specified storage domain
+Create or replace FUNCTION GetNumberOfImagesInStorageDomain(v_storage_domain_id UUID)
+  RETURNS SETOF BIGINT STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY
+   SELECT COUNT(*)
+   FROM image_storage_domain_map
+   WHERE storage_domain_id = v_storage_domain_id;
+END; $procedure$
+LANGUAGE plpgsql;

@@ -26,6 +26,7 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_STORAGE_POOL_ID = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
     private static final String EXISTING_CONNECTION = "10.35.64.25:/export/share";
     private static final Guid EXISTING_USER_ID = new Guid("9bf7c640-b620-456f-a550-0348f366544b");
+    private static final long NUMBER_OF_IMAGES_ON_EXISTING_DOMAIN = 5;
 
     private StorageDomainDAO dao;
     private StorageDomain existingDomain;
@@ -423,6 +424,18 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
             assertNull(getDbFacade().getVmTemplateDao().get(template.getId()));
         }
         assertNull(getDbFacade().getBaseDiskDao().get(FixturesTool.DISK_ID));
+    }
+
+    @Test
+    public void testGetNumberOfImagesInExistingDomain() {
+        long numOfImages = dao.getNumberOfImagesInStorageDomain(EXISTING_DOMAIN_ID);
+        assertEquals("Number of images on storage domain different than expected", NUMBER_OF_IMAGES_ON_EXISTING_DOMAIN, numOfImages);
+    }
+
+    @Test
+    public void testGetNumberOfImagesInNonExistingDomain() {
+        long numOfImages = dao.getNumberOfImagesInStorageDomain(Guid.newGuid());
+        assertEquals("Number of images on a non existing domain should be 0", 0, numOfImages);
     }
 
     /**
