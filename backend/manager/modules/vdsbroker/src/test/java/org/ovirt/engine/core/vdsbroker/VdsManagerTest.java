@@ -72,7 +72,7 @@ package org.ovirt.engine.core.vdsbroker;
 //
 //        when(mockConfigUtils.<Integer> getValue(ConfigValues.VdsRefreshRate, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
 //        when(mockConfigUtils.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
-//        when(mockConfigUtils.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMintues, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
+//        when(mockConfigUtils.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMinutes, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
 //        when(mockConfigUtils.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave, ConfigCommon.defaultConfigurationVersion)).thenReturn(1);
 //        when(mockConfigUtils.<Integer> getValue(ConfigValues.vdsTimeout, ConfigCommon.defaultConfigurationVersion)).thenReturn(60);
 //        when(mockConfigUtils.<Boolean> getValue(ConfigValues.EncryptHostCommunication, ConfigCommon.defaultConfigurationVersion)).thenReturn(false);

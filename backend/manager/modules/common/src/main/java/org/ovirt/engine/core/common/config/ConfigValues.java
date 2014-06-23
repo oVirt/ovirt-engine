@@ -378,7 +378,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
-    VdsRecoveryTimeoutInMintues,
+    VdsRecoveryTimeoutInMinutes,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("8192")

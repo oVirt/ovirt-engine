@@ -32,6 +32,7 @@ select fn_db_rename_config_key('SSHInactivityTimoutSeconds', 'SSHInactivityTimeo
 select fn_db_rename_config_key('SSHInactivityHardTimoutSeconds', 'SSHInactivityHardTimeoutSeconds', 'general');
 select fn_db_rename_config_key('StorageDomainFalureTimeoutInMinutes', 'StorageDomainFailureTimeoutInMinutes', 'general');
 select fn_db_rename_config_key('VdsLoadBalancingeIntervalInMinutes', 'VdsLoadBalancingIntervalInMinutes', 'general');
+select fn_db_rename_config_key('VdsRecoveryTimeoutInMintues', 'VdsRecoveryTimeoutInMinutes', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -628,7 +629,7 @@ select fn_db_add_config_value('CustomVdsFenceType','','general');
 select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
 select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','general');
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');
-select fn_db_add_config_value('VdsRecoveryTimeoutInMintues','3','general');
+select fn_db_add_config_value('VdsRecoveryTimeoutInMinutes','3','general');
 select fn_db_add_config_value('VdsRefreshRate','2','general');
 select fn_db_add_config_value('vdsRetries','0','general');
 --Handling Host Selection Algorithm default for cluster
@@ -1068,6 +1069,7 @@ select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
 select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general');
 select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general');
+select fn_db_delete_config_value('VdsRecoveryTimeoutInMintues','general');
 
 
 ------------------------------------------------------------------------------------
