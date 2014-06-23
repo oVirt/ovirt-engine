@@ -159,7 +159,7 @@ public class FeatureSupported {
      * @return <code>true</code> if Management Network normalization is supported for the cluster version.
      */
     public static boolean setupManagementNetwork(Version version) {
-        return supportedInConfig(ConfigValues.NormalizedMgmgNetworkEnabled, version);
+        return supportedInConfig(ConfigValues.NormalizedMgmtNetworkEnabled, version);
     }
 
     /**

@@ -1559,7 +1559,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
-    NormalizedMgmgNetworkEnabled,
+    NormalizedMgmtNetworkEnabled,
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")

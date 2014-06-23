@@ -38,6 +38,9 @@ select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSup
 select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.1');
 select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.2');
 select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSupport', '3.3');
+select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.0');
+select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.1');
+select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.2');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -225,9 +228,9 @@ select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
 select fn_db_add_config_value('VirtIoScsiEnabled','false','3.0');
 select fn_db_add_config_value('VirtIoScsiEnabled','false','3.1');
 select fn_db_add_config_value('VirtIoScsiEnabled','false','3.2');
-select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.0');
-select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.1');
-select fn_db_add_config_value('NormalizedMgmgNetworkEnabled','false','3.2');
+select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.0');
+select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.1');
+select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.2');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
 select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.0');
 select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.1');
@@ -1077,6 +1080,7 @@ select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general')
 select fn_db_delete_config_value('VdsRecoveryTimeoutInMintues','general');
 select fn_db_delete_config_value('UknownTaskPrePollingLapse','general');
 select fn_db_delete_config_value('GlusterAysncTasksSupport','3.0,3.1,3.2,3.3');
+select fn_db_delete_config_value('NormalizedMgmgNetworkEnabled','3.0,3.1,3.2');
 
 
 ------------------------------------------------------------------------------------
