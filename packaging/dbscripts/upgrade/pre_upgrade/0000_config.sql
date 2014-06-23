@@ -28,6 +28,7 @@ select fn_db_rename_config_key('PowerClientAutoInstallCertificateOnApprove','Aut
 select fn_db_rename_config_key('UseSecureConnectionWithServers', 'EncryptHostCommunication', 'general');
 select fn_db_rename_config_key('SpiceReleaseCursorKeys', 'ConsoleReleaseCursorKeys', 'general');
 select fn_db_rename_config_key('SpiceToggleFullScreenKeys', 'ConsoleToggleFullScreenKeys', 'general');
+select fn_db_rename_config_key('SSHInactivityTimoutSeconds', 'SSHInactivityTimeoutSeconds', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -546,7 +547,7 @@ select fn_db_add_config_value('WANColorDepth','16','general');
 select fn_db_add_config_value('SpmCommandFailOverRetries','3','general');
 select fn_db_add_config_value('SPMFailOverAttempts','3','general');
 select fn_db_add_config_value('SpmVCpuConsumption','1','general');
-select fn_db_add_config_value('SSHInactivityTimoutSeconds','300','general');
+select fn_db_add_config_value('SSHInactivityTimeoutSeconds','300','general');
 select fn_db_add_config_value('SSHInactivityHardTimoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
 select fn_db_add_config_value('SSLEnabled','true','general');
@@ -1059,6 +1060,8 @@ select fn_db_delete_config_value('DocsURL','general');
 select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
+select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
+
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

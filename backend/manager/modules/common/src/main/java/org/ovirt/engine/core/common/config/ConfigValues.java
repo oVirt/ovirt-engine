@@ -332,7 +332,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
-    SSHInactivityTimoutSeconds,
+    SSHInactivityTimeoutSeconds,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("120")
