@@ -1305,7 +1305,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             Class[] inputType = new Class[] { Guid.class };
             Object[] inputParams = new Object[] { domainId };
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimer", inputType,
-                    inputParams, Config.<Integer> getValue(ConfigValues.StorageDomainFalureTimeoutInMinutes),
+                    inputParams, Config.<Integer> getValue(ConfigValues.StorageDomainFailureTimeoutInMinutes),
                     TimeUnit.MINUTES);
             clearTimer(domainId);
             _timers.put(domainId, jobId);

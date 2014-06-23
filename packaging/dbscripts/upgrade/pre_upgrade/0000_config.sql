@@ -30,6 +30,7 @@ select fn_db_rename_config_key('SpiceReleaseCursorKeys', 'ConsoleReleaseCursorKe
 select fn_db_rename_config_key('SpiceToggleFullScreenKeys', 'ConsoleToggleFullScreenKeys', 'general');
 select fn_db_rename_config_key('SSHInactivityTimoutSeconds', 'SSHInactivityTimeoutSeconds', 'general');
 select fn_db_rename_config_key('SSHInactivityHardTimoutSeconds', 'SSHInactivityHardTimeoutSeconds', 'general');
+select fn_db_rename_config_key('StorageDomainFalureTimeoutInMinutes', 'StorageDomainFailureTimeoutInMinutes', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -552,7 +553,7 @@ select fn_db_add_config_value('SSHInactivityTimeoutSeconds','300','general');
 select fn_db_add_config_value('SSHInactivityHardTimeoutSeconds','1800','general');
 --Handling SPICE SSL Enabled
 select fn_db_add_config_value('SSLEnabled','true','general');
-select fn_db_add_config_value('StorageDomainFalureTimeoutInMinutes','5','general');
+select fn_db_add_config_value('StorageDomainFailureTimeoutInMinutes','5','general');
 select fn_db_add_config_value('StorageDomainNameSizeLimit','50','general');
 select fn_db_add_config_value('StoragePoolNameSizeLimit','40','general');
 select fn_db_add_config_value('StoragePoolNonOperationalResetTimeoutInMin','3','general');
@@ -1064,6 +1065,7 @@ select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
 select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
 select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
+select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general');
 
 
 ------------------------------------------------------------------------------------

@@ -509,7 +509,7 @@ public enum ConfigValues {
     StoragePoolNonOperationalResetTimeoutInMin,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1")
-    StorageDomainFalureTimeoutInMinutes,
+    StorageDomainFailureTimeoutInMinutes,
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     ComputerADPaths,
