@@ -148,7 +148,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         if (profile == null) {
             log.errorFormat(
                     "Can't login because authentication profile \"{1}\" doesn't exist.",
-                    profile
+                    getParameters().getProfileName()
                     );
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             return false;
@@ -377,7 +377,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                         password
                 ));
 
-        String principal = outputMap.<String> get(Authn.InvokeKeys.PRINCIPAL);
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {
             log.infoFormat(
