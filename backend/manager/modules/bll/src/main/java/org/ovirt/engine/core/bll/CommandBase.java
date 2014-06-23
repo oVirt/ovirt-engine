@@ -2133,18 +2133,17 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected VdcReturnValueBase runInternalAction(VdcActionType actionType,
             VdcActionParametersBase parameters,
             CommandContext context) {
-        return Backend.getInstance().runInternalAction(actionType, parameters, context);
+        return getBackend().runInternalAction(actionType, parameters, context);
     }
 
     protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters) {
-        return Backend.getInstance().runInternalMultipleActions(actionType, parameters);
+        return getBackend().runInternalMultipleActions(actionType, parameters);
     }
 
     protected ArrayList<VdcReturnValueBase> runInternalMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> parameters,
             ExecutionContext executionContext) {
-        return Backend.getInstance().runInternalMultipleActions(actionType, parameters, executionContext);
+        return getBackend().runInternalMultipleActions(actionType, parameters, executionContext);
     }
-
 }
