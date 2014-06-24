@@ -161,10 +161,14 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void removeImages() {
         for (final DiskImage source : getSourceImages()) {
 
-            // The following line is ok because we have tested in the candoaction that the vm
+            // The following is ok because we have tested in the candoaction that the vm
             // is not a template and the vm is not in preview mode and that
             // this is not the active snapshot.
-            DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(source.getImageId()).get(0);
+            List<DiskImage> images = getDiskImageDao().getAllSnapshotsForParent(source.getImageId());
+            DiskImage dest = null;
+            if (!images.isEmpty()) {
+                dest = images.get(0);
+            }
 
             if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDisk) {
                 VdcReturnValueBase vdcReturnValue = runInternalActionWithTasksContext(
@@ -182,7 +186,9 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();
             quotasToRemoveFromCache.add(source.getQuotaId());
-            quotasToRemoveFromCache.add(dest.getQuotaId());
+            if (dest != null) {
+                quotasToRemoveFromCache.add(dest.getQuotaId());
+            }
             QuotaManager.getInstance().removeQuotaFromCache(getStoragePoolId(), quotasToRemoveFromCache);
         }
     }
@@ -205,7 +211,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             DiskImage dest) {
         RemoveSnapshotSingleDiskParameters parameters =
                 new RemoveSnapshotSingleDiskParameters(source.getImageId(), getVmId());
-        parameters.setDestinationImageId(dest.getImageId());
+        parameters.setDestinationImageId(dest != null ? dest.getImageId() : null);
         parameters.setEntityInfo(getParameters().getEntityInfo());
         parameters.setParentParameters(getParameters());
         parameters.setParentCommand(getActionType());

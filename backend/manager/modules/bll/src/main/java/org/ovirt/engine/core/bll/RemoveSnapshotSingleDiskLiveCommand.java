@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Image;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -26,6 +29,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.transaction.TransactionMethod;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleDiskParameters>
@@ -56,7 +61,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         log.debug("Proceeding with execution of RemoveSnapshotSingleDiskLiveCommand");
         if (getParameters().getCommandStep() == null) {
-            getParameters().setCommandStep(RemoveSnapshotSingleDiskLiveStep.MERGE);
+            getParameters().setCommandStep(getInitialMergeStepForImage(getParameters().getImageId()));
             getParameters().setChildCommands(new HashMap<RemoveSnapshotSingleDiskLiveStep, Guid>());
         }
 
@@ -90,7 +95,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     getParameters().setCommandStep(getParameters().getNextCommandStep());
                     break;
                 } else {
-                    log.errorFormat("Failed to merge, child command {0} failed: {1}",
+                    log.errorFormat("Child command {0} failed: {1}",
                             getParameters().getCommandStep(),
                             (vdcReturnValue != null
                                     ? vdcReturnValue.getExecuteFailedMessages()
@@ -102,13 +107,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case FAILED:
             case FAILED_RESTARTED:
-                log.errorFormat("Failed to merge: failed child command status for step {0}",
+                log.errorFormat("Failed child command status for step {0}",
                         getParameters().getCommandStep());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
 
             case UNKNOWN:
-                log.errorFormat("Failed to merge: unknown child command status for step {0}",
+                log.errorFormat("Unknown child command status for step {0}",
                         getParameters().getCommandStep());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
@@ -129,9 +134,13 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE);
             break;
         case DESTROY_IMAGE:
-            getParameters().setMergeStatusReturnValue((MergeStatusReturnValue) vdcReturnValue.getActionReturnValue());
-            nextCommand =
-                    new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
+            if (vdcReturnValue != null) {
+                getParameters().setMergeStatusReturnValue((MergeStatusReturnValue) vdcReturnValue.getActionReturnValue());
+            } else if (getParameters().getMergeStatusReturnValue() == null) {
+                // If the images were already merged, just add the orphaned image
+                getParameters().setMergeStatusReturnValue(synthesizeMergeStatusReturnValue());
+            }
+            nextCommand = new Pair<>(VdcActionType.DestroyImage, buildDestroyImageParameters());
             getParameters().setNextCommandStep(RemoveSnapshotSingleDiskLiveStep.COMPLETE);
             break;
         case COMPLETE:
@@ -144,6 +153,26 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         if (nextCommand != null) {
             TaskManagerUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
         }
+    }
+
+    private RemoveSnapshotSingleDiskLiveStep getInitialMergeStepForImage(Guid imageId) {
+        Image image = getImageDao().get(imageId);
+        if (image.getStatus() == ImageStatus.ILLEGAL
+                && (image.getParentId().equals(Guid.Empty))) {
+            List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
+                    .getAllSnapshotsForParent(imageId);
+            if (children.isEmpty()) {
+                // An illegal, orphaned image means its contents have been merged
+                log.info("Image has been previously merged, proceeding with deletion");
+                return RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE;
+            }
+        }
+        return RemoveSnapshotSingleDiskLiveStep.MERGE;
+    }
+
+    private boolean completedMerge() {
+        return getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE
+                || getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.COMPLETE;
     }
 
     private MergeParameters buildMergeParameters() {
@@ -179,19 +208,69 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         return getDiskImageDao().getDiskSnapshotForVmSnapshot(getDiskImage().getId(), snapshotId);
     }
 
+    /**
+     * Add orphaned, already-merged images from this snapshot to a MergeStatusReturnValue that
+     * can be used by the DESTROY_IMAGE command step to tell what needs to be deleted.
+     *
+     * @return A suitable MergeStatusReturnValue object
+     */
+    private MergeStatusReturnValue synthesizeMergeStatusReturnValue() {
+        Set<Guid> images = new HashSet<>();
+        images.add(getDiskImage().getImageId());
+        return new MergeStatusReturnValue(VmBlockJobType.UNKNOWN, images);
+    }
+
     public void onSucceeded() {
+        syncDbRecords(true);
+        endSuccessfully();
+        log.infoFormat("Successfully merged snapshot {0} images {1}..{2}",
+                getDiskImage().getImage().getSnapshotId(),
+                getDiskImage().getImageId(),
+                getDestinationDiskImage() != null ? getDestinationDiskImage().getImageId() : "(n/a)");
+    }
+
+    private void syncDbRecordsMergeFailure() {
+        DiskImage curr = getDestinationDiskImage();
+        while (!curr.getImageId().equals(getDiskImage().getImageId())) {
+            curr = getDbFacade().getDiskImageDao().getSnapshotById(curr.getParentId());
+            getImageDao().updateStatus(curr.getImageId(), ImageStatus.ILLEGAL);
+        }
+    }
+
+    /**
+     * After merging the snapshots, update the image and snapshot records in the
+     * database to reflect the changes.  This handles either forward or backwards
+     * merge (detected).  It will either then remove the images, or mark them
+     * illegal (to handle the case where image deletion failed).
+     *
+     * @param removeImages Remove the images from the database, or if false, only
+     *                     mark them illegal
+     */
+    private void syncDbRecords(boolean removeImages) {
+        // If deletion failed after a backwards merge, the snapshots' images need to be swapped
+        // as they would upon success.  Instead of removing them, mark them illegal.
         DiskImage baseImage = getDiskImage();
         DiskImage topImage = getDestinationDiskImage();
 
         // The vdsm merge verb may decide to perform a forward or backward merge.
-        if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
+        if (topImage == null) {
+            log.debug("No merge destination image, not updating image/snapshot association");
+        } else if (getParameters().getMergeStatusReturnValue().getBlockJobType() == VmBlockJobType.PULL) {
             // For forward merge, the volume format and type may change.
             topImage.setvolumeFormat(baseImage.getVolumeFormat());
             topImage.setVolumeType(baseImage.getVolumeType());
             topImage.setParentId(baseImage.getParentId());
+            topImage.setImageStatus(ImageStatus.OK);
+
+            getBaseDiskDao().update(topImage);
+            getImageDao().update(topImage.getImage());
+            updateDiskImageDynamic(topImage);
         } else {
             // For backwards merge, the prior base image now has the data associated with the newer
             // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
+            // The base snapshot is deleted if everything went well.  In case it's not deleted, we
+            // hijack it to preserve a link to the broken image.  This makes the image discoverable
+            // so that we can retry the deletion later, yet doesn't corrupt the VM image chain.
             List<DiskImage> children = DbFacade.getInstance().getDiskImageDao()
                     .getAllSnapshotsForParent(topImage.getImageId());
             if (!children.isEmpty()) {
@@ -200,25 +279,39 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 getImageDao().update(childImage.getImage());
             }
 
-            baseImage.getImage().setSnapshotId(topImage.getImage().getSnapshotId());
+            Image oldTopImage = topImage.getImage();
             topImage.setImage(baseImage.getImage());
-        }
-        getBaseDiskDao().update(topImage);
-        getImageDao().update(topImage.getImage());
-        updateDiskImageDynamic(topImage);
+            baseImage.setImage(oldTopImage);
 
-        Set<Guid> imagesToRemove = getParameters().getMergeStatusReturnValue().getImagesToRemove();
-        if (imagesToRemove == null) {
-            log.error("Failed to remove images from db: image list could not be retrieved");
+            Guid oldTopSnapshotId = topImage.getImage().getSnapshotId();
+            topImage.getImage().setSnapshotId(baseImage.getImage().getSnapshotId());
+            baseImage.getImage().setSnapshotId(oldTopSnapshotId);
+
+            topImage.setImageStatus(ImageStatus.OK);
+            getBaseDiskDao().update(topImage);
+            getImageDao().update(topImage.getImage());
+            updateDiskImageDynamic(topImage);
+
+            getBaseDiskDao().update(baseImage);
+            getImageDao().update(baseImage.getImage());
+        }
+
+        Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
+        if (imagesToUpdate == null) {
+            log.error("Failed to update orphaned images in db: image list could not be retrieved");
             return;
         }
-        for (Guid imageId : imagesToRemove) {
-            DbFacade.getInstance().getImageDao().remove(imageId);
+        for (Guid imageId : imagesToUpdate) {
+            if (removeImages) {
+                getImageDao().remove(imageId);
+            } else {
+                // The (illegal && no-parent && no-children) status indicates an orphaned image.
+                Image image = getImageDao().get(imageId);
+                image.setStatus(ImageStatus.ILLEGAL);
+                image.setParentId(Guid.Empty);
+                getImageDao().update(image);
+            }
         }
-
-        endSuccessfully();
-        log.infoFormat("Successfully merged snapshot {0} images {1}..{2}",
-                baseImage.getSnapshotId(), baseImage.getImageId(), topImage.getImageId());
     }
 
     @Override
@@ -227,6 +320,38 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     }
 
     public void onFailed() {
+        if (!completedMerge()) {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    syncDbRecordsMergeFailure();
+                    return null;
+                }
+            });
+            log.errorFormat("Merging of snapshot {0} images {1}..{2} failed. Images have been" +
+                            " marked illegal and can no longer be previewed or reverted to." +
+                            " Please retry Live Merge on the snapshot to complete the operation.",
+                    getDiskImage().getImage().getSnapshotId(),
+                    getDiskImage().getImageId(),
+                    getDestinationDiskImage() != null ? getDestinationDiskImage().getImageId() : "(n/a)"
+            );
+
+        } else {
+            TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+                @Override
+                public Void runInTransaction() {
+                    syncDbRecords(false);
+                    return null;
+                }
+            });
+            log.errorFormat("Snapshot {0} images {1}..{2} merged, but volume removal failed." +
+                            " Some or all of the following volumes may be orphaned: {3}." +
+                            " Please retry Live Merge on the snapshot to complete the operation.",
+                    getDiskImage().getImage().getSnapshotId(),
+                    getDiskImage().getImageId(),
+                    getDestinationDiskImage() != null ? getDestinationDiskImage().getImageId() : "(n/a)",
+                    getParameters().getMergeStatusReturnValue().getImagesToRemove());
+        }
         endWithFailure();
     }
 
