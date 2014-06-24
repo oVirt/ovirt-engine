@@ -271,7 +271,12 @@ class Plugin(plugin.PluginBase):
             ]
         )
 
-    def _askUserToStopTasks(self, runningTasks, runningCommands, compensations):
+    def _askUserToStopTasks(
+        self,
+        runningTasks,
+        runningCommands,
+        compensations,
+    ):
         self.dialog.note(
             text=_(
                 'The following system tasks have been '
@@ -311,8 +316,8 @@ class Plugin(plugin.PluginBase):
             raise RuntimeError(
                 _(
                     'Upgrade cannot be completed; asynchronious tasks or '
-                    'commands or compensations are still running. Please make sure '
-                    'that there are no running tasks before you '
+                    'commands or compensations are still running. Please '
+                    'make sure that there are no running tasks before you '
                     'continue.'
                 )
             )
@@ -334,7 +339,11 @@ class Plugin(plugin.PluginBase):
             parent=self,
         ):
             while True:
-                runningTasks, runningCommands, compensations = self._checkRunningTasks()
+                (
+                    runningTasks,
+                    runningCommands,
+                    compensations,
+                ) = self._checkRunningTasks()
                 if (
                     not runningTasks and
                     not runningCommands and
@@ -353,7 +362,11 @@ class Plugin(plugin.PluginBase):
                             oenginecons.AsyncTasksEnv.
                             CLEAR_TASKS_WAIT_PERIOD
                         ],
-                        number=len(runningTasks + runningCommands + compensations),
+                        number=(
+                            len(runningTasks) +
+                            len(runningCommands) +
+                            len(compensations)
+                        ),
                     )
                 )
                 time.sleep(
@@ -417,9 +430,19 @@ class Plugin(plugin.PluginBase):
         self.logger.info(
             _('Cleaning async tasks and compensations')
         )
-        runningTasks, runningCommands, compensations = self._checkRunningTasks()
+
+        (
+            runningTasks,
+            runningCommands,
+            compensations,
+        ) = self._checkRunningTasks()
+
         if runningTasks or runningCommands or compensations:
-            self._askUserToStopTasks(runningTasks, runningCommands, compensations)
+            self._askUserToStopTasks(
+                runningTasks,
+                runningCommands,
+                compensations,
+            )
             dbstatement = database.Statement(
                 dbenvkeys=oenginecons.Const.ENGINE_DB_ENV_KEYS,
                 environment=self.environment,
@@ -430,9 +453,9 @@ class Plugin(plugin.PluginBase):
                 self.logger.error(
                     _(
                         'Upgrade cannot be completed; asynchronious tasks '
-                        'or commands or compensations are still running. Please make '
-                        'sure that there are no running tasks before you '
-                        'continue.'
+                        'or commands or compensations are still running. '
+                        'Please make sure that there are no running tasks '
+                        'before you continue.'
                     )
                 )
                 raise RuntimeError(
