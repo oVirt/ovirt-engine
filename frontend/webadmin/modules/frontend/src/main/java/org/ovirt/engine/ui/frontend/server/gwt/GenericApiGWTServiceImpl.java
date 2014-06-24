@@ -212,7 +212,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         String result = null;
         if (value instanceof String) {
             result = (String)value;
-        } else {
+        } else if (value != null) {
             log.error("Retrieving non string value from session"); //$NON-NLS-1$
         }
         return result;
