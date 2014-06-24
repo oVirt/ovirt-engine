@@ -16,6 +16,8 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.ImportFcpStorageView;
+import org.ovirt.engine.ui.common.widget.uicommon.storage.ImportIscsiStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
@@ -238,9 +240,19 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
             } else if (model.getType() == StorageType.GLUSTERFS) {
                 storageView = new GlusterStorageView();
             } else if (model.getType() == StorageType.FCP) {
-                storageView = new FcpStorageView(true);
+                if (!object.getBehavior().isImport()) {
+                    storageView = new FcpStorageView(true);
+                }
+                else {
+                    storageView = new ImportFcpStorageView();
+                }
             } else if (model.getType() == StorageType.ISCSI) {
-                storageView = new IscsiStorageView(true);
+                if (!object.getBehavior().isImport()) {
+                    storageView = new IscsiStorageView(true);
+                }
+                else {
+                    storageView = new ImportIscsiStorageView();
+                }
             }
         }
 

@@ -1,10 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
@@ -33,6 +37,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         super.updateItemsAvailability();
 
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
+
         updateAvailabilityByDatacenter(dataCenter);
 
         for (IStorageModel item : Linq.<IStorageModel> cast(getModel().getItems()))
@@ -79,7 +84,31 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
             return;
         }
 
+        boolean isUnassignedDC = StorageModel.UnassignedDataCenterId.equals(datacenter.getId());
+        Version dcVersion = !isUnassignedDC ? datacenter.getcompatibility_version() : Version.v3_5;
+        boolean ovfStoreOnAnyDomainEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+                ConfigurationValues.ImportDataStorageDomain, dcVersion.getValue());
+
+        if (ovfStoreOnAnyDomainEnabled && !isItemsContainDataDomains()) {
+            Collection<IStorageModel> items = new ArrayList<IStorageModel>();
+            items.addAll(getModel().getItems());
+            items.addAll(AsyncDataProvider.getFileDataStorageModels());
+            items.addAll(AsyncDataProvider.getImportBlockDataStorageModels());
+
+            // Set items manually to invoke itemsChanged event
+            getModel().setItems(items);
+        }
+
         getModel().getActivateDomain().setIsAvailable(!StorageModel.UnassignedDataCenterId.equals(datacenter.getId()));
+    }
+
+    private boolean isItemsContainDataDomains() {
+        for (IStorageModel storageModel : getModel().getItems()) {
+            if (storageModel.getRole() == StorageDomainType.Data) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoStorageAttached)
@@ -108,6 +137,11 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
     }
 
     private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoStorageAttached) {
+        // Allow import of data domains
+        if (item.getRole() == StorageDomainType.Data) {
+            return true;
+        }
+
         // Local SD can be attached to a local DC only
         if (isLocalStorage(item) && !dataCenter.isLocal()) {
             return false;

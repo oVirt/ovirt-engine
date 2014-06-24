@@ -153,6 +153,8 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ImportIscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.LocalStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
@@ -3648,6 +3650,13 @@ public final class AsyncDataProvider {
 
     public static List<IStorageModel> getDataStorageModels() {
         ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+        models.addAll(getFileDataStorageModels());
+        models.addAll(getBlockDataStorageModels());
+        return models;
+    }
+
+    public static List<IStorageModel> getFileDataStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
 
         NfsStorageModel nfsDataModel = new NfsStorageModel();
         models.add(nfsDataModel);
@@ -3658,6 +3667,17 @@ public final class AsyncDataProvider {
         GlusterStorageModel GlusterDataModel = new GlusterStorageModel();
         models.add(GlusterDataModel);
 
+        LocalStorageModel localDataModel = new LocalStorageModel();
+        models.add(localDataModel);
+
+        addTypeToStorageModels(StorageDomainType.Data, models);
+
+        return models;
+    }
+
+    public static List<IStorageModel> getBlockDataStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+
         IscsiStorageModel iscsiDataModel = new IscsiStorageModel();
         iscsiDataModel.setIsGrouppedByTarget(true);
         models.add(iscsiDataModel);
@@ -3665,12 +3685,21 @@ public final class AsyncDataProvider {
         FcpStorageModel fcpDataModel = new FcpStorageModel();
         models.add(fcpDataModel);
 
-        LocalStorageModel localDataModel = new LocalStorageModel();
-        models.add(localDataModel);
+        addTypeToStorageModels(StorageDomainType.Data, models);
 
-        for (IStorageModel model : models) {
-            model.setRole(StorageDomainType.Data);
-        }
+        return models;
+    }
+
+    public static List<IStorageModel> getImportBlockDataStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+
+        ImportIscsiStorageModel iscsiDataModel = new ImportIscsiStorageModel();
+        models.add(iscsiDataModel);
+
+        ImportFcpStorageModel fcpDataModel = new ImportFcpStorageModel();
+        models.add(fcpDataModel);
+
+        addTypeToStorageModels(StorageDomainType.Data, models);
 
         return models;
     }
@@ -3687,10 +3716,15 @@ public final class AsyncDataProvider {
         LocalStorageModel localIsoModel = new LocalStorageModel();
         models.add(localIsoModel);
 
-        for (IStorageModel model : models) {
-            model.setRole(StorageDomainType.ISO);
-        }
+        addTypeToStorageModels(StorageDomainType.ISO, models);
+
 
         return models;
+    }
+
+    private static void addTypeToStorageModels(StorageDomainType storageDomainType, List<IStorageModel> models) {
+        for (IStorageModel model : models) {
+            model.setRole(storageDomainType);
+        }
     }
 }
