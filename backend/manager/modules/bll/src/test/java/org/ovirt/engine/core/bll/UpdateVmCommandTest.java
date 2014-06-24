@@ -75,6 +75,14 @@ public class UpdateVmCommandTest {
     @Mock
     OsRepository osRepository;
 
+    private static final Map<String, String> migrationMap = new HashMap<>();
+
+    static {
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86_64", "true");
+        migrationMap.put("ppc64", "false");
+    }
+
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MaxVmNameLengthWindows, 15),
@@ -96,7 +104,9 @@ public class UpdateVmCommandTest {
             mockConfig(ConfigValues.MaxNumOfCpuPerSocket, "3.3", 16),
             mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_3.toString(), true),
             mockConfig(ConfigValues.VncKeyboardLayoutValidValues, Arrays.asList(vncKeyboardLayoutValues.split(","))),
-            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")))
+            mockConfig(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(","))),
+            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_0.toString(), migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, Version.v3_3.toString(), migrationMap)
             );
 
     @Before

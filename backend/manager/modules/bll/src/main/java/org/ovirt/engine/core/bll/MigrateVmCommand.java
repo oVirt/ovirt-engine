@@ -295,6 +295,10 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
+        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getcompatibility_version())) {
+            return failCanDoAction(VdcBllMessages.MIGRATION_IS_NOT_SUPPORTED);
+        }
+
         // If VM is pinned to host, no migration can occur
         if (vm.getMigrationSupport() == MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_PINNED_TO_HOST);

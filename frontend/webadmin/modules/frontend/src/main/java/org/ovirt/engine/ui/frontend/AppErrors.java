@@ -493,6 +493,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$VdsName [N/A]")
     String HOST_NAME_NOT_AVAILABLE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Migration is not supported in this CPU architecture.")
+    String MIGRATION_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. This resilience policy is not supported in this CPU architecture.")
+    String MIGRATION_ON_ERROR_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Migration option is not supported in this CPU architecture.")
+    String VM_MIGRATION_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("CPU pinning format invalid.")
     String VM_PINNING_FORMAT_INVALID();
 

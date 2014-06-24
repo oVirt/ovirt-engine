@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
+import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -153,6 +154,11 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         if (result && getVdsGroup().supportsTrustedService()&& Config.<String> getValue(ConfigValues.AttestationServer).equals("")) {
              addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
              result = false;
+        }
+
+        if (!FeatureSupported.isMigrationSupported(getArchitecture(), getVdsGroup().getcompatibility_version())
+                && getVdsGroup().getMigrateOnError() != MigrateOnErrorOptions.NO) {
+            return failCanDoAction(VdcBllMessages.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
         }
 
         if (result) {

@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -350,6 +351,13 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_SET_TRUSTED_ATTESTATION_SERVER_NOT_CONFIGURED);
             result = false;
         }
+
+        if (result
+                && !FeatureSupported.isMigrationSupported(getArchitecture(), getVdsGroup().getcompatibility_version())
+                && getVdsGroup().getMigrateOnError() != MigrateOnErrorOptions.NO) {
+            return failCanDoAction(VdcBllMessages.MIGRATION_ON_ERROR_IS_NOT_SUPPORTED);
+        }
+
         if (result) {
             result = validateClusterPolicy();
         }

@@ -524,6 +524,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (!FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(), getVdsGroup().getcompatibility_version())
+                && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
+            return failCanDoAction(VdcBllMessages.VM_MIGRATION_IS_NOT_SUPPORTED);
+        }
+
         // check cpuPinning if the check haven't failed yet
         if (!isCpuPinningValid(vmFromParams.getCpuPinning(), vmFromParams.getStaticData())) {
             return false;

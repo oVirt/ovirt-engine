@@ -86,6 +86,14 @@ public class AddVmCommandTest {
     private VDSGroup vdsGroup = null;
     protected StorageDomainValidator storageDomainValidator;
 
+    private static final Map<String, String> migrationMap = new HashMap<>();
+
+    static {
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86_64", "true");
+        migrationMap.put("ppc64", "false");
+    }
+
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
 
@@ -500,6 +508,7 @@ public class AddVmCommandTest {
         mcr.mockConfigValue(ConfigValues.InitStorageSparseSizeInGB, 1);
         mcr.mockConfigValue(ConfigValues.VirtIoScsiEnabled, Version.v3_3, true);
         mcr.mockConfigValue(ConfigValues.ValidNumOfMonitors, Arrays.asList("1,2,4".split(",")));
+        mcr.mockConfigValue(ConfigValues.IsMigrationSupported, Version.v3_3, migrationMap);
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {

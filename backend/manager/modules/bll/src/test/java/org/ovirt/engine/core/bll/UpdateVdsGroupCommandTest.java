@@ -8,13 +8,17 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
+import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -43,14 +47,27 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsGroupCommandTest {
 
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule();
-
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
+
+    private static final Map<String, String> migrationMap = new HashMap<>();
+
+    static {
+        migrationMap.put("undefined", "true");
+        migrationMap.put("x86_64", "true");
+        migrationMap.put("ppc64", "false");
+    }
+
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(
+            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_0.getValue(), migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_1.getValue(), migrationMap),
+            mockConfig(ConfigValues.IsMigrationSupported, VERSION_1_2.getValue(), migrationMap)
+            );
+
     @Mock
     private VdsGroupDAO vdsGroupDAO;
     @Mock
@@ -360,6 +377,12 @@ public class UpdateVdsGroupCommandTest {
         doReturn(vmDao).when(cmd).getVmDAO();
         doReturn(true).when(cmd).validateClusterPolicy();
 
+        if (StringUtils.isEmpty(group.getcpu_name())) {
+            doReturn(ArchitectureType.undefined).when(cmd).getArchitecture();
+        } else {
+            doReturn(ArchitectureType.x86_64).when(cmd).getArchitecture();
+        }
+
         when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDefaultVdsGroup());
         when(vdsGroupDAO.getByName(anyString())).thenReturn(createDefaultVdsGroup());
         List<VDSGroup> vdsGroupList = new ArrayList<VDSGroup>();
@@ -374,6 +397,7 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createVdsGroupWithDifferentName() {
         VDSGroup group = new VDSGroup();
         group.setName("BadName");
+        group.setcompatibility_version(VERSION_1_1);
         return group;
     }
 
@@ -546,7 +570,7 @@ public class UpdateVdsGroupCommandTest {
     }
 
     private void architectureIsNotUpdatable() {
-        doReturn(ArchitectureType.ppc64).when(cmd).getArchitecture();
+        doReturn(false).when(cmd).isArchitectureUpdatable();
     }
 
     private static void setValidCpuVersionMap() {
