@@ -99,6 +99,7 @@ public enum ConfigurationValues {
     MultipleGatewaysSupported,
     HostNetworkQosSupported,
     VirtIoScsiEnabled(ConfigAuthType.User),
+    OvfStoreOnAnyDomain,
     SshSoftFencingCommand,
     MemorySnapshotSupported(ConfigAuthType.User),
     MaxAverageNetworkQoSValue,
