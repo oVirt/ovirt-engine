@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetDeviceListVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 @SuppressWarnings({ "rawtypes", "unchecked" })
@@ -62,6 +63,9 @@ public class GetDeviceListVDSCommand<P extends GetDeviceListVDSCommandParameters
             lun.setvolume_group_id(xlun.get("vgUUID").toString());
         } else {
             lun.setvolume_group_id("");
+        }
+        if (xlun.containsKey("vgName")) {
+            lun.setStorageDomainId(Guid.createGuidFromString(xlun.get("vgName").toString()));
         }
         if (xlun.containsKey("serial")) {
             lun.setSerial(xlun.get("serial").toString());
