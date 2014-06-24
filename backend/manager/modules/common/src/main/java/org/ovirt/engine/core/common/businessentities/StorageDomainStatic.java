@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StorageDomainStatic implements BusinessEntity<Guid> {
+public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
     private static final long serialVersionUID = 8635263021145935458L;
 
     private Guid id;
@@ -160,6 +160,11 @@ public class StorageDomainStatic implements BusinessEntity<Guid> {
 
     public void setComment(String value) {
         comment = value;
+    }
+
+    @Override
+    public String getName() {
+        return getStorageName();
     }
 
     @Override
