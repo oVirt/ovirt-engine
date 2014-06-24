@@ -6,9 +6,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.QueriesCommandBase;
-import org.ovirt.engine.core.common.businessentities.SANState;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.queries.GetExistingStorageDomainListParameters;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -49,8 +48,8 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                 }
                 for (Guid domainId : guidsFromIrs) {
                     if (!guidsFromDb.contains(domainId)) {
-                        Pair<StorageDomainStatic, SANState> domainFromIrs =
-                                (Pair<StorageDomainStatic, SANState>) Backend
+                        Pair<StorageDomainStatic, Guid> domainFromIrs =
+                                (Pair<StorageDomainStatic, Guid>) Backend
                                         .getInstance()
                                         .getResourceManager()
                                         .RunVdsCommand(

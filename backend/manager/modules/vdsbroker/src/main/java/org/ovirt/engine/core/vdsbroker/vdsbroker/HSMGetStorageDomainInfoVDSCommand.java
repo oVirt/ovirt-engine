@@ -4,14 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.SANState;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfoVDSCommandParameters>
@@ -26,13 +27,13 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
     protected void executeVdsBrokerCommand() {
         _result = getBroker().getStorageDomainInfo(getParameters().getStorageDomainId().toString());
         proceedProxyReturnValue();
-        Pair<StorageDomainStatic, SANState> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);
+        Pair<StorageDomainStatic, Guid> pairSdStatic = BuildStorageStaticFromXmlRpcStruct(_result.mStorageInfo);
         pairSdStatic.getFirst().setId(getParameters().getStorageDomainId());
         setReturnValue(pairSdStatic);
     }
 
-    private static Pair<StorageDomainStatic, SANState> BuildStorageStaticFromXmlRpcStruct(Map<String, Object>  xmlRpcStruct) {
-        Pair<StorageDomainStatic, SANState> returnValue = new Pair<StorageDomainStatic, SANState>();
+    private static Pair<StorageDomainStatic, Guid> BuildStorageStaticFromXmlRpcStruct(Map<String, Object>  xmlRpcStruct) {
+        Pair<StorageDomainStatic, Guid> returnValue = new Pair<StorageDomainStatic, Guid>();
         StorageDomainStatic sdStatic = new StorageDomainStatic();
         if (xmlRpcStruct.containsKey("name")) {
             sdStatic.setStorageName(xmlRpcStruct.get("name").toString());
@@ -71,12 +72,17 @@ public class HSMGetStorageDomainInfoVDSCommand<P extends HSMGetStorageDomainInfo
             }
         }
         if (xmlRpcStruct.containsKey("state")) {
-            returnValue.setSecond(EnumUtils.valueOf(SANState.class, xmlRpcStruct.get("state")
+            sdStatic.setSanState(EnumUtils.valueOf(SANState.class, xmlRpcStruct.get("state")
                     .toString()
                     .toUpperCase(),
                     false));
         }
         returnValue.setFirst(sdStatic);
+        Object[] poolUUIDs = (Object[])xmlRpcStruct.get("pool");
+        if (poolUUIDs.length != 0) {
+            returnValue.setSecond(Guid.createGuidFromString(poolUUIDs[0].toString()));
+        }
+
         return returnValue;
     }
 

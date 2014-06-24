@@ -4,12 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.SANState;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -76,7 +74,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
-        Pair<StorageDomainStatic, SANState> domainFromIrs = (Pair<StorageDomainStatic, SANState>) runVdsCommand(
+        Pair<StorageDomainStatic, Guid> domainFromIrs = (Pair<StorageDomainStatic, Guid>) runVdsCommand(
                 VDSCommandType.HSMGetStorageDomainInfo,
                 new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId())
         ).getReturnValue();
@@ -88,7 +86,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         return concreteCheckExistingStorageDomain(domainFromIrs);
     }
 
-    protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, SANState> domain) {
+    protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, Guid> domain) {
         boolean returnValue = false;
         StorageDomainStatic domainFromIrs = domain.getFirst();
         if (StringUtils.isEmpty(getStorageDomain().getStorageStaticData().getStorage())
