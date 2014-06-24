@@ -45,6 +45,8 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private String storagePoolName;
 
+    private SANState sanState;
+
     private transient long lastTimeUsedAsMaster;
 
     public StorageDomainStatic() {
@@ -162,6 +164,14 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         comment = value;
     }
 
+    public SANState getSanState() {
+        return sanState;
+    }
+
+    public void setSanState(SANState sanState) {
+        this.sanState = sanState;
+    }
+
     @Override
     public String getName() {
         return getStorageName();
@@ -181,6 +191,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         result = prime * result + ((storagePoolType == null) ? 0 : storagePoolType.hashCode());
         result = prime * result + ((storageType == null) ? 0 : storageType.hashCode());
         result = prime * result + ((description == null) ? 0 : description.hashCode());
+        result = prime * result + ((sanState == null) ? 0 : sanState.hashCode());
         return result;
     }
 
@@ -205,6 +216,7 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && storageFormat == other.storageFormat
                 && storagePoolType == other.storagePoolType
                 && storageType == other.storageType
+                && sanState == other.sanState
                 && ObjectUtils.objectsEqual(description, other.description));
     }
 }

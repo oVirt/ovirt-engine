@@ -56,6 +56,7 @@
         <include name="common/businessentities/VmBalloonInfo.java" />
 		<include name="common/businessentities/ArchitectureType.java" />
         <include name="common/businessentities/IscsiBond.java" />
+        <include name="common/businessentities/SANState.java" />
         <include name="common/businessentities/HaMaintenanceMode.java" />
     <include name="common/businessentities/HasSerialNumberPolicy.java" />
     <include name="common/businessentities/SerialNumberPolicy.java" />
