@@ -55,24 +55,25 @@ public class CommandExecutor {
             Guid cmdId = entry.getKey();
             CommandCallBack callBack = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
-            switch(status) {
-                case FAILED:
-                    callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
-                    coco.updateCallBackNotified(cmdId);
-                    iterator.remove();
-                    break;
-                case SUCCEEDED:
-                    callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
-                    coco.updateCallBackNotified(cmdId);
-                    iterator.remove();
-                    break;
-                case ACTIVE_SYNC:
-                    coco.retrieveCommand(cmdId).setCommandStatus(CommandStatus.FAILED_RESTARTED);
-                    break;
-                case ACTIVE:
-                case ACTIVE_ASYNC:
-                    callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
-                    break;
+
+            switch (status) {
+            case FAILED:
+                callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
+                coco.updateCallBackNotified(cmdId);
+                iterator.remove();
+                break;
+            case SUCCEEDED:
+                callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
+                coco.updateCallBackNotified(cmdId);
+                iterator.remove();
+                break;
+            case ACTIVE_SYNC:
+                coco.retrieveCommand(cmdId).setCommandStatus(CommandStatus.FAILED_RESTARTED);
+                break;
+            case ACTIVE:
+            case ACTIVE_ASYNC:
+                callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                break;
             default:
                 break;
             }
