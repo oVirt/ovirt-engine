@@ -38,6 +38,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.map.DeserializationConfig.Feature;
+import org.ovirt.engine.core.uutils.crypto.CryptMD5;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
 
@@ -272,8 +273,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "            },\n" +
                 "           {\n" +
                 "                \"name\": \"pass\",\n" +
-                // todo: current set pass hardcore to "321321321", waits for alonbl for md5 util and will use also rootPassword field
-                "                \"value\": \"" + "$1$s/abrbU5$qSMGyWzwtBAQXLQN0VlQg0" + "\",\n" +
+                "                \"value\": \"" + CryptMD5.crypt(rootPassword) + "\",\n" +
                 "                \"_destroy\": \"false\",\n" +
                 "                \"nested\": \"\"\n" +
                 "            },\n" +
