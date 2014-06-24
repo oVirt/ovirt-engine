@@ -287,6 +287,10 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             topImage.getImage().setSnapshotId(baseImage.getImage().getSnapshotId());
             baseImage.getImage().setSnapshotId(oldTopSnapshotId);
 
+            boolean oldTopIsActive = topImage.getImage().isActive();
+            topImage.getImage().setActive(baseImage.getImage().isActive());
+            baseImage.getImage().setActive(oldTopIsActive);
+
             topImage.setImageStatus(ImageStatus.OK);
             getBaseDiskDao().update(topImage);
             getImageDao().update(topImage.getImage());
