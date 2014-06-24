@@ -49,6 +49,10 @@ public class MacPoolModel extends EntityModel<MacPool> {
     }
 
     protected void init() {
+        if (getEntity() == null) {
+            return;
+        }
+
         allowDuplicates.setEntity(getEntity().isAllowDuplicateMacAddresses());
         List<MacRangeModel> rangeModels = new ArrayList<MacRangeModel>();
         for (MacRange range : getEntity().getRanges()) {

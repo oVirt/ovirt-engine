@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewD
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.RecoveryStoragePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.QuotaPopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -65,7 +66,8 @@ public class DataCenterModule extends AbstractGinModule {
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<RecoveryStoragePopupPresenterWidget> recoveryStorageConfirmPopupProvider,
             final Provider<ReportPresenterWidget> reportWindowProvider,
-            final Provider<DataCenterForceRemovePopupPresenterWidget> forceRemovePopupProvider) {
+            final Provider<DataCenterForceRemovePopupPresenterWidget> forceRemovePopupProvider,
+            final Provider<SharedMacPoolPopupPresenterWidget> macPoolPopupProvider) {
         return new MainTabModelProvider<StoragePool, DataCenterListModel>(eventBus, defaultConfirmPopupProvider, DataCenterListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterListModel source,
@@ -75,6 +77,8 @@ public class DataCenterModule extends AbstractGinModule {
                     return popupProvider.get();
                 } else if (lastExecutedCommand == getModel().getGuideCommand()) {
                     return guidePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getAddMacPoolCommand()) {
+                    return macPoolPopupProvider.get();
                 } else {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }

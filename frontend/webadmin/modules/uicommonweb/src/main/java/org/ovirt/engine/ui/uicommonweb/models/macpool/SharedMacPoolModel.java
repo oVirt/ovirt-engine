@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.macpool;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MacPool;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -70,7 +71,7 @@ public class SharedMacPoolModel extends MacPoolModel {
         return getIsValid();
     }
 
-    private void cancel() {
+    protected void cancel() {
         sourceModel.setWindow(null);
     }
 
@@ -87,10 +88,14 @@ public class SharedMacPoolModel extends MacPoolModel {
             public void executed(FrontendActionAsyncResult result) {
                 stopProgress();
                 if (result.getReturnValue() != null && result.getReturnValue().getSucceeded()) {
-                    cancel();
+                    onActionSucceeded((Guid) result.getReturnValue().getActionReturnValue());
                 }
             }
         });
+    }
+
+    protected void onActionSucceeded(Guid macPoolId) {
+        cancel();
     }
 
     @Override

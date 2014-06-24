@@ -180,6 +180,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Data Center(s)")
     String removeDataCenterTitle();
 
+    @DefaultStringValue("New")
+    String addMacPoolButton();
+
     @DefaultStringValue("Force Remove Data Center")
     String forceRemoveDataCenterTitle();
 

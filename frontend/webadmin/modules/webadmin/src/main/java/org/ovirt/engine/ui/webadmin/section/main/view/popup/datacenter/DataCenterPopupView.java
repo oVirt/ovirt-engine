@@ -6,6 +6,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
@@ -81,6 +83,9 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     MacPoolWidget macPoolWidget;
 
     @UiField
+    UiCommandButton addMacPoolButton;
+
+    @UiField
     Style style;
 
     private final Driver driver = GWT.create(Driver.class);
@@ -145,6 +150,11 @@ public class DataCenterPopupView extends AbstractModelBoundPopupView<DataCenterM
     @Override
     public void updateMacPool(MacPoolModel macPoolModel) {
         macPoolWidget.edit(macPoolModel);
+    }
+
+    @Override
+    public HasUiCommandClickHandlers getMacPoolButton() {
+        return addMacPoolButton;
     }
 
     public void addContentStyleName(String styleName) {

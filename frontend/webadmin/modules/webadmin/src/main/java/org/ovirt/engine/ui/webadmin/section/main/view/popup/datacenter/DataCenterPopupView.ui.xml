@@ -4,12 +4,23 @@
     xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
     xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
     xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab"
-    xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool">
+    xmlns:m="urn:import:org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool"
+    xmlns:c="urn:import:org.ovirt.engine.ui.common.widget">
 
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
 
     <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView.Style">
         .contentStyle {
+        }
+
+        .inlineWidget {
+            display: inline-block;
+            float: left;
+        }
+
+        .indentedButton {
+            margin-left: 10px;
+            margin-top: 5px;
         }
     </ui:style>
 
@@ -34,7 +45,10 @@
                     <t:DialogTab label="{constants.dataCenterMacPoolTab}">
                         <t:content>
                             <g:FlowPanel>
-                                <e:ListModelListBoxEditor ui:field="macPoolListEditor" />
+                                <g:FlowPanel>
+                                    <e:ListModelListBoxEditor ui:field="macPoolListEditor" addStyleNames="{style.inlineWidget}" />
+                                    <c:UiCommandButton ui:field="addMacPoolButton" addStyleNames="{style.inlineWidget} {style.indentedButton}" />
+                                </g:FlowPanel>
                                 <m:MacPoolWidget ui:field="macPoolWidget" />
                             </g:FlowPanel>
                         </t:content>

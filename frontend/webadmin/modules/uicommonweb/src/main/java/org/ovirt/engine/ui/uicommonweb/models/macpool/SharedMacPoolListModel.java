@@ -80,10 +80,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
     }
 
     private void newMacPool() {
-        SharedMacPoolModel model = new SharedMacPoolModel(this, VdcActionType.AddMacPool);
-        model.setTitle(ConstantsManager.getInstance().getConstants().newSharedMacPoolTitle());
-        model.setHashName("new_shared_mac_pool"); //$NON-NLS-1$
-        model.setHelpTag(HelpTag.new_shared_mac_pool);
+        SharedMacPoolModel model = new NewSharedMacPoolModel(this);
         model.setEntity(new MacPool());
         setWindow(model);
     }
