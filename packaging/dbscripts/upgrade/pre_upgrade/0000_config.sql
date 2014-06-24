@@ -1061,7 +1061,7 @@ select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
 select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
-
+select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once

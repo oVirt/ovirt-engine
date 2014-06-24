@@ -1827,5 +1827,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     LiveMergeSupported,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    AlertOnNumberOfLVs,
+
     Invalid
 }
