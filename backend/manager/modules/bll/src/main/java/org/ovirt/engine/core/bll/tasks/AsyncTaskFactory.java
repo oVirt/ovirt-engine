@@ -69,7 +69,8 @@ public final class AsyncTaskFactory {
     public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit) {
         try {
             SPMAsyncTask result = null;
-            if (taskType == AsyncTaskType.unknown) {
+            if (taskType == AsyncTaskType.unknown ||
+                    asyncTaskParams.getDbAsyncTask().getaction_type() == VdcActionType.Unknown) {
                 result = new SPMAsyncTask(coco, asyncTaskParams);
             } else {
                 result = new CommandAsyncTask(coco, asyncTaskParams, duringInit);
