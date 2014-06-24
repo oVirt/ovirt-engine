@@ -17,48 +17,6 @@
          <fo:flow flow-name="xsl-region-body">
            <fo:block font-family="Arial" font-size="8pt" font-weight="bold">
 
-           <xsl:template match="block_statistic">
-               <fo:table border-width="0.1mm" border-style="solid" table-layout="fixed" width="100%" border-collapse="collapse">
-                   <fo:table-column column-width="3cm"/>
-                   <fo:table-column column-width="3cm"/>
-                   <fo:table-column column-width="3cm"/>
-                   <fo:table-header text-align="center">
-                       <fo:table-cell border="2pt solid black">
-                           <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Size</fo:block>
-                       </fo:table-cell>
-                       <fo:table-cell border="2pt solid black">
-                           <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Read Blocks</fo:block>
-                       </fo:table-cell>
-                       <fo:table-cell border="2pt solid black">
-                           <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Write Blocks</fo:block>
-                       </fo:table-cell>
-                   </fo:table-header>
-                   <fo:table-body>
-                       <xsl:for-each select="block_statistic">
-                           <fo:table-row border="solid 0.1mm black">
-                               <fo:table-cell text-align="center" border="1pt solid black">
-                                   <fo:block>
-                                       <xsl:value-of select="concat(concat(statistic[name/text()='block.size']/values/value/datum, ' '), statistic[name/text()='block.size']/unit)" />
-                                   </fo:block>
-                               </fo:table-cell>
-                               <fo:table-cell text-align="center" border="1pt solid black">
-                                   <fo:block>
-                                       <xsl:value-of select="statistic[name/text()='block.bytes.read']/values/value/datum" />
-                                   </fo:block>
-                               </fo:table-cell>
-                               <fo:table-cell text-align="center" border="1pt solid black">
-                                   <fo:block>
-                                       <xsl:value-of select="statistic[name/text()='block.bytes.write']/values/value/datum" />
-                                   </fo:block>
-                               </fo:table-cell>
-                           </fo:table-row>
-                       </xsl:for-each>
-                   </fo:table-body>
-               </fo:table>
-           </xsl:template>
-
-           <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
-
                 <xsl:if test="./brick_profile_details/brick_profile_detail != ''">
                 <xsl:for-each select="./brick_profile_details/brick_profile_detail">
                    <fo:block font="12pt bold Arial">
@@ -73,6 +31,48 @@
                             <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
                         </fo:block>
 
+                        <xsl:if test="block_statistic != ''">
+                        <fo:table border-width="0.1mm" border-style="solid" table-layout="fixed" width="100%" border-collapse="collapse">
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-header text-align="center">
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Size</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Read Blocks</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Write Blocks</fo:block>
+                                </fo:table-cell>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:for-each select="block_statistic">
+                                    <fo:table-row border="solid 0.1mm black">
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="concat(concat(statistic[name/text()='block.size']/values/value/datum, ' '), statistic[name/text()='block.size']/unit)" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="statistic[name/text()='block.bytes.read']/values/value/datum" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="statistic[name/text()='block.bytes.write']/values/value/datum" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:for-each>
+                            </fo:table-body>
+                        </fo:table>
+                        </xsl:if>
+                        <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
+
+                        <xsl:if test="fop_statistic != ''">
                         <fo:block font="12pt bold Arial">
                             Fop Statistics
                             <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
@@ -133,7 +133,7 @@
                                 </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
-
+                        </xsl:if>
                         <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
                     </xsl:if>
                 </xsl:for-each>
@@ -152,11 +152,53 @@
                    <xsl:for-each select="profile_detail">
                      <xsl:if test="profile_type='CUMULATIVE'">
 
+                       <xsl:if test="block_statistic != ''">
                         <fo:block font="12pt bold Arial">
                             Block Statistics
                             <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
                         </fo:block>
 
+                        <fo:table border-width="0.1mm" border-style="solid" table-layout="fixed" width="100%" border-collapse="collapse">
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-column column-width="3cm"/>
+                            <fo:table-header text-align="center">
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Size</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Read Blocks</fo:block>
+                                </fo:table-cell>
+                                <fo:table-cell border="2pt solid black">
+                                    <fo:block font-family="Arial" font-size="10pt" font-weight="bold">Write Blocks</fo:block>
+                                </fo:table-cell>
+                            </fo:table-header>
+                            <fo:table-body>
+                                <xsl:for-each select="block_statistic">
+                                    <fo:table-row border="solid 0.1mm black">
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="concat(concat(statistic[name/text()='block.size']/values/value/datum, ' '), statistic[name/text()='block.size']/unit)" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="statistic[name/text()='block.bytes.read']/values/value/datum" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                        <fo:table-cell text-align="center" border="1pt solid black">
+                                            <fo:block>
+                                                <xsl:value-of select="statistic[name/text()='block.bytes.write']/values/value/datum" />
+                                            </fo:block>
+                                        </fo:table-cell>
+                                    </fo:table-row>
+                                </xsl:for-each>
+                            </fo:table-body>
+                        </fo:table>
+                        </xsl:if>
+                        <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
+
+                        <xsl:if test="fop_statistic != ''">
                         <fo:block font="12pt bold Arial">
                             Fop Statistics
                             <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
@@ -217,7 +259,7 @@
                                 </xsl:for-each>
                             </fo:table-body>
                         </fo:table>
-
+                        </xsl:if>
                         <fo:block linefeed-treatment="preserve" padding-bottom="10.0pt" font-size="11pt" />
                     </xsl:if>
                 </xsl:for-each>
@@ -231,4 +273,3 @@
     </fo:root>
   </xsl:template>
 </xsl:stylesheet>
-
