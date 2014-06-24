@@ -89,4 +89,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<span title='{2}'>{0} {1}</span>")
     SafeHtml iconWithTextAndTitle(SafeHtml icon, String text, String title);
+
+    @Template("<span title='{1}'>{0}</span>")
+    SafeHtml textAndTitle(String text, String title);
 }

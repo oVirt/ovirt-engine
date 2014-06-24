@@ -1342,6 +1342,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 
+    @DefaultStringValue("Disk in status Illegal")
+    String illegalStatus();
+
     @DefaultStringValue("CPU Pinning topology")
     String cpuPinningLabel();
 

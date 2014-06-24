@@ -21,6 +21,7 @@ import com.google.gwt.user.client.ui.SplitLayoutPanel;
 import com.google.gwt.view.client.CellPreviewEvent;
 import com.google.gwt.view.client.NoSelectionModel;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
@@ -235,11 +236,14 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 @Override
                 public void render(Context context, SnapshotModel snapshotModel, SafeHtmlBuilder sb) {
                     DiskImage image = snapshotModel.getImageByDiskId(disk.getId());
-                    if (image != null) {
-                        super.render(context, snapshotModel, sb);
+                    if (image == null) {
+                        sb.appendEscaped(constants.notAvailableLabel());
+                    }
+                    else if (image.getImageStatus() == ImageStatus.ILLEGAL) {
+                        sb.append(templates.textAndTitle(constants.notAvailableLabel(), constants.illegalStatus()));
                     }
                     else {
-                        sb.appendEscaped(constants.notAvailableLabel());
+                        super.render(context, snapshotModel, sb);
                     }
                 }
             }, templates.iconWithTextAndTitle(imageResourceToSafeHtml(resources.diskIcon()),
