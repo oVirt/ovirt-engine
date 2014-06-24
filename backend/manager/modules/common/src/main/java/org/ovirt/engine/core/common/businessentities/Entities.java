@@ -50,6 +50,18 @@ public class Entities {
         }
     }
 
+    public static <E extends StorageServerConnections> Map<String, E> connectionsByIQN(List<E> entityList) {
+        if (entityList != null) {
+            Map<String, E> map = new HashMap<String, E>();
+            for (E e : entityList) {
+                map.put(e.getiqn(), e);
+            }
+            return map;
+        } else {
+            return Collections.emptyMap();
+        }
+    }
+
     public static <E extends VmNetworkInterface> Map<String, E> vmInterfacesByNetworkName(List<E> entityList) {
         if (entityList != null) {
             Map<String, E> map = new HashMap<String, E>();
