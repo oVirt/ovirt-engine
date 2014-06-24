@@ -45,7 +45,7 @@ public class LabelWithToolTip extends HTML {
 
             @Override
             public void onMouseOver(MouseOverEvent event) {
-                if (StringUtils.isEmpty(title)) {
+                if (!StringUtils.isEmpty(title)) {
                     tooltip.setHTML(title);
                     tooltipPanel.showRelativeTo(LabelWithToolTip.this);
                 }
