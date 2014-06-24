@@ -58,7 +58,7 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         List<T> sortedParamValues = new ArrayList<>(paramValues);
         Collections.sort(sortedParamValues, BusinessEntityComparator.<T, ID> newInstance());
         getCallsHandler().executeStoredProcAsBatch(procedureName == null ? getProcedureNameForUpdate() : procedureName,
-                paramValues, mapper);
+                sortedParamValues, mapper);
     }
 
     @Override
