@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -59,6 +59,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         before=(
             oenginecons.Stages.DIALOG_TITLES_E_ENGINE,
+            osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
         ),
         after=(
             oenginecons.Stages.DIALOG_TITLES_S_ENGINE,
@@ -66,12 +67,10 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
         ],
-        name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _customization_enable(self):
-        if not self.environment[oenginecons.CoreEnv.ENABLE]:
-            self._enabled = False
+        self._enabled = self.environment[oenginecons.CoreEnv.ENABLE]
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -88,7 +87,6 @@ class Plugin(plugin.PluginBase):
         name=osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
     )
     def _customization(self):
-
         if self.environment[
             osetupcons.ConfigEnv.APPLICATION_MODE
         ] is None:
