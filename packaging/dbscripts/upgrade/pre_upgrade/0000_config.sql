@@ -779,6 +779,8 @@ select fn_db_add_config_value('FenceKdumpMessageInterval','5','general');
 select fn_db_add_config_value('FenceKdumpListenerTimeout','90','general');
 select fn_db_add_config_value('KdumpStartedTimeout','30','general');
 
+select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
+
 
 ------------------------------------------------------------------------------------
 --                  Update with override section
@@ -1073,7 +1075,6 @@ select fn_db_delete_config_value('VirtIoScsiUnsupportedOsList','general');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.0');
 select fn_db_delete_config_value('EnableMACAntiSpoofingFilterRules', '3.1');
 select fn_db_delete_config_value('SSHInactivityTimoutSeconds','general');
-select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 select fn_db_delete_config_value('SSHInactivityHardTimoutSeconds','general');
 select fn_db_delete_config_value('StorageDomainFalureTimeoutInMinutes','general');
 select fn_db_delete_config_value('VdsLoadBalancingeIntervalInMinutes','general');
