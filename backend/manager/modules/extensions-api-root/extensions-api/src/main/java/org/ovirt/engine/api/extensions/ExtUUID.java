@@ -75,7 +75,7 @@ public class ExtUUID implements Comparable<ExtUUID>, Cloneable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public ExtUUID clone() throws CloneNotSupportedException {
         return new ExtUUID(
             name,
             uuid

@@ -118,7 +118,7 @@ public class ExtKey implements Cloneable, Serializable {
      * {@inheritDoc}
      */
     @Override
-    public Object clone() throws CloneNotSupportedException {
+    public ExtKey clone() throws CloneNotSupportedException {
         return new ExtKey(
             type,
             uuid,

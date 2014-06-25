@@ -51,8 +51,8 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * {@inheritDoc}
      */
     @Override
-    public Object clone() {
-        return new ConcurrentHashMap<ExtKey, Object>(map);
+    public ExtMap clone() {
+        return new ExtMap(map);
     }
 
     /**
