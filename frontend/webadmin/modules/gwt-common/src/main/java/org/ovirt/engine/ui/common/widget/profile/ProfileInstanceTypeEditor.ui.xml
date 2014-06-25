@@ -3,12 +3,17 @@
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
 	xmlns:g="urn:import:com.google.gwt.user.client.ui"
 	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
-	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile">
+	xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile"
+	xmlns:l="urn:import:org.ovirt.engine.ui.common.widget.label">
 
 	<ui:style type="org.ovirt.engine.ui.common.widget.profile.ProfileInstanceTypeEditor.Style">
 		.labelStyle {
 			float: left;
-			width: 50px;
+			width: 70px;
+		}
+
+		.noDisplay {
+			display: none;
 		}
 
 		.contentStyle {
@@ -22,6 +27,7 @@
 	</ui:style>
 
 	<g:FlowPanel>
+		<l:LabelWithTextOverflow ui:field="vnicLabel" addStyleNames="{style.labelStyle}" />
 		<p:ProfileEditor ui:field="profileEditor" addStyleNames="{style.containerStyle}" />
 	</g:FlowPanel>
 

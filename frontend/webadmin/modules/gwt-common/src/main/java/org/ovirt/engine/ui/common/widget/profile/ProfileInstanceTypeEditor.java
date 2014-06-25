@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextOverflow;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VnicInstanceType;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -33,9 +34,14 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
     }
 
     interface Style extends CssResource {
-        String labelStyle();
         String contentStyle();
+
+        String noDisplay();
     }
+
+    @UiField
+    @Path(value = "networkInterface.name")
+    LabelWithTextOverflow vnicLabel;
 
     @UiField
     @Path(value = "selectedItem")
@@ -68,8 +74,7 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         final VmNetworkInterface vnic = model.getNetworkInterface();
         String vnicName = vnic.getName();
 
-        profileEditor.setLabel(vnicName);
-        profileEditor.addLabelStyleName(style.labelStyle());
+        profileEditor.addLabelStyleName(style.noDisplay());
         profileEditor.addContentWidgetStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, vnicName));
         model.getSelectedItemChangedEvent().addListener(new IEventListener() {
