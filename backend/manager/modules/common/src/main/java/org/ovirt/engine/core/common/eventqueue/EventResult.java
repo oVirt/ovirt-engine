@@ -4,6 +4,7 @@ public class EventResult {
 
     private boolean success;
     private EventType eventType;
+    private Object resultData;
 
     public EventResult(boolean success, EventType eventType) {
         this.success = success;
@@ -26,4 +27,11 @@ public class EventResult {
         this.success = success;
     }
 
+    public Object getResultData() {
+        return resultData;
+    }
+
+    public void setResultData(Object resultData) {
+        this.resultData = resultData;
+    }
 }
