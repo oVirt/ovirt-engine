@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.storage.StorageHandlingCommandBase;
@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.SetNonOperationalVdsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
+import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.KdumpStatus;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -77,6 +79,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean fenceSucceeded = true;
     private boolean vdsProxyFound;
+    private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
     private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
     private FenceStatusReturnValue fenceStatusReturnValue;
@@ -152,7 +155,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             processStoragePoolStatus();
             runUpdateMomPolicy(getVdsGroup(), getVds());
         } else {
-            Map<String, String> customLogValues = Collections.singletonMap("StoragePoolName", getStoragePoolName());
+            Map<String, String> customLogValues = new HashMap<>();
+            customLogValues.put("StoragePoolName", getStoragePoolName());
+            if (problematicDomains != null && !problematicDomains.isEmpty()) {
+                customLogValues.put("StorageDomainNames", StringUtils.join(Entities.objectNames(problematicDomains), ", "));
+            }
             setNonOperational(NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE, customLogValues);
             return false;
         }
@@ -200,7 +207,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         } else {
             ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(getStoragePool(), getVds());
             runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params);
-            returnValue = connectHostToPool();
+            EventResult connectResult = connectHostToPool();
+            if (connectResult != null) {
+                returnValue = connectResult.isSuccess();
+                problematicDomains = (List<StorageDomainStatic>) connectResult.getResultData();
+            }
             connectPoolSucceeded = returnValue;
         }
         return returnValue;
@@ -213,7 +224,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
      * we will try to run reconstruct
      * @return
      */
-    private boolean connectHostToPool() {
+    private EventResult connectHostToPool() {
         final VDS vds = getVds();
         EventResult result =
                 ((EventQueue) EjbUtils.findBean(BeanType.EVENTQUEUE_MANAGER, BeanProxyType.LOCAL)).submitEventSync(new Event(getStoragePool().getId(),
@@ -224,10 +235,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                 return runConnectHostToPoolEvent(getStoragePool().getId(), vds);
                             }
                         });
-        if (result != null) {
-            return result.isSuccess();
-        }
-        return false;
+        return result;
     }
 
     private EventResult runConnectHostToPoolEvent(final Guid storagePoolId, final VDS vds) {
@@ -263,8 +271,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         }
 
         if (result.isSuccess()) {
-            result.setSuccess(proceedVdsStats(!masterDomainInactiveOrUnknown));
+            Pair<Boolean, List<StorageDomainStatic>> vdsStatsResults = proceedVdsStats(!masterDomainInactiveOrUnknown);
+            result.setSuccess(vdsStatsResults.getFirst());
             if (!result.isSuccess()) {
+                result.setResultData(vdsStatsResults.getSecond());
                 AuditLogDirector.log(new AuditLogableBase(getVdsId()),
                         AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
             }
@@ -288,8 +298,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         return returnValue;
     }
 
-    protected boolean proceedVdsStats(boolean shouldCheckReportedDomains) {
-        boolean returnValue = true;
+    private Pair<Boolean, List<StorageDomainStatic>> proceedVdsStats(boolean shouldCheckReportedDomains) {
+        Pair<Boolean, List<StorageDomainStatic>> returnValue = new Pair<>(true, null);
         try {
             runVdsCommand(VDSCommandType.GetStats, new VdsIdAndVdsVDSCommandParametersBase(getVds()));
             if (shouldCheckReportedDomains) {
@@ -303,7 +313,11 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                             getStoragePool().getName(),
                             getVds().getName());
                     if (domainInfo == null || domainInfo.getStorageDomainType().isDataDomain()) {
-                        returnValue = false;
+                        returnValue.setFirst(false);
+                        if (returnValue.getSecond() == null) {
+                            returnValue.setSecond(new ArrayList<StorageDomainStatic>());
+                        }
+                        returnValue.getSecond().add(domainInfo);
                     }
                 }
             }
@@ -311,7 +325,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
                     getVds().getName(),
                     e);
-            returnValue = false;
+            returnValue.setFirst(false);
         }
         return returnValue;
     }

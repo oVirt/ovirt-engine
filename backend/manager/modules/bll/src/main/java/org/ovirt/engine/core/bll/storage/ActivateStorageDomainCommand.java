@@ -127,8 +127,9 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         );
 
         for (Guid vdsId : vdsIdsToSetNonOperational) {
+            Map<String, String> customLogValues = Collections.singletonMap("StorageDomainNames", getStorageDomainName());
             SetNonOperationalVdsParameters tempVar =
-                    new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE);
+                    new SetNonOperationalVdsParameters(vdsId, STORAGE_DOMAIN_UNREACHABLE, customLogValues);
             tempVar.setStorageDomainId(getStorageDomain().getId());
             tempVar.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
             getBackend().runInternalAction(VdcActionType.SetNonOperationalVds,

@@ -1365,7 +1365,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
             // is with the hosts
             // that did report on a problem with this domain.
             // (and not a problem with the domain itself).
-            StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+            final StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
             String domainIdTuple = getDomainIdTuple(domainId);
             List<Guid> nonOpVdss = new ArrayList<Guid>();
             if (vdssInProblem.size() > 0) {
@@ -1395,8 +1395,11 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                                     ResourceManager
                                             .getInstance()
                                             .getEventListener()
-                                            .vdsNonOperational(vdsId, NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
-                                                    true, domainId);
+                                            .vdsNonOperational(vdsId,
+                                                    NonOperationalReason.STORAGE_DOMAIN_UNREACHABLE,
+                                                    true,
+                                                    domainId,
+                                                    Collections.singletonMap("StorageDomainNames", storageDomain.getStorageName()));
                                 }
                             });
 
