@@ -1,6 +1,6 @@
 #
 # ovirt-engine-setup -- ovirt engine setup
-# Copyright (C) 2013 Red Hat, Inc.
+# Copyright (C) 2013-2014 Red Hat, Inc.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
 # you may not use this file except in compliance with the License.
@@ -55,6 +55,7 @@ class Plugin(plugin.PluginBase):
         self.dialog.note(
             text=_('\n--== CONFIGURATION PREVIEW ==--\n\n'),
         )
+        shown = set()
         for c in sum(
             [
                 constobj.__dict__['__osetup_attrs__']
@@ -73,7 +74,8 @@ class Plugin(plugin.PluginBase):
                     ):
                         env = k.fget(None)
                         value = self.environment.get(env)
-                        if value is not None:
+                        if value is not None and env not in shown:
+                            shown.add(env)
                             self.dialog.note(
                                 text=_('{key:40}: {value}').format(
                                     key=(
