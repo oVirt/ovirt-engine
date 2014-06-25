@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;

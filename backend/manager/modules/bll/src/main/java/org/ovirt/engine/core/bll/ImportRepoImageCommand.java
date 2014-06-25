@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.provider.OpenStackImageException;
-import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;

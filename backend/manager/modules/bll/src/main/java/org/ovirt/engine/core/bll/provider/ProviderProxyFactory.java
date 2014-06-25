@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.provider;
 
 import org.ovirt.engine.core.bll.host.provider.foreman.ForemanHostProviderProxy;
 import org.ovirt.engine.core.bll.provider.network.openstack.OpenstackNetworkProviderProxy;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;

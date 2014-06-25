@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.provider;
+package org.ovirt.engine.core.bll.provider.storage;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -16,6 +16,9 @@ import com.woorea.openstack.glance.model.Image;
 import com.woorea.openstack.glance.model.ImageDownload;
 import com.woorea.openstack.glance.model.Images;
 import com.woorea.openstack.keystone.utils.KeystoneTokenProvider;
+
+import org.ovirt.engine.core.bll.provider.ProviderProxy;
+import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderProperties;

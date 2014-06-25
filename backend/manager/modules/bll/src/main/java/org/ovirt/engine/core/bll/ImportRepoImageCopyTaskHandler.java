@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
-import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.VdcObjectType;

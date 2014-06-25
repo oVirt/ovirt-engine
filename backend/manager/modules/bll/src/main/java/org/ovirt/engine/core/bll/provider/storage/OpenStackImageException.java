@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.provider;
+package org.ovirt.engine.core.bll.provider.storage;
 
 public class OpenStackImageException extends RuntimeException {
 

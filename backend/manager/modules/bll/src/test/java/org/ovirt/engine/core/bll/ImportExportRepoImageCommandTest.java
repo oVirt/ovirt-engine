@@ -4,7 +4,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.lock.InMemoryLockManager;
-import org.ovirt.engine.core.bll.provider.OpenStackImageProviderProxy;
+import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Provider;
