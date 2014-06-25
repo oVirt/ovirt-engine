@@ -70,7 +70,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH
+        name=oenginecons.Stages.KDUMP_ALLOW,
     )
     def _customization_disable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE]:
@@ -90,6 +90,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DB_CONNECTION_STATUS,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            oenginecons.Stages.KDUMP_ALLOW,
         ),
     )
     def _customization_firewall(self):

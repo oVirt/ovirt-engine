@@ -55,7 +55,6 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _customization(self):
         if self.environment[oenginecons.CoreEnv.ENABLE] is None:

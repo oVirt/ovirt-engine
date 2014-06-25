@@ -123,7 +123,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
             oengcommcons.Stages.DIALOG_TITLES_S_PKI,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH
+        name=oenginecons.Stages.CA_ALLOWED,
     )
     def _customization_enable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE]:
@@ -137,6 +137,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
             oengcommcons.Stages.DIALOG_TITLES_S_PKI,
+            oenginecons.Stages.CA_ALLOWED
         ),
         condition=lambda self: self._enabled,
     )

@@ -67,7 +67,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: self.environment[
             oenginecons.EngineDBEnv.NEW_DATABASE
         ],
-        priority=plugin.Stages.PRIORITY_HIGH,
+        name=oenginecons.Stages.APPMODE_ALLOWED,
     )
     def _customization_enable(self):
         self._enabled = self.environment[oenginecons.CoreEnv.ENABLE]
@@ -79,6 +79,7 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_ENGINE,
+            oenginecons.Stages.APPMODE_ALLOWED,
         ),
         condition=lambda self: (
             self._enabled and

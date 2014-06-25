@@ -88,6 +88,7 @@ class Plugin(plugin.PluginBase):
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
         ),
+        name=oenginecons.Stages.CONNECTION_ALLOW,
     )
     def _customization_enable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE]:
@@ -101,6 +102,7 @@ class Plugin(plugin.PluginBase):
         ),
         after=(
             oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
+            oenginecons.Stages.CONNECTION_ALLOW,
         ),
         condition=lambda self: self._enabled,
     )

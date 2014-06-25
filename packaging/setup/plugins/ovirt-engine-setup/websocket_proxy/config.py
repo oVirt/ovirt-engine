@@ -148,7 +148,6 @@ class Plugin(plugin.PluginBase):
         after=(
             owspcons.Stages.CA_AVAILABLE,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH
     )
     def _check_separate(self):
         self.logger.info(_('Configuring WebSocket Proxy'))
@@ -158,7 +157,6 @@ class Plugin(plugin.PluginBase):
                 OVIRT_ENGINE_PKI_ENGINE_CERT
             )
         ):
-            self._on_separate_h = True
             self.dialog.note(
                 text=_(
                     "\n"

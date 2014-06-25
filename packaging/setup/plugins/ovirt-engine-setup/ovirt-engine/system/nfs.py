@@ -136,7 +136,7 @@ class Plugin(plugin.PluginBase):
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
         ),
-        priority=plugin.Stages.PRIORITY_HIGH,
+        name=oenginecons.Stages.NFS_CONFIG_ALLOWED
     )
     def _customization_enable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE]:
@@ -151,6 +151,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.CONFIG_APPLICATION_MODE_AVAILABLE,
             osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            oenginecons.Stages.NFS_CONFIG_ALLOWED,
         ),
         condition=lambda self: self._enabled,
     )

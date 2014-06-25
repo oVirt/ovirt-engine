@@ -316,7 +316,14 @@ class Stages(object):
 
     MEMORY_CHECK = 'osetup.memory.check'
 
+    CA_ALLOWED = 'osetup.engine.pki.ca.allow'
     CA_AVAILABLE = 'osetup.pki.ca.available'
+
+    POSTGRES_PROVISIONING_ALLOWED = 'osetup.engine.provisioning.pgsql.allow'
+    NFS_CONFIG_ALLOWED = 'osetup.engine.system.nfs.allow'
+    APPMODE_ALLOWED = 'osetup.engine.config.appmode.allow'
+    KDUMP_ALLOW = 'osetup.engine.kdump.allow'
+    CONNECTION_ALLOW = 'osetup.engine.db.connection.allow'
 
 
 @util.export

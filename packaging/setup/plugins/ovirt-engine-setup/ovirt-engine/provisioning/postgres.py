@@ -89,7 +89,7 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: not self.environment[
             oenginecons.CoreEnv.ENABLE
         ],
-        priority=plugin.Stages.PRIORITY_HIGH
+        name=oenginecons.Stages.POSTGRES_PROVISIONING_ALLOWED,
     )
     def _customization_enable(self):
         self._enabled = False
@@ -101,7 +101,7 @@ class Plugin(plugin.PluginBase):
             oengcommcons.Stages.DB_CONNECTION_CUSTOMIZATION,
         ),
         after=(
-            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
+            oenginecons.Stages.POSTGRES_PROVISIONING_ALLOWED,
         ),
         condition=lambda self: self._enabled,
     )
