@@ -94,6 +94,8 @@ public class FrontendActionTest {
     INewAsyncCallback mockAsyncCallback;
     @Mock
     EventBus mockEventBus;
+    @Mock
+    XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
     @Captor
     ArgumentCaptor<AsyncCallback<ArrayList<VdcReturnValueBase>>> callbackMultipleActions;
     @Captor
@@ -109,10 +111,9 @@ public class FrontendActionTest {
     public void setUp() throws Exception {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
-        XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
         CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService,
                 mockXsrfRpcRequestBuilder);
-        mockXsrfRpcRequestBuilder.setXsrfToken(new XsrfToken("Something")); //$NON-NLS-1$
+        when(mockXsrfRpcRequestBuilder.getXsrfToken()).thenReturn(new XsrfToken("Something")); //$NON-NLS-1$
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
