@@ -74,6 +74,7 @@ public class NewClusterPolicyModel extends Model {
         if (clusterPolicy.getParameterMap() != null) {
             getCustomProperties().putAll(clusterPolicy.getParameterMap());
         }
+        getCustomPropertySheet().setIsChangable(!clusterPolicy.isLocked());
         customPropertiesInitialized = true;
         refreshCustomProperties(null, false);
 

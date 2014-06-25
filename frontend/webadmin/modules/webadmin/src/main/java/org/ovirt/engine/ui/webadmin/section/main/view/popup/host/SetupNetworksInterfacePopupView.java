@@ -45,6 +45,7 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView
 
         customPropertiesPanel.setVisible(object.getCustomPropertiesModel().getIsAvailable());
         customPropertiesWidget.edit(object.getCustomPropertiesModel());
+        customPropertiesLabel.setEnabled(object.getCustomPropertiesModel().getIsChangable());
 
         if (object.getNetwork().getSelectedItem().getCluster().isDisplay()) {
             displayNetworkChangeWarning.setVisible(true);

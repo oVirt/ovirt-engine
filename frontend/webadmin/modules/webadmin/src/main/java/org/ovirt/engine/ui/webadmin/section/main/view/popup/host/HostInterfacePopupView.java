@@ -296,8 +296,6 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         bootProtocolLabel.setEnabled(bootProtocolsAvailable);
         bootProtocol.setEnabled(bootProtocolsAvailable);
         bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
-        customPropertiesLabel.setEnabled(bootProtocolsAvailable);
-        customPropertiesWidget.setEnabled(bootProtocolsAvailable);
     }
 
     @Override

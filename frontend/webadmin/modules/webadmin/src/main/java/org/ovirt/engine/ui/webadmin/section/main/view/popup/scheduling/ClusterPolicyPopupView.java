@@ -201,9 +201,6 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
                 clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
         });
-        if (model.getClusterPolicy().isLocked()) {
-            customPropertiesSheetEditor.setEnabled(false);
-        }
         customPropertiesSheetEditor.edit(model.getCustomPropertySheet());
 
         clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));

@@ -18,7 +18,6 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
 
     private T model;
     private final LinkedList<KeyValueLineWidget> widgets = new LinkedList<KeyValueLineWidget>();
-    private boolean enabled = true;
     String rowWidth = null;
     String fieldWidth = null;
 
@@ -52,13 +51,6 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
         return model;
     }
 
-    public void setEnabled(boolean value) {
-        enabled = value;
-        for (KeyValueLineWidget widget : widgets) {
-            widget.setEnabled(enabled);
-        }
-    }
-
     @Override
     protected KeyValueLineWidget createWidget(KeyValueLineModel value) {
         KeyValueLineWidget keyValueLineWidget = new KeyValueLineWidget(rowWidth, fieldWidth);
@@ -79,9 +71,13 @@ public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveR
 
     @Override
     protected void toggleGhost(KeyValueLineModel value, KeyValueLineWidget widget, boolean becomingGhost) {
-        widget.setEnabled(!becomingGhost && enabled);
-        widget.keyField.setEnabled(enabled);
-        setButtonsEnabled(widget, !becomingGhost && enabled);
+        if (!widget.isEnabled()) {
+            return;
+        }
+
+        super.toggleGhost(value, widget, becomingGhost);
+        widget.valueField.setEnabled(!becomingGhost);
+        widget.valuesField.setEnabled(!becomingGhost);
     }
 
     @Override

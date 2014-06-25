@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.Clear;
@@ -26,6 +27,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Focusable;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -60,8 +62,10 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     private final List<Pair<T, V>> items;
     private final IEventListener itemsChangedListener;
+    private final IEventListener propertyChangedListener;
     private M model;
     private Collection<T> modelItems;
+    private boolean enabled;
 
     public AddRemoveRowWidget() {
         items = new LinkedList<Pair<T, V>>();
@@ -70,6 +74,16 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 init(model);
+            }
+        };
+        propertyChangedListener = new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if ("IsChangable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                    enabled = model.getIsChangable();
+                    updateEnabled();
+                }
             }
         };
     }
@@ -103,7 +117,12 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 addEntry(value, !i.hasNext());
             }
         }
+    }
 
+    private void updateEnabled() {
+        for (Pair<T, V> item : items) {
+            toggleEnabled(item.getFirst(), item.getSecond());
+        }
     }
 
     @Override
@@ -111,10 +130,13 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         // guard against multiple calls to edit()
         if (this.model != null) {
             this.model.getItemsChangedEvent().removeListener(itemsChangedListener);
+            this.model.getPropertyChangedEvent().removeListener(propertyChangedListener);
         }
 
         this.model = model;
         model.getItemsChangedEvent().addListener(itemsChangedListener);
+        model.getPropertyChangedEvent().addListener(propertyChangedListener);
+        enabled = model.getIsChangable();
         setVisible(model.getIsAvailable());
         init(model);
     }
@@ -137,7 +159,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return new Pair<T, V>(value, widget);
     }
 
-    private V addEntry(T value, boolean lastItem) {
+    private V addEntry(final T value, boolean lastItem) {
         final V widget = createWidget(value);
         Pair<T, V> item = new Pair<T, V>(value, widget);
         items.add(item);
@@ -148,25 +170,37 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                         : new AddRemoveRowPanel(widget, removeButton);
         contentPanel.add(entry);
 
-        final boolean ghost = isGhost(value);
-        toggleGhost(value, widget, ghost);
+        toggleEnabled(value, widget);
+
         widget.addValueChangeHandler(new ValueChangeHandler<T>() {
 
-            private boolean wasGhost = ghost;
+            private boolean wasGhost = isGhost(value);
 
             @Override
             public void onValueChange(ValueChangeEvent<T> event) {
                 T value = event.getValue();
                 boolean becomingGhost = isGhost(value);
                 if (becomingGhost != wasGhost) {
-                    setButtonsEnabled(widget, !becomingGhost);
-                    toggleGhost(value, widget, becomingGhost);
                     wasGhost = becomingGhost;
+                    if (enabled) {
+                        toggleGhost(value, widget, becomingGhost);
+                    }
                 }
             }
         });
 
         return widget;
+    }
+
+    private void toggleEnabled(T value, V widget) {
+        setButtonsEnabled(widget, enabled);
+        if (widget instanceof HasEnabled) {
+            ((HasEnabled) widget).setEnabled(enabled);
+        }
+
+        if (enabled && isGhost(value)) { // if entry is enabled, it still might need to be rendered as a ghost entry
+            toggleGhost(value, widget, true);
+        }
     }
 
     private void removeEntry(Pair<T, V> item) {
@@ -182,7 +216,6 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
                 new PushButton(new Image(plusButton ? resources.increaseIcon() : resources.decreaseIcon()));
         button.addStyleName(style.buttonStyle());
         button.addStyleName("buttonStyle_pfly_fix"); //$NON-NLS-1$
-        button.setEnabled(!isGhost(value));
 
         button.addClickHandler(plusButton ?
                 new ClickHandler() {
@@ -226,11 +259,11 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         return (AddRemoveRowPanel) widget.getParent();
     }
 
-    protected void removeWidget(V widget) {
+    private void removeWidget(V widget) {
         contentPanel.remove(getEntry(widget));
     }
 
-    protected void setButtonsEnabled(V widget, boolean enabled) {
+    private void setButtonsEnabled(V widget, boolean enabled) {
         getEntry(widget).setButtonsEnabled(enabled);
     }
 
@@ -338,7 +371,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     /**
      * This method is called when the value backing the widget of type V has changed so that the widget transitioned into
      * or out of "ghost" state. It should implement the details of the widget's appearance as it moves in or out of
-     * the ghost state.
+     * the ghost state. By default, only the buttons are enabled/disabled when changing state.
      *
      * @param value
      *            the value backing the widget.
@@ -347,6 +380,8 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
      * @param becomingGhost
      *            true if the item is entering ghost state, false if exiting ghost state.
      */
-    protected abstract void toggleGhost(T value, V widget, boolean becomingGhost);
+    protected void toggleGhost(T value, V widget, boolean becomingGhost) {
+        setButtonsEnabled(widget, !becomingGhost && enabled);
+    }
 
 }

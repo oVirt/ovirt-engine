@@ -253,6 +253,7 @@ public class UnitVmModel extends Model {
 
             // ==Custom Properties Tab==
             getCustomProperties().setIsChangable(false);
+            getCustomPropertySheet().setIsChangable(false);
 
             vmAttachedToPool = true;
         }
