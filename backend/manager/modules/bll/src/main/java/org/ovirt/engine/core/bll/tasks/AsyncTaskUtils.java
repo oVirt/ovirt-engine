@@ -50,7 +50,8 @@ public class AsyncTaskUtils {
         } catch (RuntimeException e) {
             log.error(String.format(
                     "Adding/Updating task %1$s to DataBase threw an exception.",
-                    asyncTask.getVdsmTaskId()), e);
+                    Guid.isNullOrEmpty(asyncTask.getVdsmTaskId()) ? asyncTask.getCommandId() : asyncTask.getVdsmTaskId()),
+                    e);
         }
     }
 
