@@ -2468,6 +2468,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("URL is required.")
     String VALIDATION_URL_NULL();
 
+    @DefaultStringValue("URL is invalid.")
+    String VALIDATION_URL_INVALID();
+
     @DefaultStringValue("Provider type is required.")
     String VALIDATION_PROVIDER_TYPE_NULL();
 

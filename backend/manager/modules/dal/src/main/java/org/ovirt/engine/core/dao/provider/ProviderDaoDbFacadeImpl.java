@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderPro
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.Provider.AdditionalProperties;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.VmwareVmProviderProperties;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +38,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         String tenantName = null;
         String pluginType = null;
         AgentConfiguration agentConfiguration = null;
+        AdditionalProperties additionalProperties = null;
 
         if (entity.getAdditionalProperties() != null) {
             switch (entity.getType()) {
@@ -57,6 +59,9 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                         (OpenStackVolumeProviderProperties) entity.getAdditionalProperties();
                 tenantName = volumeProperties.getTenantName();
                 break;
+            case VMWARE:
+                additionalProperties = entity.getAdditionalProperties();
+                break;
             default:
                 break;
             }
@@ -66,6 +71,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
         mapper.addValue("tenant_name", tenantName);
         mapper.addValue("plugin_type", pluginType);
         mapper.addValue("agent_configuration", SerializationFactory.getSerializer().serialize(agentConfiguration));
+        mapper.addValue("additional_properties", SerializationFactory.getSerializer().serialize(additionalProperties));
         return mapper;
     }
 
@@ -144,6 +150,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 OpenStackVolumeProviderProperties volumeProperties = new OpenStackVolumeProviderProperties();
                 volumeProperties.setTenantName(rs.getString("tenant_name"));
                 return volumeProperties;
+            case VMWARE:
+                return SerializationFactory.getDeserializer().deserialize(rs.getString("additional_properties"), VmwareVmProviderProperties.class);
             default:
                 return null;
             }
