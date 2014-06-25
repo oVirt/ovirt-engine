@@ -14,9 +14,9 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
@@ -38,8 +38,6 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
     @Override
     protected void executeCommand() {
-        boolean success = true;
-
         // Attempt to connect only if a host is given.
         // If not, just save the connection to the database
         if (!Guid.isNullOrEmpty(getParameters().getVdsId())) {
@@ -48,21 +46,16 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
 
             // Process failure
             if (!isValidConnection) {
-                VdcFault fault = new VdcFault();
-                fault.setError(VdcBllErrors.forValue(result.getSecond()));
-                getReturnValue().setFault(fault);
-                success = false;
+                throw new VdcBLLException(VdcBllErrors.forValue(result.getSecond()));
             }
         }
 
-        if (success) {
-            StorageServerConnections connection = getConnection();
-            connection.setid(Guid.newGuid().toString());
-            saveConnection(connection);
-            getReturnValue().setActionReturnValue(connection.getid());
-        }
+        StorageServerConnections connection = getConnection();
+        connection.setid(Guid.newGuid().toString());
+        saveConnection(connection);
+        getReturnValue().setActionReturnValue(connection.getid());
 
-        setSucceeded(success);
+        setSucceeded(true);
     }
 
     protected StorageServerConnections getConnectionFromDbById(String connectionId) {
