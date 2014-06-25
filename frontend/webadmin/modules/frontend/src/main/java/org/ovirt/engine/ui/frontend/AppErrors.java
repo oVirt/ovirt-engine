@@ -2280,8 +2280,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot remove the built-in group \"Everyone\".")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_BUILTIN_GROUP_EVERYONE();
 
-    @DefaultStringValue("Importing data domain is prohibited.")
-    String ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED();
+    @DefaultStringValue("Cannot ${action} ${type}. The operation is not supported for this Data Center version.")
+    String ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_IS_NOT_SUPPORTED();
 
     @DefaultStringValue("Cannot ${action} ${type}. Valid Host statuses are \"Non operational\", \"Maintenance\" or \"Problematic\".")
     String ACTION_TYPE_FAILED_VDS_NOT_MATCH_VALID_STATUS();

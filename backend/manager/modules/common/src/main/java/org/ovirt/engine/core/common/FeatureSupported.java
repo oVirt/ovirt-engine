@@ -307,6 +307,15 @@ public class FeatureSupported {
 
     /**
      * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if import of Data Storage Domain is supported.
+     */
+    public static boolean importDataStorageDomain(Version version) {
+        return supportedInConfig(ConfigValues.ImportDataStorageDomain, version);
+    }
+
+    /**
+     * @param version
      *          Compatibility version to check for.
      * @return  <code>true</code> if iSCSI multipathing is supported for the given version.
      */

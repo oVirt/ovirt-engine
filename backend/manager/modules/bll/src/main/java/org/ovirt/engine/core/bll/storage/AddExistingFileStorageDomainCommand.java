@@ -9,7 +9,6 @@ import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
@@ -56,11 +55,6 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
     }
 
     protected boolean checkExistingStorageDomain() {
-        // prevent importing DATA domain
-        if (getParameters().getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_IMPORT_DATA_DOMAIN_PROHIBITED);
-        }
-
         if (DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
             return  failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }

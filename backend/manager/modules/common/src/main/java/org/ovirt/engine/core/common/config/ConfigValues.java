@@ -1611,6 +1611,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    ImportDataStorageDomain,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     VirtIoRngDeviceSupported,
 
     @TypeConverterAttribute(Boolean.class)

@@ -53,6 +53,7 @@ public enum ConfigurationValues {
     VM64BitMaxMemorySizeInMB(ConfigAuthType.User),
     VmPriorityMaxValue(ConfigAuthType.User),
     StorageDomainNameSizeLimit(ConfigAuthType.User),
+    ImportDataStorageDomain,
     StoragePoolNameSizeLimit(ConfigAuthType.User),
     SANWipeAfterDelete(ConfigAuthType.User),
     AuthenticationMethod(ConfigAuthType.User),

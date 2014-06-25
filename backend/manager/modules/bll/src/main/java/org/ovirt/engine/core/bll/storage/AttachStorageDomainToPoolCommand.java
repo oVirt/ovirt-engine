@@ -11,6 +11,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
@@ -116,28 +117,30 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                         // If the storage domain is already related to another Storage Pool, detach it by force.
                         Guid storagePoolId = domainFromIrs.getSecond();
                         if (storagePoolId != null) {
-                            // Master domain version is not relevant since force remove at
-                            // DetachStorageDomainVdsCommand
-                            // does not use it.
-                            // Storage pool id can be empty
-                            DetachStorageDomainVDSCommandParameters detachParams =
-                                    new DetachStorageDomainVDSCommandParameters(getVds().getStoragePoolId(),
+                            if (FeatureSupported.importDataStorageDomain(getStoragePool().getcompatibility_version())) {
+                                // Master domain version is not relevant since force remove at
+                                // DetachStorageDomainVdsCommand does not use it.
+                                // Storage pool id can be empty
+                                DetachStorageDomainVDSCommandParameters detachParams =
+                                        new DetachStorageDomainVDSCommandParameters(getVds().getStoragePoolId(),
+                                                getParameters().getStorageDomainId(),
+                                                Guid.Empty,
+                                                0);
+                                detachParams.setForce(true);
+                                VDSReturnValue returnValue =
+                                        runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
+                                if (!returnValue.getSucceeded()) {
+                                    log.warnFormat("Detaching Storage Domain {0} from it's previous storage pool {1} has failed. "
+                                            +
+                                            "The meta data of the Storage Domain might still indicate that it is attached to a different Storage Pool.",
                                             getParameters().getStorageDomainId(),
                                             Guid.Empty,
                                             0);
-                            detachParams.setForce(true);
-                            VDSReturnValue returnValue =
-                                    runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
-                            if (!returnValue.getSucceeded()) {
-                                log.warnFormat("Detaching Storage Domain {0} from it's previous storage pool {1} has failed. "
-                                        +
-                                        "The meta data of the Storage Domain might still indicate that it is attached to a different Storage Pool.",
-                                        getParameters().getStorageDomainId(),
-                                        storagePoolId);
-                                throw new VdcBLLException(
-                                        returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
-                                                : VdcBllErrors.ENGINE,
-                                        returnValue.getExceptionString());
+                                    throw new VdcBLLException(
+                                            returnValue.getVdsError() != null ? returnValue.getVdsError().getCode()
+                                                    : VdcBllErrors.ENGINE,
+                                            returnValue.getExceptionString());
+                                }
                             }
                         }
                     }
