@@ -154,6 +154,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                         (VdcQueryParametersBase) operation.getParameter(), new AsyncCallback<VdcQueryReturnValue>() {
                     @Override
                     public void onFailure(final Throwable exception) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         operation.getCallback().onFailure(operation, exception);
                     }
 
@@ -183,6 +185,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                         (VdcActionParametersBase) operation.getParameter(), new AsyncCallback<VdcReturnValueBase>() {
                     @Override
                     public void onFailure(final Throwable exception) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         operation.getCallback().onFailure(operation, exception);
                     }
 
@@ -260,6 +264,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
                             new AsyncCallback<ArrayList<VdcQueryReturnValue>>() {
                         @Override
                         public void onFailure(final Throwable exception) {
+                            //Clear out the token, and let the retry mechanism try again.
+                            xsrfRequestBuilder.setXsrfToken(null);
                             handleMultipleQueriesFailure(queriesList, exception);
                         }
 
@@ -301,6 +307,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
      */
     private void handleMultipleQueriesFailure(final List<VdcOperation<?, ?>> queriesList,
             final Throwable exception) {
+        //Clear out the token, and let the retry mechanism try again.
+        xsrfRequestBuilder.setXsrfToken(null);
         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap = getCallbackMap(queriesList);
         for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
             if (callbackEntry.getKey() instanceof VdcOperationCallbackList) {
@@ -368,6 +376,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
                     @Override
                     public void onFailure(final Throwable exception) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         handleRunMultipleActionFailure(operations, exception);
                     }
 
@@ -400,6 +410,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
     private void handleRunMultipleActionFailure(final List<VdcOperation<?, ?>> operations,
             final Throwable exception) {
+        //Clear out the token, and let the retry mechanism try again.
+        xsrfRequestBuilder.setXsrfToken(null);
         Map<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackMap =
                 getCallbackMap(operations);
         for (Map.Entry<VdcOperationCallback<?, ?>, List<VdcOperation<?, ?>>> callbackEntry: callbackMap.entrySet()) {
@@ -480,6 +492,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
                     @Override
                     public void onFailure(final Throwable caught) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         loginOperation.getCallback().onFailure(loginOperation, caught);
                     }
                 });
@@ -541,6 +555,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
                     @Override
                     public void onFailure(final Throwable caught) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         callback.onFailure(caught);
                     }
                 });
@@ -569,6 +585,8 @@ public class GWTRPCCommunicationProvider implements CommunicationProvider {
 
                     @Override
                     public void onFailure(final Throwable caught) {
+                        //Clear out the token, and let the retry mechanism try again.
+                        xsrfRequestBuilder.setXsrfToken(null);
                         callback.onFailure(caught);
                     }
                 });
