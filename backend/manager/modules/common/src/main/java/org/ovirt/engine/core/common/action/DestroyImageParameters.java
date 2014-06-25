@@ -54,7 +54,7 @@ public class DestroyImageParameters extends StorageDomainParametersBase {
 
     @Override
     public String toString() {
-        return new StringBuilder("MergeParameters{")
+        return new StringBuilder("DestroyImageParameters{")
                 .append(super.toString())
                 .append(", vmId=").append(vmId)
                 .append(", imageGroupId=").append(imageGroupId)

@@ -36,7 +36,7 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
         RemoveSnapshotCommand<RemoveSnapshotParameters> command = getCommand(cmdId);
         command.getParameters().setTaskGroupSuccess(!anyFailed);
         command.setCommandStatus(anyFailed ? CommandStatus.FAILED : CommandStatus.SUCCEEDED);
-        log.infoFormat("All Live Merge child commands have completed, status {1}",
+        log.infoFormat("All Live Merge child commands have completed, status {0}",
                 command.getCommandStatus());
     }
 
