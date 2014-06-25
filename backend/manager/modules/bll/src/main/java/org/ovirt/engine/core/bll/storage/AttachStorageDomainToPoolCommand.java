@@ -1,6 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.io.IOException;
+import java.text.SimpleDateFormat;
 import java.util.Arrays;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -10,6 +16,9 @@ import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -19,14 +28,21 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
+import org.ovirt.engine.core.utils.JsonHelper;
+import org.ovirt.engine.core.utils.OvfUtils;
+import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
+import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -129,6 +145,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
                             new AttachStorageDomainVDSCommandParameters(getParameters().getStoragePoolId(),
                                     getParameters().getStorageDomainId()));
+                    final List<OvfEntityData> unregisteredEntitiesFromOvfDisk = getEntitiesFromStorageOvfDisk();
                     executeInNewTransaction(new TransactionMethod<Object>() {
                         @Override
                         public Object runInTransaction() {
@@ -144,9 +161,20 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
                                 updateStorageDomainFormat(getStorageDomain());
                             }
+
+                            // Update unregistered entities
+                            for (OvfEntityData ovf : unregisteredEntitiesFromOvfDisk) {
+                                getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
+                                        getParameters().getStorageDomainId());
+                                getUnregisteredOVFDataDao().saveOVFData(ovf);
+                                log.infoFormat("Adding OVF data of entity id {0} and entity name {1}",
+                                        ovf.getEntityId(),
+                                        ovf.getEntityName());
+                            }
                             return null;
                         }
                     });
+
                     if (getParameters().getActivate()) {
                         attemptToActivateDomain();
                     }
@@ -154,7 +182,104 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 }
             }
         }
+    }
 
+    protected List<OvfEntityData> getEntitiesFromStorageOvfDisk() {
+        List<OvfEntityData> ovfEntitiesFromTar = Collections.emptyList();
+
+        // Get all unregistered disks.
+        List<Disk> unregisteredDisks = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
+                new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
+                        getVds().getStoragePoolId())).getReturnValue();
+
+        if (!unregisteredDisks.isEmpty()) {
+            Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(unregisteredDisks);
+            DiskImage ovfDisk = ovfDiskAndSize.getFirst();
+            if (ovfDisk != null) {
+                VDSReturnValue retrievedByteData =
+                        runVdsCommand(VDSCommandType.RetrieveImageData,
+                                new ImageHttpAccessVDSCommandParameters(getVdsId(),
+                                        getParameters().getStoragePoolId(),
+                                        getParameters().getStorageDomainId(),
+                                        ovfDisk.getId(),
+                                        ovfDisk.getImage().getId(),
+                                        ovfDiskAndSize.getSecond()));
+                if (retrievedByteData.getSucceeded()) {
+                    ovfEntitiesFromTar =
+                            OvfUtils.getOvfEntities((byte[]) retrievedByteData.getReturnValue(),
+                                    getParameters().getStorageDomainId());
+                }
+            }
+        }
+        return ovfEntitiesFromTar;
+    }
+
+    /**
+     * Returns the best match for OVF disk from all the disks. If no OVF disk was found, it returns null for disk and
+     * size 0. If there are OVF disks, we first match the updated ones, and from them we retrieve the one which was last
+     * updated.
+     *
+     * @param disks
+     *            - A list of disks
+     * @return A Pair which contains the best OVF disk to retrieve data from and its size.
+     */
+    private Pair<DiskImage, Long> getLatestOVFDisk(List<Disk> disks) {
+        Date foundOvfDiskUpdateDate = new Date();
+        boolean isFoundOvfDiskUpdated = false;
+        Long size = 0L;
+        Disk ovfDisk = null;
+        for (Disk disk : disks) {
+            boolean isBetterOvfDiskFound = false;
+            // Check which disks are of OVF_STORE
+            String diskDecription = ((DiskImage) disk).getDescription();
+            if (diskDecription.contains(OvfInfoFileConstants.OvfStoreDescriptionLabel)) {
+                Map<String, Object> diskDescriptionMap;
+                try {
+                    diskDescriptionMap = JsonHelper.jsonToMap(diskDecription);
+                } catch (IOException e) {
+                    log.warnFormat("Exception while generating json containing ovf store info. Exception: {0}", e);
+                    continue;
+                }
+
+                // The purpose of this check is to verify that it's an OVF store with data related to the Storage Domain.
+                if (!isDomainExistsInDiskDescription(diskDescriptionMap, getParameters().getStorageDomainId())) {
+                    log.warnFormat("The disk description does not contain the storage domain id {0}",
+                            getParameters().getStorageDomainId());
+                    continue;
+                }
+
+                boolean isUpdated = Boolean.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.IsUpdated).toString());
+                Date date = getDateFromDiskDescription(diskDescriptionMap);
+
+                if (isFoundOvfDiskUpdated && !isUpdated) {
+                    continue;
+                }
+                if ((isUpdated && !isFoundOvfDiskUpdated) || date.after(foundOvfDiskUpdateDate)) {
+                    isBetterOvfDiskFound = true;
+                }
+                if (isBetterOvfDiskFound) {
+                    isFoundOvfDiskUpdated = isUpdated;
+                    foundOvfDiskUpdateDate = date;
+                    ovfDisk = disk;
+                    size = new Long(diskDescriptionMap.get(OvfInfoFileConstants.Size).toString());
+                }
+            }
+        }
+        return new Pair<>((DiskImage)ovfDisk, size);
+    }
+
+    private Date getDateFromDiskDescription(Map<String, Object> map) {
+        try {
+            return new SimpleDateFormat(OvfParser.formatStrFromDiskDescription).parse(map.get(OvfInfoFileConstants.LastUpdated)
+                    .toString());
+        } catch (java.text.ParseException e) {
+            log.errorFormat("LastUpdate Date could not be parsed from disk desscription. Exception: {0}", e);
+            return null;
+        }
+    }
+
+    private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
+        return map.get(OvfInfoFileConstants.Domains).toString().contains(storageDomainId.toString());
     }
 
     protected void attemptToActivateDomain() {

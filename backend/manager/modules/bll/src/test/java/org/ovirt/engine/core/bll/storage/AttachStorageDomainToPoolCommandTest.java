@@ -12,6 +12,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -112,6 +114,7 @@ public class AttachStorageDomainToPoolCommandTest {
         mockGetStorageDomainInfoVdsCommand(storageDomain);
         mockAttachStorageDomainVdsCommand();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        doReturn(getUnregisteredList()).when(cmd).getEntitiesFromStorageOvfDisk();
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
@@ -140,5 +143,9 @@ public class AttachStorageDomainToPoolCommandTest {
         returnValueForGetStorageDomainInfo.setReturnValue(pairResult);
         when(vdsBrokerFrontend.RunVdsCommand(eq(VDSCommandType.HSMGetStorageDomainInfo),
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class))).thenReturn(returnValueForGetStorageDomainInfo);
+    }
+
+    private List<OvfEntityData> getUnregisteredList() {
+        return new ArrayList<OvfEntityData>();
     }
 }

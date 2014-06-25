@@ -17,9 +17,9 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 public class OvfParser {
-
     private static final String utcFallbackDateFormatStr = "yyyy.MM.dd HH:mm:ss";
     private static final String utcDateFormatStr = "yyyy/MM/dd HH:mm:ss";
+    public static final String formatStrFromDiskDescription = "EEE MMM d HH:mm:ss zzz yyyy";
     protected XmlDocument _document;
     protected XmlNamespaceManager _xmlNS;
 
