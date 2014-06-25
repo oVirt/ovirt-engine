@@ -87,10 +87,10 @@ class Plugin(plugin.PluginBase):
         name=owspcons.Stages.CONFIG_WEBSOCKET_PROXY_CUSTOMIZATION,
         condition=lambda self: self._enabled,
         before=(
-            osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_E_PRODUCT_OPTIONS,
         ),
         after=(
-            osetupcons.Stages.DIALOG_TITLES_S_SYSTEM,
+            osetupcons.Stages.DIALOG_TITLES_S_PRODUCT_OPTIONS,
         ),
     )
     def _customization(self):
@@ -104,7 +104,7 @@ class Plugin(plugin.PluginBase):
                 dialog=self.dialog,
                 name='OVESETUP_CONFIG_WEBSOCKET_PROXY',
                 note=_(
-                    'Configure WebSocket Proxy on this machine? '
+                    'Configure WebSocket Proxy on this host '
                     '(@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
