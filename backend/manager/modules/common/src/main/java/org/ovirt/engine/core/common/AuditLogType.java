@@ -1033,7 +1033,15 @@ public enum AuditLogType {
     USER_REMOVE_AUDIT_LOG(10600),
     USER_REMOVE_AUDIT_LOG_FAILED(10601, AuditLogSeverity.ERROR),
     USER_CLEAR_ALL_DISMISSED_AUDIT_LOG(10602),
-    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED(10603, AuditLogSeverity.ERROR);
+    USER_CLEAR_ALL_DISMISSED_AUDIT_LOG_FAILED(10603, AuditLogSeverity.ERROR),
+
+    //MacPool Log
+    MAC_POOL_ADD_SUCCESS(10700),
+    MAC_POOL_ADD_FAILED(10701, AuditLogSeverity.ERROR),
+    MAC_POOL_EDIT_SUCCESS(10702),
+    MAC_POOL_EDIT_FAILED(10703, AuditLogSeverity.ERROR),
+    MAC_POOL_REMOVE_SUCCESS(10704),
+    MAC_POOL_REMOVE_FAILED(10705, AuditLogSeverity.ERROR);
 
     private int intValue;
     // indicates time interval in seconds on which identical events from same instance are suppressed.

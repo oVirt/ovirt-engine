@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -20,6 +21,15 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
     public UpdateMacPoolCommand(MacPoolParameters parameters) {
         super(parameters);
         addValidationGroup(UpdateEntity.class);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        if (getSucceeded()) {
+            return AuditLogType.MAC_POOL_EDIT_SUCCESS;
+        } else {
+            return AuditLogType.MAC_POOL_EDIT_FAILED;
+        }
     }
 
     @Override
@@ -40,16 +50,23 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
                 validate(validateDefaultFlagIsNotChanged(oldMacPool, getMacPoolEntity()));
     }
 
-    private MacPool getMacPoolEntity() {
+    protected MacPool getMacPoolEntity() {
         return getParameters().getMacPool();
     }
 
-    private Guid getMacPoolId() {
+    //used by introspector
+    public Guid getMacPoolId() {
         return getMacPoolEntity().getId();
+    }
+
+    //used by introspector
+    public String getMacPoolName() {
+        return getMacPoolEntity().getName();
     }
 
     @Override
     protected void executeCommand() {
+
         getMacPoolDao().update(getMacPoolEntity());
         MacPoolPerDcSingleton.getInstance().modifyPool(getMacPoolEntity());
 

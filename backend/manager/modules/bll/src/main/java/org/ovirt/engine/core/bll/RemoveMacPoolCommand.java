@@ -5,11 +5,13 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveMacPoolByIdParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.compat.Guid;
 
 public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdParameters> {
 
@@ -17,6 +19,15 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     public RemoveMacPoolCommand(RemoveMacPoolByIdParameters parameters) {
         super(parameters);
+    }
+
+    @Override
+    public AuditLogType getAuditLogTypeValue() {
+        if (getSucceeded()) {
+            return AuditLogType.MAC_POOL_REMOVE_SUCCESS;
+        } else {
+            return AuditLogType.MAC_POOL_REMOVE_FAILED;
+        }
     }
 
     @Override
@@ -32,6 +43,16 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
         MacPoolPerDcSingleton.getInstance().removePool(getParameters().getMacPoolId());
 
         getReturnValue().setSucceeded(true);
+    }
+
+    //used by introspector
+    public Guid getMacPoolId() {
+        return oldMacPool.getId();
+    }
+
+    //used by introspector
+    public String getMacPoolName() {
+        return oldMacPool.getName();
     }
 
     @Override
