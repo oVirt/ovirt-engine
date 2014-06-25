@@ -306,6 +306,9 @@ public class HostInterfaceModel extends EntityModel
                         revertChanges();
                     }
                     setBootProtocolsAvailable(value);
+                    getQosOverridden().setIsChangable(value);
+                    getQosModel().setIsChangable(value);
+                    getCustomPropertiesModel().setIsChangable(value);
                 }
             }
 
@@ -334,6 +337,8 @@ public class HostInterfaceModel extends EntityModel
             getAddress().setEntity(originalNetParams.getAddress());
             getSubnet().setEntity(originalNetParams.getSubnet());
             getGateway().setEntity(originalNetParams.getGateway());
+            getQosOverridden().setEntity(originalNetParams.getQosOverridden());
+            getQosModel().init(originalNetParams.getQos());
             getCustomPropertiesModel().deserialize(KeyValueModel.convertProperties(originalNetParams.getCustomProperties()));
         }
     }
@@ -393,7 +398,6 @@ public class HostInterfaceModel extends EntityModel
         getAddress().setIsChangable(isChangable && staticIpChangeAllowed);
         getSubnet().setIsChangable(isChangable);
         getGateway().setIsChangable(isChangable);
-        getCustomPropertiesModel().setIsChangable(bootProtocolsAvailable);
     }
 
     public boolean validate()

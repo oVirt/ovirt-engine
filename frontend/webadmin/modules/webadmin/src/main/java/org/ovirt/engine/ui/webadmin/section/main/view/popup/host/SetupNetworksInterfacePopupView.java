@@ -41,7 +41,7 @@ public class SetupNetworksInterfacePopupView extends HostInterfacePopupView
         layoutPanel.setWidgetSize(mainPanel, 510);
         asPopupPanel().setPixelSize(400, 590);
 
-        enableDisableBySync(object);
+        enableDisableByBootProtocol(object);
 
         customPropertiesPanel.setVisible(object.getCustomPropertiesModel().getIsAvailable());
         customPropertiesWidget.edit(object.getCustomPropertiesModel());

@@ -402,6 +402,13 @@ public class HostSetupNetworksModel extends EntityModel {
             networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(entity.getBootProtocol());
+            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
+                    version)) {
+                networkDialogModel.getQosOverridden().setIsAvailable(true);
+                networkDialogModel.getQosModel().setIsAvailable(true);
+                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
+                networkDialogModel.getQosModel().init(entity.getQos());
+            }
             if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
                     version)) {
                 KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
@@ -422,13 +429,6 @@ public class HostSetupNetworksModel extends EntityModel {
             networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
             networkDialogModel.getIsToSync()
                     .setEntity(networksToSync.contains(logicalNetwork.getName()));
-            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
-                    version)) {
-                networkDialogModel.getQosOverridden().setIsAvailable(true);
-                networkDialogModel.getQosModel().setIsAvailable(true);
-                networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
-                networkDialogModel.getQosModel().init(entity.getQos());
-            }
 
             editPopup = networkDialogModel;
 

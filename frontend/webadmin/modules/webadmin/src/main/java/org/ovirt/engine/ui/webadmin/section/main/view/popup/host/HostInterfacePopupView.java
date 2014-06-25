@@ -243,7 +243,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 HostInterfaceModel model = (HostInterfaceModel) sender;
                 String propertyName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
-                    enableDisableBySync(model);
+                    enableDisableByBootProtocol(model);
                     checkConnectivity.setEnabled(model.getBootProtocolsAvailable());
                 }
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
@@ -291,7 +291,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         displayNetworkChangeWarning.setVisible(false);
     }
 
-    protected void enableDisableBySync(HostInterfaceModel model) {
+    protected void enableDisableByBootProtocol(HostInterfaceModel model) {
         boolean bootProtocolsAvailable = model.getBootProtocolsAvailable();
         bootProtocolLabel.setEnabled(bootProtocolsAvailable);
         bootProtocol.setEnabled(bootProtocolsAvailable);
