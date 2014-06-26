@@ -408,6 +408,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean isHypervEnabled(int osId, Version version) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.hyperv.enabled", version), false);
+    }
+
+    @Override
     public int getOsIdByUniqueName(String uniqueOsName) {
         for (Map.Entry<Integer, String> entry : getUniqueOsNames().entrySet()) {
             if (entry.getValue().equals(uniqueOsName)) {

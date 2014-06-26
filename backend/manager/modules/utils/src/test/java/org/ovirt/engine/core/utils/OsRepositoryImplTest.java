@@ -58,6 +58,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel8/derivedFrom").put("value", "rhel7");
         preferences.node("/os/windows_8/id").put("value", "20");
         preferences.node("/backwardCompatibility").put("Windows8", "20");
+        preferences.node("/os/windows_7/devices/hyperv/enabled").put("value", "true");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -232,5 +233,15 @@ public class OsRepositoryImplTest {
     public void testBackwardCompatibility() {
         assertEquals(20, OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("Windows8"));
         assertEquals(20, OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"));
+    }
+
+    @Test
+    public void testHyperVLinux() throws Exception {
+        assertFalse(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("rhel7"), Version.v3_5));
+    }
+
+    @Test
+    public void testHyperVWindows() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"), Version.v3_5));
     }
 }

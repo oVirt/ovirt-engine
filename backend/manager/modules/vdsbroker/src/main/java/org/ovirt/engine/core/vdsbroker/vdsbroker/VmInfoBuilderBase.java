@@ -156,6 +156,10 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.spiceCopyPasteEnable,
                 Boolean.toString(vm.isSpiceCopyPasteEnabled()));
         }
+
+        if (osRepository.isHypervEnabled(vm.getVmOsId(), vm.getVdsGroupCompatibilityVersion())) {
+            createInfo.put(VdsProperties.hypervEnable, "true");
+        }
     }
 
     private void addCpuPinning(final String compatibilityVersion) {
