@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extends BaseImagesCommand<T> {
-    protected DiskImage mNewCreatedDiskImage;
+    protected DiskImage newDiskImage;
 
     protected CreateSnapshotCommand(Guid commandId) {
         super(commandId);
@@ -56,8 +56,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                     @Override
                     public Void runInTransaction() {
                         processOldImageFromDb();
-                        addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
-                        setActionReturnValue(mNewCreatedDiskImage);
+                        addDiskImageToDb(newDiskImage, getCompensationContext());
+                        setActionReturnValue(newDiskImage);
                         setSucceeded(true);
                         return null;
                     }
@@ -69,23 +69,23 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     }
 
     protected Guid getDestinationStorageDomainId() {
-        return mNewCreatedDiskImage.getStorageIds() != null ? mNewCreatedDiskImage.getStorageIds().get(0)
+        return newDiskImage.getStorageIds() != null ? newDiskImage.getStorageIds().get(0)
                 : Guid.Empty;
     }
 
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
-        mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
-        setStoragePoolId(mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage.getStoragePoolId()
+        newDiskImage = cloneDiskImage(getDestinationImageId());
+        newDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getDestinationStorageDomainId())));
+        setStoragePoolId(newDiskImage.getStoragePoolId() != null ? newDiskImage.getStoragePoolId()
                 : Guid.Empty);
         getParameters().setStoragePoolId(getStoragePoolId());
 
         // override volume type and volume format to sparse and cow according to
         // storage team request
-        mNewCreatedDiskImage.setVolumeType(VolumeType.Sparse);
-        mNewCreatedDiskImage.setvolumeFormat(VolumeFormat.COW);
+        newDiskImage.setVolumeType(VolumeType.Sparse);
+        newDiskImage.setvolumeFormat(VolumeFormat.COW);
         VDSReturnValue vdsReturnValue = null;
 
         try {
@@ -99,8 +99,8 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                                             getImageGroupId(),
                                             getImage().getImageId(),
                                             getDiskImage().getSize(),
-                                            mNewCreatedDiskImage.getVolumeType(),
-                                            mNewCreatedDiskImage.getVolumeFormat(),
+                                            newDiskImage.getVolumeType(),
+                                            newDiskImage.getVolumeFormat(),
                                             getDiskImage().getId(),
                                             getDestinationImageId(),
                                             ""));

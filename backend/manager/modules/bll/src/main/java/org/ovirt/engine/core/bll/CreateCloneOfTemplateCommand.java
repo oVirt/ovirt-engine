@@ -46,9 +46,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
     @Override
     protected VDSReturnValue performImageVdsmOperation() {
         setDestinationImageId(Guid.newGuid());
-        mNewCreatedDiskImage = cloneDiskImage(getDestinationImageId());
-        mNewCreatedDiskImage.setId(Guid.newGuid());
-        Guid storagePoolID = mNewCreatedDiskImage.getStoragePoolId() != null ? mNewCreatedDiskImage
+        newDiskImage = cloneDiskImage(getDestinationImageId());
+        newDiskImage.setId(Guid.newGuid());
+        Guid storagePoolID = newDiskImage.getStoragePoolId() != null ? newDiskImage
                 .getStoragePoolId() : Guid.Empty;
 
         VDSReturnValue vdsReturnValue = null;
@@ -57,9 +57,9 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
             vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
                     new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
                             getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
-                            mNewCreatedDiskImage.getId(), getDestinationImageId(),
+                            newDiskImage.getId(), getDestinationImageId(),
                             "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
-                            mNewCreatedDiskImage.getVolumeFormat(), mNewCreatedDiskImage.getVolumeType(),
+                            newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
                             getDiskImage().isWipeAfterDelete(), false));
 
         } catch (VdcBLLException e) {

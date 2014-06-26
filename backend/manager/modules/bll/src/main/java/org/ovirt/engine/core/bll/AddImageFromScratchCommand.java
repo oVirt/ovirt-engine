@@ -44,47 +44,47 @@ public class AddImageFromScratchCommand<T extends AddImageFromScratchParameters>
             setDestinationImageId(Guid.newGuid());
         }
 
-        mNewCreatedDiskImage = new DiskImage();
-        mNewCreatedDiskImage.setImageId(getDestinationImageId());
-        mNewCreatedDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
-        mNewCreatedDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
-        mNewCreatedDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
-        mNewCreatedDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
-        mNewCreatedDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
-        mNewCreatedDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
-        mNewCreatedDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
-        mNewCreatedDiskImage.setId(getImageGroupId());
-        mNewCreatedDiskImage.setStoragePoolId(getParameters().getStoragePoolId());
-        mNewCreatedDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
-        mNewCreatedDiskImage.setSize(getParameters().getDiskInfo().getSize());
-        mNewCreatedDiskImage.setVolumeType(getParameters().getDiskInfo().getVolumeType());
-        mNewCreatedDiskImage.setvolumeFormat(getParameters().getDiskInfo().getVolumeFormat());
-        mNewCreatedDiskImage.setDescription("");
-        mNewCreatedDiskImage.setCreationDate(new Date());
-        mNewCreatedDiskImage.setLastModified(new Date());
-        mNewCreatedDiskImage.setActive(true);
-        mNewCreatedDiskImage.setImageStatus(ImageStatus.LOCKED);
-        mNewCreatedDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
-        mNewCreatedDiskImage.setQuotaId(getParameters().getQuotaId());
+        newDiskImage = new DiskImage();
+        newDiskImage.setImageId(getDestinationImageId());
+        newDiskImage.setBoot(getParameters().getDiskInfo().isBoot());
+        newDiskImage.setDiskInterface(getParameters().getDiskInfo().getDiskInterface());
+        newDiskImage.setPropagateErrors(getParameters().getDiskInfo().getPropagateErrors());
+        newDiskImage.setWipeAfterDelete(getParameters().getDiskInfo().isWipeAfterDelete());
+        newDiskImage.setDiskAlias(getParameters().getDiskInfo().getDiskAlias());
+        newDiskImage.setDiskDescription(getParameters().getDiskInfo().getDiskDescription());
+        newDiskImage.setShareable(getParameters().getDiskInfo().isShareable());
+        newDiskImage.setId(getImageGroupId());
+        newDiskImage.setStoragePoolId(getParameters().getStoragePoolId());
+        newDiskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(getParameters().getStorageDomainId())));
+        newDiskImage.setSize(getParameters().getDiskInfo().getSize());
+        newDiskImage.setVolumeType(getParameters().getDiskInfo().getVolumeType());
+        newDiskImage.setvolumeFormat(getParameters().getDiskInfo().getVolumeFormat());
+        newDiskImage.setDescription("");
+        newDiskImage.setCreationDate(new Date());
+        newDiskImage.setLastModified(new Date());
+        newDiskImage.setActive(true);
+        newDiskImage.setImageStatus(ImageStatus.LOCKED);
+        newDiskImage.setVmSnapshotId(getParameters().getVmSnapshotId());
+        newDiskImage.setQuotaId(getParameters().getQuotaId());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
                 if (!getParameters().isShouldRemainIllegalOnFailedExecution()) {
-                    addDiskImageToDb(mNewCreatedDiskImage, getCompensationContext());
+                    addDiskImageToDb(newDiskImage, getCompensationContext());
                 } else {
-                    addDiskImageToDb(mNewCreatedDiskImage, null);
-                    getCompensationContext().snapshotEntityStatus(mNewCreatedDiskImage.getImage(), ImageStatus.ILLEGAL);
+                    addDiskImageToDb(newDiskImage, null);
+                    getCompensationContext().snapshotEntityStatus(newDiskImage.getImage(), ImageStatus.ILLEGAL);
                 }
                 return null;
             }
         });
         freeLock();
         if (getParameters().isShouldRemainIllegalOnFailedExecution()) {
-            getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
+            getReturnValue().setActionReturnValue(newDiskImage);
         }
         processImageInIrs();
-        getReturnValue().setActionReturnValue(mNewCreatedDiskImage);
+        getReturnValue().setActionReturnValue(newDiskImage);
         setSucceeded(true);
     }
 
