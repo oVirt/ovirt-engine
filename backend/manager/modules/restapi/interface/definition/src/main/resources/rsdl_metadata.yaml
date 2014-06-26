@@ -5255,11 +5255,8 @@ actions:
   description: delete the specified disabled and external scheduling policy unit in the system
   request:
     body:
-      required: false
-      parameterType: Action
-      signatures:
-      - mandatoryArguments: {}
-        description: delete the specified scheduling policy unit in the system
+      parameterType: null
+      signatures: []
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
