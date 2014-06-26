@@ -52,7 +52,6 @@ import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
 import org.ovirt.engine.api.restapi.util.VersionHelper;
 import org.ovirt.engine.api.rsdl.RsdlManager;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
-import org.ovirt.engine.api.utils.FileUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -70,7 +69,6 @@ public class BackendApiResource
     implements ApiResource {
 
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
-    private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
@@ -244,12 +242,13 @@ public class BackendApiResource
     private Response getSchema() {
         ByteArrayOutputStream baos = null;
         InputStream is = null;
-        int thisLine;
+        byte[] buffer = new byte[4096];
         try {
             baos = new ByteArrayOutputStream();
-            is = FileUtils.get(RESOURCES_PACKAGE, API_SCHEMA);
-            while ((thisLine = is.read()) != -1) {
-                baos.write(thisLine);
+            is = Thread.currentThread().getContextClassLoader().getResourceAsStream(API_SCHEMA);
+            int count;
+            while ((count = is.read(buffer)) != -1) {
+                baos.write(buffer, 0, count);
             }
             baos.flush();
             return Response.ok(baos.toByteArray(), MediaType.APPLICATION_OCTET_STREAM)

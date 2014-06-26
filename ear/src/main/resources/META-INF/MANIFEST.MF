@@ -27,7 +27,6 @@ Dependencies: asm.asm,
  org.ovirt.engine.api.ovirt-engine-extensions-api,
  org.ovirt.vdsm-jsonrpc-java,
  org.quartz,
- org.apache.xmlgraphics.fop,
  org.springframework,
  com.woorea.openstack.sdk services,
  org.yaml.snakeyaml

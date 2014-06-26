@@ -1,4 +1,8 @@
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -11,92 +15,23 @@
   <packaging>war</packaging>
   <name>oVirt RESTful API Backend Integration Webapp</name>
 
-  <properties>
-	<webapp.name>restapi</webapp.name>
-  </properties>
-  <dependencies>
-     <dependency>
-	<groupId>org.ovirt.engine.api</groupId>
-	<artifactId>restapi-jaxrs</artifactId>
-	<version>${engine.version}</version>
-     </dependency>
-
-     <dependency>
-	<groupId>org.jboss.resteasy</groupId>
-	<artifactId>resteasy-jaxrs</artifactId>
-	<version>${resteasy.version}</version>
-	<scope>provided</scope>
-     </dependency>
-  </dependencies>
   <build>
     <plugins>
+
+      <!-- Don't include Maven metadata or empty classes directory in
+           the generated .jar file: -->
       <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-war-plugin</artifactId>
         <configuration>
-
-          <!-- Add a the manifest that contains the required
-               dependencies for JBoss modules: -->
           <archive>
             <addMavenDescriptor>false</addMavenDescriptor>
-            <manifestFile>src/main/resources/META-INF/MANIFEST.MF</manifestFile>
           </archive>
-
-          <!-- Don't include any of the external dependencies, as they are
-               already included as references in the manifest (note that the
-               web.xml file is included regardless of this configuration): -->
-          <packagingIncludes>
-            WEB-INF/lib/interface-common-jaxrs.jar,
-            WEB-INF/lib/restapi-definition.jar,
-            WEB-INF/lib/restapi-jaxrs.jar,
-            WEB-INF/lib/restapi-types.jar,
-            WEB-INF/lib/branding.jar,
-          </packagingIncludes>
-
+          <packagingExcludes>WEB-INF/classes</packagingExcludes>
         </configuration>
       </plugin>
+
     </plugins>
   </build>
-  <profiles>
-    <profile>
-        <id>findbugs</id>
-        <activation>
-            <activeByDefault>true</activeByDefault>
-        </activation>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>${findbugs.version}</version>
-                    <configuration>
-                        <xmlOutput>true</xmlOutput>
-                        <!-- Optional directory to put findbugs xdoc xml report -->
-                        <excludeFilterFile> ${basedir}/exclude-filters.xml</excludeFilterFile>
-                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-
-    <profile>
-        <id>findbugs-general</id>
-        <build>
-            <plugins>
-                <plugin>
-                    <groupId>org.codehaus.mojo</groupId>
-                    <artifactId>findbugs-maven-plugin</artifactId>
-                    <version>${findbugs.version}</version>
-                    <configuration>
-                        <xmlOutput>true</xmlOutput>
-                        <!-- Optional directory to put findbugs xdoc xml report -->
-                        <excludeFilterFile> ${basedir}/exclude-filters.xml, ${basedir}/../../../../../exclude-filters-general.xml</excludeFilterFile>
-                        <xmlOutputDirectory>target/site</xmlOutputDirectory>
-                    </configuration>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-  </profiles>
 
 </project>

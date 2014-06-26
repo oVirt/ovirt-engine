@@ -36,13 +36,6 @@
     </dependency>
 
     <dependency>
-      <groupId>org.ovirt.engine.api</groupId>
-      <artifactId>restapi-webapp</artifactId>
-      <version>${engine.version}</version>
-      <type>war</type>
-    </dependency>
-
-    <dependency>
       <groupId>org.ovirt.engine.ui</groupId>
       <artifactId>userportal</artifactId>
       <version>${engine.version}</version>
@@ -194,20 +187,6 @@
               <artifactId>root-war</artifactId>
               <bundleFileName>root.war</bundleFileName>
               <contextRoot>/</contextRoot>
-            </webModule>
-
-            <webModule>
-              <groupId>org.ovirt.engine.api</groupId>
-              <artifactId>restapi-webapp</artifactId>
-              <bundleFileName>restapi.war</bundleFileName>
-              <contextRoot>${application.baseuri}</contextRoot>
-            </webModule>
-
-            <webModule>
-              <groupId>org.ovirt.engine.api</groupId>
-              <artifactId>restapi-webapp</artifactId>
-              <bundleFileName>legacy_restapi.war</bundleFileName>
-              <contextRoot>/api</contextRoot>
             </webModule>
 
             <webModule>

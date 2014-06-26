@@ -1,32 +1,54 @@
+/*
+* Copyright (c) 2014 Red Hat, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.ovirt.engine.api.common.util;
 
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
 import java.net.URL;
 import java.net.URLDecoder;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.Enumeration;
 import java.util.List;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 public class PackageExplorer {
+    /**
+     * The logger used by this class.
+     */
+    private static final Logger log = LoggerFactory.getLogger(PackageExplorer.class);
 
     /**
      * Discover classes under target package.
      *
-     * @param packageName
-     *            package to look under
-     * @return list of classes found
+     * @param packageName the fully qualified name of the package
+     * @return the list of class names found
      */
-    public static List<Class<?>> discoverClasses(String packageName) {
-        List<Class<?>> ret = new ArrayList<Class<?>>();
+    public static List<String> discoverClasses(String packageName) {
         ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        List<String> classNames = new ArrayList<>();
         try {
             Enumeration<URL> resources = classLoader.getResources(toPath(packageName));
-            List<File> dirs = new ArrayList<File>();
-            List<JarInputStream> jars = new ArrayList<JarInputStream>();
+            List<File> dirs = new ArrayList<>();
+            List<JarInputStream> jars = new ArrayList<>();
             while (resources.hasMoreElements()) {
                 URL resource = resources.nextElement();
                 if (isJar(resource)) {
@@ -37,16 +59,21 @@ public class PackageExplorer {
                     dirs.add(new File(URLDecoder.decode(resource.getFile(), "UTF-8")));
                 }
             }
-            walkJars(ret, packageName, jars);
-            walkDirs(ret, packageName, dirs);
-        } catch (Exception e) {
-            ret = Collections.emptyList();
+            walkJars(classNames, packageName, jars);
+            walkDirs(classNames, packageName, dirs);
         }
-        return ret;
+        catch (IOException exception) {
+            log.error(
+                "Error while trying to find scan classpath for package \"{}\".",
+                packageName,
+                exception
+            );
+        }
+        return classNames;
     }
 
     private static JarInputStream getContainingResource(ClassLoader classLoader, URL resource)
-            throws Exception {
+            throws IOException {
         JarInputStream ret = null;
         Enumeration<URL> globals = classLoader.getResources("/");
         while (globals.hasMoreElements()) {
@@ -59,15 +86,15 @@ public class PackageExplorer {
         return ret;
     }
 
-    private static void walkJars(List<Class<?>> classList, String packageName, List<JarInputStream> jars)
-            throws Exception {
+    private static void walkJars(List<String> classNames, String packageName, List<JarInputStream> jars)
+            throws IOException {
         for (JarInputStream jarFile : jars) {
             try {
-                JarEntry entry = null;
+                JarEntry entry;
                 while ((entry = jarFile.getNextJarEntry()) != null) {
                     String name = toPackage(entry.getName());
                     if (name.startsWith(packageName) && isClass(name)) {
-                        classList.add(Class.forName(trimClass(name)));
+                        classNames.add(trimClass(name));
                     }
                 }
             } finally {
@@ -78,27 +105,26 @@ public class PackageExplorer {
         }
     }
 
-    private static void walkDirs(List<Class<?>> classList, String packageName, List<File> dirs)
-            throws Exception {
+    private static void walkDirs(List<String> classNames, String packageName, List<File> dirs)
+            throws IOException {
         for (File directory : dirs) {
-            List<Class<?>> classes = new ArrayList<Class<?>>();
+            List<String> classes = new ArrayList<>();
             if (directory.exists()) {
                 File[] files = directory.listFiles();
                 for (File file : files) {
                     if (file.isDirectory()) {
                         classes.addAll(getClassesUnder(file, in(packageName, file.getName())));
                     } else if (isClass(file.getName())) {
-                        classes.add(Class.forName(in(packageName, trimClass(file.getName()))));
+                        classes.add(in(packageName, trimClass(file.getName())));
                     }
                 }
-                classList.addAll(getClassesUnder(directory, packageName));
+                classNames.addAll(getClassesUnder(directory, packageName));
             }
         }
     }
 
-    private static List<Class<?>> getClassesUnder(File directory, String packageName)
-            throws ClassNotFoundException {
-        List<Class<?>> classes = new ArrayList<Class<?>>();
+    private static List<String> getClassesUnder(File directory, String packageName) {
+        List<String> classes = new ArrayList<>();
         if (!directory.exists()) {
             return classes;
         }
@@ -107,7 +133,7 @@ public class PackageExplorer {
             if (file.isDirectory()) {
                 classes.addAll(getClassesUnder(file, in(packageName, file.getName())));
             } else if (isClass(file.getName())) {
-                classes.add(Class.forName(in(packageName, trimClass(file.getName()))));
+                classes.add(in(packageName, trimClass(file.getName())));
             }
         }
         return classes;

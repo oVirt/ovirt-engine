@@ -1,3 +1,19 @@
+/*
+* Copyright (c) 2014 Red Hat, Inc.
+*
+* Licensed under the Apache License, Version 2.0 (the "License");
+* you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at
+*
+*   http://www.apache.org/licenses/LICENSE-2.0
+*
+* Unless required by applicable law or agreed to in writing, software
+* distributed under the License is distributed on an "AS IS" BASIS,
+* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+* See the License for the specific language governing permissions and
+* limitations under the License.
+*/
+
 package org.ovirt.engine.api.restapi.types;
 
 import java.lang.reflect.InvocationTargetException;
@@ -9,11 +25,17 @@ import java.util.Map;
 import org.ovirt.engine.api.common.util.PackageExplorer;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.api.restapi.utils.MappingException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Discovers and manages type mappers.
  */
 public class MappingLocator {
+    /**
+     * The logger used by this class.
+     */
+    private static final Logger log = LoggerFactory.getLogger(MappingLocator.class);
 
     private String discoverPackageName;
     private Map<ClassPairKey, Mapper<?, ?>> mappers;
@@ -22,7 +44,7 @@ public class MappingLocator {
      * Normal constructor used when injected
      */
     public MappingLocator() {
-        mappers = new HashMap<ClassPairKey, Mapper<?, ?>>();
+        mappers = new HashMap<>();
     }
 
     /**
@@ -33,7 +55,7 @@ public class MappingLocator {
      */
     MappingLocator(String discoverPackageName) {
         this.discoverPackageName = discoverPackageName;
-        mappers = new HashMap<ClassPairKey, Mapper<?, ?>>();
+        mappers = new HashMap<>();
     }
 
     /**
@@ -43,15 +65,26 @@ public class MappingLocator {
      * with the @Mapping annotation.
      */
     public void populate() {
-        List<Class<?>> classes = PackageExplorer.discoverClasses(discoverPackageName != null ? discoverPackageName
-                : this.getClass().getPackage().getName());
-        for (Class<?> clz : classes) {
-            for (Method method : clz.getMethods()) {
-                Mapping mapping = method.getAnnotation(Mapping.class);
-                if (mapping != null) {
-                    mappers.put(new ClassPairKey(mapping.from(), mapping.to()),
+        String packageName = discoverPackageName != null? discoverPackageName: this.getClass().getPackage().getName();
+        ClassLoader classLoader = Thread.currentThread().getContextClassLoader();
+        List<String> classNames = PackageExplorer.discoverClasses(packageName);
+        for (String className : classNames) {
+            try {
+                Class<?> mapperClass = classLoader.loadClass(className);
+                for (Method method : mapperClass.getMethods()) {
+                    Mapping mapping = method.getAnnotation(Mapping.class);
+                    if (mapping != null) {
+                        mappers.put(new ClassPairKey(mapping.from(), mapping.to()),
                             new MethodInvokerMapper(method, mapping.to()));
+                    }
                 }
+            }
+            catch (ClassNotFoundException exception) {
+                log.error(
+                    "Error while trying to load mapper class \"{}\".",
+                    className,
+                    exception
+                );
             }
         }
     }

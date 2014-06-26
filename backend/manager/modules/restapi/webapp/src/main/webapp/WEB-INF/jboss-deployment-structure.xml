@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+Copyright (c) 2014 Red Hat, Inc.
+
+Licensed under the Apache License, Version 2.0 (the "License");
+you may not use this file except in compliance with the License.
+You may obtain a copy of the License at
+
+  http://www.apache.org/licenses/LICENSE-2.0
+
+Unless required by applicable law or agreed to in writing, software
+distributed under the License is distributed on an "AS IS" BASIS,
+WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+See the License for the specific language governing permissions and
+limitations under the License.
+-->
+
+<jboss-deployment-structure xmlns="urn:jboss:deployment-structure:1.1">
+
+  <deployment>
+    <dependencies>
+
+      <!-- This is to make sure that the backend EJB has been deployed before deploying the RESTAPI, but we don't
+           want to be able to use any classes or resources that it may be exporting: -->
+      <module name="deployment.engine.ear">
+        <imports>
+          <exclude path="**"/>
+        </imports>
+      </module>
+
+      <!-- These are dependencies really needed by the RESTAPI: -->
+      <module name="org.ovirt.engine.api.interface-common-jaxrs" annotations="true" services="import"/>
+      <module name="org.ovirt.engine.api.restapi-definition" annotations="true" services="import"/>
+      <module name="org.ovirt.engine.api.restapi-jaxrs" annotations="true" services="import"/>
+      <module name="org.ovirt.engine.api.restapi-types" annotations="true" services="import"/>
+      <module name="org.ovirt.engine.core.aaa"/>
+
+    </dependencies>
+  </deployment>
+
+</jboss-deployment-structure>

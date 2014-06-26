@@ -93,8 +93,8 @@
 %global engine_log %{_localstatedir}/log/%{engine_name}
 %global engine_name ovirt-engine
 %global engine_pki %{_sysconfdir}/pki/%{engine_name}
-%global engine_restapi_war %{engine_ear}/restapi.war
-%global engine_legacy_restapi_war %{engine_ear}/legacy_restapi.war
+%global engine_restapi_war %{engine_data}/restapi.war
+%global engine_legacy_restapi_war %{engine_data}/legacy_restapi.war
 %global engine_run %{_localstatedir}/run/%{engine_name}
 %global engine_state %{_localstatedir}/lib/%{engine_name}
 %global engine_tmp %{_localstatedir}/tmp/%{engine_name}
@@ -583,10 +583,13 @@ install -dm 755 "%{buildroot}/%{engine_run}/notifier"
 #
 # Force TLS/SSL for selected applications.
 #
-for war in restapi legacy_restapi userportal webadmin; do
+for war in \
+	"%{buildroot}%{engine_ear}"/{userportal,webadmin}.war \
+	"%{buildroot}%{engine_restapi_war}" \
+	"%{buildroot}%{engine_legacy_restapi_war}"; do
 	sed -i \
 		's#<transport-guarantee>NONE</transport-guarantee>#<transport-guarantee>CONFIDENTIAL</transport-guarantee>#' \
-		"%{buildroot}%{engine_ear}/${war}.war/WEB-INF/web.xml"
+		"${war}/WEB-INF/web.xml"
 done
 
 #
@@ -603,15 +606,18 @@ while read lib_path; do
 done << __EOF__
 %{engine_ear}/bll.jar
 %{engine_ear}/docs.war/WEB-INF/lib/branding.jar
-%{engine_ear}/legacy_restapi.war/WEB-INF/lib/branding.jar
 %{engine_ear}/lib/vdsbroker.jar
-%{engine_ear}/restapi.war/WEB-INF/lib/branding.jar
 %{engine_ear}/scheduler.jar
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
+%{engine_jboss_modules}/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
 %{engine_jboss_modules}/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
+%{engine_jboss_modules}/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
+%{engine_jboss_modules}/org/ovirt/engine/api/restapi-jaxrs/main/restapi-jaxrs.jar
+%{engine_jboss_modules}/org/ovirt/engine/api/restapi-types/main/restapi-types.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/aaa/main/aaa.jar
+%{engine_jboss_modules}/org/ovirt/engine/core/branding/main/branding.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
@@ -621,14 +627,6 @@ done << __EOF__
 %{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
 %{engine_jboss_modules}/org/ovirt/engine/core/uutils/main/uutils.jar
 %{engine_jboss_modules}/org/ovirt/engine/extensions/builtin/main/builtin.jar
-%{engine_legacy_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
-%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-definition.jar
-%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
-%{engine_legacy_restapi_war}/WEB-INF/lib/restapi-types.jar
-%{engine_restapi_war}/WEB-INF/lib/interface-common-jaxrs.jar
-%{engine_restapi_war}/WEB-INF/lib/restapi-definition.jar
-%{engine_restapi_war}/WEB-INF/lib/restapi-jaxrs.jar
-%{engine_restapi_war}/WEB-INF/lib/restapi-types.jar
 __EOF__
 
 # Needed for compatibility if package is different than the directory structure

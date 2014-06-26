@@ -127,7 +127,7 @@ ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules"
 # separated files or directories that should exist under
 # /usr/share/ovirt-engine:
 #
-ENGINE_APPS=engine.ear
+ENGINE_APPS="engine.ear restapi.war legacy_restapi.war"
 ENGINE_URI=/ovirt-engine
 
 #
