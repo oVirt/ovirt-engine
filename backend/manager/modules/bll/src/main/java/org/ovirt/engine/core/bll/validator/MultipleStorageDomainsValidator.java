@@ -2,12 +2,15 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 /**
  * A validator for multiple storage domains.
@@ -39,6 +42,17 @@ public class MultipleStorageDomainsValidator {
         }
     }
 
+    private Map<Guid, List<DiskImage>> getDomainsDisksMap(List<DiskImage> disksList) {
+        Map<Guid, List<DiskImage>> domainsDisksMap = new HashMap<>();
+        for (DiskImage disk : disksList) {
+            List<Guid> domainIds = disk.getStorageIds();
+            for (Guid domainId : domainIds) {
+                MultiValueMapUtils.addToMap(domainId, disk, domainsDisksMap);
+            }
+        }
+        return domainsDisksMap;
+    }
+
     /**
      * Validates that all the domains exist and are active.
      * @return {@link ValidationResult#VALID} if all the domains are OK, or a {@link ValidationResult} with the first non-active domain encountered.
@@ -46,8 +60,8 @@ public class MultipleStorageDomainsValidator {
     public ValidationResult allDomainsExistAndActive() {
         return validOrFirstFailure(new ValidatorPredicate() {
             @Override
-            public ValidationResult evaluate(StorageDomainValidator validator) {
-                return validator.isDomainExistAndActive();
+            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
+                return getStorageDomainValidator(entry).isDomainExistAndActive();
             }
         });
     }
@@ -59,14 +73,30 @@ public class MultipleStorageDomainsValidator {
     public ValidationResult allDomainsWithinThresholds() {
         return validOrFirstFailure(new ValidatorPredicate() {
             @Override
-            public ValidationResult evaluate(StorageDomainValidator validator) {
-                return validator.isDomainWithinThresholds();
+            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
+                return getStorageDomainValidator(entry).isDomainWithinThresholds();
+            }
+        });
+    }
+
+    /**
+     * Validates that all the domains have enough space for the request
+     * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
+     */
+    public ValidationResult allDomainsHaveSpaceForNewDisks(final List<DiskImage> disksList) {
+        final Map<Guid, List<DiskImage>> domainsDisksMap = getDomainsDisksMap(disksList);
+        return validOrFirstFailure(new ValidatorPredicate() {
+            @Override
+            public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
+                Guid sdId = entry.getKey();
+                List disksForDomain = domainsDisksMap.get(sdId);
+                return getStorageDomainValidator(entry).hasSpaceForNewDisks(disksForDomain);
             }
         });
     }
 
     /** @return The lazy-loaded validator for the given map entry */
-    private StorageDomainValidator getStorageDomainValidator(Map.Entry<Guid, StorageDomainValidator> entry) {
+    protected StorageDomainValidator getStorageDomainValidator(Map.Entry<Guid, StorageDomainValidator> entry) {
         if (entry.getValue() == null) {
             entry.setValue(new StorageDomainValidator(getStorageDomainDAO().getForStoragePool(entry.getKey(), storagePoolId)));
         }
@@ -87,7 +117,7 @@ public class MultipleStorageDomainsValidator {
      */
     private ValidationResult validOrFirstFailure(ValidatorPredicate predicate) {
         for (Map.Entry<Guid, StorageDomainValidator> entry : domainValidators.entrySet()) {
-            ValidationResult currResult = predicate.evaluate(getStorageDomainValidator(entry));
+            ValidationResult currResult = predicate.evaluate(entry);
             if (!currResult.isValid()) {
                 return currResult;
             }
@@ -97,6 +127,6 @@ public class MultipleStorageDomainsValidator {
 
     /** A predicate for evaluating storage domains */
     private static interface ValidatorPredicate {
-        public ValidationResult evaluate(StorageDomainValidator validator);
+        public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry);
     }
 }

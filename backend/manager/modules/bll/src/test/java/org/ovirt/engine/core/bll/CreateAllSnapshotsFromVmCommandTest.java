@@ -3,8 +3,10 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -264,11 +266,35 @@ public class CreateAllSnapshotsFromVmCommandTest {
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.name()));
     }
 
+    @Test
+    public void testAllDomainsHaveSpaceForNewDisksFailure() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        List<DiskImage> disksList = getNonEmptyDiskList();
+        doReturn(disksList).when(cmd).getDisksList();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).when(multipleStorageDomainsValidator)
+                .allDomainsHaveSpaceForNewDisks(disksList);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForNewDisksSuccess() {
+        setUpGeneralValidations();
+        setUpDiskValidations();
+        List<DiskImage> disksList = getNonEmptyDiskList();
+        doReturn(disksList).when(cmd).getDisksList();
+        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        verify(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(disksList);
+    }
+
     private void setUpDiskValidations() {
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotLocked();
         doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsExistAndActive();
         doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsWithinThresholds();
+        doReturn(ValidationResult.VALID).when(multipleStorageDomainsValidator).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     private void setUpGeneralValidations() {
