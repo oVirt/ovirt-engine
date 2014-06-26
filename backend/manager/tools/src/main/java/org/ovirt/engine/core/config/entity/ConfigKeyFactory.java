@@ -2,6 +2,7 @@ package org.ovirt.engine.core.config.entity;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Map;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
@@ -67,13 +68,33 @@ public class ConfigKeyFactory {
         // If the isReloadable attribute isn't specified - assume it is false
         boolean reloadable = configurationAt.getBoolean("isReloadable", false);
         ConfigKey configKey = new ConfigKey(type, description, alternateKey, key, "", validValues,
-                "", getHelperByType(type), reloadable);
+                "", getHelperByType(type), reloadable, isDeprecated(key));
         configKey.setParser(parser);
         return configKey;
     }
 
+    private boolean isDeprecated(String key) {
+        final String pathToDeprecatedAttribute = key + "/deprecated";
+        if (!keysConfig.containsKey(pathToDeprecatedAttribute)) {
+            return false;
+        }
+
+        final List list = keysConfig.getList(pathToDeprecatedAttribute);
+        if (list.size() != 1) {
+            throw new IllegalArgumentException("Configuration error; Key \""+key+"\" has ambiguous definition.");
+        }
+
+        final Object value = list.iterator().next();
+        try {
+            return Boolean.parseBoolean((String) value);
+        } catch (ClassCastException e) {
+            throw new IllegalArgumentException("Configuration error;" +
+                    " Key \""+key+"\" should be either 'true' or 'false'. Value '"+value+"' is not valid.");
+        }
+    }
+
     public ConfigKey generateBlankConfigKey(String keyName, String keyType) {
-        return new ConfigKey(keyType, "", "", keyName, "", null, "", getHelperByType(keyType), false);
+        return new ConfigKey(keyType, "", "", keyName, "", null, "", getHelperByType(keyType), false, false);
     }
 
     private ValueHelper getHelperByType(String type) {
@@ -102,7 +123,8 @@ public class ConfigKeyFactory {
                              key.getValidValues().toArray(new String[0]),
                              version,
                              key.getValueHelper(),
-                             key.isReloadable());
+                             key.isReloadable(),
+                             key.isDeprecated());
     }
 
     /**

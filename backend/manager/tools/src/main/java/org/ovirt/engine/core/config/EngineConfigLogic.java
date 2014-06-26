@@ -503,6 +503,10 @@ public class EngineConfigLogic {
         String message = null;
         boolean res = true;
 
+        if (configKey.isDeprecated()) {
+            throw new IllegalAccessError("Configuration key " + key + " is deprecated, thus it cannot be set.");
+        }
+
         try {
             configKey.safeSetValue(value);
             res = (getConfigDAO().updateKey(configKey) == 1);

@@ -18,9 +18,10 @@ public class ConfigKey {
     private String alternateKey;
     private String keyName;
     private String value;
+    private final boolean deprecated;
     private boolean reloadable;
     private List<String> validValues;
-    private static final ArrayList<String> EMPTY_LIST = new ArrayList<String>(0);
+    private static final List<String> EMPTY_LIST = new ArrayList<String>(0);
     private String version;
     private ValueHelper valueHelper;
 
@@ -32,13 +33,15 @@ public class ConfigKey {
             String[] validValues,
             String version,
             ValueHelper helper,
-            boolean reloadable) {
+            boolean reloadable,
+            boolean deprecated) {
         super();
         this.type = type;
         this.description = description;
         this.alternateKey = alternateKey;
         this.keyName = key;
         this.value = value;
+        this.deprecated = deprecated;
         setVersion(version);
         this.validValues = validValues != null ? Arrays.asList(validValues) : EMPTY_LIST;
         this.valueHelper = helper;
@@ -158,5 +161,9 @@ public class ConfigKey {
     public boolean isPasswordKey() {
         return CompositePasswordValueHelper.class.isAssignableFrom(valueHelper.getClass()) ||
                 PasswordValueHelper.class.isAssignableFrom(valueHelper.getClass());
+    }
+
+    public boolean isDeprecated() {
+        return deprecated;
     }
 }
