@@ -194,10 +194,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
     private void sendTicket() {
         // Send the ticket to the virtual machine:
         final DbUser user = getCurrentUser();
-        final boolean sent = Backend
-            .getInstance()
-            .getResourceManager()
-            .RunVdsCommand(VDSCommandType.SetVmTicket,
+        final boolean sent =
+                runVdsCommand(VDSCommandType.SetVmTicket,
                     new SetVmTicketVDSCommandParameters(getVdsId(), getVmId(), mTicket, mValidTime, user.getLoginName(), user.getId())).getSucceeded();
 
         // Return the ticket only if sending it to the virtual machine succeeded:

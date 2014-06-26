@@ -144,9 +144,7 @@ public class RemoveVdsCommand<T extends RemoveVdsParameters> extends VdsCommand<
     }
 
     private void RemoveVdsFromCollection() {
-        // ResourceManager.Instance.removeVds(VdsId);
-        getBackend().getResourceManager()
-                .RunVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
+        runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(getVdsId()));
     }
 
     private void RemoveVdsStaticFromDb() {

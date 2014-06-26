@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -98,9 +97,7 @@ public class AddBricksToGlusterVolumeCommand extends GlusterVolumeCommandBase<Gl
             int stripeCount,
             boolean force) {
         VDSReturnValue returnValue =
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.AddBricksToGlusterVolume,
+                runVdsCommand(VDSCommandType.AddBricksToGlusterVolume,
                                 new GlusterVolumeBricksActionVDSParameters(upServer.getId(),
                                         getGlusterVolumeName(),
                                         bricksList,

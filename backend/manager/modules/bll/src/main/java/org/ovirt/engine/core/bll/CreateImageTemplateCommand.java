@@ -53,12 +53,8 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         Guid taskId = getAsyncTaskId();
 
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
-                        VDSCommandType.CopyImage,
-                        new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
+                new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
                                 getDestinationImageId(), StringUtils.defaultString(newImage.getDescription()), getParameters()
                                         .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, newImage

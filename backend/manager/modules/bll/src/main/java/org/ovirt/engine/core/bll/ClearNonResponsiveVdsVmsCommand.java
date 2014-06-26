@@ -55,10 +55,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
             if (vm.isAutoStartup()) {
                 autoStartVmIdsToRerun.add(vm.getId());
             }
-            VDSReturnValue returnValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVmStatus,
+            VDSReturnValue returnValue = runVdsCommand(VDSCommandType.SetVmStatus,
                             new SetVmStatusVDSCommandParameters(vm.getId(), VMStatus.Down, VmExitStatus.Error));
             // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
@@ -68,9 +65,7 @@ public class ClearNonResponsiveVdsVmsCommand<T extends VdsActionParameters> exte
             runInternalActionWithTasksContext(VdcActionType.ProcessDownVm, new IdParameters(vm.getId()));
         }
 
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
+        runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                         new UpdateVdsVMsClearedVDSCommandParameters(getVdsId()));
         if (!autoStartVmIdsToRerun.isEmpty()) {
             AutoStartVmsRunner.getInstance().addVmsToRun(autoStartVmIdsToRerun);

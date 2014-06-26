@@ -22,10 +22,7 @@ public class ChangeFloppyCommand<T extends ChangeDiskCommandParameters> extends 
     @Override
     protected void perform() {
         if (getVm().isRunningOrPaused()) {
-            setActionReturnValue(Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.ChangeFloppy,
+            setActionReturnValue(runVdsCommand(VDSCommandType.ChangeFloppy,
                             new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), mCdImagePath))
                     .getReturnValue());
             setSucceeded(true);

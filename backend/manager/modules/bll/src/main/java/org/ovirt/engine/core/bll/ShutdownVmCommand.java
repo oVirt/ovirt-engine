@@ -56,10 +56,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
                     .<Integer> getValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
 
             // sending a shutdown command to the VM:
-            setActionReturnValue(Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.DestroyVm,
+            setActionReturnValue(runVdsCommand(VDSCommandType.DestroyVm,
                             new DestroyVmVDSCommandParameters(getVdsId(), getVmId(), getParameters().getStopReason(), false, true, secondsToWait))
                     .getReturnValue());
         }

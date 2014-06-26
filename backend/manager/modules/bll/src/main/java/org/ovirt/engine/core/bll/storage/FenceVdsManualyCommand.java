@@ -4,7 +4,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceVdsBaseCommand;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -188,19 +187,13 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                 } else {
                     for (VDS vds : getAllRunningVdssInPool()) {
                         try {
-                            SpmStatusResult statusResult = (SpmStatusResult) Backend
-                                    .getInstance()
-                                    .getResourceManager()
-                                    .RunVdsCommand(VDSCommandType.SpmStatus,
+                            SpmStatusResult statusResult = (SpmStatusResult) runVdsCommand(VDSCommandType.SpmStatus,
                                             new SpmStatusVDSCommandParameters(vds.getId(), getStoragePool().getId()))
                                     .getReturnValue();
                             log.infoFormat("Trying to fence spm {0} via vds {1}",
                                     _problematicVds.getName(),
                                     vds.getName());
-                            if (Backend
-                                    .getInstance()
-                                    .getResourceManager()
-                                    .RunVdsCommand(
+                            if (runVdsCommand(
                                             VDSCommandType.FenceSpmStorage,
                                             new FenceSpmStorageVDSCommandParameters(vds.getId(),
                                                     getStoragePool().getId(),
@@ -233,9 +226,7 @@ public class FenceVdsManualyCommand<T extends FenceVdsManualyParameters> extends
                     new ResetIrsVDSCommandParameters(getStoragePool()
                             .getId(), getStoragePool().getspm_vds_id());
             tempVar.setIgnoreStopFailed(true);
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.ResetIrs, tempVar);
+            runVdsCommand(VDSCommandType.ResetIrs, tempVar);
         }
     }
 

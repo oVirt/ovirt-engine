@@ -64,12 +64,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected void initializeVds(boolean newHost) {
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.RemoveVds,
+        runVdsCommand(VDSCommandType.RemoveVds,
                         new RemoveVdsVDSCommandParameters(getVdsId(), newHost));
-        Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.AddVds, new AddVdsVDSCommandParameters(getVdsId()));
+        runVdsCommand(VDSCommandType.AddVds, new AddVdsVDSCommandParameters(getVdsId()));
     }
 
     @Override
@@ -95,9 +92,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         log.infoFormat("Waiting {0} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
         ThreadUtils.sleep(sleepTimeInSec * 1000);
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
+        runVdsCommand(VDSCommandType.SetVdsStatus,
                         new SetVdsStatusVDSCommandParameters(getVdsId(), status));
     }
 
@@ -340,9 +335,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             }
         }
         if (result) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
+            runVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Down));
         }
         return result;

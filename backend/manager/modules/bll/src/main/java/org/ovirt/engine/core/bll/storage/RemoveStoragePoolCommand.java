@@ -211,10 +211,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             }
         } else {
             try {
-                Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.FormatStorageDomain,
+                runVdsCommand(VDSCommandType.FormatStorageDomain,
                                 new FormatStorageDomainVDSCommandParameters(vdss.get(0).getId(),
                                         masterDomain.getId()));
             } catch (VdcBLLException e) {
@@ -231,19 +228,14 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
 
     private void handleDestroyStoragePoolCommand() {
         try {
-            Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.DestroyStoragePool,
+            runVdsCommand(VDSCommandType.DestroyStoragePool,
                             new IrsBaseVDSCommandParameters(getStoragePool().getId()));
         } catch (VdcBLLException e) {
             try {
                 TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
                     @Override
                     public Void runInTransaction() {
-                        Backend.getInstance()
-                                .getResourceManager()
-                                .RunVdsCommand(VDSCommandType.SpmStopOnIrs,
+                        runVdsCommand(VDSCommandType.SpmStopOnIrs,
                                         new SpmStopOnIrsVDSCommandParameters(getStoragePool().getId()));
                         return null;
                     }

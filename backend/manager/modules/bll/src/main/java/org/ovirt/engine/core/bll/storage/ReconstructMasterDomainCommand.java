@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -161,10 +160,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
         setSucceeded(!_isLastMaster && reconstructOpSucceeded);
 
         if (getSucceeded()) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
-                            VDSCommandType.MarkPoolInReconstructMode,
+            runVdsCommand(VDSCommandType.MarkPoolInReconstructMode,
                             new IrsBaseVDSCommandParameters(getStoragePoolId()));
         }
     }
@@ -186,8 +182,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 ResetIrsVDSCommandParameters tempVar2 = new ResetIrsVDSCommandParameters(
                         getStoragePool().getId(), spm.getId());
                 tempVar2.setIgnoreStopFailed(true);
-                commandSucceeded = Backend.getInstance().getResourceManager()
-                            .RunVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
+                commandSucceeded = runVdsCommand(VDSCommandType.ResetIrs, tempVar2).getSucceeded();
 
                 // if spm host is up switch to use it in the following logic
                 if (spm.getStatus() == VDSStatus.Up) {

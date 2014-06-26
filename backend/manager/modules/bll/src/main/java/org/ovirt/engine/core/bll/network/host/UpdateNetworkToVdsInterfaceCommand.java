@@ -5,7 +5,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
@@ -107,10 +106,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
         if (retVal != null && editNetworkDone) {
             // update vds network data
-            retVal = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
+            retVal = runVdsCommand(VDSCommandType.CollectVdsNetworkData,
                             new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {
@@ -136,7 +132,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
 
     private void editNetworkThreadCompat(NetworkVdsmVDSCommandParameters parameters) {
         try {
-            retVal = Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.EditNetwork, parameters);
+            retVal = runVdsCommand(VDSCommandType.EditNetwork, parameters);
             editNetworkDone = true;
         } catch (RuntimeException e) {
             if (e instanceof VdcBLLException) {
@@ -153,9 +149,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         while (retries > 0 && retVal == null && !editNetworkThreadFinish) {
             retries--;
             try {
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
+                runVdsCommand(VDSCommandType.CollectVdsNetworkData,
                                 new CollectHostNetworkDataVdsCommandParameters(vds));
             } catch (Exception e) {
             }

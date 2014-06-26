@@ -49,10 +49,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         final DbUser currentUser = getCurrentUser();
         final String password = SessionDataContainer.getInstance().getPassword(getParameters().getSessionId());
         final String domainController = currentUser != null ? currentUser.getDomain() : "";
-        final boolean sentToVM = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        final boolean sentToVM = runVdsCommand(
                         VDSCommandType.VmLogon,
                         new VmLogonVDSCommandParameters(getVdsId(), vm.getId(), domainController,
                                 getUserName(), password)).getSucceeded();

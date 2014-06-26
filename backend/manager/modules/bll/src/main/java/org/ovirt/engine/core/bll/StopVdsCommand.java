@@ -92,9 +92,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
                     getVds()
             );
             restartVmsOper.restartVms(mVmList);
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
+            runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                             new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
         }
     }

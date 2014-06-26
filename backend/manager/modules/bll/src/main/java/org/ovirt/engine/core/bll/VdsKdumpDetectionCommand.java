@@ -82,9 +82,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                     getVds()
             );
             restartVmsOper.restartVms(vms);
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
+            runVdsCommand(VDSCommandType.UpdateVdsVMsCleared,
                             new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
         }
     }
@@ -142,9 +140,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
                     AuditLogDirector.log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
 
                     // set status to Kdumping to prevent Host Monitoring errors and wait until kdump finishes
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.SetVdsStatus,
+                    runVdsCommand(VDSCommandType.SetVdsStatus,
                                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Kdumping)
                             );
 
@@ -157,9 +153,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
                 if (kdumpStatus.getStatus() == KdumpFlowStatus.FINISHED) {
                     // host finished its kdump flow, set status to Non Responsive
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.SetVdsStatus,
+                    runVdsCommand(VDSCommandType.SetVdsStatus,
                                     new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.NonResponsive)
                             );
                     return KdumpDetectionResult.KDUMP_FINISHED;

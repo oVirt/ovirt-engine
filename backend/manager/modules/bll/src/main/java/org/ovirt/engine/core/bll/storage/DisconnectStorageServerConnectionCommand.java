@@ -5,7 +5,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -31,9 +30,7 @@ public class DisconnectStorageServerConnectionCommand<T extends StorageServerCon
     }
 
     protected boolean disconnectStorage() {
-        return Backend.getInstance()
-               .getResourceManager()
-               .RunVdsCommand(
+        return runVdsCommand(
                     VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
                                 getParameters().getStorageServerConnection().getstorage_type(),

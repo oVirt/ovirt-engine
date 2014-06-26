@@ -77,9 +77,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
             if (getVds().getStatus() == VDSStatus.NonResponsive
                     || getVds().getStatus() == VDSStatus.Connecting
                     || getVds().getStatus() == VDSStatus.Down) {
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.SetVdsStatus,
+                runVdsCommand(VDSCommandType.SetVdsStatus,
                                 new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Maintenance));
             }
         }

@@ -48,13 +48,11 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
                 params.getBondingOptions(),
                 params.getBootProtocol());
 
-        VDSReturnValue retVal = getBackend().getResourceManager().RunVdsCommand(VDSCommandType.AddNetwork, vdsParams);
+        VDSReturnValue retVal = runVdsCommand(VDSCommandType.AddNetwork, vdsParams);
 
         if (retVal.getSucceeded()) {
             // update vds network data
-            retVal = getBackend()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
+            retVal = runVdsCommand(VDSCommandType.CollectVdsNetworkData,
                             new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {

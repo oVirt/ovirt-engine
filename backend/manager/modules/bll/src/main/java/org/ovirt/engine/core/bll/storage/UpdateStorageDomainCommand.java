@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -80,9 +79,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
     protected void executeCommand() {
         DbFacade.getInstance().getStorageDomainStaticDao().update(getStorageDomain().getStorageStaticData());
         if (_storageDomainNameChanged && getStoragePool() != null) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
+            runVdsCommand(
                             VDSCommandType.SetStorageDomainDescription,
                             new SetStorageDomainDescriptionVDSCommandParameters(getStoragePool().getId(),
                                     getStorageDomain().getId(), getStorageDomain().getStorageName()));

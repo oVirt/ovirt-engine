@@ -63,8 +63,7 @@ public class DetachNetworkFromVdsInterfaceCommand<T extends AttachNetworkToVdsPa
                         .getNetwork().getAddr(), getParameters().getNetwork().getSubnet(), getParameters().getNetwork()
                         .getGateway(), getParameters().getNetwork().getStp(), getParameters().getBondingOptions(),
                 getParameters().getBootProtocol());
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.RemoveNetwork, parameters);
+        VDSReturnValue retVal = runVdsCommand(VDSCommandType.RemoveNetwork, parameters);
         if (retVal.getSucceeded()) {
             // update vds network data
             retVal = Backend

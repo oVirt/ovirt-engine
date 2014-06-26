@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Collections;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -45,7 +44,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 DetachStorageDomainVDSCommandParameters tempVar2 = new DetachStorageDomainVDSCommandParameters(
                         getStoragePool().getId(), getStorageDomain().getId(), Guid.Empty, -1);
                 tempVar2.setForce(true);
-                Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
+                runVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
             } catch (RuntimeException ex) {
                 log.errorFormat("Could not force detach storage domain {0}. error: {1}", getStorageDomain()
                         .getStorageName(), ex.toString());
@@ -62,9 +61,7 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
                 // todo: when iso in multiple pools will be implemented, we
                 // should reset iso path for all related pools
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.ResetISOPath,
+                runVdsCommand(VDSCommandType.ResetISOPath,
                                 new IrsBaseVDSCommandParameters(getStoragePool().getId()));
             }
             if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {

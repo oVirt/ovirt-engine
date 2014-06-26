@@ -1,14 +1,12 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -37,10 +35,7 @@ public class DisconnectHostFromStoragePoolServersCommand extends
     }
 
     private void disconnectStorageByType(StorageType storageType, List<StorageServerConnections> connections) {
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.DisconnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getVds().getId(), getStoragePool().getId(),
                                 storageType, connections));

@@ -38,11 +38,15 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
             beforeTask();
             Guid taskId = getEnclosingCommand().persistAsyncTaskPlaceHolder();
 
-            addTask(taskId, Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(getVDSCommandType(), getVDSParameters()), false);
+            addTask(taskId, runVdsCommand(getVDSCommandType(), getVDSParameters()), false);
         }
         ExecutionHandler.setAsyncJob(getEnclosingCommand().getExecutionContext(), true);
         getReturnValue().setSucceeded(true);
+    }
+
+    protected VDSReturnValue runVdsCommand(VDSCommandType commandType, VDSParametersBase params) {
+        return Backend.getInstance().getResourceManager()
+                .RunVdsCommand(commandType, params);
     }
 
     @Override
@@ -51,8 +55,7 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         VDSCommandType revertCommandType = getRevertVDSCommandType();
         if (revertCommandType != null) {
             addTask(Guid.Empty,
-                    Backend.getInstance().getResourceManager()
-                    .RunVdsCommand(getRevertVDSCommandType(), getRevertVDSParameters()), true);
+                    runVdsCommand(getRevertVDSCommandType(), getRevertVDSParameters()), true);
         }
     }
 

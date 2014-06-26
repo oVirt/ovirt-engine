@@ -42,9 +42,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
      */
     @Override
     protected void executeCommand() {
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
+        runVdsCommand(VDSCommandType.SetVdsStatus,
                         new SetVdsStatusVDSCommandParameters(getVdsId(),
                                 VDSStatus.NonOperational,
                                 getParameters().getNonOperationalReason()));

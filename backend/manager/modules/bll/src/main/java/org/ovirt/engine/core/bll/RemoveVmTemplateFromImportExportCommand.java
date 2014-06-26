@@ -98,7 +98,7 @@ public class RemoveVmTemplateFromImportExportCommand<T extends VmTemplateImportE
         RemoveVMVDSCommandParameters tempVar = new RemoveVMVDSCommandParameters(getParameters().getStoragePoolId(),
                 getVmTemplateId());
         tempVar.setStorageDomainId(getParameters().getStorageDomainId());
-        Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveVM, tempVar);
+        runVdsCommand(VDSCommandType.RemoveVM, tempVar);
 
         List<DiskImage> images = getParameters().getImages();
         setSucceeded(true);

@@ -54,10 +54,7 @@ public class AddSANStorageDomainCommand<T extends AddSANStorageDomainParameters>
     }
 
     protected void proceedVGLunsInDb() {
-        final ArrayList<LUNs> luns = (ArrayList<LUNs>) Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.GetVGInfo,
+        final ArrayList<LUNs> luns = (ArrayList<LUNs>) runVdsCommand(VDSCommandType.GetVGInfo,
                         new GetVGInfoVDSCommandParameters(getVds().getId(), getStorageDomain().getStorage()))
                 .getReturnValue();
 

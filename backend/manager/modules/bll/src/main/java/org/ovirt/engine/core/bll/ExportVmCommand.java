@@ -259,10 +259,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                 DiskImage diskForVolumeInfo = getDiskForVolumeInfo(diskImage);
                 diskImage.setvolumeFormat(diskForVolumeInfo.getVolumeFormat());
                 diskImage.setVolumeType(diskForVolumeInfo.getVolumeType());
-                VDSReturnValue vdsReturnValue = Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
+                VDSReturnValue vdsReturnValue = runVdsCommand(
                                     VDSCommandType.GetImageInfo,
                                     new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, diskImage
                                             .getId(), diskImage.getImageId()));
@@ -285,7 +282,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     .put(vm.getId(), new KeyValuePairCompat<String, List<Guid>>(vmMeta, imageGroupIds));
         UpdateVMVDSCommandParameters tempVar = new UpdateVMVDSCommandParameters(storagePoolId, vmsAndMetaDictionary);
         tempVar.setStorageDomainId(storageDomainId);
-        return Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.UpdateVM, tempVar)
+        return runVdsCommand(VDSCommandType.UpdateVM, tempVar)
                 .getSucceeded();
     }
 

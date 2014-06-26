@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -59,15 +58,12 @@ public class RemoveBondCommand<T extends RemoveBondParameters> extends VdsBondCo
                             false,
                             null,
                             NetworkBootProtocol.NONE);
-            retVal = Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.RemoveNetwork, parameters);
+            retVal = runVdsCommand(VDSCommandType.RemoveNetwork, parameters);
         }
 
         if (retVal != null && retVal.getSucceeded()) {
             // update vds network data
-            retVal = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.CollectVdsNetworkData,
+            retVal = runVdsCommand(VDSCommandType.CollectVdsNetworkData,
                             new CollectHostNetworkDataVdsCommandParameters(getVds()));
 
             if (retVal.getSucceeded()) {

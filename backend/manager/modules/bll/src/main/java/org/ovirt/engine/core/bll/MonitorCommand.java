@@ -17,10 +17,7 @@ public class MonitorCommand<T extends MonitorCommandParameters> extends VmOperat
 
     @Override
     protected void perform() {
-        setSucceeded(Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.VmMonitorCommand,
+        setSucceeded(runVdsCommand(VDSCommandType.VmMonitorCommand,
                         new VmMonitorCommandVDSCommandParameters(getVdsId(), getVmId(), mMonitorCommand))
                 .getSucceeded());
     }

@@ -16,9 +16,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
 
     @Override
     protected void executeCommand() {
-        VDSReturnValue retVal = Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        VDSReturnValue retVal = runVdsCommand(
                         VDSCommandType.CancelMigrate,
                         new CancelMigrationVDSParameters(getVm().getRunOnVds(),
                                 getParameters().getVmId(), false));

@@ -48,15 +48,11 @@ public class ApproveVdsCommand<T extends ApproveVdsParameters> extends InstallVd
             setSucceeded(true);
         }
         if (getSucceeded()) {
-            Backend.getInstance()
-            .getResourceManager()
-            .RunVdsCommand(VDSCommandType.SetVdsStatus,
+            runVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Unassigned));
         } else if (getParameters().isApprovedByRegister()) {
             // In case of Approval of oVirt host process, the status of the host is re-initialized to PendingApproval
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
+            runVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.PendingApproval));
         }
     }

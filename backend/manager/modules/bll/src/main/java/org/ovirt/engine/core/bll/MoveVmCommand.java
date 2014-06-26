@@ -151,10 +151,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
         // Check if vm is initializing to run or already running - if it is in
         // such state,
         // we cannot move the vm
-        boolean isVmDuringInit = ((Boolean) Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.IsVmDuringInitiating,
+        boolean isVmDuringInit = ((Boolean) runVdsCommand(VDSCommandType.IsVmDuringInitiating,
                         new IsVmDuringInitiatingVDSCommandParameters(vm.getId())).getReturnValue()).booleanValue();
 
         if (isVmDuringInit) {

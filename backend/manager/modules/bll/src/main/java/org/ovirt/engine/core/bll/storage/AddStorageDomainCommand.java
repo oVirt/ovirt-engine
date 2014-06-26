@@ -9,7 +9,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -57,10 +56,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected boolean addStorageDomainInIrs() {
         // No need to run in separate transaction - counting on rollback of external transaction wrapping the command
-        return Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        return runVdsCommand(
                         VDSCommandType.CreateStorageDomain,
                         new CreateStorageDomainVDSCommandParameters(getVds().getId(), getStorageDomain()
                                 .getStorageStaticData(), getStorageArgs())).getSucceeded();
@@ -85,10 +81,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     protected void updateStorageDomainDynamicFromIrs() {
         final StorageDomain sd =
-                (StorageDomain) Backend
-                        .getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(VDSCommandType.GetStorageDomainStats,
+                (StorageDomain) runVdsCommand(VDSCommandType.GetStorageDomainStats,
                                 new GetStorageDomainStatsVDSCommandParameters(getVds().getId(),
                                         getStorageDomain().getId()))
                         .getReturnValue();

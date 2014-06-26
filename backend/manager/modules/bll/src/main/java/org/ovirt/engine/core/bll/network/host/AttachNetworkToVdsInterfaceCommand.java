@@ -66,8 +66,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
                 gateway,
                 params.getBondingOptions(),
                 params.getBootProtocol());
-        VDSReturnValue retVal = Backend.getInstance().getResourceManager()
-                .RunVdsCommand(VDSCommandType.AddNetwork, parameters);
+        VDSReturnValue retVal = runVdsCommand(VDSCommandType.AddNetwork, parameters);
 
         if (retVal.getSucceeded()) {
             // update vds network data

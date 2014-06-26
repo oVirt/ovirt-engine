@@ -446,9 +446,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     }
 
     protected void setStatus() {
-        Backend.getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.SetVdsStatus,
+        runVdsCommand(VDSCommandType.SetVdsStatus,
                         new SetVdsStatusVDSCommandParameters(getVdsId(), VDSStatus.Reboot));
         RunSleepOnReboot();
     }
@@ -525,9 +523,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
     protected void setStatus(VDSStatus status) {
         if (getVds().getStatus() != status) {
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.SetVdsStatus,
+            runVdsCommand(VDSCommandType.SetVdsStatus,
                             new SetVdsStatusVDSCommandParameters(getVds().getId(), status));
         }
     }

@@ -108,9 +108,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                             // Set the VM to SavingState to lock the VM,to avoid situation of multi VM hibernation.
                             getVm().setStatus(VMStatus.PreparingForHibernate);
 
-                            Backend.getInstance()
-                                    .getResourceManager()
-                                    .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
+                            runVdsCommand(VDSCommandType.UpdateVmDynamicData,
                                             new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
                                                     getVm().getDynamicData()));
                             getCompensationContext().stateChanged();
@@ -126,10 +124,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             Guid hiberVol1 = Guid.newGuid();
             final VDSReturnValue ret1 =
-                    Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
+                    runVdsCommand(
                                     VDSCommandType.CreateImage,
                                     new CreateImageVDSCommandParameters(
                                             getVm().getStoragePoolId(),
@@ -168,10 +163,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
             Guid hiberVol2 = Guid.newGuid();
             VDSReturnValue ret2 =
-                    Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
+                    runVdsCommand(
                                     VDSCommandType.CreateImage,
                                     new CreateImageVDSCommandParameters(getVm().getStoragePoolId(),
                                             getStorageDomainId(),
@@ -195,9 +187,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                     image1GroupId, hiberVol1, image2GroupId, hiberVol2));
             // end of temp code
 
-            Backend.getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(VDSCommandType.UpdateVmDynamicData,
+            runVdsCommand(VDSCommandType.UpdateVmDynamicData,
                             new UpdateVmDynamicDataVDSCommandParameters(getVdsId(),
                                     getVm().getDynamicData()));
 
@@ -326,9 +316,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 String hiberVol = getVm().getHibernationVolHandle();
                 if (hiberVol != null) {
                     try {
-                        Backend.getInstance()
-                                .getResourceManager()
-                                .RunVdsCommand(
+                        runVdsCommand(
                                         VDSCommandType.Hibernate,
                                         new HibernateVDSCommandParameters(new Guid(getVm().getRunOnVds().toString()),
                                                 getVmId(), getVm().getHibernationVolHandle()));
@@ -358,9 +346,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 getVm().setHibernationVolHandle(null);
                 getVm().setStatus(VMStatus.Up);
 
-                Backend.getInstance()
-                        .getResourceManager()
-                        .RunVdsCommand(
+                runVdsCommand(
                                 VDSCommandType.UpdateVmDynamicData,
                                 new UpdateVmDynamicDataVDSCommandParameters(
                                         new Guid(getVm().getRunOnVds().toString()), getVm().getDynamicData()));

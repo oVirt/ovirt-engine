@@ -24,10 +24,7 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
     protected void executeCommand() {
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
 
-        VDSReturnValue vdsReturnValue = Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(
+        VDSReturnValue vdsReturnValue = runVdsCommand(
                         VDSCommandType.DeleteImageGroup,
                         new DeleteImageGroupVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
                                 .getStorageDomainId(), getParameters().getImageGroupID(), getParameters()

@@ -636,10 +636,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             Guid storageDomainId = getSourceDomainId(image);
             Guid imageGroupId = image.getId() != null ? image.getId() : Guid.Empty;
 
-            VDSReturnValue retValue = Backend
-                    .getInstance()
-                    .getResourceManager()
-                    .RunVdsCommand(
+            VDSReturnValue retValue = runVdsCommand(
                             VDSCommandType.DoesImageExist,
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     imageGUID));

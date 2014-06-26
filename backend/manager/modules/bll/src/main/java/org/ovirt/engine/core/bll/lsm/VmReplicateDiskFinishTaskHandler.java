@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.lsm;
 
 import org.ovirt.engine.core.bll.AbstractSPMAsyncTaskHandler;
-import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -52,8 +51,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
         VDSReturnValue ret = null;
         try {
-            ret = Backend.getInstance().getResourceManager().
-                    RunVdsCommand(VDSCommandType.VmReplicateDiskFinish, migrationCompleteParams);
+            ret = runVdsCommand(VDSCommandType.VmReplicateDiskFinish, migrationCompleteParams);
 
             if (ret.getSucceeded()) {
                 updateImagesInfo();
@@ -101,7 +99,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
     private void updateImagesInfo() {
         for (DiskImage image : getDiskImageDao().getAllSnapshotsForImageGroup
                 (getEnclosingCommand().getParameters().getImageGroupID())) {
-            VDSReturnValue ret = Backend.getInstance().getResourceManager().RunVdsCommand(
+            VDSReturnValue ret = runVdsCommand(
                     VDSCommandType.GetImageInfo,
                     new GetImageInfoVDSCommandParameters(getEnclosingCommand().getParameters().getStoragePoolId(),
                             getEnclosingCommand().getParameters().getTargetStorageDomainId(),

@@ -105,7 +105,7 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
     }
 
     protected boolean isImageRemovedFromStorage() {
-        VDSReturnValue retValue = getBackend().getResourceManager().RunVdsCommand(VDSCommandType.GetImagesList,
+        VDSReturnValue retValue = runVdsCommand(VDSCommandType.GetImagesList,
             new GetImagesListVDSCommandParameters(getStorageDomainId(), getDiskImage().getStoragePoolId()));
 
         if (retValue.getSucceeded()) {

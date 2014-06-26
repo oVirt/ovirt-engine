@@ -65,10 +65,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected void perform() {
-        setActionReturnValue(Backend
-                .getInstance()
-                .getResourceManager()
-                .RunVdsCommand(VDSCommandType.ChangeDisk,
+        setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
                         new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), cdImagePath))
                 .getReturnValue());
         VmHandler.updateCurrentCd(getVdsId(), getVm(), getParameters().getCdImagePath());

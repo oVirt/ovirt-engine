@@ -380,7 +380,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     protected void determineMigrationFailureForAuditLog() {
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
             try {
-                Backend.getInstance().getResourceManager().RunVdsCommand(VDSCommandType.MigrateStatus,
+                runVdsCommand(VDSCommandType.MigrateStatus,
                         new MigrateStatusVDSCommandParameters(getVdsId(), getVmId()));
             } catch (VdcBLLException e) {
                 migrationErrorCode = e.getErrorCode();

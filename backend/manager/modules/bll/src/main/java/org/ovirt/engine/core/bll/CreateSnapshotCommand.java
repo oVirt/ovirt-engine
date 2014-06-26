@@ -99,10 +99,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
             Guid taskId = getAsyncTaskId();
 
             vdsReturnValue =
-                    Backend
-                            .getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
+                    runVdsCommand(
                                     VDSCommandType.CreateSnapshot,
                                     new CreateSnapshotVDSCommandParameters(getStoragePoolId(),
                                             getDestinationStorageDomainId(),
