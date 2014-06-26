@@ -100,7 +100,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
     @Size(max = BusinessEntitiesDefinitions.VM_SERIAL_NUMBER_SIZE)
     private String customSerialNumber;
 
-    private final Set<VmRngDevice.Source> requiredRngSources;
+    private Set<VmRngDevice.Source> requiredRngSources;
 
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
