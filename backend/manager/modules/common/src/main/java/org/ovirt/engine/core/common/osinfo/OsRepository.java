@@ -255,4 +255,11 @@ public interface OsRepository {
      */
     boolean isSingleQxlDeviceEnabled(int osId);
 
+    /**
+     * Checks if is recommended enable the HyperV optimizations
+     * @param osId
+     * @param version
+     * @return an boolean
+     */
+    public boolean isHypervEnabled(int osId, Version version);
 }

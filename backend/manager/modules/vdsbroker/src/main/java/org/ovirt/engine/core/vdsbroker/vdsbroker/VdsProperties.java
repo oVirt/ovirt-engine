@@ -269,6 +269,7 @@ public final class VdsProperties {
     public static final String sysprepInf = "sysprepInf"; // for the binary sys
     public static final String spiceFileTransferEnable = "fileTransferEnable";
     public static final String spiceCopyPasteEnable = "copyPasteEnable";
+    public static final String hypervEnable = "hypervEnable";
                                                           // prep
     public static final String Boot = "boot"; // Optional
     public static final String BootOrder = "bootOrder";
