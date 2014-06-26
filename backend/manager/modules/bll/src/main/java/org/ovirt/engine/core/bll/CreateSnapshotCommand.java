@@ -9,8 +9,6 @@ import java.util.Date;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
-import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -42,11 +40,6 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
     public CreateSnapshotCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setSnapshotName(parameters.getDescription());
-    }
-
-    protected ImagesContainterParametersBase getImagesContainterParameters() {
-        VdcActionParametersBase tempVar = getParameters();
-        return (ImagesContainterParametersBase) ((tempVar instanceof ImagesContainterParametersBase) ? tempVar : null);
     }
 
     @Override
