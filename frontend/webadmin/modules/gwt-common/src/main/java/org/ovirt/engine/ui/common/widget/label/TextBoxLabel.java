@@ -1,28 +1,19 @@
 package org.ovirt.engine.ui.common.widget.label;
 
-import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
-
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.BlurEvent;
 import com.google.gwt.event.dom.client.BlurHandler;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import org.ovirt.engine.ui.common.widget.renderer.EmptyValueRenderer;
 
 public class TextBoxLabel extends TextBoxLabelBase<String> {
 
     private boolean hasFocus = false;
 
     public TextBoxLabel() {
-        super(new EmptyValueRenderer<String>() {
-            @Override
-            public String render(String value) {
-                String renderedText = super.render(value);
-                renderedText = SafeHtmlUtils.htmlEscape(renderedText);
-                return renderedText;
-            }
-        });
+        super(new EmptyValueRenderer<String>());
     }
 
     public TextBoxLabel(String text) {
