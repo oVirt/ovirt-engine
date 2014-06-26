@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -477,5 +476,11 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             getModel().getTemplateVersionName().setEntity(getModel().getName().getEntity());
             getModel().getName().setEntity(getModel().getBaseTemplate().getSelectedItem().getName());
         }
+    }
+
+    @Override
+    public void enableSinglePCI(boolean enabled) {
+        super.enableSinglePCI(enabled);
+        getModel().getIsSingleQxlEnabled().setEntity(vm.getSingleQxlPci());
     }
 }

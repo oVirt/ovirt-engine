@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -21,9 +23,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.NewVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class NewVmModelBehavior extends VmModelBehaviorBase {
 
@@ -358,4 +357,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
     public InstanceTypeManager getInstanceTypeManager() {
         return instanceTypeManager;
     }
+
+    @Override
+    public void enableSinglePCI(boolean enabled) {
+        super.enableSinglePCI(enabled);
+        getModel().getIsSingleQxlEnabled().setEntity(enabled);
+    }
+
 }

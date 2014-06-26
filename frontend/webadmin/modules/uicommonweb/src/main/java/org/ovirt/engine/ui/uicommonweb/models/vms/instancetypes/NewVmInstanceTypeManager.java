@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CustomInstanceType;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditProfileBehavior;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ProfileBehavior;
@@ -26,6 +27,21 @@ public class NewVmInstanceTypeManager extends VmInstanceTypeManager {
     @Override
     protected ProfileBehavior getNetworkProfileBehavior() {
         return networkBehavior;
+    }
+
+    @Override
+    protected void maybeSetSingleQxlPci(VmBase vmBase) {
+        // We are setting the default Qxl support for true on new Linux VM with Spice display protocol
+        // The default value cannot be set in the template since it will effect REST API as well
+        boolean customInstanceTypeUsed = getModel().getInstanceTypes().getSelectedItem() instanceof CustomInstanceType;
+        boolean blankTemplateUsed =
+                getModel().getTemplate().getSelectedItem() != null
+                        && getModel().getTemplate().getSelectedItem().getId().equals(Guid.Empty);
+        if (customInstanceTypeUsed && blankTemplateUsed) {
+            maybeSetEntity(getModel().getIsSingleQxlEnabled(), getModel().getIsQxlSupported());
+        } else {
+            super.maybeSetSingleQxlPci(vmBase);
+        }
     }
 
 

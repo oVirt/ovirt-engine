@@ -45,4 +45,9 @@ public class ExistingVmInstanceTypeManager extends VmInstanceTypeManager {
     protected Guid getSelectedInstanceTypeId() {
         return super.getSelectedInstanceTypeId() == null ? vm.getInstanceTypeId() : super.getSelectedInstanceTypeId();
     }
+
+    @Override
+    public void maybeSetSingleQxlPci(VmBase vmBase) {
+        maybeSetEntity(getModel().getIsSingleQxlEnabled(), vm.getSingleQxlPci() && getModel().getIsQxlSupported());
+    }
 }
