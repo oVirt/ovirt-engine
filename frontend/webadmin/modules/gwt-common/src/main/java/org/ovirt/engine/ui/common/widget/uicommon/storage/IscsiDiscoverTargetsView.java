@@ -88,7 +88,7 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     UiCommandButton discoverButton;
 
     @UiField
-    UiCommandButton loginAllButton;
+    UiCommandButton loginButton;
 
     @UiField
     @Ignore
@@ -146,14 +146,13 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
                         constants.storageIscsiDiscoverTargetsLabel()));
     }
 
-    void localize(CommonApplicationConstants constants) {
+    protected void localize(CommonApplicationConstants constants) {
         addressEditor.setLabel(constants.storageIscsiPopupAddressLabel());
         portEditor.setLabel(constants.storageIscsiPopupPortLabel());
         useUserAuthEditor.setLabel(constants.storageIscsiPopupUserAuthLabel());
         chapUserEditor.setLabel(constants.storageIscsiPopupChapUserLabel());
         chapPassEditor.setLabel(constants.storageIscsiPopupChapPassLabel());
         discoverButton.setLabel(constants.storageIscsiPopupDiscoverButtonLabel());
-        loginAllButton.setLabel(constants.storageIscsiPopupLoginAllButtonLabel());
     }
 
     private void setProposeDiscover(boolean propose) {
@@ -198,7 +197,6 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
 
     void initButtons(final SanStorageModelBase object) {
         discoverButton.setCommand(object.getDiscoverTargetsCommand());
-        loginAllButton.setCommand(object.getLoginAllCommand());
 
         discoverTargetsPanelInner.setVisible(discoverTargetsImageButton.isDown());
         discoverTargetsImageButton.addClickHandler(new ClickHandler() {
@@ -215,12 +213,20 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
             }
         });
 
-        loginAllButton.addClickHandler(new ClickHandler() {
+        initLoginButton(object);
+    }
+
+    protected void initLoginButton(SanStorageModelBase object) {
+
+        loginButton.setCommand(object.getLoginCommand());
+        loginButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                loginAllButton.getCommand().execute();
+                loginButton.getCommand().execute();
             }
         });
+
+        loginButton.setLabel(object.getLoginButtonLabel());
     }
 
     public void setEnabled(boolean enabled) {
@@ -236,6 +242,10 @@ public class IscsiDiscoverTargetsView extends FocusComposite implements HasEdito
     @Override
     public HandlerRegistration addKeyPressHandler(KeyPressHandler handler) {
         return addDomHandler(handler, KeyPressEvent.getType());
+    }
+
+    public void setLoginButtonStyle(String style) {
+        loginButton.setStyleName(style);
     }
 
     public boolean isDiscoverPanelFocused() {

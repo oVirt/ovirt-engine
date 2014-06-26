@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
@@ -681,11 +682,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS, model.getActivateDomain().getEntity() }))).run();
         }
-        else
-        {
+        else if (model.getSelectedItem() instanceof ImportSanStorageModel) {
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
-                            host.getId() }))).run();
+                            host.getId(), model.getActivateDomain().getEntity() }))).run();
         }
     }
 
@@ -1924,6 +1924,57 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         importFileStorageInit();
     }
 
+    private void importSanStorage(final TaskContext context)
+    {
+        this.context = context;
+
+        ArrayList<Object> data = (ArrayList<Object>) context.getState();
+        StorageModel model = (StorageModel) getWindow();
+
+        storageModel = model.getSelectedItem();
+        hostId = (Guid) data.get(1);
+        activateDomain = (Boolean) data.get(2);
+
+        ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
+        final List<StorageDomain> storageDomains = importSanStorageModel.getStorageDomains().getSelectedItems();
+
+        ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
+        List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
+
+        for (final StorageDomain storageDomain : storageDomains) {
+            StorageDomainManagementParameter parameters =
+                    new StorageDomainManagementParameter(storageDomain.getStorageStaticData());
+            parameters.setVdsId(hostId);
+            parametersList.add(parameters);
+
+            callbacks.add(new IFrontendActionAsyncCallback() {
+                @Override
+                public void executed(FrontendActionAsyncResult result) {
+                    VdcReturnValueBase returnValue = result.getReturnValue();
+                    boolean success = returnValue != null && returnValue.getSucceeded();
+
+                    if (success) {
+                        StorageModel model = (StorageModel) getWindow();
+                        StoragePool dataCenter = model.getDataCenter().getSelectedItem();
+                        if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
+                            attachStorageToDataCenter(storageDomain.getId(), dataCenter.getId(), activateDomain);
+                        }
+
+                        boolean isLastDomain = storageDomain == storageDomains.get(storageDomains.size() - 1);
+                        if (isLastDomain) {
+                            onFinish(context, true, storageModel);
+                        }
+                    }
+                    else {
+                        onFinish(context, false, storageModel);
+                    }
+                }
+            });
+        }
+
+        Frontend.getInstance().runMultipleActions(VdcActionType.AddExistingBlockStorageDomain, parametersList, callbacks);
+    }
+
     public void importFileStorageInit()
     {
         if (fileConnection != null)
@@ -2143,6 +2194,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         else if ("ImportFile".equals(key)) //$NON-NLS-1$
         {
             importFileStorage(context);
+        }
+        else if ("ImportSan".equals(key)) //$NON-NLS-1$
+        {
+            importSanStorage(context);
         }
         else if ("Finish".equals(key)) //$NON-NLS-1$
         {

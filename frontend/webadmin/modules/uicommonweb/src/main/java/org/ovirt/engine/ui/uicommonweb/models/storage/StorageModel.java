@@ -204,7 +204,8 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
                 VdcQueryType.GetConfigurationValue, VdcQueryType.GetStoragePoolsByStorageDomainId,
                 VdcQueryType.GetStorageDomainsByStoragePoolId, VdcQueryType.GetLunsByVgId,
                 VdcQueryType.GetAllVdsByStoragePool, VdcQueryType.DiscoverSendTargets, VdcQueryType.GetDeviceList,
-                VdcQueryType.GetExistingStorageDomainList, VdcQueryType.GetHostsForStorageOperation });
+                VdcQueryType.GetExistingStorageDomainList, VdcQueryType.GetHostsForStorageOperation,
+                VdcQueryType.GetUnregisteredBlockStorageDomains });
 
         setName(new EntityModel<String>());
         setDescription(new EntityModel<String>());
@@ -587,8 +588,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             selectedItem = spm == null ? Linq.firstOrDefault(hosts) : spm;
         }
 
-        getHost().setItems(hosts);
-        getHost().setSelectedItem(selectedItem);
+        getHost().setItems(hosts, selectedItem);
     }
 
     private VDS getSPM(Iterable<VDS> hosts) {
@@ -738,5 +738,9 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
 
     public boolean isNewStorage() {
         return getStorage() == null;
+    }
+
+    public StorageModelBehavior getBehavior() {
+        return behavior;
     }
 }

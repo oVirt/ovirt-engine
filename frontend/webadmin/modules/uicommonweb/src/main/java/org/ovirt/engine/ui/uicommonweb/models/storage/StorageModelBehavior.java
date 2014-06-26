@@ -112,4 +112,6 @@ public abstract class StorageModelBehavior extends Model
     protected boolean isLocalStorage(IStorageModel storage) {
         return storage.getType() == StorageType.LOCALFS;
     }
+
+    public abstract boolean isImport();
 }

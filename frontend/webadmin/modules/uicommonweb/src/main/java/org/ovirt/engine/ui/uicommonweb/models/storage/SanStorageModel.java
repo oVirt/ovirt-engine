@@ -316,7 +316,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
      * Organizes items according to the current groupping flag. When new items provided takes them in account and add to
      * the Items collection.
      */
-    private void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
+    protected void initializeItems(List<LunModel> newLuns, List<SanTargetModel> newTargets)
     {
         if (getIsGrouppedByTarget())
         {
@@ -357,7 +357,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
 
             setItems(items);
 
-            updateLoginAllAvailability();
+            updateLoginAvailability();
         }
         else
         {
@@ -550,8 +550,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
         return list;
     }
 
-    private void proposeDiscover()
-    {
+    protected void proposeDiscover() {
         boolean proposeDiscover =
                 !getProposeDiscoverTargets() && (getItems() == null || Linq.count(getItems()) == 0);
 

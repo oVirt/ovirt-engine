@@ -102,6 +102,11 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         }
     }
 
+    @Override
+    public boolean isImport() {
+        return true;
+    }
+
     private boolean isItemSelectable(IStorageModel item, StoragePool dataCenter, boolean isNoStorageAttached) {
         // Local SD can be attached to a local DC only
         if (isLocalStorage(item) && !dataCenter.isLocal()) {

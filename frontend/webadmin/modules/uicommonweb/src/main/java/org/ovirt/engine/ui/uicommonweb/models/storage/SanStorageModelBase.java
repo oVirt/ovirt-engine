@@ -51,16 +51,16 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         privateUpdateCommand = value;
     }
 
-    private UICommand privateLoginAllCommand;
+    private UICommand loginCommand;
 
-    public UICommand getLoginAllCommand()
+    public UICommand getLoginCommand()
     {
-        return privateLoginAllCommand;
+        return loginCommand;
     }
 
-    private void setLoginAllCommand(UICommand value)
+    private void setLoginCommand(UICommand value)
     {
-        privateLoginAllCommand = value;
+        loginCommand = value;
     }
 
     private UICommand privateDiscoverTargetsCommand;
@@ -271,9 +271,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         setHash(getHashName() + new Date());
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
-        UICommand tempVar = new UICommand("LoginAll", this); //$NON-NLS-1$
+        UICommand tempVar = new UICommand("Login", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(false);
-        setLoginAllCommand(tempVar);
+        setLoginCommand(tempVar);
         setDiscoverTargetsCommand(new UICommand("DiscoverTargets", this)); //$NON-NLS-1$
 
         setAddress(new EntityModel<String>());
@@ -400,6 +400,10 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         connectTargets();
     }
 
+    protected void login() {
+        loginAll();
+    }
+
     private void loginAll()
     {
         // Cast to list of SanTargetModel because we get call
@@ -451,7 +455,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         Frontend.getInstance().runQuery(VdcQueryType.DiscoverSendTargets, parameters, asyncQuery);
     }
 
-    private void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
+    protected void postDiscoverTargetsInternal(ArrayList<StorageServerConnections> items)
     {
         ArrayList<SanTargetModel> newItems = new ArrayList<SanTargetModel>();
 
@@ -529,9 +533,9 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
         {
             update();
         }
-        else if (command == getLoginAllCommand())
+        else if (command == getLoginCommand())
         {
-            loginAll();
+            login();
         }
         else if (command == getDiscoverTargetsCommand())
         {
@@ -549,7 +553,7 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
     {
     }
 
-    protected void updateLoginAllAvailability()
+    protected void updateLoginAvailability()
     {
         List<SanTargetModel> items = (List<SanTargetModel>) getItems();
 
@@ -565,10 +569,14 @@ public abstract class SanStorageModelBase extends SearchableListModel implements
             }
         }
 
-        getLoginAllCommand().setIsExecutionAllowed(allow);
+        getLoginCommand().setIsExecutionAllowed(allow);
     }
 
     protected void isAllLunsSelectedChanged()
     {
+    }
+
+    public String getLoginButtonLabel() {
+        return ConstantsManager.getInstance().getConstants().empty();
     }
 }

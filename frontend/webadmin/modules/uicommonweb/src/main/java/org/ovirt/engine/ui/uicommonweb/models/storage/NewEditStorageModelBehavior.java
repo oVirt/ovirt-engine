@@ -71,6 +71,11 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
         }
     }
 
+    @Override
+    public boolean isImport() {
+        return false;
+    }
+
     public void postUpdateItemsAvailability(IStorageModel item, boolean isNoExportOrIsoStorageAttached) {
         StoragePool dataCenter = getModel().getDataCenter().getSelectedItem();
 

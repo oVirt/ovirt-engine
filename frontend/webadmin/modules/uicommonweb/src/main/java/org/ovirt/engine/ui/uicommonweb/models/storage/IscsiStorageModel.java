@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 @SuppressWarnings("unused")
 public class IscsiStorageModel extends SanStorageModel
@@ -14,5 +15,10 @@ public class IscsiStorageModel extends SanStorageModel
     @Override
     protected String getListName() {
         return "IscsiStorageModel"; //$NON-NLS-1$
+    }
+
+    @Override
+    public String getLoginButtonLabel() {
+        return ConstantsManager.getInstance().getConstants().loginAllButtonLabel();
     }
 }

@@ -1364,6 +1364,12 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("No LUNs selected. Please select LUNs.")
     String noLUNsSelectedInvalidReason();
 
+    @DefaultStringValue("No storage domains selected. Please select storage domains to import.")
+    String noStorageDomainsSelectedInvalidReason();
+
+    @DefaultStringValue("No storage domains to import have been found.")
+    String noStorageDomainsFound();
+
     @DefaultStringValue("Could not retrieve LUNs, please check your storage.")
     String couldNotRetrieveLUNsLunsFailure();
 
@@ -2307,5 +2313,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Random Number Generator not supported for this cluster level or is disabled in the engine config.")
     String rngNotSupported();
+
+    @DefaultStringValue("Login All")
+    String loginAllButtonLabel();
+
+    @DefaultStringValue("Login")
+    String loginButtonLabel();
 }
 

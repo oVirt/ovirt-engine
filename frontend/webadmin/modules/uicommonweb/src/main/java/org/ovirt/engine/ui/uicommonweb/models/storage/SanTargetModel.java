@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -12,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class SanTargetModel extends EntityModel
+public class SanTargetModel extends EntityModel<StorageServerConnections>
 {
 
     public static final EventDefinition loggedInEventDefinition;

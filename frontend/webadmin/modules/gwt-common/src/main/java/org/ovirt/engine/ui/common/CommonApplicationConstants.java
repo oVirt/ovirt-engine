@@ -1296,9 +1296,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Discover Targets")
     String storageIscsiDiscoverTargetsLabel();
 
-    @DefaultStringValue("Login All")
-    String storageIscsiPopupLoginAllButtonLabel();
-
     @DefaultStringValue("Login")
     String storageIscsiPopupLoginButtonLabel();
 
@@ -1801,6 +1798,12 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("IQN")
     String iqn();
+
+    @DefaultStringValue("Storage Name")
+    String storageName();
+
+    @DefaultStringValue("Storage ID (VG Name)")
+    String storageIdVgName();
 
     @DefaultStringValue("Provide custom serial number policy")
     String overrideSerialNumberPolicy();
