@@ -18,10 +18,12 @@ public class BackendAffinityGroupsResource
         extends AbstractBackendCollectionResource<AffinityGroup, org.ovirt.engine.core.common.scheduling.AffinityGroup>
         implements AffinityGroupsResource {
 
+    static final String[] SUB_COLLECTIONS = { "vms" };
+
     private String clusterId;
 
     public BackendAffinityGroupsResource(String clusterId) {
-        super(AffinityGroup.class, org.ovirt.engine.core.common.scheduling.AffinityGroup.class);
+        super(AffinityGroup.class, org.ovirt.engine.core.common.scheduling.AffinityGroup.class, SUB_COLLECTIONS);
         this.clusterId = clusterId;
     }
 
