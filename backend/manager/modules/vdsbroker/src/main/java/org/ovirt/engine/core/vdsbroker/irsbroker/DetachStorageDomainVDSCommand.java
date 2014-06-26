@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -14,8 +15,12 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
     protected void executeIrsBrokerCommand() {
         if (getParameters().getForce()) {
             try {
+                Guid storagePoolId = getParameters().getStoragePoolId();
+                if (getParameters().isDetachFromOldStoragePool()) {
+                    storagePoolId = Guid.Empty;
+                }
                 status = getIrsProxy().forcedDetachStorageDomain(getParameters().getStorageDomainId().toString(),
-                        getParameters().getStoragePoolId().toString());
+                        storagePoolId.toString());
                 proceedProxyReturnValue();
             } catch (RuntimeException ex) {
                 printReturnValue();

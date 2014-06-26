@@ -127,6 +127,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                                 Guid.Empty,
                                                 0);
                                 detachParams.setForce(true);
+                                detachParams.setDetachFromOldStoragePool(true);
                                 VDSReturnValue returnValue =
                                         runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
                                 if (!returnValue.getSucceeded()) {

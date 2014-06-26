@@ -18,7 +18,17 @@ public class DetachStorageDomainVDSCommandParameters extends DeactivateStorageDo
         privateForce = value;
     }
 
+    private boolean detachFromOldStoragePool;
+
     public DetachStorageDomainVDSCommandParameters() {
+    }
+
+    public boolean isDetachFromOldStoragePool() {
+        return detachFromOldStoragePool;
+    }
+
+    public void setDetachFromOldStoragePool(boolean detachFromOldStoragePool) {
+        this.detachFromOldStoragePool = detachFromOldStoragePool;
     }
 
     @Override
