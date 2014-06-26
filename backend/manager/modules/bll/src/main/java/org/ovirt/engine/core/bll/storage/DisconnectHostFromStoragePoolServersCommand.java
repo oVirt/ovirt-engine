@@ -19,6 +19,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 public class DisconnectHostFromStoragePoolServersCommand extends
         ConnectHostToStoragePoolServerCommandBase<HostStoragePoolParametersBase> {
 
+    // Required as invoked not only by command
+    public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters) {
+        this(parameters, null);
+    }
+
     public DisconnectHostFromStoragePoolServersCommand(HostStoragePoolParametersBase parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStoragePool(parameters.getStoragePool());

@@ -603,7 +603,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
                     p,
-                    dupContext().withoutCompensationContext().withoutExecutionContext().withoutLock());
+                    cloneContextAndDetachFromParent());
         }
         if (reloadVmTemplateFromDB() != null) {
             endDefaultOperations();
@@ -651,7 +651,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
             UpdateVmVersionParameters params = new UpdateVmVersionParameters(vmId);
             params.setSessionId(getParameters().getSessionId());
-            getBackend().runInternalAction(VdcActionType.UpdateVmVersion, params);
+            getBackend().runInternalAction(VdcActionType.UpdateVmVersion, params, cloneContextAndDetachFromParent());
         }
         updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
     }
@@ -681,7 +681,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             p.setTaskGroupSuccess(false);
             Backend.getInstance().endAction(VdcActionType.CreateImageTemplate,
                     p,
-                    dupContext().withoutCompensationContext().withoutExecutionContext().withoutLock());
+                    cloneContextAndDetachFromParent());
         }
 
         // if template exist in db remove it

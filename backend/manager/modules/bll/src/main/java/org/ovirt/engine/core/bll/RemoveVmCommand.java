@@ -126,9 +126,9 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
 
     private void removeMemoryVolumes() {
         for (String memoryState : memoryStates) {
-            VdcReturnValueBase retVal = getBackend().runInternalAction(
+            VdcReturnValueBase retVal = runInternalAction(
                     VdcActionType.RemoveMemoryVolumes,
-                    buildRemoveMemoryVolumesParameters(memoryState, getVmId()));
+                    buildRemoveMemoryVolumesParameters(memoryState, getVmId()), cloneContextAndDetachFromParent());
 
             if (!retVal.getSucceeded()) {
                 log.errorFormat("Failed to remove memory volumes whie removing vm {0} (volumes: {1})",
@@ -407,4 +407,5 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
+
 }

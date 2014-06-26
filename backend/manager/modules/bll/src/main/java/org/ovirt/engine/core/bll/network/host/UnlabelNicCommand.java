@@ -28,10 +28,10 @@ public class UnlabelNicCommand<T extends LabelNicParameters> extends CommandBase
     @Override
     protected void executeCommand() {
         VdcReturnValueBase result =
-                getBackend().runInternalAction(VdcActionType.PersistentSetupNetworks,
-                        new RemoveNetworksByLabelParametersBuilder().buildParameters(getNic(),
+                runInternalAction(VdcActionType.PersistentSetupNetworks,
+                        new RemoveNetworksByLabelParametersBuilder(getContext()).buildParameters(getNic(),
                                 getLabel(),
-                                getVds().getVdsGroupId()));
+                                getVds().getVdsGroupId()), cloneContextAndDetachFromParent());
 
         if (!result.getSucceeded()) {
             propagateFailure(result);

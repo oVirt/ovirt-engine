@@ -285,7 +285,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             tempVar.setDestroyingPool(true);
             tempVar.setDoFormat(true);
             tempVar.setVdsId(vds.getId());
-            if (!runInternalAction(VdcActionType.RemoveStorageDomain, tempVar, dupContext().withoutLock().withoutExecutionContext())
+            if (!runInternalAction(VdcActionType.RemoveStorageDomain, tempVar, cloneContext().withoutLock().withoutExecutionContext())
                     .getSucceeded()) {
                 return false;
             }

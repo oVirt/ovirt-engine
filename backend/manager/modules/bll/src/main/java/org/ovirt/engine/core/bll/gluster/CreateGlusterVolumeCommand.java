@@ -210,7 +210,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
             option.setVolumeId(volume.getId());
 
             VdcReturnValueBase setOptionReturnValue =
-                    getBackend().runInternalAction(
+                    runInternalAction(
                             VdcActionType.SetGlusterVolumeOption,
                             new GlusterVolumeOptionParameters(option),
                             createCommandContext(volume, option));
@@ -238,7 +238,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         ExecutionContext setOptionCtx = new ExecutionContext();
         setOptionCtx.setMonitored(true);
         setOptionCtx.setStep(setOptionStep);
-        return dupContext().withExecutionContext(setOptionCtx).withoutLock();
+        return cloneContext().withExecutionContext(setOptionCtx).withoutLock();
     }
 
     private Map<String, String> getOptionValues(GlusterVolumeEntity volume, GlusterVolumeOptionEntity option) {

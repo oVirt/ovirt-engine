@@ -60,7 +60,7 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                             getAddImageFromScratchParameters(),
-                            ExecutionHandler.createDefaultContextForTasks(enclosingCommand.getContext()));
+                            ExecutionHandler.createDefaultContextForTasks(enclosingCommand.cloneContextAndDetachFromParent()));
 
             enclosingCommand.getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
 

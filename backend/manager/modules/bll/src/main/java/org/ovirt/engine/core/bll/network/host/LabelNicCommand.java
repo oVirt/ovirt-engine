@@ -36,10 +36,10 @@ public class LabelNicCommand<T extends LabelNicParameters> extends CommandBase<T
     @Override
     protected void executeCommand() {
         VdcReturnValueBase result =
-                getBackend().runInternalAction(VdcActionType.PersistentSetupNetworks,
-                        new AddNetworksByLabelParametersBuilder().buildParameters(getNic(),
+                runInternalAction(VdcActionType.PersistentSetupNetworks,
+                        new AddNetworksByLabelParametersBuilder(getContext()).buildParameters(getNic(),
                                 getLabel(),
-                                getClusterNetworksByLabel()));
+                                getClusterNetworksByLabel()), cloneContextAndDetachFromParent());
         if (result.getSucceeded()) {
             getReturnValue().setActionReturnValue(getLabel());
         } else {

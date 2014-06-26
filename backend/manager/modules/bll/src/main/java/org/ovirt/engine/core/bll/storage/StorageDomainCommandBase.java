@@ -59,7 +59,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     private List<StorageDomainOvfInfo> ovfInfo;
 
     protected StorageDomainCommandBase(T parameters) {
-        super(parameters, null);
+        this(parameters, null);
     }
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {

@@ -429,7 +429,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         ExecutionContext createSnapshotsCtx = new ExecutionContext();
         createSnapshotsCtx.setMonitored(true);
         createSnapshotsCtx.setStep(createSnapshotsStep);
-        return dupContext().withExecutionContext(createSnapshotsCtx);
+        return cloneContext().withExecutionContext(createSnapshotsCtx);
     }
 
     private CreateAllSnapshotsFromVmParameters buildCreateSnapshotParametersForEndAction() {
@@ -953,14 +953,14 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // Since run stateless step involves invocation of command, we should set the run stateless vm step as
         // the "beginning step" of the child command.
         runStatelessVmCtx.setStep(runStatelessStep);
-        return dupContext().withExecutionContext(runStatelessVmCtx).withoutCompensationContext().withoutLock();
+        return cloneContextAndDetachFromParent().withExecutionContext(runStatelessVmCtx);
     }
 
     @Override
     protected void endWithFailure() {
         if (isStatelessSnapshotExistsForVm()) {
             VdcReturnValueBase vdcReturnValue = getBackend().endAction(VdcActionType.CreateAllSnapshotsFromVm,
-                    buildCreateSnapshotParametersForEndAction(), dupContext().withoutExecutionContext().withoutLock());
+                    buildCreateSnapshotParametersForEndAction(), cloneContext().withoutExecutionContext().withoutLock());
 
             setSucceeded(vdcReturnValue.getSucceeded());
             // we are not running the VM, of course,

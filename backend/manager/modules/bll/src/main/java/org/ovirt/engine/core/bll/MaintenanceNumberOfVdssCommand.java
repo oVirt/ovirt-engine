@@ -116,7 +116,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             VdcReturnValueBase result =
                     runInternalAction(VdcActionType.MaintenanceVds,
                             tempVar,
-                            ExecutionHandler.createInternalJobContext());
+                            ExecutionHandler.createInternalJobContext(getContext()));
             if (!result.getCanDoAction()) {
                 getReturnValue().getCanDoActionMessages().addAll(result.getCanDoActionMessages());
                 getReturnValue().setCanDoAction(false);

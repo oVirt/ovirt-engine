@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -21,8 +22,13 @@ import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresForStorageDomainCommandParameters> extends CommandBase<T> {
 
     public CreateOvfStoresForStorageDomainCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public CreateOvfStoresForStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected void executeCommand() {

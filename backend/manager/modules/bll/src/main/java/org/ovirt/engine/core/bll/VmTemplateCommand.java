@@ -223,7 +223,7 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                     parameters.setId(templateId);
                     parameters.setAction(getParameters().getWatchdog().getAction());
                     parameters.setModel(getParameters().getWatchdog().getModel());
-                    getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+                    runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
                 }
             } else {
                 WatchdogParameters watchdogParameters = new WatchdogParameters();
@@ -233,12 +233,12 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 watchdogParameters.setId(templateId);
                 if (getParameters().getWatchdog() == null) {
                     // there is a watchdog in the vm, there should not be any, so let's delete
-                    getBackend().runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters);
+                    runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
                     watchdogParameters.setAction(getParameters().getWatchdog().getAction());
                     watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    getBackend().runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters);
+                    runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 }
             }
         }
@@ -260,16 +260,16 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
             if (rngDevs.isEmpty()) {
                 if (getParameters().getRngDevice() != null) {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
                 }
             } else {
                 if (getParameters().getRngDevice() == null) {
                     RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), false);
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.RemoveRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
                 } else {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), false);
                     params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.UpdateRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
                 }
             }
 

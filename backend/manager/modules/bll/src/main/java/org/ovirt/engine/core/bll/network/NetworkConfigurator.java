@@ -8,6 +8,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -44,9 +45,11 @@ public class NetworkConfigurator {
     private static final long POLLING_BREAK_IN_MILLIS = 500;
     private static final Log log = LogFactory.getLog(NetworkConfigurator.class);
     private final VDS host;
+    private CommandContext commandContext;
 
-    public NetworkConfigurator(VDS host) {
+    public NetworkConfigurator(VDS host, CommandContext commandContext) {
         this.host = host;
+        this.commandContext = commandContext;
     }
 
     public void createManagementNetworkIfRequired() {
@@ -233,11 +236,12 @@ public class NetworkConfigurator {
     }
 
     private void configureManagementNetwork(SetupNetworksParameters parameters) {
-        VdcReturnValueBase retVal = getBackend().runInternalAction(VdcActionType.SetupNetworks, parameters);
+        VdcReturnValueBase retVal =
+                getBackend().runInternalAction(VdcActionType.SetupNetworks, parameters, cloneContextAndDetachFromParent());
         if (retVal.getSucceeded()) {
             retVal =
                     getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
-                            new VdsActionParameters(parameters.getVdsId()));
+                            new VdsActionParameters(parameters.getVdsId()), cloneContextAndDetachFromParent());
             if (!retVal.getSucceeded()) {
                 AuditLogDirector.log(createEvent(),
                         AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK,
@@ -254,6 +258,10 @@ public class NetworkConfigurator {
 
     private BackendInternal getBackend() {
         return Backend.getInstance();
+    }
+
+    private CommandContext cloneContextAndDetachFromParent() {
+        return commandContext.clone().withoutCompensationContext().withoutExecutionContext().withoutLock();
     }
 
     private DbFacade getDbFacade() {

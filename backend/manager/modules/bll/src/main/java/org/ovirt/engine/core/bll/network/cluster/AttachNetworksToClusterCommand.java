@@ -88,7 +88,7 @@ public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters>
             Map<Guid, Map<String, VdsNetworkInterface>> labelsToNicsByHost) {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (Entry<Guid, List<Network>> entry : networksByHost.entrySet()) {
-            AddNetworksByLabelParametersBuilder builder = new AddNetworksByLabelParametersBuilder();
+            AddNetworksByLabelParametersBuilder builder = new AddNetworksByLabelParametersBuilder(getContext());
             parameters.add(builder.buildParameters(entry.getKey(),
                     entry.getValue(),
                     labelsToNicsByHost.get(entry.getKey())));

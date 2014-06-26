@@ -94,7 +94,7 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
 
     @Override
     protected CommandContext createMigrateVmContext(ExecutionContext parentContext, VM vm) {
-        return ExecutionHandler.createInternalJobContext();
+        return ExecutionHandler.createInternalJobContext(getContext());
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -17,6 +18,10 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AddNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
+
+    public AddNetworksByLabelParametersBuilder(CommandContext commandContext) {
+        super(commandContext);
+    }
 
     /**
      * Adds a list of labeled networks to a given interface

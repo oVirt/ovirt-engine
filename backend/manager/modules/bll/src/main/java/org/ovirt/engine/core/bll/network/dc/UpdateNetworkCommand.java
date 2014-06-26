@@ -15,6 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
@@ -88,7 +89,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private void applyNetworkChangesToHosts() {
-        SyncNetworkParametersBuilder builder = new SyncNetworkParametersBuilder();
+        SyncNetworkParametersBuilder builder = new SyncNetworkParametersBuilder(getContext());
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(getNetwork(), getOldNetwork());
 
         if (!parameters.isEmpty()) {
@@ -327,6 +328,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private class SyncNetworkParametersBuilder extends NetworkParametersBuilder{
 
+        public SyncNetworkParametersBuilder(CommandContext commandContext) {
+            super(commandContext);
+        }
+
         private ArrayList<VdcActionParametersBase> buildParameters(Network network, Network oldNetwork) {
             ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
             List<VdsNetworkInterface> nics =
@@ -403,12 +408,12 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private ArrayList<VdcActionParametersBase> createAddNetworkParameters(List<VdsNetworkInterface> nicsForAdd) {
-            AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getNetwork());
+            AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getNetwork(), getContext());
             return builder.buildParameters(nicsForAdd);
         }
 
         private ArrayList<VdcActionParametersBase> createRemoveNetworkParameters(List<VdsNetworkInterface> nicsForRemove) {
-            RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getOldNetwork());
+            RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getOldNetwork(), getContext());
             return builder.buildParameters(nicsForRemove);
         }
 

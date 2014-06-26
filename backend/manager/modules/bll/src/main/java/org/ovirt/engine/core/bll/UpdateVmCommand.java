@@ -162,16 +162,16 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (rngDevs.isEmpty()) {
                 if (getParameters().getRngDevice() != null) {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
                 }
             } else {
                 if (getParameters().getRngDevice() == null) {
                     RngDeviceParameters params = new RngDeviceParameters(rngDevs.get(0), true);
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.RemoveRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.RemoveRngDevice, params, cloneContextAndDetachFromParent());
                 } else {
                     RngDeviceParameters params = new RngDeviceParameters(getParameters().getRngDevice(), true);
                     params.getRngDevice().setDeviceId(rngDevs.get(0).getDeviceId());
-                    rngCommandResult = getBackend().runInternalAction(VdcActionType.UpdateRngDevice, params);
+                    rngCommandResult = runInternalAction(VdcActionType.UpdateRngDevice, params, cloneContextAndDetachFromParent());
                 }
             }
 
@@ -221,9 +221,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                             newVmStatic,
                             currentSockets < newSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
             setNumberOfCpusResult =
-                    getBackend().runInternalAction(
+                    runInternalAction(
                             VdcActionType.HotSetNumberOfCpus,
-                            params);
+                            params, cloneContextAndDetachFromParent());
             newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newSockets : currentSockets);
             auditLogHotSetCpusCandos(params);
         }
@@ -264,19 +264,19 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                     parameters.setId(getParameters().getVmId());
                     parameters.setAction(getParameters().getWatchdog().getAction());
                     parameters.setModel(getParameters().getWatchdog().getModel());
-                    getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+                    runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
                 }
             } else {
                 WatchdogParameters watchdogParameters = new WatchdogParameters();
                 watchdogParameters.setId(getParameters().getVmId());
                 if (getParameters().getWatchdog() == null) {
                     // there is a watchdog in the vm, there should not be any, so let's delete
-                    getBackend().runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters);
+                    runInternalAction(VdcActionType.RemoveWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 } else {
                     // there is a watchdog in the vm, we have to update.
                     watchdogParameters.setAction(getParameters().getWatchdog().getAction());
                     watchdogParameters.setModel(getParameters().getWatchdog().getModel());
-                    getBackend().runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters);
+                    runInternalAction(VdcActionType.UpdateWatchdog, watchdogParameters, cloneContextAndDetachFromParent());
                 }
             }
 

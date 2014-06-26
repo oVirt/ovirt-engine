@@ -89,6 +89,6 @@ public class HandleVdsVersionCommand<T extends VdsActionParameters> extends VdsC
         SetNonOperationalVdsParameters tempVar = new SetNonOperationalVdsParameters(getVdsId(),
                 reason,
                 customLogValues);
-        runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
+        runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext(getContext()));
     }
 }

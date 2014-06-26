@@ -77,7 +77,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
                 runInternalAction(VdcActionType.SetNonOperationalVds,
                         tempVar,
-                        ExecutionHandler.createInternalJobContext());
+                        ExecutionHandler.createInternalJobContext(getContext()));
             } else {
                 // if cluster doesn't have cpu then get the cpu from the vds
                 if (StringUtils.isEmpty(vdsGroupCpuName)) {
@@ -118,7 +118,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                         NonOperationalReason.CPU_TYPE_INCOMPATIBLE_WITH_CLUSTER);
                 runInternalAction(VdcActionType.SetNonOperationalVds,
                         tempVar2,
-                        ExecutionHandler.createInternalJobContext());
+                        ExecutionHandler.createInternalJobContext(getContext()));
             } else {
                 // if no need to change to non operational then don't log the command
                 setCommandShouldBeLogged(false);

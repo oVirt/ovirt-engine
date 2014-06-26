@@ -181,7 +181,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         } else {
             addVmParams.setSessionId(getParameters().getSessionId());
         }
-        getBackend().runInternalAction(action, addVmParams,
+        runInternalAction(action, addVmParams,
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }
 

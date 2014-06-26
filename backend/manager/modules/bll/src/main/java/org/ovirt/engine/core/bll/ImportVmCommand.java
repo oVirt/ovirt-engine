@@ -1199,9 +1199,9 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private void removeMemoryVolumes(String memoryVolume, Guid vmId) {
-        VdcReturnValueBase retVal = getBackend().runInternalAction(
+        VdcReturnValueBase retVal = runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
-                new RemoveMemoryVolumesParameters(memoryVolume, vmId));
+                new RemoveMemoryVolumesParameters(memoryVolume, vmId), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
             log.errorFormat("Failed to remove memory volumes: {0}", memoryVolume);
@@ -1360,4 +1360,5 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
+
 }

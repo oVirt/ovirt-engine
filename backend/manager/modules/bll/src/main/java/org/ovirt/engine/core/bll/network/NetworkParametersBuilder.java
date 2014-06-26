@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -26,13 +27,16 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public abstract class NetworkParametersBuilder {
 
-    public NetworkParametersBuilder() {
+    private CommandContext commandContext;
+
+    public NetworkParametersBuilder(CommandContext commandContext) {
+        this.commandContext = commandContext;
     }
 
     protected PersistentSetupNetworksParameters createSetupNetworksParameters(Guid hostId) {
         VDS host = new VDS();
         host.setId(hostId);
-        NetworkConfigurator configurator = new NetworkConfigurator(host);
+        NetworkConfigurator configurator = new NetworkConfigurator(host, commandContext);
         List<VdsNetworkInterface> nics = configurator.filterBondsWithoutSlaves(getHostInterfaces(hostId));
 
         PersistentSetupNetworksParameters parameters = new PersistentSetupNetworksParameters();

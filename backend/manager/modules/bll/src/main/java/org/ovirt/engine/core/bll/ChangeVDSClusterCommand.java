@@ -7,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -229,7 +230,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             addVdsSpmIdParams.setCompensationEnabled(true);
             VdcReturnValueBase addVdsSpmIdReturn =
                     runInternalAction(VdcActionType.AddVdsSpmId,
-                            addVdsSpmIdParams, dupContext().withoutLock().withoutExecutionContext());
+                            addVdsSpmIdParams, cloneContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());
@@ -270,7 +271,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private void configureNetworks() {
-        ChangeClusterParametersBuilder builder = new ChangeClusterParametersBuilder();
+        ChangeClusterParametersBuilder builder = new ChangeClusterParametersBuilder(getContext());
         final PersistentSetupNetworksParameters params;
 
         try {
@@ -285,7 +286,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
 
             @Override
             public void run() {
-                getBackend().runInternalAction(VdcActionType.PersistentSetupNetworks, params);
+                runInternalAction(VdcActionType.PersistentSetupNetworks, params, cloneContextAndDetachFromParent());
 
             }
         });
@@ -404,6 +405,10 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
     }
 
     private class ChangeClusterParametersBuilder extends NetworkParametersBuilder {
+
+        public ChangeClusterParametersBuilder(CommandContext commandContext) {
+            super(commandContext);
+        }
 
         public PersistentSetupNetworksParameters buildParameters(Guid hostId, Guid sourceClusterId, Guid targetClusterId) {
             List<Network> targetClusterNetworks = getNetworkDAO().getAllForCluster(targetClusterId);

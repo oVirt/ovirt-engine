@@ -95,8 +95,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
             for (VDS vds : allForVdsGroup) {
                 VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
-                VdcReturnValueBase addVdsSpmIdReturn =
-                        getBackend().runInternalAction(VdcActionType.AddVdsSpmId, parameters);
+                VdcReturnValueBase addVdsSpmIdReturn = runInternalAction(VdcActionType.AddVdsSpmId, parameters, cloneContextAndDetachFromParent());
                 if (!addVdsSpmIdReturn.getSucceeded()) {
                     setSucceeded(false);
                     getReturnValue().setFault(addVdsSpmIdReturn.getFault());

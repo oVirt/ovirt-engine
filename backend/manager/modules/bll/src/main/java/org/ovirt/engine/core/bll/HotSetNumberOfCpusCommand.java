@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
@@ -33,8 +34,13 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
     public static final String LOGABLE_FIELD_ERROR_MESSAGE = "ErrorMessage";
 
     public HotSetNumberOfCpusCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public HotSetNumberOfCpusCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected boolean canDoAction() {

@@ -87,7 +87,7 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
             Map<Guid, List<VdsNetworkInterface>> nicsByHost) {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
         for (Entry<Guid, List<Network>> entry : networksByHost.entrySet()) {
-            RemoveNetworksByLabelParametersBuilder builder = new RemoveNetworksByLabelParametersBuilder();
+            RemoveNetworksByLabelParametersBuilder builder = new RemoveNetworksByLabelParametersBuilder(getContext());
             parameters.add(builder.buildParameters(entry.getKey(),
                     entry.getValue(),
                     nicsByHost.get(entry.getKey())));

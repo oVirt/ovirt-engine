@@ -495,7 +495,11 @@ public class ExecutionHandler {
      * @return an execution context as a Job
      */
     public static CommandContext createInternalJobContext() {
-        return createInternalJobContext(null);
+        return createInternalJobContext((EngineLock) null);
+    }
+
+    public static CommandContext createInternalJobContext(CommandContext commandContext) {
+        return createInternalJobContext(commandContext, null);
     }
 
     /**
@@ -507,13 +511,25 @@ public class ExecutionHandler {
      * @return an execution context as a Job
      */
     public static CommandContext createInternalJobContext(EngineLock lock) {
+        return modifyContextForIntenralJob(new CommandContext(new EngineContext()), lock);
+    }
+
+    public static CommandContext createInternalJobContext(CommandContext commandContext, EngineLock lock) {
+        return modifyContextForIntenralJob(commandContext.clone(), lock);
+    }
+
+    private static CommandContext modifyContextForIntenralJob(CommandContext returnedContext, EngineLock lock) {
+        return returnedContext
+                .withExecutionContext(createMonitoredExecutionContext())
+                .withLock(lock)
+                .withoutCompensationContext();
+    }
+
+    private static ExecutionContext createMonitoredExecutionContext() {
         ExecutionContext executionContext = new ExecutionContext();
         executionContext.setJobRequired(true);
         executionContext.setMonitored(true);
-        return new CommandContext(new EngineContext())
-                .withExecutionContext(executionContext)
-                .withLock(lock)
-                .withoutCompensationContext();
+        return executionContext;
     }
 
     /**
@@ -541,7 +557,8 @@ public class ExecutionHandler {
      * @return A context by which the internal command should be monitored.
      */
     public static CommandContext createDefaultContextForTasks(CommandContext commandContext, EngineLock lock) {
-        return commandContext.clone().withLock(lock).withoutCompensationContext();
+        CommandContext result = commandContext.clone().withLock(lock).withoutCompensationContext();
+        return result.withExecutionContext(createDefaultContextForTasksImpl(result.getExecutionContext()));
     }
 
     public static void setExecutionContextForTasks(CommandContext commandContext, ExecutionContext executionContext, EngineLock lock) {

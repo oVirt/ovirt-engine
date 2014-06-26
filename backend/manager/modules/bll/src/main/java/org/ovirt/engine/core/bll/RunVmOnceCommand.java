@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -32,13 +33,19 @@ import org.ovirt.engine.core.utils.OsRepositoryImpl;
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute
 public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T> implements QuotaStorageDependent {
-    public RunVmOnceCommand(T runVmParams) {
-        super(runVmParams);
+
+    public RunVmOnceCommand(T runVmParams, CommandContext commandContext) {
+        super(runVmParams, commandContext);
 
         // Load payload if user didn't send via run-once
         if (getParameters().getVmPayload() == null) {
             loadPayload();
         }
+    }
+
+
+    public RunVmOnceCommand(T runVmParams) {
+        this(runVmParams, null);
     }
 
     @Override

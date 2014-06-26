@@ -180,7 +180,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private void configureManagementNetwork() {
-        final NetworkConfigurator networkConfigurator = new NetworkConfigurator(getVds());
+        final NetworkConfigurator networkConfigurator = new NetworkConfigurator(getVds(), getContext());
         if (!networkConfigurator.awaitVdsmResponse()) {
             throw new VdsInstallException(
                 VDSStatus.NonResponsive,

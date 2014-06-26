@@ -39,7 +39,7 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
             @Override
             public Void runInTransaction() {
                 for (LiveMigrateDiskParameters parameters : enclosingCommand.getParameters().getParametersList()) {
-                    CommandContext commandContext = ExecutionHandler.createInternalJobContext();
+                    CommandContext commandContext = ExecutionHandler.createInternalJobContext(enclosingCommand.cloneContextAndDetachFromParent());
                     ExecutionHandler.setAsyncJob(commandContext.getExecutionContext(), true);
                     parameters.setSessionId(enclosingCommand.getParameters().getSessionId());
 

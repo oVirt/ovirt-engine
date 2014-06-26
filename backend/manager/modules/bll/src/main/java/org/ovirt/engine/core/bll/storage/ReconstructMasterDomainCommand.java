@@ -5,6 +5,7 @@ import java.util.List;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.ReconstructMasterParameters;
@@ -44,7 +45,11 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     public ReconstructMasterDomainCommand(T parameters) {
-        super(parameters);
+        super(parameters, null);
+    }
+
+    public ReconstructMasterDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         _newMasterStorageDomainId = parameters.getNewMasterDomainId();
         canChooseInactiveDomainAsMaster = parameters.isCanChooseInactiveDomainAsMaster();
         canChooseCurrentMasterAsNewMaster = parameters.isCanChooseCurrentMasterAsNewMaster();

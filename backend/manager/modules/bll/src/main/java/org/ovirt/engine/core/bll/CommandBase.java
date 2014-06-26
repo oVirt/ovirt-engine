@@ -2169,13 +2169,16 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 ExecutionHandler.createDefaultContextForTasks(getContext(), lock));
     }
 
+    protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {
+        return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
+    }
 
-    protected CommandContext dupContext() {
+    protected CommandContext cloneContext() {
         return getContext().clone();
     }
 
 
-    protected VdcQueryReturnValue runInternalQuery(VdcQueryType type, VdcQueryParametersBase queryParams) {
-        return getBackend().runInternalQuery(type, queryParams, context.getEngineContext());
+    public CommandContext cloneContextAndDetachFromParent() {
+        return cloneContext().withoutCompensationContext().withoutExecutionContext().withoutLock();
     }
 }

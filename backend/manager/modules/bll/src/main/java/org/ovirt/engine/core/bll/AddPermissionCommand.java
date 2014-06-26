@@ -213,7 +213,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             parameters.setDirectory(directory);
             parameters.setId(externalId);
             parameters.setNamespace(namespace);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddUser, parameters);
+            VdcReturnValueBase result = runInternalAction(VdcActionType.AddUser, parameters, cloneContextAndDetachFromParent());
             if (result.getCanDoAction()) {
                 id = (Guid) result.getActionReturnValue();
                 if (id != null) {
@@ -233,7 +233,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
             parameters.setDirectory(directory);
             parameters.setId(externalId);
             parameters.setNamespace(namespace);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddGroup, parameters);
+            VdcReturnValueBase result = runInternalAction(VdcActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
             if (result.getCanDoAction()) {
                 id = (Guid) result.getActionReturnValue();
                 if (id != null) {

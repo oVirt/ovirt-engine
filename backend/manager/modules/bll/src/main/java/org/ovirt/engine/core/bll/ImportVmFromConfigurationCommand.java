@@ -48,7 +48,6 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         this(parameters, null);
     }
 
-
     @Override
     protected boolean canDoAction() {
         if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmFromConfiguration, ovfEntityData)) {
@@ -140,7 +139,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         for (Disk disk : disks) {
             AttachDetachVmDiskParameters params = new AttachDetachVmDiskParameters(getVm().getId(),
                     disk.getId(), disk.getPlugged(), disk.getReadOnly());
-            VdcReturnValueBase returnVal = getBackend().runInternalAction(VdcActionType.AttachDiskToVm, params);
+            VdcReturnValueBase returnVal = runInternalAction(VdcActionType.AttachDiskToVm, params, cloneContextAndDetachFromParent());
             if (!returnVal.getSucceeded()) {
                 failedDisks.add(disk.getDiskAlias());
             }

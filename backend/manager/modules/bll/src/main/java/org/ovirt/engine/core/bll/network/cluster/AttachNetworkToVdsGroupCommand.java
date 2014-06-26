@@ -86,7 +86,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         List<VdsNetworkInterface> nics =
                 getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
                         getPersistedNetwork().getLabel());
-        AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getPersistedNetwork());
+        AddNetworkParametersBuilder builder = new AddNetworkParametersBuilder(getPersistedNetwork(), getContext());
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
 
         if (!parameters.isEmpty()) {

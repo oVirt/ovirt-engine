@@ -42,7 +42,7 @@ public abstract class AbstractVmInterfaceCommand<T extends AddVmInterfaceParamet
         parameters.setVmId(getParameters().getVmId());
 
         VdcReturnValueBase returnValue =
-                getBackend().runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameters);
+                runInternalAction(VdcActionType.ActivateDeactivateVmNic, parameters, cloneContextAndDetachFromParent());
         if (!returnValue.getSucceeded()) {
             propagateFailure(returnValue);
         }

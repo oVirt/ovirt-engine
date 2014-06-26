@@ -5,6 +5,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -21,7 +22,8 @@ public class AddNetworkParametersBuilder extends NetworkParametersBuilder {
 
     private Network network;
 
-    public AddNetworkParametersBuilder(Network network) {
+    public AddNetworkParametersBuilder(Network network, CommandContext commandContext) {
+        super(commandContext);
         this.network = network;
     }
 

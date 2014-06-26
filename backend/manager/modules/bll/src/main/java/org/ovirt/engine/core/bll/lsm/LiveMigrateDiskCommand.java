@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.LockIdNameAttribute;
 import org.ovirt.engine.core.bll.MoveOrCopyDiskCommand;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
@@ -31,6 +32,24 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
 
     public LiveMigrateDiskCommand(T parameters) {
         super(parameters);
+
+        if (isLastTaskHandler()) {
+            // No need to initialize values if all tasks have been completed
+            // (prevent fetching un-needed/stale data after last task completion)
+            return;
+        }
+
+        setStoragePoolId(getVm().getStoragePoolId());
+        getParameters().setStoragePoolId(getStoragePoolId());
+
+        getParameters().setVdsId(getVdsId());
+        getParameters().setDiskAlias(getDiskAlias());
+        getParameters().setImageGroupID(getImageGroupId());
+        getParameters().setCommandType(getActionType());
+    }
+
+    public LiveMigrateDiskCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
 
         if (isLastTaskHandler()) {
             // No need to initialize values if all tasks have been completed

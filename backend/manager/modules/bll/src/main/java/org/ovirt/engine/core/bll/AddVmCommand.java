@@ -782,7 +782,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             parameters.setId(getParameters().getVmId());
             parameters.setAction(vmWatchdog.getAction());
             parameters.setModel(vmWatchdog.getModel());
-            getBackend().runInternalAction(VdcActionType.AddWatchdog, parameters);
+            runInternalAction(VdcActionType.AddWatchdog, parameters, cloneContextAndDetachFromParent());
         }
     }
 
@@ -791,7 +791,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (rngDev != null) {
             rngDev.setVmId(getVmId());
             RngDeviceParameters params = new RngDeviceParameters(rngDev, true);
-            VdcReturnValueBase result = getBackend().runInternalAction(VdcActionType.AddRngDevice, params);
+            VdcReturnValueBase result = runInternalAction(VdcActionType.AddRngDevice, params, cloneContextAndDetachFromParent());
             if (!result.getSucceeded()) {
                 log.error("Couldn't add RNG device for new VM.");
                 throw new IllegalArgumentException("Couldn't add RNG device for new VM.");

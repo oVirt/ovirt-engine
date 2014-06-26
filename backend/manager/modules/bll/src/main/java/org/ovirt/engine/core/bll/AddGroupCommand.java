@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -26,8 +27,13 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
     private DirectoryGroup directoryGroup;
 
     public AddGroupCommand(T params) {
-        super(params);
+        this(params, null);
     }
+
+    public AddGroupCommand(T params, CommandContext commandContext) {
+        super(params, commandContext);
+    }
+
 
     @Override
     public AuditLogType getAuditLogTypeValue() {

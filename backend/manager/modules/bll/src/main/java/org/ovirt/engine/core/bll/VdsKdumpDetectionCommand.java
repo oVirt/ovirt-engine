@@ -103,7 +103,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         runInternalAction(
                 VdcActionType.FenceVdsManualy,
                 fenceVdsManuallyParams,
-                dupContext()
+                cloneContext()
                         .withoutCompensationContext()
                         .withLock(new EngineLock(getExclusiveLocks(), null)));
     }

@@ -62,7 +62,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             VdcReturnValueBase retVal =
                     runInternalAction(VdcActionType.VdsKdumpDetection,
                             getParameters(),
-                            ExecutionHandler.createInternalJobContext());
+                            ExecutionHandler.createInternalJobContext(getContext()));
 
             if (retVal.getSucceeded()) {
                 // kdump on host detected and finished successfully, stop hard fencing execution

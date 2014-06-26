@@ -139,7 +139,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             VdcReturnValueBase addVdsSpmIdReturn =
                     runInternalAction(VdcActionType.AddVdsSpmId,
                             tempVar,
-                            dupContext().withoutLock().withoutExecutionContext());
+                            cloneContext().withoutLock().withoutExecutionContext());
             if (!addVdsSpmIdReturn.getSucceeded()) {
                 setSucceeded(false);
                 getReturnValue().setFault(addVdsSpmIdReturn.getFault());
@@ -188,10 +188,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
                 public void run() {
                     runInternalAction(VdcActionType.InstallVdsInternal,
                             installVdsParameters,
-                            dupContext()
-                                    .withExecutionContext(installCtx)
-                                    .withLock(null)
-                                    .withCompensationContext(null));
+                            cloneContextAndDetachFromParent()
+                            .withExecutionContext(installCtx));
                 }
             });
             ExecutionHandler.setAsyncJob(getExecutionContext(), true);

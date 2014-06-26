@@ -52,5 +52,7 @@ public interface TaskHandlerCommand<T extends VdcActionParametersBase> {
 
     CommandContext getContext();
 
+    CommandContext cloneContextAndDetachFromParent();
+
     void taskEndSuccessfully();
 }

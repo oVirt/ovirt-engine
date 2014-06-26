@@ -104,7 +104,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         List<VdsNetworkInterface> nics =
                 getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
                         getPersistedNetwork().getLabel());
-        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getPersistedNetwork());
+        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getPersistedNetwork(), getContext());
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
 
         if (!parameters.isEmpty()) {

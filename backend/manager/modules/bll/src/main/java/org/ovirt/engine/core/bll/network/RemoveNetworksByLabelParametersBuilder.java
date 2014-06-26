@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -17,6 +18,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class RemoveNetworksByLabelParametersBuilder extends NetworkParametersBuilder {
+
+    public RemoveNetworksByLabelParametersBuilder(CommandContext commandContext) {
+        super(commandContext);
+    }
 
     /**
      * Removes labeled networks from an interface by a given label

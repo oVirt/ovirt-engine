@@ -192,7 +192,9 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private void setNonOperational(NonOperationalReason reason, Map<String, String> customLogValues) {
         SetNonOperationalVdsParameters tempVar =
                 new SetNonOperationalVdsParameters(getVds().getId(), reason, customLogValues);
-        runInternalAction(VdcActionType.SetNonOperationalVds, tempVar,  ExecutionHandler.createInternalJobContext());
+        runInternalAction(VdcActionType.SetNonOperationalVds,
+                tempVar,
+                ExecutionHandler.createInternalJobContext(getContext()));
     }
 
     private boolean InitializeStorage() {

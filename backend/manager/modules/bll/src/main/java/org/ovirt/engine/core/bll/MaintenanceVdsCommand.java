@@ -148,7 +148,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
         } catch (RuntimeException e) {
             log.error("Failed to create ExecutionContext for MigrateVmCommand", e);
         }
-        return dupContext().withExecutionContext(ctx).withoutCompensationContext().withoutLock();
+        return cloneContextAndDetachFromParent().withExecutionContext(ctx);
     }
 
     @Override

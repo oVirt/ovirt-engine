@@ -49,15 +49,14 @@ public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksPar
             AuditLogDirector.log(this, AuditLogType.PERSIST_NETWORK_ON_HOST);
         }
 
-        VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.SetupNetworks, getParameters());
+        VdcReturnValueBase returnValue =  runInternalAction(VdcActionType.SetupNetworks, getParameters(), cloneContextAndDetachFromParent());
         if (returnValue.getSucceeded()
                 && SETUP_NETWORKS_RESOLUTION.NO_CHANGES_DETECTED != returnValue.getActionReturnValue()) {
             VdsActionParameters parameters = new VdsActionParameters(getParameters().getVdsId());
             parameters.setShouldBeLogged(false);
             parameters.setCorrelationId(getCorrelationId());
-            returnValue =
-                    getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
-                            parameters);
+            returnValue = runInternalAction(VdcActionType.CommitNetworkChanges,
+                            parameters, cloneContextAndDetachFromParent());
         }
 
         if (!returnValue.getSucceeded()) {

@@ -14,9 +14,15 @@ import org.ovirt.engine.core.common.action.AddStepParameters;
 @InternalCommandAttribute
 public class AddInternalStepCommand <T extends AddStepParameters> extends AddStepCommand<T>{
 
+    // Required as invoked not just from an internal command
+    public AddInternalStepCommand(T parameters) {
+        this(parameters, null);
+    }
+
     public AddInternalStepCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
+
 
     @Override
     protected boolean canDoAction() {

@@ -187,7 +187,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                 permParams.setParentCommand(VdcActionType.AttachUserToVmFromPoolAndRun);
                 VdcReturnValueBase vdcReturnValueFromAddPerm = runInternalAction(VdcActionType.AddPermission,
                         permParams,
-                        dupContext().withoutExecutionContext().withoutLock());
+                        cloneContext().withoutExecutionContext().withoutLock());
                 if (!vdcReturnValueFromAddPerm.getSucceeded()) {
                     log.infoFormat("Failed to give user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
                     setActionReturnValue(vdcReturnValueFromAddPerm);
@@ -212,7 +212,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
             runVmParams.setRunAsStateless(true);
             ExecutionContext runVmContext = createRunVmContext();
             VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RunVm,
-                    runVmParams, dupContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
+                    runVmParams, cloneContext().withExecutionContext(runVmContext).withoutLock().withCompensationContext(null));
 
             getTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
             setSucceeded(vdcReturnValue.getSucceeded());
@@ -246,7 +246,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
         if (getVm() != null) {
             if (DbFacade.getInstance().getSnapshotDao().exists(getVm().getId(), SnapshotType.STATELESS)) {
                 setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
-                        getParameters().getImagesParameters().get(0), dupContext().withoutLock().withExecutionContext(null)).getSucceeded());
+                        getParameters().getImagesParameters().get(0), cloneContext().withoutLock().withoutExecutionContext()).getSucceeded());
 
                 if (!getSucceeded()) {
                     log.warn("EndSuccessfully: endAction of RunVm failed, detaching user from Vm");
@@ -274,7 +274,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
     protected void endWithFailure() {
         setSucceeded(Backend.getInstance().endAction(VdcActionType.RunVm,
                 getParameters().getImagesParameters().get(0),
-                dupContext().withExecutionContext(null).withoutLock()).getSucceeded());
+                cloneContext().withoutExecutionContext().withoutLock()).getSucceeded());
         if (!getSucceeded()) {
             log.warn("AttachUserToVmFromPoolAndRunCommand::EndWitFailure: endAction of RunVm Failed");
         }

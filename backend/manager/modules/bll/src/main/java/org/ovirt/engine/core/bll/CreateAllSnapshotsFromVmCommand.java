@@ -314,9 +314,9 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
-        VdcReturnValueBase retVal = getBackend().runInternalAction(
+        VdcReturnValueBase retVal = runInternalAction(
                 VdcActionType.RemoveMemoryVolumes,
-                new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()));
+                new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
             log.errorFormat("Failed to remove memory volumes of snapshot {0} ({1})",
@@ -655,4 +655,5 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     public Guid persistAsyncTaskPlaceHolder(String taskKey) {
         return super.persistAsyncTaskPlaceHolder(getActionType(), taskKey);
     }
+
 }

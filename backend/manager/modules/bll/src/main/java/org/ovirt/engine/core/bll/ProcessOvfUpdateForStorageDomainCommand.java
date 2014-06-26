@@ -296,9 +296,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         int missingDiskCount = Config.<Integer> getValue(ConfigValues.StorageDomainOvfStoreCount) - ovfDiskCount;
 
         if (missingDiskCount > 0) {
-            getBackend().runInternalAction(VdcActionType.CreateOvfStoresForStorageDomain,
+            runInternalAction(VdcActionType.CreateOvfStoresForStorageDomain,
                     new CreateOvfStoresForStorageDomainCommandParameters(getParameters().getStoragePoolId(),
-                            getParameters().getStorageDomainId(), missingDiskCount));
+                            getParameters().getStorageDomainId(), missingDiskCount), cloneContextAndDetachFromParent());
         }
 
         setSucceeded(true);

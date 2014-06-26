@@ -108,8 +108,8 @@ public class RecoveryStoragePoolCommand extends ReconstructMasterDomainCommand<R
                                     .save(domainPoolMap);
 
                             getParameters().setVdsId(getVds().getId());
-                            VdcReturnValueBase returnVal = getBackend().runInternalAction(
-                                    VdcActionType.ReconstructMasterDomain, getParameters());
+                            VdcReturnValueBase returnVal = runInternalAction(
+                                    VdcActionType.ReconstructMasterDomain, getParameters(), cloneContextAndDetachFromParent());
 
                             boolean reconstructVerbExecuted = (returnVal.getActionReturnValue() != null) ?
                                     (Boolean) returnVal.getActionReturnValue() : false;

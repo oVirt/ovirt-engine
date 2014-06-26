@@ -22,6 +22,11 @@ public class AddInternalJobCommand<T extends AddInternalJobParameters> extends A
         super(parameters, cmdContext);
     }
 
+    // Required as invoked not just from a command.
+    public AddInternalJobCommand(T parameters) {
+        this(parameters, null);
+    }
+
     @Override
     protected boolean canDoAction() {
 
