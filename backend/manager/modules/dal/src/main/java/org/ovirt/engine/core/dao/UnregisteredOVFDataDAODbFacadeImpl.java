@@ -53,6 +53,7 @@ public class UnregisteredOVFDataDAODbFacadeImpl extends BaseDAODbFacade implemen
                                 ovfEntityData.getLowestCompVersion() != null ? ovfEntityData.getLowestCompVersion()
                                         .getValue() : null)
                         .addValue("storage_domain_id", ovfEntityData.getStorageDomainId())
+                        .addValue("ovf_data", ovfEntityData.getOvfData())
                         .addValue("ovf_extra_data", ovfEntityData.getOvfExtraData()));
     }
 

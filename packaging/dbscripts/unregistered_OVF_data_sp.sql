@@ -7,12 +7,13 @@ Create or replace FUNCTION InsertOVFDataForEntities(v_entity_guid UUID,
    v_architecture INTEGER,
    v_lowest_comp_version VARCHAR(40),
    v_storage_domain_id UUID,
+   v_ovf_data TEXT,
    v_ovf_extra_data TEXT)
 RETURNS VOID
    AS $procedure$
 BEGIN
-        INSERT INTO unregistered_ovf_of_entities(entity_guid, entity_name, entity_type, architecture, lowest_comp_version, storage_domain_id, ovf_extra_data)
-        VALUES (v_entity_guid, v_entity_name, v_entity_type, v_architecture, v_lowest_comp_version, v_storage_domain_id, v_ovf_extra_data);
+        INSERT INTO unregistered_ovf_of_entities(entity_guid, entity_name, entity_type, architecture, lowest_comp_version, storage_domain_id, ovf_extra_data, ovf_data)
+        VALUES (v_entity_guid, v_entity_name, v_entity_type, v_architecture, v_lowest_comp_version, v_storage_domain_id, v_ovf_extra_data, v_ovf_data);
 
         UPDATE unregistered_ovf_of_entities u
         SET ovf_data = vog.ovf_data
