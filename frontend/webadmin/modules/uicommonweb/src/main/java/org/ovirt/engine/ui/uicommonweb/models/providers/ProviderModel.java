@@ -15,7 +15,10 @@ import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.storage.OpenStackVolumeProviderProperties;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -67,7 +70,9 @@ public class ProviderModel extends Model {
     private ListModel<StoragePool> dataCenter;
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
+    private VmwarePropertiesModel vmwarePropertiesModel = new VmwarePropertiesModel();
     private String certificate;
+
 
     public EntityModel<String> getName() {
         return name;
@@ -125,6 +130,10 @@ public class ProviderModel extends Model {
         return neutronAgentModel;
     }
 
+    public VmwarePropertiesModel getVmwarePropertiesModel() {
+        return vmwarePropertiesModel;
+    }
+
     protected boolean isTypeOpenStackNetwork() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_NETWORK;
     }
@@ -135,6 +144,10 @@ public class ProviderModel extends Model {
 
     private boolean isTypeOpenStackVolume() {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_VOLUME;
+    }
+
+    protected boolean isTypeVmware() {
+        return getType().getSelectedItem() == ProviderType.VMWARE;
     }
 
     public ListModel<StoragePool> getDataCenter() {
@@ -170,6 +183,8 @@ public class ProviderModel extends Model {
                 return "http://localhost:9292"; //$NON-NLS-1$
             case OPENSTACK_VOLUME:
                 return "http://localhost:8776"; //$NON-NLS-1$
+            case VMWARE:
+                return ""; //$NON-NLS-1$
             case FOREMAN:
             default:
                 return "http://localhost"; //$NON-NLS-1$
@@ -219,19 +234,28 @@ public class ProviderModel extends Model {
                 boolean isNeutron = isTypeOpenStackNetwork();
                 getNeutronAgentModel().setIsAvailable(isNeutron);
 
+                boolean isVmware = isTypeVmware();
                 boolean requiresAuth = isTypeRequiresAuthentication();
-                getRequiresAuthentication().setEntity(Boolean.valueOf(requiresAuth));
+                getRequiresAuthentication().setEntity(isVmware || Boolean.valueOf(requiresAuth));
                 getRequiresAuthentication().setIsChangeable(!requiresAuth);
 
                 boolean isCinder = isTypeOpenStackVolume();
-                getDataCenter().setIsAvailable(isCinder);
+                getDataCenter().setIsAvailable(isCinder || isVmware);
                 if (isCinder) {
                     updateDatacentersForVolumeProvider();
+                }
+
+                getVmwarePropertiesModel().setIsAvailable(isVmware);
+                getRequiresAuthentication().setIsAvailable(!isVmware);
+                getUrl().setIsAvailable(!isVmware);
+                if (isVmware) {
+                    updateDatacentersForVmwareProvider();
                 }
             }
         });
 
         getNeutronAgentModel().setIsAvailable(false);
+        getVmwarePropertiesModel().setIsAvailable(false);
         getTenantName().setIsAvailable(false);
 
         List<ProviderType> providerTypes = new ArrayList<ProviderType>(Arrays.asList(ProviderType.values()));
@@ -244,6 +268,68 @@ public class ProviderModel extends Model {
 
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().setIsAvailable(false);
+        getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                if (getType().getSelectedItem() != ProviderType.VMWARE) {
+                    return;
+                }
+
+                if (getDataCenter().getSelectedItem() == null) {
+                    getVmwarePropertiesModel().disableProxyHost();
+                } else {
+                    getVmwarePropertiesModel().getProxyHost().setIsChangeable(true);
+                    AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            List<VDS> hosts = (List<VDS>) returnValue;
+                            VDS prevHost = getPreviousHost(hosts);
+                            hosts.add(0, null); // Any host in the cluster
+                            getVmwarePropertiesModel().getProxyHost().setItems(hosts);
+                            getVmwarePropertiesModel().getProxyHost().setSelectedItem(prevHost);
+                        }
+                    }),
+                    getDataCenter().getSelectedItem().getId());
+                }
+            }
+
+            private VDS getPreviousHost(List<VDS> hosts) {
+                Guid previousProxyHostId = getVmwarePropertiesModel().getLastProxyHostId();
+                for (VDS host : hosts) {
+                    if (host.getId().equals(previousProxyHostId)) {
+                        return host;
+                    }
+                }
+                return null;
+            }
+        });
+    }
+
+    protected void updateDatacentersForVmwareProvider() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                final List<StoragePool> dataCenters = (List<StoragePool>) returnValue;
+                StoragePool prevDataCenter = getPreviousDataCenter(dataCenters);
+                Collections.sort(dataCenters, new NameableComparator());
+                dataCenters.add(0, null); //any data center
+                getDataCenter().setItems(dataCenters);
+                getDataCenter().setSelectedItem(prevDataCenter);
+                if (getDataCenter().getSelectedItem() == null) {
+                    getVmwarePropertiesModel().disableProxyHost();
+                }
+            }
+
+            private StoragePool getPreviousDataCenter(List<StoragePool> dataCenters) {
+                Guid previousDataCenterId = getVmwarePropertiesModel().getLastStoragePoolId();
+                for (StoragePool dataCenter : dataCenters) {
+                    if (dataCenter.getId().equals(previousDataCenterId)) {
+                        return dataCenter;
+                    }
+                }
+                return null;
+            }
+        }));
     }
 
     protected void updateDatacentersForVolumeProvider() {
@@ -254,12 +340,14 @@ public class ProviderModel extends Model {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getNeutronAgentModel().validate();
+        getVmwarePropertiesModel().validate();
         boolean connectionSettingsValid = validateConnectionSettings();
 
         return connectionSettingsValid &&
                 getName().getIsValid() &&
                 getType().getIsValid() &&
-                getNeutronAgentModel().getIsValid();
+                getNeutronAgentModel().getIsValid() &&
+                getVmwarePropertiesModel().getIsValid();
     }
 
     private boolean validateConnectionSettings() {
@@ -294,6 +382,9 @@ public class ProviderModel extends Model {
             provider.setAdditionalProperties(new OpenStackImageProviderProperties());
         } else if (isTypeOpenStackVolume()) {
             provider.setAdditionalProperties(new OpenStackVolumeProviderProperties(getDataCenter().getSelectedItem().getId()));
+        } else if (isTypeVmware()) {
+            provider.setAdditionalProperties(getVmwarePropertiesModel().getVmwareVmProviderProperties(dataCenter.getSelectedItem().getId()));
+            provider.setUrl(getVmwarePropertiesModel().getUrl());
         }
 
         boolean authenticationRequired = requiresAuthentication.getEntity();
@@ -481,6 +572,5 @@ public class ProviderModel extends Model {
         }
         getTestResult().setEntity(errorMessage);
     }
-
 
 }

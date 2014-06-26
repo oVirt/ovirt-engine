@@ -16,18 +16,20 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
-import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ProviderModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.provider.NeutronAgentWidget;
+import org.ovirt.engine.ui.webadmin.widget.provider.VmwarePropertiesWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Image;
@@ -126,6 +128,10 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     NeutronAgentWidget neutronAgentWidget;
 
     @UiField
+    @Ignore
+    VmwarePropertiesWidget vmwarePropertiesWidget;
+
+    @UiField
     Style style;
 
     private final static ApplicationResources resources = AssetProvider.getResources();
@@ -137,10 +143,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         super(eventBus);
 
         typeEditor = new ListModelListBoxEditor<ProviderType>(new EnumRenderer());
-        datacenterEditor = new ListModelListBoxEditor<>(new NullSafeRenderer<StoragePool>() {
+        datacenterEditor = new ListModelListBoxEditor<>(new AbstractRenderer<StoragePool>() {
             @Override
-            public String renderNullSafe(StoragePool storagePool) {
-                return storagePool.getName();
+            public String render(StoragePool storagePool) {
+                return storagePool != null ? storagePool.getName() :
+                    ConstantsManager.getInstance().getConstants().anyDataCenter();
             }
         });
         requiresAuthenticationEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -177,11 +184,13 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         setAgentTabVisibility(model.getNeutronAgentModel().isPluginConfigurationAvailable().getEntity());
         driver.edit(model);
         neutronAgentWidget.edit(model.getNeutronAgentModel());
+        vmwarePropertiesWidget.edit(model.getVmwarePropertiesModel());
     }
 
     @Override
     public ProviderModel flush() {
         neutronAgentWidget.flush();
+        vmwarePropertiesWidget.flush();
         return driver.flush();
     }
 

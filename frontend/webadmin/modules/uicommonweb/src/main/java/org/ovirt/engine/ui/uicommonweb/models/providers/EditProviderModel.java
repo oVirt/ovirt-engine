@@ -58,6 +58,10 @@ public class EditProviderModel extends ProviderModel {
             getNeutronAgentModel().init(provider);
         }
 
+        if (isTypeVmware()) {
+            getVmwarePropertiesModel().init(provider);
+        }
+
         oldUrl = provider.getUrl();
     }
 

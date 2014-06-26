@@ -314,6 +314,8 @@ public interface Enums extends LocalizedEnums {
 
     String ProviderType___FOREMAN();
 
+    String ProviderType___VMWARE();
+
     String ProviderType___OPENSTACK_NETWORK();
 
     String OpenstackNetworkPluginType___LINUX_BRIDGE();

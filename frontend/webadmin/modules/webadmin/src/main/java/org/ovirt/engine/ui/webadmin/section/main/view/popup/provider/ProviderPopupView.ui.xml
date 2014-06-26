@@ -66,6 +66,7 @@
 									<g:FlowPanel>
 										<ge:ListModelSuggestBoxEditor ui:field="pluginTypeEditor" />
 										<ge:StringEntityModelTextBoxEditor ui:field="urlEditor" />
+										<p:VmwarePropertiesWidget ui:field="vmwarePropertiesWidget" />
 									</g:FlowPanel>
 									<g:FlowPanel addStyleNames="{style.sectionStyle}">
 										<ge:EntityModelCheckBoxEditor ui:field="requiresAuthenticationEditor" />

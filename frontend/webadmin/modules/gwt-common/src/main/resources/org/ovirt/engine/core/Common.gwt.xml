@@ -20,6 +20,7 @@
         <include name="common/businessentities/EngineSession.java" />
         <include name="common/businessentities/UserSession.java" />
         <include name="common/businessentities/V2VJobInfo.java" />
+        <include name="common/businessentities/VmwareVmProviderProperties.java" />
         <include name="aaa/AuthType.java" />
         <include name="aaa/DirectoryEntry.java" />
         <include name="aaa/ProfileEntry.java" />
