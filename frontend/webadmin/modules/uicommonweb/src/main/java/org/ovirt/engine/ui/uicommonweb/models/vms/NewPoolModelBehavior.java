@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -127,5 +126,11 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     @Override
     public InstanceTypeManager getInstanceTypeManager() {
         return instanceTypeManager;
+    }
+
+    @Override
+    public void enableSinglePCI(boolean enabled) {
+        super.enableSinglePCI(enabled);
+        getModel().getIsSingleQxlEnabled().setEntity(enabled);
     }
 }

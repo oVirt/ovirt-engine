@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -241,4 +240,13 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         return template;
     }
 
+    @Override
+    public void enableSinglePCI(boolean enabled) {
+        super.enableSinglePCI(enabled);
+        if (enabled) {
+            getModel().getIsSingleQxlEnabled().setEntity(template.getSingleQxlPci() && getModel().getIsQxlSupported());
+        } else {
+            getModel().getIsSingleQxlEnabled().setEntity(false);
+        }
+    }
 }

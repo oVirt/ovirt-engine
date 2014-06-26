@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -2132,16 +2131,21 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private void handleQxlClusterLevel() {
+    public boolean getIsQxlSupported() {
         // Enable Single PCI only on cluster 3.3 and high and on Linux OS
         boolean isLinux = getIsLinuxOS();
         boolean isQxl = getDisplayType() == DisplayType.qxl;
         boolean clusterSupportsSinglePci = getSelectedCluster() != null &&
         Version.v3_3.compareTo(getSelectedCluster().getcompatibility_version()) <= 0;
 
-        getBehavior().enableSinglePCI(isLinux && isQxl && clusterSupportsSinglePci);
+        return isLinux && isQxl && clusterSupportsSinglePci;
+    }
+
+    private void handleQxlClusterLevel() {
+        getBehavior().enableSinglePCI(getIsQxlSupported());
 
         if (getSelectedCluster() != null) {
+            boolean isQxl = getDisplayType() == DisplayType.qxl;
             boolean spiceFileTransferToggle = isQxl
                     && AsyncDataProvider.isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
             if (!spiceFileTransferToggle) {
@@ -2290,7 +2294,7 @@ public class UnitVmModel extends Model {
         getMigrationDowntime().setIsChangable(Boolean.TRUE.equals(entity));
     }
 
-    private DisplayType getDisplayType() {
+    public DisplayType getDisplayType() {
         EntityModel<DisplayType> entityModel = getDisplayProtocol().getSelectedItem();
         if (entityModel == null)
         {

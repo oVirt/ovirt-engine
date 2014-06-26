@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -19,9 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingPoolInst
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
@@ -45,6 +44,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         }
 
         instanceTypeManager = new ExistingPoolInstanceTypeManager(getModel(), pool);
+        instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
     }
 
     @Override

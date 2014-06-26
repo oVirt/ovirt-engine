@@ -1,5 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
 import java.util.Set;
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -41,14 +48,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeMana
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 import org.ovirt.engine.ui.uicompat.UIMessages;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
 
 public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
@@ -1119,7 +1118,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     public void enableSinglePCI(boolean enabled) {
         getModel().getIsSingleQxlEnabled().setIsChangable(enabled);
-        getModel().getIsSingleQxlEnabled().setEntity(enabled);
+        if (!enabled) {
+            getModel().getIsSingleQxlEnabled().setEntity(false);
+        }
     }
 
     protected void updateRngDevice(Guid templateId) {

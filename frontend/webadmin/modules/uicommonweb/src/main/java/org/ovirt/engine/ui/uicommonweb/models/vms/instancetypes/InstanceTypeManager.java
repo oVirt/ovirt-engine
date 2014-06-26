@@ -1,5 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -27,10 +30,6 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.List;
-
 /**
  * Base class which takes care about copying the proper fields from instance type/template/vm static to the VM.
  *
@@ -44,6 +43,9 @@ import java.util.List;
  *
  */
 public abstract class InstanceTypeManager {
+
+    // turns the maybeSet* to always let the entity be set - useful for e.g. pooled VMs were everything is disabled but has to be set according to the underlying VM
+    private boolean alwaysEnabledFieldUpdate = false;
 
     private final UnitVmModel model;
 
@@ -375,7 +377,7 @@ public abstract class InstanceTypeManager {
         return false;
     }
 
-    private void updateDefaultDisplayRelatedFields(VmBase vmBase) {
+    protected void updateDefaultDisplayRelatedFields(VmBase vmBase) {
         // Update display protocol selected item
         if (model.getDisplayProtocol().getItems() == null) {
             return;
@@ -399,17 +401,21 @@ public abstract class InstanceTypeManager {
         maybeSetSelectedItem(model.getNumOfMonitors(), vmBase.getNumOfMonitors());
         maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
         maybeSetEntity(model.getIsSmartcardEnabled(), vmBase.isSmartcardEnabled());
+        maybeSetSingleQxlPci(vmBase);
+    }
+
+    protected void maybeSetSingleQxlPci(VmBase vmBase) {
         maybeSetEntity(model.getIsSingleQxlEnabled(), vmBase.getSingleQxlPci());
     }
 
-    private <T> void maybeSetSelectedItem(ListModel<T> listModel, T value) {
-        if (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable()) {
-            listModel.setSelectedItem(value);
+    protected <T> void maybeSetSelectedItem(ListModel<T> entityModel, T value) {
+        if (alwaysEnabledFieldUpdate || (entityModel != null && entityModel.getIsChangable() && entityModel.getIsAvailable())) {
+            entityModel.setSelectedItem(value);
         }
     }
 
-    private <T> void maybeSetEntity(EntityModel<T> listModel, T value) {
-        if (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable()) {
+    protected <T> void maybeSetEntity(EntityModel<T> listModel, T value) {
+        if (alwaysEnabledFieldUpdate || (listModel != null && listModel.getIsChangable() && listModel.getIsAvailable())) {
             listModel.setEntity(value);
         }
     }
@@ -422,11 +428,14 @@ public abstract class InstanceTypeManager {
         void activated();
     }
 
+    public void setAlwaysEnabledFieldUpdate(boolean alwaysEnabledFieldUpdate) {
+        this.alwaysEnabledFieldUpdate = alwaysEnabledFieldUpdate;
+    }
+
     /**
      * The source from which the data has to be copyed to managed fields.
      *
      * It can be an instance type, a template or a VM's static data
      */
     protected abstract VmBase getSource();
-
 }

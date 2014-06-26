@@ -56,8 +56,11 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getInstanceTypes().setIsChangable(!vm.isRunning());
 
         loadDataCenter();
-
         instanceTypeManager = new ExistingVmInstanceTypeManager(getModel(), vm);
+
+        if (vm.getVmPoolId() != null) {
+            instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
+        }
     }
 
     private void loadDataCenter() {
@@ -347,7 +350,15 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    public InstanceTypeManager getInstanceTypeManager() {
-        return instanceTypeManager;
+    public void enableSinglePCI(boolean enabled) {
+        super.enableSinglePCI(enabled);
+        if (getInstanceTypeManager() != null) {
+            getInstanceTypeManager().maybeSetSingleQxlPci(vm.getStaticData());
+        }
+    }
+
+    @Override
+    public ExistingVmInstanceTypeManager getInstanceTypeManager() {
+        return (ExistingVmInstanceTypeManager) instanceTypeManager;
     }
 }
