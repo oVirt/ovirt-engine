@@ -30,7 +30,7 @@ public final class AuditLogDirector {
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
     static final String UNKNOWN_REASON_VALUE = "Not Specified";
     static final String REASON_TOKEN = "reason";
-    private static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
+    static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
 
     static {
         initMessages();
@@ -39,59 +39,33 @@ public final class AuditLogDirector {
     private static void initMessages() {
         ResourceBundle bundle = readMessagesFromBundle();
 
-        for (String key : bundle.keySet()) {
-            try {
-                AuditLogType type = AuditLogType.valueOf(key);
-                if (!messages.containsKey(type)) {
-                    messages.put(type, bundle.getString(key));
-                } else {
-                    log.error("The type '{}' appears more then once in audit log messages bundle with the values"
-                                    + " '{}' and '{}'",
-                            type,
-                            messages.get(type),
-                            bundle.getString(key));
-                }
-            } catch (Exception e) {
-                log.error("Cannot convert the string '{}' to AuditLogType, the key does not exist in the AuditLogType"
-                                + " declared types",
-                        bundle.getString(key));
-            }
+        for (AuditLogType auditLogType : AuditLogType.values()) {
+            messages.put(auditLogType, getMessage(bundle, auditLogType));
         }
-        checkMessages();
     }
 
-    private static ResourceBundle readMessagesFromBundle() {
+    public static String getMessage(ResourceBundle bundle, AuditLogType logType) {
+        final String key = logType.name();
+        try {
+            return bundle.getString(key);
+        } catch (Exception e) {
+            log.error("Key '{}' is not translated in '{}'", key, APP_ERRORS_MESSAGES_FILE_NAME);
+            return "";
+        }
+    }
+
+    static ResourceBundle readMessagesFromBundle() {
         try {
             return ResourceBundle.getBundle(APP_ERRORS_MESSAGES_FILE_NAME);
         } catch (MissingResourceException e) {
-            log.error("Could not load audit log messages from the file '{}'", APP_ERRORS_MESSAGES_FILE_NAME);
+            log.error("Could not load audit log messages from the file {}", APP_ERRORS_MESSAGES_FILE_NAME);
             throw e;
         }
     }
 
-    private static void checkMessages() {
-        AuditLogType[] values = AuditLogType.values();
-        if (values.length != messages.size()) {
-            for (AuditLogType value : values) {
-                if (!messages.containsKey(value)) {
-                    log.info("AuditLogType: '{}' not exist in string table", value);
-                }
-            }
-        }
-    }
-
-    /**
-     * Gets the message.
-     * @param logType
-     *            Type of the log.
-     * @return
-     */
     public static String getMessage(AuditLogType logType) {
-        String value = "";
-        if (messages.containsKey(logType)) {
-            value = messages.get(logType);
-        }
-        return value;
+        String message = messages.get(logType);
+        return message == null ? "" : message;
     }
 
     public static void log(AuditLogableBase auditLogable) {
@@ -112,14 +86,65 @@ public final class AuditLogDirector {
     }
 
     private static void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
-        String message = null;
-        String resolvedMessage = null;
         AuditLogSeverity severity = logType.getSeverity();
-        AuditLog auditLog = null;
+        AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, severity);
+
+        if (auditLog == null) {
+            log.warn("Unable to create AuditLog");
+        } else {
+            setPropertiesFromAuditLogableBase(auditLogable, auditLog);
+
+            getDbFacadeInstance().getAuditLogDao().save(auditLog);
+            logMessage(severity, getMessageToLog(loggerString, auditLog));
+        }
+    }
+
+    private static void setPropertiesFromAuditLogableBase(AuditLogableBase auditLogable, AuditLog auditLog) {
+        auditLog.setStorageDomainId(auditLogable.getStorageDomainId());
+        auditLog.setStorageDomainName(auditLogable.getStorageDomainName());
+        auditLog.setStoragePoolId(auditLogable.getStoragePoolId());
+        auditLog.setStoragePoolName(auditLogable.getStoragePoolName());
+        auditLog.setVdsGroupId(auditLogable.getVdsGroupId());
+        auditLog.setVdsGroupName(auditLogable.getVdsGroupName());
+        auditLog.setCorrelationId(auditLogable.getCorrelationId());
+        auditLog.setJobId(auditLogable.getJobId());
+        auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
+        auditLog.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
+        auditLog.setExternal(auditLogable.isExternal());
+        auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
+        auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
+        auditLog.setCallStack(auditLogable.getCallStack());
+    }
+
+    private static void logMessage(AuditLogSeverity severity, String logMessage) {
+        switch (severity) {
+        case NORMAL:
+            log.info(logMessage);
+            break;
+        case ERROR:
+            log.error(logMessage);
+            break;
+        case ALERT:
+        case WARNING:
+        default:
+            log.warn(logMessage);
+            break;
+        }
+    }
+
+    private static String getMessageToLog(String loggerString, AuditLog auditLog) {
+        if (loggerString.isEmpty()) {
+            return auditLog.toStringForLogging();
+        } else {
+            return MessageFormat.format(loggerString, auditLog.getMessage());
+        }
+    }
+
+    private static AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
-            resolvedMessage = message = loggerString; // message is sent as an argument, no need to resolve.
-            auditLog = new AuditLog(logType,
+            String resolvedMessage = loggerString; // message is sent as an argument, no need to resolve.
+            return new AuditLog(logType,
                     severity,
                     resolvedMessage,
                     auditLogable.getUserId(),
@@ -134,50 +159,18 @@ public final class AuditLogDirector {
                     auditLogable.getCustomEventId(),
                     auditLogable.getEventFloodInSec(),
                     auditLogable.getCustomData());
-        } else if ((message = messages.get(logType)) != null) { // Application log message from AuditLogMessages
-            resolvedMessage = resolveMessage(message, auditLogable);
-            auditLog = new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
+        }
+
+        final String messageByType = messages.get(logType);
+        if (messageByType == null) {
+            return null;
+        } else {
+            // Application log message from AuditLogMessages
+            String resolvedMessage = resolveMessage(messageByType, auditLogable);
+            return new AuditLog(logType, severity, resolvedMessage, auditLogable.getUserId(),
                     auditLogable.getUserName(), auditLogable.getVmIdRef(), auditLogable.getVmName(),
                     auditLogable.getVdsIdRef(), auditLogable.getVdsName(), auditLogable.getVmTemplateIdRef(),
                     auditLogable.getVmTemplateName());
-        }
-        if (auditLog != null) {
-            auditLog.setStorageDomainId(auditLogable.getStorageDomainId());
-            auditLog.setStorageDomainName(auditLogable.getStorageDomainName());
-            auditLog.setStoragePoolId(auditLogable.getStoragePoolId());
-            auditLog.setStoragePoolName(auditLogable.getStoragePoolName());
-            auditLog.setVdsGroupId(auditLogable.getVdsGroupId());
-            auditLog.setVdsGroupName(auditLogable.getVdsGroupName());
-            auditLog.setCorrelationId(auditLogable.getCorrelationId());
-            auditLog.setJobId(auditLogable.getJobId());
-            auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());
-            auditLog.setGlusterVolumeName(auditLogable.getGlusterVolumeName());
-            auditLog.setExternal(auditLogable.isExternal());
-            auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
-            auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
-            auditLog.setCallStack(auditLogable.getCallStack());
-            auditLog.setRepeatable(auditLogable.isRepeatable());
-            getDbFacadeInstance().getAuditLogDao().save(auditLog);
-            String logMessage;
-            if (!"".equals(loggerString)) {
-                logMessage = MessageFormat.format(loggerString.replaceAll("'", ""), resolvedMessage);
-            } else {
-                logMessage = auditLog.toStringForLogging();
-            }
-
-            switch (severity) {
-            case NORMAL:
-                log.info(logMessage);
-                break;
-            case ERROR:
-                log.error(logMessage);
-                break;
-            case ALERT:
-            case WARNING:
-                log.warn(logMessage);
-                break;
-            }
-
         }
     }
 
