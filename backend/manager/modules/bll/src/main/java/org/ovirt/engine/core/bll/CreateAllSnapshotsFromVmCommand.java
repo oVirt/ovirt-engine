@@ -485,7 +485,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
                     && validate(diskImagesValidator.diskImagesNotIllegal())
                     && validate(sdValidator.allDomainsExistAndActive())
-                    && validate(sdValidator.allDomainsWithinThresholds()))) {
+                    && validate(sdValidator.allDomainsWithinThresholds())
+                    && validate(sdValidator.allDomainsHaveSpaceForNewDisks(disksList)))) {
                 return false;
             }
         }

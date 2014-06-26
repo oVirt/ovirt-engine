@@ -3,12 +3,20 @@ package org.ovirt.engine.core.bll.validator;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -17,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -44,6 +53,9 @@ public class MultipleStorageDomainsValidatorTest {
     private StorageDomain domain2;
 
     private MultipleStorageDomainsValidator validator;
+
+    private static final int NUM_DISKS = 3;
+    private static final int NUM_DOMAINS = 2;
 
     @Before
     public void setUp() {
@@ -99,5 +111,46 @@ public class MultipleStorageDomainsValidatorTest {
         assertEquals("Wrong validation error",
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 result.getMessage());
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForNewDisksSuccess(){
+        List<DiskImage> disksList = generateDisksList(NUM_DISKS);
+
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
+
+        assertTrue(validator.allDomainsHaveSpaceForNewDisks(disksList).isValid());
+        verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void testAllDomainsHaveSpaceForNewDisksFail(){
+        List<DiskImage> disksList = generateDisksList(NUM_DISKS);
+
+        StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+
+        ValidationResult result = validator.allDomainsHaveSpaceForNewDisks(disksList);
+        assertFalse(result.isValid());
+        assertEquals("Wrong validation error",
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
+                result.getMessage());
+    }
+
+    private List<DiskImage> generateDisksList(int size) {
+        List<DiskImage> disksList = new ArrayList<>();
+        ArrayList<Guid> sdIds = new ArrayList<>();
+        sdIds.add(sdId1);
+        sdIds.add(sdId2);
+        for (int i = 0; i < size; ++i) {
+            DiskImage diskImage = new DiskImage();
+            diskImage.setImageId(Guid.newGuid());
+            diskImage.setStorageIds(sdIds);
+            disksList.add(diskImage);
+        }
+        return disksList;
     }
 }
