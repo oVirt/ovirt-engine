@@ -1193,6 +1193,10 @@ public enum AuditLogType {
         return severity;
     }
 
+    public boolean shouldBeLogged() {
+        return this != AuditLogType.UNASSIGNED;
+    }
+
     public static AuditLogType forValue(int value) {
         return mappings.get(value);
     }

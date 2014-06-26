@@ -78,6 +78,10 @@ public final class AuditLogDirector {
     }
 
     public static void log(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+        if (!logType.shouldBeLogged()) {
+            return;
+        }
+
         updateTimeoutLogableObject(auditLogable, logType);
 
         if (auditLogable.getLegal()) {
