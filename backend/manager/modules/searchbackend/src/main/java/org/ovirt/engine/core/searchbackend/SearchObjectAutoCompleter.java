@@ -109,9 +109,9 @@ public class SearchObjectAutoCompleter extends SearchObjectsBaseAutoCompleter {
 
         // vds - storage domain
         addJoin(SearchObjects.VDS_OBJ_NAME,
-                "storage_pool_id",
+                "storage_id",
                 SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME,
-                "storage_pool_id");
+                "id");
 
         // cluster - storage domain
         addJoin(SearchObjects.VDC_CLUSTER_OBJ_NAME,

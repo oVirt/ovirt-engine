@@ -135,8 +135,8 @@ public class SyntaxCheckerTest {
         // Before: 63ms
         // "SELECT * FROM (SELECT * FROM vds WHERE ( storage_pool_id IN (SELECT storage_pool_id FROM storage_domains WHERE  storage_domains.storage_name LIKE 'pool1'))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 68ms
-        testValidSql("Host: STORAGE.name = \"pool1\" sortby cpu_usage desc",
-                "SELECT * FROM ((SELECT vds.* FROM  vds   LEFT OUTER JOIN storage_domains_with_hosts_view ON vds.storage_pool_id=storage_domains_with_hosts_view.storage_pool_id    WHERE  storage_domains_with_hosts_view.storage_name LIKE pool1 )  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+        testValidSql("Host: STORAGE.name = \"sd1\" sortby cpu_usage desc",
+                "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT vds_with_tags.vds_id FROM  vds_with_tags   LEFT OUTER JOIN storage_domains_with_hosts_view ON vds_with_tags.storage_id=storage_domains_with_hosts_view.id    WHERE  storage_domains_with_hosts_view.storage_name LIKE sd1 ))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         // Before: 23ms
         // "SELECT * FROM (SELECT * FROM vds WHERE ( vds_id IN (SELECT vds_with_tags.vds_id FROM  vds_with_tags   LEFT OUTER JOIN audit_log ON vds_with_tags.vds_id=audit_log.vds_id    WHERE (  audit_log.severity = '2'  AND  vds_with_tags.usage_cpu_percent > 80  )))  ORDER BY usage_cpu_percent DESC NULLS LAST,vds_name ASC ) as T1 OFFSET (1 -1) LIMIT 0"
         // Current: 9ms
@@ -308,7 +308,7 @@ public class SyntaxCheckerTest {
         testValidSql("Storage: datacenter = Default",
                 "SELECT * FROM ((SELECT storage_domains_for_search.* FROM  storage_domains_for_search   WHERE  storage_domains_for_search.storage_pool_name::text LIKE Default )  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Storage: host.name = fake1",
-                "SELECT * FROM ((SELECT storage_domains_for_search.* FROM  storage_domains_for_search   LEFT OUTER JOIN vds_with_tags ON storage_domains_for_search.storage_pool_id=vds_with_tags.storage_pool_id    WHERE  vds_with_tags.vds_name LIKE fake1 )  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+                "SELECT * FROM ((SELECT storage_domains_for_search.* FROM  storage_domains_for_search   LEFT OUTER JOIN vds_with_tags ON storage_domains_for_search.id=vds_with_tags.storage_id    WHERE  vds_with_tags.vds_name LIKE fake1 )  ORDER BY storage_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test
