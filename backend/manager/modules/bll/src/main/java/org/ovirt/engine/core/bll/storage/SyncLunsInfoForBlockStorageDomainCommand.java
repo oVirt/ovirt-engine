@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.List;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
@@ -24,8 +22,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
-    public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
-        super(parameters, cmdContext);
+    public SyncLunsInfoForBlockStorageDomainCommand(T parameters) {
+        super(parameters);
         setVdsId(parameters.getVdsId());
     }
 
