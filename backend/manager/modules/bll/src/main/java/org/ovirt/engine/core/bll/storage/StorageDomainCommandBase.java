@@ -63,7 +63,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
     }
 
     protected StorageDomainCommandBase(T parameters, CommandContext cmdContext) {
-        super(parameters);
+        super(parameters, cmdContext);
     }
 
 

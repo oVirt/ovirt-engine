@@ -1698,7 +1698,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     protected void setLock(EngineLock lock) {
-        context.withLock(null);
+        context.withLock(lock);
     }
 
     protected boolean acquireLock() {
