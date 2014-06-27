@@ -550,10 +550,10 @@ public class JsonRpcIIrsServer implements IIrsServer {
             String volumeUUID,
             String newSize) {
         JsonRpcRequest request =
-                new RequestBuilder("Volume.extendSize").withParameter("spUUID", spUUID)
-                        .withParameter("sdUUID", sdUUID)
-                        .withParameter("imgUUID", imageUUID)
-                        .withParameter("volUUID", volumeUUID)
+                new RequestBuilder("Volume.extendSize").withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imageUUID)
+                        .withParameter("volumeID", volumeUUID)
                         .withParameter("newSize", newSize)
                         .build();
         Map<String, Object> response =
