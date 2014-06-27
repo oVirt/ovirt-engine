@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
@@ -23,7 +24,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
 
     public SyncLunsInfoForBlockStorageDomainCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public SyncLunsInfoForBlockStorageDomainCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         setVdsId(parameters.getVdsId());
     }
 
