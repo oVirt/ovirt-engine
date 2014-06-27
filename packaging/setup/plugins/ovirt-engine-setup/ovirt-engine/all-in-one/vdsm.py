@@ -45,7 +45,7 @@ class Plugin(plugin.PluginBase):
     """
 
     ENGINE_RETRIES = 60
-    ENGINE_DELAY = 3
+    ENGINE_DELAY = 5
     VDSM_RETRIES = 600
     VDSM_DELAY = 1
 
