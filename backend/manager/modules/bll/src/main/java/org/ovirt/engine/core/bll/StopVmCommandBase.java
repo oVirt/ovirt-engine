@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -38,9 +39,13 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
         super(guid);
     }
 
-    public StopVmCommandBase(T parameters) {
-        super(parameters);
+    protected StopVmCommandBase(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setReason(parameters.getStopReason());
+    }
+
+    public StopVmCommandBase(T parameters) {
+        this(parameters, null);
     }
 
     protected boolean getSuspendedVm() {

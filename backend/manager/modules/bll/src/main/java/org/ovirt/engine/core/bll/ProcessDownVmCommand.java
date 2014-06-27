@@ -44,6 +44,10 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
         super(commandId);
     }
 
+    public ProcessDownVmCommand(T parameters) {
+        this(parameters, null);
+    }
+
     public ProcessDownVmCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setVmId(getParameters().getId());

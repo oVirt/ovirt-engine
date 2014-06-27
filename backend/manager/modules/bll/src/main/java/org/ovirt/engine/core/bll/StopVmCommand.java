@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.StopVmParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -7,8 +8,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase<T> {
+
     public StopVmCommand(T stopVmParams) {
-        super(stopVmParams);
+        this(stopVmParams, null);
+    }
+
+    public StopVmCommand(T stopVmParams,  CommandContext commandContext) {
+        super(stopVmParams, commandContext);
     }
 
     protected StopVmCommand(Guid commandId) {

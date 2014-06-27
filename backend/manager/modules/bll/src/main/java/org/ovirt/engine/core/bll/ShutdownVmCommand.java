@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ShutdownVmParameters;
 import org.ovirt.engine.core.common.action.StopVmParameters;
@@ -23,7 +24,11 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
     }
 
     public ShutdownVmCommand(T shutdownVmParamsData) {
-        super(shutdownVmParamsData);
+        this(shutdownVmParamsData, null);
+    }
+
+    public ShutdownVmCommand(T shutdownVmParamsData, CommandContext commandContext) {
+        super(shutdownVmParamsData, commandContext);
     }
 
     @Override
