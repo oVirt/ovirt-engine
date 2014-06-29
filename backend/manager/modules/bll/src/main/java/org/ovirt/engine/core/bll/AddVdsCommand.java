@@ -85,8 +85,8 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         addCanDoActionMessageVariable("server", getParameters().getvds().getHostName());
     }
 
-    protected Provider getHostProvider() {
-        return DbFacade.getInstance().getProviderDao().get(getParameters().getProviderId());
+    protected Provider<?> getHostProvider() {
+        return getProviderDao().get(getParameters().getProviderId());
     }
 
     @Override
