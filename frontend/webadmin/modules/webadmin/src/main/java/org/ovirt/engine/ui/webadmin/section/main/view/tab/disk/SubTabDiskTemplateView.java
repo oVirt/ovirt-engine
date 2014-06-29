@@ -43,6 +43,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameTemplate(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> disksColumn = new TextColumnWithTooltip<VmTemplate>() {
@@ -51,6 +52,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return String.valueOf(object.getDiskTemplateMap().size());
             }
         };
+        disksColumn.makeSortable();
         getTable().addColumn(disksColumn, constants.disksTemplate(), "200px"); //$NON-NLS-1$
 
         DiskSizeColumn<VmTemplate> sizeColumn = new DiskSizeColumn<VmTemplate>() {
@@ -59,7 +61,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return Double.valueOf(object.getActualDiskSize()).longValue();
             }
         };
-
+        sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "200px"); //$NON-NLS-1$
 
         FullDateTimeColumn<VmTemplate> dateColumn = new FullDateTimeColumn<VmTemplate>() {
@@ -68,6 +70,7 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
                 return object.getCreationDate();
             }
         };
+        dateColumn.makeSortable();
         getTable().addColumn(dateColumn, constants.creationDateTemplate(), "200px"); //$NON-NLS-1$
     }
 

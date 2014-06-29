@@ -48,6 +48,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return object.getStorageName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.domainNameStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> typeColumn = new EnumColumn<StorageDomain, StorageDomainType>() {
@@ -56,6 +57,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return object.getStorageDomainType();
             }
         };
+        typeColumn.makeSortable();
         getTable().addColumn(typeColumn, constants.domainTypeStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> statusColumn = new EnumColumn<StorageDomain, StorageDomainStatus>() {
@@ -64,6 +66,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> freeColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
@@ -73,6 +76,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return (long) availableDiskSize;
             }
         };
+        freeColumn.makeSortable();
         getTable().addColumn(freeColumn, constants.freeSpaceStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> usedColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
@@ -82,6 +86,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return (long) usedDiskSize;
             }
         };
+        usedColumn.makeSortable();
         getTable().addColumn(usedColumn, constants.usedSpaceStorage(), "160px"); //$NON-NLS-1$
 
         DiskSizeColumn<StorageDomain> totalColumn = new DiskSizeColumn<StorageDomain>(SizeConverter.SizeUnit.GB) {
@@ -91,6 +96,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return (long) totalDiskSize;
             }
         };
+        totalColumn.makeSortable();
         getTable().addColumn(totalColumn, constants.totalSpaceStorage(), "160px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> descriptionColumn = new TextColumnWithTooltip<StorageDomain>() {
@@ -99,6 +105,7 @@ public class SubTabDiskStorageView extends AbstractSubTabTableView<Disk, Storage
                 return object.getDescription();
             }
         };
+        descriptionColumn.makeSortable();
         getTable().addColumn(descriptionColumn, constants.domainDescriptionStorage(), "160px"); //$NON-NLS-1$
     }
 

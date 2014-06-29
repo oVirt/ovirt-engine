@@ -56,6 +56,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "140px"); //$NON-NLS-1$
 
         getTable().addColumn(new VmTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -66,6 +67,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> ipColumn = new TextColumnWithTooltip<VM>() {
@@ -74,6 +76,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getVmIp();
             }
         };
+        ipColumn.makeSortable();
         getTable().addColumn(ipColumn, constants.ipVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> fqdnColumn = new TextColumnWithTooltip<VM>() {
@@ -82,6 +85,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getVmFQDN();
             }
         };
+        fqdnColumn.makeSortable();
         getTable().addColumn(fqdnColumn, constants.fqdn(), "140px"); //$NON-NLS-1$
 
         PercentColumn<VM> memColumn = new PercentColumn<VM>() {
@@ -114,6 +118,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getStatus();
             }
         };
+        statusColumn.makeSortable();
         getTable().addColumn(statusColumn, constants.statusVm(), "140px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> hostColumn = new UptimeColumn<VM>() {
@@ -122,6 +127,7 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
                 return object.getRoundedElapsedTime();
             }
         };
+        hostColumn.makeSortable();
         getTable().addColumn(hostColumn, constants.uptimeVm(), "140px"); //$NON-NLS-1$
     }
 
