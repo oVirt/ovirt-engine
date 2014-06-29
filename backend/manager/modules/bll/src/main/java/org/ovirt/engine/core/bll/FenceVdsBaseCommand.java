@@ -3,12 +3,14 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorCompletionService;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -20,7 +22,9 @@ import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -35,6 +39,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
+import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> extends VdsCommand<T> {
@@ -468,11 +474,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         int i = 1;
         boolean statusReached = false;
         log.infoFormat("Waiting for vds {0} to {1}", vdsName, ACTION_NAME);
+
         // Waiting before first attempt to check the host status.
         // This is done because if we will attempt to get host status immediately
         // in most cases it will not turn from on/off to off/on and we will need
         // to wait a full cycle for it.
-        ThreadUtils.sleep(SLEEP_BEFORE_FIRST_ATTEMPT);
+        ThreadUtils.sleep(getSleep(actionType, order));
         while (!statusReached && i <= getRerties()) {
             log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
             if (executor.findProxyHost()) {
@@ -519,6 +526,36 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
 
         }
         return statusReached;
+    }
+
+    private int getSleep(FenceActionType actionType, FenceAgentOrder order) {
+        if (actionType != FenceActionType.Stop) {
+            return SLEEP_BEFORE_FIRST_ATTEMPT;
+        }
+        // We have to find out if power off delay was used and add this to the wait time
+        // since otherwise the command will return immediately with 'off' status and
+        // subsequent 'on' command issued during this delay will be overridden by the actual shutdown
+        String agent = (order == FenceAgentOrder.Primary) ? getVds().getPmType() : getVds().getPmSecondaryType();
+        String options =  (order == FenceAgentOrder.Primary) ? getVds().getPmOptions() : getVds().getPmSecondaryOptions();
+        options = VdsFenceOptions.getDefaultAgentOptions(agent, options);
+        HashMap<String, String> optionsMap = VdsStatic.pmOptionsStringToMap(options);
+        String powerWaitParamSettings = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FencePowerWaitParam.name(), ConfigCommon.defaultConfigurationVersion);
+        String powerWaitParam = VdsFenceOptions.getAgentPowerWaitParam(agent, powerWaitParamSettings);
+        if (powerWaitParam == null) {
+            // no power wait for this agent
+            return SLEEP_BEFORE_FIRST_ATTEMPT;
+        }
+        if (optionsMap.containsKey(powerWaitParam)) {
+            try {
+                Integer powerWaitValueInSec = Integer.parseInt(optionsMap.get(powerWaitParam));
+                return SLEEP_BEFORE_FIRST_ATTEMPT + (int)TimeUnit.SECONDS.toMillis(powerWaitValueInSec);
+            }
+            catch(NumberFormatException nfe) {
+                // illegal value
+                return SLEEP_BEFORE_FIRST_ATTEMPT;
+            }
+        }
+        return SLEEP_BEFORE_FIRST_ATTEMPT;
     }
 
     protected void setStatus(VDSStatus status) {

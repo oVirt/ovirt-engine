@@ -127,12 +127,14 @@ select fn_db_add_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait
 select fn_db_add_config_value('CustomFenceAgentDefaultParams','','general');
 select fn_db_add_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo,ilo3=ipmilan,ilo4=ipmilan','general');
 select fn_db_add_config_value('CustomFenceAgentMapping','','general');
+select fn_db_add_config_value('CustomFencePowerWaitParam','','general');
 select fn_db_add_config_value('FenceProxyDefaultPreferences','cluster,dc','general');
 select fn_db_add_config_value('FenceQuietTimeBetweenOperationsInSec','180','general');
 select fn_db_add_config_value('FenceStartStatusDelayBetweenRetriesInSec','60','general');
 select fn_db_add_config_value('FenceStartStatusRetries','3','general');
 select fn_db_add_config_value('FenceStopStatusDelayBetweenRetriesInSec','60','general');
 select fn_db_add_config_value('FenceStopStatusRetries','3','general');
+select fn_db_add_config_value('FencePowerWaitParam','apc=power_wait,apc_snmp=power_wait,bladecenter=power_wait,cisco_ucs=power_wait,drac5=power_wait,drac7=power_wait,eps=delay,hpblade=power_wait,ilo=power_wait,ilo2=power_wait,ilo3=power_wait,ilo4=power_wait,ipmilan=power_wait,rsa=power_wait,rsb=power_wait,wti=power_wait','general');
 select fn_db_add_config_value('FilteringLUNsEnabled','true','3.0');
 select fn_db_add_config_value('FindFenceProxyDelayBetweenRetriesInSec','30','general');
 select fn_db_add_config_value('FindFenceProxyRetries','3','general');
