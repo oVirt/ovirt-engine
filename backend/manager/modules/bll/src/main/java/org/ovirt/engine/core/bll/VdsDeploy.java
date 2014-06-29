@@ -583,8 +583,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         new Callable<Boolean>() { public Boolean call() throws Exception {
             if (_vds.isPmKdumpDetection() && !fenceKdumpSupported) {
                 _messages.post(
-                        InstallerMessages.Severity.WARNING,
-                        "Kdump detection is not supported by host!"
+                        InstallerMessages.Severity.INFO,
+                        "Disabling Kdump integration"
                 );
             }
 
