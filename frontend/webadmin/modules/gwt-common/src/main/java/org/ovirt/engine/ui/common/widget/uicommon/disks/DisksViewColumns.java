@@ -38,35 +38,46 @@ public class DisksViewColumns {
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
-    public static final TextColumnWithTooltip<Disk> aliasColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskAlias();
-        }
-    };
-
-    public static final TextColumnWithTooltip<Disk> idColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getId().toString();
-        }
-    };
-
-    public static final TextColumnWithTooltip<Disk> qoutaColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-
-            String value = "";
-            if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage diskImage = (DiskImage) object;
-                ArrayList<String> quotaNamesArr = diskImage.getQuotaNames();
-                if (quotaNamesArr != null) {
-                    value = StringHelper.join(", ", quotaNamesArr.toArray());//$NON-NLS-1$
-                }
+    public static TextColumnWithTooltip<Disk> getAliasColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskAlias();
             }
-            return value;
-        }
-    };
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static TextColumnWithTooltip<Disk> getIdColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getId().toString();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static TextColumnWithTooltip<Disk> getQoutaColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                String value = "";
+                if (object.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) object;
+                    ArrayList<String> quotaNamesArr = diskImage.getQuotaNames();
+                    if (quotaNamesArr != null) {
+                        value = StringHelper.join(", ", quotaNamesArr.toArray());//$NON-NLS-1$
+                    }
+                }
+                return value;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
 
     public static final ImageResourceColumn<Disk> bootableDiskColumn = new ImageResourceColumn<Disk>() {
         @Override
@@ -185,93 +196,137 @@ public class DisksViewColumns {
         }
     };
 
-    public static final DiskSizeColumn<Disk> sizeColumn = new DiskSizeColumn<Disk>() {
-        @Override
-        protected Long getRawValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getSize() :
-                    (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
-        }
-    };
+    public static final DiskSizeColumn<Disk> getSizeColumn(String sortBy) {
+        DiskSizeColumn<Disk> column = new DiskSizeColumn<Disk>() {
+            @Override
+            protected Long getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        ((DiskImage) object).getSize() :
+                        (long) (((LunDisk) object).getLun().getDeviceSize() * Math.pow(1024, 3));
+            }
+        };
 
-    public static final DiskSizeColumn<Disk> actualSizeColumn = new DiskSizeColumn<Disk>(SizeConverter.SizeUnit.GB) {
-        @Override
-        protected Long getRawValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
-                    : (long) (((LunDisk) object).getLun().getDeviceSize());
-        }
-    };
+        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+    }
 
-    public static final TextColumnWithTooltip<Disk> allocationColumn = new EnumColumn<Disk, VolumeType>() {
-        @Override
-        protected VolumeType getRawValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getVolumeType() : null;
-        }
-    };
+    public static final DiskSizeColumn<Disk> getActualSizeColumn(String sortBy) {
+        DiskSizeColumn<Disk> column = new DiskSizeColumn<Disk>(SizeConverter.SizeUnit.GB) {
+            @Override
+            protected Long getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        Math.round(((DiskImage) object).getActualDiskWithSnapshotsSize())
+                        : (long) (((LunDisk) object).getLun().getDeviceSize());
+            }
+        };
 
-    public static final TextColumnWithTooltip<Disk> interfaceColumn = new EnumColumn<Disk, DiskInterface>() {
-        @Override
-        protected DiskInterface getRawValue(Disk object) {
-            return object.getDiskInterface();
-        }
-    };
+        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+    }
 
-    public static final TextColumnWithTooltip<Disk> dateCreatedColumn = new FullDateTimeColumn<Disk>() {
-        @Override
-        protected Date getRawValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getCreationDate() : null;
-        }
-    };
+    public static final TextColumnWithTooltip<Disk> getAllocationColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new EnumColumn<Disk, VolumeType>() {
+            @Override
+            protected VolumeType getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        ((DiskImage) object).getVolumeType() : null;
+            }
+        };
 
-    public static final TextColumnWithTooltip<Disk> statusColumn = new EnumColumn<Disk, ImageStatus>() {
-        @Override
-        protected ImageStatus getRawValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.IMAGE ?
-                    ((DiskImage) object).getImageStatus() : null;
-        }
-    };
+        return makeSortable(column, sortBy);
+    }
 
-    public static final TextColumnWithTooltip<Disk> descriptionColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskDescription();
-        }
-    };
+    public static final TextColumnWithTooltip<Disk> getInterfaceColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new EnumColumn<Disk, DiskInterface>() {
+            @Override
+            protected DiskInterface getRawValue(Disk object) {
+                return object.getDiskInterface();
+            }
+        };
 
-    public static final TextColumnWithTooltip<Disk> lunIdColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.LUN ?
-                    ((LunDisk) object).getLun().getLUN_id() : null;
-        }
-    };
+        return makeSortable(column, sortBy);
+    }
 
-    public static final TextColumnWithTooltip<Disk> lunVendorIdColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.LUN ?
-                    ((LunDisk) object).getLun().getVendorId() : null;
-        }
-    };
+    public static final TextColumnWithTooltip<Disk> getDateCreatedColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new FullDateTimeColumn<Disk>() {
+            @Override
+            protected Date getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        ((DiskImage) object).getCreationDate() : null;
+            }
+        };
 
-    public static final TextColumnWithTooltip<Disk> lunProductIdColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.LUN ?
-                    ((LunDisk) object).getLun().getProductId() : null;
-        }
-    };
+        return makeSortable(column, sortBy);
+    }
 
-    public static final TextColumnWithTooltip<Disk> lunSerialColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return object.getDiskStorageType() == DiskStorageType.LUN ?
-                    ((LunDisk) object).getLun().getSerial() : null;
-        }
-    };
+    public static final TextColumnWithTooltip<Disk> getStatusColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new EnumColumn<Disk, ImageStatus>() {
+            @Override
+            protected ImageStatus getRawValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.IMAGE ?
+                        ((DiskImage) object).getImageStatus() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getDescriptionColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskDescription();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getLunIdColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.LUN ?
+                        ((LunDisk) object).getLun().getLUN_id() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getLunVendorIdColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.LUN ?
+                        ((LunDisk) object).getLun().getVendorId() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getLunProductIdColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.LUN ?
+                        ((LunDisk) object).getLun().getProductId() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getLunSerialColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return object.getDiskStorageType() == DiskStorageType.LUN ?
+                        ((LunDisk) object).getLun().getSerial() : null;
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
 
     public static final CheckboxColumn<EntityModel> readOnlyCheckboxColumn = new CheckboxColumn<EntityModel>(
         new FieldUpdater<EntityModel, Boolean>() {
@@ -298,17 +353,38 @@ public class DisksViewColumns {
             }
     };
 
-    public static final DiskSizeColumn<Disk> snapshotSizeColumn = new DiskSizeColumn<Disk>() {
-        @Override
-        protected Long getRawValue(Disk object) {
-            return ((DiskImage) object).getActualSizeInBytes();
-        }
-    };
+    public static final DiskSizeColumn<Disk> getSnapshotSizeColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new DiskSizeColumn<Disk>() {
+            @Override
+            protected Long getRawValue(Disk object) {
+                return ((DiskImage) object).getActualSizeInBytes();
+            }
+        };
 
-    public static final TextColumnWithTooltip<Disk> snapshotDescriptionColumn = new TextColumnWithTooltip<Disk>() {
-        @Override
-        public String getValue(Disk object) {
-            return ((DiskImage) object).getVmSnapshotDescription();
+        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+    }
+
+    public static final TextColumnWithTooltip<Disk> getSnapshotDescriptionColumn(String sortBy) {
+        TextColumnWithTooltip<Disk> column = new TextColumnWithTooltip<Disk>() {
+            @Override
+            public String getValue(Disk object) {
+                return ((DiskImage) object).getVmSnapshotDescription();
+            }
+        };
+
+        return makeSortable(column, sortBy);
+    }
+
+    public static <T> TextColumnWithTooltip<T> makeSortable(TextColumnWithTooltip<T> column, String sortBy) {
+        if (sortBy == null ) {
+            // Client sorting
+            column.makeSortable();
         }
-    };
+        else if (!sortBy.equals(constants.empty())) {
+            // Server sorting
+            column.makeSortable(sortBy);
+        }
+
+        return column;
+    }
 }

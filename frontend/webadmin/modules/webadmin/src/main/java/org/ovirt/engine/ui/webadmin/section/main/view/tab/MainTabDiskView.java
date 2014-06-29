@@ -4,10 +4,13 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.searchbackend.DiskConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
+import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewRadioGroup;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -44,6 +47,19 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     private final ApplicationConstants constants;
     private DisksViewRadioGroup disksViewRadioGroup;
     private boolean isQuotaVisible;
+
+    private static TextColumnWithTooltip<Disk> aliasColumn;
+    private static TextColumnWithTooltip<Disk> idColumn;
+    private static DiskSizeColumn sizeColumn;
+    private static TextColumnWithTooltip<Disk> allocationColumn;
+    private static TextColumnWithTooltip<Disk> dateCreatedColumn;
+    private static TextColumnWithTooltip<Disk> statusColumn;
+    private static TextColumnWithTooltip<Disk> lunIdColumn;
+    private static TextColumnWithTooltip<Disk> lunSerialColumn;
+    private static TextColumnWithTooltip<Disk> lunVendorIdColumn;
+    private static TextColumnWithTooltip<Disk> lunProductIdColumn;
+    private static TextColumnWithTooltip<Disk> qoutaColumn;
+    private static TextColumnWithTooltip<Disk> descriptionColumn;
 
     @Inject
     public MainTabDiskView(MainModelProvider<Disk, DiskListModel> modelProvider, ApplicationConstants constants) {
@@ -104,11 +120,11 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         searchByDiskViewType(disksViewRadioGroup.getDiskStorageType());
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.aliasDisk(), all || images || luns,
+                aliasColumn, constants.aliasDisk(), all || images || luns,
                 "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.idColumn, constants.idDisk(), all || images || luns,
+                idColumn, constants.idDisk(), all || images || luns,
                 "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
@@ -136,47 +152,60 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
                 "180px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.sizeColumn, constants.provisionedSizeDisk(), all || images || luns,
+                sizeColumn, constants.provisionedSizeDisk(), all || images || luns,
                 "110px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.allocationColumn, constants.allocationDisk(), images,
+                allocationColumn, constants.allocationDisk(), images,
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), images,
+                dateCreatedColumn, constants.creationDateDisk(), images,
                 "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), images,
+                statusColumn, constants.statusDisk(), images,
                 "80px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunIdColumn, constants.lunIdSanStorage(), luns,
+                lunIdColumn, constants.lunIdSanStorage(), luns,
                 "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunSerialColumn, constants.serialSanStorage(), luns,
+                lunSerialColumn, constants.serialSanStorage(), luns,
                 "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunVendorIdColumn, constants.vendorIdSanStorage(), luns,
+                lunVendorIdColumn, constants.vendorIdSanStorage(), luns,
                 "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.lunProductIdColumn, constants.productIdSanStorage(), luns,
+                lunProductIdColumn, constants.productIdSanStorage(), luns,
                 "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.qoutaColumn, constants.quotaDisk(), images && isQuotaVisible, "120px"); //$NON-NLS-1$
+                qoutaColumn, constants.quotaDisk(), images && isQuotaVisible, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.descriptionColumn, constants.descriptionDisk(), all || images || luns,
+                descriptionColumn, constants.descriptionDisk(), all || images || luns,
                 "90px"); //$NON-NLS-1$
     }
 
     void initTableColumns() {
         getTable().enableColumnResizing();
+
+        aliasColumn = DisksViewColumns.getAliasColumn(DiskConditionFieldAutoCompleter.ALIAS);
+        idColumn = DisksViewColumns.getIdColumn(DiskConditionFieldAutoCompleter.ID);
+        sizeColumn = DisksViewColumns.getSizeColumn(DiskConditionFieldAutoCompleter.PROVISIONED_SIZE);
+        allocationColumn = DisksViewColumns.getAllocationColumn(constants.empty());
+        dateCreatedColumn = DisksViewColumns.getDateCreatedColumn(DiskConditionFieldAutoCompleter.CREATION_DATE);
+        statusColumn = DisksViewColumns.getStatusColumn(DiskConditionFieldAutoCompleter.STATUS);
+        lunIdColumn = DisksViewColumns.getLunIdColumn(constants.empty());
+        lunSerialColumn = DisksViewColumns.getLunSerialColumn(constants.empty());
+        lunVendorIdColumn = DisksViewColumns.getLunVendorIdColumn(constants.empty());
+        lunProductIdColumn = DisksViewColumns.getLunProductIdColumn(constants.empty());
+        qoutaColumn = DisksViewColumns.getQoutaColumn(DiskConditionFieldAutoCompleter.QUOTA);
+        descriptionColumn = DisksViewColumns.getDescriptionColumn(DiskConditionFieldAutoCompleter.DESCRIPTION);
     }
 
     void initTableOverhead() {

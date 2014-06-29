@@ -36,22 +36,22 @@ public class SubTabStorageSnapshotView extends AbstractSubTabTableView<StorageDo
         getTable().enableColumnResizing();
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.snapshotSizeColumn, constants.diskSnapshotSize(), true, "130px"); //$NON-NLS-1$
+                DisksViewColumns.getSnapshotSizeColumn(null), constants.diskSnapshotSize(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.dateCreatedColumn, constants.creationDateDisk(), true, "130px"); //$NON-NLS-1$
+                DisksViewColumns.getDateCreatedColumn(null), constants.creationDateDisk(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.aliasColumn, constants.diskSnapshotAlias(), true, "130px"); //$NON-NLS-1$
+                DisksViewColumns.getAliasColumn(null), constants.diskSnapshotAlias(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.snapshotDescriptionColumn, constants.diskSnapshotDescription(), true, "160px"); //$NON-NLS-1$
+                DisksViewColumns.getSnapshotDescriptionColumn(null), constants.diskSnapshotDescription(), true, "160px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.diskContainersColumn, constants.attachedToDisk(), true, "130px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.statusColumn, constants.statusDisk(), true, "80px"); //$NON-NLS-1$
+                DisksViewColumns.getStatusColumn(null), constants.statusDisk(), true, "80px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.removeDisk()) {
             @Override

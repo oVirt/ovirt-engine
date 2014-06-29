@@ -202,9 +202,14 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     @Override
     protected void syncSearch()
     {
-        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.Disk, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.Disk, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
+    }
+
+    @Override
+    public boolean supportsServerSideSorting() {
+        return true;
     }
 
     @Override
