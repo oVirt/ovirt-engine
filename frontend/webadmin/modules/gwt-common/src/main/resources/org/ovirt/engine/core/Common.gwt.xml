@@ -338,6 +338,7 @@
 		<include name="common/businessentities/VdsNumaNode.java" />
 		<include name="common/businessentities/VmNumaNode.java" />
         <!-- Foreman Objects -->
+        <include name="common/businessentities/ExternalEntityBase.java"/>
         <include name="common/businessentities/ExternalHostGroup.java"/>
         <include name="common/businessentities/ExternalHost.java"/>
         <include name="common/businessentities/ExternalDiscoveredHost.java"/>

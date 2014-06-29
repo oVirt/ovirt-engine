@@ -8,6 +8,7 @@ import java.util.Map;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.Provider;
@@ -818,23 +819,23 @@ public abstract class HostModel extends Model
         privateExternalHostName = value;
     }
 
-    private ListModel privateExternalDiscoveredHosts;
+    private ListModel<ExternalEntityBase> privateExternalDiscoveredHosts;
 
-    public ListModel getExternalDiscoveredHosts() { return privateExternalDiscoveredHosts; }
+    public ListModel<ExternalEntityBase> getExternalDiscoveredHosts() { return privateExternalDiscoveredHosts; }
 
-    protected void setExternalDiscoveredHosts(ListModel value) { privateExternalDiscoveredHosts = value; }
+    protected void setExternalDiscoveredHosts(ListModel<ExternalEntityBase> value) { privateExternalDiscoveredHosts = value; }
 
-    private ListModel privateExternalHostGroups;
+    private ListModel<ExternalEntityBase> privateExternalHostGroups;
 
-    public ListModel getExternalHostGroups() { return privateExternalHostGroups; }
+    public ListModel<ExternalEntityBase> getExternalHostGroups() { return privateExternalHostGroups; }
 
-    protected void setExternalHostGroups(ListModel value) { privateExternalHostGroups = value; }
+    protected void setExternalHostGroups(ListModel<ExternalEntityBase> value) { privateExternalHostGroups = value; }
 
-    private ListModel privateExternalComputeResource;
+    private ListModel<ExternalEntityBase> privateExternalComputeResource;
 
-    public ListModel getExternalComputeResource() { return privateExternalComputeResource; }
+    public ListModel<ExternalEntityBase> getExternalComputeResource() { return privateExternalComputeResource; }
 
-    protected void setExternalComputeResource(ListModel value) { privateExternalComputeResource = value; }
+    protected void setExternalComputeResource(ListModel<ExternalEntityBase> value) { privateExternalComputeResource = value; }
 
     private EntityModel<String> privateComment;
 

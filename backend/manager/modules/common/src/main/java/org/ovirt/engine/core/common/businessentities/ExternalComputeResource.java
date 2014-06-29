@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
-public class ExternalComputeResource implements Serializable {
+public class ExternalComputeResource implements ExternalEntityBase {
     private static final long serialVersionUID = -6951116030464852526L;
     private String name;
     private int id;
@@ -14,12 +12,6 @@ public class ExternalComputeResource implements Serializable {
     public void setProvider(String provider) { this.provider = provider; }
     public String getUser() { return user; }
     public void setUser(String user) { this.user = user; }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
-    }
     public String getUrl() {
         return url;
     }
@@ -31,6 +23,15 @@ public class ExternalComputeResource implements Serializable {
         this.id = id;
     }
 
+    @Override
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
     public String getDescription() {
         return "URL: " + url +
                " | Provider: " + provider + "\n" +

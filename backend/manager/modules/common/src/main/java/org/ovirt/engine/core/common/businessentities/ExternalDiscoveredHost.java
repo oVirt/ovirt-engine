@@ -1,8 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
-
-public class ExternalDiscoveredHost implements Serializable {
+public class ExternalDiscoveredHost implements ExternalEntityBase {
     private static final long serialVersionUID = -6900772579678185173L;
     private String ip;
     private String mac;
@@ -26,6 +24,8 @@ public class ExternalDiscoveredHost implements Serializable {
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    @Override
     public String getName() {
         return name;
     }
@@ -33,6 +33,7 @@ public class ExternalDiscoveredHost implements Serializable {
         this.name = name;
     }
 
+    @Override
     public String getDescription() {
         return "MAC: " + mac + "\n" +
                " | DiscoverTime : " + lastReport + "\n" +

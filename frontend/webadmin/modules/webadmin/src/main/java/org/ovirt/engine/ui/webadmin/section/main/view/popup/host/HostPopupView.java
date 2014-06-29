@@ -3,9 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
-import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
-import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
-import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
+import org.ovirt.engine.core.common.businessentities.ExternalEntityBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -158,17 +156,17 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
     @UiField(provided = true)
     @Path(value = "externalDiscoveredHosts.selectedItem")
     @WithElementId("externalDiscoveredHosts")
-    ListModelTypeAheadListBoxEditor<Object> externalDiscoveredHostsEditor;
+    ListModelTypeAheadListBoxEditor<ExternalEntityBase> externalDiscoveredHostsEditor;
 
     @UiField(provided = true)
     @Path(value = "externalHostGroups.selectedItem")
     @WithElementId("externalHostGroups")
-    ListModelTypeAheadListBoxEditor<Object> externalHostGroupsEditor;
+    ListModelTypeAheadListBoxEditor<ExternalEntityBase> externalHostGroupsEditor;
 
     @UiField(provided = true)
     @Path(value = "externalComputeResource.selectedItem")
     @WithElementId("externalComputeResource")
-    ListModelTypeAheadListBoxEditor<Object> externalComputeResourceEditor;
+    ListModelTypeAheadListBoxEditor<ExternalEntityBase> externalComputeResourceEditor;
 
     @UiField
     @Path(value = "host.entity")
@@ -561,65 +559,9 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
 
         pmSecondaryTypeEditor = new ListModelListBoxEditor<String>(new StringRenderer<String>());
 
-        externalDiscoveredHostsEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
-
-                    @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        ExternalDiscoveredHost host = (ExternalDiscoveredHost) data;
-                        return host.getName();
-                    }
-
-                    @Override
-                    public String getDisplayStringNullSafe(Object data) {
-                        ExternalDiscoveredHost host = (ExternalDiscoveredHost) data;
-                        return typeAheadNameDescriptionTemplateNullSafe(
-                                host.getName(),
-                                host.getDescription()
-                        );
-                    }
-                }
-                );
-
-        externalHostGroupsEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
-
-                    @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        ExternalHostGroup hg = (ExternalHostGroup) data;
-                        return hg.getName();
-                    }
-
-                    @Override
-                    public String getDisplayStringNullSafe(Object data) {
-                        ExternalHostGroup hg = (ExternalHostGroup) data;
-                        return typeAheadNameDescriptionTemplateNullSafe(
-                                hg.getName(),
-                                hg.getDescription()
-                        );
-                    }
-                }
-                );
-
-        externalComputeResourceEditor = new ListModelTypeAheadListBoxEditor<Object>(
-                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<Object>() {
-
-                    @Override
-                    public String getReplacementStringNullSafe(Object data) {
-                        ExternalComputeResource cr = (ExternalComputeResource) data;
-                        return cr.getName();
-                    }
-
-                    @Override
-                    public String getDisplayStringNullSafe(Object data) {
-                        ExternalComputeResource cr = (ExternalComputeResource) data;
-                        return typeAheadNameDescriptionTemplateNullSafe(
-                                cr.getName(),
-                                cr.getDescription()
-                        );
-                    }
-                }
-                );
+        externalDiscoveredHostsEditor = getListModelTypeAheadListBoxEditor();
+        externalHostGroupsEditor = getListModelTypeAheadListBoxEditor();
+        externalComputeResourceEditor = getListModelTypeAheadListBoxEditor();
 
         // Check boxes
         pmEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -629,6 +571,24 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         rbPublicKey = new RadioButton("1"); //$NON-NLS-1$
         rbDiscoveredHost = new RadioButton("2"); //$NON-NLS-1$
         rbProvisionedHost = new RadioButton("2"); //$NON-NLS-1$
+    }
+
+    private ListModelTypeAheadListBoxEditor<ExternalEntityBase> getListModelTypeAheadListBoxEditor() {
+        return new ListModelTypeAheadListBoxEditor<ExternalEntityBase>(
+                new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<ExternalEntityBase>() {
+                    @Override
+                    public String getReplacementStringNullSafe(ExternalEntityBase data) {
+                        return data.getName();
+                    }
+
+                    @Override
+                    public String getDisplayStringNullSafe(ExternalEntityBase data) {
+                        return typeAheadNameDescriptionTemplateNullSafe(
+                                data.getName(),
+                                data.getDescription()
+                        );
+                    }
+                });
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {

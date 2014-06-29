@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import java.io.Serializable;
 import java.util.Map;
 
-public class ExternalHostGroup implements Serializable {
+public class ExternalHostGroup implements ExternalEntityBase {
     private static final long serialVersionUID = -3099054972843803212L;
 
     private String name;
@@ -35,12 +34,6 @@ public class ExternalHostGroup implements Serializable {
     }
     public void setHostgroupId(int id) {
         this.hostgroupId = id;
-    }
-    public String getName() {
-        return name;
-    }
-    public void setName(String name) {
-        this.name = name;
     }
     public int getOsId() {
         return osId;
@@ -91,10 +84,19 @@ public class ExternalHostGroup implements Serializable {
         this.architectureId = architectureId;
     }
 
+    @Override
     public String getDescription() {
         return "OS: " + operatingsystemName + "\n" +
                " | Subnet: " + subnetName + "\n" +
                " | Domain: " + domainName + "\n" +
                " | Arch: " + architectureName;
+    }
+
+    @Override
+    public String getName() {
+        return name;
+    }
+    public void setName(String name) {
+        this.name = name;
     }
 }
