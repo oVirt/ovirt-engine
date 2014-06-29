@@ -38,6 +38,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
                 return object.getRepoImageTitle();
             }
         };
+        fileNameColumn.makeSortable();
         getTable().addColumn(fileNameColumn, constants.fileNameIso(), "500px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<RepoImage> typeColumn = new TextColumnWithTooltip<RepoImage>() {
@@ -46,6 +47,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
                 return object.getFileType().toString();
             }
         };
+        typeColumn.makeSortable();
         getTable().addColumn(typeColumn, constants.typeIso(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<RepoImage> sizeColumn = new DiskSizeColumn<RepoImage>(SizeConverter.SizeUnit.BYTES,
@@ -55,6 +57,7 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
                 return object.getSize();
             }
         };
+        sizeColumn.makeSortable();
         getTable().addColumn(sizeColumn, constants.actualSizeTemplate(), "100px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<RepoImage>(constants.importImage()) {

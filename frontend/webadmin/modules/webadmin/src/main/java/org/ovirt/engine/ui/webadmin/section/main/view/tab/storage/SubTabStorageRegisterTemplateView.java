@@ -39,6 +39,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return object.getName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameVm(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> originColumn = new EnumColumn<VmTemplate, OriginType>() {
@@ -47,6 +48,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return object.getOrigin();
             }
         };
+        originColumn.makeSortable();
         getTable().addColumn(originColumn, constants.originVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> memoryColumn = new TextColumnWithTooltip<VmTemplate>() {
@@ -55,6 +57,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return String.valueOf(object.getMemSizeMb()) + " MB"; //$NON-NLS-1$
             }
         };
+        memoryColumn.makeSortable();
         getTable().addColumn(memoryColumn, constants.memoryVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> cpuColumn = new TextColumnWithTooltip<VmTemplate>() {
@@ -63,6 +66,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return String.valueOf(object.getNumOfCpus());
             }
         };
+        cpuColumn.makeSortable();
         getTable().addColumn(cpuColumn, constants.cpusVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> archColumn = new TextColumnWithTooltip<VmTemplate>() {
@@ -71,6 +75,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return String.valueOf(object.getClusterArch());
             }
         };
+        archColumn.makeSortable();
         getTable().addColumn(archColumn, constants.architectureVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> numOfDisksColumn = new TextColumnWithTooltip<VmTemplate>() {
@@ -79,6 +84,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return String.valueOf(object.getDiskTemplateMap().size());
             }
         };
+        numOfDisksColumn.makeSortable();
         getTable().addColumn(numOfDisksColumn, constants.disksVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> creationDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
@@ -87,6 +93,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return object.getCreationDate();
             }
         };
+        creationDateColumn.makeSortable();
         getTable().addColumn(creationDateColumn, constants.creationDateVm(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VmTemplate> exportDateColumn = new GeneralDateTimeColumn<VmTemplate>() {
@@ -95,6 +102,7 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
                 return object.getExportDate();
             }
         };
+        exportDateColumn.makeSortable();
         getTable().addColumn(exportDateColumn, constants.exportDateVm(), "200px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<VmTemplate>(constants.restoreVm()) {

@@ -44,6 +44,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
                 return object.getStoragePoolName();
             }
         };
+        nameColumn.makeSortable();
         getTable().addColumn(nameColumn, constants.nameDc(), "600px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageDomain> domainStatusColumn =
@@ -53,6 +54,7 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
                         return object.getStatus();
                     }
                 };
+        domainStatusColumn.makeSortable();
         getTable().addColumn(domainStatusColumn, constants.domainStatusInDcStorageDc(), "300px"); //$NON-NLS-1$
 
         getTable().addActionButton(new WebAdminButtonDefinition<StorageDomain>(constants.attachStorageDc()) {
