@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class ClusterVmListModel extends VmListModel {
 
@@ -29,7 +31,8 @@ public class ClusterVmListModel extends VmListModel {
             VmAppListModel vmAppListModel,
             PermissionListModel permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
-            VmSessionsModel vmSessionsModel) {
+            VmSessionsModel vmSessionsModel,
+            Provider<ImportVmsModel> importVmsModelProvider) {
         super(vmGeneralModel,
                 vmInterfaceListModel,
                 vmDiskListModel,
@@ -38,7 +41,8 @@ public class ClusterVmListModel extends VmListModel {
                 vmAppListModel,
                 permissionListModel,
                 vmAffinityGroupListModel,
-                vmSessionsModel);
+                vmSessionsModel,
+                importVmsModelProvider);
     }
 
     @Override

@@ -2279,6 +2279,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Not available when no Data Center is up.")
     String notAvailableWithNoUpDC();
 
+    @DefaultStringValue("Not available when no Export Domain is active.")
+    String notAvailableWithNoActiveExportDomain();
+
     @DefaultStringValue("Not available when Templates are not configured.")
     String notAvailableWithNoTemplates();
 
@@ -2479,4 +2482,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove the Data Center(s) will move the entities residing on the storage domain(s) to an unregistered state. For further information please consult documentation.")
     String removeDataCenterWarnningNote();
+
+    @DefaultStringValue("Back")
+    String back();
+
+    @DefaultStringValue("Next")
+    String next();
 }

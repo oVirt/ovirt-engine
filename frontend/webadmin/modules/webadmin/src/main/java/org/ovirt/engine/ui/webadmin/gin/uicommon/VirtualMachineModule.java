@@ -25,6 +25,9 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
@@ -36,11 +39,14 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.quota.ChangeQuotaPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
@@ -91,7 +97,10 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ConsolePopupPresenterWidget> consolePopupProvider,
             final Provider<VncInfoPopupPresenterWidget> vncWindoProvider,
             final Provider<VmNextRunConfigurationPresenterWidget> nextRunProvider,
+            final Provider<ImportVmsPopupPresenterWidget> importVmsProvider,
+            final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
+            final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
             final Provider<VmListModel> modelProvider,
             final Provider<CommonModel> commonModelProvider) {
         MainTabModelProvider<VM, VmListModel> result =
@@ -125,6 +134,11 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return consolePopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getCloneVmCommand()) {
                             return cloneVmProvider.get();
+                        } else if (lastExecutedCommand == getModel().getImportVmCommand()
+                                || windowModel instanceof ImportVmsModel) {
+                            return importVmsProvider.get();
+                        } else if (windowModel instanceof ImportVmFromExportDomainModel) {
+                            return importVmFromExportDomainPopupProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }
@@ -138,6 +152,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                         } else if (lastExecutedCommand == getModel().getStopCommand() ||
                                 lastExecutedCommand == getModel().getShutdownCommand()) {
                             return removeConfirmPopupProvider.get();
+                        } else if (source.getConfirmWindow() instanceof ImportCloneModel) {
+                            return importClonePopupProvider.get();
                         } else if ("OnSave".equals(lastExecutedCommand.getName())) { //$NON-NLS-1$
                             return nextRunProvider.get();
                         } else {

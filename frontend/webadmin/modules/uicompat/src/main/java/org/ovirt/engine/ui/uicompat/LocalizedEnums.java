@@ -981,4 +981,6 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String NumaTuneMode___PREFERRED();
 
     String NumaTuneMode___INTERLEAVE();
+
+    String ImportSource___EXPORT_DOMAIN();
 }

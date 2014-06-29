@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
@@ -256,6 +257,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.ReportView;
 import org.ovirt.engine.ui.webadmin.section.main.view.SearchPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.AssignTagsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.DetachConfirmationPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.NewNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.PermissionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.SystemPermissionsRemoveConfirmationPopupView;
@@ -1420,6 +1422,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(EditQuotaStoragePopupPresenterWidget.class,
                 EditQuotaStoragePopupPresenterWidget.ViewDef.class,
                 EditQuotaStoragePopupView.class);
+
+        bindPresenterWidget(ImportVmsPopupPresenterWidget.class,
+                ImportVmsPopupPresenterWidget.ViewDef.class,
+                ImportVmsPopupView.class);
 
         // Volume
         bindPresenter(VolumeSubTabPanelPresenter.class,

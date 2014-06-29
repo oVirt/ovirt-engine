@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -14,6 +16,7 @@ import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
+import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.action.MoveVmParameters;
@@ -32,6 +35,8 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -50,15 +55,16 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.BaseCommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister.ConsoleContext;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
-import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TagsEqualityComparer;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
@@ -84,11 +90,19 @@ import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicommonweb.models.configure.ChangeCDModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_groups.list.VmAffinityGroupListModel;
+import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagListModel;
 import org.ovirt.engine.ui.uicommonweb.models.tags.TagModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.templates.VmBaseListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.AttachCdModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.NotInCollectionValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -103,11 +117,30 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 import com.google.inject.Inject;
+import com.google.inject.Provider;
 
 public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTreeContext {
 
+    public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
+    public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
+    private static final String CMD_BACK = "Back"; //$NON-NLS-1$
+    private static final String CMD_RESTORE_FROM_EXPORT_DOMAIN = "OnRestoreExportDomain"; //$NON-NLS-1$
+    private static final String CMD_IMPORT_CLONED_VM = "ImportVmAsClone"; //$NON-NLS-1$
+
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
+
+    Provider<ImportVmsModel> importVmsModelProvider;
+
+    private UICommand importVmCommand;
+
+    public UICommand getImportVmCommand() {
+        return importVmCommand;
+    }
+
+    public void setImportVmCommand(UICommand importVmCommand) {
+        this.importVmCommand = importVmCommand;
+    }
 
     private UICommand cloneVmCommand;
 
@@ -461,7 +494,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel vmAppListModel,
             final PermissionListModel permissionListModel, final VmAffinityGroupListModel vmAffinityGroupListModel,
-            final VmSessionsModel vmSessionsModel) {
+            final VmSessionsModel vmSessionsModel, final Provider<ImportVmsModel> importVmsModelProvider) {
+        this.importVmsModelProvider = importVmsModelProvider;
         setDetailList(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
                 vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -478,6 +512,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         setConsoleHelpers();
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
+        setImportVmCommand(new UICommand("ImportVm", this)); //$NON-NLS-1$
         setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
@@ -2370,6 +2405,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         {
             newVm();
         }
+        else if (command == getImportVmCommand()) {
+            importVms();
+        }
         else if (command == getCloneVmCommand())
         {
             cloneVm();
@@ -2526,6 +2564,30 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             updateExistingVm(model.getApplyCpuLater().getEntity());
             cancelConfirmation();
         }
+        else if (CMD_CONFIGURE_VMS_TO_IMPORT.equals(command.getName())) {
+            onConfigureVmsToImport();
+        }
+    }
+
+    private void importVms() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        ImportVmsModel model = importVmsModelProvider.get();
+        model.init();
+        setWindow(model);
+
+        model.getCommands().add(new UICommand(CMD_CONFIGURE_VMS_TO_IMPORT, this)
+        .setIsExecutionAllowed(false)
+        .setTitle(ConstantsManager.getInstance().getConstants().next())
+        .setIsDefault(true)
+        );
+
+        model.getCommands().add(new UICommand(CMD_CANCEL, this)
+        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+        .setIsCancel(true)
+        );
     }
 
     private void cloneVm() {
@@ -2556,6 +2618,42 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private void onClone() {
         ((CloneVmModel) getWindow()).onClone(this, false);
+    }
+
+    private void onConfigureVmsToImport() {
+        final ImportVmsModel importVmsModel = (ImportVmsModel) getWindow();
+        if (importVmsModel == null) {
+            return;
+        }
+
+        ImportVmFromExportDomainModel model = importVmsModel.getSpecificImportModel();
+        setWindow(null); // remove import-vms window first
+        setWindow(model);
+
+        model.getCommands().add(new UICommand(CMD_RESTORE_FROM_EXPORT_DOMAIN, new BaseCommandTarget() {
+            @Override
+            public void executeCommand(UICommand uiCommand) {
+                onRestoreFromExportDomain();
+            }
+        })
+        .setTitle(ConstantsManager.getInstance().getConstants().ok())
+        .setIsDefault(true)
+        );
+
+        model.getCommands().add(new UICommand(CMD_BACK, new BaseCommandTarget() {
+            @Override
+            public void executeCommand(UICommand uiCommand) {
+                setWindow(null); // remove current window first
+                setWindow(importVmsModel);
+            }
+        })
+        .setTitle(ConstantsManager.getInstance().getConstants().back())
+        );
+
+        model.getCommands().add(new UICommand(CMD_CANCEL, this)
+        .setTitle(ConstantsManager.getInstance().getConstants().cancel())
+        .setIsCancel(true)
+        );
     }
 
     private void connectToConsoles() {
@@ -2619,5 +2717,331 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     @Override
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
+    }
+
+    ////////////////////////
+    //// Temporary Code ////
+    ////////////////////////
+
+    protected List<Object> objectsToClone;
+    protected Map<Guid, Object> cloneObjectMap;
+    /** used to save the names that were assigned for VMs which are going
+     *  to be created using import in case of choosing multiple VM imports */
+    protected Set<String> assignedVmNames = new HashSet<String>();
+
+    private void onRestoreFromExportDomain() {
+        ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) getWindow();
+        if (importModel.getProgress() != null) {
+            return;
+        }
+
+        if (!importModel.validate()) {
+            return;
+        }
+        cloneObjectMap = new HashMap<Guid, Object>();
+
+        objectsToClone = new ArrayList<Object>();
+        for (Object object : (ArrayList<Object>) importModel.getItems()) {
+            ImportEntityData item = (ImportEntityData) object;
+            if ((Boolean) item.getClone().getEntity()) {
+                objectsToClone.add(object);
+            }
+        }
+        executeImportClone(importModel);
+    }
+
+    private void executeImportClone(final ImportVmFromExportDomainModel importModel) {
+        if (objectsToClone.size() == 0) {
+            clearCachedAssignedVmNames();
+            executeImport(importModel);
+            return;
+        }
+        ImportCloneModel entity = new ImportCloneModel();
+        Object object = objectsToClone.iterator().next();
+        entity.setEntity(object);
+        entity.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        entity.setHelpTag(HelpTag.import_conflict);
+        entity.setHashName("import_conflict"); //$NON-NLS-1$
+        UICommand command = new UICommand(CMD_IMPORT_CLONED_VM, new BaseCommandTarget() {
+            @Override
+            public void executeCommand(UICommand uiCommand) {
+                VmListModel.this.onImportVmAsClone(importModel);
+            }
+        });
+        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        command.setIsDefault(true);
+        entity.getCommands().add(command);
+        command = new UICommand(CMD_CANCEL, this); //$NON-NLS-1$
+        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+        command.setIsCancel(true);
+        entity.getCommands().add(command);
+
+        setConfirmWindow(entity);
+    }
+
+    private void clearCachedAssignedVmNames() {
+        assignedVmNames.clear();
+    }
+
+    protected void executeImport(ImportVmFromExportDomainModel importModel) {
+        ArrayList<VdcActionParametersBase> prms = new ArrayList<VdcActionParametersBase>();
+
+        for (Object item : importModel.getItems()) {
+            VM vm = ((ImportVmData) item).getVm();
+
+            ImportVmParameters prm = new ImportVmParameters(vm, (Guid) importModel.getEntity(),
+                    Guid.Empty, importModel.getStoragePool().getId(),
+                    ((VDSGroup) importModel.getCluster().getSelectedItem()).getId());
+
+            if (importModel.getClusterQuota().getSelectedItem() != null &&
+                    importModel.getClusterQuota().getIsAvailable()) {
+                prm.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
+            }
+
+            prm.setForceOverride(true);
+            prm.setCopyCollapse((Boolean) ((ImportVmData) item).getCollapseSnapshots().getEntity());
+
+            Map<Guid, Guid> map = new HashMap<Guid, Guid>();
+            for (Map.Entry<Guid, Disk> entry : vm.getDiskMap().entrySet()) {
+                DiskImage disk = (DiskImage) entry.getValue();
+                map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
+                disk.setvolumeFormat(
+                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
+                                importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
+                                importModel.getDiskImportData(
+                                        disk.getId()).getSelectedStorageDomain().getStorageType()));
+                disk.setVolumeType(importModel.getDiskImportData(disk.getId()).getSelectedVolumeType());
+
+                if (importModel.getDiskImportData(disk.getId()).getSelectedQuota() != null) {
+                    disk.setQuotaId(
+                            importModel.getDiskImportData(disk.getId()).getSelectedQuota().getId());
+                }
+            }
+
+            prm.setImageToDestinationDomainMap(map);
+
+            if (((ImportVmData) item).isExistsInSystem() ||
+                    (Boolean) ((ImportVmData) item).getClone().getEntity()) {
+                if (!cloneObjectMap.containsKey(vm.getId())) {
+                    continue;
+                }
+                prm.setImportAsNewEntity(true);
+                prm.setCopyCollapse(true);
+                prm.getVm().setName(((ImportVmData) cloneObjectMap.get(vm.getId())).getVm().getName());
+            }
+
+            prms.add(prm);
+
+        }
+
+        importModel.startProgress(null);
+
+        Frontend.getInstance().runMultipleAction(VdcActionType.ImportVm, prms,
+                new IFrontendMultipleActionAsyncCallback() {
+                    @Override
+                    public void executed(
+                            FrontendMultipleActionAsyncResult result) {
+
+                        VmListModel vmListModel = (VmListModel) result.getState();
+                        vmListModel.stopProgress();
+                        vmListModel.setConfirmWindow(null);
+                        vmListModel.setWindow(null);
+                        vmListModel.clearCachedAssignedVmNames();
+                        List<VdcReturnValueBase> retVals =
+                                (List<VdcReturnValueBase>) result.getReturnValue();
+                        if (retVals != null
+                                && vmListModel.getSelectedItems().size() == retVals
+                                        .size()) {
+                            StringBuilder importedVms = new StringBuilder();
+                            int counter = 0;
+                            boolean toShowConfirmWindow = false;
+                            for (Object item : vmListModel.getSelectedItems()) {
+                                VM vm = (VM) item;
+                                if (retVals.get(counter) != null
+                                        && retVals.get(counter).getCanDoAction()) {
+                                    importedVms.append(vm.getName()).append(", "); //$NON-NLS-1$
+                                    toShowConfirmWindow = true;
+                                }
+                                counter++;
+                            }
+                            // show the confirm window only if the import has been successfully started for at least one
+                            // VM
+                            if (toShowConfirmWindow) {
+                                ConfirmationModel confirmModel = new ConfirmationModel();
+                                vmListModel.setConfirmWindow(confirmModel);
+                                confirmModel.setTitle(ConstantsManager.getInstance()
+                                        .getConstants()
+                                        .importVirtualMachinesTitle());
+                                confirmModel.setHelpTag(HelpTag.import_virtual_machine);
+                                confirmModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+                                confirmModel.setMessage(ConstantsManager.getInstance()
+                                        .getMessages()
+                                        .importProcessHasBegunForVms(StringHelper.trimEnd(importedVms.toString().trim(), ',')));
+                                UICommand tempVar2 = new UICommand("CancelConfirm", //$NON-NLS-1$
+                                        vmListModel);
+                                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
+                                tempVar2.setIsDefault(true);
+                                tempVar2.setIsCancel(true);
+                                confirmModel.getCommands().add(tempVar2);
+                            }
+                        }
+
+                    }
+                },
+                this);
+    }
+
+    private void onImportVmAsClone(ImportVmFromExportDomainModel importModel) {
+        ImportCloneModel cloneModel = (ImportCloneModel) getConfirmWindow();
+        if (cloneModel.getApplyToAll().getEntity()) {
+            if (!cloneModel.getNoClone().getEntity()) {
+                String suffix = cloneModel.getSuffix().getEntity();
+                if (!validateSuffix(suffix, cloneModel.getSuffix())) {
+                    return;
+                }
+                for (Object object : objectsToClone) {
+                    setObjectName(object, suffix, true);
+                    cloneObjectMap.put((Guid) ((IVdcQueryable) (((ImportEntityData) object).getEntity())).getQueryableId(),
+                            object);
+                }
+            }
+            objectsToClone.clear();
+        } else {
+            Object object = cloneModel.getEntity();
+            if (!cloneModel.getNoClone().getEntity()) {
+                String vmName = cloneModel.getName().getEntity();
+                if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators(object))) {
+                    return;
+                }
+                setObjectName(object, vmName, false);
+                cloneObjectMap.put((Guid) ((IVdcQueryable) ((ImportEntityData) object).getEntity()).getQueryableId(),
+                        object);
+            }
+            objectsToClone.remove(object);
+        }
+
+        setConfirmWindow(null);
+        executeImportClone(importModel);
+    }
+
+    protected String getObjectName(Object object) {
+        return ((ImportVmData) object).getVm().getName();
+    }
+
+    protected void setObjectName(Object object, String name) {
+        ((ImportVmData) object).getVm().setName(name);
+    }
+
+    private void setObjectName(Object object, String input, boolean isSuffix) {
+        String nameForTheClonedVm = isSuffix ? getObjectName(object) + input : input;
+        setObjectName(object, nameForTheClonedVm);
+        assignedVmNames.add(nameForTheClonedVm);
+    }
+
+    protected boolean validateName(String newVmName, EntityModel entity, IValidation[] validators) {
+        EntityModel temp = new EntityModel();
+        temp.setIsValid(true);
+        temp.setEntity(newVmName);
+        temp.validateEntity(validators);
+        if (!temp.getIsValid()) {
+            entity.setInvalidityReasons(temp.getInvalidityReasons());
+            entity.setIsValid(false);
+        }
+
+        return temp.getIsValid();
+    }
+
+    protected boolean validateSuffix(String suffix, EntityModel entityModel) {
+        for (Object object : objectsToClone) {
+            VM vm = ((ImportVmData) object).getVm();
+            if (!validateName(vm.getName() + suffix, entityModel, getClonedAppendedNameValidators(object))) {
+                return false;
+            }
+        }
+        return true;
+    }
+
+    protected IValidation[] getClonedAppendedNameValidators(Object object) {
+        final int maxClonedNameLength = getMaxClonedNameLength(object);
+        return new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(maxClonedNameLength),
+                new I18NNameValidation() {
+                    @Override
+                    protected String composeMessage() {
+                        return ConstantsManager.getInstance()
+                                .getMessages()
+                                .newNameWithSuffixCannotContainBlankOrSpecialChars(maxClonedNameLength);
+                    };
+                },
+                new UniqueClonedAppendedNameValidator(assignedVmNames)
+        };
+    }
+
+    protected IValidation[] getClonedNameValidators(Object object) {
+        final int maxClonedNameLength = getMaxClonedNameLength(object);
+        return new IValidation[] {
+                new NotEmptyValidation(),
+                new LengthValidation(maxClonedNameLength),
+                new I18NNameValidation() {
+                    @Override
+                    protected String composeMessage() {
+                        return ConstantsManager.getInstance()
+                                .getMessages()
+                                .nameMustConataionOnlyAlphanumericChars(maxClonedNameLength);
+                    };
+                },
+                new UniqueClonedNameValidator(assignedVmNames)
+        };
+    }
+
+    protected int getMaxClonedNameLength(Object object) {
+        VM vm = ((ImportVmData) object).getVm();
+        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
+    }
+
+    private static class UniqueClonedNameValidator extends NotInCollectionValidation {
+
+        public UniqueClonedNameValidator(Collection<?> collection) {
+            super(collection);
+        }
+
+        @Override
+        public ValidationResult validate(Object value) {
+            ValidationResult result = super.validate(value);
+            if (!result.getSuccess()) {
+                result.getReasons().add(getAlreadyAssignedClonedNameMessage());
+            }
+            return result;
+        }
+
+        protected String getAlreadyAssignedClonedNameMessage() {
+            return ConstantsManager.getInstance()
+                    .getMessages()
+                    .alreadyAssignedClonedVmName();
+        }
+    }
+
+    private static class UniqueClonedAppendedNameValidator extends NotInCollectionValidation {
+
+        public UniqueClonedAppendedNameValidator(Collection<?> collection) {
+            super(collection);
+        }
+
+        @Override
+        public ValidationResult validate(Object value) {
+            ValidationResult result = super.validate(value);
+            if (!result.getSuccess()) {
+                result.getReasons().add(getSuffixCauseToClonedNameCollisionMessage((String) value));
+            }
+            return result;
+        }
+
+        protected String getSuffixCauseToClonedNameCollisionMessage(String existingName) {
+            return ConstantsManager.getInstance()
+                    .getMessages()
+                    .suffixCauseToClonedVmNameCollision(existingName);
+        }
     }
 }

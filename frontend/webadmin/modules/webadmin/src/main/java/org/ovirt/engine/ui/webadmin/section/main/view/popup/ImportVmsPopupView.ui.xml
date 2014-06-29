@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView.Style">
+		.providersStyle {
+			width: 420px;
+		}
+
+		.section {
+			margin-bottom: 5px;
+		}
+
+        .refreshButton {
+            float: right;
+            font-size: 12px;
+            height: 14px;
+            width: 12px;
+            margin-right: 5px;
+            margin-left: 2px;
+            margin-up: 10px;
+            padding: 2px;
+            background: transparent;
+            border: 1px solid transparent;
+        }
+
+        .labelStyle {
+            color: red;
+            vertical-align: bottom;
+            height: 20px;
+            line-height: 15px;
+            margin-left: 5px;
+        }
+	</ui:style>
+
+	<d:SimpleDialogPanel ui:field="mainPanel" width="800px" height="470px">
+		<d:content>
+			<g:VerticalPanel>
+				<g:FlowPanel addStyleNames="{style.section}">
+					<e:ListModelListBoxEditor ui:field="DataCentersEditor" />
+					<g:HorizontalPanel>
+					    <e:ListModelListBoxEditor ui:field="importSourcesEditor" />
+					    <g:PushButton ui:field="refreshButton" addStyleNames="{style.refreshButton} avmpw_refreshButton_pfly_fix">
+                             <g:upFace image='{resources.refreshButtonImage}' />
+                        </g:PushButton>
+					</g:HorizontalPanel>
+				</g:FlowPanel>
+				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+				<w:VerticalSplitTable ui:field="splitTable" />
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>

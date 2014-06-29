@@ -3356,6 +3356,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network Provider")
     String networkProvider();
 
+    @DefaultStringValue("Virtual Machines on Source")
+    String externalVms();
+
+    @DefaultStringValue("Virtual Machines to Import")
+    String importedVms();
+
     @DefaultStringValue("Provider Networks")
     String providerNetworks();
 
