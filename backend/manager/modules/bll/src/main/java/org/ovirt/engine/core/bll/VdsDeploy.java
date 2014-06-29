@@ -216,6 +216,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
         if (vdsGroup.supportsGlusterService()) {
             serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigForGluster);
         }
+        serviceIPTablesConfig += Config.<String> getValue(ConfigValues.IPTablesConfigSiteCustom);
 
         ipTablesConfig = ipTablesConfig.replace(
             IPTABLES_CUSTOM_RULES_PLACE_HOLDER,

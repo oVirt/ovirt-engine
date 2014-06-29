@@ -1199,6 +1199,11 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     IPTablesConfigForGluster,
 
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    IPTablesConfigSiteCustom,
+
     // Host time drift
     @Reloadable
     @TypeConverterAttribute(Boolean.class)

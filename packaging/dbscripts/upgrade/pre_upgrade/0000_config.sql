@@ -410,6 +410,7 @@ select fn_db_add_config_value('IPTablesConfigForVirt',
 ', 'general');
 
 
+select fn_db_add_config_value('IPTablesConfigSiteCustom','','general');
 select fn_db_add_config_value('IsMultilevelAdministrationOn','true','general');
 select fn_db_add_config_value('JobCleanupRateInMinutes','10','general');
 select fn_db_add_config_value('JobPageSize','100','general');
