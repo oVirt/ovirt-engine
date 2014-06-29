@@ -95,8 +95,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
             }
 
-            if (parameters.getProviderId() != null) {
-                Provider<?> provider = getDbFacade().getProviderDao().get(parameters.getProviderId());
+            if (parameters.getNetworkProviderId() != null) {
+                Provider<?> provider = getDbFacade().getProviderDao().get(parameters.getNetworkProviderId());
                 if (provider.getType() == ProviderType.OPENSTACK_NETWORK) {
                     OpenstackNetworkProviderProperties agentProperties =
                             (OpenstackNetworkProviderProperties) provider.getAdditionalProperties();

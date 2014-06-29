@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.ExternalComputeResource;
 import org.ovirt.engine.core.common.businessentities.ExternalDiscoveredHost;
 import org.ovirt.engine.core.common.businessentities.ExternalHostGroup;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -42,7 +43,6 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -965,14 +965,14 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             parameters.setRebootAfterInstallation(isVirt);
             parameters.setAuthMethod(model.getAuthenticationMethod());
 
-            Provider networkProvider = model.getNetworkProviders().getSelectedItem();
+            Provider<?> networkProvider = model.getNetworkProviders().getSelectedItem();
             if (networkProvider != null) {
-                parameters.setProviderId(networkProvider.getId());
+                parameters.setNetworkProviderId(networkProvider.getId());
                 parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
             if (model.getIsProvisioning()) {
-                Provider provider = (Provider) model.getProviders().getSelectedItem();
+                Provider<?> provider = (Provider<?>) model.getProviders().getSelectedItem();
                 ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
                 ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
                 ExternalDiscoveredHost discoveredHost = (ExternalDiscoveredHost)model.getExternalDiscoveredHosts().getSelectedItem();
@@ -1368,9 +1368,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
-        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+        Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {
-            param.setProviderId(networkProvider.getId());
+            param.setNetworkProviderId(networkProvider.getId());
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
@@ -1494,9 +1494,9 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
-        Provider networkProvider = (Provider) model.getNetworkProviders().getSelectedItem();
+        Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
         if (networkProvider != null) {
-            param.setProviderId(networkProvider.getId());
+            param.setNetworkProviderId(networkProvider.getId());
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 

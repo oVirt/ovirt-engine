@@ -26,7 +26,7 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private AuthenticationMethod authMethod;
 
-    private Guid providerId;
+    private Guid networkProviderId;
     private String networkMappings;
 
     public enum AuthenticationMethod {
@@ -133,12 +133,12 @@ public class VdsOperationActionParameters extends VdsActionParameters {
         this.rebootAfterInstallation = rebootAfterInstallation;
     }
 
-    public Guid getProviderId() {
-        return providerId;
+    public Guid getNetworkProviderId() {
+        return networkProviderId;
     }
 
-    public void setProviderId(Guid providerId) {
-        this.providerId = providerId;
+    public void setNetworkProviderId(Guid networkProviderId) {
+        this.networkProviderId = networkProviderId;
     }
 
     public String getNetworkMappings() {

@@ -146,7 +146,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
             tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
-            tempVar.setProviderId(getParameters().getProviderId());
+            tempVar.setNetworkProviderId(getParameters().getNetworkProviderId());
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());
             tempVar.setAuthMethod(getParameters().getAuthMethod());
             ArrayList<VdcReturnValueBase> resultList = runInternalMultipleActions(

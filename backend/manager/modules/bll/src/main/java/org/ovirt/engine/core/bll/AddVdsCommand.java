@@ -85,7 +85,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         addCanDoActionMessageVariable("server", getParameters().getvds().getHostName());
     }
 
-    protected Provider<?> getHostProvider() {
+    private Provider<?> getHostProvider() {
         return getProviderDao().get(getParameters().getProviderId());
     }
 
@@ -170,7 +170,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             installVdsParameters.setAuthMethod(getParameters().getAuthMethod());
             installVdsParameters.setOverrideFirewall(getParameters().getOverrideFirewall());
             installVdsParameters.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
-            installVdsParameters.setProviderId(getParameters().getProviderId());
+            installVdsParameters.setNetworkProviderId(getParameters().getNetworkProviderId());
             installVdsParameters.setNetworkMappings(getParameters().getNetworkMappings());
             Map<String, String> values = new HashMap<String, String>();
             values.put(VdcObjectType.VDS.name().toLowerCase(), getParameters().getvds().getName());
