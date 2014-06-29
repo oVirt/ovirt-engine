@@ -68,7 +68,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public IAutoCompleter getFieldRelationshipAutoCompleter(String fieldName) {
-        if ("CREATIONDATE".equals(fieldName) || "SIZE".equals(fieldName)
+        if ("CREATION_DATE".equals(fieldName) || "SIZE".equals(fieldName)
                 || "ACTUAL_SIZE".equals(fieldName)
                 || "PROVISIONED_SIZE".equals(fieldName)) {
             return BiggerOrSmallerRelationAutoCompleter.INSTANCE;
@@ -95,7 +95,7 @@ public class DiskConditionFieldAutoCompleter extends BaseConditionFieldAutoCompl
 
     @Override
     public void formatValue(String fieldName, Pair<String, String> pair, boolean caseSensitive) {
-        if ("CREATIONDATE".equals(fieldName)) {
+        if ("CREATION_DATE".equals(fieldName)) {
             Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
             pair.setSecond(StringFormat.format("'%1$s'", tmp));
         } else {
