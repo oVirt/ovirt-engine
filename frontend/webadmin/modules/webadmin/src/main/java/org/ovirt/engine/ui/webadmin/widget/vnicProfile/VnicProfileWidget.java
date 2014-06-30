@@ -19,11 +19,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.Align;
 
 import com.google.gwt.core.client.GWT;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.dom.client.KeyPressEvent;
-import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
@@ -100,17 +96,7 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
     public void edit(final VnicProfileModel model) {
         driver.edit(model);
         publicInfo.setVisible(model.getPublicUse().getIsAvailable());
-        nameEditor.addKeyPressHandler(new KeyPressHandler() {
-            @Override
-            public void onKeyPress(KeyPressEvent event) {
-                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                    @Override
-                    public void execute() {
-                        ValueChangeEvent.fire(nameEditor.asValueBox(), nameEditor.asValueBox().getValue());
-                    }
-                });
-            }
-        });
+        nameEditor.fireValueChangeOnKeyDown();
         model.getName().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {

@@ -6,17 +6,23 @@ import org.ovirt.engine.ui.common.view.popup.FocusableComponentsContainer;
 import org.ovirt.engine.ui.common.widget.editor.EditorWidget;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.LabelElement;
 import com.google.gwt.event.dom.client.HasAllKeyHandlers;
+import com.google.gwt.event.dom.client.KeyDownEvent;
 import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.dom.client.KeyUpHandler;
+import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
+import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.TakesValue;
 import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -27,7 +33,7 @@ import com.google.gwt.user.client.ui.Widget;
  * @param <W>
  *            Content widget type.
  */
-public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?>> extends AbstractValidatedWidget
+public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget<T, ?> & TakesValue<T> & HasValueChangeHandlers<T>> extends AbstractValidatedWidget
         implements HasLabel, HasEnabledWithHints, HasAccess, HasAllKeyHandlers, HasElementId, Focusable, FocusableComponentsContainer {
 
     interface WidgetUiBinder extends UiBinder<Widget, AbstractValidatedWidgetWithLabel<?, ?>> {
@@ -122,6 +128,26 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
             wrapperPanel.getElement().removeClassName(style.wrapper());
             contentWidgetContainer.asWidget().removeStyleName(style.contentWidget());
         }
+    }
+
+    /**
+     * Render widget more responsive, by firing {@link ValueChangeEvent} on each {@link KeyDownEvent}.
+     */
+    public void fireValueChangeOnKeyDown() {
+        getContentWidget().addKeyDownHandler(new KeyDownHandler() {
+
+            @Override
+            public void onKeyDown(KeyDownEvent event) {
+                // deferring is required to allow the widget's internal value to update according to key press
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        ValueChangeEvent.fire(getContentWidget(), getContentWidget().getValue());
+                    }
+                });
+            }
+        });
     }
 
     protected W getContentWidget() {
