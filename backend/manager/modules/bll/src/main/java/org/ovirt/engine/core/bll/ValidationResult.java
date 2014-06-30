@@ -138,4 +138,80 @@ public final class ValidationResult {
         return builder.toString();
     }
 
+    /**
+     * Return an error if the following validation is not successful, or a valid result if it is.<br>
+     * <br>
+     * For example, if we want to make sure that <b>num doesn't equal 2</b> then we would do:
+     * <pre>
+     *     int num = 1;
+     *     ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);</pre>
+     * <br>
+     * Which would return a valid result since 1 != 2.<br>
+     * If we were to set <b>num = 2</b> in the example then the desired validation error would return.<br>
+     * <br>
+     * Conveniently, we can also check that <b>num equals 2</b> by doing:
+     * <pre>
+     *     int num = 1;
+     *     ValidationResult.error(VdcBllMessages.ERROR_CONST).unless(num == 2);</pre>
+     * <br>
+     * This time the desired validation error would return since 1 != 2.<br>
+     * If we were to set <b>num = 2</b> in the example then the result would be valid.<br>
+     *
+     * @param expectedError
+     *            The error we expect should the validation fail.
+     * @return A helper object that returns the correct validation result depending on the condition.
+     */
+    public static ValidationResultBuilder failWith(VdcBllMessages expectedError) {
+        return new ValidationResultBuilder(expectedError);
+    }
+
+    /**
+     * Helper class to chain calls that produce a {@link ValidationResult}.
+     */
+    public static class ValidationResultBuilder {
+
+        private ValidationResult expectedValidation;
+
+        private ValidationResultBuilder(VdcBllMessages expectedError) {
+            expectedValidation = new ValidationResult(expectedError);
+        }
+
+        /**
+         * Return the expected error when the condition occurs, or a valid result if it doesn't.<br>
+         * <br>
+         * For example, if we want to make sure that <b>num doesn't equal 2</b> then we would do:
+         * <pre>
+         *     int num = 1;
+         *     ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);</pre>
+         * <br>
+         * Which would return a valid result since 1 != 2.<br>
+         * If we were to set <b>num = 2</b> in the example then the desired validation error would return.<br>
+         *
+         * @param conditionOccurs
+         *            Indication if the condition for the validation occurs or not.
+         * @return The erroneous validation result if the condition occurs, or a valid result of it doesn't.
+         */
+        public ValidationResult when(boolean conditionOccurs) {
+            return conditionOccurs ? expectedValidation : VALID;
+        }
+
+        /**
+         * Return the expected error unless the condition occurs, or a valid result if it does.<br>
+         * <br>
+         * For example, if we want to make sure that <b>num equals 2</b> then we would do:
+         * <pre>
+         *     int num = 1;
+         *     ValidationResult.error(VdcBllMessages.ERROR_CONST).unless(num == 2);</pre>
+         * <br>
+         * Which would return the desired validation error since 1 != 2.<br>
+         * If we were to set <b>num = 2</b> in the example then the result would be valid.<br>
+         *
+         * @param conditionOccurs
+         *            Indication if the condition for the validation occurs or not.
+         * @return A valid result if the condition occurs, or the erroneous validation result if it doesn't.
+         */
+        public ValidationResult unless(boolean conditionOccurs) {
+            return when(!conditionOccurs);
+        }
+    }
 }
