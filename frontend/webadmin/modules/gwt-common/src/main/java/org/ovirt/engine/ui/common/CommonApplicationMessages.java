@@ -138,8 +138,8 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Represents maximum number of milliseconds the VM can be down during live migration. Value of 0 means that VDSM default will be used. (Current engine-wide default is {0}ms)")
     String migrationDowntimeInfo(Integer milliseconds);
 
-    @DefaultMessage("Hot set CPUs by changing the number of sockets." +
-            " The support for hot plug/unplug CPUs to the guest varies.")
+    @DefaultMessage("Hot add CPUs by changing the number of sockets." +
+            " Please consult documentation for your guest operating system to ensure it has proper support for CPU Hot Add")
     String hotPlugUnplugCpuWarning();
 
     @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
