@@ -58,28 +58,26 @@ public class NetworkValidator {
      * @return An error iff network is defined as non-VM when that feature is not supported.
      */
     public ValidationResult vmNetworkSetCorrectly() {
-        return network.isVmNetwork() || FeatureSupported.nonVmNetwork(getDataCenter().getcompatibility_version())
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL);
+        return ValidationResult.failWith(VdcBllMessages.NON_VM_NETWORK_NOT_SUPPORTED_FOR_POOL_LEVEL)
+                .unless(network.isVmNetwork()
+                        || FeatureSupported.nonVmNetwork(getDataCenter().getcompatibility_version()));
     }
 
     /**
      * @return An error iff STP is specified for a non-VM network.
      */
     public ValidationResult stpForVmNetworkOnly() {
-        return network.isVmNetwork() || !network.getStp()
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP);
+        return ValidationResult.failWith(VdcBllMessages.NON_VM_NETWORK_CANNOT_SUPPORT_STP)
+                .unless(network.isVmNetwork() || !network.getStp());
     }
 
     /**
      * @return An error iff nonzero MTU was specified when the MTU feature is not supported.
      */
     public ValidationResult mtuValid() {
-        return network.getMtu() == 0
-                || FeatureSupported.mtuSpecification(getDataCenter().getcompatibility_version())
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED);
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_MTU_OVERRIDE_NOT_SUPPORTED)
+                .unless(network.getMtu() == 0
+                        || FeatureSupported.mtuSpecification(getDataCenter().getcompatibility_version()));
     }
 
     /**
@@ -103,27 +101,24 @@ public class NetworkValidator {
      * @return An error iff network is named as if it were a bond.
      */
     public ValidationResult networkPrefixValid() {
-        return network.getName().toLowerCase().startsWith("bond")
-                ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME)
-                : ValidationResult.VALID;
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_CANNOT_CONTAIN_BOND_NAME)
+                .when(network.getName().toLowerCase().startsWith("bond"));
     }
 
     /**
      * @return An error iff the data center to which the network belongs doesn't exist.
      */
     public ValidationResult dataCenterExists() {
-        return getDataCenter() == null
-                ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
-                : ValidationResult.VALID;
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST)
+                .when(getDataCenter() == null);
     }
 
     /**
      * @return An error iff the network isn't set.
      */
     public ValidationResult networkIsSet() {
-        return network == null
-                ? new ValidationResult(VdcBllMessages.NETWORK_NOT_EXISTS)
-                : ValidationResult.VALID;
+        return ValidationResult.failWith(VdcBllMessages.NETWORK_NOT_EXISTS)
+                .when(network == null);
     }
 
     /**
@@ -194,8 +189,8 @@ public class NetworkValidator {
     }
 
     public ValidationResult notLabeled() {
-        return !NetworkUtils.isLabeled(network) ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED);
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED)
+                .when(NetworkUtils.isLabeled(network));
     }
 
     protected List<VM> getVms() {
