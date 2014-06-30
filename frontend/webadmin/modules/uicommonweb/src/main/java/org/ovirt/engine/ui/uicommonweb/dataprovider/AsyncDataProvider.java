@@ -3722,6 +3722,23 @@ public final class AsyncDataProvider {
         return models;
     }
 
+    public static List<IStorageModel> getExportStorageModels() {
+        ArrayList<IStorageModel> models = new ArrayList<IStorageModel>();
+
+        NfsStorageModel nfsExportModel = new NfsStorageModel();
+        models.add(nfsExportModel);
+
+        PosixStorageModel posixExportModel = new PosixStorageModel();
+        models.add(posixExportModel);
+
+        GlusterStorageModel glusterExportModel = new GlusterStorageModel();
+        models.add(glusterExportModel);
+
+        addTypeToStorageModels(StorageDomainType.ImportExport, models);
+
+        return models;
+    }
+
     private static void addTypeToStorageModels(StorageDomainType storageDomainType, List<IStorageModel> models) {
         for (IStorageModel model : models) {
             model.setRole(storageDomainType);

@@ -305,9 +305,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         items = AsyncDataProvider.getDataStorageModels();
         items.addAll(AsyncDataProvider.getIsoStorageModels());
 
-        NfsStorageModel nfsExportModel = new NfsStorageModel();
-        nfsExportModel.setRole(StorageDomainType.ImportExport);
-        items.add(nfsExportModel);
+        items.addAll(AsyncDataProvider.getExportStorageModels());
 
         model.setItems(items);
 
