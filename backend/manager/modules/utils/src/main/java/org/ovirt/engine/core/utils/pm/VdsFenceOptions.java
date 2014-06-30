@@ -289,6 +289,31 @@ public class VdsFenceOptions implements Serializable {
         return realAgent;
     }
 
+
+    /**
+     * handles agent power wait parameter mapping
+     * @param agent
+     * @param powerWait
+     * @return
+     */
+    public static String getAgentPowerWaitParam(String agent, String powerWait) {
+        String param = null;
+        // result has the format [<agent>=<power wait param name>[,]]*
+        String[] settings = powerWait.split(Pattern.quote(COMMA), -1);
+        if (settings.length > 0) {
+            for (String setting : settings) {
+                String[] pair = setting.split(Pattern.quote(EQUAL), -1);
+                if (pair.length == 2) {
+                    if (agent.equalsIgnoreCase(pair[0])) {
+                        param = pair[1];
+                        break;
+                    }
+                }
+            }
+        }
+        return param;
+    }
+
     /**
      * handles agent default options
      *
