@@ -258,47 +258,54 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             return;
         }
 
-        // Add cluster action.
-        UICommand addClusterAction = new UICommand("AddCluster", this); //$NON-NLS-1$
-        if (clusters.isEmpty())
-        {
-            addClusterAction.setTitle(DataCenterConfigureClustersAction);
-            getCompulsoryActions().add(addClusterAction);
-        }
-        else
-        {
-            addClusterAction.setTitle(DataCenterAddAnotherClusterAction);
-            getOptionalActions().add(addClusterAction);
-        }
-
+        updateAddClusterAvailability();
 
         ArrayList<VDS> hosts = new ArrayList<VDS>();
         ArrayList<VDS> availableHosts = new ArrayList<VDS>();
         ArrayList<VDS> upHosts = new ArrayList<VDS>();
-        for (VDS vds : allHosts)
-        {
-            if (Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId()))
-            {
+        for (VDS vds : allHosts) {
+            if (Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId())) {
                 hosts.add(vds);
             }
 
             if ((vds.getStatus() == VDSStatus.Maintenance || vds.getStatus() == VDSStatus.PendingApproval)
-                && doesHostSupportAnyCluster(clusters, vds))
-            {
+                && doesHostSupportAnyCluster(clusters, vds)) {
                 availableHosts.add(vds);
             }
 
-            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId()))
-            {
+            if (vds.getStatus() == VDSStatus.Up && Linq.isClusterItemExistInList(clusters, vds.getVdsGroupId())) {
                 upHosts.add(vds);
             }
         }
 
+        updateAddAndSelectHostAvailability(hosts, availableHosts);
+
+        List<StorageDomain> unattachedStorages = getUnattachedStorages();
+
+        List<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
+        List<StorageDomain> attachedIsoStorages = new ArrayList<StorageDomain>();
+        for (StorageDomain sd : attachedStorageDomains) {
+            if (sd.getStorageDomainType().isDataDomain()) {
+                attachedDataStorages.add(sd);
+            }
+            else if (sd.getStorageDomainType() == StorageDomainType.ISO) {
+                attachedIsoStorages.add(sd);
+            }
+        }
+
+        updateAddAndAttachDataDomainAvailability(upHosts, unattachedStorages, attachedDataStorages);
+
+        updateAddAndAttachIsoDomainAvailability(upHosts, attachedDataStorages, attachedIsoStorages);
+
+        stopProgress();
+    }
+
+    private void updateAddAndSelectHostAvailability(ArrayList<VDS> hosts, ArrayList<VDS> availableHosts) {
         UICommand tempVar = new UICommand("AddHost", this); //$NON-NLS-1$
         tempVar.setIsExecutionAllowed(clusters.size() > 0);
         UICommand addHostAction = tempVar;
 
-        if (hosts.isEmpty()){
+        if (hosts.isEmpty()) {
             addHostAction.setTitle(DataCenterConfigureHostsAction);
             getCompulsoryActions().add(addHostAction);
         } else {
@@ -314,106 +321,49 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         selectHostAction.setIsExecutionAllowed(availableHosts.size() > 0);
 
         if (clusters.size() > 0) {
-            if (hosts.isEmpty())
-            {
+            if (hosts.isEmpty()) {
                 selectHostAction.setTitle(DataCenterSelectHostsAction);
                 getCompulsoryActions().add(selectHostAction);
             }
-            else
-            {
+            else {
                 selectHostAction.setTitle(DataCenterSelectHostsAction);
                 getOptionalActions().add(selectHostAction);
             }
         }
+    }
 
-
-        ArrayList<StorageDomain> unattachedStorage = new ArrayList<StorageDomain>();
-        boolean addToList;
-        Version version3_0 = new Version(3, 0);
-        for (StorageDomain item : allStorageDomains)
-        {
-            addToList = false;
+    private List<StorageDomain> getUnattachedStorages() {
+        List<StorageDomain> unattachedStorage = new ArrayList<StorageDomain>();
+        for (StorageDomain item : allStorageDomains) {
             if (item.getStorageDomainType() == StorageDomainType.Data
-                    && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
-            {
-                if (getEntity().getStoragePoolFormatType() == null)
-                {
-                    // compat logic: in case its not v1 and the version is less than 3.0 break.
-                    if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
-                            && getEntity().getcompatibility_version().compareTo(version3_0) < 0)
-                    {
-                        continue;
-                    }
-                    addToList = true;
-                }
-                else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData().getStorageFormat())
-                {
-                    addToList = true;
+                    && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
+                if (getEntity().getStoragePoolFormatType() == null ||
+                        getEntity().getStoragePoolFormatType() == item.getStorageStaticData().getStorageFormat()) {
+                    unattachedStorage.add(item);
                 }
             }
-
-            if (addToList)
-            {
-                unattachedStorage.add(item);
-            }
         }
+        return unattachedStorage;
+    }
 
-        ArrayList<StorageDomain> attachedDataStorages = new ArrayList<StorageDomain>();
-        for (StorageDomain a : attachedStorageDomains)
-        {
-            if (a.getStorageDomainType().isDataDomain())
-            {
-                attachedDataStorages.add(a);
-            }
+    private void updateAddClusterAvailability() {
+        // Add cluster action.
+        UICommand addClusterAction = new UICommand("AddCluster", this); //$NON-NLS-1$
+        if (clusters.isEmpty()) {
+            addClusterAction.setTitle(DataCenterConfigureClustersAction);
+            getCompulsoryActions().add(addClusterAction);
         }
+        else {
+            addClusterAction.setTitle(DataCenterAddAnotherClusterAction);
+            getOptionalActions().add(addClusterAction);
+        }
+    }
 
-        UICommand addDataStorageAction = new UICommand("AddDataStorage", this); //$NON-NLS-1$
-        addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-        addDataStorageAction.setIsExecutionAllowed(upHosts.size() > 0);
-
-        if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty())
-        {
-            addDataStorageAction.setTitle(DataCenterConfigureStorageAction);
-            getCompulsoryActions().add(addDataStorageAction);
-        }
-        else
-        {
-            addDataStorageAction.setTitle(DataCenterAddMoreStorageAction);
-            getOptionalActions().add(addDataStorageAction);
-        }
-
-        // Attach data storage action.
-        UICommand attachDataStorageAction = new UICommand("AttachDataStorage", this); //$NON-NLS-1$
-        if (upHosts.isEmpty())
-        {
-            attachDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
-        }
-        attachDataStorageAction.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
-
-        if (attachedDataStorages.isEmpty())
-        {
-            attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
-            getCompulsoryActions().add(attachDataStorageAction);
-        }
-        else
-        {
-            attachDataStorageAction.setTitle(DataCenterAttachMoreStorageAction);
-            getOptionalActions().add(attachDataStorageAction);
-        }
-
-        // Attach ISO storage action.
-        // Allow to attach ISO domain only when there are Data storages attached
-        // and there ISO storages to attach and ther are no ISO storages actually
-        // attached.
-        ArrayList<StorageDomain> attachedIsoStorages = new ArrayList<StorageDomain>();
-        for (StorageDomain sd : attachedStorageDomains)
-        {
-            if (sd.getStorageDomainType() == StorageDomainType.ISO)
-            {
-                attachedIsoStorages.add(sd);
-            }
-        }
-
+    // Attach ISO storage action.
+    // Allow to attach ISO domain only when there are Data storages attached
+    // and there ISO storages to attach and there are no ISO storages actually
+    // attached.
+    private void updateAddAndAttachIsoDomainAvailability(List<VDS> upHosts, List<StorageDomain> attachedDataStorages, List<StorageDomain> attachedIsoStorages) {
         boolean attachOrAddIsoAvailable = attachedIsoStorages.isEmpty();
         boolean masterStorageExistsAndRunning = Linq.isAnyStorageDomainIsMasterAndActive(attachedDataStorages);
         boolean addIsoAllowed =
@@ -443,8 +393,37 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             addIsoStorageAction.setIsExecutionAllowed(addIsoAllowed);
             attachIsoStorageAction.setIsExecutionAllowed(addIsoAllowed && isoStorageDomains.size() > 0);
         }
+    }
 
-        stopProgress();
+    private void updateAddAndAttachDataDomainAvailability(List<VDS> upHosts, List<StorageDomain> unattachedStorage, List<StorageDomain> attachedDataStorages) {
+        UICommand addDataStorageAction = new UICommand("AddDataStorage", this); //$NON-NLS-1$
+        addDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+        addDataStorageAction.setIsExecutionAllowed(upHosts.size() > 0);
+
+        if (unattachedStorage.isEmpty() && attachedDataStorages.isEmpty()) {
+            addDataStorageAction.setTitle(DataCenterConfigureStorageAction);
+            getCompulsoryActions().add(addDataStorageAction);
+        }
+        else {
+            addDataStorageAction.setTitle(DataCenterAddMoreStorageAction);
+            getOptionalActions().add(addDataStorageAction);
+        }
+
+        // Attach data storage action.
+        UICommand attachDataStorageAction = new UICommand("AttachDataStorage", this); //$NON-NLS-1$
+        if (upHosts.isEmpty()) {
+            attachDataStorageAction.getExecuteProhibitionReasons().add(NoUpHostReason);
+        }
+        attachDataStorageAction.setIsExecutionAllowed(unattachedStorage.size() > 0 && upHosts.size() > 0);
+
+        if (attachedDataStorages.isEmpty()) {
+            attachDataStorageAction.setTitle(DataCenterAttachStorageAction);
+            getCompulsoryActions().add(attachDataStorageAction);
+        }
+        else {
+            attachDataStorageAction.setTitle(DataCenterAttachMoreStorageAction);
+            getOptionalActions().add(attachDataStorageAction);
+        }
     }
 
     private boolean doesHostSupportAnyCluster(List<VDSGroup> clusterList, VDS host){
