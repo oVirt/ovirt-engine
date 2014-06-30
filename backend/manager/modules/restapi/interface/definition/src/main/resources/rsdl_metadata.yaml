@@ -665,6 +665,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.sgio: xs:string
           disk.read_only: xs:boolean
           description: update the size, boot flag and other parameters of the disk attached to the virtual machine
@@ -688,6 +689,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new disk to the virtual machine allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
@@ -700,6 +702,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
@@ -1183,6 +1186,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new disk to the system with specified size, space will be allocated from the storage domain for the disk
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
@@ -1195,6 +1199,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.sgio: xs:string
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new lun disk to the system, this operation does not require size but requires lun connection details
@@ -4574,6 +4579,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
         description: add a new disk to the storage domain with the specified size allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
@@ -4585,6 +4591,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.sgio: xs:string
         description: add a new lun disk to the storage domain
     urlparams:
@@ -4664,6 +4671,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
         description: add a new disk with the specified size to the storage domain in the data center, allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
       - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
@@ -4675,6 +4683,7 @@ actions:
           disk.shareable: xs:boolean
           disk.propagate_errors: xs:boolean
           disk.wipe_after_delete: xs:boolean
+          disk.quota.id: xs:string
           disk.sgio: xs:string
         description: add a new lun disk to the storage domain in the data center
     urlparams:
