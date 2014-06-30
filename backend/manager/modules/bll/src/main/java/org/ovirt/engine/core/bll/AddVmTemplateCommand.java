@@ -12,6 +12,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -95,8 +96,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         super(commandId);
     }
 
-    public AddVmTemplateCommand(T parameters) {
-        super(parameters);
+    public AddVmTemplateCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
         super.setVmTemplateName(parameters.getName());
         VmStatic parameterMasterVm = parameters.getMasterVm();
         if (parameterMasterVm != null) {
@@ -126,6 +127,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
+    }
+
+    public AddVmTemplateCommand(T parameters) {
+        this(parameters, null);
     }
 
     protected void updateDiskInfoDestinationMap() {
