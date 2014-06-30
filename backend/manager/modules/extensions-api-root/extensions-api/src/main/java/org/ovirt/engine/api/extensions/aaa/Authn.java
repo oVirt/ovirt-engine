@@ -184,6 +184,7 @@ public class Authn {
          * <p>
          * Output:
          * <ul>
+         * <li>{@link InvokeKeys#RESULT}[M]</li>
          * <li>{@link InvokeKeys#CREDENTIALS_CHALLENGE_RECORD}[O]</li>
          * </ul>
          * </p>
