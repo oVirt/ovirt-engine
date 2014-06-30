@@ -100,7 +100,7 @@ public class ImportRepoImageCopyTaskHandler
         }
         getEnclosingCommand().getParameters().getDiskImage().setImageStatus(ImageStatus.OK);
         ImagesHandler.updateImageStatus(
-                getEnclosingCommand().getParameters().getDiskImage().getImageId(), ImageStatus.OK);
+                getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.OK);
         getEnclosingCommand().getReturnValue().setSucceeded(true);
     }
 
@@ -157,7 +157,7 @@ public class ImportRepoImageCopyTaskHandler
         super.endWithFailure();
         getEnclosingCommand().getParameters().getDiskImage().setImageStatus(ImageStatus.ILLEGAL);
         ImagesHandler.updateImageStatus(
-                getEnclosingCommand().getParameters().getDiskImage().getImageId(), ImageStatus.ILLEGAL);
+                getEnclosingCommand().getParameters().getDestinationImageId(), ImageStatus.ILLEGAL);
     }
 
     @Override
