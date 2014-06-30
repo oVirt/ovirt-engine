@@ -106,7 +106,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     connectAllHostsToPool();
 
                     // Forcibly detach only data storage domains.
-                    if (getStorageDomain().getStorageDomainType() != StorageDomainType.ImportExport) {
+                    if (getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {
                         @SuppressWarnings("unchecked")
                         Pair<StorageDomainStatic, Guid> domainFromIrs =
                                 (Pair<StorageDomainStatic, Guid>) runVdsCommand(
