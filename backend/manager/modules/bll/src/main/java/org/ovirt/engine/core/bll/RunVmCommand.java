@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -670,10 +669,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setInitializationType(getParameters().getInitializationType());
         }
 
-        // if we attach floppy we don't need the sysprep
-        if (!getVm().isRunOnce() && !StringUtils.isEmpty(getParameters().getFloppyPath())) {
-            getVmStaticDAO().update(getVm().getStaticData());
-        }
         // get what cpu flags should be passed to vdsm according to cluster
         // cpu name
         getVm().setVdsGroupCpuFlagsData(
