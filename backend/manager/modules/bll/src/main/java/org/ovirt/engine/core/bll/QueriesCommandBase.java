@@ -38,14 +38,14 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     private final EngineContext engineContext;
 
     public QueriesCommandBase(P parameters) {
-        this(parameters, new EngineContext().withSessionId(parameters.getSessionId()));
+        this(parameters, null);
     }
 
     public QueriesCommandBase(P parameters, EngineContext engineContext) {
         this.parameters = parameters;
         returnValue = new VdcQueryReturnValue();
         queryType = initQueryType();
-        this.engineContext = engineContext;
+        this.engineContext = engineContext == null ? new EngineContext().withSessionId(parameters.getSessionId()) : engineContext;
         user = initUser();
     }
 
