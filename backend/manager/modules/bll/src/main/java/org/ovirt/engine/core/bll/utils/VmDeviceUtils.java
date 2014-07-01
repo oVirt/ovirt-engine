@@ -463,6 +463,19 @@ public class VmDeviceUtils {
                 soundDeviceEnabled, isConsoleEnabled, isVirtioScsiEnabled, isBalloonEnabled, copySnapshotDevices);
     }
 
+    public static void copyDiskDevices(Guid dstId, List<VmDevice> devicesDataToUse, Map<Guid, Guid> srcDeviceIdToTargetDeviceIdMapping) {
+        for (VmDevice device : devicesDataToUse) {
+            if (VmDeviceType.DISK.getName().equals(device.getDevice())) {
+                if (srcDeviceIdToTargetDeviceIdMapping.containsKey(device.getDeviceId())) {
+                    Guid id = srcDeviceIdToTargetDeviceIdMapping.get(device.getDeviceId());
+                    device.setId(new VmDeviceId(id, dstId));
+                    device.setSpecParams(new HashMap<String, Object>());
+                    dao.save(device);
+                }
+            }
+        }
+    }
+
     private static void addVideoDevice(VmBase vm) {
         VmDeviceType vmDeviceType = osRepository.getDisplayDevice(vm.getOsId(), ClusterUtils.getCompatibilityVersion(vm), vm.getDefaultDisplayType());
 

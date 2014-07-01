@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
@@ -833,20 +834,16 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
      * disk devices which has to be copied from the template (since the instance type has no disks but the template does have).
      */
     private void copyDiskDevicesFromTemplate() {
-        List<VmDevice> disks = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vmDisksSource.getId(), VmDeviceGeneralType.DISK);
-        VmDeviceUtils.copyVmDevices(
-                vmDisksSource.getId(),
+        List<VmDevice> disks =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdTypeAndDevice(vmDisksSource.getId(),
+                                VmDeviceGeneralType.DISK,
+                                VmDeviceType.DISK.getName());
+        VmDeviceUtils.copyDiskDevices(
                 getVmId(),
-                getVm(),
-                getVm().getStaticData(),
-                true,
                 disks,
-                getSrcDeviceIdToTargetDeviceIdMapping(),
-                false,
-                false,
-                false,
-                false,
-                false
+                getSrcDeviceIdToTargetDeviceIdMapping()
         );
     }
 
