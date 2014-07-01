@@ -137,7 +137,8 @@ public enum ConfigurationValues {
     SpiceCopyPasteToggleSupported(ConfigAuthType.User),
     DefaultMtu,
     LiveMergeSupported(ConfigAuthType.User),
-    SkipFencingIfSDActiveSupported;
+    SkipFencingIfSDActiveSupported,
+    JsonProtocolSupported(ConfigAuthType.User);
 
     public static enum ConfigAuthType {
         Admin,

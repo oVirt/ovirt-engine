@@ -5,6 +5,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,6 +30,7 @@ public class VdsStatisticsDAOTest extends BaseDAOTestCase {
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
+        newStaticVds.setProtocol(VdsProtocol.STOMP);
         newStatistics = new VdsStatistics();
 
     }
