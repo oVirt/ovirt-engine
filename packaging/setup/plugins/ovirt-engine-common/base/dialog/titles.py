@@ -28,8 +28,6 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup.engine_common \
-    import constants as oengcommcons
 
 
 @util.export
@@ -64,19 +62,6 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _title_e_product_options(self):
-        pass
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        name=oengcommcons.Stages.DB_OWNERS_CONNECTIONS_CUSTOMIZED,
-        before=(
-            oengcommcons.Stages.DIALOG_TITLES_E_DATABASE,
-        ),
-        after=(
-            oengcommcons.Stages.DIALOG_TITLES_S_DATABASE,
-        ),
-    )
-    def _db_owners_connections_customized(self):
         pass
 
     @plugin.event(
