@@ -1883,5 +1883,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("90")
     HostStorageLeaseAliveCheckingInterval,
 
-    Invalid
+    Invalid,
+
+    /**
+     * Specifies whether jsonrpc protocol is supported.
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    JsonProtocolSupported,
 }

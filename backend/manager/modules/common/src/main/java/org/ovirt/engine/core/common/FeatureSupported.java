@@ -393,6 +393,14 @@ public class FeatureSupported {
      */
     public static boolean isSkipFencingIfSDActiveSupported(Version version) {
         return supportedInConfig(ConfigValues.SkipFencingIfSDActiveSupported, version);
+    }
 
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if json protocol is supported for the given version.
+     */
+    public static boolean jsonProtocol(Version version) {
+        return supportedInConfig(ConfigValues.JsonProtocolSupported, version);
     }
 }

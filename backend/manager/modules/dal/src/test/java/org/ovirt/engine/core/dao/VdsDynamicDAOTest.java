@@ -7,6 +7,7 @@ import static org.junit.Assert.assertNull;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
@@ -31,6 +32,7 @@ public class VdsDynamicDAOTest extends BaseDAOTestCase {
         newStaticVds = new VdsStatic();
         newStaticVds.setHostName("farkle.redhat.com");
         newStaticVds.setVdsGroupId(existingVds.getVdsGroupId());
+        newStaticVds.setProtocol(VdsProtocol.STOMP);
         newDynamicVds = new VdsDynamic();
     }
 

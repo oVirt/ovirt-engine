@@ -21,6 +21,7 @@ import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.bll.utils.GlusterUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
@@ -33,8 +34,11 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -259,6 +263,15 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
     private void AddVdsStaticToDb() {
         getParameters().getVdsStaticData().setServerSslEnabled(
                 Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
+        VdsStatic vdsStatic = getParameters().getVdsStaticData();
+        if (vdsStatic.getProtocol() == null) {
+            VDSGroup cluster = getVdsGroup();
+            if (cluster != null && FeatureSupported.jsonProtocol(cluster.getcompatibility_version())) {
+                vdsStatic.setProtocol(VdsProtocol.STOMP);
+            } else {
+                vdsStatic.setProtocol(VdsProtocol.XML);
+            }
+        }
         DbFacade.getInstance().getVdsStaticDao().save(getParameters().getVdsStaticData());
         getCompensationContext().snapshotNewEntity(getParameters().getVdsStaticData());
         setVdsIdRef(getParameters().getVdsStaticData().getId());

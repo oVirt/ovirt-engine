@@ -193,7 +193,6 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         autoRecoverable = true;
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
-        this.protocol = VdsProtocol.XML;
         this.hostProviderId = null;
     }
 

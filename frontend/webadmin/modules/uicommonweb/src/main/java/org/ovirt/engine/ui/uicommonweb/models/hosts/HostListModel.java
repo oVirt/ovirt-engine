@@ -679,6 +679,25 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             }
         });
 
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                ListModel<VDSGroup> clusterModel = hostModel.getCluster();
+                if (clusterModel.getSelectedItem() != null) {
+                    VDSGroup cluster = clusterModel.getSelectedItem();
+                    Boolean jsonSupported =
+                            (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
+                                    cluster.getcompatibility_version().toString());
+                    if (jsonSupported) {
+                        hostModel.getProtocol().setEntity(true);
+                    } else {
+                        hostModel.getProtocol().setEntity(false);
+                    }
+                }
+            }
+        });
+
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
