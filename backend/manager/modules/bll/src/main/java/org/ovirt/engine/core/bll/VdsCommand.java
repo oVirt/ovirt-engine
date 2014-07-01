@@ -32,13 +32,13 @@ import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
 
-    private static final String GENERIC_ERROR = "Please refer to engine.log and log files under /var/log/ovirt-engine/host-deploy/ on the engine for further details.";
     protected String _failureMessage = null;
 
     /**
@@ -283,7 +283,10 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
     }
 
     protected String getErrorMessage(String msg) {
-        return StringUtils.isEmpty(msg) ? GENERIC_ERROR : msg;
+        return !StringUtils.isEmpty(msg) ? msg : String.format(
+            "Please refer to %1$s/engine.log and log logs under %1$s/ovirt-engine/host-deploy/ for further details.",
+            EngineLocalConfig.getInstance().getLogDir()
+        );
     }
 
     @SuppressWarnings("serial")
