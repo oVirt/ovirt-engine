@@ -182,6 +182,10 @@ public class SyntaxCheckerTest {
                 "SELECT * FROM ((SELECT vms.* FROM  vms   LEFT OUTER JOIN vdc_users_with_tags ON vms.vm_guid=vdc_users_with_tags.vm_guid    WHERE  vdc_users_with_tags.name LIKE user1 )  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
         testValidSql("Vm: user.name = \"user1\" and user.tag=\"tag1\"",
                 "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT vms_with_tags.vm_guid FROM  vms_with_tags   LEFT OUTER JOIN vdc_users_with_tags ON vms_with_tags.vm_guid=vdc_users_with_tags.vm_guid    WHERE (  vdc_users_with_tags.name LIKE user1  AND  vdc_users_with_tags.tag_name IN (tag1)  )))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
+
+        // Used to validate that searching values not in fields search all fields
+        testValidSql("Vm: mac=00:1a:4a:d4:53:94",
+                "SELECT * FROM (SELECT * FROM vms WHERE ( vm_guid IN (SELECT vms_with_tags.vm_guid FROM  vms_with_tags   WHERE  (  vms_with_tags.vm_pool_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.run_on_vds_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_fqdn LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.tag_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.guest_cur_user_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_description LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.quota_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_host LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_ip LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.storage_pool_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vds_group_name LIKE '%mac=00:1a:4a:d4:53:94%' OR  vms_with_tags.vm_comment LIKE '%mac=00:1a:4a:d4:53:94%' ) ))  ORDER BY vm_name ASC ) as T1 OFFSET (1 -1) LIMIT 0");
     }
 
     @Test

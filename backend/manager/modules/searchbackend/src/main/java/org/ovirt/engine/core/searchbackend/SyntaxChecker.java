@@ -813,8 +813,18 @@ public class SyntaxChecker implements ISyntaxChecker {
                     whereBuilder.addLast(obj.getBody());
                     break;
                 case CONDITION_VALUE:
-                    whereBuilder.addLast(generateConditionStatment(obj, syntax.listIterator(objIter.previousIndex()),
-                            searchObjStr, syntax.getCaseSensitive(), isSafe, useTags));
+                    ConditionData conditionData =
+                            generateConditionStatment(obj,
+                                    syntax.listIterator(objIter.previousIndex()),
+                                    searchObjStr,
+                                    syntax.getCaseSensitive(),
+                                    isSafe,
+                                    useTags);
+                    whereBuilder.addLast(conditionData.getConditionText());
+                    if (conditionData.isFullTableRequired() && !useTags) {
+                        useTags = true;
+                        fromStatement = generateFromStatement(syntax, useTags);
+                    }
                     break;
                 case SORTBY:
                     break;
@@ -979,13 +989,13 @@ public class SyntaxChecker implements ISyntaxChecker {
         ConditionwithSpesificObj;
     }
 
-    private String generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
+    private ConditionData generateConditionStatment(SyntaxObject obj, ListIterator<SyntaxObject> objIter,
             final String searchObjStr, final boolean caseSensitive, final boolean issafe, final boolean useTags) {
         final String safeValue = issafe ? obj.getBody() : SqlInjectionChecker.enforceEscapeCharacters(obj.getBody());
         return generateSafeConditionStatement(obj, objIter, searchObjStr, caseSensitive, safeValue, useTags);
     }
 
-    private String generateSafeConditionStatement(final SyntaxObject obj,
+    private ConditionData generateSafeConditionStatement(final SyntaxObject obj,
             ListIterator<SyntaxObject> objIter,
             final String searchObjStr,
             final boolean caseSensitive,
@@ -1102,7 +1112,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         return customizedValue;
     }
 
-    final String buildCondition(boolean caseSensitive,
+    final ConditionData buildCondition(boolean caseSensitive,
             IConditionFieldAutoCompleter conditionFieldAC,
             String customizedValue,
             String customizedRelation,
@@ -1136,23 +1146,30 @@ public class SyntaxChecker implements ISyntaxChecker {
             }
             customizedValue = customizedValue.replace("_", replaceWith);
         }
+        ConditionData conditionData = new ConditionData();
         switch (conditionType) {
         case FreeText:
         case FreeTextSpecificObj:
-            return conditionFieldAC.buildFreeTextConditionSql(tableName,
+            conditionData.setConditionText(conditionFieldAC.buildFreeTextConditionSql(tableName,
                     customizedRelation,
                     customizedValue,
-                    caseSensitive);
+                    caseSensitive));
+            conditionData.setFullTableRequired(true);
+            break;
         case ConditionWithDefaultObj:
         case ConditionwithSpesificObj:
-            return conditionFieldAC.buildConditionSql(fieldName,
+            conditionData.setConditionText(conditionFieldAC.buildConditionSql(fieldName,
                     customizedValue,
                     customizedRelation,
                     tableName,
-                    caseSensitive);
+                    caseSensitive));
+            conditionData.setFullTableRequired(false);
+            break;
         default:
-            return "";
+            conditionData.setConditionText("");
+            conditionData.setFullTableRequired(false);
         }
+        return conditionData;
     }
 
     private static final Log log = LogFactory.getLog(SyntaxChecker.class);
@@ -1170,5 +1187,27 @@ public class SyntaxChecker implements ISyntaxChecker {
         public int getValue() {
             return value;
         }
+    }
+
+    private static class ConditionData {
+        private String conditionText;
+        private boolean fullTableRequired = false;
+
+        public String getConditionText() {
+            return conditionText;
+        }
+
+        public void setConditionText(String conditionText) {
+            this.conditionText = conditionText;
+        }
+
+        public boolean isFullTableRequired() {
+            return fullTableRequired;
+        }
+
+        public void setFullTableRequired(boolean fullTableRequired) {
+            this.fullTableRequired = fullTableRequired;
+        }
+
     }
 }
