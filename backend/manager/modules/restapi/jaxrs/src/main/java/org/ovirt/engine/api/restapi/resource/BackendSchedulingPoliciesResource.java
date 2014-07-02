@@ -21,6 +21,10 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
 
     static final String[] SUB_COLLECTIONS = { "filters", "weights", "balances", "clusters" };
 
+    private final QueryIdResolver<Guid> queryIdResolver =
+            new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
+                    IdQueryParameters.class);
+
     public BackendSchedulingPoliciesResource() {
         super(SchedulingPolicy.class, ClusterPolicy.class, SUB_COLLECTIONS);
     }
@@ -36,8 +40,7 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
     public Response add(SchedulingPolicy schedulingPolicy) {
         validateParameters(schedulingPolicy, "name");
         return performCreate(VdcActionType.AddClusterPolicy, new ClusterPolicyCRUDParameters(null,
-                map(schedulingPolicy)), new QueryIdResolver<Guid>(VdcQueryType.GetClusterPolicyById,
-                IdQueryParameters.class));
+                map(schedulingPolicy)), queryIdResolver);
     }
 
     @Override
@@ -48,7 +51,16 @@ public class BackendSchedulingPoliciesResource extends AbstractBackendCollection
 
     @Override
     protected Response performRemove(String id) {
-        return performAction(VdcActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id), null));
+        Response performAction = null;
+        try {
+
+            performAction =
+                    performAction(VdcActionType.RemoveClusterPolicy, new ClusterPolicyCRUDParameters(asGuid(id),
+                            queryIdResolver.lookupEntity(asGuid(id))));
+        } catch (BackendFailureException e) {
+            e.printStackTrace();
+        }
+        return performAction;
     }
 
     @Override
