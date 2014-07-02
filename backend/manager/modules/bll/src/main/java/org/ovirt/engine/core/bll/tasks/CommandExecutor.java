@@ -48,7 +48,7 @@ public class CommandExecutor {
     }
 
     @OnTimerMethodAnnotation("invokeCallbackMethods")
-    public synchronized void invokeCallbackMethods() {
+    public void invokeCallbackMethods() {
         initCommandExecutor();
         for (Iterator<Entry<Guid, CommandCallBack>> iterator = cmdCallBackMap.entrySet().iterator(); iterator.hasNext();) {
             Entry<Guid, CommandCallBack> entry = iterator.next();
