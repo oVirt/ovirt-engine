@@ -1709,6 +1709,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Unlimited")
     String UnlimitedNetworkQoS();
 
+    @DefaultStringValue("Unlimited")
+    String UnlimitedStorageQos();
+
     @DefaultStringValue("Password")
     String hostPasswordLabel();
 

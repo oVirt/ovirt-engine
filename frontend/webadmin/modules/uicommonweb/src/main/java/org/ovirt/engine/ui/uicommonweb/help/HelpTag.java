@@ -146,6 +146,8 @@ public enum HelpTag {
 
     edit_network_qos("edit_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Edit Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_storage_qos("edit_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'Edit Storage QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     edit_pool("edit_pool", HelpTagType.COMMON, "Pools Tab > Edit Pool"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_provider("edit_provider", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Edit Provider' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -286,6 +288,8 @@ public enum HelpTag {
 
     new_network_qos("new_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'New Network QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    new_storage_qos("new_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'New Storage QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_pool("new_pool", HelpTagType.WEBADMIN, "Pools Tab > New Pool"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_quota("new_quota", HelpTagType.WEBADMIN, "Quota Tab > New Quota"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -351,6 +355,8 @@ public enum HelpTag {
     remove_network_interface_vms("remove_network_interface_vms", HelpTagType.COMMON, "VMs Tab > Logical Network Sub-Tab > Remove Network Interface(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_network_qos("remove_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Remove Network QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_storage_qos("remove_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'Remove Storage QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_permission("remove_permission", HelpTagType.COMMON, "Each Main Tab > Permissions Sub-Tab > Remove Permission"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -478,7 +484,9 @@ public enum HelpTag {
 
     reboot_virtual_machine("reboot_virtual_machine", HelpTagType.WEBADMIN, "VMs main tab -> Reboot confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_disk_snapshot("remove_disk_snapshot", HelpTagType.WEBADMIN, "Storage Tab > Snapshots Sub-Tab > Remove Disk Snapshot(s)"); //$NON-NLS-1$ //$NON-NLS-2$
+    remove_disk_snapshot("remove_disk_snapshot", HelpTagType.WEBADMIN, "Storage Tab > Snapshots Sub-Tab > Remove Disk Snapshot(s)"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    storage_qos("storage_qos", HelpTagType.UNKNOWN); //$NON-NLS-1$
 
     public final String name;
 

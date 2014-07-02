@@ -181,6 +181,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network QoS")
     String dataCenterNetworkQoSSubTabLabel();
 
+    @DefaultStringValue("Storage QoS")
+    String dataCenterStorageQosSubTabLabel();
+
     @DefaultStringValue("Permissions")
     String dataCenterPermissionSubTabLabel();
 
@@ -3289,6 +3292,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String networkQoSName();
 
+    @DefaultStringValue("Name")
+    String storageQosName();
+
     @DefaultStringValue("In Average")
     String networkQoSInboundAverage();
 
@@ -3760,4 +3766,58 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("This will skip fencing if the percentage of Cluster Hosts with connectivity issues is greater than or equal to the defined threshold")
     String skipFencingWhenConnectivityBrokenInfo();
+
+    @DefaultStringValue("Total Throughput")
+    String storageQosThroughputTotal();
+
+    @DefaultStringValue("Read Throughput")
+    String storageQosThroughputRead();
+
+    @DefaultStringValue("Write Throughput")
+    String storageQosThroughputWrite();
+
+    @DefaultStringValue("Total IOps")
+    String storageQosIopsTotal();
+
+    @DefaultStringValue("Read IOps")
+    String storageQosIopsRead();
+
+    @DefaultStringValue("Read IOps")
+    String storageQosIopsWrite();
+
+    @DefaultStringValue("New")
+    String newStorageQos();
+
+    @DefaultStringValue("Edit")
+    String editStorageQos();
+
+    @DefaultStringValue("Remove")
+    String removeStorageQos();
+
+    @DefaultStringValue("Data Center")
+    String dataCenterStorageQosPopup();
+
+    @DefaultStringValue("Description")
+    String storageQosDescription();
+
+    @DefaultStringValue("Throughput")
+    String throughputLabelQosPopup();
+
+    @DefaultStringValue("IOps")
+    String iopsLabelQosPopup();
+
+    @DefaultStringValue("Read")
+    String readStorageQosPopup();
+
+    @DefaultStringValue("Total")
+    String totalStorageQosPopup();
+
+    @DefaultStringValue("Write")
+    String writeStorageQosPopup();
+
+    @DefaultStringValue("Mbps")
+    String mbpsLabelStorageQosPopup();
+
+    @DefaultStringValue("Count")
+    String iopsCountLabelQosPopup();
 }

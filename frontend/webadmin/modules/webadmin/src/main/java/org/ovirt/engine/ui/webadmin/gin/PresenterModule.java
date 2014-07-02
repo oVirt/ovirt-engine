@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopup
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.SystemPermissionsRemoveConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.bookmark.BookmarkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
@@ -25,7 +26,6 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.Gluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ManageGlusterSwiftPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.NewClusterNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.ConfigurePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.configure.RolePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterPopupPresenterWidget;
@@ -64,6 +64,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHo
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksBondPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.SetupNetworksManagementPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.InstanceTypesPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
@@ -144,6 +145,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterQuotaPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStoragePresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterStorageQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.DiskSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskPermissionPresenter;
@@ -253,7 +255,6 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.GlusterHookR
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.ManageGlusterSwiftPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster.NewClusterNetworkPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.ConfigurePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.configure.RolePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterForceRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter.DataCenterPopupView;
@@ -291,6 +292,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.MultipleHostsPo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksBondPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.host.SetupNetworksManagementPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.instancetypes.InstanceTypesPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
@@ -298,6 +300,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfileP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSubnetPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaStoragePopupView;
@@ -373,6 +376,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataC
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterQuotaView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterStorageView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.DiskSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskGeneralView;
@@ -610,6 +614,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterNetworkQoSPresenter.ViewDef.class,
                 SubTabDataCenterNetworkQoSView.class,
                 SubTabDataCenterNetworkQoSPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterStorageQosPresenter.class,
+                SubTabDataCenterStorageQosPresenter.ViewDef.class,
+                SubTabDataCenterStorageQosView.class,
+                SubTabDataCenterStorageQosPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterClusterPresenter.class,
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,
@@ -1337,6 +1345,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(NetworkQoSPopupPresenterWidget.class,
                 NetworkQoSPopupPresenterWidget.ViewDef.class,
                 NetworkQoSPopupView.class);
+
+        // Storage QoS
+        bindPresenterWidget(StorageQosPopupPresenterWidget.class,
+                StorageQosPopupPresenterWidget.ViewDef.class,
+                StorageQosPopupView.class);
 
         bindPresenterWidget(EditQuotaClusterPopupPresenterWidget.class,
                 EditQuotaClusterPopupPresenterWidget.ViewDef.class,

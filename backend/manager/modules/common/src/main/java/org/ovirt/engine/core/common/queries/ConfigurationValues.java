@@ -103,7 +103,7 @@ public enum ConfigurationValues {
     SshSoftFencingCommand,
     MemorySnapshotSupported(ConfigAuthType.User),
     HostNetworkQosSupported,
-    StorageQosSupported,
+    StorageQosSupported(ConfigAuthType.User),
     CpuQosSupported,
     MaxAverageNetworkQoSValue,
     MaxPeakNetworkQoSValue,
@@ -140,7 +140,13 @@ public enum ConfigurationValues {
     DefaultMtu,
     LiveMergeSupported(ConfigAuthType.User),
     SkipFencingIfSDActiveSupported,
-    JsonProtocolSupported(ConfigAuthType.User);
+    JsonProtocolSupported(ConfigAuthType.User),
+    MaxThroughputUpperBoundQosValue,
+    MaxReadThroughputUpperBoundQosValue,
+    MaxWriteThroughputUpperBoundQosValue,
+    MaxIopsUpperBoundQosValue,
+    MaxReadIopsUpperBoundQosValue,
+    MaxWriteIopsUpperBoundQosValue;
 
     public static enum ConfigAuthType {
         Admin,
