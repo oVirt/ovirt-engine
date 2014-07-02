@@ -573,6 +573,7 @@ public class JsonRpcVdsServer implements IVdsServer {
         // no lockPolicy and hostSpmId not needed can be removed from the interface
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.reconstructMaster").withParameter("storagepoolID", spUUID)
+                        .withParameter("hostId", hostSpmId)
                         .withParameter("name", poolName)
                         .withParameter("masterSdUUID", masterDom)
                         .withParameter("masterVersion", masterVersion)
