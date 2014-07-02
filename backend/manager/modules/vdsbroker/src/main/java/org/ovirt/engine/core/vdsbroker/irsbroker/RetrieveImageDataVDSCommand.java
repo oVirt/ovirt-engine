@@ -14,7 +14,7 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
     }
 
     protected void prepareMethod() {
-        getMethod().setRequestHeader("Size", getParameters().getSize().toString());
+        getMethod().setRequestHeader("Range", String.format("bytes=0-%s", getParameters().getSize() - 1));
     }
 
     @Override
@@ -54,6 +54,6 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
 
     @Override
     protected int getSuccessCode() {
-        return HttpStatus.SC_OK;
+        return HttpStatus.SC_PARTIAL_CONTENT;
     }
 }
