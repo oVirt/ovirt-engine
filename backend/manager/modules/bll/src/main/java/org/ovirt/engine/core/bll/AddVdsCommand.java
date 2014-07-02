@@ -344,6 +344,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
+        if (returnValue && getParameters().getNetworkProviderId() != null) {
+            returnValue = validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
+                    getParameters().getNetworkMappings());
+        }
+
         if (returnValue && isGlusterSupportEnabled()) {
             if (clusterHasServers()) {
                 VDS upServer = getClusterUtils().getUpServer(getVdsGroupId());
@@ -554,5 +559,4 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
         return jobProperties;
     }
-
 }

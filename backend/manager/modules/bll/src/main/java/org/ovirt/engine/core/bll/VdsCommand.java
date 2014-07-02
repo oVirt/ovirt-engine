@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.provider.NetworkProviderValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -342,6 +343,14 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
                             new SetVdsStatusVDSCommandParameters(getVds().getId(), VDSStatus.Down));
         }
         return result;
+    }
+
+    protected boolean validateNetworkProviderProperties(Guid providerId, String networkMappings) {
+        NetworkProviderValidator validator = new NetworkProviderValidator(getProviderDao().get(providerId));
+        return validate(validator.providerIsSet())
+                && validate(validator.providerTypeValid())
+                && validate(validator.networkMappingsProvided(networkMappings))
+                && validate(validator.messagingBrokerProvided());
     }
 
     private static boolean isHostStatusOff(VDSReturnValue returnValue) {
