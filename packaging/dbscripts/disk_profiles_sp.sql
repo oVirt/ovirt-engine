@@ -100,3 +100,15 @@ UPDATE disk_profiles
    WHERE storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetDiskProfilesByQosId(v_qos_id UUID)
+RETURNS SETOF disk_profiles STABLE
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM disk_profiles
+   WHERE qos_id = v_qos_id;
+END; $procedure$
+LANGUAGE plpgsql;

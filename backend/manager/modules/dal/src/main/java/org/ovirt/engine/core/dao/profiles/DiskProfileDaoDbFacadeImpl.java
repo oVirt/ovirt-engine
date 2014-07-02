@@ -30,6 +30,13 @@ public class DiskProfileDaoDbFacadeImpl extends ProfileBaseDaoFacadeImpl<DiskPro
     }
 
     @Override
+    public List<DiskProfile> getAllForQos(Guid qosId) {
+        return getCallsHandler().executeReadList("GetDiskProfilesByQosId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("qos_id", qosId));
+    }
+
+    @Override
     protected RowMapper<DiskProfile> createEntityRowMapper() {
         return MAPPER;
     }
