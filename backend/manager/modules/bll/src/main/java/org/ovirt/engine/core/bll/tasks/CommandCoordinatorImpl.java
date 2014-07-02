@@ -13,6 +13,7 @@ import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -40,6 +41,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     private static final Log log = LogFactory.getLog(CommandCoordinator.class);
     private final CommandsCache commandsCache;
+    private final CommandContextsCache contextsCache;
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;
     private final CommandExecutor cmdExecutor;
     private Object LOCK = new Object();
@@ -48,12 +50,19 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     CommandCoordinatorImpl() {
         commandsCache = new CommandsCacheImpl();
+        contextsCache = new CommandContextsCacheImpl();
         coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
         cmdExecutor = new CommandExecutor(this);
     }
 
     public <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return CommandsFactory.createCommand(action, parameters);
+    }
+
+    @Override
+    public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
+        persistCommand(cmdEntity);
+        saveCommandContext(cmdEntity.getId(), cmdContext);
     }
 
     @Override
@@ -64,6 +73,12 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             if (!cmdEntity.isCallBackNotified()) {
                 cmdExecutor.addToCallBackMap(cmdEntity);
             }
+        }
+    }
+
+    void saveCommandContext(Guid cmdId, CommandContext cmdContext) {
+        if (cmdContext != null) {
+            contextsCache.put(cmdId, cmdContext);
         }
     }
 
@@ -97,13 +112,13 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public CommandBase<?> retrieveCommand(Guid commandId) {
-        return buildCommand(commandsCache.get(commandId));
+        return buildCommand(commandsCache.get(commandId), contextsCache.get(commandId));
     }
 
-    private CommandBase<?> buildCommand(CommandEntity cmdEntity) {
+    private CommandBase<?> buildCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
         CommandBase<?> command = null;
         if (cmdEntity != null) {
-            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters());
+            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters(), cmdContext);
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
             if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
                     ! cmdEntity.getRootCommandId().equals(cmdEntity.getId()) &&
@@ -134,6 +149,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     public void removeCommand(final Guid commandId) {
         commandsCache.remove(commandId);
+        contextsCache.remove(commandId);
         updateCmdHierarchy(commandId);
     }
 

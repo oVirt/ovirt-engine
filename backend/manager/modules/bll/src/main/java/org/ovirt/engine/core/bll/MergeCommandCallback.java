@@ -35,7 +35,7 @@ public class MergeCommandCallback extends CommandCallBack {
             // It finished; a command will be called later to determine the status.
             command.setSucceeded(true);
             command.setCommandStatus(CommandStatus.SUCCEEDED);
-            command.persistCommand(command.getParameters().getParentCommand(), true);
+            command.persistCommandWithContext(command.getParameters().getParentCommand(), true);
         }
         log.infoFormat("Merge command has completed for images {0}..{1}",
                 command.getParameters().getBaseImage().getImageId(),

@@ -131,8 +131,8 @@ public class TaskManagerUtil {
         coco.addOrUpdateTaskInDB(asyncTask);
     }
 
-    public static void persistCommand(CommandEntity cmdEntity) {
-        coco.persistCommand(cmdEntity);
+    public static void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
+        coco.persistCommand(cmdEntity, cmdContext);
     }
 
     public static List<Guid> getChildCommandIds(Guid commandId) {

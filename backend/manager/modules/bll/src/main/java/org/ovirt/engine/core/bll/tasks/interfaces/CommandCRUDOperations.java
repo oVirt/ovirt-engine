@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.tasks.interfaces;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -15,6 +16,7 @@ public interface CommandCRUDOperations {
     public CommandStatus getCommandStatus(Guid commandId);
     public List<CommandEntity> getCommandsWithCallBackEnabled();
     public void persistCommand(CommandEntity cmdEntity);
+    public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext);
     public CommandBase<?> retrieveCommand(Guid commandId);
     public void removeCommand(Guid commandId);
     public void removeAllCommandsInHierarchy(Guid commandId);
