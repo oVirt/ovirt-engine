@@ -6,8 +6,6 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
-import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
@@ -219,29 +217,19 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
             map(rs, entity);
 
             entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
-            entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setVdsGroupId(getGuidDefaultEmpty(rs, "vds_group_id"));
 
             entity.setName(rs.getString("vm_name"));
             entity.setVmtGuid(getGuidDefaultEmpty(rs, "vmt_guid"));
-            entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
-            entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
-            entity.setDedicatedVmForVds(getGuid(rs, "dedicated_vm_for_vds"));
-            entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
-            entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
             String predefinedProperties = rs.getString("predefined_properties");
             String userDefinedProperties = rs.getString("userdefined_properties");
             entity.setPredefinedProperties(predefinedProperties);
             entity.setUserDefinedProperties(userDefinedProperties);
             entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
                     userDefinedProperties));
-            entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
-            entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
-            entity.setTunnelMigration((Boolean) rs.getObject("tunnel_migration"));
-            entity.setVncKeyboardLayout(rs.getString("vnc_keyboard_layout"));
             entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));
             entity.setImageTypeId(Guid.createGuidFromString(rs.getString("image_type_id")));
             entity.setOriginalTemplateName(rs.getString("original_template_name"));

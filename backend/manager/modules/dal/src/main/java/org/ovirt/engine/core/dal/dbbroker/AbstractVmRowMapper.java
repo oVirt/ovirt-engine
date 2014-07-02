@@ -4,6 +4,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -11,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.BaseDAODbFacade;
 import org.springframework.jdbc.core.RowMapper;
 
 /**
@@ -20,7 +23,11 @@ import org.springframework.jdbc.core.RowMapper;
 public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper<T> {
 
     protected final void map(final ResultSet rs, final T entity) throws SQLException {
+        entity.setMemSizeMb(rs.getInt("mem_size_mb"));
         entity.setOsId(rs.getInt("os"));
+        entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
+        entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
+        entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
         entity.setDescription(rs.getString("description"));
         entity.setComment(rs.getString("free_text_comment"));
         entity.setCreationDate(DbFacadeUtils.fromDate(rs.getTimestamp("creation_date")));
@@ -55,6 +62,10 @@ public abstract class AbstractVmRowMapper<T extends VmBase> implements RowMapper
         entity.setBootMenuEnabled(rs.getBoolean("is_boot_menu_enabled"));
         entity.setSpiceFileTransferEnabled(rs.getBoolean("is_spice_file_transfer_enabled"));
         entity.setSpiceCopyPasteEnabled(rs.getBoolean("is_spice_copy_paste_enabled"));
+        entity.setMigrationSupport(MigrationSupport.forValue(rs.getInt("migration_support")));
+        entity.setDedicatedVmForVds(BaseDAODbFacade.getGuid(rs, "dedicated_vm_for_vds"));
+        entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
+        entity.setQuotaId(BaseDAODbFacade.getGuid(rs, "quota_id"));
     }
 
 }

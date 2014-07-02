@@ -153,7 +153,7 @@ public abstract class BaseDAODbFacade {
      * @return a {@link Guid} representing the UUID in the column, or the default value if it was <code>null</code>.
      * @throws SQLException If resultSet does not contain columnName or its value cannot be cast to {@link UUID}.
      */
-    protected static Guid getGuid(ResultSet resultSet, String columnName) throws SQLException {
+    public static Guid getGuid(ResultSet resultSet, String columnName) throws SQLException {
         return getGuid(resultSet, columnName, null);
     }
 
