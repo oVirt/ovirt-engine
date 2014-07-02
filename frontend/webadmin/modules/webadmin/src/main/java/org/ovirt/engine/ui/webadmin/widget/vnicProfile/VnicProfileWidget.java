@@ -10,6 +10,9 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -108,9 +111,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
                 });
             }
         });
-        nameEditor.asValueBox().addValueChangeHandler(new ValueChangeHandler<String>() {
+        model.getName().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
-            public void onValueChange(ValueChangeEvent<String> event) {
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
                 ValueChangeEvent.fire(VnicProfileWidget.this, model);
             }
         });
