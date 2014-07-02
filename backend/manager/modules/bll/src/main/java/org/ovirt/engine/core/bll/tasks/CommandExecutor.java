@@ -12,6 +12,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
@@ -100,8 +101,9 @@ public class CommandExecutor {
     }
 
     public Future<VdcReturnValueBase> executeAsyncCommand(final VdcActionType actionType,
-                                                          final VdcActionParametersBase parameters) {
-        final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
+                                                          final VdcActionParametersBase parameters,
+                                                          final CommandContext cmdContext) {
+        final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
         return executor.submit(new Callable<VdcReturnValueBase>() {
 
             @Override

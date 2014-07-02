@@ -176,7 +176,8 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             } else {
                 TaskManagerUtil.executeAsyncCommand(
                         getSnapshotActionType(),
-                        buildRemoveSnapshotSingleDiskParameters(source, dest));
+                        buildRemoveSnapshotSingleDiskParameters(source, dest),
+                        cloneContextAndDetachFromParent());
             }
 
             List<Guid> quotasToRemoveFromCache = new ArrayList<Guid>();

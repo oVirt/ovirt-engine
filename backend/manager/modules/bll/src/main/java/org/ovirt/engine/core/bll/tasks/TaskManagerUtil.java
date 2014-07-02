@@ -6,6 +6,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -163,8 +164,9 @@ public class TaskManagerUtil {
     }
 
     public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
-                                    VdcActionParametersBase parameters) {
-        return coco.executeAsyncCommand(actionType, parameters);
+                                    VdcActionParametersBase parameters,
+                                    CommandContext cmdContext) {
+        return coco.executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
     public static VdcReturnValueBase getCommandReturnValue(Guid cmdId) {
