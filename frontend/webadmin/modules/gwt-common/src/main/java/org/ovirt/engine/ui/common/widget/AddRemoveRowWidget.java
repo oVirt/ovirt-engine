@@ -25,6 +25,7 @@ import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.Focusable;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.PushButton;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -285,6 +286,10 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
      */
     protected void onAdd(T value, V widget) {
         modelItems.add(value);
+
+        if (widget instanceof Focusable) {
+            ((Focusable) widget).setFocus(true);
+        }
     }
 
     /**

@@ -14,8 +14,9 @@ import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
 import com.google.gwt.event.shared.HandlerRegistration;
+import com.google.gwt.user.client.ui.Focusable;
 
-public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<String>> implements HasValueChangeHandlers<ListModel<String>> {
+public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<String>> implements HasValueChangeHandlers<ListModel<String>>, Focusable {
 
     public interface Driver extends SimpleBeanEditorDriver<ListModel<String>, NicLabelEditor> {
     }
@@ -54,5 +55,25 @@ public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<Stri
     @Override
     public HandlerRegistration addValueChangeHandler(ValueChangeHandler<ListModel<String>> handler) {
         return addHandler(handler, ValueChangeEvent.getType());
+    }
+
+    @Override
+    public int getTabIndex() {
+        return suggestBoxEditor.getTabIndex();
+    }
+
+    @Override
+    public void setAccessKey(char key) {
+        suggestBoxEditor.setAccessKey(key);
+    }
+
+    @Override
+    public void setFocus(boolean focused) {
+        suggestBoxEditor.setFocus(focused);
+    }
+
+    @Override
+    public void setTabIndex(int index) {
+        suggestBoxEditor.setTabIndex(index);
     }
 }
