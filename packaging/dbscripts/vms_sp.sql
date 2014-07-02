@@ -391,21 +391,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION ClearStopReason(
-	v_vm_guid UUID)
-RETURNS VOID
-
-   AS $procedure$
-BEGIN
-      UPDATE vm_dynamic
-      SET
-      reason = null
-      WHERE vm_guid = v_vm_guid;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 Create or replace FUNCTION DeleteVmDynamic(v_vm_guid UUID)
 RETURNS VOID
    AS $procedure$

@@ -49,14 +49,6 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
-    public void clearStopReason(Guid vmGuid) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("vm_guid", vmGuid);
-
-        getCallsHandler().executeModification("ClearStopReason", parameterSource);
-    }
-
-    @Override
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())

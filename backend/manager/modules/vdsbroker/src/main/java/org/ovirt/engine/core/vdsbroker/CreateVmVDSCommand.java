@@ -45,6 +45,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                 if (command.getVDSReturnValue().getSucceeded()) {
                     saveSetInitializedToDb(vm.getId());
 
+                    vm.setStopReason(null);
                     vm.setInitialized(true);
                     vm.setRunOnVds(getVdsId());
                     if (clearHibernationVolume) {

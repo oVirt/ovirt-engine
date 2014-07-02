@@ -249,8 +249,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             if (status != null && (status.isRunning() || status == VMStatus.RestoringState)) {
                 setSucceeded(true);
-                getVm().setStopReason(null);
-                getVmDynamicDao().clearStopReason(this.getVm().getId());
             } else {
                 // Try to rerun Vm on different vds no need to log the command because it is
                 // being logged inside the rerun
