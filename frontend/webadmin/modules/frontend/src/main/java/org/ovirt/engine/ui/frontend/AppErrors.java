@@ -1618,6 +1618,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provider does not exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'OpenStack Network'.")
+    String ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The network provider's broker host address must be configured on the provider.")
+    String ACTION_TYPE_FAILED_MISSING_NETWORK_MAPPINGS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The provider's broker address must be configured on the provider.")
+    String ACTION_TYPE_FAILED_MISSING_MESSAGING_BROKER_PROPERTIES();
+
     @DefaultStringValue("Cannot ${action} ${type}. Several external networks (${NETWORK_NAMES_COUNTER}) are being used by virtual machines and/or templates:\n${NETWORK_NAMES}\n - Please resolve the external networks usage first and try again.")
     String ACTION_TYPE_FAILED_PROVIDER_NETWORKS_USED();
 

@@ -111,6 +111,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     // This is due to permission check that must be done both on
                     // the VDS and on the VDSGroup
                     addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_UPDATE_CLUSTER);
+                } else if (getParameters().getInstallVds() && getParameters().getNetworkProviderId() != null) {
+                    returnValue =
+                            validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
+                                    getParameters().getNetworkMappings());
                 } else {
                     returnValue = true;
                 }

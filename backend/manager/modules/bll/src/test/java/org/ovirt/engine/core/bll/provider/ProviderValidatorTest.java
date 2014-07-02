@@ -21,7 +21,7 @@ import org.ovirt.engine.core.dao.provider.ProviderDao;
 @RunWith(MockitoJUnitRunner.class)
 public class ProviderValidatorTest {
 
-    private Provider<AdditionalProperties> provider = createProvider("provider");
+    protected Provider<AdditionalProperties> provider = createProvider("provider");
 
     @Mock
     private ProviderDao providerDao;
