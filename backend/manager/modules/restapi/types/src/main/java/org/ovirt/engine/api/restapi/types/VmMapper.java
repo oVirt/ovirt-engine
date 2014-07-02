@@ -9,7 +9,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -1257,6 +1256,9 @@ public class VmMapper {
                 List<VmInitNetwork> interfaces = new ArrayList<VmInitNetwork>();
                 for (NIC iface : model.getNetworkConfiguration().getNics().getNics()) {
                     VmInitNetwork vmInitInterface = new VmInitNetwork();
+                    if (iface.isSetName()) {
+                        vmInitInterface.setName(iface.getName());
+                    }
                     interfaces.add(vmInitInterface);
                     if (iface.isSetBootProtocol()) {
                         NetworkBootProtocol protocol = BootProtocolMapper.map
