@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
-import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
 import org.ovirt.engine.core.bll.utils.BackendUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -35,11 +34,11 @@ public class CommandExecutor {
     private static final ExecutorService executor = Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
     private static final Log log = LogFactory.getLog(CommandExecutor.class);
 
-    private final CommandCoordinator coco;
+    private final CommandCoordinatorImpl coco;
     private final Map<Guid, CommandCallBack> cmdCallBackMap = new ConcurrentHashMap<>();
     private boolean cmdExecutorInitialized;
 
-    CommandExecutor(CommandCoordinator coco) {
+    CommandExecutor(CommandCoordinatorImpl coco) {
         this.coco = coco;
         SchedulerUtil scheduler = SchedulerUtilQuartzImpl.getInstance();
         scheduler.scheduleAFixedDelayJob(this, "invokeCallbackMethods", new Class[]{},
@@ -104,17 +103,18 @@ public class CommandExecutor {
                                                           final VdcActionParametersBase parameters,
                                                           final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
+        coco.saveCommandContext(command.getCommandId(), cmdContext);
         return executor.submit(new Callable<VdcReturnValueBase>() {
 
             @Override
             public VdcReturnValueBase call() throws Exception {
-                return executeCommand(command);
+                return executeCommand(command, cmdContext);
             }
         });
     }
 
-    private VdcReturnValueBase executeCommand(final CommandBase<?> command) {
-        command.persistCommand(command.getParameters().getParentCommand(), true);
+    private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, true);
         CommandCallBack callBack = command.getCallBack();
         if (callBack != null) {
             cmdCallBackMap.put(command.getCommandId(), callBack);

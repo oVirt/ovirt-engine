@@ -75,7 +75,7 @@ public class MergeStatusCommand<T extends MergeParameters>
         MergeStatusReturnValue returnValue = new MergeStatusReturnValue(jobType, imagesToRemove);
         getReturnValue().setActionReturnValue(returnValue);
         setSucceeded(true);
-        persistCommand(getParameters().getParentCommand(), true);
+        persistCommandWithContext(getParameters().getParentCommand(), true);
         setCommandStatus(CommandStatus.SUCCEEDED);
     }
 

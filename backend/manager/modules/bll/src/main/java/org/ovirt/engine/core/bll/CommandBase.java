@@ -2105,11 +2105,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 
-    public void persistCommand(VdcActionType parentCommand) {
-        persistCommand(parentCommand, false);
+    public void persistCommandWithoutContext(VdcActionType parentCommand, boolean enableCallBack) {
+        persistCommand(parentCommand, null, enableCallBack);
     }
 
-    public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
+    public void persistCommandWithContext(VdcActionType parentCommand, boolean enableCallBack) {
+        persistCommand(parentCommand, getContext(), enableCallBack);
+    }
+
+    public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallBack) {
         VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
         Transaction transaction = TransactionSupport.suspend();
         try {
@@ -2120,7 +2124,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         getParameters(),
                         commandStatus,
                         enableCallBack,
-                        getReturnValue()));
+                        getReturnValue()),
+                    cmdContext);
         } finally {
             TransactionSupport.resume(transaction);
         }
