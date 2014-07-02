@@ -10,6 +10,7 @@ import java.util.concurrent.Future;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCoordinator;
@@ -72,8 +73,9 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
      */
     @Override
     public Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,
-                                                          VdcActionParametersBase parameters) {
-        return cmdExecutor.executeAsyncCommand(actionType, parameters);
+                                                          VdcActionParametersBase parameters,
+                                                          CommandContext cmdContext) {
+        return cmdExecutor.executeAsyncCommand(actionType, parameters, cmdContext);
     }
 
     @Override
