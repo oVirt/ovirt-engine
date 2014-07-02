@@ -1,11 +1,11 @@
 /*
-* Copyright (c) 2010 Red Hat, Inc.
+* Copyright (c) 2014 Red Hat, Inc.
 *
 * Licensed under the Apache License, Version 2.0 (the "License");
 * you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at
 *
-*           http://www.apache.org/licenses/LICENSE-2.0
+*   http://www.apache.org/licenses/LICENSE-2.0
 *
 * Unless required by applicable law or agreed to in writing, software
 * distributed under the License is distributed on an "AS IS" BASIS,
@@ -123,12 +123,12 @@ public class RsdlBuilder {
     }
 
     public RSDL build() throws ClassNotFoundException, IOException {
-            rsdl = construct();
-            rsdl.setRel(getRel());
-            rsdl.setHref(getHref());
-            rsdl.setDescription(getDescription());
-            rsdl.setSchema(getSchema());
-            rsdl.setGeneral(getGeneralMetadata());
+        rsdl = construct();
+        rsdl.setRel(getRel());
+        rsdl.setHref(getHref());
+        rsdl.setDescription(getDescription());
+        rsdl.setSchema(getSchema());
+        rsdl.setGeneral(getGeneralMetadata());
         return rsdl;
     }
 
@@ -307,8 +307,22 @@ public class RsdlBuilder {
 
     private void handleMethod(String prefix, Collection<DetailedLink> results, Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         if (isRequiresDescription(m)) {
-            Class<?> returnType = findReturnType(m, resource, parametersMap);
-            String returnTypeStr = getReturnTypeStr(returnType);
+            Type genericReturnType = m.getGenericReturnType();
+            Class<?> concreteReturnType = findConcreteType(genericReturnType, resource, parametersMap);
+            if (concreteReturnType == null) {
+                concreteReturnType = m.getReturnType();
+            }
+            String returnTypeStr = getReturnTypeStr(concreteReturnType);
+
+            Type[] genericParameterTypes = m.getGenericParameterTypes();
+            Class<?>[] concreteParameterTypes = m.getParameterTypes();
+            for (int i = 0; i < concreteParameterTypes.length; i++) {
+                Class<?> concreteParameterType = findConcreteType(genericParameterTypes[i], resource, parametersMap);
+                if (concreteParameterType != null) {
+                    concreteParameterTypes[i] = concreteParameterType;
+                }
+            }
+
             if (m.isAnnotationPresent(javax.ws.rs.GET.class)) {
                 handleGet(prefix, results, returnTypeStr);
             } else if (m.isAnnotationPresent(PUT.class)) {
@@ -327,11 +341,11 @@ public class RsdlBuilder {
                         ParameterizedType parameterizedType = (ParameterizedType)m.getGenericReturnType();
                         addToGenericParamsMap(resource, parameterizedType.getActualTypeArguments(), m.getReturnType().getTypeParameters(), parametersMap);
                     }
-                    results.addAll(describe(returnType, prefix + "/" + path, new HashMap<String, Type>(parametersMap)));
+                    results.addAll(describe(concreteReturnType, prefix + "/" + path, new HashMap<String, Type>(parametersMap)));
                 }
             } else {
                 if (m.getName().equals(ADD)) {
-                    handleAdd(prefix, results, m);
+                    handleAdd(prefix, results, concreteParameterTypes);
                 }
             }
         }
@@ -488,9 +502,8 @@ public class RsdlBuilder {
         }
     }
 
-    private void handleAdd(String prefix, Collection<DetailedLink> results, Method m) {
-        Class<?>[] parameterTypes = m.getParameterTypes();
-        assert(parameterTypes.length==1);
+    private void handleAdd(String prefix, Collection<DetailedLink> results, Class<?>[] parameterTypes) {
+        assert parameterTypes.length == 1;
         String s = parameterTypes[0].getSimpleName();
         s = handleExcpetionalCases(s, prefix); //TODO: refactor to a more generic solution
 
@@ -526,19 +539,19 @@ public class RsdlBuilder {
         return entityType;
     }
 
-    private Class<?> findReturnType(Method m, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
+    private Class<?> findConcreteType(Type generic, Class<?> resource, Map<String, Type> parametersMap) throws ClassNotFoundException {
         for (Type superInterface : resource.getGenericInterfaces()) {
             if (superInterface instanceof ParameterizedType) {
                 ParameterizedType p = (ParameterizedType)superInterface;
                 Class<?> clazz = Class.forName(p.getRawType().toString().substring(p.getRawType().toString().lastIndexOf(' ')+1));
-                Map<String, Type> map = new HashMap<String, Type>();
+                Map<String, Type> map = new HashMap<>();
                 for (int i=0; i<p.getActualTypeArguments().length; i++) {
                     if (!map.containsKey(clazz.getTypeParameters()[i].toString())) {
                         map.put(clazz.getTypeParameters()[i].toString(), p.getActualTypeArguments()[i]);
                     }
                 }
-                if (map.containsKey(m.getGenericReturnType().toString())) {
-                    String type = map.get(m.getGenericReturnType().toString()).toString();
+                if (map.containsKey(generic.toString())) {
+                    String type = map.get(generic.toString()).toString();
                     try {
                         Class<?> returnClass = Class.forName(type.substring(type.lastIndexOf(' ')+1));
                         return returnClass;
@@ -548,16 +561,16 @@ public class RsdlBuilder {
                 }
             }
         }
-        if (parametersMap.containsKey(m.getGenericReturnType().toString())) {
+        if (parametersMap.containsKey(generic.toString())) {
             try {
-                Type type = parametersMap.get(m.getGenericReturnType().toString());
+                Type type = parametersMap.get(generic.toString());
                 Class<?> returnClass = Class.forName(type.toString().substring(type.toString().indexOf(' ') +1));
                 return returnClass;
             } catch (ClassNotFoundException e) {
-                return m.getReturnType();
+                return null;
             }
         } else {
-            return m.getReturnType();
+            return null;
         }
     }
 
