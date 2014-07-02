@@ -144,4 +144,14 @@ public class DiskProfileDaoTest extends BaseDAOTestCase {
         }
         assertEquals(isAllNull, allValues);
     }
+
+    @Test
+    public void testGetByQos() {
+        List<DiskProfile> allForQos = dao.getAllForQos(FixturesTool.QOS_ID_1);
+        assertNotNull(allForQos);
+        assertEquals(2, allForQos.size());
+        for (DiskProfile diskProfile : allForQos) {
+            assertEquals(FixturesTool.QOS_ID_1, diskProfile.getQosId());
+        }
+    }
 }
