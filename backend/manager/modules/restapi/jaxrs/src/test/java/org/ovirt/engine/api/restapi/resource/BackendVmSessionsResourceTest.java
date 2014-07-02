@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
+import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.User;
@@ -18,7 +19,7 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
     protected VM getEntity(int index) {
         org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
         VmDynamic vmDynamic = new VmDynamic();
-        vmDynamic.setConsoleCurrentUserName("admin");
+        vmDynamic.setConsoleCurrentUserName("admin@internal");
         vmDynamic.setClientIp("1.1.1.1");
         vmDynamic.setGuestCurrentUserName("Ori");
         vm.setDynamicData(vmDynamic);
@@ -38,7 +39,7 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
     @Test
     public void testList() throws Exception {
         BackendUserResource userResourceMock = control.createMock(BackendUserResource.class);
-        expect(userResourceMock.getUserByName("admin")).andReturn(getUser()).anyTimes();
+        expect(userResourceMock.getUserByNameAndDomain("admin", "internal")).andReturn(getUser()).anyTimes();
         resource.setUserResource(userResourceMock);
         resource.setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(VdcQueryType.GetVmByVmId,
@@ -52,16 +53,15 @@ public class BackendVmSessionsResourceTest extends AbstractBackendResourceTest<S
         assertNotNull(sessions.getSessions().get(1).getVm());
         assertNotNull(sessions.getSessions().get(0).getId());
         assertNotNull(sessions.getSessions().get(1).getId());
-        Session consoleSession =
-                sessions.getSessions().get(0).getUser().getName().equals("admin") ? sessions.getSessions().get(0)
-                        : sessions.getSessions().get(1);
-        assertEquals(consoleSession.getUser().getHref(), "/ovirt-engine/api/users/11111111-1111-1111-1111-111111111111");
     }
 
     private User getUser() {
         User user = new User();
-        user.setName("admin");
+        user.setUserName("admin");
         user.setId(GUIDS[1].toString());
+        Domain domain = new Domain();
+        domain.setName("internal");
+        user.setDomain(domain);
         return user;
     }
 }

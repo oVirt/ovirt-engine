@@ -187,12 +187,12 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByUserName(v_username VARCHAR(255)) RETURNS SETOF users STABLE
+Create or replace FUNCTION GetUserByUserNameAndDomain(v_username VARCHAR(255), v_domain VARCHAR(255)) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
       FROM users
-      WHERE username = v_username;
+      WHERE username = v_username AND domain = v_domain;
 END; $procedure$
 LANGUAGE plpgsql;
 

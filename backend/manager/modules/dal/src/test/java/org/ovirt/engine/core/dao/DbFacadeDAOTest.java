@@ -129,7 +129,9 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
     public void testUpdateLastAdminCheckStatus() {
 
         // Getting a nonAdmin user that is defined in the fixtures
-        DbUser nonAdminUser = dbFacade.getDbUserDao().getByUsername("userportal2@testportal.redhat.com");
+        DbUser nonAdminUser =
+                dbFacade.getDbUserDao().getByUsernameAndDomain("userportal2@testportal.redhat.com",
+                        "testportal.redhat.com");
 
         assertNotNull(nonAdminUser);
         assertFalse(nonAdminUser.isAdmin());

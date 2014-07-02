@@ -4,6 +4,7 @@ import javax.ws.rs.Path;
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.User;
@@ -38,11 +39,26 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
             for (Session session : sessions.getSessions()) {
                 setSessionId(session);
                 setSessionVmId(vmModel, session);
-                setSessionUser(session);
-                addLinks(session, org.ovirt.engine.api.model.VM.class);
+                // only console user assumed to be an ovirt user, and only an ovirt-user has an ID & href
+                if (session.isSetConsoleUser() && session.isConsoleUser()) {
+                    addLinksIncludingUser(session);
+                } else {
+                    addLinks(session, org.ovirt.engine.api.model.VM.class);
+                }
             }
         }
         return sessions;
+    }
+
+    /**
+     * Special handling of adding links to the user and domain of the session.
+     */
+    private void addLinksIncludingUser(Session session) {
+        String domainName = session.getUser().getDomain().getName();
+        addLinks(session, org.ovirt.engine.api.model.VM.class);
+        session.getUser().setDomain(new Domain());
+        session.getUser().getDomain().setName(domainName);
+        setSessionUser(session);
     }
 
     private void setSessionVmId(org.ovirt.engine.api.model.VM vmModel, Session session) {
@@ -69,10 +85,14 @@ public class BackendVmSessionsResource extends AbstractBackendCollectionResource
      * inside the user object, inside the session.
      */
     private void setSessionUser(Session session) {
-        if (session.isSetConsoleUser() && session.isConsoleUser()) { // (only console user assumed to be an ovirt user).
-            User user = getUserResource().getUserByName(session.getUser().getName());
+        User user =
+                getUserResource().getUserByNameAndDomain(session.getUser().getUserName(),
+                        session.getUser().getDomain().getName());
+        if (user != null) {
             session.getUser().setId(user.getId());
             session.getUser().setHref(user.getHref());
+            session.getUser().getDomain().setId(user.getDomain().getId());
+            session.getUser().getDomain().setHref(user.getDomain().getHref());
         }
     }
 

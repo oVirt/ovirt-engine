@@ -87,11 +87,12 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
     }
 
     @Override
-    public DbUser getByUsername(String username) {
+    public DbUser getByUsernameAndDomain(String username, String domainName) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("username", username);
+                .addValue("username", username)
+                .addValue("domain", domainName);
 
-        return getCallsHandler().executeRead("GetUserByUserName", DbUserRowMapper.instance, parameterSource);
+        return getCallsHandler().executeRead("GetUserByUserNameAndDomain", DbUserRowMapper.instance, parameterSource);
     }
 
     @Override

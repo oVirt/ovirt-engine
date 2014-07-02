@@ -579,14 +579,14 @@ public class VmMapperTest extends
         assertNotNull(sessions);
         assertEquals(sessions.getSessions().size(), 2);
         Session consoleSession =
-                sessions.getSessions().get(0).getUser().getName().equals("admin") ? sessions.getSessions().get(0)
+                sessions.getSessions().get(0).getUser().getUserName().equals("admin") ? sessions.getSessions().get(0)
                         : sessions.getSessions().get(1);
         Session guestSession =
-                sessions.getSessions().get(0).getUser().getName().equals("Ori") ? sessions.getSessions().get(0)
+                sessions.getSessions().get(0).getUser().getUserName().equals("Ori") ? sessions.getSessions().get(0)
                         : sessions.getSessions().get(1);
-        assertEquals(consoleSession.getUser().getName(), "admin");
+        assertEquals(consoleSession.getUser().getUserName(), "admin");
         assertEquals(consoleSession.getIp().getAddress(), "1.1.1.1");
         assertTrue(consoleSession.isConsoleUser());
-        assertEquals(guestSession.getUser().getName(), "Ori");
+        assertEquals(guestSession.getUser().getUserName(), "Ori");
     }
 }

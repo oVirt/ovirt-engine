@@ -100,7 +100,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByUsernameWithInvalidName() {
-        DbUser result = dao.getByUsername("IdoNoExist");
+        DbUser result = dao.getByUsernameAndDomain("IdoNoExist", existingUser.getDomain());
 
         assertNull(result);
     }
@@ -110,7 +110,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetByUsername() {
-        DbUser result = dao.getByUsername(existingUser.getLoginName());
+        DbUser result = dao.getByUsernameAndDomain(existingUser.getLoginName(), existingUser.getDomain());
 
         assertNotNull(result);
         assertEquals(existingUser, result);
@@ -178,7 +178,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newUser);
 
-        DbUser result = dao.getByUsername(newUser.getLoginName());
+        DbUser result = dao.getByUsernameAndDomain(newUser.getLoginName(), newUser.getDomain());
 
         assertEquals(newUser, result);
     }
@@ -215,7 +215,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
     public void testSaveOrUpdateNew() {
         int sizeBeforeSave = dao.getAll().size();
         dao.saveOrUpdate(newUser);
-        DbUser result = dao.getByUsername(newUser.getLoginName());
+        DbUser result = dao.getByUsernameAndDomain(newUser.getLoginName(), newUser.getDomain());
         int sizeAfterSave = dao.getAll().size();
         assertEquals(newUser, result);
         assertEquals(1, sizeAfterSave - sizeBeforeSave);

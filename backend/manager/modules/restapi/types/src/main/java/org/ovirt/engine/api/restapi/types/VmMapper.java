@@ -1476,11 +1476,16 @@ public class VmMapper {
      * protocol used in the session (spice/vnc).
      */
     private static Sessions mapConsoleSession(org.ovirt.engine.core.common.businessentities.VM vm, Sessions sessions) {
-        String consoleUserName = vm.getConsoleCurentUserName();
+        String consoleUserName = vm.getConsoleCurentUserName(); // currently in format user@domain, so needs to be
+                                                                // parsed.
         if (consoleUserName != null && !consoleUserName.isEmpty()) {
-            Session consoleSession = new Session();
+            String userName = parseUserName(consoleUserName);
+            String domainName = parseDomainName(consoleUserName);
             User consoleUser = new User();
-            consoleUser.setName(consoleUserName);
+            consoleUser.setUserName(userName);
+            consoleUser.setDomain(new Domain());
+            consoleUser.getDomain().setName(domainName);
+            Session consoleSession = new Session();
             consoleSession.setUser(consoleUser);
             if (vm.getClientIp()!=null && !vm.getClientIp().isEmpty()) {
                 IP ip = new IP();
@@ -1495,6 +1500,25 @@ public class VmMapper {
     }
 
     /**
+     * Parse the user name out of the provided string. Expects 'user@domain', but if no '@' found, will assume that
+     * domain was omitted and that the whole String is the user-name.
+     */
+    private static String parseDomainName(String consoleUserName) {
+        return consoleUserName.contains("@") ?
+                consoleUserName.substring(consoleUserName.indexOf("@") + 1, consoleUserName.length()) : null;
+    }
+
+    /**
+     * Parse the domain name out of the provided string. Expects 'user@domain'. If no '@' found, will assume that domain
+     * name was omitted and return null.
+     */
+    private static String parseUserName(String consoleUserName) {
+        return consoleUserName.contains("@") ?
+                consoleUserName.substring(0, consoleUserName.indexOf("@")) :
+                consoleUserName;
+    }
+
+    /**
      * This method maps the sessions of users who are connected to the VM, but are not the 'logged-in'/'console' user.
      * Currently the information that engine supplies about these users is only a string, which contains the name of
      * only one such user, if exists (the user is not necessarily an ovirt user). In the future the engine may pass
@@ -1506,7 +1530,7 @@ public class VmMapper {
         if (guestUserName != null && !guestUserName.isEmpty()) {
             Session guestSession = new Session();
             User user = new User();
-            user.setName(guestUserName);
+            user.setUserName(guestUserName);
             guestSession.setUser(user);
             // TODO: in the future, map the user-IP and connection protocol as well
             sessions.getSessions().add(guestSession);

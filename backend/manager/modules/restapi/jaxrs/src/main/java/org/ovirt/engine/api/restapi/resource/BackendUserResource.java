@@ -9,8 +9,8 @@ import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
 /**
@@ -64,7 +64,9 @@ public class BackendUserResource
         return model;
     }
 
-    public User getUserByName(String name) {
-        return performGet(VdcQueryType.GetDbUserByUserName, new NameQueryParameters(name), BaseResource.class);
+    public User getUserByNameAndDomain(String userName, String domainName) {
+        return performGet(VdcQueryType.GetDbUserByUserNameAndDomain,
+                new GetDbUserByUserNameAndDomainQueryParameters(userName, domainName),
+                BaseResource.class);
     }
 }
