@@ -15,6 +15,11 @@ import org.springframework.util.CollectionUtils;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParametersBase> extends RemoveSnapshotSingleDiskCommandBase {
+
+    public RemoveSnapshotSingleDiskCommand(T parameters) {
+        super(parameters);
+    }
+
     public RemoveSnapshotSingleDiskCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

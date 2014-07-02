@@ -25,6 +25,10 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
         extends CommandBase<T> {
     private static final Log log = LogFactory.getLog(DestroyImageCommand.class);
 
+    public DestroyImageCommand(T parameters) {
+        super(parameters);
+    }
+
     public DestroyImageCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }

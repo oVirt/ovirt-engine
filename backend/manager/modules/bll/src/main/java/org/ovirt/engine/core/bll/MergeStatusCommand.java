@@ -29,6 +29,10 @@ public class MergeStatusCommand<T extends MergeParameters>
         extends CommandBase<T> {
     private static final Log log = LogFactory.getLog(MergeStatusCommand.class);
 
+    public MergeStatusCommand(T parameters) {
+        super(parameters);
+    }
+
     public MergeStatusCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
