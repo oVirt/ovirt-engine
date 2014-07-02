@@ -52,6 +52,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.NewSharedMacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -251,6 +252,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         quotaListModel.setIsAvailable(false);
         list.add(quotaListModel);
         list.add(new DataCenterNetworkQoSListModel());
+        list.add(new DataCenterStorageQosListModel());
         list.add(new PermissionListModel());
         list.add(new DataCenterEventListModel());
         setDetailModels(list);

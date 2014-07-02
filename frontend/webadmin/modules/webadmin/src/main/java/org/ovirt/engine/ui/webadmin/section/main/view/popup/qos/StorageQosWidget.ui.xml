@@ -1,0 +1,83 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+	<ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants' />
+
+	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosWidget.WidgetStyle">
+		.labelStyle {
+			font-weight: bold;
+			width: 90%;
+			padding-left: 5px;
+		}
+		.mbpsLabel {
+			text-align: right;
+			font-size: smaller;
+			color: gray;
+		}
+		.valueWidth {
+			width: 60px;
+			padding-left: 5px;
+		}
+		.valuePanelStyle {
+			padding-left: 30px;
+			width: 120px;
+		}
+		.textBoxLabelStyle {
+			padding-left: 5px;
+		}
+	</ui:style>
+
+	<g:FlowPanel ui:field="mainPanel" >
+		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="throughputEnabled"/>
+		<g:HorizontalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.totalStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputTotalEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.readStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputReadEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.writeStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="throughputWriteEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.mbpsLabelStorageQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+		<e:EntityModelCheckBoxEditor addStyleNames="{style.labelStyle}" ui:field="iopsEnabled"/>
+		<g:HorizontalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.totalStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsTotalEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.readStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsReadEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+			<g:VerticalPanel addStyleNames="{style.valuePanelStyle}">
+				<g:Label addStyleNames="{style.textBoxLabelStyle}" text="{constants.writeStorageQosPopup}"/>
+				<g:VerticalPanel>
+					<e:IntegerEntityModelTextBoxOnlyEditor ui:field="iopsWriteEditor" />
+					<g:Label addStyleNames="{style.mbpsLabel}" text="{constants.iopsCountLabelQosPopup}"/>
+				</g:VerticalPanel>
+			</g:VerticalPanel>
+		</g:HorizontalPanel>
+	</g:FlowPanel>
+
+</ui:UiBinder>

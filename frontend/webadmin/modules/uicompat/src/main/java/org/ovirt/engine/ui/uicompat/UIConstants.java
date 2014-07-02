@@ -263,6 +263,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Network QoS")
     String networkQoSTitle();
 
+    @DefaultStringValue("Storage QoS")
+    String storageQosTitle();
+
     @DefaultStringValue("Volumes")
     String volumesTitle();
 
@@ -2116,11 +2119,20 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Network QoS")
     String removeNetworkQoSTitle();
 
+    @DefaultStringValue("Remove Storage QoS")
+    String removeStorageQoSTitle();
+
     @DefaultStringValue("Edit Network QoS")
     String editNetworkQoSTitle();
 
+    @DefaultStringValue("Edit Storage QoS")
+    String editStorageQoSTitle();
+
     @DefaultStringValue("New Network QoS")
     String newNetworkQoSTitle();
+
+    @DefaultStringValue("New Storage QoS")
+    String newStorageQoSTitle();
 
     @DefaultStringValue("Are you sure you want to remove this Network QoS")
     String removeNetworkQoSMessage();
