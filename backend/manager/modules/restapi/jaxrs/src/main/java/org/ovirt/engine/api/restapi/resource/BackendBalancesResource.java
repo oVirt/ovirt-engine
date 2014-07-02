@@ -30,7 +30,7 @@ public class BackendBalancesResource extends BackendPolicyUnitsResource<Balances
 
     @Override
     public BalanceResource getSubResource(String id) {
-        return inject(new BackendBalanceResource(id));
+        return inject(new BackendBalanceResource(id, schedulingPolicyId));
     }
 
     @SingleEntityResource

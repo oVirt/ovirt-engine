@@ -15,13 +15,13 @@ import org.ovirt.engine.core.compat.Guid;
 
 public abstract class BackendPolicyUnitsResource<M extends BaseResources, N extends BaseResource> extends AbstractBackendCollectionResource<N, ClusterPolicy> implements PolicyUnitsResource<M, N> {
 
-    protected final Guid clusterPolicyId;
+    protected final Guid schedulingPolicyId;
     private static final String[] SUB_COLLECTIONS = {};
 
     protected BackendPolicyUnitsResource(Guid schedulingPolicyId,
             Class<N> baseResourcesClass) {
         super(baseResourcesClass, ClusterPolicy.class, SUB_COLLECTIONS);
-        this.clusterPolicyId = schedulingPolicyId;
+        this.schedulingPolicyId = schedulingPolicyId;
     }
 
     protected abstract ParametersProvider<N, ClusterPolicy> getAddParametersProvider();
@@ -56,8 +56,8 @@ public abstract class BackendPolicyUnitsResource<M extends BaseResources, N exte
     protected ClusterPolicy getClusterPolicy() {
         return getEntity(ClusterPolicy.class,
                 VdcQueryType.GetClusterPolicyById,
-                new IdQueryParameters(clusterPolicyId),
-                clusterPolicyId.toString());
+                new IdQueryParameters(schedulingPolicyId),
+                schedulingPolicyId.toString());
     }
 
 }

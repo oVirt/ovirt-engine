@@ -32,7 +32,7 @@ public class BackendFiltersResource extends BackendPolicyUnitsResource<Filters, 
 
     @Override
     public FilterResource getSubResource(String id) {
-        return inject(new BackendFilterResource(id));
+        return inject(new BackendFilterResource(id, schedulingPolicyId));
     }
 
     @SingleEntityResource
