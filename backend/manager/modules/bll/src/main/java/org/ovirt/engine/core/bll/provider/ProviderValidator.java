@@ -19,13 +19,12 @@ public class ProviderValidator {
     }
 
     public ValidationResult nameAvailable() {
-        return getProviderDao().getByName(provider.getName()) == null
-                ? ValidationResult.VALID
-                : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED);
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED)
+                .when(getProviderDao().getByName(provider.getName()) != null);
     }
 
     public ValidationResult providerIsSet() {
-        return provider == null ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
-                : ValidationResult.VALID;
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST)
+                .when(provider == null);
     }
 }
