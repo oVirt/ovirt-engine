@@ -2120,6 +2120,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             TaskManagerUtil.persistCommand(
                 CommandEntity.buildCommandEntity(getCommandId(),
                         parentParameters.getCommandId(),
+                        getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
+                        getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
                         getActionType(),
                         getParameters(),
                         commandStatus,

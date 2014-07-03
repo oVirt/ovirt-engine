@@ -142,6 +142,14 @@ public final class CommandsFactory {
         return getCommandClass(name, QueryPrefix);
     }
 
+    public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters) {
+        return ReflectionUtils.findConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()) != null;
+    }
+
+    public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters, CommandContext cmdContext) {
+        return ReflectionUtils.findConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass(), cmdContext.getClass()) != null;
+    }
+
     private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {
         // try the cache first
         String key = name + suffix;
