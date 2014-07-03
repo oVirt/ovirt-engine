@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.webadmin;
 
+import com.google.gwt.safehtml.shared.SafeUri;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 
 import com.google.gwt.safehtml.shared.SafeHtml;
@@ -18,6 +19,19 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
             "<div style='background: {2}; width: {0}%; height: 100%'></div>" +
             "<div class='engine-progress-text'>{1}</div></div>")
     SafeHtml progressBar(int progress, String text, String color);
+
+    @Template("<div>" +
+            "<div style='float:right; width: {2}px; color: {3}; font-weight: {4}'>{5}%</div>" +
+            "<div style='margin-right: {1}px; width: 100%; margin: auto;'>" +
+                "<img style='border-left: 1px solid #c0c0c0; border-bottom: 1px solid #c0c0c0;' src='{0}' />" +
+            "</div>" +
+            "</div>")
+    SafeHtml lineChart(SafeUri chartData, int chartMarginRight, int textWidth, String textColor, String fontWeight, int percentage);
+
+    @Template("<div>" +
+            "<div style='float:right; width: {0}px; color: {1}; font-weight: {2}'>{3}%</div>" +
+            "</div>")
+    SafeHtml lineChartWithoutImage(int textWidth, String textColor, String fontWeight, int percentage);
 
     /**
      * Creates a tree-item HTML

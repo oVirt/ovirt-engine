@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminImageButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminMenuBarButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CommentColumn;
+import org.ovirt.engine.ui.webadmin.widget.table.column.LineChartProgressBarColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.OneColorPercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.PercentColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.ProgressBarColumn;
@@ -132,41 +133,46 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         dcColumn.makeSortable(VmConditionFieldAutoCompleter.DATACENTER);
         getTable().addColumn(dcColumn, constants.dcVm(), "120px"); //$NON-NLS-1$
 
-        PercentColumn<VM> memoryColumn = new PercentColumn<VM>() {
+        ColumnResizeTableLineChartProgressBar memoryColumn = new ColumnResizeTableLineChartProgressBar() {
+
             @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageMemPercent();
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getMemoryUsageHistory();
             }
         };
         memoryColumn.makeSortable(VmConditionFieldAutoCompleter.MEM_USAGE);
         getTable().addColumn(memoryColumn, constants.memoryVm(), "60px"); //$NON-NLS-1$
 
-        PercentColumn<VM> cpuColumn = new PercentColumn<VM>() {
+        ColumnResizeTableLineChartProgressBar cpuColumn = new ColumnResizeTableLineChartProgressBar() {
+
             @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageCpuPercent();
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getCpuUsageHistory();
             }
         };
         cpuColumn.makeSortable(VmConditionFieldAutoCompleter.CPU_USAGE);
-        getTable().addColumn(cpuColumn, constants.cpuVm(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(cpuColumn, constants.cpuVm(), "70px"); //$NON-NLS-1$
 
-        PercentColumn<VM> networkColumn = new PercentColumn<VM>() {
+        ColumnResizeTableLineChartProgressBar networkColumn = new ColumnResizeTableLineChartProgressBar() {
+
             @Override
-            public Integer getProgressValue(VM object) {
-                return object.getUsageNetworkPercent();
+            protected List<Integer> getProgressValues(VM object) {
+                return object.getNetworkUsageHistory();
             }
         };
+
         networkColumn.makeSortable(VmConditionFieldAutoCompleter.NETWORK_USAGE);
-        getTable().addColumn(networkColumn, constants.networkVm(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(networkColumn, constants.networkVm(), "70px"); //$NON-NLS-1$
 
         PercentColumn<VM> migrationProgressColumn = new OneColorPercentColumn<VM>(ProgressBarColumn.ProgressBarColors.GREEN) {
+
             @Override
             public Integer getProgressValue(VM object) {
                 return object.getMigrationProgressPercent();
             }
         };
         migrationProgressColumn.makeSortable(VmConditionFieldAutoCompleter.MIGRATION_PROGRESS_PERCENT);
-        getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "60px"); //$NON-NLS-1$
+        getTable().addColumn(migrationProgressColumn, constants.migrationProgress(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> displayColumn = new EnumColumn<VM, DisplayType>() {
             @Override
@@ -182,7 +188,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                     return renderer.render(getRawValue(object));
             }
         };
-        getTable().addColumn(displayColumn, constants.displayVm(), "80px"); //$NON-NLS-1$
+        getTable().addColumn(displayColumn, constants.displayVm(), "70px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> statusColumn = new EnumColumn<VM, VMStatus>() {
             @Override
@@ -217,7 +223,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
             }
         };
         uptimeColumn.makeSortable(VmConditionFieldAutoCompleter.UPTIME);
-        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "120px"); //$NON-NLS-1$
+        getTable().addColumn(uptimeColumn, constants.uptimeVm(), "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<VM> descriptionColumn = new TextColumnWithTooltip<VM>() {
             @Override
@@ -388,4 +394,11 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
     }
 
+    abstract class ColumnResizeTableLineChartProgressBar extends LineChartProgressBarColumn<VM> {
+
+        @Override
+        protected String getActualWidth() {
+            return getTable().getColumnWidth(this);
+        }
+    }
 }

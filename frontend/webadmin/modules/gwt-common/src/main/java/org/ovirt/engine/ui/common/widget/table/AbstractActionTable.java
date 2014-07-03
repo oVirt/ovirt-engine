@@ -655,4 +655,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         return !showDefaultHeader;
     }
 
+    public String getColumnWidth(Column<T, ?> column) {
+        return table.getColumnWidth(column);
+    }
 }
