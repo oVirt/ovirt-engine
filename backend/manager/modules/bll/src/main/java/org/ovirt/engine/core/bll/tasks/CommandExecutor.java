@@ -36,8 +36,7 @@ public class CommandExecutor {
 
     private final CommandCoordinator coco;
     private final Map<Guid, CommandCallBack> cmdCallBackMap = new ConcurrentHashMap<>();
-    private Object LOCK = new Object();
-    private volatile boolean cmdExecutorInitialized;
+    private boolean cmdExecutorInitialized;
 
     CommandExecutor(CommandCoordinator coco) {
         this.coco = coco;
@@ -82,16 +81,12 @@ public class CommandExecutor {
 
     private void initCommandExecutor() {
         if (!cmdExecutorInitialized) {
-            synchronized(LOCK) {
-                if (!cmdExecutorInitialized) {
-                    for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
-                        if (!cmdEntity.isCallBackNotified()) {
-                            addToCallBackMap(cmdEntity);
-                        }
-                    }
-                    cmdExecutorInitialized = true;
+            for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
+                if (!cmdEntity.isCallBackNotified()) {
+                    addToCallBackMap(cmdEntity);
                 }
             }
+            cmdExecutorInitialized = true;
         }
     }
 
