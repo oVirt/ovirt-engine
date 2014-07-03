@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandContextsCache;
@@ -50,7 +51,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     CommandCoordinatorImpl() {
         commandsCache = new CommandsCacheImpl();
-        contextsCache = new CommandContextsCacheImpl();
+        contextsCache = new CommandContextsCacheImpl(commandsCache);
         coCoAsyncTaskHelper = new CoCoAsyncTaskHelper(this);
         cmdExecutor = new CommandExecutor(this);
     }
@@ -118,7 +119,15 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     private CommandBase<?> buildCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
         CommandBase<?> command = null;
         if (cmdEntity != null) {
-            command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters(), cmdContext);
+            if (cmdContext == null) {
+                cmdContext = new CommandContext(new EngineContext()).withExecutionContext(new ExecutionContext());
+            }
+            if (CommandsFactory.hasConstructor(cmdEntity.getCommandType(), cmdEntity.getActionParameters(), cmdContext)) {
+                command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters(), cmdContext);
+            } else {
+                command = CommandsFactory.createCommand(cmdEntity.getCommandType(), cmdEntity.getActionParameters());
+            }
+
             command.setCommandStatus(cmdEntity.getCommandStatus(), false);
             if (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
                     ! cmdEntity.getRootCommandId().equals(cmdEntity.getId()) &&

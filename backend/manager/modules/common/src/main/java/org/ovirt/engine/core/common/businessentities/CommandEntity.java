@@ -14,6 +14,8 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 5293055556971973650L;
     private Guid commandId;
     private Guid rootCommandId;
+    private Guid jobId;
+    private Guid stepId;
     private VdcActionType commandType;
     private VdcActionParametersBase actionParameters;
     private VdcReturnValueBase returnValue;
@@ -114,10 +116,20 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.callBackNotified = callBackNotified;
     }
 
-    public static CommandEntity buildCommandEntity(Guid commandId, Guid rootCommandId, VdcActionType actionType, VdcActionParametersBase params, CommandStatus status, boolean callBackEnabled, VdcReturnValueBase returnValue) {
+    public static CommandEntity buildCommandEntity(Guid commandId,
+                                                   Guid rootCommandId,
+                                                   Guid jobId,
+                                                   Guid stepId,
+                                                   VdcActionType actionType,
+                                                   VdcActionParametersBase params,
+                                                   CommandStatus status,
+                                                   boolean callBackEnabled,
+                                                   VdcReturnValueBase returnValue) {
         CommandEntity entity = new CommandEntity();
         entity.setId(commandId);
         entity.setRootCommandId(rootCommandId);
+        entity.setJobId(jobId);
+        entity.setStepId(stepId);
         entity.setCommandType(actionType);
         entity.setActionParameters(params);
         entity.setCommandStatus(status);
@@ -132,5 +144,21 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setReturnValue(VdcReturnValueBase returnValue) {
         this.returnValue = returnValue;
+    }
+
+    public Guid getJobId() {
+        return jobId;
+    }
+
+    public void setJobId(Guid jobId) {
+        this.jobId = jobId;
+    }
+
+    public Guid getStepId() {
+        return stepId;
+    }
+
+    public void setStepId(Guid stepId) {
+        this.stepId = stepId;
     }
 }

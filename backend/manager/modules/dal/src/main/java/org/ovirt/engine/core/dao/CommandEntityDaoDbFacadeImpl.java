@@ -26,6 +26,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
         public CommandEntity mapRow(ResultSet resultSet, int rowNum) throws SQLException {
             CommandEntity result = new CommandEntity();
             result.setId(Guid.createGuidFromString(resultSet.getString("command_id")));
+            result.setJobId(Guid.createGuidFromString(resultSet.getString("job_id")));
+            result.setStepId(Guid.createGuidFromString(resultSet.getString("step_id")));
             result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
             result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
             result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
@@ -56,6 +58,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
         return getCustomMapSqlParameterSource().addValue("command_id", Guid.isNullOrEmpty(entity.getId()) ? Guid.Empty : entity.getId())
                 .addValue("command_type", entity.getCommandType().getValue())
                 .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
+                .addValue("job_id", Guid.isNullOrEmpty(entity.getJobId()) ? Guid.Empty : entity.getJobId())
+                .addValue("step_id", Guid.isNullOrEmpty(entity.getStepId()) ? Guid.Empty : entity.getStepId())
                 .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
                 .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
