@@ -1262,11 +1262,11 @@ AS
 SELECT       object_id, ad_element_id
 FROM         internal_permissions_view
 WHERE        object_type_id = 9 AND role_type = 2
--- Or the object is a VM in the cluster
+-- Or the object is a VM or Template in the cluster
 UNION ALL
-SELECT       vds_group_id, ad_element_id
+SELECT       DISTINCT vds_group_id, ad_element_id
 FROM         vm_static
-INNER JOIN   internal_permissions_view ON object_id = vm_guid AND object_type_id = 2 AND role_type=2
+INNER JOIN   internal_permissions_view ON object_id = vm_guid AND (object_type_id = 2 OR object_type_id = 4) AND role_type=2 and vds_group_id is not null
 -- Or the object is the Data Center containing the Cluster
 UNION ALL
 SELECT       vds_group_id, ad_element_id
