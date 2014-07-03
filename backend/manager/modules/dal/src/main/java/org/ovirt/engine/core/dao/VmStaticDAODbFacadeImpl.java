@@ -10,19 +10,16 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStaticDAO {
+public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> implements VmStaticDAO {
     public static final Integer USE_LATEST_VERSION_NUMBER_INDICATOR = null;
     public static final Integer DONT_USE_LATEST_VERSION_NUMBER_INDICATOR = 1;
 
-    @Override
-    public VmStatic get(Guid id) {
-        return getCallsHandler().executeRead("GetVmStaticByVmGuid",
-                VMStaticRowMapper.instance,
-                getIdParamterSource(id));
+    public VmStaticDAODbFacadeImpl() {
+        super("VmStatic");
+        setProcedureNameForGet("GetVmStaticByVmGuid");
     }
 
     @Override
@@ -31,81 +28,30 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
     }
 
     @Override
-    public void save(VmStatic vm) {
-        getCallsHandler().executeModification("InsertVmStatic", getFullParameterSource(vm));
-
-    }
-
-    @Override
-    public void update(VmStatic vm) {
-        getCallsHandler().executeModification("UpdateVmStatic", getFullParameterSource(vm));
-    }
-
-    private MapSqlParameterSource getFullParameterSource(VmStatic vm) {
-        return getIdParamterSource(vm.getId())
-                .addValue("description", vm.getDescription())
-                .addValue("free_text_comment", vm.getComment())
-                .addValue("mem_size_mb", vm.getMemSizeMb())
-                .addValue("os", vm.getOsId())
-                .addValue("vds_group_id", vm.getVdsGroupId())
+    protected MapSqlParameterSource createFullParametersMapper(VmStatic vm) {
+        return createBaseParametersMapper(vm)
                 .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
-                .addValue("creation_date", vm.getCreationDate())
-                .addValue("num_of_monitors", vm.getNumOfMonitors())
-                .addValue("single_qxl_pci", vm.getSingleQxlPci())
                 .addValue("is_initialized", vm.isInitialized())
-                .addValue("num_of_sockets", vm.getNumOfSockets())
-                .addValue("cpu_per_socket", vm.getCpuPerSocket())
-                .addValue("usb_policy", vm.getUsbPolicy())
-                .addValue("time_zone", vm.getTimeZone())
-                .addValue("auto_startup", vm.isAutoStartup())
-                .addValue("is_stateless", vm.isStateless())
-                .addValue("is_smartcard_enabled", vm.isSmartcardEnabled())
-                .addValue("is_delete_protected", vm.isDeleteProtected())
-                .addValue("sso_method", vm.getSsoMethod().toString())
-                .addValue("dedicated_vm_for_vds", vm.getDedicatedVmForVds())
-                .addValue("fail_back", vm.isFailBack())
-                .addValue("vm_type", vm.getVmType())
-                .addValue("nice_level", vm.getNiceLevel())
-                .addValue("cpu_shares", vm.getCpuShares())
-                .addValue("default_boot_sequence",
-                        vm.getDefaultBootSequence())
-                .addValue("default_display_type", vm.getDefaultDisplayType())
-                .addValue("priority", vm.getPriority())
-                .addValue("iso_path", vm.getIsoPath())
-                .addValue("origin", vm.getOrigin())
-                .addValue("initrd_url", vm.getInitrdUrl())
-                .addValue("kernel_url", vm.getKernelUrl())
-                .addValue("kernel_params", vm.getKernelParams())
-                .addValue("migration_support",
-                        vm.getMigrationSupport().getValue())
                 .addValue("predefined_properties", vm.getPredefinedProperties())
                 .addValue("userdefined_properties",
                         vm.getUserDefinedProperties())
-                .addValue("min_allocated_mem", vm.getMinAllocatedMem())
-                .addValue("quota_id", vm.getQuotaId())
-                .addValue("allow_console_reconnect", vm.isAllowConsoleReconnect())
                 .addValue("cpu_pinning", vm.getCpuPinning())
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
-                .addValue("tunnel_migration", vm.getTunnelMigration())
-                .addValue("vnc_keyboard_layout", vm.getVncKeyboardLayout())
-                .addValue("is_run_and_pause", vm.isRunAndPause())
-                .addValue("created_by_user_id", vm.getCreatedByUserId())
                 .addValue("instance_type_id", vm.getInstanceTypeId())
                 .addValue("image_type_id", vm.getImageTypeId())
                 .addValue("original_template_name", vm.getOriginalTemplateName())
                 .addValue("original_template_id", vm.getOriginalTemplateGuid())
-                .addValue("migration_downtime", vm.getMigrationDowntime())
                 .addValue("template_version_number", vm.isUseLatestVersion() ?
                         USE_LATEST_VERSION_NUMBER_INDICATOR : DONT_USE_LATEST_VERSION_NUMBER_INDICATOR)
-                .addValue("serial_number_policy", vm.getSerialNumberPolicy() == null ? null : vm.getSerialNumberPolicy().getValue())
-                .addValue("custom_serial_number", vm.getCustomSerialNumber())
-                .addValue("is_boot_menu_enabled", vm.isBootMenuEnabled())
                 .addValue("numatune_mode",
                         vm.getNumaTuneMode() == null ? NumaTuneMode.PREFERRED.getValue() : vm.getNumaTuneMode()
-                                .getValue())
-                .addValue("is_spice_file_transfer_enabled", vm.isSpiceFileTransferEnabled())
-                .addValue("is_spice_copy_paste_enabled", vm.isSpiceCopyPasteEnabled());
+                                .getValue());
+    }
+
+    @Override
+    protected RowMapper<VmStatic> createEntityRowMapper() {
+        return VMStaticRowMapper.instance;
     }
 
     @Override
@@ -115,13 +61,13 @@ public class VmStaticDAODbFacadeImpl extends BaseDAODbFacade implements VmStatic
 
     public void remove(Guid id, boolean removePermissions) {
         getCallsHandler().executeModification("DeleteVmStatic",
-                getIdParamterSource(id)
+                createIdParameterMapper(id)
                         .addValue("remove_permissions", removePermissions));
     }
 
-    private MapSqlParameterSource getIdParamterSource(Guid id) {
-        return getCustomMapSqlParameterSource()
-                .addValue("vm_guid", id);
+    @Override
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("vm_guid", id);
     }
 
     @Override

@@ -16,14 +16,18 @@ import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.AbstractVmRowMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * <code>VmTemplateDAODbFacadeImpl</code> provides a concrete implementation of {@link VmTemplateDAO}.
  */
-public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemplateDAO {
+public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> implements VmTemplateDAO {
+
+    public VmTemplateDAODbFacadeImpl() {
+        super("VmTemplate");
+        setProcedureNameForRemove("DeleteVmTemplates");
+    }
 
     @Override
     public VmTemplate get(Guid id) {
@@ -52,8 +56,7 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     public VmTemplate get(Guid id, Guid userID, boolean isFiltered) {
         return getCallsHandler().executeRead("GetVmTemplateByVmtGuid",
                 VMTemplateRowMapper.instance,
-                getCustomMapSqlParameterSource()
-                        .addValue("vmt_guid", id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
+                createIdParameterMapper(id).addValue("user_id", userID).addValue("is_filtered", isFiltered));
     }
 
     @Override
@@ -156,84 +159,25 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
     }
 
     @Override
-    public void save(VmTemplate template) {
-        getCallsHandler().executeModification("InsertVmTemplate", getInsertOrUpdateParameters(template));
-    }
-
-    private MapSqlParameterSource getInsertOrUpdateParameters(VmTemplate template) {
-        return getCustomMapSqlParameterSource()
+    protected MapSqlParameterSource createFullParametersMapper(VmTemplate template) {
+        return createBaseParametersMapper(template)
                 .addValue("child_count", template.getChildCount())
-                .addValue("creation_date", template.getCreationDate())
-                .addValue("description", template.getDescription())
-                .addValue("free_text_comment", template.getComment())
-                .addValue("mem_size_mb", template.getMemSizeMb())
                 .addValue("name", template.getName())
-                .addValue("num_of_sockets", template.getNumOfSockets())
-                .addValue("cpu_per_socket", template.getCpuPerSocket())
-                .addValue("os", template.getOsId())
-                .addValue("vmt_guid", template.getId())
-                .addValue("vds_group_id", template.getVdsGroupId())
-                .addValue("num_of_monitors", template.getNumOfMonitors())
-                .addValue("single_qxl_pci", template.getSingleQxlPci())
-                .addValue("allow_console_reconnect", template.isAllowConsoleReconnect())
                 .addValue("status", template.getStatus())
-                .addValue("usb_policy", template.getUsbPolicy())
-                .addValue("time_zone", template.getTimeZone())
-                .addValue("fail_back", template.isFailBack())
-                .addValue("vm_type", template.getVmType())
-                .addValue("nice_level", template.getNiceLevel())
-                .addValue("cpu_shares", template.getCpuShares())
-                .addValue("default_boot_sequence",
-                        template.getDefaultBootSequence())
-                .addValue("default_display_type",
-                        template.getDefaultDisplayType())
-                .addValue("priority", template.getPriority())
-                .addValue("auto_startup", template.isAutoStartup())
-                .addValue("is_stateless", template.isStateless())
-                .addValue("is_smartcard_enabled", template.isSmartcardEnabled())
-                .addValue("is_delete_protected", template.isDeleteProtected())
-                .addValue("sso_method", template.getSsoMethod().toString())
-                .addValue("iso_path", template.getIsoPath())
-                .addValue("origin", template.getOrigin())
-                .addValue("initrd_url", template.getInitrdUrl())
-                .addValue("kernel_url", template.getKernelUrl())
-                .addValue("kernel_params", template.getKernelParams())
                 .addValue("is_disabled", template.isDisabled())
-                .addValue("quota_id", template.getQuotaId())
-                .addValue("migration_support", template.getMigrationSupport().getValue())
-                .addValue("dedicated_vm_for_vds", template.getDedicatedVmForVds())
-                .addValue("tunnel_migration", template.getTunnelMigration())
-                .addValue("vnc_keyboard_layout", template.getVncKeyboardLayout())
-                .addValue("min_allocated_mem", template.getMinAllocatedMem())
-                .addValue("is_run_and_pause", template.isRunAndPause())
-                .addValue("created_by_user_id", template.getCreatedByUserId())
                 .addValue("template_type", template.getTemplateType().name())
-                .addValue("migration_downtime", template.getMigrationDowntime())
                 .addValue("base_template_id", template.getBaseTemplateId())
-                .addValue("template_version_name", template.getTemplateVersionName())
-                .addValue("serial_number_policy", template.getSerialNumberPolicy() == null ? null : template.getSerialNumberPolicy().getValue())
-                .addValue("custom_serial_number", template.getCustomSerialNumber())
-                .addValue("is_boot_menu_enabled", template.isBootMenuEnabled())
-                .addValue("is_spice_file_transfer_enabled", template.isSpiceFileTransferEnabled())
-                .addValue("is_spice_copy_paste_enabled", template.isSpiceCopyPasteEnabled());
+                .addValue("template_version_name", template.getTemplateVersionName());
     }
 
     @Override
-    public void update(VmTemplate template) {
-        getCallsHandler().executeModification("UpdateVmTemplate", getInsertOrUpdateParameters(template));
+    protected MapSqlParameterSource createIdParameterMapper(Guid id) {
+        return getCustomMapSqlParameterSource().addValue("vmt_guid", id);
     }
 
     @Override
     public void updateStatus(Guid id, VmTemplateStatus status) {
-        getCallsHandler().executeModification("UpdateVmTemplateStatus", getCustomMapSqlParameterSource()
-                .addValue("vmt_guid", id)
-                .addValue("status", status));
-    }
-
-    @Override
-    public void remove(Guid id) {
-        getCallsHandler().executeModification("DeleteVmTemplates", getCustomMapSqlParameterSource()
-                .addValue("vmt_guid", id));
+        getCallsHandler().executeModification("UpdateVmTemplateStatus", createIdParameterMapper(id).addValue("status", status));
     }
 
     @Override
@@ -311,6 +255,11 @@ public class VmTemplateDAODbFacadeImpl extends BaseDAODbFacade implements VmTemp
             entity.setTemplateVersionName(rs.getString("template_version_name"));
             return entity;
         }
+    }
+
+    @Override
+    protected RowMapper<VmTemplate> createEntityRowMapper() {
+        return VMTemplateRowMapper.instance;
     }
 
     private static class VMTemplateWithPlugInfo {
