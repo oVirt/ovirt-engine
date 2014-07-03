@@ -1,5 +1,6 @@
 function pageLoaded()
 {
+    // TODO fix these IDs
     document.getElementById("warningMessage").style.display = "none";
     document.getElementById("dynamicLinksSection").style.display = "block";
 }

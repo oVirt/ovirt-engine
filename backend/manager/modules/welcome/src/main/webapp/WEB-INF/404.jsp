@@ -27,7 +27,7 @@
                         </div>
                     </div>
 
-                    <div class="col-sm-12">
+                    <div class="col-sm-12 welcome-title-wrapper">
                         <span class="welcome-title"><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></span>
                     </div>
 

@@ -90,6 +90,7 @@ popup windows, for instance for creating a new VM */
     width: 98px;
     height: 39px;
     border: 0px;
+    display: block;
 }
 
 .obrand_loginPageLogoImageLink {

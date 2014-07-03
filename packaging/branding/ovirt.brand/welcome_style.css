@@ -33,15 +33,21 @@
     background-color: inherit;
 }
 
+.welcome-title-wrapper {
+    padding-bottom: 20px;
+}
+
 .welcome-title {
     font-size: 18px;
 }
 
 .version-text {
     margin-left: 30px;
+    color: #bbb;
 }
 
 .welcome-section-title {
+    padding-bottom: 7px;
     font-weight: 700;
     font-size: 14px;
 }

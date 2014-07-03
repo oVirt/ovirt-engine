@@ -7,6 +7,16 @@
   background-color: rgba(0, 0, 0, 0.25);
 }
 
+@media (min-width: 768px) {
+    .login-pf .login {
+        padding-left: 0;
+    }
+}
+
+.login-pf .login {
+    padding-right: 20px;
+}
+
 .navbar-pf {
   background: #393f45;
   border-top: 3px solid #43a103;

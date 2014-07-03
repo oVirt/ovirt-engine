@@ -1,11 +1,10 @@
-
-<div class="col-sm-7 col-md-6 col-lg-5 login">
+<div class="col-sm-3 col-md-3 col-lg-3 login">
     <div class="welcome-section-title">{portal_title}</div>
     <div class="welcome-link"><a id="WelcomePage_userportal" href="userportal/?locale={userLocale}">{portal_user_portal}</a></div>
     <div class="welcome-link"><a id="WelcomePage_webadmin" href="webadmin/?locale={userLocale}">{portal_admin}</a></div>
     <div class="welcome-link"><a id="WelcomePage_reports" href="services/reports-redirect">{portal_reports}</a></div>
 </div>
-<div class="col-sm-5 col-md-6 col-lg-7 details">
+<div class="col-sm-4 col-md-4 col-lg-3 details">
     <div class="welcome-section-title"><span class="">{downloads_title}</div>
     <div class="welcome-link"><a id="WelcomePage_ccr" href="{console_client_resources_url}" target="_blank">{console_client_resources}</a></div>
 </div>

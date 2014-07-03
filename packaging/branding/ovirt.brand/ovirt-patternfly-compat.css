@@ -62,7 +62,9 @@ label {
 }
 .login-pf select {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
+    color: black;
 }
+
 .login-pf label {
     font-family: 'Open Sans', Helvetica, Arial, sans-serif !important;
 }
