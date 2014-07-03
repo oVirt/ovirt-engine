@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll.host.provider.foreman;
 
 import java.io.Serializable;
 
-public class ForemanOperatingSystem implements Serializable  {
+public class ForemanOperatingSystem implements Serializable {
 
     private static final long serialVersionUID = 5278645435607997741L;
 

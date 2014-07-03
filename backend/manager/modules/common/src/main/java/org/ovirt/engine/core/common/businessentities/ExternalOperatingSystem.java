@@ -11,18 +11,23 @@ public class ExternalOperatingSystem implements Serializable {
     public int getMediaId() {
         return mediaId;
     }
+
     public void setMediaId(int mediaId) {
         this.mediaId = mediaId;
     }
+
     public int getId() {
         return id;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public String getName() {
         return name;
     }
+
     public void setName(String name) {
         this.name = name;
     }

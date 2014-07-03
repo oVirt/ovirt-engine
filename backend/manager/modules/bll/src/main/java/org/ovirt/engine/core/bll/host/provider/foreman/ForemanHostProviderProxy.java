@@ -58,7 +58,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String HOST_GROUPS_ENTRY_POINT = API_ENTRY_POINT + "/hostgroups";
     private static final String HOST_GROUPS_QUERY = HOST_GROUPS_ENTRY_POINT + "?" + JSON_FORMAT;
 
-    private static final String COMPUTE_RESOURCES_HOSTS_ENTRY_POINT = API_ENTRY_POINT + "/compute_resources?search=oVirt";
+    private static final String COMPUTE_RESOURCES_HOSTS_ENTRY_POINT = API_ENTRY_POINT
+            + "/compute_resources?search=oVirt";
 
     private static final String DISCOVERED_HOSTS = "/discovered_hosts";
     private static final String DISCOVERED_HOSTS_ENTRY_POINT = API_ENTRY_POINT + DISCOVERED_HOSTS;
@@ -73,7 +74,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<VDS> runHostListMethod(HttpMethod httpMethod) {
-        try{
+        try {
             runHttpMethod(httpClient, httpMethod);
             ForemanHostWrapper fhw = objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostWrapper.class);
             return mapHosts(Arrays.asList(fhw.getResults()));
@@ -83,7 +84,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalDiscoveredHost> runDiscoveredHostListMethod(HttpMethod httpMethod) {
-        try{
+        try {
             runHttpMethod(httpClient, httpMethod);
             ForemanDiscoveredHostWrapper fdw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanDiscoveredHostWrapper.class);
@@ -94,7 +95,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalHostGroup> runHostGroupListMethod(HttpMethod httpMethod) {
-        try{
+        try {
             runHttpMethod(httpClient, httpMethod);
             ForemanHostGroupWrapper fhgw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanHostGroupWrapper.class);
@@ -105,7 +106,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalOperatingSystem> runOperationSystemMethod(HttpMethod httpMethod) {
-        try{
+        try {
             runHttpMethod(httpClient, httpMethod);
             ForemanOperatingSystemWrapper fosw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanOperatingSystemWrapper.class);
@@ -116,11 +117,11 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     }
 
     private List<ExternalComputeResource> runComputeResourceMethod(HttpMethod httpMethod) {
-        try{
+        try {
             runHttpMethod(httpClient, httpMethod);
             ForemanComputerResourceWrapper fcrw =
                     objectMapper.readValue(httpMethod.getResponseBody(), ForemanComputerResourceWrapper.class);
-          return mapComputeResource(Arrays.asList(fcrw.getResults()));
+            return mapComputeResource(Arrays.asList(fcrw.getResults()));
         } catch (Exception e) {
             return null;
         }
@@ -239,11 +240,11 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
     @Override
     public void provisionHost(VDS vds,
-                              ExternalHostGroup hg,
-                              ExternalComputeResource computeResource,
-                              String mac,
-                              String discoverName,
-                              String rootPassword) {
+            ExternalHostGroup hg,
+            ExternalComputeResource computeResource,
+            String mac,
+            String discoverName,
+            String rootPassword) {
         final String entityBody = "{\n" +
                 "    \"discovered_host\": {\n" +
                 "        \"name\": \"" + vds.getName() + "\",\n" +
@@ -260,7 +261,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "        \"root_pass\": \"" + rootPassword + "\",\n" +
                 "        \"host_parameters_attributes\": [\n" +
                 "           {\n" +
-               "                \"name\": \"host_ovirt_id\",\n" +
+                "                \"name\": \"host_ovirt_id\",\n" +
                 "                \"value\": \"" + vds.getStaticData().getId() + "\",\n" +
                 "                \"_destroy\": \"false\",\n" +
                 "                \"nested\": \"\"\n" +
@@ -360,7 +361,10 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             URL hostUrl = getUrl();
             if (isSecured()) {
                 int hostPort = hostUrl.getPort() == -1 ? HttpsURL.DEFAULT_PORT : hostUrl.getPort();
-                Protocol httpsProtocol = new Protocol(String.valueOf(HttpsURL.DEFAULT_SCHEME), (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(ExternalTrustStoreInitializer.getTrustStore()),  hostPort);
+                Protocol httpsProtocol =
+                        new Protocol(String.valueOf(HttpsURL.DEFAULT_SCHEME),
+                                (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(ExternalTrustStoreInitializer.getTrustStore()),
+                                hostPort);
                 httpClient.getHostConfiguration().setHost(hostUrl.getHost(), hostPort, httpsProtocol);
             } else {
                 int hostPort = hostUrl.getPort() == -1 ? HttpURL.DEFAULT_PORT : hostUrl.getPort();
@@ -368,7 +372,8 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
             }
             objectMapper.configure(Feature.FAIL_ON_UNKNOWN_PROPERTIES, false);
             if (hostProvider.getUsername() != null && hostProvider.getPassword() != null) {
-                Credentials hostProviderCredentials = new UsernamePasswordCredentials(hostProvider.getUsername(), hostProvider.getPassword());
+                Credentials hostProviderCredentials =
+                        new UsernamePasswordCredentials(hostProvider.getUsername(), hostProvider.getPassword());
                 httpClient.getState().setCredentials(AuthScope.ANY, hostProviderCredentials);
                 // Required when working with foreman's /api rather than accessing directly to /hosts
                 httpClient.getParams().setAuthenticationPreemptive(true);
