@@ -536,7 +536,7 @@
                         <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" />
                         <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor"/>
                         <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" addStyleNames="{style.checkbox}" />
-                        <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkbox}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                     </g:FlowPanel>
                 </t:content>
             </t:DialogTab>
