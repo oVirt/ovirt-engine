@@ -297,6 +297,8 @@
 		<include name="common/businessentities/gluster/GlusterVolumeType.java" />
 		<include name="common/businessentities/gluster/GlusterTaskSupport.java"/>
 		<include name="common/businessentities/gluster/GlusterStatus.java" />
+		<include name="common/businessentities/gluster/GeoRepCrawlStatus.java" />
+		<include name="common/businessentities/gluster/GeoRepSessionStatus.java" />
 		<include name="common/businessentities/gluster/GlusterServiceStatus.java" />
 		<include name="common/businessentities/gluster/TransportType.java" />
 		<include name="common/businessentities/gluster/GlusterBrickEntity.java"/>
@@ -341,6 +343,9 @@
         <include name="common/businessentities/gluster/GlusterVolumeProfileStats.java"/>
         <include name="common/businessentities/gluster/NfsProfileDetails.java"/>
         <include name="common/businessentities/gluster/BrickProfileDetails.java"/>
+        <include name="common/businessentities/gluster/GlusterGeoRepSession.java"/>
+        <include name="common/businessentities/gluster/GlusterGeoRepSessionDetails.java"/>
+        <include name="common/businessentities/gluster/GlusterGeoRepSessionConfiguration.java"/>
 		<!-- Scheduling -->
 		<include name="common/scheduling/*.java"/>
 		<include name="common/scheduling/parameters/*.java"/>
