@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.MissingResourceException;
+import java.util.Objects;
 import java.util.ResourceBundle;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
@@ -198,37 +199,37 @@ public final class AuditLogDirector {
      * @return a unique object id
      */
     private static String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
-        final char DELIMITER = ',';
-        StringBuilder sb = new StringBuilder();
-        sb.append("type=");
-        sb.append(logType);
-        sb.append(DELIMITER);
-        sb.append("sd=");
-        sb.append(logable.getStorageDomainId() == null ? "" : logable.getStorageDomainId().toString());
-        sb.append(DELIMITER);
-        sb.append("dc=");
-        sb.append(logable.getStoragePoolId() == null ? "" : logable.getStoragePoolId().toString());
-        sb.append(DELIMITER);
-        sb.append("user=");
-        sb.append(logable.getUserId() == null ? "" : logable.getUserId().toString());
-        sb.append(DELIMITER);
-        sb.append("cluster=");
-        sb.append(logable.getVdsGroupId().toString());
-        sb.append(DELIMITER);
-        sb.append("vds=");
-        sb.append(logable.getVdsId().toString());
-        sb.append(DELIMITER);
-        sb.append("vm=");
-        sb.append(logable.getVmId().equals(Guid.Empty) ? "" : logable.getVmId().toString());
-        sb.append(DELIMITER);
-        sb.append("template=");
-        sb.append(logable.getVmTemplateId().equals(Guid.Empty) ? "" : logable.getVmTemplateId().toString());
-        sb.append(DELIMITER);
-        sb.append("customId=");
-        sb.append(StringUtils.defaultString(logable.getCustomId()));
-        sb.append(DELIMITER);
+        final StringBuilder builder = new StringBuilder();
 
-        return sb.toString();
+        compose(builder, "type", logType.toString());
+        compose(builder, "sd", nullToEmptyString(logable.getStorageDomainId()));
+        compose(builder, "dc", nullToEmptyString(logable.getStoragePoolId()));
+        compose(builder, "user", nullToEmptyString(logable.getUserId()));
+        compose(builder, "cluster", logable.getVdsGroupId().toString());
+        compose(builder, "vds", logable.getVdsId().toString());
+        compose(builder, "vm", emptyGuidToEmptyString(logable.getVmId()));
+        compose(builder, "template", emptyGuidToEmptyString(logable.getVmTemplateId()));
+        compose(builder, "customId", StringUtils.defaultString(logable.getCustomId()));
+
+        return builder.toString();
+    }
+
+    private static void compose(StringBuilder builder, String key, String value) {
+        final char DELIMITER = ',';
+        final char NAME_VALUE_SEPARATOR = '=';
+        if (builder.length() > 0) {
+            builder.append(DELIMITER);
+        }
+
+        builder.append(key).append(NAME_VALUE_SEPARATOR).append(value);
+    }
+
+    private static String emptyGuidToEmptyString(Guid guid) {
+        return guid.equals(Guid.Empty) ? "" : guid.toString();
+    }
+
+    private static String nullToEmptyString(Object obj) {
+        return Objects.toString(obj, "");
     }
 
     static String resolveMessage(String message, AuditLogableBase logable) {
