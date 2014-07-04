@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
 import java.text.MessageFormat;
-import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -25,47 +24,36 @@ import org.slf4j.LoggerFactory;
 
 public final class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
-    private static final Map<AuditLogType, String> messages = new EnumMap<AuditLogType, String>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
     static final String UNKNOWN_REASON_VALUE = "Not Specified";
     static final String REASON_TOKEN = "reason";
-    static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
+    private static final ResourceBundle resourceBundle = getResourceBundle();
 
-    static {
-        initMessages();
-    }
-
-    private static void initMessages() {
-        ResourceBundle bundle = readMessagesFromBundle();
-
-        for (AuditLogType auditLogType : AuditLogType.values()) {
-            messages.put(auditLogType, getMessage(bundle, auditLogType));
-        }
-    }
-
-    public static String getMessage(ResourceBundle bundle, AuditLogType logType) {
-        final String key = logType.name();
+    static ResourceBundle getResourceBundle() {
         try {
-            return bundle.getString(key);
-        } catch (Exception e) {
-            log.error("Key '{}' is not translated in '{}'", key, APP_ERRORS_MESSAGES_FILE_NAME);
-            return "";
-        }
-    }
-
-    static ResourceBundle readMessagesFromBundle() {
-        try {
-            return ResourceBundle.getBundle(APP_ERRORS_MESSAGES_FILE_NAME);
+            return ResourceBundle.getBundle(getResourceBundleName());
         } catch (MissingResourceException e) {
-            log.error("Could not load audit log messages from the file {}", APP_ERRORS_MESSAGES_FILE_NAME);
-            throw e;
+            throw new RuntimeException("Could not find ResourceBundle file '" + getResourceBundleName() +"'.");
         }
+    }
+
+    private static String getResourceBundleName() {
+        return "bundles/AuditLogMessages";
     }
 
     public static String getMessage(AuditLogType logType) {
-        String message = messages.get(logType);
-        return message == null ? "" : message;
+        return StringUtils.defaultString(getMessageOrNull(logType));
+    }
+
+    protected static String getMessageOrNull(AuditLogType logType) {
+        final String key = logType.name();
+        try {
+            return resourceBundle.getString(key);
+        } catch (Exception e) {
+            log.error("Key '{}' is not translated in '{}'", key, getResourceBundleName());
+            return null;
+        }
     }
 
     public static void log(AuditLogableBase auditLogable) {
@@ -165,7 +153,7 @@ public final class AuditLogDirector {
                     auditLogable.getCustomData());
         }
 
-        final String messageByType = messages.get(logType);
+        final String messageByType = getMessageOrNull(logType);
         if (messageByType == null) {
             return null;
         } else {
