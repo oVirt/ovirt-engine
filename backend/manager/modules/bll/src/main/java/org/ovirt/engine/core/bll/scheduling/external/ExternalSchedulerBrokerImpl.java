@@ -94,7 +94,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private void auditLogFailedToConnect() {
         AuditLogableBase loggable = new AuditLogableBase();
-        AuditLogDirector.log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
+        new AuditLogDirector().log(loggable, AuditLogType.FAILED_TO_CONNECT_TO_SCHEDULER_PROXY);
     }
 
     private Object[] createFilterArgs(List<String> filterNames,

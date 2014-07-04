@@ -73,7 +73,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
     private void logAction(VDS vds, AuditLogType type) {
         AuditLogableBase loggable = new AuditLogableBase();
         loggable.addCustomValue("Host", vds.getName());
-        AuditLogDirector.log(loggable, type);
+        new AuditLogDirector().log(loggable, type);
     }
 
     private void processPmAction(Pair<VDS, VDSStatus> action) {

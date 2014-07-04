@@ -190,7 +190,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
         AuditLogableBase logable = new AuditLogableBase(vdsId, vmId);
-        AuditLogDirector.log(logable,
+        new AuditLogDirector().log(logable,
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
 

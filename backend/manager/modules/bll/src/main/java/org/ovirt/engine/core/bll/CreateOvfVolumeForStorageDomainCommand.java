@@ -27,6 +27,9 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> {
+
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     public CreateOvfVolumeForStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStorageDomainId(getParameters().getStorageDomainId());
@@ -57,9 +60,9 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeFor
         if (!vdcReturnValueBase.getSucceeded()) {
             if (createdId != null) {
                 addCustomValue("DiskId", createdId.toString());
-                AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
+                auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             } else {
-                AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
+                auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);
             }
             setSucceeded(false);
         }

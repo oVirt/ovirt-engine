@@ -43,6 +43,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
      * use this member to determine if fence failed but vms moved to unknown mode (for the audit log type)
      */
     private static final String RESTART = "Restart";
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
         this(parameters, null);
@@ -64,7 +65,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         if (vdsGroup != null && !vdsGroup.getFencingPolicy().isFencingEnabled()) {
             AuditLogableBase alb = new AuditLogableBase(vds.getId());
             alb.setRepeatable(true);
-            AuditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
+            auditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
             return true;
         }
 
@@ -173,7 +174,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             // fencing was skipped, fire an alert and suppress standard command logging
             AuditLogableBase alb = new AuditLogableBase(getVds().getId());
             alb.setRepeatable(true);
-            AuditLogDirector.log(alb, AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
+            auditLogDirector.log(alb, AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
             setSucceeded(false);
             setCommandShouldBeLogged(false);
         } else {
@@ -240,7 +241,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         auditLogable.addCustomValue("Percents", percents.toString());
         auditLogable.setVdsId(host.getId());
         auditLogable.setRepeatable(true);
-        AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
+        auditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
     }
 
     public ResourceManager getResourceManager() {

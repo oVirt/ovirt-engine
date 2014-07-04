@@ -556,7 +556,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         }
         catch (VdcBLLException e) {
             log.error("Updating VM OVF in export domain failed.", e);
-            AuditLogDirector.log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
+            new AuditLogDirector().log(this, AuditLogType.IMPORTEXPORT_IMPORT_VM_FAILED_UPDATING_OVF);
         }
     }
 

@@ -83,6 +83,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;
@@ -706,10 +707,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         logable.addCustomValue("VmName", getVmName());
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVm().isTrustedService() && !getVmTemplate().isTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVm().isTrustedService() && getVmTemplate().isTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

@@ -46,6 +46,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final HostNetworkQosDao hostNetworkQosDao;
     private final ResourceManager resourceManager;
     private final ManagementNetworkUtil managementNetworkUtil;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     @Inject
     HostNetworkTopologyPersisterImpl(VmDynamicDAO vmDynamicDao,
@@ -177,7 +178,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             if (vdsmDisplayInterface == null // the display interface is't on host anymore
                 || !displayIneterfaceEqualityPredicate.eval(vdsmDisplayInterface)) {
                 final AuditLogableBase loggable = new AuditLogableBase(host.getId());
-                AuditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
+                auditLogDirector.log(loggable, AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_HOST_WITH_ACTIVE_VM);
             }
         }
     }
@@ -233,7 +234,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         if (!networkNames.isEmpty()) {
             AuditLogableBase logable = new AuditLogableBase(host.getId());
             logable.addCustomValue("Networks", StringUtils.join(networkNames, ","));
-            AuditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
+            auditLogDirector.log(logable, AuditLogType.VDS_NETWORKS_OUT_OF_SYNC);
         }
     }
 

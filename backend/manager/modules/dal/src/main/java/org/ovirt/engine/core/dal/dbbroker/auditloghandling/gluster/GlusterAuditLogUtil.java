@@ -18,6 +18,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
  */
 public class GlusterAuditLogUtil {
     private static GlusterAuditLogUtil instance = new GlusterAuditLogUtil();
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private GlusterAuditLogUtil() {
     }
@@ -59,6 +60,6 @@ public class GlusterAuditLogUtil {
             }
         }
 
-        AuditLogDirector.log(logable, logType);
+        auditLogDirector.log(logable, logType);
     }
 }

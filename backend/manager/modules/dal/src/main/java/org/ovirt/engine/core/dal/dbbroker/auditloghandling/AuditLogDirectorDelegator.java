@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 public final class AuditLogDirectorDelegator implements AuditLogger {
 
     private static final AuditLogger instance = new AuditLogDirectorDelegator();
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public static AuditLogger getInstance() {
         return instance;
@@ -12,16 +13,16 @@ public final class AuditLogDirectorDelegator implements AuditLogger {
 
     @Override
     public void log(AuditLogableBase auditLogable) {
-        AuditLogDirector.log(auditLogable);
+        auditLogDirector.log(auditLogable);
     }
 
     @Override
     public void log(AuditLogableBase auditLogable, AuditLogType logType) {
-        AuditLogDirector.log(auditLogable, logType);
+        auditLogDirector.log(auditLogable, logType);
     }
 
     @Override
     public void log(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
-        AuditLogDirector.log(auditLogable, logType, loggerString);
+        auditLogDirector.log(auditLogable, logType, loggerString);
     }
 }

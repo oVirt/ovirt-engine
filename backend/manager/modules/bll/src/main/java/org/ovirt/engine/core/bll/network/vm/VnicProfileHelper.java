@@ -151,7 +151,7 @@ public class VnicProfileHelper {
             logable.addCustomValue("EntityName", entityName);
             logable.addCustomValue("Networks", StringUtils.join(invalidNetworkNames, ','));
             logable.addCustomValue("Interfaces", StringUtils.join(invalidIfaceNames, ','));
-            AuditLogDirector.log(logable, logType);
+            new AuditLogDirector().log(logable, logType);
         }
     }
 

@@ -62,7 +62,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
         } catch (RuntimeException e) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("StorageDomainName", storage.getStorageName());
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
+            new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
             throw e;
         }
     }

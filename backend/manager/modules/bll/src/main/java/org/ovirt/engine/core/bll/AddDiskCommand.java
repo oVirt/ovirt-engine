@@ -598,7 +598,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             params.setShouldBeLogged(false);
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {
-                AuditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
+                new AuditLogDirector().log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
             }
         }
     }

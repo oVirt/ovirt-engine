@@ -88,7 +88,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
         }
         addCustomValue("NetworkNames", StringUtils.join(networkNames, ","));
         addCustomValue("IscsiBondName", getIscsiBond().getName());
-        AuditLogDirector.log(this, AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING);
+        new AuditLogDirector().log(this, AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING);
     }
 
     private Set<Guid> updateNetworksIds() {

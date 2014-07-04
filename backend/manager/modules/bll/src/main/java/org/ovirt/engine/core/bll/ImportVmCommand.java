@@ -106,6 +106,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<DiskImage> imageList;
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
@@ -1056,10 +1057,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmName", getVmName());
         if (getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

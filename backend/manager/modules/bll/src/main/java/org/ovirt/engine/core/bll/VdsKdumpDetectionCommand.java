@@ -134,7 +134,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
                     AuditLogableBase base = new AuditLogableBase();
                     base.setVds(getVds());
-                    AuditLogDirector.log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
+                    new AuditLogDirector().log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
 
                     // set status to Kdumping to prevent Host Monitoring errors and wait until kdump finishes
                     runVdsCommand(VDSCommandType.SetVdsStatus,

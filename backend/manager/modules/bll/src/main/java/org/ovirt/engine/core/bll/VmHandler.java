@@ -495,7 +495,7 @@ public class VmHandler {
             logable.addCustomValue("VmMaxMemInMb",
                     String.valueOf(VmValidationUtils.getMaxMemorySizeInMb(vm.getOsId(), clusterVersion)));
 
-            AuditLogDirector.log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
+            new AuditLogDirector().log(logable, AuditLogType.VM_MEMORY_NOT_IN_RECOMMENDED_RANGE);
         }
     }
 

@@ -45,6 +45,6 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("ImportedVmName", machineName);
         logable.addCustomValue("ErrorMessage", errorMessage);
-        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
+        new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
     }
 }

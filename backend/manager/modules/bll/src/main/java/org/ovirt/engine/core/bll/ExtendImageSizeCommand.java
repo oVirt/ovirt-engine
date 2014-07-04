@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends BaseImagesCommand<T>
         implements QuotaStorageDependent {
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<PermissionSubject> permissionsList;
     private List<VM> vmsDiskPluggedTo;
 
@@ -154,12 +155,12 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
     private void updateAuditLog(AuditLogType auditLogType, Long imageSizeInGigabytes) {
         addCustomValue("DiskAlias", getImage().getDiskAlias());
         addCustomValue("NewSize", String.valueOf(imageSizeInGigabytes));
-        AuditLogDirector.log(this, auditLogType);
+        auditLogDirector.log(this, auditLogType);
     }
 
     private void updateAuditLogFailedToUpdateVM(String vmName) {
         addCustomValue("VmName", vmName);
-        AuditLogDirector.log(this, AuditLogType.USER_EXTEND_DISK_SIZE_UPDATE_VM_FAILURE);
+        auditLogDirector.log(this, AuditLogType.USER_EXTEND_DISK_SIZE_UPDATE_VM_FAILURE);
     }
 
     @Override

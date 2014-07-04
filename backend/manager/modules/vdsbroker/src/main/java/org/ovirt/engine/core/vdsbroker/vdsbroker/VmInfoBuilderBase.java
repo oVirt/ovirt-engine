@@ -293,7 +293,7 @@ public abstract class VmInfoBuilderBase {
         }
 
         event.addCustomValue("UnsupportedFeatures", StringUtils.join(unsupportedFeatureNames, ", "));
-        AuditLogDirector.log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
+        new AuditLogDirector().log(event, AuditLogType.VNIC_PROFILE_UNSUPPORTED_FEATURES);
     }
 
     protected static VmDevice getVmDeviceByDiskId(Guid diskId, Guid vmId) {

@@ -170,7 +170,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         // the messages from SetGlusterVolumeOptionCommand appear first,
         // making it look like options were set before volume was created.
         // Hence we explicitly log the volume creation before setting the options.
-        AuditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_CREATE);
+        new AuditLogDirector().log(this, AuditLogType.GLUSTER_VOLUME_CREATE);
         // And don't log it at the end
         setCommandShouldBeLogged(false);
 

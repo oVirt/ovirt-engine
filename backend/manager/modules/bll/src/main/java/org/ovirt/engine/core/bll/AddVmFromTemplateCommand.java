@@ -38,6 +38,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
  * This class adds a cloned VM from a template (Deep disk copy)
  */
 public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCommand<T> {
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
 
@@ -77,10 +78,10 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
         logable.addCustomValue("VmName", getVmName());
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVmTemplate().isTrustedService() && !getVm().isTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVmTemplate().isTrustedService() && getVm().isTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_ADD_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

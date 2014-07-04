@@ -52,6 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class AsyncTaskManager {
     private static final Logger log = LoggerFactory.getLogger(AsyncTaskManager.class);
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     /** Map which consist all tasks that currently are monitored **/
     private ConcurrentMap<Guid, SPMTask> _tasks;
@@ -355,7 +356,7 @@ public final class AsyncTaskManager {
                         && task.getLastTaskStatus().getStatus() != AsyncTaskStatusEnum.unknown) {
                     // mark it as a zombie task, Will result in failure of the command
                     task.setZombieTask(true);
-                    AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
+                    auditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
                     log.info("Cleaning zombie tasks: Stopping async task '{}' that started at '{}'",
                             task.getParameters().getDbAsyncTask().getActionType(), task
@@ -363,7 +364,7 @@ public final class AsyncTaskManager {
 
                     task.stopTask(true);
                 } else {
-                    AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
+                    auditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
                     log.info("Cleaning zombie tasks: Clearing async task '{}' that started at '{}'",
                             task.getParameters().getDbAsyncTask().getActionType(), task

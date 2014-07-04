@@ -82,6 +82,6 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             logType = AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE;
         }
-        AuditLogDirector.log(logable, logType);
+        new AuditLogDirector().log(logable, logType);
     }
 }

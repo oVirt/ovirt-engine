@@ -148,7 +148,7 @@ public abstract class StorageHelperBase implements IStorageHelper {
         // will set the error code instead.
         String translatedError = getTranslatedStorageError(errorCode);
         logable.addCustomValue("ErrorMessage", translatedError);
-        AuditLogDirector.log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
+        new AuditLogDirector().log(logable, AuditLogType.STORAGE_DOMAIN_ERROR);
         return connectionField;
     }
 

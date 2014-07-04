@@ -42,6 +42,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private VmTemplate mOldTemplate;
     private List<GraphicsDevice> cachedGraphics;
 
@@ -254,10 +255,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

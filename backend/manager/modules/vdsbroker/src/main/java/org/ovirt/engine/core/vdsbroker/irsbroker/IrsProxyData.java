@@ -451,7 +451,7 @@ public class IrsProxyData {
                         logable.setStoragePoolId(_storagePoolId);
                         logable.addCustomValue("DiskSpace", (data.getAvailableDiskSize()).toString());
                         data.setStorageName(domainFromDb.getStorageName());
-                        AuditLogDirector.log(logable, type);
+                        new AuditLogDirector().log(logable, type);
 
                     }
                 }
@@ -467,10 +467,10 @@ public class IrsProxyData {
                     for (VdcBllErrors alert : alerts) {
                         switch (alert) {
                         case VG_METADATA_CRITICALLY_FULL:
-                            AuditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
+                            new AuditLogDirector().log(logable, AuditLogType.STORAGE_ALERT_VG_METADATA_CRITICALLY_FULL);
                             break;
                         case SMALL_VG_METADATA:
-                            AuditLogDirector.log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
+                            new AuditLogDirector().log(logable, AuditLogType.STORAGE_ALERT_SMALL_VG_METADATA);
                             break;
                         default:
                             log.error("Unrecognized alert for domain {}(id = {}): {}",
@@ -514,7 +514,7 @@ public class IrsProxyData {
 
                         AuditLogableBase logable = new AuditLogableBase(mCurrentVdsId);
                         logable.setStorageDomainId(masterDomainId);
-                        AuditLogDirector.log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
+                        new AuditLogDirector().log(logable, AuditLogType.SYSTEM_MASTER_DOMAIN_NOT_IN_SYNC);
 
                         return ResourceManager.getInstance()
                                 .getEventListener()
@@ -807,7 +807,7 @@ public class IrsProxyData {
             log.info("Initialize Irs proxy from vds: {}", returnValue);
             AuditLogableBase logable = new AuditLogableBase(selectedVds.argvalue.getId());
             logable.addCustomValue("ServerIp", returnValue);
-            AuditLogDirector.log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
+            new AuditLogDirector().log(logable, AuditLogType.IRS_HOSTED_ON_VDS);
         }
         return returnValue;
     }
@@ -1182,7 +1182,7 @@ public class IrsProxyData {
         logable.setStorageDomainId(tempData.getDomainId());
         logable.addCustomValue("Delay",
                 Double.toString(tempData.getDelay()));
-        AuditLogDirector.log(logable,
+        new AuditLogDirector().log(logable,
                 AuditLogType.VDS_DOMAIN_DELAY_INTERVAL);
     }
 

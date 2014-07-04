@@ -45,6 +45,7 @@ public class NetworkConfigurator {
     private static final long POLLING_BREAK_IN_MILLIS = 500;
     private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
     private final VDS host;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private CommandContext commandContext;
 
     public NetworkConfigurator(VDS host, CommandContext commandContext) {
@@ -85,7 +86,7 @@ public class NetworkConfigurator {
         } else {
             final AuditLogableBase event = createEvent();
             event.addCustomValue("InterfaceName", nic.getName());
-            AuditLogDirector.log(event,
+            auditLogDirector.log(event,
                     AuditLogType.INVALID_INTERFACE_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
@@ -189,7 +190,7 @@ public class NetworkConfigurator {
             event.addCustomValue("VlanId", resolveVlanId(nic.getVlanId()));
             event.addCustomValue("MgmtVlanId", resolveVlanId(managementNetwork.getVlanId()));
             event.addCustomValue("InterfaceName", nic.getName());
-            AuditLogDirector.log(event,
+            auditLogDirector.log(event,
                     AuditLogType.VLAN_ID_MISMATCH_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
@@ -247,13 +248,13 @@ public class NetworkConfigurator {
                     getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
                             new VdsActionParameters(parameters.getVdsId()), cloneContextAndDetachFromParent());
             if (!retVal.getSucceeded()) {
-                AuditLogDirector.log(createEvent(),
+                auditLogDirector.log(createEvent(),
                         AuditLogType.PERSIST_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK,
                         NETWORK_CONFIG_LOG_ERR);
                 throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
             }
         } else {
-            AuditLogDirector.log(createEvent(),
+            auditLogDirector.log(createEvent(),
                     AuditLogType.SETUP_NETWORK_FAILED_FOR_MANAGEMENT_NETWORK_CONFIGURATION,
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);

@@ -65,6 +65,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<CreateAllSnapshotsFromVmParameters> {
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<DiskImage> cachedSelectedActiveDisks;
     private Guid cachedStorageDomainId = Guid.Empty;
     private String cachedSnapshotIsBeingTakenMessage;
@@ -350,7 +351,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private void logMemorySavingFailed() {
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
-        AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE);
+        auditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_NO_MEMORY_FAILURE);
     }
 
     private void removeMemoryVolumesOfSnapshot(Snapshot snapshot) {
@@ -446,7 +447,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
         updateCallStackFromThrowable(e);
-        AuditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE);
+        auditLogDirector.log(this, AuditLogType.USER_CREATE_LIVE_SNAPSHOT_FINISHED_FAILURE);
     }
 
     /**

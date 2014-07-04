@@ -318,7 +318,7 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
         logable.addCustomValue("FieldName", fieldName);
         logable.addCustomValue("VmName", vmName);
         logable.addCustomValue("FieldValue", fieldValue);
-        AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
+        new AuditLogDirector().log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
     protected void addVmInterfaces() {

@@ -80,6 +80,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean fenceSucceeded = false;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
@@ -148,7 +149,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         if (getSucceeded()) {
             AuditLogableBase logable = new AuditLogableBase(getVds().getId());
             logable.addCustomValue("HostStatus", getVds().getStatus().toString());
-            AuditLogDirector.log(logable, AuditLogType.VDS_DETECTED);
+            auditLogDirector.log(logable, AuditLogType.VDS_DETECTED);
         }
     }
 
@@ -291,7 +292,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             result.setSuccess(vdsStatsResults.getFirst());
             if (!result.isSuccess()) {
                 result.setResultData(vdsStatsResults.getSecond());
-                AuditLogDirector.log(new AuditLogableBase(getVdsId()),
+                auditLogDirector.log(new AuditLogableBase(getVdsId()),
                         AuditLogType.VDS_STORAGE_VDS_STATS_FAILED);
             }
         }
@@ -364,7 +365,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             if (getVds().isPmEnabled()) {
                 if (!vdsProxyFound) {
                     logable.addCustomValue("Reason",
-                            AuditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
+                            auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
                     AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
                 } else if (!fenceStatusReturnValue.getIsSucceeded()) {
                     logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
@@ -537,7 +538,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
             AuditLogableBase logable = new AuditLogableBase(upServerId);
             logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
-            AuditLogDirector.log(logable, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
+            auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
             glusterPeerListSucceeded = false;
         } else {
             glusterServers = (List<GlusterServerInfo>) returnValue.getReturnValue();
@@ -554,7 +555,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 getReturnValue().getFault().setMessage(returnValue.getVdsError().getMessage());
                 AuditLogableBase logable = new AuditLogableBase(getVdsId());
                 logable.updateCallStackFromThrowable(returnValue.getExceptionObject());
-                AuditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
+                auditLogDirector.log(logable, AuditLogType.GLUSTER_SERVER_ADD_FAILED);
                 glusterPeerProbeSucceeded = false;
             }
             return returnValue.getSucceeded();
@@ -577,7 +578,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
             AuditLogableBase base = new AuditLogableBase();
             base.setVds(getVds());
-            AuditLogDirector.log(base, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
+            auditLogDirector.log(base, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
         }
     }
 

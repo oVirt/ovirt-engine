@@ -271,7 +271,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             if (!failedToRemoveDisks.isEmpty()) {
                 addCustomValue("DiskAliases", StringUtils.join(failedToRemoveDisks, ", "));
-                AuditLogDirector.log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
+                new AuditLogDirector().log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
             }
 
             getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);

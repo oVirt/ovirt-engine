@@ -140,7 +140,7 @@ public class VmPoolMonitor {
         if (!prestartingVmSucceeded) {
             AuditLogableBase log = new AuditLogableBase();
             log.addCustomValue("VmPoolName", vmToRunAsStateless.getVmPoolName());
-            AuditLogDirector.log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
+            new AuditLogDirector().log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }
 
         log.info("Running Vm '{}' as stateless {}",

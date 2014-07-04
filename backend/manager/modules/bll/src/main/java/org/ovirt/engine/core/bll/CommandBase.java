@@ -638,7 +638,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     void auditLog(AuditLogableBase logable, AuditLogType logType) {
-        AuditLogDirector.log(logable, logType);
+        new AuditLogDirector().log(logable, logType);
     }
 
     private void internalEndWithFailure() {

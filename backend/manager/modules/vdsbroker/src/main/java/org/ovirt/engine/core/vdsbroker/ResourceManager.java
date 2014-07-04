@@ -283,7 +283,7 @@ public class ResourceManager {
         // log VM transition to unknown status
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
-        AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
+        new AuditLogDirector().log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
 
         storeVm(vm);
 

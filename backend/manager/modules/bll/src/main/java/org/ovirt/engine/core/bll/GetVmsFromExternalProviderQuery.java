@@ -15,6 +15,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProviderQueryParameters> extends QueriesCommandBase<T> {
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     public GetVmsFromExternalProviderQuery(T parameters) {
         this(parameters, null);
     }
@@ -44,7 +46,7 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     private void logFailureToGetVms() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("URL", getParameters().getUrl());
-        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_EXTERNAL_VMS_INFO_FAILED);
+        auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_EXTERNAL_VMS_INFO_FAILED);
     }
 
     private GetVmsFromExternalProviderParameters buildGetRemoteVmsInfoParameters() {
@@ -86,12 +88,12 @@ public class GetVmsFromExternalProviderQuery<T extends GetVmsFromExternalProvide
     private void logHostCannotBeProxy(String hostName) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VdsName", hostName);
-        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_HOST_CANNOT_SERVE_AS_PROXY);
+        auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_HOST_CANNOT_SERVE_AS_PROXY);
     }
 
     private void logNoProxyAvailable(Guid dataCenterId) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("StoragePoolName", getDbFacade().getStoragePoolDao().get(dataCenterId).getName());
-        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
+        auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_NO_PROXY_HOST_AVAILABLE_IN_DC);
     }
 }

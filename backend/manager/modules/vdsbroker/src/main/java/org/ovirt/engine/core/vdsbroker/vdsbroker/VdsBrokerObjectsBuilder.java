@@ -99,6 +99,7 @@ public class VdsBrokerObjectsBuilder {
 
     private final static int VNC_START_PORT = 5900;
     private final static double NANO_SECONDS = 1000000000;
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static final Comparator<VdsNumaNode> numaNodeComparator = new Comparator<VdsNumaNode>() {
 
@@ -705,7 +706,7 @@ public class VdsBrokerObjectsBuilder {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
                     logable.addCustomValue("Actual", timeDrift.toString());
                     logable.addCustomValue("Max", maxTimeDriftAllowed.toString());
-                    AuditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
+                    auditLogDirector.log(logable, AuditLogType.VDS_TIME_DRIFT_ALERT);
                 }
             } else {
                 log.error("Time Drift validation: failed to get Host or Engine time.");
@@ -1463,11 +1464,11 @@ public class VdsBrokerObjectsBuilder {
      */
     private static void reportInvalidInterfacesForNetwork(List<VdsNetworkInterface> interfaces, Network network, VDS vds) {
         if (interfaces.isEmpty()) {
-            AuditLogDirector.log(createHostNetworkAuditLog(network, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
+            auditLogDirector.log(createHostNetworkAuditLog(network, vds), AuditLogType.NETWORK_WITHOUT_INTERFACES);
         } else if (interfaces.size() > 1) {
             AuditLogableBase logable = createHostNetworkAuditLog(network, vds);
             logable.addCustomValue("Interfaces", StringUtils.join(Entities.objectNames(interfaces), ","));
-            AuditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
+            auditLogDirector.log(logable, AuditLogType.BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES);
         }
     }
 

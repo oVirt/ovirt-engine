@@ -38,6 +38,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private static final String INTERNAL_FENCE_USER = "Engine";
     private static final String VDSM_STATUS_UNKONWN = "unknown";
     private static final int UNKNOWN_RESULT_ALLOWED = 3;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     protected FenceValidator fenceValidator;
     protected FenceExecutor fenceExecutor;
@@ -136,7 +137,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         logable.addCustomValue("Action", getAction().name());
         logable.addCustomValue("VdsName", getVds().getName());
         logable.setVdsId(getVdsId());
-        AuditLogDirector.log(logable, auditMessage);
+        auditLogDirector.log(logable, auditMessage);
     }
 
     private void handleResult(VDSFenceReturnValue result) {
@@ -323,7 +324,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         auditLogable.addCustomValue("Host", getVds().getName());
         auditLogable.addCustomValue("Status", actionName);
         auditLogable.setVdsId(getVds().getId());
-        AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
+        auditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
         log.error("Failed to verify host '{}' {} status. Have retried {} times with delay of {} seconds between each retry.",
                 getVds().getName(),
                 getAction().name(),

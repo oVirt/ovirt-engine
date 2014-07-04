@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll.quota;
 
 
+import java.text.DecimalFormat;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-
-import java.text.DecimalFormat;
 
 public class QuotaManagerAuditLogger {
     private static final DecimalFormat percentageFormatter = new DecimalFormat("#.##");
@@ -59,7 +59,7 @@ public class QuotaManagerAuditLogger {
 
     public void auditLog(AuditLogType auditLogType, AuditLogableBase auditLogable) {
         if (auditLogType != null) {
-            AuditLogDirector.log(auditLogable, auditLogType);
+            new AuditLogDirector().log(auditLogable, auditLogType);
         }
     }
 }

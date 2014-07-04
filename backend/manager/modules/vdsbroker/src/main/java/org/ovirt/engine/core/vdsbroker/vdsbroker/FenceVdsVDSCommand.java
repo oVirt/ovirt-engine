@@ -131,7 +131,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
         auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
-        AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
+        new AuditLogDirector().log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
         getVDSReturnValue().setSucceeded(true);
         setReturnValue(fenceStatusReturnValue);
     }

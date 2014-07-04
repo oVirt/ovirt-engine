@@ -64,6 +64,8 @@ import org.slf4j.LoggerFactory;
 public class AuditLogableBase extends TimeoutBase {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     private Guid mVmId = Guid.Empty;
     private DbUser dbUser;
     private Guid mUserId = Guid.Empty;
@@ -498,7 +500,7 @@ public class AuditLogableBase extends TimeoutBase {
         final Transaction transaction = TransactionSupport.suspend();
         try {
             try {
-                AuditLogDirector.log(this);
+                auditLogDirector.log(this);
             } catch (final RuntimeException ex) {
                 log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
                 log.debug("Exception", ex);

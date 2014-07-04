@@ -144,7 +144,7 @@ public class GetDiskAlignmentCommand<T extends GetDiskAlignmentParameters> exten
     protected void executeCommand() {
         GetDiskAlignmentVDSCommandParameters parameters;
 
-        AuditLogDirector.log(this, AuditLogType.DISK_ALIGNMENT_SCAN_START);
+        new AuditLogDirector().log(this, AuditLogType.DISK_ALIGNMENT_SCAN_START);
 
         acquireExclusiveDiskDbLocks();
 

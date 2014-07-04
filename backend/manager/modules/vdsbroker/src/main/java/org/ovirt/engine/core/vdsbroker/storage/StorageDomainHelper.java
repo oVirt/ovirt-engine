@@ -25,7 +25,7 @@ public class StorageDomainHelper {
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.addCustomValue("storageDomainName", domain.getStorageName());
                 logable.addCustomValue("maxNumOfLVs", maxNumOfLVs.toString());
-                AuditLogDirector.log(logable, AuditLogType.NUNBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
+                new AuditLogDirector().log(logable, AuditLogType.NUNBER_OF_LVS_ON_STORAGE_DOMAIN_EXCEEDED_THRESHOLD);
             }
         }
     }

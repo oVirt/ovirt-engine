@@ -27,6 +27,7 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public abstract class NetworkParametersBuilder {
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private CommandContext commandContext;
 
     public NetworkParametersBuilder(CommandContext commandContext) {
@@ -85,7 +86,7 @@ public abstract class NetworkParametersBuilder {
         AuditLogableBase logable = new AuditLogableBase();
         addValuesToLog(logable);
         logable.addCustomValue("HostNames", StringUtils.join(hostNames, ", "));
-        AuditLogDirector.log(logable, auditLogType);
+        auditLogDirector.log(logable, auditLogType);
     }
 
     protected void addValuesToLog(AuditLogableBase logable) {

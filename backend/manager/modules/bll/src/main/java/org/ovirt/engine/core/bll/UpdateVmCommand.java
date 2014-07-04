@@ -81,7 +81,10 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
+
     private static final Base64 BASE_64 = new Base64(0, null);
+
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private VM oldVm;
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
@@ -264,7 +267,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             List<String> canDos = getBackend().getErrorsTranslator().
                     TranslateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
-            AuditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
+            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }
 
@@ -272,10 +275,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmName", getVmName());
         if (getParameters().getVm().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getParameters().getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.USER_UPDATE_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 
@@ -459,7 +462,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void addLogMessages(VdcReturnValueBase returnValueBase) {
         if (!returnValueBase.getSucceeded()) {
-            AuditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
+            new AuditLogDirector().log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
         }
     }
 

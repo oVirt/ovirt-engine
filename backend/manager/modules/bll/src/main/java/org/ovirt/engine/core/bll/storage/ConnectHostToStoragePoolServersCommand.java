@@ -43,7 +43,7 @@ public class ConnectHostToStoragePoolServersCommand extends
         setSucceeded(connectStorageServer(getConnectionsTypeMap()));
 
         if (!getSucceeded()) {
-           AuditLogDirector.log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
+            new AuditLogDirector().log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
         }
     }
 

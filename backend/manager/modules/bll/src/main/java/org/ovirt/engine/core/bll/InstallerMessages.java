@@ -54,7 +54,7 @@ public class InstallerMessages {
             log.error("Installation '{}': {}", _vds.getHostName(), text);
             break;
         }
-        AuditLogDirector.log(logable, logType);
+        new AuditLogDirector().log(logable, logType);
     }
 
     public boolean postOldXmlFormat(String message) {

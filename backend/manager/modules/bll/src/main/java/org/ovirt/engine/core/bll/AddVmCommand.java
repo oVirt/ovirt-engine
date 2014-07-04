@@ -1003,7 +1003,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         VdcReturnValueBase returnValueBase = getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
-            AuditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
+            new AuditLogDirector().log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }
     }
 

@@ -70,9 +70,9 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
                         getParameters().getPreferredSPMId());
 
         if (runVdsCommand(VDSCommandType.SpmStopOnIrs, params).getSucceeded()) {
-            AuditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM);
+            new AuditLogDirector().log(this, AuditLogType.USER_FORCE_SELECTED_SPM);
         } else {
-            AuditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM_STOP_FAILED);
+            new AuditLogDirector().log(this, AuditLogType.USER_FORCE_SELECTED_SPM_STOP_FAILED);
         }
 
         setSucceeded(true);

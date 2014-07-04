@@ -62,6 +62,8 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);
         setVmTemplate(parameters.getVmTemplate());
@@ -335,10 +337,10 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("VmTemplateName", getVmTemplateName());
         if (getVmTemplate().isTrustedService() && !getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
+            auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_TRUSTED_TO_UNTRUSTED);
         }
         else if (!getVmTemplate().isTrustedService() && getVdsGroup().supportsTrustedService()) {
-            AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
+            auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_TEMPLATE_FROM_UNTRUSTED_TO_TRUSTED);
         }
     }
 

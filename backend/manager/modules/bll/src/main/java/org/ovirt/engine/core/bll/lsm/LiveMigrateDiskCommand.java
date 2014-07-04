@@ -181,7 +181,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         boolean canDoAction = super.canDoAction();
 
         if (!canDoAction) {
-            AuditLogDirector.log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
+            new AuditLogDirector().log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
         }
 
         return canDoAction;

@@ -44,7 +44,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
                     if (getParameters().isStopSpmFailureLogged()) {
                         AuditLogableBase base = new AuditLogableBase();
                         base.setVds(vds);
-                        AuditLogDirector.log(base, AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE);
+                        new AuditLogDirector().log(base, AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE);
                     }
 
                     if (parameters.getStatus() == VDSStatus.PreparingForMaintenance) {

@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -11,6 +12,8 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
 
     @Inject
     private HostNetworkTopologyPersister hostNetworkTopologyPersister;
+
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public CollectVdsNetworkDataVDSCommand(CollectHostNetworkDataVdsCommandParameters parameters) {
         super(parameters);

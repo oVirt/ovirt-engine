@@ -262,7 +262,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
             auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
             auditLogableBase.addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
-            AuditLogDirector.log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
+            new AuditLogDirector().log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
         }
     }
 

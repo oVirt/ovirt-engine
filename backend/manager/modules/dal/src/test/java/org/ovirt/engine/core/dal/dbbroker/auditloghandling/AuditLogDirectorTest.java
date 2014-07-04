@@ -13,12 +13,14 @@ import org.junit.Test;
 
 public class AuditLogDirectorTest {
 
+    private AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     @Test
     public void testResolveUnknownVariable() {
         final String message = "This is my ${Variable}";
         final String expectedResolved = String.format("This is my %1s", AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
         Map<String, String> values = Collections.emptyMap();
-        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -27,7 +29,7 @@ public class AuditLogDirectorTest {
         final String message = "This is my ${Variable}";
         final String expectedResolved = "This is my value";
         Map<String, String> values = Collections.singletonMap("variable", "value");
-        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -38,11 +40,11 @@ public class AuditLogDirectorTest {
         final String expectedResolved =
                 String.format("one equals one, two equals two, ' ' equals blank and %1s is unknown",
                         AuditLogDirector.UNKNOWN_VARIABLE_VALUE);
-        Map<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<>();
         values.put("first", "one");
         values.put("second", "two");
         values.put("blank", " ");
-        String resolvedMessage = AuditLogDirector.resolveMessage(message, values);
+        String resolvedMessage = auditLogDirector.resolveMessage(message, values);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
 
@@ -62,7 +64,7 @@ public class AuditLogDirectorTest {
         when(logable.getVdsName()).thenReturn("TestVDS");
         when(logable.getVmName()).thenReturn("TestVM");
 
-        String resolvedMessage = AuditLogDirector.resolveMessage(message, logable);
+        String resolvedMessage = auditLogDirector.resolveMessage(message, logable);
         Assert.assertEquals(expectedResolved, resolvedMessage);
     }
 }

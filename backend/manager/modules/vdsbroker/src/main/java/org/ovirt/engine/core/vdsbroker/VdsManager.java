@@ -71,6 +71,7 @@ public class VdsManager {
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS cachedVds;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
@@ -112,7 +113,7 @@ public class VdsManager {
             }
             log.error("Could not find VDC Certificate file.");
             AuditLogableBase logable = new AuditLogableBase(vdsId);
-            AuditLogDirector.log(logable, AuditLogType.CERTIFICATE_FILE_NOT_FOUND);
+            auditLogDirector.log(logable, AuditLogType.CERTIFICATE_FILE_NOT_FOUND);
         }
     }
 
@@ -338,7 +339,7 @@ public class VdsManager {
             AuditLogableBase logable = new AuditLogableBase(cachedVds.getId());
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
-            AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
+            auditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
             log.warn(
                     "Failed to refresh VDS, continuing, vds='{}'({}): {}",
                     cachedVds.getName(),
@@ -566,7 +567,7 @@ public class VdsManager {
                     new Object[0],
                     Config.<Integer>getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes),
                     TimeUnit.MINUTES);
-            AuditLogDirector.log(
+            auditLogDirector.log(
                     new AuditLogableBase(vds.getId()).addCustomValue(
                             "Time",
                             Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
@@ -604,12 +605,12 @@ public class VdsManager {
                 if (!ret.getSucceeded()) {
                     AuditLogableBase logable = new AuditLogableBase(vds.getId());
                     logable.updateCallStackFromThrowable(ret.getExceptionObject());
-                    AuditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
+                    auditLogDirector.log(logable, AuditLogType.VDS_FAILED_TO_GET_HOST_HARDWARE_INFO);
                 }
             }
 
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)) {
-                AuditLogDirector.log(new AuditLogableBase(vds.getId()), AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
+                auditLogDirector.log(new AuditLogableBase(vds.getId()), AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
                 if (vds.getSELinuxEnforceMode() != null) {
                     log.warn("Host '{}' is running with disabled SELinux.", vds.getName());
                 } else {
@@ -748,7 +749,7 @@ public class VdsManager {
         AuditLogableBase logable;
         logable = new AuditLogableBase(cachedVds.getId());
         logable.updateCallStackFromThrowable(ex);
-        AuditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
+        auditLogDirector.log(logable, AuditLogType.VDS_FAILURE);
     }
 
     private void logChangeStatusToConnecting(long timeoutToFence) {
@@ -759,7 +760,7 @@ public class VdsManager {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVdsId(cachedVds.getId());
         logable.addCustomValue("Seconds", Long.toString(TimeUnit.MILLISECONDS.toSeconds(timeoutToFence)));
-        AuditLogDirector.log(logable, AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING);
+        auditLogDirector.log(logable, AuditLogType.VDS_HOST_NOT_RESPONDING_CONNECTING);
     }
 
     public void dispose() {
@@ -852,7 +853,7 @@ public class VdsManager {
             // log VM transition to unknown status
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVmId(vm.getId());
-            AuditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
+            auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
         }
     }
 

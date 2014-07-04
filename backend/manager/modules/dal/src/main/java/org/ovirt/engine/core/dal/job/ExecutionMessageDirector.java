@@ -27,6 +27,8 @@ public class ExecutionMessageDirector {
      */
     protected static final String STEP_MESSAGE_PREFIX = "step.";
 
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     /**
      * A single instance of the {@code ExecutionMessageDirector}
      */
@@ -160,7 +162,7 @@ public class ExecutionMessageDirector {
     public static String resolveJobMessage(VdcActionType actionType, Map<String, String> values) {
         String jobMessage = getInstance().getJobMessage(actionType);
         if (jobMessage != null) {
-            return AuditLogDirector.resolveMessage(jobMessage, values);
+            return auditLogDirector.resolveMessage(jobMessage, values);
         } else {
             return actionType.name();
         }
@@ -169,7 +171,7 @@ public class ExecutionMessageDirector {
     public static String resolveStepMessage(StepEnum stepName, Map<String, String> values) {
         String stepMessage = getInstance().getStepMessage(stepName);
         if (stepMessage != null) {
-            return AuditLogDirector.resolveMessage(stepMessage, values);
+            return auditLogDirector.resolveMessage(stepMessage, values);
         } else {
             return stepName.name();
         }

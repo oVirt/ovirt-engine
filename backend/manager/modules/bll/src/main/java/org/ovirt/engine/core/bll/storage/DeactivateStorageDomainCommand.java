@@ -332,7 +332,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!asyncTasks.isEmpty()) {
             AuditLogableBase auditLogableBase = new AuditLogableBase();
             auditLogableBase.setStorageDomain(getStorageDomain());
-            AuditLogDirector.log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
+            new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
         }
     }
 

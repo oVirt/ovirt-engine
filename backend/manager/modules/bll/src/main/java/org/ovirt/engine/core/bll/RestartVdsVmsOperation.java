@@ -107,7 +107,7 @@ public class RestartVdsVmsOperation {
             );
             // Write that this VM was shut down by host reboot or manual fence
             if (returnValue != null && returnValue.getSucceeded()) {
-                AuditLogDirector.log(
+                new AuditLogDirector().log(
                         new AuditLogableBase(
                                 vds.getId(),
                                 vm.getId()

@@ -113,7 +113,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 );
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.addCustomValue("VdsHostName", hostName);
-                AuditLogDirector.log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
+                new AuditLogDirector().log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
                 return false;
             }
 
@@ -576,7 +576,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private void writeToAuditLog() {
         try {
-            AuditLogDirector.log(logable, getAuditLogTypeValue());
+            new AuditLogDirector().log(logable, getAuditLogTypeValue());
         } catch (RuntimeException ex) {
             log.error("RegisterVdsQuery::WriteToAuditLog: An exception has been thrown.", ex);
         }

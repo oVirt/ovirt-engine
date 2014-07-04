@@ -66,6 +66,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
     private List<DiskImage> ovfDisks;
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public AttachStorageDomainToPoolCommand(T parameters) {
         this(parameters, null);
@@ -236,7 +237,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks());
         if (!ovfStoreDiskImages.isEmpty()) {
             if (!FeatureSupported.ovfStoreOnAnyDomain(getStoragePool().getCompatibilityVersion())) {
-                AuditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
+                auditLogDirector.log(this, AuditLogType.RETRIEVE_UNREGISTERED_ENTITIES_NOT_SUPPORTED_IN_DC_VERSION);
                 return Collections.emptyList();
             }
             while (!ovfStoreDiskImages.isEmpty()) {
@@ -272,11 +273,11 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     ovfStoreDiskImages.remove(ovfDisk);
                 }
             }
-            AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
+            auditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {
             log.warn("There are no OVF_STORE disks on storage domain id {}",
                     getParameters().getStorageDomainId());
-            AuditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
+            auditLogDirector.log(this, AuditLogType.OVF_STORE_DOES_NOT_EXISTS);
         }
         return Collections.emptyList();
     }

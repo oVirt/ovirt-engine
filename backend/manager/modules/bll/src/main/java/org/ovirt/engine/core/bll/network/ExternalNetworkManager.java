@@ -69,7 +69,7 @@ public class ExternalNetworkManager {
                 removePortFailureEvent.addCustomValue("NicName", nic.getName());
                 removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
                 removePortFailureEvent.addCustomValue("ProviderName", provider.getName());
-                AuditLogDirector.log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
+                new AuditLogDirector().log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
             }
         }
     }

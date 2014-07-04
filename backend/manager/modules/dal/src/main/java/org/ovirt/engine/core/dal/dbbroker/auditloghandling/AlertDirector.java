@@ -8,6 +8,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  * AlertDirector
  */
 public final class AlertDirector {
+
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     /**
      * Alerts the specified audit logable.
      *
@@ -17,11 +20,11 @@ public final class AlertDirector {
      *            Type of the log.
      */
     public static void Alert(AuditLogableBase auditLogable, AuditLogType logType) {
-        AuditLogDirector.log(auditLogable, logType);
+        auditLogDirector.log(auditLogable, logType);
     }
 
     public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, String message) {
-        AuditLogDirector.log(auditLogable, logType, message);
+        auditLogDirector.log(auditLogable, logType, message);
     }
 
     public static void AddVdsAlert(Guid vdsId, AuditLogType type) {

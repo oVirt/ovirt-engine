@@ -74,7 +74,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     private void logWhenMacPoolIsEmpty() {
         if (!macsStorage.availableMacExist()) {
             AuditLogableBase logable = new AuditLogableBase();
-            AuditLogDirector.log(logable, AuditLogType.MAC_POOL_EMPTY);
+            new AuditLogDirector().log(logable, AuditLogType.MAC_POOL_EMPTY);
         }
     }
 

@@ -39,7 +39,7 @@ public final class AuditLogDirector {
         }
     }
 
-    private static String getResourceBundleName() {
+    static String getResourceBundleName() {
         return "bundles/AuditLogMessages";
     }
 
@@ -57,16 +57,16 @@ public final class AuditLogDirector {
         }
     }
 
-    public static void log(AuditLogableBase auditLogable) {
+    public void log(AuditLogableBase auditLogable) {
         AuditLogType logType = auditLogable.getAuditLogTypeValue();
         log(auditLogable, logType);
     }
 
-    public static void log(AuditLogableBase auditLogable, AuditLogType logType) {
+    public void log(AuditLogableBase auditLogable, AuditLogType logType) {
         log(auditLogable, logType, "");
     }
 
-    public static void log(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+    public void log(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
         if (!logType.shouldBeLogged()) {
             return;
         }
@@ -78,7 +78,7 @@ public final class AuditLogDirector {
         }
     }
 
-    private static void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
+    private void saveToDb(AuditLogableBase auditLogable, AuditLogType logType, String loggerString) {
         AuditLogSeverity severity = logType.getSeverity();
         AuditLog auditLog = createAuditLog(auditLogable, logType, loggerString, severity);
 
@@ -109,7 +109,7 @@ public final class AuditLogDirector {
         auditLog.setCallStack(auditLogable.getCallStack());
     }
 
-    private static void logMessage(AuditLogSeverity severity, String logMessage) {
+    private void logMessage(AuditLogSeverity severity, String logMessage) {
         switch (severity) {
         case NORMAL:
             log.info(logMessage);
@@ -133,7 +133,7 @@ public final class AuditLogDirector {
         }
     }
 
-    private static AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
+    private AuditLog createAuditLog(AuditLogableBase auditLogable, AuditLogType logType, String loggerString, AuditLogSeverity severity) {
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
             String resolvedMessage = loggerString; // message is sent as an argument, no need to resolve.
@@ -174,7 +174,7 @@ public final class AuditLogDirector {
      * @param logType
      *            the log type which determine if timeout is used for it
      */
-    private static void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
+    private void updateTimeoutLogableObject(AuditLogableBase auditLogable, AuditLogType logType) {
         int eventFloodRate = (auditLogable.isExternal() && auditLogable.getEventFloodInSec() == 0)
                 ?
                 30 // Minimal default duration for External Events is 30 seconds.
@@ -198,7 +198,7 @@ public final class AuditLogDirector {
      *            the log type associated with the object
      * @return a unique object id
      */
-    private static String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
+    private String composeObjectId(AuditLogableBase logable, AuditLogType logType) {
         final StringBuilder builder = new StringBuilder();
 
         compose(builder, "type", logType.toString());
@@ -214,7 +214,7 @@ public final class AuditLogDirector {
         return builder.toString();
     }
 
-    private static void compose(StringBuilder builder, String key, String value) {
+    private void compose(StringBuilder builder, String key, String value) {
         final char DELIMITER = ',';
         final char NAME_VALUE_SEPARATOR = '=';
         if (builder.length() > 0) {
@@ -224,7 +224,7 @@ public final class AuditLogDirector {
         builder.append(key).append(NAME_VALUE_SEPARATOR).append(value);
     }
 
-    private static String emptyGuidToEmptyString(Guid guid) {
+    private String emptyGuidToEmptyString(Guid guid) {
         return guid.equals(Guid.Empty) ? "" : guid.toString();
     }
 
@@ -232,7 +232,7 @@ public final class AuditLogDirector {
         return Objects.toString(obj, "");
     }
 
-    static String resolveMessage(String message, AuditLogableBase logable) {
+    String resolveMessage(String message, AuditLogableBase logable) {
         String returnValue = message;
         if (logable != null) {
             Map<String, String> map = getAvailableValues(message, logable);
@@ -250,7 +250,7 @@ public final class AuditLogDirector {
      *            a map of the place holder to its values
      * @return a resolved message
      */
-    public static String resolveMessage(String message, Map<String, String> values) {
+    public String resolveMessage(String message, Map<String, String> values) {
         Matcher matcher = pattern.matcher(message);
 
         StringBuffer buffer = new StringBuffer();
@@ -282,7 +282,7 @@ public final class AuditLogDirector {
         return buffer.toString();
     }
 
-    private static Set<String> resolvePlaceHolders(String message) {
+    private Set<String> resolvePlaceHolders(String message) {
         Set<String> result = new HashSet<String>();
         Matcher matcher = pattern.matcher(message);
 
@@ -297,7 +297,7 @@ public final class AuditLogDirector {
         return result;
     }
 
-    private static Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
+    private Map<String, String> getAvailableValues(String message, AuditLogableBase logable) {
         Map<String, String> returnValue = new HashMap<String, String>(logable.getCustomValues());
         Set<String> attributes = resolvePlaceHolders(message);
         if (attributes != null && attributes.size() > 0) {

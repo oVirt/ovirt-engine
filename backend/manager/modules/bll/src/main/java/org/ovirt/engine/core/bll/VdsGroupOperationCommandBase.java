@@ -161,7 +161,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             AuditLogableBase alb = new AuditLogableBase();
             alb.setVdsGroupId(getVdsGroup().getId());
             alb.setRepeatable(true);
-            AuditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
+            new AuditLogDirector().log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
     }
 }

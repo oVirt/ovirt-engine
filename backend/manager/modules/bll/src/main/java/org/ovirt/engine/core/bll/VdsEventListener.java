@@ -87,6 +87,8 @@ public class VdsEventListener implements IVdsEventListener {
 
     private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     @Override
     public void vdsMovedToMaintenance(VDS vds) {
         try {
@@ -329,10 +331,9 @@ public class VdsEventListener implements IVdsEventListener {
             final VmDynamic vmDynamic = DbFacade.getInstance().getVmDynamicDao().get(vmId);
             vmDynamic.setConsoleCurrentUserName(null);
             DbFacade.getInstance().getVmDynamicDao().update(vmDynamic);
-
-            AuditLogDirector.log(event, AuditLogType.VM_CONSOLE_DISCONNECTED);
+            auditLogDirector.log(event, AuditLogType.VM_CONSOLE_DISCONNECTED);
         } else {
-            AuditLogDirector.log(event, AuditLogType.VM_CONSOLE_CONNECTED);
+            auditLogDirector.log(event, AuditLogType.VM_CONSOLE_CONNECTED);
         }
     }
 
@@ -390,7 +391,7 @@ public class VdsEventListener implements IVdsEventListener {
             // Alert that the virtual machine failed:
             AuditLogableBase event = new AuditLogableBase();
             event.setVmId(vmId);
-            AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
+            auditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
 
             log.info("Highly Available VM went down. Attempting to restart. VM Name '{}', VM Id '{}'",
                     event.getVmName(), vmId);

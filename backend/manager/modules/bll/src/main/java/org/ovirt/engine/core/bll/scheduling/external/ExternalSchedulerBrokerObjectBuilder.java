@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 public class ExternalSchedulerBrokerObjectBuilder {
     private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerObjectBuilder.class);
     private final static int RESULT_OK = 0;
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     private static void auditLogPluginError(String pluginName, String errorMessage) {
         AuditLogableBase loggable = new AuditLogableBase();
@@ -20,13 +21,13 @@ public class ExternalSchedulerBrokerObjectBuilder {
         loggable.addCustomValue("PluginName", pluginName);
         loggable.addCustomValue("ErrorMessage", errorMessage);
 
-        AuditLogDirector.log(loggable, AuditLogType.EXTERNAL_SCHEDULER_PLUGIN_ERROR);
+        auditLogDirector.log(loggable, AuditLogType.EXTERNAL_SCHEDULER_PLUGIN_ERROR);
     }
 
     private static void auditLogExternalSchedulerError(String errorMessage) {
         AuditLogableBase loggable = new AuditLogableBase();
         loggable.addCustomValue("ErrorMessage", errorMessage);
-        AuditLogDirector.log(loggable, AuditLogType.EXTERNAL_SCHEDULER_ERROR);
+        auditLogDirector.log(loggable, AuditLogType.EXTERNAL_SCHEDULER_ERROR);
     }
 
 

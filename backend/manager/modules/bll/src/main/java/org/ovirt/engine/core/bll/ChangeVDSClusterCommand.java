@@ -280,7 +280,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         try {
             params = builder.buildParameters(getVdsId(), getSourceCluster().getId(), getTargetCluster().getId());
         } catch (VdcBLLException e) {
-            AuditLogDirector.log(new AuditLogableBase(getVdsId()),
+            new AuditLogDirector().log(new AuditLogableBase(getVdsId()),
                     AuditLogType.CONFIGURE_NETWORK_BY_LABELS_WHEN_CHANGING_CLUSTER_FAILED);
             return;
         }

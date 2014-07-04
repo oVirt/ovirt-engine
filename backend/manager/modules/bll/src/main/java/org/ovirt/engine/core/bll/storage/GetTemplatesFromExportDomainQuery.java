@@ -51,7 +51,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("Template", machineName);
         logable.addCustomValue("ErrorMessage", errorMessage);
-        AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
+        new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
 
     }
 

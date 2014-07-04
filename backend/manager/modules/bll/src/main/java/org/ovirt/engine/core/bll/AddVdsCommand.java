@@ -138,7 +138,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             AuditLogableBase logable = new AuditLogableBase();
             logable.setVds(getParameters().getvds());
             logable.addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
-            AuditLogDirector.log(logable, AuditLogType.VDS_PROVISION);
+            new AuditLogDirector().log(logable, AuditLogType.VDS_PROVISION);
         }
 
         // set vds spm id

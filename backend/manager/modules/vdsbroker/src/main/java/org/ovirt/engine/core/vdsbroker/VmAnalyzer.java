@@ -95,6 +95,8 @@ public class VmAnalyzer {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
+    private AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     // FIXME auditlogger is a dependency and realy doesn't belong in the constructor but
     // there is no way to mock it otherwise.
     public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, AuditLogger auditLogger) {
@@ -390,7 +392,7 @@ public class VmAnalyzer {
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
-                AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
+                auditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_UNCONTROLLED);
                 vmsWithUncontrolledBalloon.put(vmId, 0);
             }
         }
@@ -412,7 +414,7 @@ public class VmAnalyzer {
             if (currentVal >= Config.<Integer> getValue(ConfigValues.IterationsWithBalloonProblem)) {
                 AuditLogableBase auditLogable = new AuditLogableBase();
                 auditLogable.setVmId(vmId);
-                AuditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
+                auditLogDirector.log(auditLogable, AuditLogType.VM_BALLOON_DRIVER_ERROR);
                 vmsWithBalloonDriverProblem.put(vmId, 0);
             }
         }
@@ -699,7 +701,7 @@ public class VmAnalyzer {
         final AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.setVmId(dbVm.getId());
         auditLogable.addCustomValue("VmStatus", vdsmVm.getVmDynamic().getStatus().toString());
-        AuditLogDirector.log(auditLogable, AuditLogType.VM_STATUS_RESTORED);
+        auditLogDirector.log(auditLogable, AuditLogType.VM_STATUS_RESTORED);
     }
 
     private void updateVmStatistics() {

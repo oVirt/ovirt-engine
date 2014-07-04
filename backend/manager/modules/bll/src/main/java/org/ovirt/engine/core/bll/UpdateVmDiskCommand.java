@@ -441,7 +441,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
         auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
         auditLogableBase.addCustomValue("DiskName", diskImage.getDiskAlias());
-        AuditLogDirector.log(auditLogableBase, auditLogType);
+        new AuditLogDirector().log(auditLogableBase, auditLogType);
     }
 
     private String getJsonDiskDescription() throws IOException {

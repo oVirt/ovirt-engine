@@ -40,6 +40,7 @@ public class AutoStartVmsRunner {
     private static final int RETRY_TO_RUN_HA_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
     private static AutoStartVmsRunner instance = new AutoStartVmsRunner();
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     /** Records of HA VMs that need to be restarted */
     private CopyOnWriteArraySet<AutoStartVmToRestart> autoStartVmsToRestart;
@@ -138,13 +139,13 @@ public class AutoStartVmsRunner {
     private void logFailedAttemptToRestartHighlyAvailableVm(Guid vmId) {
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        AuditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
+        auditLogDirector.log(event, AuditLogType.HA_VM_RESTART_FAILED);
     }
 
     private void logFailureToRestartHighlyAvailableVm(Guid vmId) {
         AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
-        AuditLogDirector.log(event, AuditLogType.EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS);
+        auditLogDirector.log(event, AuditLogType.EXCEEDED_MAXIMUM_NUM_OF_RESTART_HA_VM_ATTEMPTS);
     }
 
     private boolean isVmNeedsToBeAutoStarted(Guid vmId) {

@@ -167,7 +167,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             // if subsequent attempts failure exceeds configuration value , abort the loop.
             if (subsequentFailedAttempts == vmPoolMaxSubsequentFailures) {
                 AuditLogableBase logable = new AuditLogableBase();
-                AuditLogDirector.log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
+                new AuditLogDirector().log(logable, AuditLogType.USER_VM_POOL_MAX_SUBSEQUENT_FAILURES_REACHED);
                 break;
             }
         }

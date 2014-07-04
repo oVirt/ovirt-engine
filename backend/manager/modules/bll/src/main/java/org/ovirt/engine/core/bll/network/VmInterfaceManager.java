@@ -241,7 +241,7 @@ public class VmInterfaceManager {
      * @param auditLogType
      */
     protected void log(AuditLogableBase logable, AuditLogType auditLogType) {
-        AuditLogDirector.log(logable, auditLogType);
+        new AuditLogDirector().log(logable, auditLogType);
     }
 
     protected VmNetworkStatisticsDao getVmNetworkStatisticsDao() {

@@ -92,7 +92,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 List<VdsNetworkInterface> nics =
                         getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
                 if (!nics.isEmpty()) {
-                    AuditLogDirector.log(this, AuditLogType.MULTI_UPDATE_NETWORK_NOT_POSSIBLE);
+                    new AuditLogDirector().log(this, AuditLogType.MULTI_UPDATE_NETWORK_NOT_POSSIBLE);
                 }
             }
         }

@@ -87,7 +87,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
                         p,
                         getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
                 addCustomValue("DiskId", diskId.toString());
-                AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
+                new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             }
         }
 

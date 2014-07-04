@@ -66,6 +66,7 @@ import org.slf4j.LoggerFactory;
 @SuppressWarnings("synthetic-access")
 public class IsoDomainListSyncronizer {
     private static final Logger log = LoggerFactory.getLogger(IsoDomainListSyncronizer.class);
+    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
@@ -245,7 +246,7 @@ public class IsoDomainListSyncronizer {
                                 AuditLogableBase logable = new AuditLogableBase();
                                 logable.addCustomValue("imageDomain", storageDomain.getName());
                                 logable.addCustomValue("imageListSize", String.valueOf(repoImages.size()));
-                                AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
+                                auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_INCOMPLETE);
                             }
 
                             for (RepoImage repoImage : repoImages) {
@@ -775,7 +776,7 @@ public class IsoDomainListSyncronizer {
         // Get translated error by error code ,if no translation found (should not happened) ,
         // will set the error code instead.
         logable.addCustomValue("imageDomains", problematicRepoFilesList);
-        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_FAILED);
+        auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_FAILED);
     }
 
     /**
@@ -784,7 +785,7 @@ public class IsoDomainListSyncronizer {
     private static void addToAuditLogSuccessMessage(String IsoDomain, String imageType) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("imageDomains", String.format("%s (%s file type)", IsoDomain, imageType));
-        AuditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
+        auditLogDirector.log(logable, AuditLogType.REFRESH_REPOSITORY_IMAGE_LIST_SUCCEEDED);
     }
 
 

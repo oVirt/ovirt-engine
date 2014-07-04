@@ -14,6 +14,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
     private static final String OVIRT="oVirt";
+    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public AddExternalEventCommand(T parameters) {
         super(parameters);
@@ -39,13 +40,13 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
         String message = getParameters().getEvent().getMessage();
         switch (getParameters().getEvent().getSeverity()){
             case NORMAL:
-                AuditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_NORMAL, message);
+                auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_NORMAL, message);
                 break;
             case WARNING:
-                AuditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_WARNING, message);
+                auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_WARNING, message);
                 break;
             case ERROR:
-                AuditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_ERROR, message);
+                auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_ERROR, message);
                 break;
             case ALERT:
                 AlertDirector.Alert(event, AuditLogType.EXTERNAL_ALERT, message);

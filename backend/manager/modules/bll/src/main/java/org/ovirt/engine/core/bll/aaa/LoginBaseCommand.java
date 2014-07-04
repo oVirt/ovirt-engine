@@ -326,7 +326,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     private void logEventForUser(String userName, AuditLogType auditLogType) {
         AuditLogableBase msg = new AuditLogableBase();
         msg.setUserName(userName);
-        AuditLogDirector.log(msg, auditLogType);
+        new AuditLogDirector().log(msg, auditLogType);
     }
 
     @Override
@@ -354,7 +354,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected void logAutheticationFailure() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setUserName(getUserName());
-        AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
+        new AuditLogDirector().log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
     private boolean isCredentialsAuth(ExtensionProxy authnExtension) {

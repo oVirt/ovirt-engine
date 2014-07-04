@@ -100,7 +100,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         if (newSizeUnderCurrentConsumption) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("QuotaName", getQuotaName());
-            AuditLogDirector.log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
+            new AuditLogDirector().log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
         }
     }
 }

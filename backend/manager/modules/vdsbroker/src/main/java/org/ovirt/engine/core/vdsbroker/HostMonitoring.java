@@ -764,7 +764,7 @@ public class HostMonitoring {
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-        AuditLogDirector.log(auditLogable, logType);
+        new AuditLogDirector().log(auditLogable, logType);
     }
 
     public DbFacade getDbFacade() {

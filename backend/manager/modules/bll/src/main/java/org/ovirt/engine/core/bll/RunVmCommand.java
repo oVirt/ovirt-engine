@@ -457,7 +457,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void warnIfNotAllDisksPermitSnapshots() {
         for (Disk disk : getVm().getDiskMap().values()) {
             if (!disk.isAllowSnapshot()) {
-                AuditLogDirector.log(this,
+                new AuditLogDirector().log(this,
                         AuditLogType.USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT);
                 break;
             }

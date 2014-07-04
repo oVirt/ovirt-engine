@@ -46,7 +46,7 @@ public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksPar
     @Override
     protected void executeCommand() {
         if (getParameters().getShouldBeLogged()) {
-            AuditLogDirector.log(this, AuditLogType.PERSIST_NETWORK_ON_HOST);
+            new AuditLogDirector().log(this, AuditLogType.PERSIST_NETWORK_ON_HOST);
         }
 
         VdcReturnValueBase returnValue =  runInternalAction(VdcActionType.SetupNetworks, getParameters(), cloneContextAndDetachFromParent());

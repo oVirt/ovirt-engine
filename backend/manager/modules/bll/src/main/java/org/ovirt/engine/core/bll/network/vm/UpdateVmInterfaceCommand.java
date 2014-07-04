@@ -249,7 +249,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 AuditLogType customValue =
                         getInterface().isLinked() ? AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_UP
                                 : AuditLogType.NETWORK_UPDATE_VM_INTERFACE_LINK_DOWN;
-                addCustomValue("LinkState", AuditLogDirector.getMessage(customValue));
+                addCustomValue("LinkState", new AuditLogDirector().getMessage(customValue));
             } else {
                 addCustomValue("LinkState", " ");
             }
