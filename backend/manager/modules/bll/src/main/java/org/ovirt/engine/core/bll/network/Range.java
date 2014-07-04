@@ -20,7 +20,7 @@ class Range {
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
 
-        int numberOfMacs = (int) (rangeEnd - rangeStart);
+        int numberOfMacs = (int) (rangeEnd - rangeStart) + 1;
         this.availableMacsCount = numberOfMacs;
         this.usedMacs = new BitSet(numberOfMacs);
     }
