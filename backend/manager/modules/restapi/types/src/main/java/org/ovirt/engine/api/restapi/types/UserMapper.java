@@ -25,9 +25,9 @@ public class UserMapper {
         model.setDepartment(entity.getDepartment());
         model.setDomainEntryId(DirectoryEntryIdUtils.encode(entity.getExternalId()));
         model.setNamespace(entity.getNamespace());
-        if (entity.getGroupNames() != null && entity.getGroupNames().trim().length() > 0) {
+        if (entity.getGroupNames() != null && entity.getGroupNames().size() > 0) {
             model.setGroups(new Groups());
-            for (String name : entity.getGroupNames().split(",")) {
+            for (String name : entity.getGroupNames()) {
                 Group group = new Group();
                 group.setName(name);
                 model.getGroups().getGroups().add(group);

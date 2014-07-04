@@ -3,6 +3,9 @@ package org.ovirt.engine.api.restapi.resource;
 import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.GROUPS;
 import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.PARSED_GROUPS;
 
+import java.util.Arrays;
+import java.util.HashSet;
+
 import javax.ws.rs.WebApplicationException;
 
 import org.junit.Test;
@@ -88,7 +91,7 @@ public class BackendUserResourceTest
         entity.setId(GUIDS[index]);
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setFirstName(NAMES[index]);
-        entity.setGroupNames(GROUPS);
+        entity.setGroupNames(new HashSet<String>(Arrays.asList(GROUPS.split(","))));
         entity.setDomain(DOMAIN);
         return entity;
     }
@@ -99,10 +102,11 @@ public class BackendUserResourceTest
         assertNotNull(model.getDomain());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
-        for (int i = 0; i < PARSED_GROUPS.length; i++) {
-            Group group = model.getGroups().getGroups().get(i);
-            assertEquals(PARSED_GROUPS[i], group.getName());
+        HashSet<String> groupNames = new HashSet<>();
+        for (Group group : model.getGroups().getGroups()) {
+            groupNames.add(group.getName());
         }
+        assertEquals(new HashSet<String>(Arrays.asList(PARSED_GROUPS)), groupNames);
         verifyLinks(model);
     }
 }

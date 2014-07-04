@@ -59,7 +59,15 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
-                return object.getGroupNames();
+                StringBuilder builder = new StringBuilder();
+                int counter = 0;
+                for (String name : object.getGroupNames()) {
+                    builder.append(name);
+                    if (counter < object.getGroupNames().size() - 1) {
+                        builder.append(","); //$NON-NLS-1$
+                    }
+                }
+                return builder.toString();
             }
         }, constants.groupUser(), "150px"); //$NON-NLS-1$
 

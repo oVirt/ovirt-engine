@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -248,10 +247,10 @@ public class DbUserCacheManager {
             groupNamesFromDirectory.add(directoryGroup.getName());
         }
         Collections.sort(groupNamesFromDirectory);
-        List<String> groupNamesFromDb = Arrays.asList(dbUser.getGroupNames().split(","));
+        List<String> groupNamesFromDb = new ArrayList<String>(dbUser.getGroupNames());
         Collections.sort(groupNamesFromDb);
         if (!groupNamesFromDb.equals(groupNamesFromDirectory)) {
-            dbUser.setGroupNames(StringUtils.join(groupNamesFromDirectory, ","));
+            dbUser.setGroupNames(new HashSet<String>(groupNamesFromDirectory));
             update = true;
         }
 
