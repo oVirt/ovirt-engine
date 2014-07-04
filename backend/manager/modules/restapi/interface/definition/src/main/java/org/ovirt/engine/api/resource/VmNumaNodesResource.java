@@ -10,15 +10,15 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-import org.ovirt.engine.api.model.NumaNodes;
 import org.ovirt.engine.api.model.VirtualNumaNode;
+import org.ovirt.engine.api.model.VirtualNumaNodes;
 
 @Produces({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
 public interface VmNumaNodesResource {
 
     @GET
     @Formatted
-    public NumaNodes list();
+    public VirtualNumaNodes list();
 
     @POST
     @Formatted
