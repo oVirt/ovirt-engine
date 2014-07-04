@@ -104,8 +104,12 @@ public class RestApiSessionManager {
 
     RequestBuilder createRequest() {
         RequestBuilder requestBuilder = new RequestBuilder(RequestBuilder.GET, restApiBaseUrl);
-        requestBuilder.setHeader("Prefer", "persistent-auth"); //$NON-NLS-1$ //$NON-NLS-2$
+        requestBuilder.setHeader("Prefer", "persistent-auth, csrf-protection"); //$NON-NLS-1$ //$NON-NLS-2$
         requestBuilder.setHeader("Session-TTL", getSessionTimeout()); //$NON-NLS-1$
+        String sessionId = getSessionId();
+        if (sessionId != null) {
+            requestBuilder.setHeader(SESSION_ID_HEADER, sessionId);
+        }
         return requestBuilder;
     }
 
