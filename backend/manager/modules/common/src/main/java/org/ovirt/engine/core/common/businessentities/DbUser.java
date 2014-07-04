@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
+import java.util.Arrays;
 import java.util.HashSet;
 
 import javax.validation.constraints.Size;
@@ -63,12 +64,7 @@ public class DbUser extends IVdcQueryable {
      */
     private boolean isAdmin;
 
-
-    /**
-     * Comma delimited list of group names.
-     */
-    @Size(min = 1, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String groupNames;
+    private HashSet<String> groupNames;
 
     /**
      * Comma delimited list of group identifiers.
@@ -80,7 +76,7 @@ public class DbUser extends IVdcQueryable {
         firstName = "";
         lastName = "";
         department = "";
-        groupNames = "";
+        groupNames = new HashSet<String>();
         groupIds = new HashSet<Guid>();
         role = "";
         note = "";
@@ -96,7 +92,7 @@ public class DbUser extends IVdcQueryable {
         department = ldapUser.getDepartment();
         email = ldapUser.getEmail();
         active = true;
-        groupNames = ldapUser.getGroup();
+        groupNames = new HashSet<String>(Arrays.asList(ldapUser.getGroup().trim().split(" *, *")));
         role = "";
         note = "";
     }
@@ -114,11 +110,9 @@ public class DbUser extends IVdcQueryable {
         role = "";
         note = "";
 
-        StringBuilder namesBuffer = new StringBuilder();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
-            populateGroupNames(namesBuffer, directoryGroup);
+            groupNames.add(directoryGroup.getName());
         }
-        groupNames = namesBuffer.toString();
     }
 
     public Guid getId() {
@@ -193,11 +187,11 @@ public class DbUser extends IVdcQueryable {
         email = value;
     }
 
-    public String getGroupNames() {
+    public HashSet<String> getGroupNames() {
         return groupNames;
     }
 
-    public void setGroupNames(String value) {
+    public void setGroupNames(HashSet<String> value) {
         groupNames = value;
     }
 

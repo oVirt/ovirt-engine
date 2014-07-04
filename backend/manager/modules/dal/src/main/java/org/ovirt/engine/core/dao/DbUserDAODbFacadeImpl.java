@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 
@@ -28,7 +29,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setDepartment(rs.getString("department"));
             entity.setDomain(rs.getString("domain"));
             entity.setEmail(rs.getString("email"));
-            entity.setGroupNames(rs.getString("groups"));
+            entity.setGroupNames(new HashSet<String>(Arrays.asList(rs.getString("groups").split(","))));
             entity.setFirstName(rs.getString("name"));
             entity.setNote(rs.getString("note"));
             entity.setNote(rs.getString("note"));
@@ -63,7 +64,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             addValue("department", user.getDepartment());
             addValue("domain", user.getDomain());
             addValue("email", user.getEmail());
-            addValue("groups", user.getGroupNames());
+            addValue("groups", StringUtils.join(user.getGroupNames(), ","));
             addValue("name", user.getFirstName());
             addValue("note", user.getNote());
             addValue("role", user.getRole());
