@@ -29,7 +29,7 @@ class MacsStorage {
     private boolean useMac(long mac, boolean allowDuplicates) {
         Range range = findIncludingRange(mac);
         if (range == null) {
-            return customMacs.add(mac, allowDuplicates);
+            return customMacs.increase(mac, allowDuplicates);
         } else {
             return range.use(mac, allowDuplicates);
         }
@@ -47,7 +47,7 @@ class MacsStorage {
     public void freeMac(long mac) {
         Range range = findIncludingRange(mac);
         if (range == null) {
-            customMacs.remove(mac);
+            customMacs.decrease(mac);
         } else {
             range.freeMac(mac);
         }

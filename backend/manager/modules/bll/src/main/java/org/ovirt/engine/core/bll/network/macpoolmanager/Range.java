@@ -52,7 +52,7 @@ class Range {
         }
 
         if (allowDuplicates) {
-            return macDuplicityCount.add(arrayIndex);
+            return macDuplicityCount.increase(arrayIndex);
         } else {
             return false;
         }
@@ -77,7 +77,7 @@ class Range {
 
         final boolean duplicatesExist = macDuplicityCount.count(arrayIndex) != 0;
         if (duplicatesExist) {
-            macDuplicityCount.remove(arrayIndex);
+            macDuplicityCount.decrease(arrayIndex);
         } else {
             usedMacs.set(arrayIndex, false);
             availableMacsCount++;

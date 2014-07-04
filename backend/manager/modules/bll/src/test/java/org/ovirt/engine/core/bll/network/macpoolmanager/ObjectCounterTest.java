@@ -8,14 +8,14 @@ import org.junit.Test;
 public class ObjectCounterTest {
 
     @Test
-    public void testAddNoDuplicates() throws Exception {
+    public void testIncreaseNoDuplicates() throws Exception {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(false);
 
 
-        assertThat(objectCounter.add(1), is(true));
-        assertThat(objectCounter.add(1), is(false));
-        assertThat(objectCounter.add(2), is(true));
-        assertThat(objectCounter.add(-3), is(true));
+        assertThat(objectCounter.increase(1), is(true));
+        assertThat(objectCounter.increase(1), is(false));
+        assertThat(objectCounter.increase(2), is(true));
+        assertThat(objectCounter.increase(-3), is(true));
 
         assertThat(objectCounter.contains(0), is(false));
         assertThat(objectCounter.contains(1), is(true));
@@ -24,14 +24,14 @@ public class ObjectCounterTest {
     }
 
     @Test
-    public void testAddWithDuplicates() throws Exception {
+    public void testIncreaseWithDuplicates() throws Exception {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(true);
 
 
-        assertThat(objectCounter.add(1), is(true));
-        assertThat(objectCounter.add(1), is(true));
-        assertThat(objectCounter.add(2), is(true));
-        assertThat(objectCounter.add(-3), is(true));
+        assertThat(objectCounter.increase(1), is(true));
+        assertThat(objectCounter.increase(1), is(true));
+        assertThat(objectCounter.increase(2), is(true));
+        assertThat(objectCounter.increase(-3), is(true));
 
         assertThat(objectCounter.contains(0), is(false));
         assertThat(objectCounter.contains(1), is(true));
@@ -40,41 +40,41 @@ public class ObjectCounterTest {
     }
 
     @Test
-    public void testRemoveNoDuplicates() throws Exception {
+    public void testDecreaseNoDuplicates() throws Exception {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(false);
 
-        objectCounter.add(1);
-        objectCounter.add(2);
+        objectCounter.increase(1);
+        objectCounter.increase(2);
 
         assertThat(objectCounter.contains(0), is(false));
-        objectCounter.remove(0);
+        objectCounter.decrease(0);
         assertThat(objectCounter.contains(0), is(false));
 
         assertThat(objectCounter.contains(1), is(true));
-        objectCounter.remove(1);
+        objectCounter.decrease(1);
         assertThat(objectCounter.contains(1), is(false));
     }
 
     @Test
-    public void testRemoveWithDuplicates() throws Exception {
+    public void testDecreaseWithDuplicates() throws Exception {
         final ObjectCounter<Integer> objectCounter = new ObjectCounter<>(true);
 
-        objectCounter.add(1);
-        objectCounter.add(1);
-        objectCounter.add(2);
+        objectCounter.increase(1);
+        objectCounter.increase(1);
+        objectCounter.increase(2);
 
         assertThat(objectCounter.contains(0), is(false));
-        objectCounter.remove(0);
+        objectCounter.decrease(0);
         assertThat(objectCounter.contains(0), is(false));
 
         assertThat(objectCounter.contains(1), is(true));
-        objectCounter.remove(1);
+        objectCounter.decrease(1);
         assertThat(objectCounter.contains(1), is(true));
-        objectCounter.remove(1);
+        objectCounter.decrease(1);
         assertThat(objectCounter.contains(1), is(false));
 
         assertThat(objectCounter.contains(2), is(true));
-        objectCounter.remove(2);
+        objectCounter.decrease(2);
         assertThat(objectCounter.contains(2), is(false));
 
     }

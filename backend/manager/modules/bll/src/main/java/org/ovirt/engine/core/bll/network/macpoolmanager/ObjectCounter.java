@@ -24,17 +24,17 @@ class ObjectCounter<T> implements Iterable<T>{
      * @param key instance to add.
      * @return true if instance was added  && count incremented.
      */
-    public boolean add(T key) {
-        return add(key, allowDuplicate);
+    public boolean increase(T key) {
+        return increase(key, allowDuplicate);
     }
 
-    public boolean add(T key, boolean allowDuplicate) {
+    public boolean increase(T key, boolean allowDuplicate) {
         Counter counter = map.get(key);
         if (counter == null) {
             map.put(key, new Counter());
             return true;
         } else if (allowDuplicate) {
-            counter.increment();
+            counter.increase();
             return true;
         } else {
             return false;
@@ -48,13 +48,13 @@ class ObjectCounter<T> implements Iterable<T>{
      *
      * @return true if instance was removed  && count decremented.
      */
-    public void remove(T key) {
+    public void decrease(T key) {
         Counter counter = map.get(key);
         if (counter == null) {
             return;
         }
 
-        int count = counter.decrement();
+        int count = counter.decrease();
         if (count == 0) {
             map.remove(key);
         } else if (count < 0) {
@@ -103,11 +103,11 @@ class ObjectCounter<T> implements Iterable<T>{
             this.count = count;
         }
 
-        public void increment() {
+        public void increase() {
             count++;
         }
 
-        public int decrement() {
+        public int decrease() {
             count--;
             return count;
         }
