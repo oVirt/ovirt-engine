@@ -124,7 +124,9 @@ public class DocsServlet extends FileServlet {
      * @return A {@code File} object pointing to the requested file.
      */
     protected File determineActualFile(final HttpServletRequest request, Locale locale) {
-        File file = ServletUtils.makeFileFromSanePath(request.getPathInfo(), base);
+        // webapp asks for files in xx_XX locale, but the directory has a - not a _ . Convert.
+        File file = ServletUtils.makeFileFromSanePath(replaceLocaleWithOtherLocale(request.getPathInfo(), locale, locale), base);
+
         // Check if file is found. If not found go ahead and try and look up the English US locale version.
         if (file != null && !ServletUtils.canReadFile(file)) {
             file = ServletUtils.makeFileFromSanePath(replaceLocaleWithUSLocale(request.getPathInfo(), locale), base);
