@@ -1441,30 +1441,28 @@ public abstract class HostModel extends Model
 
         HashMap<String, String> dict = new HashMap<String, String>();
 
-        if (getIsPm().getEntity()) {
-            // Add well known pm options.
-            if (port.getIsAvailable() && port.getEntity() != null) {
-                dict.put(PmPortKey, port.getEntity());
-            }
-            if (slot.getIsAvailable() && slot.getEntity() != null) {
-                dict.put(PmSlotKey, slot.getEntity());
-            }
-            if (secure.getIsAvailable()) {
-                dict.put(PmSecureKey, secure.getEntity().toString());
-            }
+        // Add well known pm options.
+        if (port.getIsAvailable() && port.getEntity() != null) {
+            dict.put(PmPortKey, port.getEntity());
+        }
+        if (slot.getIsAvailable() && slot.getEntity() != null) {
+            dict.put(PmSlotKey, slot.getEntity());
+        }
+        if (secure.getIsAvailable()) {
+            dict.put(PmSecureKey, secure.getEntity().toString());
+        }
 
-            // Add unknown pm options.
-            // Assume Validate method was called before this getter.
-            String pmOptions = options.getEntity();
-            if (!StringHelper.isNullOrEmpty(pmOptions)) {
-                for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
-                {
-                    String[] array = pair.split("[=]", -1); //$NON-NLS-1$
-                    if (array.length == 2) {
-                        dict.put(array[0], array[1]);
-                    } else if (array.length == 1) {
-                        dict.put(array[0], ""); //$NON-NLS-1$
-                    }
+        // Add unknown pm options.
+        // Assume Validate method was called before this getter.
+        String pmOptions = options.getEntity();
+        if (!StringHelper.isNullOrEmpty(pmOptions)) {
+            for (String pair : pmOptions.split("[,]", -1)) //$NON-NLS-1$
+            {
+                String[] array = pair.split("[=]", -1); //$NON-NLS-1$
+                if (array.length == 2) {
+                    dict.put(array[0], array[1]);
+                } else if (array.length == 1) {
+                    dict.put(array[0], ""); //$NON-NLS-1$
                 }
             }
         }
