@@ -25,6 +25,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 from otopi import util
 from otopi import plugin
+from otopi import constants as otopicons
 
 
 from ovirt_engine import configfile
@@ -43,6 +44,16 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_BOOT,
+    )
+    def _boot(self):
+        self.environment[
+            otopicons.CoreEnv.LOG_FILTER_KEYS
+        ].append(
+            oenginecons.EngineDBEnv.PASSWORD
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
