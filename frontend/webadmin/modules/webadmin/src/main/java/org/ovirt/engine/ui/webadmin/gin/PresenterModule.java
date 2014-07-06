@@ -68,6 +68,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.I
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ImportNetworksPopupPresenterWidget;
@@ -200,6 +201,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.quota.SubTabQuota
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.StorageSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDataCenterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageDiskProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageIsoPresenter;
@@ -298,6 +300,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.DiskProfilePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfilePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSubnetPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView;
@@ -432,6 +435,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaUserV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.quota.SubTabQuotaVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.StorageSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDataCenterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDiskProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageDiskView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.storage.SubTabStorageGeneralView;
@@ -700,6 +704,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabStorageEventPresenter.ViewDef.class,
                 SubTabStorageEventView.class,
                 SubTabStorageEventPresenter.ProxyDef.class);
+        bindPresenter(SubTabStorageDiskProfilePresenter.class,
+                SubTabStorageDiskProfilePresenter.ViewDef.class,
+                SubTabStorageDiskProfileView.class,
+                SubTabStorageDiskProfilePresenter.ProxyDef.class);
 
         // Cluster
         bindPresenter(ClusterSubTabPanelPresenter.class,
@@ -1440,6 +1448,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VnicProfilePopupPresenterWidget.class,
                 VnicProfilePopupPresenterWidget.ViewDef.class,
                 VnicProfilePopupView.class);
+        bindPresenterWidget(DiskProfilePopupPresenterWidget.class,
+                DiskProfilePopupPresenterWidget.ViewDef.class,
+                DiskProfilePopupView.class);
 
         // External Subnet
         bindPresenterWidget(ExternalSubnetPopupPresenterWidget.class,

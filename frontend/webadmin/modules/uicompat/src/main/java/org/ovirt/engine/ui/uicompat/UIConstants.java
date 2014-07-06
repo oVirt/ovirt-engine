@@ -2400,5 +2400,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No")
     String doNotOptimiseForVirtStore();
+
+    @DefaultStringValue("Disk Profiles")
+    String diskProfilesTitle();
+
+    @DefaultStringValue("Disk Profile")
+    String diskProfileTitle();
+
+    @DefaultStringValue("Remove Disk Profile(s)")
+    String removeDiskProfileTitle();
 }
 

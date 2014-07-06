@@ -492,7 +492,15 @@ public enum HelpTag {
 
     remove_disk_snapshot("remove_disk_snapshot", HelpTagType.WEBADMIN, "Storage Tab > Snapshots Sub-Tab > Remove Disk Snapshot(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    storage_qos("storage_qos", HelpTagType.UNKNOWN); //$NON-NLS-1$
+    storage_qos("storage_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    disk_profiles("disk profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    new_disk_profile("new_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> New Disk Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_disk_profile("edit_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> Edit Disk Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_disk_profile("remove_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> Remove Disk Profile dialog"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 
