@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.Callable;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.BaseDiskDao;
@@ -50,6 +53,7 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -325,8 +329,28 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected void connectAllHostsToPool() {
-        runSynchronizeOperation(new ConnectSingleAsyncOperationFactory());
+    protected List<Pair<Guid, Boolean>> connectAllHostsToPool() {
+        List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
+        List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
+        for (final VDS vds : hostsInStatusUp) {
+            callables.add(new Callable<Pair<Guid, Boolean>>() {
+                @Override
+                public Pair<Guid, Boolean> call() throws Exception {
+                    Pair<Guid, Boolean> toReturn = new Pair<>(vds.getId(), Boolean.FALSE);
+                    try {
+                        boolean connectResult = StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
+                                .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
+                        toReturn.setSecond(connectResult);
+                    } catch (RuntimeException e) {
+                        log.errorFormat("Failed to connect host {0} to storage domain (name: {1}, id: {2}). Exception: {3}",
+                                vds.getName(), getStorageDomain().getName(), getStorageDomain().getId(), e);
+                    }
+                    return toReturn;
+                }
+            });
+        }
+
+        return ThreadPoolUtil.invokeAll(callables);
     }
 
     protected void disconnectAllHostsInPool() {
