@@ -1,8 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
@@ -10,6 +13,9 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.GetVGInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dao.StorageServerConnectionLunMapDAO;
@@ -131,5 +137,12 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
 
     protected StorageServerConnectionLunMapDAO getStorageServerConnectionLunMapDao() {
         return getDbFacade().getStorageServerConnectionLunMapDao();
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.SYNC_LUNS,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 }
