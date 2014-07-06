@@ -1,4 +1,4 @@
-package org.ovirt.engine.ui.webadmin.widget.label;
+package org.ovirt.engine.ui.common.widget.label;
 
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
@@ -10,33 +10,43 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.user.client.ui.DecoratedPopupPanel;
 import com.google.gwt.user.client.ui.HTML;
 
-public class LabelWithToolTip extends HTML {
+/**
+ * This class represents a label with a tooltip.
+ *
+ * Both the label and the tooltip can be <code>String</code> or <code>SafeHtml</code>.
+ *
+ * The default tooltip is the label's text. Overriding the tooltip (<code>setTitle(String title)</code>) should be done
+ * after setting the text (<code>setText(String text)</code>).
+ */
+public class LabelWithCustomToolTip extends HTML {
 
     private final HTML tooltip = new HTML();
     private final DecoratedPopupPanel tooltipPanel = new DecoratedPopupPanel();
     private String title;
 
-    public LabelWithToolTip() {
-        this("", -1); //$NON-NLS-1$
+    public LabelWithCustomToolTip() {
+        initTooltipPanel();
     }
 
-    public LabelWithToolTip(String text) {
-        this(text, -1);
+    public LabelWithCustomToolTip(String text) {
+        this();
+        setText(text);
     }
 
-    public LabelWithToolTip(SafeHtml text) {
-        this(text.asString());
+    public LabelWithCustomToolTip(SafeHtml html) {
+        this();
+        setHTML(html);
     }
 
-    public LabelWithToolTip(String text, int length) {
-        super(text);
+    @Override
+    public void setText(final String text) {
+        super.setText(text);
+        setTitle(text);
+    }
 
-        if (length > -1 && text.length() > length) {
-            setText(text.substring(0, length - 3) + "..."); //$NON-NLS-1$
-        }
+    private void initTooltipPanel() {
         tooltipPanel.setWidget(tooltip);
         tooltipPanel.getElement().getStyle().setZIndex(1);
-        setTitle(text);
         registerHandlers();
     }
 
@@ -47,7 +57,7 @@ public class LabelWithToolTip extends HTML {
             public void onMouseOver(MouseOverEvent event) {
                 if (!StringUtils.isEmpty(title)) {
                     tooltip.setHTML(title);
-                    tooltipPanel.showRelativeTo(LabelWithToolTip.this);
+                    tooltipPanel.showRelativeTo(LabelWithCustomToolTip.this);
                 }
             }
         });
@@ -66,6 +76,6 @@ public class LabelWithToolTip extends HTML {
     }
 
     public void setTitle(SafeHtml text) {
-        setTitle(text == null ? (String)null : text.asString());
+        setTitle(text == null ? (String) null : text.asString());
     }
 }

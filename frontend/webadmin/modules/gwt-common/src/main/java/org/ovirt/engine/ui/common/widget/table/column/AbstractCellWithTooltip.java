@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import org.ovirt.engine.ui.common.utils.ElementUtils;
+
 import com.google.gwt.cell.client.AbstractCell;
 import com.google.gwt.cell.client.ValueUpdater;
 import com.google.gwt.dom.client.BrowserEvents;
@@ -53,39 +55,6 @@ public abstract class AbstractCellWithTooltip<C> extends AbstractCell<C> {
      * Returns {@code true} when the content of the given {@code parent} element overflows its area.
      */
     protected boolean contentOverflows(Element parent) {
-        return parent != null && (detectOverflowUsingScrollWidth(parent) || detectOverflowUsingClientHeight(parent));
+        return parent != null && (ElementUtils.detectOverflowUsingScrollWidth(parent) || ElementUtils.detectOverflowUsingClientHeight(parent));
     }
-
-    /**
-     * Uses scrollWidth with temporary CSS 'overflow:auto' to detect horizontal overflow.
-     */
-    boolean detectOverflowUsingScrollWidth(Element parent) {
-        int scrollWidthBefore = parent.getScrollWidth();
-        String overflowValue = parent.getStyle().getProperty("overflow"); //$NON-NLS-1$
-        parent.getStyle().setProperty("overflow", "auto"); //$NON-NLS-1$ //$NON-NLS-2$
-
-        int scrollWidthAfter = parent.getScrollWidth();
-        int clientWidthAfter = parent.getClientWidth();
-        parent.getStyle().setProperty("overflow", overflowValue); //$NON-NLS-1$
-
-        return scrollWidthAfter > scrollWidthBefore || scrollWidthAfter > clientWidthAfter;
-    }
-
-    /**
-     * Uses clientHeight with temporary CSS 'whiteSpace:normal' to detect vertical overflow.
-     * <p>
-     * This is necessary due to some browsers (Firefox) having issues with scrollWidth (e.g. elements with CSS 'display'
-     * other than 'block' have incorrect scrollWidth value).
-     */
-    boolean detectOverflowUsingClientHeight(Element parent) {
-        int clientHeightBefore = parent.getClientHeight();
-        String whiteSpaceValue = parent.getStyle().getProperty("whiteSpace"); //$NON-NLS-1$
-        parent.getStyle().setProperty("whiteSpace", "normal"); //$NON-NLS-1$ //$NON-NLS-2$
-        int scrollHeightAfter = parent.getScrollHeight();
-        int clientHeightAfter = parent.getClientHeight();
-        parent.getStyle().setProperty("whiteSpace", whiteSpaceValue); //$NON-NLS-1$
-
-        return clientHeightAfter > clientHeightBefore || clientHeightAfter < scrollHeightAfter;
-    }
-
 }

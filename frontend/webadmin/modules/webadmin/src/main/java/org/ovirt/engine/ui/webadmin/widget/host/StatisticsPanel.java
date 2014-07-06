@@ -3,11 +3,11 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.widget.TogglePanel;
+import org.ovirt.engine.ui.common.widget.label.LabelWithTextOverflow;
 import org.ovirt.engine.ui.common.widget.renderer.RxTxRateRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.SumUpRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterface;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
-import org.ovirt.engine.ui.webadmin.widget.label.LabelWithToolTip;
 
 import com.google.gwt.dom.client.Style;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -49,7 +49,8 @@ class StatisticsElementPanel extends TogglePanel {
         row.getColumnFormatter().setWidth(4, "105px"); //$NON-NLS-1$
 
         // MAC
-        LabelWithToolTip macLabel = new LabelWithToolTip(hostInterface.getMAC(), 17);
+        LabelWithTextOverflow macLabel = new LabelWithTextOverflow(hostInterface.getMAC());
+        macLabel.setWidth("210px"); //$NON-NLS-1$
         row.setWidget(0, 0, macLabel);
 
         // Speed

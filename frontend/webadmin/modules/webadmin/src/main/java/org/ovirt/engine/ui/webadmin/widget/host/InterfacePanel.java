@@ -63,7 +63,7 @@ class InterfaceElementPanel extends TogglePanel {
         });
 
         // Name
-        row.setWidget(0, 1, new InterfaceLabelWithToolTip(hostInterface.getInterface()).getLabel());
+        row.setWidget(0, 1, new InterfaceLabelWithToolTip(hostInterface.getInterface()));
 
         return row;
     }
