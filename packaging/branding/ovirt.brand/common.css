@@ -13,54 +13,72 @@ These classes allow you to modify the logo used in the login form. */
     display: block;
 }
 
-
 /* SimpleDialogPanel:
 These classes allow you to modify the header of all the popup windows
 in the user portal and web admin. The border is defined in gwt-common.css */
-.obrand_dialogHeaderImage {
-    background-image: url(images/dialog/dialog_header_image.png);
-    width: 118px;
-    height: 27px;
-    border: 0px;
-    display: block;
+
+/* left */
+.obrand_dialogHeaderLeftPanel {
+    position: absolute;
+    left: 5px;
+    width: 27px;
+    line-height: 27px;
+    background: url(images/dialog/dialog_header_TL.png);
 }
 
-.obrand_dialogLogoImage {
-    background-image: url(images/dialog/blank.png);
+/* center */
+.obrand_dialogHeaderCenterPanel {
+    position: absolute;
+    background: url(images/dialog/dialog_header_background_repetitive.png) repeat-x;
+    height: 27px;
+    line-height: 27px;
+    width: auto;
+    left: 20px;
+    right: 30px;
+}
+
+.obrand_dialogHeaderTitle {
+    text-align: left;
+    font-size: 14px;
+    font-weight: bold;
+    color: white;
+    position: relative;
+    height: 27px;
+    overflow: hidden;
+    z-index: 2;
+    margin-top: 1px;
+    left: -5px;
+}
+
+/* right */
+.obrand_dialogHeaderRightPanel {
+    background-image: url(images/dialog/dialog_header_TR.png);
     width: 27px;
     height: 27px;
     border: 0px;
     display: block;
 }
 
-.obrand_headerCenterPanel {
-    position: absolute;
-    background: url(images/dialog_header_background_repetitive.png) repeat-x;
-    height: 27px;
-    line-height: 27px;
-    width: auto;
-    left: 32px;
-    right: 123px;
+.obrand_dialogHeaderRightPanelDecoration {
+    /* hook for adding a decorative image to the far right of dialog headers. /*
+    /* currently not used. */
 }
 
-.obrand_headerTitle {
-    text-align: left;
-    font-size: 14px;
-    font-weight: bold;
-    color: white;
-    margin-left: 14px;
-    float: left;
-    position: relative;
-    margin-top: 1px;
+/* SimpleDialogPanel.ui.xml:
+This class allows you to change the default icon on popup windows.
+Currently no icon for most windows. */
+.obrand_dialogLogoImage {
+    border: 0px;
 }
-
 
 /* ErrorPopupView.ui.xml:
 This class allows you to change the error icon on the error popup window. */
 .obrand_dialogLogoErrorImage {
     background: url(images/dialog/error.png);
-    width: 27px;
-    height: 27px;
+    background-repeat: no-repeat;
+    background-position: 0 5px;
+    width: 16px;
+    height: 14px;
     border: 0px;
 }
 

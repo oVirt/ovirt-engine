@@ -393,10 +393,6 @@ a.dropdown-toggle {
 .epv_closeButton_pfly_fix {
     line-height: 12px !important;
 }
-.epv_titleLabel_pfly_fix {
-    position: relative !important;
-    left: 12px !important;
-}
 .gpv_flowPanel_pfly_fix {
     padding: 4px;
 }

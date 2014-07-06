@@ -17,17 +17,16 @@
             right: 5px;
         }
 
-        .headerLeftPanel {
-            position: absolute;
-            left: 5px;
+        @external obrand_dialogHeaderLeftPanel;
+        .obrand_dialogHeaderLeftPanel {
         }
 
-        @external obrand_headerCenterPanel;
-        .obrand_headerCenterPanel {
+        @external obrand_dialogHeaderCenterPanel;
+        .obrand_dialogHeaderCenterPanel {
         }
 
-        @external obrand_headerTitle;
-        .obrand_headerTitle {
+        @external obrand_dialogHeaderTitle;
+        .obrand_dialogHeaderTitle {
         }
 
         .content {
@@ -61,10 +60,6 @@
             position: absolute;
         }
 
-        .headerTitleFloat {
-            float: left;
-        }
-
         .helpIconButton {
             background: transparent;
             border: 1px solid transparent;
@@ -91,8 +86,18 @@
             z-index: 1;
         }
 
-        @external obrand_dialogHeaderImage;
-        .obrand_dialogHeaderImage {
+        .logoPanel {
+            float: left;
+            position: relative;
+            left: -5px;
+        }
+
+        @external obrand_dialogHeaderRightPanel;
+        .obrand_dialogHeaderRightPanel {
+        }
+
+        @external obrand_dialogLogoImageWrapper;
+        .obrand_dialogLogoImageWrapper {
         }
 
         @external obrand_dialogLogoImage;
@@ -102,13 +107,25 @@
 
     <g:FlowPanel>
         <g:FlowPanel addStyleNames="{style.header}">
-            <g:SimplePanel ui:field="logoPanel" addStyleNames="{style.headerLeftPanel}">
-                <g:Image styleName='obrand_dialogLogoImage' url="clear.cache.gif" />
-            </g:SimplePanel>
-            <g:SimplePanel addStyleNames="{style.obrand_headerCenterPanel}" />
+            <g:Image styleName="obrand_dialogHeaderLeftPanel" url="clear.cache.gif" />
+            <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderCenterPanel}" >
+                <g:SimplePanel ui:field="logoPanel" addStyleNames="{style.logoPanel}">
+                    <g:Image styleName="obrand_dialogLogoImage" url="clear.cache.gif" />
+                </g:SimplePanel>
+                <g:FlowPanel addStyleNames="{style.obrand_dialogHeaderTitle}">
+                    <g:FlowPanel ui:field="headerTitlePanel">
+                        <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton} sdp_helpIconButton_pfly_fix" visible="false">
+                            <g:upFace image='{resources.dialogIconHelp}' />
+                            <g:downFace image='{resources.dialogIconHelpDown}' />
+                            <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
+                        </g:PushButton>
+                    </g:FlowPanel>
+                </g:FlowPanel>
+            </g:FlowPanel>
             <g:SimplePanel addStyleNames="{style.headerRightPanel}">
                 <g:FlowPanel>
-                    <g:Image styleName='obrand_dialogHeaderImage' url="clear.cache.gif" />
+                    <g:Image styleName='obrand_dialogHeaderRightPanel' url="clear.cache.gif" />
+                    <g:Image styleName='obrand_dialogHeaderRightPanelDecoration' url="clear.cache.gif" />
                     <g:PushButton ui:field='closeIconButton' addStyleNames="{style.closeIconButton} closeIconButton_fix">
                         <g:upFace image='{resources.dialogIconClose}' />
                         <g:downFace image='{resources.dialogIconCloseDown}' />
@@ -116,15 +133,6 @@
                     </g:PushButton>
                 </g:FlowPanel>
             </g:SimplePanel>
-            <g:FlowPanel addStyleNames="{style.obrand_headerTitle}">
-                <g:FlowPanel ui:field="headerTitlePanel">
-                    <g:PushButton ui:field="helpIconButton" addStyleNames="{style.helpIconButton} sdp_helpIconButton_pfly_fix" visible="false">
-                        <g:upFace image='{resources.dialogIconHelp}' />
-                        <g:downFace image='{resources.dialogIconHelpDown}' />
-                        <g:upHoveringFace image='{resources.dialogIconHelpRollover}' />
-                    </g:PushButton>
-                </g:FlowPanel>
-            </g:FlowPanel>
         </g:FlowPanel>
 
         <g:SimplePanel ui:field="contentPanel" addStyleNames="{style.content} contentPanel_pfly_fix" />
