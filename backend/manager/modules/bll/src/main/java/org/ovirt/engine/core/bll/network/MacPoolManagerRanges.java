@@ -52,6 +52,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
                     forceAddMacWithoutLocking(iface.getMacAddress());
                 }
             }
+
             initialized = true;
             log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
         } catch (Exception ex) {
@@ -125,8 +126,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
             boolean added = macsStorage.useMac(MacAddressRangeUtils.macToLong(mac));
             logWhenMacPoolIsEmpty();
             return added;
-
-
         }
     }
 
@@ -148,7 +147,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.readLock())) {
             checkIfInitialized();
             return macsStorage.isMacInUse(MacAddressRangeUtils.macToLong(mac));
-
         }
     }
 
@@ -159,7 +157,6 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
             for (String mac : macs) {
                 macsStorage.freeMac(MacAddressRangeUtils.macToLong(mac));
             }
-
         }
     }
 
