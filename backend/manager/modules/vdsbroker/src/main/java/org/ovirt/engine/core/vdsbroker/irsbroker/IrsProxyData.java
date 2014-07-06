@@ -407,6 +407,13 @@ public class IrsProxyData {
                     }
                 }
             }
+
+            // For block domains, synchronize LUN details comprising the storage domain with the DB
+            if (statusChanged && data.getStatus() == StorageDomainStatus.Active && storage_domain.getStorageType().isBlockDomain()) {
+                ResourceManager.getInstance().getEventListener().syncLunsInfoForBlockStorageDomain(
+                        data.getId(), getCurrentVdsId());
+            }
+
             // if status didn't change and still not active no need to
             // update dynamic data
             if (statusChanged
@@ -1109,6 +1116,13 @@ public class IrsProxyData {
                                         .get(new StoragePoolIsoMapId(tempData.getDomainId(), _storagePoolId));
                         map.setStatus(StorageDomainStatus.Active);
                         DbFacade.getInstance().getStoragePoolIsoMapDao().update(map);
+
+                        // For block domains, synchronize LUN details comprising the storage domain with the DB
+                        StorageDomain storageDomain = DbFacade.getInstance().getStorageDomainDao().get(tempData.getDomainId());
+                        if (storageDomain.getStorageType().isBlockDomain()) {
+                            ResourceManager.getInstance().getEventListener().syncLunsInfoForBlockStorageDomain(
+                                    storageDomain.getId(), vdsId);
+                        }
                     }
                 }
 
