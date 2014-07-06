@@ -169,6 +169,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
                 getMaximumMigrationDowntime());
     }
 
+    @Override
+    public void runningSucceded() {
+        try {
+            getVmDynamicDao().clearMigratingToVds(getVmId());
+        }
+        finally {
+            super.runningSucceded();
+        }
+    }
+
     private int getMaximumMigrationDowntime() {
         if (getVm().getMigrationDowntime() != null) {
             return getVm().getMigrationDowntime();

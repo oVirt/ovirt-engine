@@ -391,6 +391,19 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION ClearMigratingToVds(v_vm_guid UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE vm_dynamic
+      SET
+      migrating_to_vds = null
+      WHERE vm_guid = v_vm_guid;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 Create or replace FUNCTION DeleteVmDynamic(v_vm_guid UUID)
 RETURNS VOID
    AS $procedure$

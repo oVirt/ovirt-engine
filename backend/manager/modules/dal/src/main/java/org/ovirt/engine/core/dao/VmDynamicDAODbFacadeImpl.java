@@ -49,6 +49,14 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
     }
 
     @Override
+    public void clearMigratingToVds(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_guid", id);
+
+        getCallsHandler().executeModification("ClearMigratingToVds", parameterSource);
+    }
+
+    @Override
     public boolean updateConsoleUserWithOptimisticLocking(VmDynamic vm) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("vm_guid", vm.getId())

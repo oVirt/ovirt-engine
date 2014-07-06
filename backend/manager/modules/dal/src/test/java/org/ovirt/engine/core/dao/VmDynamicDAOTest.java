@@ -155,4 +155,17 @@ public class VmDynamicDAOTest extends BaseDAOTestCase {
         assertFalse(result);
     }
 
+    @Test
+    public void testClearMigratingToVds() throws Exception {
+        Guid vmId = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4356");
+        VmDynamic vmDynamic = dao.get(vmId);
+        assertNotNull("migrating_to_vds field should not be null before we clear it",
+                vmDynamic.getMigratingToVds());
+
+        dao.clearMigratingToVds(vmId);
+
+        vmDynamic = dao.get(vmId);
+        assertNull("migrating_to_vds field should be null after we clear it",
+                vmDynamic.getMigratingToVds());
+    }
 }
