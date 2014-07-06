@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.webadmin.widget.provider;
 
-import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
@@ -9,7 +9,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class DnsServersWidget extends AddRemoveRowWidget<ListModel<EntityModel<String>>, EntityModel<String>, DnsServerEditor> {
+public class DnsServersWidget extends ScrollableAddRemoveRowWidget<ListModel<EntityModel<String>>, EntityModel<String>, DnsServerEditor> {
 
     public interface WidgetUiBinder extends UiBinder<Widget, DnsServersWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

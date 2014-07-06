@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 
 import java.util.Collection;
 
-import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NicLabelModel;
 
@@ -10,7 +10,7 @@ import com.google.gwt.core.shared.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class NicLabelWidget extends AddRemoveRowWidget<NicLabelModel, ListModel<String>, NicLabelEditor> {
+public class NicLabelWidget extends ScrollableAddRemoveRowWidget<NicLabelModel, ListModel<String>, NicLabelEditor> {
 
     public interface WidgetUiBinder extends UiBinder<Widget, NicLabelWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

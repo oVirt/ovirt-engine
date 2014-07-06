@@ -18,7 +18,7 @@
 		}
 	</ui:style>
 
-	<g:ScrollPanel addStyleNames="{style.mainPanel}" >
+	<g:ScrollPanel ui:field="scrollPanel" addStyleNames="{style.mainPanel}" >
 		<g:FlowPanel ui:field="contentPanel" />
 	</g:ScrollPanel>
 

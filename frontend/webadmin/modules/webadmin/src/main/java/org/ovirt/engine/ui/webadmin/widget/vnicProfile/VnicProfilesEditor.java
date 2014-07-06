@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.widget.vnicProfile;
 
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -13,7 +13,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class VnicProfilesEditor extends AddRemoveRowWidget<NetworkProfilesModel, VnicProfileModel, VnicProfileWidget> {
+public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProfilesModel, VnicProfileModel, VnicProfileWidget> {
 
     interface WidgetUiBinder extends UiBinder<Widget, VnicProfilesEditor> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

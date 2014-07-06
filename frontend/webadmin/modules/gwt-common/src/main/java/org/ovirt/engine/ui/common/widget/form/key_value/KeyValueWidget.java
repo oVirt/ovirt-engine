@@ -2,7 +2,7 @@ package org.ovirt.engine.ui.common.widget.form.key_value;
 
 import java.util.LinkedList;
 
-import org.ovirt.engine.ui.common.widget.AddRemoveRowWidget;
+import org.ovirt.engine.ui.common.widget.ScrollableAddRemoveRowWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.BaseKeyModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueLineModel;
 
@@ -10,7 +10,7 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.user.client.ui.Widget;
 
-public class KeyValueWidget<T extends BaseKeyModel> extends AddRemoveRowWidget<T, KeyValueLineModel, KeyValueLineWidget> {
+public class KeyValueWidget<T extends BaseKeyModel> extends ScrollableAddRemoveRowWidget<T, KeyValueLineModel, KeyValueLineWidget> {
 
     interface WidgetUiBinder extends UiBinder<Widget, KeyValueWidget> {
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);

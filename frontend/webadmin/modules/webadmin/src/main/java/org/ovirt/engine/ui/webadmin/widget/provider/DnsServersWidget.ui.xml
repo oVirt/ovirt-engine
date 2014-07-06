@@ -29,7 +29,7 @@
 
 	<g:FlowPanel addStyleNames="{style.mainPanel}" >
 		<g:Label text="{constants.dnsServersExternalSubnet}" addStyleNames="{style.labelStyle}" />
-		<g:ScrollPanel>
+		<g:ScrollPanel ui:field="scrollPanel">
 			<g:FlowPanel ui:field="contentPanel" />
 		</g:ScrollPanel>
 	</g:FlowPanel>
