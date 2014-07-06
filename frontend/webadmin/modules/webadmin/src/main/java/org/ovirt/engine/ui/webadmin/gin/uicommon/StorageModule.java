@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
@@ -23,6 +24,7 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportCloneModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDataCenterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageDiskListModel;
@@ -40,6 +42,7 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.VmBackupModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindMultiDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.FindSingleDcPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.ImportExportImagePopupPresenterWidget;
@@ -411,6 +414,43 @@ public class StorageModule extends AbstractGinModule {
                     return super.getModelPopup(source, lastExecutedCommand, windowModel);
                 }
             }
+        };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<DiskProfile, StorageListModel, DiskProfileListModel> getStorageDiskProfileListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<DiskProfilePopupPresenterWidget> newProfilePopupProvider,
+            final Provider<DiskProfilePopupPresenterWidget> editProfilePopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<DiskProfile, StorageListModel, DiskProfileListModel>(eventBus,
+                defaultConfirmPopupProvider,
+                StorageListModel.class,
+                DiskProfileListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DiskProfileListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand == getModel().getNewCommand()) {
+                    return newProfilePopupProvider.get();
+                } else if (lastExecutedCommand == getModel().getEditCommand()) {
+                    return editProfilePopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DiskProfileListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand == getModel().getRemoveCommand()) { //$NON-NLS-1$
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+
         };
     }
 

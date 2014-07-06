@@ -3292,7 +3292,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String networkQoSName();
 
-    @DefaultStringValue("Name")
+    @DefaultStringValue("QoS Name")
     String storageQosName();
 
     @DefaultStringValue("In Average")
@@ -3820,4 +3820,28 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Count")
     String iopsCountLabelQosPopup();
+
+    @DefaultStringValue("QoS")
+    String diskProfileQosLabel();
+
+    @DefaultStringValue("Disk Profiles")
+    String diskProfilesSubTabLabel();
+
+    @DefaultStringValue("Storage Domain")
+    String diskProfileStorageDomainLabel();
+
+    @DefaultStringValue("Name")
+    String diskProfileNameLabel();
+
+    @DefaultStringValue("Description")
+    String diskProfileDescriptionLabel();
+
+    @DefaultStringValue("New")
+    String newDiskProfile();
+
+    @DefaultStringValue("Edit")
+    String editDiskProfile();
+
+    @DefaultStringValue("Remove")
+    String removeDiskProfile();
 }

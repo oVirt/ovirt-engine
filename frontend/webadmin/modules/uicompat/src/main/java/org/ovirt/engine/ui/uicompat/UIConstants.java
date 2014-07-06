@@ -2353,5 +2353,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Custom")
     String customMtu();
+
+    @DefaultStringValue("Disk Profiles")
+    String diskProfilesTitle();
+
+    @DefaultStringValue("Disk Profile")
+    String diskProfileTitle();
+
+    @DefaultStringValue("Remove Disk Profile(s)")
+    String removeDiskProfileTitle();
 }
 

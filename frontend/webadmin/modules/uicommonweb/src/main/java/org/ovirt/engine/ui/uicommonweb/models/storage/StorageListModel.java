@@ -50,6 +50,7 @@ import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportModel;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
@@ -197,6 +198,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private ListModel isoListModel;
     private ListModel diskListModel;
     private ListModel snapshotListModel;
+    private ListModel diskProfileListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -249,6 +251,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         snapshotListModel = new StorageSnapshotListModel();
         snapshotListModel.setIsAvailable(false);
 
+        diskProfileListModel = new DiskProfileListModel();
+        diskProfileListModel.setIsAvailable(false);
+
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(generalModel);
         list.add(dcListModel);
@@ -261,6 +266,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         list.add(isoListModel);
         list.add(diskListModel);
         list.add(snapshotListModel);
+        list.add(diskProfileListModel);
         list.add(new StorageEventListModel());
         list.add(new PermissionListModel());
         setDetailModels(list);
@@ -1082,6 +1088,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
             templateRegisterListModel.setIsAvailable(isRegisterSubtabsAvailable);
             diskListModel.setIsAvailable(isDataStorage);
             snapshotListModel.setIsAvailable(isDataStorage);
+            diskProfileListModel.setIsAvailable(isDataStorage);
 
             isoListModel.setIsAvailable(isImageStorage);
         }
