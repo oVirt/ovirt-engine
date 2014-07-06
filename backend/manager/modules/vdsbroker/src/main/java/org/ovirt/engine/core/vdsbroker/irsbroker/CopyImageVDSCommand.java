@@ -55,7 +55,7 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
         Guid taskID = new Guid(uuidReturn.mUuid);
 
         mCreatedImageId = getParameters().getDstImageId().toString();
-        // ReturnValue = new Guid(mCreatedImageId);
+        setReturnValue(taskID);
 
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
