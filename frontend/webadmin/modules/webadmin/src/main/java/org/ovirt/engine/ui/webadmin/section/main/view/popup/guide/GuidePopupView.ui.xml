@@ -36,6 +36,10 @@
             padding-bottom: 15px;
         }
 
+        @external obrand_dialogLogoGuideImageWrapper;
+        .obrand_dialogLogoGuideImageWrapper {
+        }
+
         @external obrand_dialogLogoGuideImage;
         .obrand_dialogLogoGuideImage {
         }
