@@ -503,6 +503,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     StoragePoolRefreshTimeInSeconds,
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("30")
+    HostStorageConnectionAndPoolRefreshTimeInSeconds,
     @Reloadable
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")

@@ -24,6 +24,7 @@ public enum LockingGroup {
     REMOTE_VM,
     OVF_UPDATE,
     /** This group is used for indication that an operation is executed using the specified host */
-    VDS_EXECUTION;
+    VDS_EXECUTION,
+    VDS_POOL_AND_STORAGE_CONNECTIONS;
 
 }

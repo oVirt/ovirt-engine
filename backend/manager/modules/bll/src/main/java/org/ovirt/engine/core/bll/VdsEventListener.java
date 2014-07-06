@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
@@ -22,6 +23,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -47,10 +49,13 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
+import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
@@ -66,6 +71,8 @@ import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -93,21 +100,32 @@ public class VdsEventListener implements IVdsEventListener {
         // Clear the problematic timers since the VDS is in maintenance so it doesn't make sense to check it
         // anymore.
         if (!Guid.Empty.equals(vds.getStoragePoolId())) {
-            clearDomainCache(vds);
+            // when vds is being moved to maintenance, this is the part in which we disconnect it from the pool
+            // and the storage server. it should be synced with the host autorecovery mechanism to try to avoid
+            // leaving the host with storage/pool connection when it's on maintenance.
+            EngineLock lock = new EngineLock(Collections.singletonMap(vds.getId().toString(),
+                    new Pair<>(LockingGroup.VDS_POOL_AND_STORAGE_CONNECTIONS.toString(),
+                            VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED.toString())), null);
+            try {
+                LockManagerFactory.getLockManager().acquireLockWait(lock);
+                clearDomainCache(vds);
 
-            StoragePool storage_pool = DbFacade.getInstance()
-                    .getStoragePoolDao()
-                    .get(vds.getStoragePoolId());
-            if (StoragePoolStatus.Uninitialized != storage_pool
-                    .getStatus()) {
-                Backend.getInstance().getResourceManager()
-                        .RunVdsCommand(
-                                VDSCommandType.DisconnectStoragePool,
-                                new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
-                                        vds.getStoragePoolId(), vds.getVdsSpmId()));
-                HostStoragePoolParametersBase params =
-                        new HostStoragePoolParametersBase(storage_pool, vds);
-                Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
+                StoragePool storage_pool = DbFacade.getInstance()
+                        .getStoragePoolDao()
+                        .get(vds.getStoragePoolId());
+                if (StoragePoolStatus.Uninitialized != storage_pool
+                        .getStatus()) {
+                    Backend.getInstance().getResourceManager()
+                            .RunVdsCommand(
+                                    VDSCommandType.DisconnectStoragePool,
+                                    new DisconnectStoragePoolVDSCommandParameters(vds.getId(),
+                                            vds.getStoragePoolId(), vds.getVdsSpmId()));
+                    HostStoragePoolParametersBase params =
+                            new HostStoragePoolParametersBase(storage_pool, vds);
+                    Backend.getInstance().runInternalAction(VdcActionType.DisconnectHostFromStoragePoolServers, params);
+                }
+            } finally {
+                LockManagerFactory.getLockManager().releaseLock(lock);
             }
         }
     }
@@ -258,6 +276,13 @@ public class VdsEventListener implements IVdsEventListener {
         }
         return isSucceeded;
     }
+
+    @Override
+    public boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds) {
+        ConnectHostToStoragePoolServersParameters params = new ConnectHostToStoragePoolServersParameters(vds, false);
+        return Backend.getInstance().runInternalAction(VdcActionType.ConnectHostToStoragePoolServers, params).getSucceeded();
+    }
+
 
     private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate, final VDS vds) {
         return LinqUtils.foreach(vmsToMigrate,

@@ -573,6 +573,7 @@ select fn_db_add_config_value('StorageDomainNameSizeLimit','50','general');
 select fn_db_add_config_value('StoragePoolNameSizeLimit','40','general');
 select fn_db_add_config_value('StoragePoolNonOperationalResetTimeoutInMin','3','general');
 select fn_db_add_config_value('StoragePoolRefreshTimeInSeconds','10','general');
+select fn_db_add_config_value('HostStorageConnectionAndPoolRefreshTimeInSeconds','30','general');
 select fn_db_add_config_value('SucceededJobCleanupTimeInMinutes','10','general');
 select fn_db_add_config_value('SupportedClusterLevels','3.0','general');
 select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');

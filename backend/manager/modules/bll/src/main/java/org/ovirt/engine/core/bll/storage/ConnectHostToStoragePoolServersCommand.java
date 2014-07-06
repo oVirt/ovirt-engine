@@ -32,6 +32,12 @@ public class ConnectHostToStoragePoolServersCommand extends
         setVds(parameters.getVds());
     }
 
+    public ConnectHostToStoragePoolServersCommand(ConnectHostToStoragePoolServersParameters parameters) {
+        super(parameters);
+        setStoragePool(parameters.getStoragePool());
+        setVds(parameters.getVds());
+    }
+
     @Override
     protected void executeCommand() {
         initConnectionList(getParameters().isConnectToInactiveDomains());

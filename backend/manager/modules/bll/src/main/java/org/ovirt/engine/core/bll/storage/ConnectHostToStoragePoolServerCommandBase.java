@@ -26,6 +26,10 @@ public abstract class ConnectHostToStoragePoolServerCommandBase<T extends Storag
         super(parameters, cmdContext);
     }
 
+    public ConnectHostToStoragePoolServerCommandBase(T parameters) {
+        super(parameters);
+    }
+
     protected Map<StorageType, List<StorageServerConnections>> getConnectionsTypeMap() {
         return connectionsTypeMap;
     }

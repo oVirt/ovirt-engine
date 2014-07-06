@@ -28,6 +28,8 @@ public interface IVdsEventListener {
 
     boolean vdsUpEvent(VDS vds);
 
+    boolean connectHostToDomainsInActiveOrUnknownStatus(VDS vds);
+
     void processOnClientIpChange(VDS vds, Guid vmId);
 
     void processOnCpuFlagsChange(Guid vdsId);
