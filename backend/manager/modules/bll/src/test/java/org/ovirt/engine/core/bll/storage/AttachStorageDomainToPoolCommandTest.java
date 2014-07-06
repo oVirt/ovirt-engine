@@ -12,6 +12,7 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.junit.ClassRule;
@@ -38,7 +39,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
@@ -88,7 +88,7 @@ public class AttachStorageDomainToPoolCommandTest {
 
         doReturn(dbFacade).when(cmd).getDbFacade();
         doNothing().when(cmd).attemptToActivateDomain();
-
+        doReturn(Collections.emptyList()).when(cmd).connectAllHostsToPool();
         when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
         when(dbFacade.getVdsDao()).thenReturn(vdsDAO);
@@ -102,7 +102,6 @@ public class AttachStorageDomainToPoolCommandTest {
         when(storageDomainStaticDAO.get(any(Guid.class))).thenReturn(new StorageDomainStatic());
 
         doReturn(backendInternal).when(cmd).getBackend();
-        when(vdsDAO.getAllForStoragePoolAndStatus(any(Guid.class), any(VDSStatus.class))).thenReturn(new ArrayList<VDS>());
         when(backendInternal.getResourceManager()).thenReturn(vdsBrokerFrontend);
         VdcReturnValueBase vdcReturnValue = new VdcReturnValueBase();
         vdcReturnValue.setSucceeded(true);
