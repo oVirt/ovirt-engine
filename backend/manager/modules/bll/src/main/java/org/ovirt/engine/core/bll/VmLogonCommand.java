@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 
-@InternalCommandAttribute
 public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
 
     public VmLogonCommand(T parameters) {
