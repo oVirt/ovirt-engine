@@ -10,12 +10,11 @@ import org.ovirt.engine.core.utils.DuplicateKeysCheck;
 
 public class DuplicateKeysTest {
     @Test
-    public void testkDuplicateKeys() throws FileNotFoundException {
+    public void testDuplicateKeys() throws FileNotFoundException {
         String baseDir = System.getProperty("basedir");
         assumeNotNull(baseDir);
-        String fileName = "AppErrors.properties";
-        File file = new File(baseDir + "/src/main/resources/bundles/" + fileName);
+
+        File file = new File(baseDir, "src/main/resources/bundles/AppErrors.properties");
         DuplicateKeysCheck.assertNoDuplicateKeys(file.getAbsolutePath());
     }
-
 }
