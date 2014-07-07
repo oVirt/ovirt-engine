@@ -117,7 +117,7 @@ public class KerberosLdapAuthz implements Extension {
                         null,
                         getDirectoryName(),
                         queryData,
-                        (input.<Integer> get(Authz.InvokeKeys.QUERY_FLAGS, 0) & Authz.QueryFlags.RESOLVE_GROUPS) != 0
+                                (input.<Integer> get(Authz.InvokeKeys.QUERY_FLAGS, 0) & Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE) != 0
                 )
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
@@ -246,7 +246,10 @@ public class KerberosLdapAuthz implements Extension {
                 ).mput(
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Arrays.asList(NAMESPACE)
-                        );
+                ).mput(
+                        Authz.ContextKeys.CAPABILITIES,
+                        Authz.Capabilities.RECURSIVE_GROUP_RESOLUTION
+                );
     }
 
     private ExtMap mapLdapUser(LdapUser user) {
