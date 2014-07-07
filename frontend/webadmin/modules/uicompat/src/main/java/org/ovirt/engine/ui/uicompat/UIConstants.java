@@ -279,6 +279,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Bricks")
     String bricksTitle();
 
+    @DefaultStringValue("Geo-Replication")
+    String geoReplicationTitle();
+
     @DefaultStringValue("Rebalance Status")
     String volumeRebalanceStatusTitle();
 

@@ -54,6 +54,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
@@ -164,6 +165,16 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         this.brickListModel = brickListModel;
     }
 
+    private VolumeGeoRepListModel geoRepListModel;
+
+    public VolumeGeoRepListModel getGeoRepListModel() {
+        return geoRepListModel;
+    }
+
+    public void setGeoRepListModel(VolumeGeoRepListModel geoRepListModel) {
+        this.geoRepListModel = geoRepListModel;
+    }
+
     public UICommand getStartVolumeProfilingCommand() {
         return startVolumeProfilingCommand;
     }
@@ -227,11 +238,13 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         super.initDetailModels();
 
         setBrickListModel(new VolumeBrickListModel());
+        setGeoRepListModel(new VolumeGeoRepListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new VolumeGeneralModel());
         list.add(new VolumeParameterListModel());
         list.add(getBrickListModel());
+        list.add(getGeoRepListModel());
         list.add(new PermissionListModel());
         list.add(new VolumeEventListModel());
         setDetailModels(list);
@@ -406,7 +419,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     protected void onSelectedItemChanged() {
         super.onSelectedItemChanged();
         updateActionAvailability();
-        getBrickListModel().setVolumeEntity((GlusterVolumeEntity) provideDetailModelEntity(getSelectedItem()));
+        GlusterVolumeEntity selectedVolume = (GlusterVolumeEntity)provideDetailModelEntity(getSelectedItem());
+        getBrickListModel().setVolumeEntity(selectedVolume);
+        getGeoRepListModel().setEntity(selectedVolume);
     }
 
     @Override
@@ -1023,11 +1038,11 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             return;
         }
 
-        Guid clusterId = ((VDSGroup) volumeModel.getCluster().getSelectedItem()).getId();
+        Guid clusterId = volumeModel.getCluster().getSelectedItem().getId();
         final GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setClusterId(clusterId);
-        volume.setName((String) volumeModel.getName().getEntity());
-        GlusterVolumeType type = (GlusterVolumeType) volumeModel.getTypeList().getSelectedItem();
+        volume.setName(volumeModel.getName().getEntity());
+        GlusterVolumeType type = volumeModel.getTypeList().getSelectedItem();
 
         if (type.isStripedType()) {
             volume.setStripeCount(volumeModel.getStripeCountValue());
@@ -1038,10 +1053,10 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volume.setVolumeType(type);
 
-        if ((Boolean) volumeModel.getTcpTransportType().getEntity()) {
+        if (volumeModel.getTcpTransportType().getEntity()) {
             volume.getTransportTypes().add(TransportType.TCP);
         }
-        if ((Boolean) volumeModel.getRdmaTransportType().getEntity()) {
+        if (volumeModel.getRdmaTransportType().getEntity()) {
             volume.getTransportTypes().add(TransportType.RDMA);
         }
 
@@ -1054,21 +1069,21 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
         volume.setBricks(brickList);
 
-        if ((Boolean) volumeModel.getNfs_accecssProtocol().getEntity()) {
+        if (volumeModel.getNfs_accecssProtocol().getEntity()) {
             volume.enableNFS();
         }
         else {
             volume.disableNFS();
         }
 
-        if ((Boolean) volumeModel.getCifs_accecssProtocol().getEntity()) {
+        if (volumeModel.getCifs_accecssProtocol().getEntity()) {
             volume.enableCifs();
         }
         else {
             volume.disableCifs();
         }
 
-        volume.setAccessControlList((String) volumeModel.getAllowAccess().getEntity());
+        volume.setAccessControlList(volumeModel.getAllowAccess().getEntity());
 
         volumeModel.startProgress(null);
 
@@ -1094,7 +1109,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         if (returnValue != null && returnValue.getSucceeded())
         {
             cancel();
-            if ((Boolean) model.getOptimizeForVirtStore().getEntity()) {
+            if (model.getOptimizeForVirtStore().getEntity()) {
                 optimizeVolumesForVirtStore(Arrays.asList(volume));
             }
         }

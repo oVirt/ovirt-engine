@@ -54,6 +54,8 @@ public enum HelpTag {
 
     bricks("bricks", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    geo_replication("geo_replication", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     cannot_add_bricks("cannot_add_bricks", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Bricks sub tab (Add Bricks context), dialog shows the following message: 'Could not find any host in Up status in the cluster. Please try again later.'"), //$NON-NLS-1$ //$NON-NLS-2$
 
     change_cd("change_cd", HelpTagType.COMMON, "VMs Tab > Change CD"), //$NON-NLS-1$ //$NON-NLS-2$

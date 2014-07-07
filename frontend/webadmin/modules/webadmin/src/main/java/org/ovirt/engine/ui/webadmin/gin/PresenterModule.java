@@ -161,6 +161,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.disk.SubTabDiskVm
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeGeoRepPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumeParameterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.SubTabVolumePermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.gluster.VolumeSubTabPanelPresenter;
@@ -400,6 +401,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.disk.SubTabDiskVmView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeGeoRepView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumeParameterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.SubTabVolumePermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.gluster.VolumeSubTabPanelView;
@@ -1408,6 +1410,11 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabVolumeBrickPresenter.ViewDef.class,
                 SubTabVolumeBrickView.class,
                 SubTabVolumeBrickPresenter.ProxyDef.class);
+
+        bindPresenter(SubTabVolumeGeoRepPresenter.class,
+                SubTabVolumeGeoRepPresenter.ViewDef.class,
+                SubTabVolumeGeoRepView.class,
+                SubTabVolumeGeoRepPresenter.ProxyDef.class);
 
         bindPresenter(SubTabVolumeParameterPresenter.class,
                 SubTabVolumeParameterPresenter.ViewDef.class,

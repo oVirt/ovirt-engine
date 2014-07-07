@@ -103,6 +103,39 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Bricks")
     String volumeBrickSubTabLabel();
 
+    @DefaultStringValue("Geo-Replication")
+    String volumeGeoRepSubTabLabel();
+
+    @DefaultStringValue("Destination Host")
+    String volumeSubTabGeoRepSlaveClusterHostColumn();
+
+    @DefaultStringValue("Destination Volume")
+    String volumeSubTabGeoRepSlaveVolumeColumn();
+
+    @DefaultStringValue("Status")
+    String volumeSubTabGeoRepStatusColumn();
+
+    @DefaultStringValue("Up Time")
+    String volumeSubTabGeoRepUptime();
+
+    @DefaultStringValue("New")
+    String newGeoRepSession();
+
+    @DefaultStringValue("Remove")
+    String removeGeoRepSession();
+
+    @DefaultStringValue("Start")
+    String startGeoRepSession();
+
+    @DefaultStringValue("Stop")
+    String stopGeoRepSession();
+
+    @DefaultStringValue("Options")
+    String geoRepSessionsOptions();
+
+    @DefaultStringValue("View Details")
+    String geoRepSessionDetails();
+
     @DefaultStringValue("Permissions")
     String volumePermissionSubTabLabel();
 
