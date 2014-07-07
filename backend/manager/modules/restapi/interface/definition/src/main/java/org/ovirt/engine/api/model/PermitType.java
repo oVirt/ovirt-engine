@@ -16,6 +16,8 @@
 
 package org.ovirt.engine.api.model;
 
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
+
 public enum PermitType {
     CREATE_VM,
     DELETE_VM,
@@ -78,7 +80,7 @@ public enum PermitType {
     ASSIGN_CLUSTER_NETWORK,
 
     // rhevm generic
-    CONFIGURE_RHEVM,
+    CONFIGURE_RHEVM(ActionGroup.CONFIGURE_ENGINE),
 
     // Quota
     CONFIGURE_QUOTA,
@@ -117,7 +119,40 @@ public enum PermitType {
     // affinity groups CRUD commands
     MANIPULATE_AFFINITY_GROUPS;
 
+    private final ActionGroup actionGroup;
+
     public String value() {
         return name().toLowerCase();
+    }
+
+    PermitType() {
+        actionGroup = calculateActionGroup();
+    }
+
+    private ActionGroup calculateActionGroup() {
+        try {
+             return ActionGroup.valueOf(name());
+        } catch (IllegalArgumentException e) {
+            return null;
+        }
+    }
+
+    PermitType(ActionGroup actionGroup) {
+        this.actionGroup = actionGroup;
+    }
+
+    public ActionGroup getActionGroup() {
+        return actionGroup;
+    }
+
+    public static PermitType valueOf(ActionGroup actionGroup) {
+        for (PermitType permitType : values()) {
+            if (permitType.getActionGroup().equals(actionGroup)) {
+                return permitType;
+            }
+        }
+
+        throw new IllegalArgumentException(
+                "No enum constant for actionGroup '"+actionGroup.name()+"' in " + PermitType.class.getName() + " enum.");
     }
 }
