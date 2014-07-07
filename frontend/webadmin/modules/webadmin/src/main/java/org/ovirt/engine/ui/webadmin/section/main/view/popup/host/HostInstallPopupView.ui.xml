@@ -52,6 +52,10 @@
             width: 200px;
         }
 
+        .activateHostAfterInstallStyle {
+            width: 200px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="700px" height="400px">
@@ -76,6 +80,7 @@
                                 <ge:EntityModelCheckBoxEditor ui:field="overrideIpTablesEditor"/>
                                 <ge:StringEntityModelLabelEditor ui:field="hostVersionEditor"/>
                                 <e:ListModelListBoxEditor ui:field="isoEditor"/>
+                                <ge:EntityModelCheckBoxEditor ui:field="activateHostAfterInstallEditor"/>
                                 <g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}"/>
                             </g:VerticalPanel>
                         </t:content>

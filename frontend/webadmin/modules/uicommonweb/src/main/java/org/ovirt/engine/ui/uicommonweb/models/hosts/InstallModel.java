@@ -51,6 +51,16 @@ public class InstallModel extends Model {
         privateOverrideIpTables = value;
     }
 
+    private EntityModel<Boolean> activateHostAfterInstall;
+
+    public EntityModel<Boolean> getActivateHostAfterInstall() {
+        return activateHostAfterInstall;
+    }
+
+    private void setActivateHostAfterInstall(EntityModel<Boolean> value) {
+        activateHostAfterInstall = value;
+    }
+
     private EntityModel<String> hostVersion;
 
     public EntityModel<String> getHostVersion() {
@@ -138,7 +148,9 @@ public class InstallModel extends Model {
         setHostVersion(new EntityModel<String>());
 
         setOverrideIpTables(new EntityModel<Boolean>());
+        setActivateHostAfterInstall(new EntityModel<Boolean>());
         getOverrideIpTables().setEntity(false);
+        getActivateHostAfterInstall().setEntity(false);
         setUserName(new EntityModel<String>());
         getUserName().setEntity(HostModel.RootUserName);
         // TODO: remove setIsChangable when configured ssh username is enabled

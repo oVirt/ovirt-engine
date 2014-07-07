@@ -145,6 +145,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
             tempVar.setIsReinstallOrUpgrade(getParameters().getIsReinstallOrUpgrade());
             tempVar.setoVirtIsoFile(getParameters().getoVirtIsoFile());
             tempVar.setOverrideFirewall(getParameters().getOverrideFirewall());
+            tempVar.setActivateHost(getParameters().getActivateHost());
             tempVar.setRebootAfterInstallation(getParameters().isRebootAfterInstallation());
             tempVar.setNetworkProviderId(getParameters().getNetworkProviderId());
             tempVar.setNetworkMappings(getParameters().getNetworkMappings());

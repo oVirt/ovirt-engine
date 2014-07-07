@@ -77,6 +77,11 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     EntityModelCheckBoxEditor overrideIpTablesEditor;
 
     @UiField
+    @Path(value = "activateHostAfterInstall.entity")
+    @WithElementId("activateHostAfterInstall")
+    EntityModelCheckBoxEditor activateHostAfterInstallEditor;
+
+    @UiField
     Label message;
 
     @UiField
@@ -157,6 +162,7 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
         hostVersionEditor.setLabel(constants.hostInstallHostVersionLabel());
         isoEditor.setLabel(constants.hostInstallIsoLabel());
         overrideIpTablesEditor.setLabel(constants.hostInstallOverrideIpTablesLabel());
+        activateHostAfterInstallEditor.setLabel(constants.activateHostAfterInstallLabel());
         authLabel.setText(constants.hostPopupAuthLabel());
         userNameEditor.setLabel(constants.hostPopupUsernameLabel());
         publicKeyEditor.setTitle(constants.publicKeyUsage());
@@ -236,11 +242,14 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     interface Style extends CssResource {
         String overrideIpStyle();
 
+        String activateHostAfterInstallStyle();
+
         String pkStyle();
     }
 
     private void addStyles() {
         overrideIpTablesEditor.addContentWidgetStyleName(style.overrideIpStyle());
+        activateHostAfterInstallEditor.addContentWidgetStyleName(style.activateHostAfterInstallStyle());
         publicKeyEditor.setCustomStyle(style.pkStyle());
     }
 }
