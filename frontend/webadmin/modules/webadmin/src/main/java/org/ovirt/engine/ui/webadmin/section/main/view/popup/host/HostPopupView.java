@@ -1128,6 +1128,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         externalComputeResourceEditor.setTabIndex(nextTabIndex++);
         providerSearchFilterLabel.setTabIndex(nextTabIndex++);
         nameEditor.setTabIndex(nextTabIndex++);
+        commentEditor.setTabIndex(nextTabIndex++);
         hostAddressEditor.setTabIndex(nextTabIndex++);
         authSshPortEditor.setTabIndex(nextTabIndex++);
         userNameEditor.setTabIndex(nextTabIndex++);
