@@ -19,6 +19,8 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     private boolean overrideFirewall;
 
+    private boolean activateHost;
+
     /**
      * reboot the installed Host when done
      */
@@ -123,6 +125,14 @@ public class VdsOperationActionParameters extends VdsActionParameters {
 
     public boolean getOverrideFirewall() {
         return overrideFirewall;
+    }
+
+    public void setActivateHost(boolean activateHost) {
+        this.activateHost = activateHost;
+    }
+
+    public boolean getActivateHost() {
+        return activateHost;
     }
 
     public boolean isRebootAfterInstallation() {

@@ -1326,6 +1326,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             model.getOverrideIpTables().setIsAvailable(true);
             model.getOverrideIpTables().setEntity(true);
         }
+        model.getActivateHostAfterInstall().setEntity(true);
         addInstallCommands(model, host, false);
         getWindow().stopProgress();
     }
@@ -1366,6 +1367,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         param.setInstallVds(true);
         param.setoVirtIsoFile(null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
+        param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();
@@ -1413,6 +1415,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         model.getOVirtISO().setIsAvailable(false);
 
         model.getOverrideIpTables().setIsAvailable(false);
+        model.getActivateHostAfterInstall().setEntity(true);
 
         model.getHostVersion().setEntity(host.getHostOs());
         model.getHostVersion().setIsAvailable(false);
@@ -1492,6 +1495,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         param.setInstallVds(true);
         param.setoVirtIsoFile(isOVirt ? model.getOVirtISO().getSelectedItem().getRpmName() : null);
         param.setOverrideFirewall(model.getOverrideIpTables().getEntity());
+        param.setActivateHost(model.getActivateHostAfterInstall().getEntity());
         param.setAuthMethod(model.getAuthenticationMethod());
 
         Provider<?> networkProvider = (Provider<?>) model.getNetworkProviders().getSelectedItem();

@@ -163,7 +163,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     if (!configureNetworkUsingHostDeploy) {
                         configureManagementNetwork();
                     }
-                    if (VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+                    if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);
                     } else {
                         setVdsStatus(VDSStatus.Initializing);
@@ -223,6 +223,9 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
     }
 
     private VDSStatus getStatusOnReboot() {
+        if (getParameters().getActivateHost()) {
+            return VDSStatus.NonResponsive;
+        }
         return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }

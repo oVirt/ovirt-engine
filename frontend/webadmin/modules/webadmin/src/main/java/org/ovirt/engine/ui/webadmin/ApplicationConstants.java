@@ -644,6 +644,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Automatically configure host firewall")
     String hostInstallOverrideIpTablesLabel();
 
+    @DefaultStringValue("Activate host after install")
+    String activateHostAfterInstallLabel();
+
     @DefaultStringValue("General")
     String importVmGeneralSubTabLabel();
 

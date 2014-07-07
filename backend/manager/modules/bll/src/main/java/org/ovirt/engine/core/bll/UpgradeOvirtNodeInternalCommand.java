@@ -175,7 +175,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
-                    if (VDSStatus.Maintenance.equals(vdsInitialStatus)) {
+                    if (!getParameters().getActivateHost() && VDSStatus.Maintenance.equals(vdsInitialStatus)) {
                         setVdsStatus(VDSStatus.Maintenance);
                     } else {
                         setVdsStatus(VDSStatus.Initializing);
@@ -215,6 +215,9 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     }
 
     private VDSStatus getStatusOnReboot() {
+        if (getParameters().getActivateHost()) {
+            return VDSStatus.NonResponsive;
+        }
         return (VDSStatus.Maintenance.equals(vdsInitialStatus)) ? VDSStatus.Maintenance : VDSStatus.NonResponsive;
     }
 }
