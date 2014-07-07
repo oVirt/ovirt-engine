@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -1672,10 +1673,17 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.setMessage(message);
         ArrayList<String> items = new ArrayList<String>();
+        boolean stoppingSingleVM = getSelectedItems().size() == 1 &&
+                (actionName.equals(SHUTDOWN) || actionName.equals(STOP));
         for (Object item : getSelectedItems())
         {
-            VM a = (VM) item;
-            items.add(a.getName());
+            VM vm = (VM) item;
+            items.add(vm.getName());
+            // If a single VM in status PoweringDown is being stopped the reason field
+            // is populated with the current reason so the user can edit it.
+            if (stoppingSingleVM && reasonVisible && VMStatus.PoweringDown.equals(vm.getStatus())) {
+                model.getReason().setEntity(vm.getStopReason());
+            }
         }
         model.setItems(items);
 
