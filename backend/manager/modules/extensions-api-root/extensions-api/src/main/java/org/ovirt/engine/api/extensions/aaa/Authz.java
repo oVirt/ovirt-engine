@@ -27,6 +27,12 @@ public class Authz {
          * No more than this may be provided.
          */
         public static final ExtKey QUERY_MAX_FILTER_SIZE = new ExtKey("AAA_AUTHZ_QUERY_MAX_FILTER_SIZE", Integer.class, "2eb1f541-0f65-44a1-a6e3-014e247595f5");
+        /**
+         * Provider capabilities.
+         * Bitwise or of capabilities flags.
+         * @see Capabilities
+         */
+        public static final ExtKey CAPABILITIES = new ExtKey("AAA_AUTHZ_CAPABILITIES", Long.class, "6106d1fb-9291-4351-a947-b897b9540a23");
     }
 
     /**
@@ -174,6 +180,17 @@ public class Authz {
          * </p>
          */
         public static final ExtUUID QUERY_CLOSE = new ExtUUID("AAA_AUTHZ_QUERY_CLOSE", "3e049bc0-055e-4789-a4e3-0ef51bfe6685");
+    }
+
+    /**
+     * Capabilities.
+     */
+    public static class Capabilities {
+        /**
+         * Provider resolves groups recursively. This implies provider ignores
+         * {@link QueryFlags#RESOLVE_GROUPS_RECURSIVE} flag.
+         */
+        public static final long RECURSIVE_GROUP_RESOLUTION = (1 << 0);
     }
 
     /**
