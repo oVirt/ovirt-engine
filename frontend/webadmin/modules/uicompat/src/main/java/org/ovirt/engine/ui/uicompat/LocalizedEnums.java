@@ -204,6 +204,12 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String ActionGroup___MANIPULATE_GLUSTER_SERVICE();
 
+    String ActionGroup___CONFIGURE_STORAGE_DISK_PROFILE();
+
+    String ActionGroup___CREATE_STORAGE_DISK_PROFILE();
+
+    String ActionGroup___DELETE_STORAGE_DISK_PROFILE();
+
     String EventNotificationEntity___Host();
 
     String EventNotificationEntity___VdsGroup();

@@ -192,6 +192,12 @@ public class PermitMapper {
             return PermitType.MANIPULATE_AFFINITY_GROUPS;
         case ADD_USERS_AND_GROUPS_FROM_DIRECTORY:
             return PermitType.ADD_USERS_AND_GROUPS_FROM_DIRECTORY;
+        case CREATE_STORAGE_DISK_PROFILE:
+            return PermitType.CREATE_STORAGE_DISK_PROFILE;
+        case CONFIGURE_STORAGE_DISK_PROFILE:
+            return PermitType.CONFIGURE_STORAGE_DISK_PROFILE;
+        case DELETE_STORAGE_DISK_PROFILE:
+            return PermitType.DELETE_STORAGE_DISK_PROFILE;
         default:
             return null;
         }
@@ -348,6 +354,12 @@ public class PermitMapper {
             return ActionGroup.MANIPULATE_AFFINITY_GROUPS;
         case ADD_USERS_AND_GROUPS_FROM_DIRECTORY:
             return ActionGroup.ADD_USERS_AND_GROUPS_FROM_DIRECTORY;
+        case CREATE_STORAGE_DISK_PROFILE:
+            return ActionGroup.CREATE_STORAGE_DISK_PROFILE;
+        case CONFIGURE_STORAGE_DISK_PROFILE:
+            return ActionGroup.CONFIGURE_STORAGE_DISK_PROFILE;
+        case DELETE_STORAGE_DISK_PROFILE:
+            return ActionGroup.DELETE_STORAGE_DISK_PROFILE;
         default:
             return null;
         }

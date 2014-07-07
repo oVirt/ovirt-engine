@@ -115,7 +115,13 @@ public enum PermitType {
     EVENT_NOTIFICATION_MANAGEMENT,
     AUDIT_LOG_MANAGEMENT,
     // affinity groups CRUD commands
-    MANIPULATE_AFFINITY_GROUPS;
+    MANIPULATE_AFFINITY_GROUPS,
+
+    // disk profile
+    CONFIGURE_STORAGE_DISK_PROFILE,
+    CREATE_STORAGE_DISK_PROFILE,
+    DELETE_STORAGE_DISK_PROFILE;
+
 
     public String value() {
         return name().toLowerCase();

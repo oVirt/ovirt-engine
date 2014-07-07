@@ -231,7 +231,7 @@ public class RoleTreeView
     }
 
     protected static RoleNode createStorageDomainRoleTree() {
-        return new RoleNode(getConstants().storageDomainRoleTree(),
+        return new RoleNode(getConstants().storageDomainRoleTree(), new RoleNode[] {
                 new RoleNode(getConstants().configureStorageDomainRoleTree(), new RoleNode[] {
                         new RoleNode(ActionGroup.CREATE_STORAGE_DOMAIN,
                                 getConstants().allowToCreateStorageDomainRoleTreeTooltip()),
@@ -240,7 +240,14 @@ public class RoleTreeView
                         new RoleNode(ActionGroup.EDIT_STORAGE_DOMAIN_CONFIGURATION,
                                 getConstants().allowToModifyStorageDomainPropertiesRoleTreeTooltip()),
                         new RoleNode(ActionGroup.MANIPULATE_STORAGE_DOMAIN,
-                                getConstants().allowToChangeStorageDomainStatusRoleTreeTooltip()) }));
+                                getConstants().allowToChangeStorageDomainStatusRoleTreeTooltip()) }),
+                new RoleNode(getConstants().configureDiskProfileRoleTree(), new RoleNode[] {
+                        new RoleNode(ActionGroup.CREATE_STORAGE_DISK_PROFILE,
+                                getConstants().allowToCreateDiskProfileRoleTreeTooltip()),
+                        new RoleNode(ActionGroup.DELETE_STORAGE_DISK_PROFILE,
+                                getConstants().allowToDeleteDiskProfileRoleTreeTooltip()),
+                        new RoleNode(ActionGroup.CONFIGURE_STORAGE_DISK_PROFILE,
+                                getConstants().allowToUpdateDiskProfileRoleTreeTooltip()) }) });
     }
 
     protected static RoleNode createNetworkRoleTree() {
