@@ -135,7 +135,7 @@ public class DbUserCacheManager {
         for (String namespace : idsPerNamespace.keySet()) {
             List<DirectoryUser> directoryUsers = null;
             if (authz != null) {
-                directoryUsers = AuthzUtils.findPrincipalsByIds(authz, namespace, ids, true, false);
+                directoryUsers = DirectoryUtils.findDirectoryUserByIds(authz, namespace, ids, true, false);
             }
             else {
                 directoryUsers = Collections.emptyList();

@@ -6,7 +6,6 @@ import java.util.HashSet;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -79,7 +78,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         boolean foundUser = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id, true, true);
+            directoryUser = DirectoryUtils.findDirectoryUserById(authz, namespace, id, true, true);
             if (directoryUser != null) {
                 foundUser = true;
                 break;

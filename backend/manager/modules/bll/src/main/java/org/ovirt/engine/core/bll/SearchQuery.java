@@ -8,9 +8,9 @@ import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
@@ -34,8 +34,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDAO;
@@ -180,7 +180,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
         List<DirectoryUser> results = new ArrayList<>();
         for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            results.addAll(AuthzUtils.findPrincipalsByQuery(authz, namespace, data.getQuery()));
+            results.addAll(DirectoryUtils.findDirectoryUsersByQuery(authz, namespace, data.getQuery()));
         }
 
         return results;
@@ -196,7 +196,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         ExtensionProxy authz = AuthenticationProfileRepository.getInstance().getProfile(data.getDomain()).getAuthz();
         List<DirectoryGroup> results = new ArrayList<>();
         for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            results.addAll(AuthzUtils.findGroupsByQuery(authz, namespace, data.getQuery()));
+            results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz, namespace, data.getQuery()));
         }
         return results;
     }

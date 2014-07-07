@@ -3,8 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
@@ -24,7 +24,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
             getQueryReturnValue().setSucceeded(false);
         } else {
             for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                final DirectoryGroup group = AuthzUtils.findGroupById(authz, namespace, id, false, false);
+                final DirectoryGroup group = DirectoryUtils.findDirectoryGroupById(authz, namespace, id, false, false);
                 if (group != null) {
                     getQueryReturnValue().setReturnValue(group);
                     break;
