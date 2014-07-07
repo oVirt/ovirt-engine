@@ -5,11 +5,15 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 
+import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -21,6 +25,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.errors.VdcBllErrors;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -66,9 +72,6 @@ public class CommandExecutor {
                 coco.updateCallBackNotified(cmdId);
                 iterator.remove();
                 break;
-            case ACTIVE_SYNC:
-                coco.retrieveCommand(cmdId).setCommandStatus(CommandStatus.FAILED_RESTARTED);
-                break;
             case ACTIVE:
             case ACTIVE_ASYNC:
                 callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
@@ -82,8 +85,16 @@ public class CommandExecutor {
     private void initCommandExecutor() {
         if (!cmdExecutorInitialized) {
             for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
-                if (!cmdEntity.isCallBackNotified()) {
-                    addToCallBackMap(cmdEntity);
+                switch(cmdEntity.getCommandStatus()) {
+                    case ACTIVE_SYNC:
+                    case NOT_STARTED:
+                        coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
+                        break;
+                    default:
+                        if (!cmdEntity.isCallBackNotified()) {
+                            addToCallBackMap(cmdEntity);
+                        }
+                        break;
                 }
             }
             cmdExecutorInitialized = true;
@@ -100,25 +111,34 @@ public class CommandExecutor {
     }
 
     public Future<VdcReturnValueBase> executeAsyncCommand(final VdcActionType actionType,
-                                                          final VdcActionParametersBase parameters,
-                                                          final CommandContext cmdContext) {
+                                    final VdcActionParametersBase parameters,
+                                    final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        coco.saveCommandContext(command.getCommandId(), cmdContext);
-        return executor.submit(new Callable<VdcReturnValueBase>() {
-
-            @Override
-            public VdcReturnValueBase call() throws Exception {
-                return executeCommand(command, cmdContext);
-            }
-        });
-    }
-
-    private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
         command.persistCommand(command.getParameters().getParentCommand(), cmdContext, true);
         CommandCallBack callBack = command.getCallBack();
         if (callBack != null) {
             cmdCallBackMap.put(command.getCommandId(), callBack);
         }
+        Future<VdcReturnValueBase> retVal;
+        try {
+            retVal = executor.submit(new Callable<VdcReturnValueBase>() {
+
+                @Override
+                public VdcReturnValueBase call() throws Exception {
+                    return executeCommand(command, cmdContext);
+                }
+            });
+        } catch(RejectedExecutionException ex) {
+            command.setCommandStatus(CommandStatus.FAILED);
+            log.errorFormat("Failed to submit command to executor service, command {0} status has been set to FAILED",
+                    command.getCommandId().toString());
+            retVal = new RejectedExecutionFuture();
+        }
+        return retVal;
+    }
+
+    private VdcReturnValueBase executeCommand(final CommandBase<?> command, final CommandContext cmdContext) {
+        CommandCallBack callBack = command.getCallBack();
         VdcReturnValueBase result = BackendUtils.getBackendCommandObjectsHandler(log).runAction(command, null);
         updateCommand(command, result);
         if (callBack != null) {
@@ -138,6 +158,47 @@ public class CommandExecutor {
             cmdEntity.setCommandStatus(result.getSucceeded() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);
         }
         coco.persistCommand(cmdEntity);
+    }
+
+    static class RejectedExecutionFuture implements Future<VdcReturnValueBase> {
+
+        VdcReturnValueBase retValue;
+
+        RejectedExecutionFuture() {
+            retValue = new VdcReturnValueBase();
+            retValue.setSucceeded(false);
+            VdcFault fault = new VdcFault();
+            fault.setError(VdcBllErrors.ResourceException);
+            fault.setMessage(Backend.getInstance()
+                    .getVdsErrorsTranslator()
+                    .TranslateErrorTextSingle(fault.getError().toString()));
+            retValue.setFault(fault);
+        }
+
+        @Override
+        public boolean cancel(boolean mayInterruptIfRunning) {
+            return false;
+        }
+
+        @Override
+        public boolean isCancelled() {
+            return false;
+        }
+
+        @Override
+        public boolean isDone() {
+            return true;
+        }
+
+        @Override
+        public VdcReturnValueBase get() throws InterruptedException, ExecutionException {
+            return retValue;
+        }
+
+        @Override
+        public VdcReturnValueBase get(long timeout, TimeUnit unit) throws InterruptedException, ExecutionException, TimeoutException {
+            return retValue;
+        }
     }
 
 }
