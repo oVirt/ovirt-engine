@@ -194,4 +194,9 @@ public abstract class StorageHelperBase implements IStorageHelper {
         }
         return "";
     }
+
+    @Override
+    public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId) {
+        return true;
+    }
 }
