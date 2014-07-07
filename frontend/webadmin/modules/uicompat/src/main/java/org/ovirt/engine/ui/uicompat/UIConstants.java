@@ -1464,6 +1464,18 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Configure Storage Domain")
     String configureStorageDomainRoleTree();
 
+    @DefaultStringValue("Configure Disk Profile")
+    String configureDiskProfileRoleTree();
+
+    @DefaultStringValue("Allow to create Disk Profile")
+    String allowToCreateDiskProfileRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to delete Disk Profile")
+    String allowToDeleteDiskProfileRoleTreeTooltip();
+
+    @DefaultStringValue("Allow to update Disk Profile")
+    String allowToUpdateDiskProfileRoleTreeTooltip();
+
     @DefaultStringValue("Cluster")
     String clusterRoleTree();
 

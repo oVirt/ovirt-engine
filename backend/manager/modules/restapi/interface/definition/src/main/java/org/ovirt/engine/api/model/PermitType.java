@@ -123,7 +123,12 @@ public enum PermitType {
     CREATE_MAC_POOL,
     EDIT_MAC_POOL,
     DELETE_MAC_POOL,
-    CONFIGURE_MAC_POOL;
+    CONFIGURE_MAC_POOL,
+
+    // disk profile
+    CONFIGURE_STORAGE_DISK_PROFILE,
+    CREATE_STORAGE_DISK_PROFILE,
+    DELETE_STORAGE_DISK_PROFILE;
 
     private final ActionGroup actionGroup;
 
