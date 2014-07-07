@@ -5,8 +5,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -53,7 +53,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         boolean foundGroup = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryGroup = AuthzUtils.findGroupById(authz, namespace, id, true, true);
+            directoryGroup = DirectoryUtils.findDirectoryGroupById(authz, namespace, id, true, true);
             if (directoryGroup != null) {
                 foundGroup = true;
                 break;

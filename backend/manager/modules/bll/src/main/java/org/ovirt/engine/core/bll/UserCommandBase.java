@@ -4,8 +4,8 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -66,7 +66,7 @@ public abstract class UserCommandBase<T extends IdParameters> extends CommandBas
             }
             boolean foundUser = false;
             for (String namespace : authz.getContext().<List<String>>get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                DirectoryUser directoryUser = AuthzUtils.findPrincipalById(authz, namespace, id, false, false);
+                DirectoryUser directoryUser = DirectoryUtils.findDirectoryUserById(authz, namespace, id, false, false);
                 if (directoryUser != null) {
                     dbUser = new DbUser(directoryUser);
                     dbUser.setId(Guid.newGuid());

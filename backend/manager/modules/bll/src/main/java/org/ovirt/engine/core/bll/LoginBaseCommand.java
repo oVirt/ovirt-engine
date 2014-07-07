@@ -254,7 +254,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
             return false;
         }
-        DirectoryUser directoryUser = AuthzUtils.mapPrincipalRecord(profile.getAuthz(), principalRecord);
+        DirectoryUser directoryUser = DirectoryUtils.mapPrincipalRecord(AuthzUtils.getName(profile.getAuthz()), principalRecord);
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
         DbUser dbUser =
