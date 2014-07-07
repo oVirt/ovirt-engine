@@ -25,12 +25,12 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.eventqueue.Event;
 import org.ovirt.engine.core.common.eventqueue.EventQueue;
 import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.ActivateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -81,6 +81,18 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         return returnValue;
     }
 
+    private void syncStorageDomainInfo(List<Pair<Guid, Boolean>> hostConnectionInfo) {
+        for (Pair<Guid, Boolean> pair : hostConnectionInfo) {
+            if (Boolean.TRUE.equals(pair.getSecond())) {
+                if (StorageHelperDirector.getInstance()
+                        .getItem(getStorageDomain().getStorageType())
+                        .syncDomainInfo(getStorageDomain(), pair.getFirst())) {
+                    break;
+                }
+            }
+        }
+    }
+
     @Override
     protected void executeCommand() {
         final StoragePoolIsoMap map =
@@ -95,7 +107,9 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
-        connectHostsInUpToDomainStorageServer();
+        List<Pair<Guid, Boolean>> hostsConnectionResults = connectHostsInUpToDomainStorageServer();
+        syncStorageDomainInfo(hostsConnectionResults);
+
         runVdsCommand(VDSCommandType.ActivateStorageDomain,
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());

@@ -28,4 +28,6 @@ public interface IStorageHelper {
 
     boolean isConnectSucceeded(Map<String, String> returnValue,
             List<StorageServerConnections> connections);
+
+    boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId);
 }

@@ -65,13 +65,6 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             isSuccess = returnValue.getSucceeded();
             if (isSuccess && VDSCommandType.forValue(type) == VDSCommandType.ConnectStorageServer) {
                 isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
-
-                if (isSuccess && storageDomain != null) {
-                    // Synchronize LUN details comprising the storage domain with the DB
-                    StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
-                    parameters.setVdsId(vdsId);
-                    Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters);
-                }
             }
         }
         return isSuccess;
@@ -258,5 +251,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
     public List<StorageServerConnections> getStorageServerConnectionsByDomain(
             StorageDomainStatic storageDomain) {
         return DbFacade.getInstance().getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage());
+    }
+
+    @Override
+    public boolean syncDomainInfo(StorageDomain storageDomain, Guid vdsId) {
+        // Synchronize LUN details comprising the storage domain with the DB
+        StorageDomainParametersBase parameters = new StorageDomainParametersBase(storageDomain.getId());
+        parameters.setVdsId(vdsId);
+        return Backend.getInstance().runInternalAction(VdcActionType.SyncLunsInfoForBlockStorageDomain, parameters).getSucceeded();
     }
 }
