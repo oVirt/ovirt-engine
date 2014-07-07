@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -125,6 +126,17 @@ public final class Linq
         }
 
     }
+
+    public static class GlusterVolumeGeoRepSessionComparer implements Comparator<GlusterGeoRepSession>, Serializable {
+
+        private static final long serialVersionUID = 1L;
+
+        @Override
+        public int compare(GlusterGeoRepSession session0, GlusterGeoRepSession session1) {
+            return session0.getSlaveVolumeName().compareTo(session1.getSlaveVolumeName());
+        }
+    }
+
     public static class DiskImageByLastModifiedComparer implements Comparator<DiskImage>, Serializable
     {
 

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.gin.uicommon;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
@@ -22,6 +23,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeBrickListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
+import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeoRepListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeParameterListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -146,6 +148,17 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
+    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+        return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class, VolumeGeoRepListModel.class) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                return null;
+            }
+        };
+    }
+
+    @Provides
+    @Singleton
     public SearchableDetailModelProvider<GlusterVolumeOptionEntity, VolumeListModel, VolumeParameterListModel> getVolumeParameterListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VolumeParameterPopupPresenterWidget> addParameterPopupProvider,
@@ -204,7 +217,6 @@ public class VolumeModule extends AbstractGinModule {
             }
         };
     }
-
 
     @Override
     protected void configure() {

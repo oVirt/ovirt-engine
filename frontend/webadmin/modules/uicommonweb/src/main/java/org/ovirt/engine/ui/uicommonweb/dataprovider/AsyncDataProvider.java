@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -1545,6 +1546,16 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeBricksByServerId, new IdQueryParameters(serverId), aQuery);
+    }
+
+    public void getGlusterVolumeGeoRepStatusForMasterVolume(AsyncQuery aQuery, Guid masterVolumeId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                return source != null ? source : new ArrayList<GlusterGeoRepSession>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessions, new IdQueryParameters(masterVolumeId), aQuery);
     }
 
     public void getGlusterHook(AsyncQuery aQuery, Guid hookId, boolean includeServerHooks) {
