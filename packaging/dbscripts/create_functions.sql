@@ -1,4 +1,3 @@
-
     -- Constraint is not used dropping it to clean the dependency before dropping the function.
     ----------------------------------
 -- 		create functions		--
@@ -148,7 +147,8 @@ $function$
 		GlusterVolume = 18,
         Disk = 19,
         Network = 20,
-        VNICProfile = 27
+        VNICProfile = 27,
+        MacPool = 28
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -359,7 +359,7 @@ BEGIN
             UNION
             SELECT v_entity_id AS id;
 	ELSE
-		IF v_entity_type IN ( 1,14,15,16 ) THEN -- Data Center, users and roles are under system
+		IF v_entity_type IN ( 1,14,15,16,28 ) THEN -- Data Center, users, roles and mac pools are under system
 			RETURN QUERY
 				SELECT system_root_id AS id
 				UNION
@@ -550,7 +550,8 @@ $function$
         GlusterVolume = 18,
         Disk = 19,
         Network = 20,
-        VNICProfile = 27
+        VNICProfile = 27,
+        MacPool = 28
 */
 DECLARE
     v_entity_type int4 := v_object_type;
@@ -595,6 +596,8 @@ BEGIN
         result := ( SELECT service_name FROM gluster_services where id = v_entity_id );
     WHEN v_entity_type = 27 THEN
         result := ( SELECT name FROM vnic_profiles where id = v_entity_id );
+    WHEN v_entity_type = 28 THEN
+        result := ( SELECT name FROM mac_pools where id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

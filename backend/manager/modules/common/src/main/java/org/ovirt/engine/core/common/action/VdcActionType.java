@@ -367,9 +367,9 @@ public enum VdcActionType {
     SetDataOnSession(3000, false, QuotaDependency.NONE),
 
     // Mac Pool
-    AddMacPool(3100, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
-    UpdateMacPool(3101, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE),
-    RemoveMacPool(3102, ActionGroup.CONFIGURE_ENGINE, false, QuotaDependency.NONE);
+    AddMacPool(3100, ActionGroup.CREATE_MAC_POOL, false, QuotaDependency.NONE),
+    UpdateMacPool(3101, ActionGroup.EDIT_MAC_POOL, false, QuotaDependency.NONE),
+    RemoveMacPool(3102, ActionGroup.DELETE_MAC_POOL, false, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

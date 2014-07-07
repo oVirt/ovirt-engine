@@ -2332,5 +2332,24 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Custom")
     String customMtu();
+
+    @DefaultStringValue("MAC Pools")
+    String macPoolTree();
+
+    @DefaultStringValue("MAC Pool User")
+    String macPoolUser();
+
+    @DefaultStringValue("Create")
+    String allowToCreateMacPoolTooltip();
+
+    @DefaultStringValue("Edit")
+    String allowToEditMacPoolTooltip();
+
+    @DefaultStringValue("Delete")
+    String allowToDeleteMacPoolTooltip();
+
+    @DefaultStringValue("Configure")
+    String allowToUseMacPoolTooltip();
+
 }
 

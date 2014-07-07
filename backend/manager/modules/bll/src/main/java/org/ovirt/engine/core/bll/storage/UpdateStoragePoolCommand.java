@@ -7,12 +7,14 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -59,13 +61,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         super(parameters, commandContext);
     }
 
-    private StoragePool _oldStoragePool;
+    private StoragePool oldStoragePool;
     private StorageDomain masterDomainForPool;
 
     @Override
     protected void executeCommand() {
         updateQuotaCache();
-        copyUnchangedStoragePoolProperties(getStoragePool(), _oldStoragePool);
+        copyUnchangedStoragePoolProperties(getStoragePool(), oldStoragePool);
         getStoragePoolDAO().updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();
@@ -82,14 +84,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
      * Checks whether part of the update was disabling quota enforcement on the Data Center
      */
     private boolean wasQuotaEnforcementChanged() {
-        return _oldStoragePool.getQuotaEnforcementType() != getStoragePool().getQuotaEnforcementType();
+        return getOldStoragePool().getQuotaEnforcementType() != getStoragePool().getQuotaEnforcementType();
     }
 
     private void updateStoragePoolFormatType() {
         final StoragePool storagePool = getStoragePool();
         final Guid spId = storagePool.getId();
         final Version spVersion = storagePool.getcompatibility_version();
-        final Version oldSpVersion = _oldStoragePool.getcompatibility_version();
+        final Version oldSpVersion = getOldStoragePool().getcompatibility_version();
 
         if (oldSpVersion.equals(spVersion)) {
             return;
@@ -115,7 +117,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     }
         });
 
-        if (_oldStoragePool.getStatus() == StoragePoolStatus.Up) {
+        if (getOldStoragePool().getStatus() == StoragePoolStatus.Up) {
             try {
                 // No need to worry about "reupgrading" as VDSM will silently ignore
                 // the request.
@@ -161,14 +163,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected boolean canDoAction() {
         boolean returnValue = checkStoragePool();
-        _oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
-        if (returnValue && !StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())
+        if (returnValue && !StringUtils.equals(getOldStoragePool().getName(), getStoragePool().getName())
                 && !isStoragePoolUnique(getStoragePool().getName())) {
             returnValue = false;
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NAME_ALREADY_EXIST);
         }
         if (returnValue
-                && _oldStoragePool.isLocal() != getStoragePool().isLocal()
+                && getOldStoragePool().isLocal() != getStoragePool().isLocal()
                 && getStorageDomainStaticDAO().getAllForStoragePool(getStoragePool().getId()).size() > 0) {
             returnValue = false;
             getReturnValue()
@@ -178,14 +179,14 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
         returnValue = returnValue && checkStoragePoolNameLengthValid();
         if (returnValue
-                && !_oldStoragePool.getcompatibility_version().equals(getStoragePool()
+                && !getOldStoragePool().getcompatibility_version().equals(getStoragePool()
                         .getcompatibility_version())) {
             if (!isStoragePoolVersionSupported()) {
                 addCanDoActionMessage(VersionSupport.getUnsupportedVersionMessage());
                 returnValue = false;
             }
             // decreasing of compatibility version is allowed under conditions
-            else if (getStoragePool().getcompatibility_version().compareTo(_oldStoragePool.getcompatibility_version()) < 0) {
+            else if (getStoragePool().getcompatibility_version().compareTo(getOldStoragePool().getcompatibility_version()) < 0) {
                 List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
                 if (networks.size() == 1) {
                     Network network = networks.get(0);
@@ -278,7 +279,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     public String getEntityOldName() {
-        return _oldStoragePool.getName();
+        return getOldStoragePool().getName();
     }
 
     @Override
@@ -288,6 +289,31 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
 
     @Override
     public void setEntityId(AuditLogableBase logable) {
-        logable.setStoragePoolId(_oldStoragePool.getId());
+        logable.setStoragePoolId(getOldStoragePool().getId());
+    }
+
+    private Guid getOldMacPoolId() {
+        return getOldStoragePool().getMacPoolId();
+    }
+
+    private StoragePool getOldStoragePool() {
+        if (oldStoragePool == null) {
+            oldStoragePool = getStoragePoolDAO().get(getStoragePool().getId());
+        }
+
+        return oldStoragePool;
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        final List<PermissionSubject> result = new ArrayList<>(super.getPermissionCheckSubjects());
+
+        final Guid macPoolId = getParameters().getStoragePool() == null ? null : getParameters().getStoragePool().getMacPoolId();
+        final boolean changingPoolDefinition = macPoolId != null && !macPoolId.equals(getOldMacPoolId());
+        if (changingPoolDefinition) {
+            result.add(new PermissionSubject(macPoolId, VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL));
+        }
+
+        return result;
     }
 }

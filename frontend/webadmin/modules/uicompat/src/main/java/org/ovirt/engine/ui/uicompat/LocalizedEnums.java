@@ -946,4 +946,11 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String SELinuxMode___DISABLED();
 
+    String ActionGroup___CREATE_MAC_POOL();
+
+    String ActionGroup___EDIT_MAC_POOL();
+
+    String ActionGroup___DELETE_MAC_POOL();
+
+    String ActionGroup___CONFIGURE_MAC_POOL();
 }

@@ -77,13 +77,25 @@ public class RoleTreeView
                                 createTemplateRoleTree(),
                                 createVmRoleTree(),
                                 createVmPoolRoleTree(),
-                                createDiskRoleTree() });
+                                createDiskRoleTree(),
+                                createMacPoolRoleTree() });
 
         // nothing to filter
         if (!ApplicationModeHelper.getUiMode().equals(ApplicationMode.AllModes)) {
             ApplicationModeHelper.filterActionGroupTreeByApplictionMode(tree);
         }
         return tree;
+    }
+
+    protected static RoleNode createMacPoolRoleTree() {
+        return new RoleNode(getConstants().macPoolTree(), new RoleNode[]{
+                new RoleNode(getConstants().basicOperationsRoleTree(), new RoleNode[]{
+                    new RoleNode(ActionGroup.CREATE_MAC_POOL, getConstants().allowToCreateMacPoolTooltip()),
+                    new RoleNode(ActionGroup.EDIT_MAC_POOL, getConstants().allowToEditMacPoolTooltip()),
+                    new RoleNode(ActionGroup.DELETE_MAC_POOL, getConstants().allowToDeleteMacPoolTooltip()),
+                    new RoleNode(ActionGroup.CONFIGURE_MAC_POOL, getConstants().allowToUseMacPoolTooltip())
+                })
+        });
     }
 
     protected static RoleNode createDiskRoleTree() {

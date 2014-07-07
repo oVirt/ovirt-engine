@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.Collections;
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
-import org.ovirt.engine.core.bll.MultiLevelAdministrationHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.StoragePoolManagementParameter;
+import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -30,13 +30,15 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
         getStoragePool().setId(Guid.newGuid());
         getStoragePool().setStatus(StoragePoolStatus.Uninitialized);
 
-        Guid requestedMacPoolId = getStoragePool().getMacPoolId();
-        Guid macPoolIdToUse = requestedMacPoolId == null
+        getStoragePool().setMacPoolId(calculateMacPoolIdToUse());
+        getStoragePoolDAO().save(getStoragePool());
+    }
+
+    private Guid calculateMacPoolIdToUse() {
+        Guid requestedMacPoolId = getStoragePool() == null ? null : getStoragePool().getMacPoolId();
+        return requestedMacPoolId == null
                 ? getDbFacade().getMacPoolDao().getDefaultPool().getId()
                 : requestedMacPoolId;
-
-        getStoragePool().setMacPoolId(macPoolIdToUse);
-        getStoragePoolDAO().save(getStoragePool());
     }
 
     @Override
@@ -100,9 +102,10 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
-                VdcObjectType.System,
-                getActionType().getActionGroup()));
+        return Arrays.asList(
+                new PermissionSubject(Guid.SYSTEM, VdcObjectType.System, getActionType().getActionGroup()),
+                new PermissionSubject(calculateMacPoolIdToUse(), VdcObjectType.MacPool, ActionGroup.CONFIGURE_MAC_POOL)
+        );
     }
 
 }

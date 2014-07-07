@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MacPool;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -36,9 +37,9 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
+        return Collections.singletonList(new PermissionSubject(Guid.SYSTEM,
                 VdcObjectType.System,
-                ActionGroup.CONFIGURE_ENGINE));
+                ActionGroup.CREATE_MAC_POOL));
     }
 
     @Override
@@ -59,6 +60,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     protected void executeCommand() {
         getMacPoolEntity().setId(Guid.newGuid());
         getMacPoolDao().save(getMacPoolEntity());
+        addPermission(getCurrentUser().getId(), getMacPoolEntity().getId());
 
         MacPoolPerDcSingleton.getInstance().createPool(getMacPoolEntity());
         setSucceeded(true);
@@ -79,6 +81,19 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     public void rollback() {
         super.rollback();
         MacPoolPerDcSingleton.getInstance().removePool(getMacPoolId());
+    }
+
+    private void addPermission(Guid userId, Guid macPoolId) {
+        addPermission(userId, macPoolId, PredefinedRoles.MAC_POOL_ADMIN, VdcObjectType.MacPool);
+    }
+
+    private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
+        Permissions perms = new Permissions();
+        perms.setad_element_id(userId);
+        perms.setObjectType(objectType);
+        perms.setObjectId(entityId);
+        perms.setrole_id(role.getId());
+        MultiLevelAdministrationHandler.addPermission(perms);
     }
 
 }

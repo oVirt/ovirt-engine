@@ -117,7 +117,13 @@ public enum PermitType {
     EVENT_NOTIFICATION_MANAGEMENT,
     AUDIT_LOG_MANAGEMENT,
     // affinity groups CRUD commands
-    MANIPULATE_AFFINITY_GROUPS;
+    MANIPULATE_AFFINITY_GROUPS,
+
+    // Mac Pool action groups
+    CREATE_MAC_POOL,
+    EDIT_MAC_POOL,
+    DELETE_MAC_POOL,
+    CONFIGURE_MAC_POOL;
 
     private final ActionGroup actionGroup;
 

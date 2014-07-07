@@ -132,7 +132,13 @@ public enum ActionGroup {
     AUDIT_LOG_MANAGEMENT(1304, RoleType.ADMIN, false),
 
     // affinity group CRUD commands
-    MANIPULATE_AFFINITY_GROUPS(1550, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
+    MANIPULATE_AFFINITY_GROUPS(1550, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+
+    // MAC pool actions groups
+    CREATE_MAC_POOL(1660, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    EDIT_MAC_POOL(1661, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    DELETE_MAC_POOL(1662, RoleType.ADMIN, true, ApplicationMode.VirtOnly),
+    CONFIGURE_MAC_POOL(1663, RoleType.ADMIN, true, ApplicationMode.VirtOnly);
 
     private int id;
     private RoleType roleType;

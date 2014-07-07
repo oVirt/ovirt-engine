@@ -52,4 +52,5 @@ public abstract class StoragePoolManagementCommandBase<T extends StoragePoolMana
         List<StoragePool> sps = spDao.getByName(storagePoolName, false);
         return (sps == null || sps.isEmpty());
     }
+
 }

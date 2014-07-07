@@ -39,20 +39,20 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
     @Override
     protected void executeCommand() {
 
-        getMacPoolDao().remove(getParameters().getMacPoolId());
-        MacPoolPerDcSingleton.getInstance().removePool(getParameters().getMacPoolId());
+        getMacPoolDao().remove(getMacPoolId());
+        MacPoolPerDcSingleton.getInstance().removePool(getMacPoolId());
 
         getReturnValue().setSucceeded(true);
     }
 
     //used by introspector
     public Guid getMacPoolId() {
-        return oldMacPool.getId();
+        return getParameters().getMacPoolId();
     }
 
     //used by introspector
     public String getMacPoolName() {
-        return oldMacPool.getName();
+        return getOldMacPool().getName();
     }
 
     @Override
@@ -61,8 +61,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
             return false;
         }
 
-        oldMacPool = getMacPoolDao().get(getParameters().getMacPoolId());
-        final MacPoolValidator validator = new MacPoolValidator(oldMacPool);
+        final MacPoolValidator validator = new MacPoolValidator(getOldMacPool());
 
         return validate(validator.macPoolExists()) &&
                 validate(validator.notRemovingUsedPool()) &&
@@ -71,14 +70,22 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
-                VdcObjectType.System, ActionGroup.CONFIGURE_ENGINE));
+        return Collections.singletonList(new PermissionSubject(getMacPoolId(),
+                VdcObjectType.MacPool,
+                ActionGroup.DELETE_MAC_POOL));
     }
 
 
     @Override
     public void rollback() {
         super.rollback();
-        MacPoolPerDcSingleton.getInstance().createPool(oldMacPool);
+        MacPoolPerDcSingleton.getInstance().createPool(getOldMacPool());
+    }
+
+    private MacPool getOldMacPool() {
+        if (oldMacPool == null) {
+            oldMacPool = getMacPoolDao().get(getMacPoolId());
+        }
+        return oldMacPool;
     }
 }

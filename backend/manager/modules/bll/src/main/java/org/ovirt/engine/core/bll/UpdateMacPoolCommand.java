@@ -76,8 +76,11 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        return Collections.singletonList(new PermissionSubject(MultiLevelAdministrationHandler.SYSTEM_OBJECT_ID,
-                VdcObjectType.System, ActionGroup.CONFIGURE_ENGINE));
+        Guid macPoolIdToUse = getParameters().getMacPool() == null ? null : getParameters().getMacPool().getId();
+
+        return Collections.singletonList(new PermissionSubject(macPoolIdToUse,
+                VdcObjectType.MacPool,
+                ActionGroup.EDIT_MAC_POOL));
     }
 
     @Override
