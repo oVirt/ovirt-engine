@@ -49,6 +49,10 @@ public class MultiValueMapUtils {
         addToMap(key, value, map, new ListCreator<V>());
     }
 
+    public static <K, V> void addToMapOfSets(K key, V value, Map<K, Set<V>> map) {
+        addToMap(key, value, map, new SetCreator<V>());
+    }
+
     public static interface CollectionCreator<V, C extends Collection<V>> {
         C create();
     }
