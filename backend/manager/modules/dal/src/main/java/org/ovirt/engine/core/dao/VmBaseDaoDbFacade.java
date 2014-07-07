@@ -80,6 +80,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setMemSizeMb(rs.getInt("mem_size_mb"));
             entity.setOsId(rs.getInt("os"));
             entity.setNumOfMonitors(rs.getInt("num_of_monitors"));
+            entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setSingleQxlPci(rs.getBoolean("single_qxl_pci"));
             entity.setDefaultDisplayType(DisplayType.forValue(rs.getInt("default_display_type")));
             entity.setDescription(rs.getString("description"));

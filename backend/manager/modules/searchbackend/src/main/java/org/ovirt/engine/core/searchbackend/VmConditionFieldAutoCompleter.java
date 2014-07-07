@@ -102,19 +102,19 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "vm_name");
-        columnNameDict.put(COMMENT, "vm_comment");
+        columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(STATUS, "status");
         columnNameDict.put(IP, "vm_ip");
         columnNameDict.put(FQDN, "vm_fqdn");
         columnNameDict.put(UPTIME, "elapsed_time");
-        columnNameDict.put(OS, "vm_os");
-        columnNameDict.put(CREATIONDATE, "vm_creation_date");
+        columnNameDict.put(OS, "os");
+        columnNameDict.put(CREATIONDATE, "creation_date");
         columnNameDict.put(ADDRESS, "vm_host");
         columnNameDict.put(MEM_USAGE, "usage_mem_percent");
         columnNameDict.put(NETWORK_USAGE, "usage_network_percent");
         columnNameDict.put(CPU_USAGE, "usage_cpu_percent");
         columnNameDict.put(MIGRATION_PROGRESS_PERCENT, "migration_progress_percent");
-        columnNameDict.put(MEMORY, "vm_mem_size_mb");
+        columnNameDict.put(MEMORY, "mem_size_mb");
         columnNameDict.put(APPS, "app_list");
         columnNameDict.put(CLUSTER, "vds_group_name");
         columnNameDict.put(POOL, "vm_pool_name");
@@ -126,7 +126,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(QUOTA, "quota_name");
         columnNameDict.put(HOST, "run_on_vds_name");
         columnNameDict.put(ID, "vm_guid");
-        columnNameDict.put(DESCRIPTION, "vm_description");
+        columnNameDict.put(DESCRIPTION, "description");
         columnNameDict.put(ARCHITECTURE, "architecture");
 
         // Override field names for purpose of sorting, if needed

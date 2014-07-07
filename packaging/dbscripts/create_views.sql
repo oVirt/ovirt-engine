@@ -613,9 +613,9 @@ tags ON tags_user_group_map.tag_id = tags.tag_id;
 
 CREATE OR REPLACE VIEW vms
 AS
-SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb, vm_static.nice_level as nice_level, vm_static.cpu_shares as cpu_shares,
-                      vm_static.vmt_guid as vmt_guid, vm_static.os as vm_os, vm_static.description as vm_description, vm_static.free_text_comment as vm_comment, vm_static.vds_group_id as vds_group_id,
-                      vm_static.creation_date as vm_creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless,
+SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, vm_static.nice_level as nice_level, vm_static.cpu_shares as cpu_shares,
+                      vm_static.vmt_guid as vmt_guid, vm_static.os as os, vm_static.description as description, vm_static.free_text_comment as free_text_comment, vm_static.vds_group_id as vds_group_id,
+                      vm_static.creation_date as creation_date, vm_static.auto_startup as auto_startup, vm_static.is_stateless as is_stateless,
                       vm_static.is_smartcard_enabled as is_smartcard_enabled, vm_static.is_delete_protected as is_delete_protected, vm_static.sso_method as sso_method, vm_static.dedicated_vm_for_vds as dedicated_vm_for_vds,
                       vm_static.fail_back as fail_back, vm_static.default_boot_sequence as default_boot_sequence, vm_static.vm_type as vm_type, vm_pool_map_view.vm_pool_spice_proxy as vm_pool_spice_proxy,
                       vds_groups.name as vds_group_name, vds_groups.transparent_hugepages as transparent_hugepages, vds_groups.trusted_service as trusted_service,
@@ -636,7 +636,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as vm_mem_size_mb
                       vm_dynamic.display_ip as display_ip, vm_dynamic.display_type as display_type, vm_dynamic.kvm_enable as kvm_enable, vm_dynamic.boot_sequence as boot_sequence,
                       vm_dynamic.display_secure_port as display_secure_port, vm_dynamic.utc_diff as utc_diff, vm_dynamic.last_vds_run_on as last_vds_run_on,
 					  vm_dynamic.client_ip as client_ip,vm_dynamic.guest_requested_memory as guest_requested_memory, vm_static.time_zone as time_zone, vm_statistics.cpu_user as cpu_user, vm_statistics.cpu_sys as cpu_sys,
-                      vm_statistics.elapsed_time as elapsed_time, vm_statistics.usage_network_percent as usage_network_percent,
+                      vm_statistics.elapsed_time as elapsed_time, vm_statistics.usage_network_percent as usage_network_percent, vm_statistics.disks_usage as disks_usage,
                       vm_statistics.usage_mem_percent as usage_mem_percent, vm_statistics.migration_progress_percent as migration_progress_percent, vm_statistics.usage_cpu_percent as usage_cpu_percent, vds_static.vds_name as run_on_vds_name, vds_groups.cpu_name as vds_group_cpu_name,
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem,  vm_dynamic.hash as hash, vm_static.cpu_pinning as cpu_pinning, vm_static.db_generation as db_generation, vm_static.host_cpu_flags as host_cpu_flags,
@@ -666,8 +666,8 @@ WHERE vm_static.entity_type = 'VM';
 
 CREATE OR REPLACE VIEW vms_with_tags
 AS
-SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vmt_guid, vms.vm_os, vms.vm_description, vms.vm_comment,
-            vms.vds_group_id, vms.vm_creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled, vms.is_delete_protected,
+SELECT      vms.vm_name, vms.mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vmt_guid, vms.os, vms.description, vms.free_text_comment,
+            vms.vds_group_id, vms.creation_date, vms.auto_startup, vms.is_stateless, vms.is_smartcard_enabled, vms.is_delete_protected,
             vms.sso_method, vms.dedicated_vm_for_vds, vms.fail_back, vms.default_boot_sequence, vms.vm_type,
             vms.vds_group_name, vms.storage_pool_id, vms.storage_pool_name,
             vms.vds_group_description, vms.vmt_name, vms.vmt_mem_size_mb, vms.vmt_os, vms.vmt_creation_date,
@@ -681,7 +681,7 @@ SELECT      vms.vm_name, vms.vm_mem_size_mb, vms.nice_level, vms.cpu_shares, vms
             vms.session, vms.num_of_sockets * vms.cpu_per_socket AS num_of_cpus, vms.display_ip, vms.display_type,
             vms.kvm_enable, vms.boot_sequence, vms.display_secure_port, vms.utc_diff, vms.last_vds_run_on, vms.client_ip,
             vms.guest_requested_memory, vms.time_zone, vms.cpu_user, vms.cpu_sys, vms.elapsed_time,
-            vms.usage_network_percent, vms.usage_mem_percent, vms.migration_progress_percent, vms.usage_cpu_percent, vms.run_on_vds_name,
+            vms.usage_network_percent, vms.disks_usage, vms.usage_mem_percent, vms.migration_progress_percent, vms.usage_cpu_percent, vms.run_on_vds_name,
             vms.vds_group_cpu_name, tags_vm_map_view.tag_name, tags_vm_map_view.tag_id, vms.default_display_type, vms.priority,
             vms.vds_group_compatibility_version, vms.initrd_url, vms.kernel_url, vms.kernel_params, vms.pause_status,
             vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id,

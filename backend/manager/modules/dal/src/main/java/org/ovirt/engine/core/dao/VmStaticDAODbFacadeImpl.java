@@ -187,4 +187,7 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
         }
     }
 
+    public static RowMapper<VmStatic> getRowMapper() {
+        return VMStaticRowMapper.instance;
+    }
 }

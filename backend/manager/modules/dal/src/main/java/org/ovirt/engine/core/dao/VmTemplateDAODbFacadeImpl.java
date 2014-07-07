@@ -239,7 +239,6 @@ public class VmTemplateDAODbFacadeImpl extends VmBaseDaoDbFacade<VmTemplate> imp
             entity.setChildCount(rs.getInt("child_count"));
             entity.setName(rs.getString("name"));
             entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
-            entity.setAllowConsoleReconnect(rs.getBoolean("allow_console_reconnect"));
             entity.setStatus(VmTemplateStatus.forValue(rs.getInt("status")));
             entity.setVdsGroupName(rs.getString("vds_group_name"));
             entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));

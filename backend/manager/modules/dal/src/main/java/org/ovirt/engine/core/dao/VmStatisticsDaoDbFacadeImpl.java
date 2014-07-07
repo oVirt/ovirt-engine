@@ -48,27 +48,29 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
 
     @Override
     protected RowMapper<VmStatistics> createEntityRowMapper() {
-        return new RowMapper<VmStatistics>() {
-            @Override
-            public VmStatistics mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                VmStatistics entity = new VmStatistics();
-                entity.setcpu_sys(rs.getDouble("cpu_sys"));
-                entity.setcpu_user(rs.getDouble("cpu_user"));
-                entity.setelapsed_time(rs.getDouble("elapsed_time"));
-                entity.setusage_cpu_percent((Integer) rs
-                        .getObject("usage_cpu_percent"));
-                entity.setusage_mem_percent((Integer) rs
-                        .getObject("usage_mem_percent"));
-                entity.setMigrationProgressPercent(rs
-                        .getInt("migration_progress_percent"));
-                entity.setusage_network_percent((Integer) rs
-                        .getObject("usage_network_percent"));
-                entity.setDisksUsage((String) rs
-                        .getObject("disks_usage"));
-                entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
-                return entity;
-            }
-        };
+        return VmStatisticsRowMapper.instance;
+    }
+
+    private static class VmStatisticsRowMapper implements RowMapper<VmStatistics> {
+        public static final VmStatisticsRowMapper instance = new VmStatisticsRowMapper();
+
+        @Override
+        public VmStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
+            VmStatistics entity = new VmStatistics();
+            entity.setcpu_sys(rs.getDouble("cpu_sys"));
+            entity.setcpu_user(rs.getDouble("cpu_user"));
+            entity.setelapsed_time(rs.getDouble("elapsed_time"));
+            entity.setusage_cpu_percent((Integer) rs.getObject("usage_cpu_percent"));
+            entity.setusage_mem_percent((Integer) rs.getObject("usage_mem_percent"));
+            entity.setMigrationProgressPercent(rs.getInt("migration_progress_percent"));
+            entity.setusage_network_percent((Integer) rs.getObject("usage_network_percent"));
+            entity.setDisksUsage((String) rs.getObject("disks_usage"));
+            entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
+            return entity;
+        }
+    }
+
+    protected static RowMapper<VmStatistics> getRowMapper() {
+        return VmStatisticsRowMapper.instance;
     }
 }
