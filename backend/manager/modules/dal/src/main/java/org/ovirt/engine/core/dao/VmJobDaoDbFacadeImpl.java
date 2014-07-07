@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.common.businessentities.VmJobState;
 import org.ovirt.engine.core.common.businessentities.VmJobType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -119,15 +118,5 @@ public class VmJobDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacade<VmJob
             entity.setJobType(jobType);
             return entity;
         }
-    }
-
-    @Override
-    public MapSqlParameterMapper<VmJob> getBatchMapper() {
-        return new MapSqlParameterMapper<VmJob>() {
-            @Override
-            public MapSqlParameterSource map(VmJob entity) {
-                return createFullParametersMapper(entity);
-            }
-        };
     }
 }

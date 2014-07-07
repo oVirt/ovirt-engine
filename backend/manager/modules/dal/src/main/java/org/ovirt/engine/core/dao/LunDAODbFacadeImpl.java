@@ -5,7 +5,6 @@ import java.sql.SQLException;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.LUNs;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -136,16 +135,5 @@ public class LunDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<LUNs, S
                 .addValue("vendor_id", lun.getVendorId())
                 .addValue("product_id", lun.getProductId())
                 .addValue("device_size", lun.getDeviceSize());
-    }
-
-    @Override
-    public MapSqlParameterMapper<LUNs> getBatchMapper() {
-        return new MapSqlParameterMapper<LUNs>() {
-
-            @Override
-            public MapSqlParameterSource map(LUNs lun) {
-                return createFullParametersMapper(lun);
-            }
-        };
     }
 }

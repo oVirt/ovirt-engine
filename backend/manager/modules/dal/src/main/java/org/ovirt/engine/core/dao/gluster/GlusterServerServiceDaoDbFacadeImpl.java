@@ -9,8 +9,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatu
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.ParameterizedRowMapper;
@@ -114,11 +112,5 @@ public class GlusterServerServiceDaoDbFacadeImpl extends MassOperationsGenericDa
             entity.setHostName(rs.getString("vds_name"));
             return entity;
         }
-    }
-
-    @Override
-    public MapSqlParameterMapper<GlusterServerService> getBatchMapper() {
-        // TODO: Implement this
-        throw new NotImplementedException("Unsupported operation");
     }
 }

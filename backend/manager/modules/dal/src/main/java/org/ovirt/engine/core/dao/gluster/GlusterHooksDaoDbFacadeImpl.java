@@ -12,8 +12,6 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.NotImplementedException;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.dao.MassOperationsGenericDaoDbFacade;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -299,13 +297,6 @@ public class GlusterHooksDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
     @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("id", id);
-    }
-
-    @SuppressWarnings("deprecation")
-    @Override
-    public MapSqlParameterMapper<GlusterHookEntity> getBatchMapper() {
-        // TODO: Implement this
-        throw new NotImplementedException("Unsupported operation");
     }
 
     @Override

@@ -67,26 +67,6 @@ public class DiskImageDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbF
         return DiskImageDynamicRowMapper.instance;
     }
 
-    @Override
-    public MapSqlParameterMapper<DiskImageDynamic> getBatchMapper() {
-        return new MapSqlParameterMapper<DiskImageDynamic>() {
-
-            @Override
-            public MapSqlParameterSource map(DiskImageDynamic entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("image_id", entity.getId())
-                        .addValue("read_rate", entity.getread_rate())
-                        .addValue("write_rate", entity.getwrite_rate())
-                        .addValue("actual_size", entity.getactual_size())
-                        .addValue("read_latency_seconds", entity.getReadLatency())
-                        .addValue("write_latency_seconds", entity.getWriteLatency())
-                        .addValue("flush_latency_seconds", entity.getFlushLatency());
-
-                return paramValue;
-            }
-        };
-    }
-
     public MapSqlParameterMapper<Pair<Guid, DiskImageDynamic>> getBatchImageGroupMapper() {
         return new MapSqlParameterMapper<Pair<Guid, DiskImageDynamic>>() {
 

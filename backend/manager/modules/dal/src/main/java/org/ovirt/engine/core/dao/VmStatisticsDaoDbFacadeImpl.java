@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -69,27 +68,6 @@ public class VmStatisticsDaoDbFacadeImpl extends MassOperationsGenericDaoDbFacad
                         .getObject("disks_usage"));
                 entity.setId(getGuidDefaultEmpty(rs, "vm_guid"));
                 return entity;
-            }
-        };
-    }
-
-    @Override
-    public MapSqlParameterMapper<VmStatistics> getBatchMapper() {
-        return new MapSqlParameterMapper<VmStatistics>() {
-            @Override
-            public MapSqlParameterSource map(VmStatistics entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("cpu_sys", entity.getcpu_sys())
-                        .addValue("cpu_user", entity.getcpu_user())
-                        .addValue("elapsed_time", entity.getelapsed_time())
-                        .addValue("usage_cpu_percent", entity.getusage_cpu_percent())
-                        .addValue("usage_mem_percent", entity.getusage_mem_percent())
-                        .addValue("migration_progress_percent", entity.getMigrationProgressPercent())
-                        .addValue("usage_network_percent", entity.getusage_network_percent())
-                        .addValue("disks_usage", entity.getDisksUsage())
-                        .addValue("vm_guid", entity.getId());
-
-                return paramValue;
             }
         };
     }

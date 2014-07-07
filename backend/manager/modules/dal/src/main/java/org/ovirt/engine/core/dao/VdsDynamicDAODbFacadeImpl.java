@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
-import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
@@ -187,18 +186,6 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
 
         getCallsHandler().executeModification("UpdateVdsDynamicPowerManagementPolicyFlag", parameterSource);
 
-    }
-
-    @Override
-    public MapSqlParameterMapper<VdsDynamic> getBatchMapper() {
-        return new MapSqlParameterMapper<VdsDynamic>() {
-
-            @Override
-            public MapSqlParameterSource map(VdsDynamic entity) {
-                return createFullParametersMapper(entity);
-            }
-
-        };
     }
 
     private MapSqlParameterSource createFullParametersMapperForSave(VdsDynamic vds) {

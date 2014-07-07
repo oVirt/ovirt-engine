@@ -9,6 +9,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 /**
  * Implementation for the {@link MassOperationsDao} which provides a default
@@ -95,5 +96,12 @@ public abstract class MassOperationsGenericDaoDbFacade<T extends BusinessEntity<
         updateAllInBatch(getProcedureNameForUpdate(), entities, getBatchMapper());
     }
 
-    public abstract MapSqlParameterMapper<T> getBatchMapper();
+    public MapSqlParameterMapper<T> getBatchMapper() {
+        return new MapSqlParameterMapper<T>() {
+            @Override
+            public MapSqlParameterSource map(T entity) {
+                return createFullParametersMapper(entity);
+            }
+        };
+    }
 }

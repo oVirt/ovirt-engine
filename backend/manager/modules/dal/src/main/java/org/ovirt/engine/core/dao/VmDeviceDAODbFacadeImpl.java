@@ -222,30 +222,6 @@ public class VmDeviceDAODbFacadeImpl extends
         getCallsHandler().executeModification("UpdateVmDeviceBootOrder", paramsForUpdate);
     }
 
-    @Override
-    public MapSqlParameterMapper<VmDevice> getBatchMapper() {
-        return new MapSqlParameterMapper<VmDevice>() {
-            @Override
-            public MapSqlParameterSource map(VmDevice entity) {
-                MapSqlParameterSource paramValue = new MapSqlParameterSource()
-                        .addValue("device_id", entity.getDeviceId())
-                        .addValue("vm_id", entity.getVmId())
-                        .addValue("address", entity.getAddress())
-                        .addValue("alias", entity.getAlias())
-                        .addValue("type", entity.getType())
-                        .addValue("is_managed", entity.getIsManaged())
-                        .addValue("is_plugged", entity.getIsPlugged())
-                        .addValue("is_readonly", entity.getIsReadOnly())
-                        .addValue("spec_params", entity.getSpecParams())
-                        .addValue("boot_order", entity.getBootOrder())
-                        .addValue("snapshot_id", entity.getSnapshotId())
-                        .addValue("device", entity.getDevice());
-
-                return paramValue;
-            }
-        };
-    }
-
     public MapSqlParameterMapper<VmDevice> getBootOrderBatchMapper() {
         return new MapSqlParameterMapper<VmDevice>() {
             @Override
