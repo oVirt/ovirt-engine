@@ -9,6 +9,7 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -30,12 +31,14 @@ public class MultiValueMapUtilsTest {
 
     /** The map used for testing */
     private Map<Integer, List<Integer>> map;
+    private Map<Integer, Set<Integer>> mapOfSets;
 
     @Before
     public void setUp() {
         key = RandomUtils.instance().nextInt();
         value = RandomUtils.instance().nextInt();
         map = new HashMap<Integer, List<Integer>>();
+        mapOfSets = new HashMap<Integer, Set<Integer>>();
     }
 
     /** Tests adding a value to map that does not contain the testing key */
@@ -106,6 +109,16 @@ public class MultiValueMapUtilsTest {
         assertNotNull(list);
         Integer val = list.get(0);
         assertEquals(value, val);
+    }
+
+    @Test
+    public void testMultiValueMapOfSets() {
+        MultiValueMapUtils.addToMapOfSets(key, value, mapOfSets);
+        assertEquals(mapOfSets.get(key).size(), 1);
+        MultiValueMapUtils.addToMapOfSets(key, value, mapOfSets);
+        assertEquals(mapOfSets.get(key).size(), 1);
+        MultiValueMapUtils.addToMapOfSets(key, RandomUtils.instance().nextInt() + value, mapOfSets);
+        assertEquals(mapOfSets.get(key).size(), 2);
     }
 
 
