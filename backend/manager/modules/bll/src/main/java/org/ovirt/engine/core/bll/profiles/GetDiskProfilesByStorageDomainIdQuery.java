@@ -12,7 +12,7 @@ public class GetDiskProfilesByStorageDomainIdQuery extends QueriesCommandBase<Id
     @Override
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(getDbFacade().getDiskProfileDao()
-                .getAllForStorageDomain(getParameters().getId()));
+                .getAllForStorageDomain(getParameters().getId(), getUserID(), getParameters().isFiltered()));
     }
 
 }

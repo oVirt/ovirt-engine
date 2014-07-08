@@ -27,4 +27,17 @@ public interface DiskProfileDao extends ProfilesDao<DiskProfile>, GenericDao<Dis
      */
     void nullifyQosForStorageDomain(Guid storageDomainId);
 
+    /**
+     * Retrieves all disk profiles associated with the given storage domain id, according user's permissions.
+     *
+     * @param storageDomainId
+     *            the storage domain's ID
+     * @param userId
+     *            the user's ID
+     * @param isFiltered
+     *            indicating whether the results should be filtered according to the user's permissions
+     * @return the list of disk profiles
+     */
+    List<DiskProfile> getAllForStorageDomain(Guid storageDomainId, Guid userId, boolean isFiltered);
+
 }
