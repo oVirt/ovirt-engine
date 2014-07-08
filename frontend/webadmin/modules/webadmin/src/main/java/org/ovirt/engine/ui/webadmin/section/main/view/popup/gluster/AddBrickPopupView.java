@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import com.google.gwt.text.shared.Parser;
+import java.text.ParseException;
+
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -12,9 +12,9 @@ import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -35,13 +35,12 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.Parser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.view.client.MultiSelectionModel;
 import com.google.inject.Inject;
-
-import java.text.ParseException;
 
 public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickModel> implements AddBrickPopupPresenterWidget.ViewDef {
 
@@ -154,10 +153,8 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
         volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>(), new Parser<GlusterVolumeType>() {
             @Override
             public GlusterVolumeType parse(CharSequence text) throws ParseException {
-                if (StringHelper.isNullOrEmpty(text.toString())) {
-                    return null;
-                }
-                return GlusterVolumeType.valueOf(text.toString().toUpperCase());
+                //Parser is not needed as its a read only field and value is nowhere used.
+                return null;
             }
         });
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
