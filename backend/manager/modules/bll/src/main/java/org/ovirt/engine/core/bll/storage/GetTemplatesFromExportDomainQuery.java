@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,19 +30,21 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
     @Override
     protected Map<VmTemplate, List<DiskImage>> buildFromOVFs(List<String> ovfList) {
         OvfManager ovfManager = new OvfManager();
-        Map<VmTemplate, List<DiskImage>> templates = new HashMap<>();
+        Map<VmTemplate, List<DiskImage>> templateDisksMap = new HashMap<>();
         OvfHelper ovfHelper = new OvfHelper();
         for (String ovf : ovfList) {
             try {
                 if (ovfManager.IsOvfTemplate(ovf)) {
-                    ovfHelper.readVmTemplateFromOvf(ovf);
+                    VmTemplate vmTemplate = ovfHelper.readVmTemplateFromOvf(ovf);
+                    List<DiskImage> templateDisks = new ArrayList<>(vmTemplate.getDiskTemplateMap().values());
+                    templateDisksMap.put(vmTemplate, templateDisks);
                 }
             } catch (OvfReaderException ex) {
                 auditLogOvfLoadError(ex.getName());
             }
         }
 
-        return templates;
+        return templateDisksMap;
     }
 
     private void auditLogOvfLoadError(String machineName) {
