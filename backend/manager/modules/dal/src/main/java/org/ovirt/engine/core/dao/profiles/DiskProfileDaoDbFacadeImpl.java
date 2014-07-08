@@ -18,9 +18,16 @@ public class DiskProfileDaoDbFacadeImpl extends ProfileBaseDaoFacadeImpl<DiskPro
 
     @Override
     public List<DiskProfile> getAllForStorageDomain(Guid storageDomainId) {
+        return getAllForStorageDomain(storageDomainId, null, false);
+    }
+
+    @Override
+    public List<DiskProfile> getAllForStorageDomain(Guid storageDomainId, Guid userId, boolean isFiltered) {
         return getCallsHandler().executeReadList("GetDiskProfilesByStorageDomainId",
                 createEntityRowMapper(),
-                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId));
+                getCustomMapSqlParameterSource().addValue("storage_domain_id", storageDomainId)
+                        .addValue("user_id", userId)
+                        .addValue("is_filtered", isFiltered));
     }
 
     @Override

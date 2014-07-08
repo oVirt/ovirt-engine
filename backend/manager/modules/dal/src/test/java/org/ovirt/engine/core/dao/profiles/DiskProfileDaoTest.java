@@ -68,8 +68,10 @@ public class DiskProfileDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllForStorageDomainFull() {
-        List<DiskProfile> result = dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5);
+        checkResults(dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5));
+    }
 
+    private void checkResults(List<DiskProfile> result) {
         assertNotNull(result);
         assertEquals(2, result.size());
         for (DiskProfile diskProfile : result) {
@@ -153,5 +155,17 @@ public class DiskProfileDaoTest extends BaseDAOTestCase {
         for (DiskProfile diskProfile : allForQos) {
             assertEquals(FixturesTool.QOS_ID_1, diskProfile.getQosId());
         }
+    }
+
+    @Test
+    public void testGetFilteredByPermissions() {
+        checkResults(dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, PRIVILEGED_USER_ID, true));
+    }
+
+    @Test
+    public void testGetFilteredByPermissionsForUnprivilegedUser() {
+        List<DiskProfile> result =
+                dao.getAllForStorageDomain(FixturesTool.STORAGE_DOAMIN_SCALE_SD5, UNPRIVILEGED_USER_ID, true);
+        assertTrue(result.isEmpty());
     }
 }
