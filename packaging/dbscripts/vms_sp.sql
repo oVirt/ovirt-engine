@@ -148,12 +148,15 @@ Create or replace FUNCTION InsertVmStatistics(v_cpu_sys DECIMAL(18,0) ,
 	v_migration_progress_percent INTEGER ,
 	v_usage_network_percent INTEGER ,
 	v_disks_usage TEXT,
+	v_memory_usage_history TEXT ,
+	v_cpu_usage_history TEXT ,
+	v_network_usage_history TEXT ,
 	v_vm_guid UUID)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO vm_statistics(cpu_sys, cpu_user, elapsed_time, usage_cpu_percent, usage_mem_percent, migration_progress_percent, usage_network_percent, disks_usage, vm_guid)
-	VALUES(v_cpu_sys, v_cpu_user, v_elapsed_time, v_usage_cpu_percent, v_usage_mem_percent, v_migration_progress_percent, v_usage_network_percent, v_disks_usage, v_vm_guid);
+INSERT INTO vm_statistics(cpu_sys, cpu_user, elapsed_time, usage_cpu_percent, usage_mem_percent, migration_progress_percent, usage_network_percent, disks_usage, vm_guid, memory_usage_history, cpu_usage_history, network_usage_history)
+	VALUES(v_cpu_sys, v_cpu_user, v_elapsed_time, v_usage_cpu_percent, v_usage_mem_percent, v_migration_progress_percent, v_usage_network_percent, v_disks_usage, v_vm_guid, v_memory_usage_history, v_cpu_usage_history, v_network_usage_history);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -169,6 +172,9 @@ Create or replace FUNCTION UpdateVmStatistics(v_cpu_sys DECIMAL(18,0) ,
 	v_usage_mem_percent INTEGER ,
 	v_usage_network_percent INTEGER ,
 	v_disks_usage TEXT ,
+	v_memory_usage_history TEXT ,
+	v_cpu_usage_history TEXT ,
+	v_network_usage_history TEXT ,
 	v_vm_guid UUID)
 RETURNS VOID
    AS $procedure$
@@ -176,7 +182,8 @@ BEGIN
       UPDATE vm_statistics
       SET cpu_sys = v_cpu_sys,cpu_user = v_cpu_user,elapsed_time = v_elapsed_time,
       usage_cpu_percent = v_usage_cpu_percent,usage_mem_percent = v_usage_mem_percent, migration_progress_percent = v_migration_progress_percent,
-      usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage, _update_date = LOCALTIMESTAMP
+      usage_network_percent = v_usage_network_percent,disks_usage = v_disks_usage, memory_usage_history = v_memory_usage_history,
+      cpu_usage_history = v_cpu_usage_history, network_usage_history = v_network_usage_history, _update_date = LOCALTIMESTAMP
       WHERE vm_guid = v_vm_guid;
 END; $procedure$
 LANGUAGE plpgsql;

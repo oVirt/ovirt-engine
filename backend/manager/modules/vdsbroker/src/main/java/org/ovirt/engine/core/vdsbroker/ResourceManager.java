@@ -314,6 +314,9 @@ public class ResourceManager {
         vm.setCpuUser(0D);
         vm.setUsageCpuPercent(0);
         vm.setUsageMemPercent(0);
+        vm.setMemoryUsageHistory(null);
+        vm.setCpuUsageHistory(null);
+        vm.setNetworkUsageHistory(null);
         vm.setMigratingToVds(null);
         vm.setRunOnVdsName("");
         vm.setGuestCurrentUserName(null);

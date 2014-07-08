@@ -1873,6 +1873,7 @@ public enum ConfigValues {
     CSRFProtection,
 
     /**
+<<<<<<< HEAD
      * Feature to skip fencing if host is connected to at least one storage domain
      */
     @TypeConverterAttribute(Boolean.class)
@@ -1918,5 +1919,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("1000000")
     MaxWriteIopsUpperBoundQosValue,
 
+    /**
+    * Defines the number of history values storable by the engine for cpu/network/memory usage of a VM
+    */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("40")
+    UsageHistoryLimit,
+
     Invalid;
+
 }

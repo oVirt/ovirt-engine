@@ -8,6 +8,7 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
@@ -55,6 +56,9 @@ public class VmStatisticsDAOTest extends BaseDAOTestCase {
     public void testSave() {
         newVmStatistics.setId(newVmStatic.getId());
         newVmStatistics.setMigrationProgressPercent(0);
+        newVmStatistics.setMemoryUsageHistory(Arrays.asList(2, 3, 4));
+        newVmStatistics.setCpuUsageHistory(Arrays.asList(5, 6, 7));
+        newVmStatistics.setNetworkUsageHistory(Collections.EMPTY_LIST);
         dao.save(newVmStatistics);
 
         VmStatistics stats = dao.get(newVmStatic.getId());

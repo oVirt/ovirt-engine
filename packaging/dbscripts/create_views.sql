@@ -636,6 +636,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       vm_dynamic.display_ip as display_ip, vm_dynamic.display_type as display_type, vm_dynamic.kvm_enable as kvm_enable, vm_dynamic.boot_sequence as boot_sequence,
                       vm_dynamic.display_secure_port as display_secure_port, vm_dynamic.utc_diff as utc_diff, vm_dynamic.last_vds_run_on as last_vds_run_on,
 					  vm_dynamic.client_ip as client_ip,vm_dynamic.guest_requested_memory as guest_requested_memory, vm_static.time_zone as time_zone, vm_statistics.cpu_user as cpu_user, vm_statistics.cpu_sys as cpu_sys,
+                      vm_statistics.memory_usage_history as memory_usage_history, vm_statistics.cpu_usage_history as cpu_usage_history,
+                      vm_statistics.network_usage_history as network_usage_history,
                       vm_statistics.elapsed_time as elapsed_time, vm_statistics.usage_network_percent as usage_network_percent, vm_statistics.disks_usage as disks_usage,
                       vm_statistics.usage_mem_percent as usage_mem_percent, vm_statistics.migration_progress_percent as migration_progress_percent, vm_statistics.usage_cpu_percent as usage_cpu_percent, vds_static.vds_name as run_on_vds_name, vds_groups.cpu_name as vds_group_cpu_name,
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,

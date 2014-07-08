@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
@@ -15,6 +17,10 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
     private List<VmJob> vmJobs;
     // NOT PERSISTED
     private VmBalloonInfo vmBalloonInfo;
+
+    private List<Integer> memoryUsageHistory;
+    private List<Integer> cpuUsageHistory;
+    private List<Integer> networkUsageHistory;
 
     public VmStatistics() {
         cpu_sysField = 0.0;
@@ -39,6 +45,9 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         result = prime * result + ((migrationProgressPercent == null) ? 0 : migrationProgressPercent.hashCode());
         result = prime * result + ((disksUsage == null) ? 0 : disksUsage.hashCode());
         result = prime * result + ((vm_guidField == null) ? 0 : vm_guidField.hashCode());
+        result = prime * result + ((cpuUsageHistory == null) ? 0 : cpuUsageHistory.hashCode());
+        result = prime * result + ((networkUsageHistory == null) ? 0 : networkUsageHistory.hashCode());
+        result = prime * result + ((memoryUsageHistory == null) ? 0 : memoryUsageHistory.hashCode());
         return result;
     }
 
@@ -64,7 +73,10 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
                 && ObjectUtils.objectsEqual(migrationProgressPercent, other.migrationProgressPercent)
                 && ObjectUtils.objectsEqual(usage_network_percentField, other.usage_network_percentField)
                 && ObjectUtils.objectsEqual(disksUsage, other.disksUsage)
-                && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField));
+                && ObjectUtils.objectsEqual(vm_guidField, other.vm_guidField)
+                && ObjectUtils.objectsEqual(cpuUsageHistory, other.cpuUsageHistory)
+                && ObjectUtils.objectsEqual(networkUsageHistory, other.networkUsageHistory)
+                && ObjectUtils.objectsEqual(memoryUsageHistory, other.memoryUsageHistory));
     }
 
     public Double getcpu_sys() {
@@ -220,4 +232,61 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
         this.vmBalloonInfo = vmBalloonInfo;
     }
 
+    public List<Integer> getMemoryUsageHistory() {
+        return memoryUsageHistory;
+    }
+
+    public void addMemoryUsageHistory(Integer memoryUsageHistory, int limit) {
+        this.memoryUsageHistory = addToHistory(this.memoryUsageHistory, memoryUsageHistory, limit);
+    }
+
+    public List<Integer> getCpuUsageHistory() {
+        return cpuUsageHistory;
+    }
+
+    public void addCpuUsageHistory(Integer cpuUsageHistory, int limit) {
+        this.cpuUsageHistory = addToHistory(this.cpuUsageHistory, cpuUsageHistory, limit);
+    }
+
+    public List<Integer> getNetworkUsageHistory() {
+        return networkUsageHistory;
+    }
+
+    public void addNetworkUsageHistory(Integer networkUsageHistory, int limit) {
+        this.networkUsageHistory = addToHistory(this.networkUsageHistory, networkUsageHistory, limit);
+    }
+
+    public void setMemoryUsageHistory(List<Integer> memoryUsageHistory) {
+        this.memoryUsageHistory = memoryUsageHistory;
+    }
+
+    public void setCpuUsageHistory(List<Integer> cpuUsageHistory) {
+        this.cpuUsageHistory = cpuUsageHistory;
+    }
+
+    public void setNetworkUsageHistory(List<Integer> networkUsageHistory) {
+        this.networkUsageHistory = networkUsageHistory;
+    }
+
+    List<Integer> addToHistory(List<Integer> current, Integer newValue, int limit) {
+        if (newValue == null) {
+            return current;
+        }
+
+        if (current == null || current.isEmpty()) {
+            return Arrays.asList(newValue);
+        }
+
+        if (limit == 0) {
+            return Collections.emptyList();
+        }
+
+        List<Integer> res = new ArrayList<Integer>(current);
+        res.add(newValue);
+        if (limit >= res.size()) {
+            return res;
+        }
+
+        return res.subList(res.size() - limit, res.size());
+    }
 }

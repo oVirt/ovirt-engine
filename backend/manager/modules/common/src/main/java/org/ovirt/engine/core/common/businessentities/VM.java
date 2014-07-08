@@ -12,6 +12,8 @@ import javax.validation.Valid;
 import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
@@ -776,12 +778,48 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatistics.setusage_mem_percent(value);
     }
 
+    public List<Integer> getMemoryUsageHistory() {
+        return this.vmStatistics.getMemoryUsageHistory();
+    }
+
+    public void addMemoryUsageHistory(Integer memoryUsageHistory, int limit) {
+        this.vmStatistics.addMemoryUsageHistory(memoryUsageHistory, limit);
+    }
+
+    public List<Integer> getCpuUsageHistory() {
+        return this.vmStatistics.getCpuUsageHistory();
+    }
+
+    public void addCpuUsageHistory(Integer cpuUsageHistory, int limit) {
+        this.vmStatistics.addCpuUsageHistory(cpuUsageHistory, limit);
+    }
+
+    public List<Integer> getNetworkUsageHistory() {
+        return this.vmStatistics.getNetworkUsageHistory();
+    }
+
+    public void addNetworkUsageHistory(Integer networkUsageHistory, int limit) {
+        this.vmStatistics.addNetworkUsageHistory(networkUsageHistory, limit);
+    }
+
     public Integer getMigrationProgressPercent() {
         return this.vmStatistics.getMigrationProgressPercent();
     }
 
     public void setMigrationProgressPercent(Integer value) {
         this.vmStatistics.setMigrationProgressPercent(value);
+    }
+
+    public void setMemoryUsageHistory(List<Integer> memoryUsageHistory) {
+        this.vmStatistics.setMemoryUsageHistory(memoryUsageHistory);
+    }
+
+    public void setCpuUsageHistory(List<Integer> cpuUsageHistory) {
+        this.vmStatistics.setCpuUsageHistory(cpuUsageHistory);
+    }
+
+    public void setNetworkUsageHistory(List<Integer> networkUsageHistory) {
+        this.vmStatistics.setNetworkUsageHistory(networkUsageHistory);
     }
 
     public Integer getUsageCpuPercent() {
@@ -1295,9 +1333,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
      * @param vm
      */
     public void updateRunTimeStatisticsData(VmStatistics vmStatistics, VM vm) {
+        Integer usageHistoryLimit = Config.getValue(ConfigValues.UsageHistoryLimit);
+
         setElapsedTime(vmStatistics.getelapsed_time());
         setUsageNetworkPercent(vmStatistics.getusage_network_percent());
+        addNetworkUsageHistory(getUsageNetworkPercent(), usageHistoryLimit);
+
         vm.getStatisticsData().setDisksUsage(vmStatistics.getDisksUsage());
+
         // -------- cpu --------------
         setCpuSys(vmStatistics.getcpu_sys());
         setCpuUser(vmStatistics.getcpu_user());
@@ -1308,8 +1351,11 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
                 setUsageCpuPercent(100);
             }
         }
+        addCpuUsageHistory(getUsageCpuPercent(), usageHistoryLimit);
+
         // -------- memory --------------
         setUsageMemPercent(vmStatistics.getusage_mem_percent());
+        addMemoryUsageHistory(getUsageMemPercent(), usageHistoryLimit);
 
         // -------- migration --------------
         setMigrationProgressPercent(vmStatistics.getMigrationProgressPercent());
