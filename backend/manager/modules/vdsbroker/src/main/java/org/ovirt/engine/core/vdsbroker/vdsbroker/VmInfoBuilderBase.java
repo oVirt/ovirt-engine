@@ -427,6 +427,8 @@ public abstract class VmInfoBuilderBase {
 
     protected abstract void buildVmRngDevice();
 
+    protected abstract void buildVmVirtioSerial();
+
     protected static enum VNIC_PROFILE_PROPERTIES {
         PORT_MIRRORING("Port Mirroring"),
         CUSTOM_PROPERTIES("Custom Properties"),
