@@ -24,7 +24,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
-import org.ovirt.engine.core.common.vdscommands.SetStoragePoolDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -66,17 +65,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     @Override
     protected void executeCommand() {
         updateQuotaCache();
-        if (_oldStoragePool.getStatus() == StoragePoolStatus.Up) {
-            if (!StringUtils.equals(_oldStoragePool.getName(), getStoragePool().getName())) {
-                runVdsCommand(VDSCommandType.SetStoragePoolDescription,
-                    new SetStoragePoolDescriptionVDSCommandParameters(
-                        getStoragePool().getId(), getStoragePool().getName())
-                );
-            }
-        }
-
         copyUnchangedStoragePoolProperties(getStoragePool(), _oldStoragePool);
-
         getStoragePoolDAO().updatePartial(getStoragePool());
 
         updateStoragePoolFormatType();

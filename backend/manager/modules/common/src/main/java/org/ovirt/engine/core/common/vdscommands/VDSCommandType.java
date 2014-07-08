@@ -81,7 +81,6 @@ public enum VDSCommandType {
     FormatStorageDomain("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     SetStorageDomainDescription("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetStorageDomainStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),
-    SetStoragePoolDescription("org.ovirt.engine.core.vdsbroker.irsbroker"),
     GetStoragePoolInfo("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DestroyStoragePool("org.ovirt.engine.core.vdsbroker.irsbroker"),
     DeleteImageGroup("org.ovirt.engine.core.vdsbroker.irsbroker"),

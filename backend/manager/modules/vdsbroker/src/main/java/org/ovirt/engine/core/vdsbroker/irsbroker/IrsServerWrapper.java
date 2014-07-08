@@ -187,13 +187,6 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setStoragePoolDescription(String spUUID, String description) {
-        Map<String, Object> xmlRpcReturnValue = irsServer.setStoragePoolDescription(spUUID, description);
-        StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-        return wrapper;
-    }
-
-    @Override
     public StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID) {
         Map<String, Object> xmlRpcReturnValue = irsServer.getStoragePoolInfo(spUUID);
         StoragePoolInfoReturnForXmlRpc wrapper = new StoragePoolInfoReturnForXmlRpc(xmlRpcReturnValue);

@@ -349,17 +349,6 @@ public class JsonRpcIIrsServer implements IIrsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc setStoragePoolDescription(String spUUID, String description) {
-        JsonRpcRequest request =
-                new RequestBuilder("StoragePool.setDescription").withParameter("storagepoolID", spUUID)
-                        .withParameter("description", description)
-                        .build();
-        Map<String, Object> response =
-                new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
     public StoragePoolInfoReturnForXmlRpc getStoragePoolInfo(String spUUID) {
         // duplicated in IVdsServer#getStoragePoolInfo
         JsonRpcRequest request =
