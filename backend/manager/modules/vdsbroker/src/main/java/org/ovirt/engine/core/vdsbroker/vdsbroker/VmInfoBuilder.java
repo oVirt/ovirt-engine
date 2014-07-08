@@ -427,7 +427,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 DbFacade.getInstance()
                         .getVmDeviceDao()
                         .getUnmanagedDevicesByVmId(vm.getId());
-        if (vmDevices.size() > 0) {
+        if (!vmDevices.isEmpty()) {
             StringBuilder id = new StringBuilder();
             for (VmDevice vmDevice : vmDevices) {
                 Map struct = new HashMap();
@@ -537,7 +537,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     private static void addAddress(VmDevice vmDevice, Map<String, Object> struct) {
         Map<String, String> addressMap = XmlRpcStringUtils.string2Map(vmDevice.getAddress());
-        if (addressMap.size() > 0) {
+        if (!addressMap.isEmpty()) {
             struct.put(VdsProperties.Address, addressMap);
         }
     }
@@ -878,6 +878,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             vmDevice.setSpecParams(specParams);
         }
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+        addAddress(vmDevice, struct);
         addDevice(struct, vmDevice, null);
     }
 
