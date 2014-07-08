@@ -35,6 +35,7 @@
 		<e:ListModelListBoxEditor ui:field="volumeTypeListEditor" />
 		<e:ListModelListBoxEditor ui:field="sourceStorageListEditor" />
 		<e:ListModelListBoxEditor ui:field="storageListEditor" />
+		<e:ListModelListBoxEditor ui:field="diskProfileListEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaListEditor" />
 	</g:HorizontalPanel>
 

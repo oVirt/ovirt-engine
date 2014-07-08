@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.idhandler.HasElementId;
@@ -79,6 +80,10 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     ListModelListBoxEditor<StorageDomain> storageListEditor;
 
     @UiField(provided = true)
+    @Path(value = "diskProfile.selectedItem")
+    ListModelListBoxEditor<DiskProfile> diskProfileListEditor;
+
+    @UiField(provided = true)
     @Path(value = "quota.selectedItem")
     ListModelListBoxEditor<Quota> quotaListEditor;
 
@@ -90,6 +95,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     public int setTabIndexes(int nextTabIndex) {
         diskAliasEditor.setTabIndex(nextTabIndex++);
         storageListEditor.setTabIndex(nextTabIndex++);
+        diskProfileListEditor.setTabIndex(nextTabIndex++);
         return nextTabIndex;
     }
 
@@ -108,6 +114,13 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
 
         sourceStorageListEditor = new ListModelListBoxEditor<StorageDomain>(new StorageDomainFreeSpaceRenderer<StorageDomain>());
 
+        diskProfileListEditor = new ListModelListBoxEditor<DiskProfile>(new NullSafeRenderer<DiskProfile>() {
+            @Override
+            protected String renderNullSafe(DiskProfile object) {
+                return object.getName();
+            }
+        });
+
         quotaListEditor = new ListModelListBoxEditor<Quota>(new NullSafeRenderer<Quota>() {
             @Override
             public String renderNullSafe(Quota quota) {
@@ -117,7 +130,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
     }
 
     void updateStyles(Boolean isNarrowStyle) {
-        String editorStyle = isNarrowStyle ? style.editorContentNarrow() : style.editorContent();
+        String editorStyle = style.editorContentNarrow();
 
         updateEditorStyle(diskAliasLabel, editorStyle);
         updateEditorStyle(diskAliasEditor, editorStyle);
@@ -126,6 +139,7 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
         updateEditorStyle(volumeTypeListEditor, editorStyle);
         updateEditorStyle(sourceStorageListEditor, editorStyle);
         updateEditorStyle(storageListEditor, editorStyle);
+        updateEditorStyle(diskProfileListEditor, editorStyle);
         updateEditorStyle(quotaListEditor, editorStyle);
     }
 
@@ -178,6 +192,8 @@ public class DisksAllocationItemView extends Composite implements HasEditorDrive
                 ElementIdUtils.createElementId(elementId, "sourceStorageDomain")); //$NON-NLS-1$
         storageListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "storageDomain")); //$NON-NLS-1$
+        diskProfileListEditor.setElementId(
+                ElementIdUtils.createElementId(elementId, "diskProfile")); //$NON-NLS-1$
         quotaListEditor.setElementId(
                 ElementIdUtils.createElementId(elementId, "quota")); //$NON-NLS-1$
     }

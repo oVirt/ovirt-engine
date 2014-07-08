@@ -114,6 +114,7 @@
 					<e:ListModelListBoxEditor ui:field="volumeTypeEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="datacenterEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="storageDomainEditor" addStyleNames="{style.boxEditor}"/>
+					<e:ListModelListBoxEditor ui:field="diskProfileEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="quotaEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="hostListEditor" addStyleNames="{style.boxEditor}"/>
 					<e:ListModelListBoxEditor ui:field="storageTypeEditor" addStyleNames="{style.boxEditor}"/>

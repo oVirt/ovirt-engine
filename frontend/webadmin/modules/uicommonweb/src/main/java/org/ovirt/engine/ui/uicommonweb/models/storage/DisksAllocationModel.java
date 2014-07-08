@@ -6,11 +6,13 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -38,10 +40,10 @@ public class DisksAllocationModel extends EntityModel
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     protected static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-    private final IEventListener quota_storageEventListener = new IEventListener() {
+    private final IEventListener storageDomainEventListener = new IEventListener() {
         @Override
         public void eventRaised(Event ev, Object sender, EventArgs args) {
-            updateDisksQuota(sender);
+            updateDisks(sender);
         }
     };
 
@@ -63,8 +65,8 @@ public class DisksAllocationModel extends EntityModel
         sortDisks();
 
         for (final DiskModel diskModel : disks) {
-            diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(quota_storageEventListener);
-            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(quota_storageEventListener);
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(storageDomainEventListener);
+            diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(storageDomainEventListener);
             diskModel.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
                 @Override
                 public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -183,6 +185,54 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
+    private void updateDiskProfile(Guid storageDomainId, final ListModel<DiskProfile> diskProfiles) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
+                new IdQueryParameters(storageDomainId),
+                new AsyncQuery(new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<DiskProfile> fetchedDiskProfiles =
+                                (List<DiskProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        DisksAllocationModel.this.setDiskProfilesList(diskProfiles, fetchedDiskProfiles);
+
+                    }
+
+                }));
+    }
+
+    private void setDiskProfilesList(final ListModel<DiskProfile> diskProfiles, List<DiskProfile> fetchedDiskProfiles) {
+        if (fetchedDiskProfiles != null) {
+            // normal flow, set items and selected item according to current selected.
+            if (diskProfiles == null) {
+                for (DiskModel diskModel : getDisks()) {
+                    diskModel.getDiskProfile().setItems(fetchedDiskProfiles);
+                    for (DiskProfile diskProfile : fetchedDiskProfiles) {
+                        if (diskModel.getDisk().getDiskStorageType() == DiskStorageType.IMAGE
+                                && diskProfile.getId().equals(((DiskImage) diskModel.getDisk()).getDiskProfileId())) {
+                            diskModel.getDiskProfile().setSelectedItem(diskProfile);
+                        }
+                    }
+                }
+                // inner model disk profiles
+            } else {
+                DiskProfile selectedDiskProfile = null;
+                if (diskProfiles.getSelectedItem() != null) {
+                    selectedDiskProfile = diskProfiles.getSelectedItem();
+                }
+                diskProfiles.setItems(fetchedDiskProfiles);
+                if (selectedDiskProfile != null && fetchedDiskProfiles.size() > 1) {
+                    for (DiskProfile diskProfile : fetchedDiskProfiles) {
+                        if (diskProfile.getId().equals(selectedDiskProfile.getId())) {
+                            diskProfiles.setSelectedItem(diskProfile);
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+    }
+
     @Override
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
@@ -216,17 +266,18 @@ public class DisksAllocationModel extends EntityModel
         }
 
         for (DiskModel diskModel : disks) {
-            StorageDomain storageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
+            StorageDomain storageDomain = diskModel.getStorageDomain().getSelectedItem();
             DiskImage diskImage = (DiskImage) diskModel.getDisk();
             diskImage.setStorageIds(new ArrayList<Guid>(Arrays.asList(storageDomain.getId())));
-            diskImage.setDiskAlias((String) diskModel.getAlias().getEntity());
-
+            diskImage.setDiskAlias(diskModel.getAlias().getEntity());
+            DiskProfile diskProfile = diskModel.getDiskProfile().getSelectedItem();
+            diskImage.setDiskProfileId(diskProfile != null ? diskProfile.getId() : null);
             if (diskModel.getQuota().getSelectedItem() != null) {
-                diskImage.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
+                diskImage.setQuotaId(diskModel.getQuota().getSelectedItem().getId());
             }
 
             if (diskModel.getVolumeType().getIsAvailable()) {
-                VolumeType volumeType = (VolumeType) diskModel.getVolumeType().getSelectedItem();
+                VolumeType volumeType = diskModel.getVolumeType().getSelectedItem();
                 diskImage.setVolumeType(volumeType);
                 diskImage.setvolumeFormat(AsyncDataProvider.getDiskVolumeFormat(
                         volumeType, storageDomain.getStorageType()));
@@ -244,12 +295,13 @@ public class DisksAllocationModel extends EntityModel
         }
     }
 
-    private void updateDisksQuota(Object sender) {
+    private void updateDisks(Object sender) {
         StorageDomain storageDomain = (StorageDomain) ((ListModel) sender).getSelectedItem();
         if (storageDomain != null) {
             for (DiskModel innerDisk : disks) {
                 if (innerDisk.getStorageDomain().equals(sender)) {
                     updateQuota(storageDomain.getId(), innerDisk.getQuota());
+                    updateDiskProfile(storageDomain.getId(), innerDisk.getDiskProfile());
                     break;
                 }
             }

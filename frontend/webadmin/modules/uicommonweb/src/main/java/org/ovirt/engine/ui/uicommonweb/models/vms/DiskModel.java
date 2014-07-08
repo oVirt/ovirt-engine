@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -25,6 +26,7 @@ public class DiskModel extends Model
     private ListModel<DiskInterface> diskInterface;
     private ListModel<StorageDomain> sourceStorageDomain;
     private ListModel<StorageDomain> storageDomain;
+    private ListModel<DiskProfile> diskProfile;
     private ListModel<Quota> quota;
 
     private boolean pluggedToRunningVm;
@@ -109,6 +111,14 @@ public class DiskModel extends Model
         this.storageDomain = storageDomain;
     }
 
+    public ListModel<DiskProfile> getDiskProfile() {
+        return diskProfile;
+    }
+
+    public void setDiskProfile(ListModel<DiskProfile> diskProfile) {
+        this.diskProfile = diskProfile;
+    }
+
     public ListModel<Quota> getQuota() {
         return quota;
     }
@@ -133,6 +143,7 @@ public class DiskModel extends Model
         setSourceStorageDomain(new ListModel<StorageDomain>());
         setDiskInterface(new ListModel<DiskInterface>());
         setStorageDomain(new ListModel<StorageDomain>());
+        setDiskProfile(new ListModel<DiskProfile>());
 
         setQuota(new ListModel<Quota>());
         getQuota().setIsAvailable(false);
