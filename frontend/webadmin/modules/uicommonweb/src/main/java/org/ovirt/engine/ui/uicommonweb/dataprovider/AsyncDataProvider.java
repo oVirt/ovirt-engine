@@ -2520,20 +2520,6 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetConnectionsByDataCenterAndStorageType, params, aQuery);
     }
 
-    public void getRedirectServletReportsPage(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? (String) source : ""; //$NON-NLS-1$
-            }
-        };
-        getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.RedirectServletReportsPage,
-                        getDefaultConfigurationVersion()),
-                aQuery);
-    }
-
     private HashMap<VdcActionType, CommandVersionsInfo> cachedCommandsCompatibilityVersions;
 
     public void isCommandCompatible(AsyncQuery aQuery, final VdcActionType vdcActionType,

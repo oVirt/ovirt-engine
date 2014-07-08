@@ -15,6 +15,9 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabDataCenterPresenter;
@@ -44,7 +47,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new DcStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -125,12 +128,14 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<StoragePool>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getModelProvider()); //$NON-NLS-1$
-            if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<StoragePool>(constants.showReportDC(),
-                        resourceSubActions));
-            }
+            updateReportsAvailability(constants);
+        } else {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateReportsAvailability(constants);
+                }
+            });
         }
 
         getTable().addActionButton(new WebAdminImageButtonDefinition<StoragePool>(constants.guideMeDc(),
@@ -147,5 +152,16 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
                 return getMainModel().getRecoveryStorageCommand();
             }
         });
+    }
+
+    private void updateReportsAvailability(ApplicationConstants constants) {
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<StoragePool>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("DataCenter", getModelProvider()); //$NON-NLS-1$
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<StoragePool>(constants.showReportDC(),
+                        resourceSubActions));
+            }
+        }
     }
 }

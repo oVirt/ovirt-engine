@@ -7,6 +7,7 @@ import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.SSOTokenData;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -141,6 +142,12 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
 
         // Post-login actions
         loginModel.getPassword().setEntity(null);
+    }
+
+    protected void updateReportsAvailability() {
+        if (CommonModelManager.instance() != null) {
+            CommonModelManager.instance().updateReportsAvailability();
+        }
     }
 
     /**

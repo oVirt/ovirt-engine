@@ -18,6 +18,9 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabStoragePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -45,7 +48,7 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
         initWidget(getTable());
     }
 
-    void initTable(ApplicationConstants constants) {
+    void initTable(final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
         getTable().addColumn(new StorageDomainSharedStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
@@ -160,6 +163,19 @@ public class MainTabStorageView extends AbstractMainTabWithDetailsTableView<Stor
                 return getMainModel().getDestroyCommand();
             }
         });
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            updateReportsAvailability(constants);
+        } else {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateReportsAvailability(constants);
+                }
+            });
+        }
+    }
+
+    private void updateReportsAvailability(ApplicationConstants constants) {
         if (ReportInit.getInstance().isReportsEnabled()) {
             List<ActionButtonDefinition<StorageDomain>> resourceSubActions =
                     ReportActionsHelper.getInstance().getResourceSubActions("Storage", getModelProvider()); //$NON-NLS-1$

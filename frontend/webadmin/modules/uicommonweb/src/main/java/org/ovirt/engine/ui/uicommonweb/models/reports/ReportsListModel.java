@@ -13,30 +13,22 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListWithReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
-import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.i18n.client.LocaleInfo;
 
-public class ReportsListModel extends SearchableListModel {
+public class ReportsListModel extends SearchableListWithReportsModel {
 
     HtmlParameters htmlParams = new HtmlParameters();
     private String lastResourceId = ""; //$NON-NLS-1$
     private final String reportUrl;
-    private final Event<EventArgs> reportModelRefreshEvent =
-            new Event<EventArgs>(new EventDefinition("ReportModelRefreshed", ReportsListModel.class)); //$NON-NLS-1$
-
-    public Event<EventArgs> getReportModelRefreshEvent() {
-        return reportModelRefreshEvent;
-    }
 
     public ReportsListModel(String baseUrl, String ssoToken) {
-        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=true"; //$NON-NLS-1$ //$NON-NLS-2$
+        reportUrl = baseUrl;
         htmlParams.setParameter("sessionID", ssoToken); //$NON-NLS-1$
 
         setFlowId();
@@ -189,7 +181,7 @@ public class ReportsListModel extends SearchableListModel {
         }
         GWT.log("Tree Item changed: " + title); //$NON-NLS-1$
 
-        reportModelRefreshEvent.raise(this, EventArgs.EMPTY);
+        getReportsAvailabilityEvent().raise(this, EventArgs.EMPTY);
     }
 
     @Override

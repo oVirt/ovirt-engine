@@ -96,13 +96,15 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         // Initialize reports
         ReportInit.getInstance().init();
 
-        // Perform login only after reports have been initialized
+        // Update Reports availability after reports xml has been retrieved
         ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                performLogin(loginModel);
+                updateReportsAvailability();
             }
         });
+
+        performLogin(loginModel);
     }
 
     @Override

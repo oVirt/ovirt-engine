@@ -46,7 +46,6 @@ public enum ConfigurationValues {
     VcpuConsumptionPercentage(ConfigAuthType.User),
     SearchResultsLimit(ConfigAuthType.User),
     MaxBlockDiskSize(ConfigAuthType.User),
-    RedirectServletReportsPage(ConfigAuthType.User),
     EnableSpiceRootCertificateValidation(ConfigAuthType.User),
     VMMinMemorySizeInMB(ConfigAuthType.User),
     VM32BitMaxMemorySizeInMB(ConfigAuthType.User),

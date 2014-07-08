@@ -22,6 +22,9 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabHostPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractMainTabWithDetailsTableView;
@@ -313,11 +316,14 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<VDS>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
-            if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
-            }
+            updateReportsAvailability();
+        } else {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateReportsAvailability();
+                }
+            });
         }
 
         getTable().addActionButton(new WebAdminButtonDefinition<VDS>(constants.refreshHostCapabilities()) {
@@ -326,6 +332,16 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
                 return getMainModel().getRefreshCapabilitiesCommand();
             }
         });
+    }
+
+    private void updateReportsAvailability() {
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<VDS>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("Host", getModelProvider()); //$NON-NLS-1$
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDS>(constants.showReportHost(), resourceSubActions));
+            }
+        }
     }
 
     @Override
