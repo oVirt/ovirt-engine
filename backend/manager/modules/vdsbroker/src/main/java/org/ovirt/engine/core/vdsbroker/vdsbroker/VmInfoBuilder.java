@@ -950,6 +950,25 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
     }
 
+    @Override
+    protected void buildVmVirtioSerial() {
+        List<VmDevice> vmDevices =
+                DbFacade.getInstance()
+                .getVmDeviceDao()
+                .getVmDeviceByVmIdTypeAndDevice(vm.getId(),
+                        VmDeviceGeneralType.CONTROLLER,
+                        VmDeviceType.VIRTIOSERIAL.getName());
+
+        for (VmDevice vmDevice : vmDevices) {
+            Map<String, Object> struct = new HashMap<>();
+            struct.put(VdsProperties.Type, VmDeviceGeneralType.CONTROLLER.getValue());
+            struct.put(VdsProperties.Device, VdsProperties.VirtioSerial);
+            addAddress(vmDevice, struct);
+
+            addDevice(struct, vmDevice, null);
+        }
+    }
+
     /**
      * @return a map containing an appropriate unit (disk's index in VirtIO-SCSI controller) for each vm device.
      */
