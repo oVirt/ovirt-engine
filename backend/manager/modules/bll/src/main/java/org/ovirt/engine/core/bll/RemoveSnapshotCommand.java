@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -125,6 +126,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         freeLock();
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, getVmId()));
 
+        boolean useTaskManagerToRemoveMemory = false;
         if (snapshotHasImages) {
             removeImages();
 
@@ -132,11 +134,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 // Enable callbacks in order to monitor for new-style child completion
                 setCommandStatus(CommandStatus.ACTIVE_ASYNC);
                 persistCommandWithoutContext(getParameters().getParentCommand(), true);
+                useTaskManagerToRemoveMemory = true;
             }
         }
 
         if (removeSnapshotMemory) {
-            removeMemory(snapshot);
+            removeMemory(snapshot, useTaskManagerToRemoveMemory);
         }
 
         setSucceeded(true);
@@ -151,10 +154,15 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 getDbFacade().getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1;
     }
 
-    private void removeMemory(final Snapshot snapshot) {
-        boolean success = removeMemoryVolumes(snapshot.getMemoryVolume(), getActionType(), false);
-        if (!success) {
-            log.errorFormat("Cannot remove memory volumes for snapshot {0}", snapshot.getId());
+    private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
+        RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
+        if (useTaskManager) {
+            TaskManagerUtil.executeAsyncCommand(VdcActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
+        } else {
+            VdcReturnValueBase ret = runInternalAction(VdcActionType.RemoveMemoryVolumes, parameters);
+            if (!ret.getSucceeded()) {
+                log.errorFormat("Cannot remove memory volumes for snapshot {0}", snapshot.getId());
+            }
         }
     }
 
