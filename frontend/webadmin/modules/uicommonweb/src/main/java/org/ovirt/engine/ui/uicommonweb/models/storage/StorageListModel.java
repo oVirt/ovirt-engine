@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ISupportSystemTreeContext;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsAndReportsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
@@ -72,7 +72,7 @@ import org.ovirt.engine.ui.uicompat.TaskContext;
 import org.ovirt.engine.ui.uicompat.UIConstants;
 
 @SuppressWarnings("unused")
-public class StorageListModel extends ListWithDetailsModel implements ITaskTarget, ISupportSystemTreeContext
+public class StorageListModel extends ListWithDetailsAndReportsModel implements ITaskTarget, ISupportSystemTreeContext
 {
 
     private UICommand privateNewDomainCommand;

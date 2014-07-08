@@ -13,6 +13,9 @@ import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabClusterPresenter;
@@ -42,7 +45,7 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
         TextColumnWithTooltip<VDSGroup> nameColumn = new TextColumnWithTooltip<VDSGroup>() {
@@ -138,12 +141,14 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getModelProvider()); //$NON-NLS-1$
-            if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>(constants.showReportCluster(),
-                        resourceSubActions));
-            }
+            updateReportsAvailability(constants);
+        } else {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateReportsAvailability(constants);
+                }
+            });
         }
 
         getTable().addActionButton(new WebAdminImageButtonDefinition<VDSGroup>(constants.guideMeCluster(),
@@ -153,5 +158,18 @@ public class MainTabClusterView extends AbstractMainTabWithDetailsTableView<VDSG
                 return getMainModel().getGuideCommand();
             }
         });
+    }
+
+    public void updateReportsAvailability(ApplicationConstants constants) {
+
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<VDSGroup>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("Cluster", getModelProvider()); //$NON-NLS-1$
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VDSGroup>(constants.showReportCluster(),
+                        resourceSubActions));
+            }
+        }
+
     }
 }

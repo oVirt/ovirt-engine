@@ -56,33 +56,53 @@
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>reports-redirect</servlet-name>
-    <servlet-class>org.ovirt.engine.core.services.ReportsRedirectServlet</servlet-class>
+      <servlet-name>reports-redirect</servlet-name>
+      <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
+      <init-param>
+          <param-name>url</param-name>
+          <param-value>%{ENGINE_REPORTS_DASHBOARD_URL}</param-value>
+      </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>reports-redirect</servlet-name>
-    <url-pattern>/reports-redirect</url-pattern>
+      <servlet-name>reports-redirect</servlet-name>
+      <url-pattern>/reports-redirect</url-pattern>
   </servlet-mapping>
 
   <servlet>
-    <servlet-name>reports-ui</servlet-name>
-    <servlet-class>org.ovirt.engine.core.utils.servlet.FileServlet</servlet-class>
+    <servlet-name>reports-interface-proxy</servlet-name>
+    <servlet-class>org.ovirt.engine.core.services.ProxyServlet</servlet-class>
     <init-param>
-      <param-name>file</param-name>
-      <param-value>%{ENGINE_REPORTS_UI}</param-value>
+        <param-name>url</param-name>
+        <param-value>%{ENGINE_REPORTS_PROXY_URL}</param-value>
     </init-param>
     <init-param>
-      <param-name>required</param-name>
-      <param-value>false</param-value>
+        <param-name>trustStoreType</param-name>
+        <param-value>%{ENGINE_PKI_TRUST_STORE_TYPE}</param-value>
     </init-param>
     <init-param>
-      <param-name>cache</param-name>
-      <param-value>false</param-value>
+        <param-name>trustStore</param-name>
+        <param-value>%{ENGINE_PKI_TRUST_STORE}</param-value>
+    </init-param>
+    <init-param>
+        <param-name>trustStorePassword</param-name>
+        <param-value>%{ENGINE_PKI_TRUST_STORE_PASSWORD}</param-value>
+    </init-param>
+    <init-param>
+        <param-name>verifyHost</param-name>
+        <param-value>%{ENGINE_REPORTS_VERIFY_HOST}</param-value>
+    </init-param>
+    <init-param>
+        <param-name>verifyChain</param-name>
+        <param-value>%{ENGINE_REPORTS_VERIFY_CHAIN}</param-value>
+    </init-param>
+    <init-param>
+        <param-name>readTimeout</param-name>
+        <param-value>%{ENGINE_REPORTS_READ_TIMEOUT}</param-value>
     </init-param>
   </servlet>
   <servlet-mapping>
-    <servlet-name>reports-ui</servlet-name>
-    <url-pattern>/reports-ui</url-pattern>
+      <servlet-name>reports-interface-proxy</servlet-name>
+      <url-pattern>/reports-interface-proxy</url-pattern>
   </servlet-mapping>
 
   <servlet>

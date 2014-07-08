@@ -556,7 +556,6 @@ select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
 select fn_db_add_config_value('QuotaThresholdStorage','80','general');
 select fn_db_add_config_value('QuotaThresholdVdsGroup','80','general');
 --Handling Connect to RDP console with Fully Qualified User-Name (user@domain)
-select fn_db_add_config_value('RedirectServletReportsPage','','general');
 select fn_db_add_config_value('RhevhLocalFSPath','/data/images/','general');
 select fn_db_add_config_value('SANWipeAfterDelete','false','general');
 --Handling SASL QOP

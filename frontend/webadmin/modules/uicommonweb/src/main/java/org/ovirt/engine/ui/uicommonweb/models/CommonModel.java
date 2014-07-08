@@ -84,11 +84,11 @@ public class CommonModel extends ListModel
     private InstanceTypeListModel instanceTypeListModel;
 
     // NOTE: when adding a new ListModel here, be sure to add it to the list in initItems()
-    private SearchableListModel dataCenterList;
+    private ListWithDetailsAndReportsModel dataCenterList;
     private ClusterListModel clusterList;
-    private SearchableListModel hostList;
+    private ListWithDetailsAndReportsModel hostList;
     private StorageListModel storageList;
-    private SearchableListModel vmList;
+    private ListWithDetailsAndReportsModel vmList;
     private SearchableListModel poolList;
     private SearchableListModel templateList;
     private SearchableListModel userList;
@@ -349,6 +349,22 @@ public class CommonModel extends ListModel
         }
     }
 
+    public void updateReportsAvailability() {
+        updateReportsAvailability(getSystemTree().getSelectedItem() == null ?
+                SystemTreeItemType.System :
+                getSystemTree().getSelectedItem().getType());
+        dataCenterList.updateReportsAvailability();
+        clusterList.updateReportsAvailability();
+        hostList.updateReportsAvailability();
+        storageList.updateReportsAvailability();
+        vmList.updateReportsAvailability();
+    }
+
+    private void updateReportsAvailability(SystemTreeItemType type) {
+        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
+                && ReportInit.getInstance().getDashboard(type.toString()) != null);
+    }
+
     private void updateAvailability(SystemTreeItemType type, Object entity) {
 
         // Update items availability depending on system tree selection
@@ -432,8 +448,7 @@ public class CommonModel extends ListModel
                 || type == SystemTreeItemType.Storage || type == SystemTreeItemType.System
                 || type == SystemTreeItemType.Volume);
 
-        reportsList.setIsAvailable(ReportInit.getInstance().isReportsEnabled()
-                && ReportInit.getInstance().getDashboard(type.toString()) != null);
+        updateReportsAvailability(type);
 
         networkList.setIsAvailable(type == SystemTreeItemType.Network
                 || type == SystemTreeItemType.Networks

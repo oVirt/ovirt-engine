@@ -22,6 +22,9 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVirtualMachinePresenter;
@@ -63,7 +66,7 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         initWidget(getTable());
     }
 
-    void initTable(ApplicationResources resources, ApplicationConstants constants) {
+    void initTable(final ApplicationResources resources, final ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
         VmStatusColumn<VM> vmStatusColumn = new VmStatusColumn<VM>();
@@ -371,12 +374,14 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
         });
 
         if (ReportInit.getInstance().isReportsEnabled()) {
-            List<ActionButtonDefinition<VM>> resourceSubActions =
-                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getModelProvider()); //$NON-NLS-1$
-            if (resourceSubActions != null && resourceSubActions.size() > 0) {
-                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>(constants.showReportVm(),
-                        resourceSubActions));
-            }
+            updateReportsAvailability(constants);
+        } else {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+                @Override
+                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    updateReportsAvailability(constants);
+                }
+            });
         }
 
         getTable().addActionButton(new WebAdminImageButtonDefinition<VM>(constants.guideMeVm(),
@@ -386,6 +391,17 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
                 return getMainModel().getGuideCommand();
             }
         });
+    }
+
+    private void updateReportsAvailability(ApplicationConstants constants) {
+        if (ReportInit.getInstance().isReportsEnabled()) {
+            List<ActionButtonDefinition<VM>> resourceSubActions =
+                    ReportActionsHelper.getInstance().getResourceSubActions("VM", getModelProvider()); //$NON-NLS-1$
+            if (resourceSubActions != null && resourceSubActions.size() > 0) {
+                getTable().addActionButton(new WebAdminMenuBarButtonDefinition<VM>(constants.showReportVm(),
+                        resourceSubActions));
+            }
+        }
     }
 
 }

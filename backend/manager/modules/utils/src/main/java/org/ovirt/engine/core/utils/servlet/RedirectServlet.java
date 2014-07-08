@@ -8,6 +8,7 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 
 /**
@@ -39,6 +40,16 @@ public class RedirectServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        response.sendRedirect(url);
+        String redirectUrl = url;
+        String queryString = request.getQueryString();
+        if (StringUtils.isNotEmpty(queryString)) {
+            if (redirectUrl.indexOf("?") == -1) {
+                redirectUrl += "?";
+            } else {
+                redirectUrl += "&";
+            }
+            redirectUrl += queryString;
+        }
+        response.sendRedirect(redirectUrl);
     }
 }

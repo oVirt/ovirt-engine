@@ -3,12 +3,10 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.ovirt.engine.ui.frontend.AsyncQuery;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import com.google.gwt.core.client.Scheduler;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent.SSOTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
@@ -26,9 +24,17 @@ import com.google.gwt.xml.client.impl.DOMParseException;
 public class ReportInit {
 
     private static final ReportInit INSTANCE = new ReportInit();
+    private static final int MAX_RETRY_COUNTS = 20;
+    private static final int RETRY_INTERVAL = 30000;
+    public static final String REDIRECT_SERVICE = "services/reports-redirect"; //$NON-NLS-1$
+    public static final String STATUS_SERVICE = "services/reports-interface-proxy?command=status"; //$NON-NLS-1$
+    public static final String XML_SERVICE = "services/reports-interface-proxy?command=webadmin-ui-xml"; //$NON-NLS-1$
+    private int retryCount;
+    private boolean reportsWebappDeployed;
+    private boolean scheduledStatusCheckInProgress;
     private boolean reportsEnabled;
     private boolean xmlInitialized;
-    private boolean urlInitialized;
+    private boolean initEventRaised;
     private Event reportsInitEvent;
     private String reportBaseUrl;
     private String ssoToken;
@@ -52,26 +58,22 @@ public class ReportInit {
         // As this class has it's state, it needs to be inited again
         initState();
 
-        AsyncDataProvider.getRedirectServletReportsPage(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        setReportBaseUrl((String) returnValue);
-                    }
-                }));
-
+        setReportBaseUrl(buildUrl(REDIRECT_SERVICE));
         parseReportsXML();
     }
 
     private void initState() {
         reportsEnabled = false;
         xmlInitialized = false;
-        urlInitialized = false;
+        reportsWebappDeployed = false;
+        scheduledStatusCheckInProgress = false;
+        initEventRaised = false;
         reportBaseUrl = ""; //$NON-NLS-1$
         isCommunityEdition = false;
         resourceMap = new HashMap<String, Resource>();
         dashboardMap = new HashMap<String, Dashboard>();
         reportsInitEvent = new Event("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
+        retryCount = 0;
     }
 
     private ReportInit() {
@@ -89,34 +91,84 @@ public class ReportInit {
         return dashboardMap.get(type);
     }
 
-    private void parseReportsXML() {
+    public static RequestBuilder constructServiceRequestBuilder(String service) {
+        return new RequestBuilder(RequestBuilder.GET, buildUrl(service));
+    }
 
-        RequestBuilder requestBuilder =
-                new RequestBuilder(RequestBuilder.GET,
-                    "/" //$NON-NLS-1$
-                    + BaseContextPathData.getInstance().getRelativePath()
-                    + "services/reports-ui"); //$NON-NLS-1$
+    private static String buildUrl(String service) {
+        return "/" //$NON-NLS-1$
+                + BaseContextPathData.getInstance().getRelativePath()
+                + service;
+    }
+
+    private void scheduleCheckStatus() {
+        if (scheduledStatusCheckInProgress || retryCount > MAX_RETRY_COUNTS || reportsWebappDeployed) {
+            return;
+        }
+        scheduledStatusCheckInProgress = true;
+        Scheduler.get().scheduleFixedDelay(
+                new Scheduler.RepeatingCommand() {
+                    @Override
+                    public boolean execute() {
+                        if (retryCount > MAX_RETRY_COUNTS || reportsWebappDeployed) {
+                            scheduledStatusCheckInProgress = false;
+                            return false;
+                        }
+                        retryCount++;
+                        checkReportsWebAppStatus();
+                        return true;
+                    }
+                },
+                RETRY_INTERVAL);
+    }
+
+    private void checkReportsWebAppStatus() {
         try {
-            requestBuilder.sendRequest(null, new RequestCallback() {
+            constructServiceRequestBuilder(STATUS_SERVICE).sendRequest(null, new RequestCallback() {
                 @Override
                 public void onError(Request request, Throwable exception) {
+                    // ignore error
+                }
+
+                @Override
+                public void onResponseReceived(Request request, Response response) {
+                    if (response.getStatusCode() == Response.SC_OK) {
+                        reportsWebappDeployed = true;
+                        parseReportsXML();
+                    }
+                }
+            });
+        } catch (RequestException e) {
+            // ignore error
+        }
+    }
+
+    private void parseReportsXML() {
+        try {
+            constructServiceRequestBuilder(XML_SERVICE).sendRequest(null, new RequestCallback() {
+                @Override
+                public void onError(Request request, Throwable exception) {
+                    scheduleCheckStatus();
                     setXmlInitialized();
                 }
 
                 @Override
                 public void onResponseReceived(Request request, Response response) {
-                    try {
-                        if (response.getStatusCode() == Response.SC_OK
-                                && ReportParser.getInstance().parseReport(response.getText())) {
-                            resourceMap = ReportParser.getInstance().getResourceMap();
-                            dashboardMap = ReportParser.getInstance().getDashboardMap();
-                            isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
+                    if (response.getStatusCode() == Response.SC_OK) {
+                        try {
+                            if (ReportParser.getInstance().parseReport(response.getText())) {
+                                resourceMap = ReportParser.getInstance().getResourceMap();
+                                dashboardMap = ReportParser.getInstance().getDashboardMap();
+                                isCommunityEdition = ReportParser.getInstance().isCommunityEdition();
+                            }
+                        } catch (DOMParseException e) {
+                        } finally {
+                            setXmlInitialized();
                         }
-                    } catch (DOMParseException e) {
-                    } finally {
+                    } else {
+                        scheduleCheckStatus();
                         setXmlInitialized();
                     }
-
                 }
             });
         } catch (RequestException e) {
@@ -133,8 +185,9 @@ public class ReportInit {
     }
 
     public void setReportBaseUrl(String reportBaseUrl) {
-        this.reportBaseUrl = reportBaseUrl;
-        this.urlInitialized = true;
+        if (reportBaseUrl != null) {
+            this.reportBaseUrl = reportBaseUrl;
+        }
         checkIfInitFinished();
     }
 
@@ -157,7 +210,7 @@ public class ReportInit {
     }
 
     private void checkIfInitFinished() {
-        if (xmlInitialized && urlInitialized && ssoToken != null) {
+        if (xmlInitialized && ssoToken != null) {
 
             // Check if the reports should be enabled in this system
             if (!"".equals(reportBaseUrl) && !resourceMap.isEmpty() && !"".equals(ssoToken)) { //$NON-NLS-1$ $NON-NLS-2$
@@ -166,8 +219,10 @@ public class ReportInit {
                 setReportsEnabled(false);
             }
 
-            // The initialization process blocks on this event after the login
-            reportsInitEvent.raise(this, null);
+            if (isReportsEnabled() && !initEventRaised) {
+                reportsInitEvent.raise(this, null);
+                initEventRaised = true;
+            }
         }
     }
 
@@ -177,18 +232,18 @@ public class ReportInit {
         }
         // Register to listen for session id acquired events.
         ssoTokenHandlerRegistration = eventBus.addHandler(SSOTokenChangeEvent.getType(),
-            new SSOTokenChangeHandler() {
+                new SSOTokenChangeHandler() {
 
-                @Override
-                public void onSSOTokenChange(SSOTokenChangeEvent event) {
-                    ReportInit.this.ssoToken = event.getToken();
-                    if (ReportInit.this.ssoToken == null) { //This should not happen
-                        //This will make the login continue, just the reports will be broken.
-                        ReportInit.this.ssoToken = "";
+                    @Override
+                    public void onSSOTokenChange(SSOTokenChangeEvent event) {
+                        ReportInit.this.ssoToken = event.getToken();
+                        if (ReportInit.this.ssoToken == null) { //This should not happen
+                            //This will make the login continue, just the reports will be broken.
+                            ReportInit.this.ssoToken = "";
+                        }
+                        checkIfInitFinished();
                     }
-                    checkIfInitFinished();
                 }
-            }
         );
     }
 

@@ -16,7 +16,7 @@ public class ReportModel extends EntityModel {
 
     public ReportModel(String baseUrl, String ssoToken) {
 
-        reportUrl = baseUrl + "/flow.html" + "?viewAsDashboardFrame=false"; //$NON-NLS-1$ //$NON-NLS-2$
+        reportUrl = baseUrl;
         paramsMap.setParameter("sessionID", ssoToken); //$NON-NLS-1$
         paramsMap.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$

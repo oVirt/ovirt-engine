@@ -24,4 +24,18 @@
        <Class name="org.ovirt.engine.core.utils.log.Log" />
        <Bug code="Nm"/>
      </Match>
+
+     <!--
+      findbugs complains that HTTP parameter is directly written to
+      HTTP header output. This servlet is used from frontend and url
+      is already encode, so the warning is not relevant.
+
+      findbugs reason:
+      HRS: HTTP parameter directly written to HTTP header output (HRS_REQUEST_PARAMETER_TO_HTTP_HEADER)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.utils.servlet.RedirectServlet" />
+       <Bug code="HRS"/>
+     </Match>
+
 </FindBugsFilter>
