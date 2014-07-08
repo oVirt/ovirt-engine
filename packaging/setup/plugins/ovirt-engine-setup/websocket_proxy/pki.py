@@ -153,12 +153,12 @@ class Plugin(plugin.PluginBase):
                     "party CA is available, with this sequence:\n"
 
                     "1. Copy and save certificate request at\n"
-                    "    /etc/pki/ovirt-engine/requests/{name}.req\n"
+                    "    /etc/pki/ovirt-engine/requests/{name}-{fqdn}.req\n"
                     "on the engine server\n\n"
                     "2. execute, on the engine host, this command "
                     "to enroll the cert:\n"
                     " /usr/share/ovirt-engine/bin/pki-enroll-request.sh \\\n"
-                    "     --name={name} \\\n"
+                    "     --name={name}-{fqdn} \\\n"
                     "     --subject=\"/C=<country>/O=<organization>/"
                     "CN={fqdn}\"\n"
                     "Substitute <country>, <organization> to suite your "
@@ -167,7 +167,7 @@ class Plugin(plugin.PluginBase):
                     "certificate authority of your engine)\n\n"
 
                     "3. Certificate will be available at\n"
-                    "    /etc/pki/ovirt-engine/certs/{name}.cer\n"
+                    "    /etc/pki/ovirt-engine/certs/{name}-{fqdn}.cer\n"
                     "on the engine host, please copy that content here "
                     "when required\n"
                 ).format(
