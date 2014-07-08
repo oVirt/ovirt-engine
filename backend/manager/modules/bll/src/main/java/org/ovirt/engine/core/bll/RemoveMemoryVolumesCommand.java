@@ -26,6 +26,10 @@ import org.ovirt.engine.core.compat.Guid;
 @InternalCommandAttribute
 public class RemoveMemoryVolumesCommand<T extends RemoveMemoryVolumesParameters> extends CommandBase<T> implements TaskHandlerCommand<T> {
 
+    public RemoveMemoryVolumesCommand(T parameters) {
+        super(parameters);
+    }
+
     public RemoveMemoryVolumesCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
     }
