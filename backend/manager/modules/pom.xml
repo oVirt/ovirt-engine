@@ -27,6 +27,7 @@
     <module>scheduler</module>
     <module>searchbackend</module>
     <module>aaa</module>
+    <module>auth-plugin</module>
     <module>bll</module>
     <module>restapi</module>
     <module>logger</module>

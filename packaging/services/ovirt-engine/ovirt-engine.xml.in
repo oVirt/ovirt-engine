@@ -7,7 +7,7 @@
 #end if
 
 #if $JBOSS_MAJOR < 7
-<server xmlns="urn:jboss:domain:1.1">
+<server xmlns="urn:jboss:domain:1.6">
 #else
 <server xmlns="urn:jboss:domain:2.1">
 #end if
@@ -64,8 +64,11 @@
            than the root and ovirt users) to be able to connect to the
            management port, so we just use an empty users file: -->
       <security-realm name="management">
+        <plug-ins>
+          <plug-in module="org.ovirt.engine.core.auth-plugin"/>
+        </plug-ins>
         <authentication>
-          <properties path="/dev/null"/>
+          <plug-in name="OvirtAuth" mechanism="PLAIN"/>
         </authentication>
       </security-realm>
 
