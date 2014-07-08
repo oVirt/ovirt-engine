@@ -49,7 +49,7 @@ public abstract class AbstractHeaderPresenterWidget<V extends AbstractHeaderPres
         registerHandler(getView().getGuideLink().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
-                WebUtils.openUrlInNewWindow(windowName, guideUrl, WebUtils.OPTION_SCROLLBARS);
+                WebUtils.openUrlInNewWindow(windowName, guideUrl);
             }
         }));
     }
