@@ -39,6 +39,7 @@ class Daemon(service.Daemon):
     def __init__(self):
         super(Daemon, self).__init__()
         self._tempDir = None
+        self._jbossRuntime = None
         self._defaults = os.path.abspath(
             os.path.join(
                 os.path.dirname(sys.argv[0]),
@@ -61,7 +62,7 @@ class Daemon(service.Daemon):
                         searchList=[
                             self._config,
                             {
-                                'tempdir': self._tempDir.directory,
+                                'jboss_runtime': self._jbossRuntime.directory,
                             },
                         ],
                     )
@@ -172,7 +173,7 @@ class Daemon(service.Daemon):
     def _setupEngineApps(self):
 
         deploymentsDir = os.path.join(
-            self._tempDir.directory,
+            self._jbossRuntime.directory,
             'deployments',
         )
         os.mkdir(deploymentsDir)
@@ -250,21 +251,24 @@ class Daemon(service.Daemon):
         self._tempDir = service.TempDir(self._config.get('ENGINE_TMP'))
         self._tempDir.create()
 
+        self._jbossRuntime = service.TempDir(self._config.get('JBOSS_RUNTIME'))
+        self._jbossRuntime.create()
+
         self._setupEngineApps()
 
         jbossTempDir = os.path.join(
-            self._tempDir.directory,
+            self._jbossRuntime.directory,
             'tmp',
         )
 
         jbossConfigDir = os.path.join(
-            self._tempDir.directory,
+            self._jbossRuntime.directory,
             'config',
         )
 
         javaModulePath = self._linkModules(
             os.path.join(
-                self._tempDir.directory,
+                self._jbossRuntime.directory,
                 'modules',
             ),
             '%s:%s' % (
@@ -439,6 +443,8 @@ class Daemon(service.Daemon):
     def daemonCleanup(self):
         if self._tempDir:
             self._tempDir.destroy()
+        if self._jbossRuntime:
+            self._jbossRuntime.destroy()
 
 
 if __name__ == '__main__':

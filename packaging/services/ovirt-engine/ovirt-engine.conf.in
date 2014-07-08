@@ -16,6 +16,7 @@ SENSITIVE_KEYS=""
 # The location of the application server used by the engine:
 #
 JBOSS_HOME="@JBOSS_HOME@"
+JBOSS_RUNTIME="@JBOSS_RUNTIME@"
 
 #
 # Important directories used by the engine:
