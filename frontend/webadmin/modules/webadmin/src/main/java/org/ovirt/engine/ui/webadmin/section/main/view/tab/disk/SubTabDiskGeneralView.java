@@ -35,6 +35,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel diskId = new TextBoxLabel();
     TextBoxLabel lunId = new TextBoxLabel();
+    TextBoxLabel diskProfileName = new TextBoxLabel();
     TextBoxLabel quotaName = new TextBoxLabel();
     TextBoxLabel alignment = new TextBoxLabel();
 
@@ -58,7 +59,7 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
         driver.initialize(this);
 
         // Build a form using the FormBuilder
-        formBuilder = new FormBuilder(formPanel, 1, 6);
+        formBuilder = new FormBuilder(formPanel, 1, 7);
 
         formBuilder.addFormItem(new FormItem(constants.aliasDisk(), alias, 0, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionDisk(), description, 1, 0));
@@ -70,7 +71,13 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isLun();
             }
         });
-        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 5, 0) {
+        formBuilder.addFormItem(new FormItem(constants.diskProfile(), diskProfileName, 5, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return !getDetailModel().isLun();
+            }
+        });
+        formBuilder.addFormItem(new FormItem(constants.quota(), quotaName, 6, 0) {
             @Override
             public boolean getIsAvailable() {
                 return getDetailModel().isQuotaAvailable();

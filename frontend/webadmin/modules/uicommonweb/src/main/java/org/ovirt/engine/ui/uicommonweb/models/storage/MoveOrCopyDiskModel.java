@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -200,7 +200,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
             // Add prohibition reasons
             if (sourceStorageDomains.isEmpty() || destStorageDomains.isEmpty()) {
-                problematicDisks.add((String) disk.getAlias().getEntity());
+                problematicDisks.add(disk.getAlias().getEntity());
                 updateChangeability(disk, isDiskBasedOnTemplate,
                         sourceStorageDomains.isEmpty(), destStorageDomains.isEmpty());
             }
@@ -319,14 +319,16 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
         for (DiskModel diskModel : getDisks())
         {
-            StorageDomain destStorageDomain = (StorageDomain) diskModel.getStorageDomain().getSelectedItem();
+            StorageDomain destStorageDomain = diskModel.getStorageDomain().getSelectedItem();
             StorageDomain sourceStorageDomain =
-                    (StorageDomain) diskModel.getSourceStorageDomain().getSelectedItem();
+                    diskModel.getSourceStorageDomain().getSelectedItem();
 
             Guid sourceStorageDomainGuid = sourceStorageDomain != null ? sourceStorageDomain.getId() : Guid.Empty;
             DiskImage disk = (DiskImage) diskModel.getDisk();
+            DiskProfile diskProfile = diskModel.getDiskProfile().getSelectedItem();
+            disk.setDiskProfileId(diskProfile != null ? diskProfile.getId() : null);
             if (diskModel.getQuota().getSelectedItem() != null) {
-                disk.setQuotaId(((Quota) diskModel.getQuota().getSelectedItem()).getId());
+                disk.setQuotaId(diskModel.getQuota().getSelectedItem().getId());
             }
 
             if (destStorageDomain == null || sourceStorageDomain == null) {
@@ -350,6 +352,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
 
         MoveOrCopyImageGroupParameters params = createParameters(sourceStorageDomainGuid, destStorageDomainGuid, disk);
         params.setQuotaId(disk.getQuotaId());
+        params.setDiskProfileId(disk.getDiskProfileId());
 
         parameters.add(params);
     }

@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.disks;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -13,6 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 public class DiskGeneralModel extends EntityModel
 {
@@ -111,6 +111,22 @@ public class DiskGeneralModel extends EntityModel
         }
     }
 
+    private String privateDiskProfileName;
+
+    public String getDiskProfileName()
+    {
+        return privateDiskProfileName;
+    }
+
+    public void setDiskProfileName(String value)
+    {
+        if (!ObjectUtils.objectsEqual(privateDiskProfileName, value))
+        {
+            privateDiskProfileName = value;
+            onPropertyChanged(new PropertyChangedEventArgs("DiskProfile Name")); //$NON-NLS-1$
+        }
+    }
+
     private String privateQuotaName;
 
     public String getQuotaName()
@@ -205,6 +221,7 @@ public class DiskGeneralModel extends EntityModel
 
         if (isImage()) {
             DiskImage diskImage = (DiskImage) disk;
+            setDiskProfileName(diskImage.getDiskProfileName());
             setQuotaName(StringUtils.join(diskImage.getQuotaNames(), ", ")); //$NON-NLS-1$
             setQuotaAvailable(!diskImage.getQuotaEnforcementType().equals(QuotaEnforcementTypeEnum.DISABLED));
         }

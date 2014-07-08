@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -124,6 +125,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Path("storageDomain.selectedItem")
     @WithElementId("storageDomain")
     ListModelListBoxEditor<StorageDomain> storageDomainEditor;
+
+    @UiField(provided = true)
+    @Path("diskProfile.selectedItem")
+    @WithElementId("diskProfile")
+    ListModelListBoxEditor<DiskProfile> diskProfileEditor;
 
     @UiField(provided = true)
     @Path("quota.selectedItem")
@@ -273,6 +279,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         storageDomainEditor.setLabel(constants.storageDomainVmDiskPopup());
         hostListEditor.setLabel(constants.hostVmDiskPopup());
         quotaEditor.setLabel(constants.quotaVmDiskPopup());
+        diskProfileEditor.setLabel(constants.diskProfileVmDiskPopup());
         interfaceEditor.setLabel(constants.interfaceVmDiskPopup());
         volumeTypeEditor.setLabel(constants.allocationDisk());
         storageTypeEditor.setLabel(constants.storageTypeVmDiskPopup());
@@ -297,6 +304,13 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             @Override
             public String render(VDS vds) {
                 return vds == null ? "" : vds.getName(); //$NON-NLS-1$
+            }
+        });
+
+        diskProfileEditor = new ListModelListBoxEditor<DiskProfile>(new NullSafeRenderer<DiskProfile>() {
+            @Override
+            protected String renderNullSafe(DiskProfile object) {
+                return object.getName();
             }
         });
 
@@ -806,6 +820,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         volumeTypeEditor.setTabIndex(nextTabIndex++);
         datacenterEditor.setTabIndex(nextTabIndex++);
         storageDomainEditor.setTabIndex(nextTabIndex++);
+        diskProfileEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         hostListEditor.setTabIndex(nextTabIndex++);
         storageTypeEditor.setTabIndex(nextTabIndex++);

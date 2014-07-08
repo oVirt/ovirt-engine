@@ -81,7 +81,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
     }
 
     void updateListHeader(DisksAllocationModel model) {
-        String width = showQuota ? "85px" : "100px"; //$NON-NLS-1$ //$NON-NLS-2$
+        String width = "85px"; //$NON-NLS-1$
         listHeader = new EntityModelCellTable(false, (Resources) GWT.create(
                 PopupSimpleTableResources.class), true);
         listHeader.addColumn(new EmptyColumn(), constants.aliasDisk(), width);
@@ -94,6 +94,7 @@ public class DisksAllocationView extends Composite implements HasEditorDriver<Di
             listHeader.addColumn(new EmptyColumn(), constants.sourceDisk(), width);
 
         listHeader.addColumn(new EmptyColumn(), constants.targetDisk(), width);
+        listHeader.addColumn(new EmptyColumn(), constants.diskProfile(), width);
 
         if (showQuota)
             listHeader.addColumn(new EmptyColumn(), constants.quotaDisk(), width);

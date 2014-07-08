@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
@@ -25,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -365,7 +367,8 @@ public abstract class AbstractDiskModel extends DiskModel
                 VdcQueryType.GetStoragePoolById, VdcQueryType.GetNextAvailableDiskAliasNameByVMId,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetAllVdsByStoragePool,
                 VdcQueryType.GetAllAttachableDisks, VdcQueryType.GetAllDisksByVmId,
-                VdcQueryType.GetAllRelevantQuotasForStorage, VdcQueryType.OsRepository });
+                VdcQueryType.GetAllRelevantQuotasForStorage, VdcQueryType.OsRepository,
+                VdcQueryType.GetDiskProfilesByStorageDomainId });
 
         // Create and set commands
         UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
@@ -582,6 +585,51 @@ public abstract class AbstractDiskModel extends DiskModel
     private void setInterfaces(ArrayList<DiskInterface> diskInterfaces) {
         getDiskInterface().setItems(diskInterfaces);
         setDefaultInterface();
+    }
+
+    private void updateDiskProfiles(StoragePool selectedItem) {
+        StorageDomain storageDomain = getStorageDomain().getSelectedItem();
+        if (storageDomain == null) {
+            return;
+        }
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetDiskProfilesByStorageDomainId,
+                new IdQueryParameters(storageDomain.getId()),
+                new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object innerModel, Object value) {
+                                AbstractDiskModel.this.setDiskProfilesList((List<DiskProfile>) ((VdcQueryReturnValue) value).getReturnValue());
+                            }
+
+                        }, getHash()));
+    }
+
+    private void setDiskProfilesList(List<DiskProfile> diskProfiles) {
+        // set disk profiles
+        if (diskProfiles != null && !diskProfiles.isEmpty()) {
+            getDiskProfile().setItems(diskProfiles);
+        }
+        // handle disk profile selected item
+        Guid defaultProfileId =
+                getDisk() != null ? ((DiskImage) getDisk()).getDiskProfileId() : null;
+        if (defaultProfileId != null) {
+            for (DiskProfile profile : diskProfiles) {
+                if (profile.getId().equals(defaultProfileId)) {
+                    getDiskProfile().setSelectedItem(profile);
+                    return;
+                }
+            }
+            // set dummy disk profile (if not fetched because of permissions, and it's attached to disk.
+            DiskProfile diskProfile = new DiskProfile();
+            diskProfile.setId(defaultProfileId);
+            if (getDisk() != null) {
+                diskProfile.setName(getDiskImage().getDiskProfileName());
+            }
+            diskProfiles.add(diskProfile);
+            getDiskProfile().setItems(diskProfiles);
+            getDiskProfile().setSelectedItem(diskProfile);
+        }
     }
 
     private void updateQuota(StoragePool datacenter) {
@@ -835,6 +883,7 @@ public abstract class AbstractDiskModel extends DiskModel
             updateVolumeType(selectedStorage.getStorageType());
         }
         updateQuota(getDataCenter().getSelectedItem());
+        updateDiskProfiles(getDataCenter().getSelectedItem());
     }
 
     public boolean validate() {
@@ -852,7 +901,10 @@ public abstract class AbstractDiskModel extends DiskModel
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
-        return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid() && getDiskInterface().getIsValid();
+        getDiskProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+
+        return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid()
+                && getDiskInterface().getIsValid() && getDiskProfile().getIsValid();
     }
 
     protected void forceCreationWarning(ArrayList<String> usedLunsMessages) {
@@ -925,6 +977,9 @@ public abstract class AbstractDiskModel extends DiskModel
             setDisk(lunDisk);
         }
 
+        if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
+            ((DiskImage) getDisk()).setDiskProfileId(getDiskProfile().getSelectedItem().getId());
+        }
         getDisk().setDiskAlias(getAlias().getEntity());
         getDisk().setDiskDescription(getDescription().getEntity());
         getDisk().setDiskInterface(getDiskInterface().getSelectedItem());

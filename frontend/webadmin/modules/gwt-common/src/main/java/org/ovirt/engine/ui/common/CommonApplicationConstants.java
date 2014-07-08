@@ -984,6 +984,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Target")
     String targetDisk();
 
+    @DefaultStringValue("Disk Profile")
+    String diskProfile();
+
     @DefaultStringValue("Quota")
     String quotaDisk();
 
@@ -1111,6 +1114,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Data Center")
     String dcVmDiskPopup();
+
+    @DefaultStringValue("Disk Profile")
+    String diskProfileVmDiskPopup();
 
     @DefaultStringValue("Quota")
     String quotaVmDiskPopup();
