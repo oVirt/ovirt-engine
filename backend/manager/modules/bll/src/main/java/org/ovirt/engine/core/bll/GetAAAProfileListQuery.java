@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
@@ -20,6 +21,8 @@ public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends Qu
         for (AuthenticationProfile profile : profiles) {
             names.add(profile.getName());
         }
+        Collections.sort(names);
+
         getQueryReturnValue().setReturnValue(names);
     }
 
