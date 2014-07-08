@@ -8,6 +8,12 @@ public class WebUtils {
      * constant for the 'scrollbars' window option.
      */
     public static final String OPTION_SCROLLBARS = "scrollbars"; //$NON-NLS-1$
+
+    /**
+     * The default options to pass to Window.open when none are specified.
+     */
+    public static final String DEFAULT_OPTIONS = OPTION_SCROLLBARS;
+
     /**
      * Opens a link on another browser window.
      *
@@ -17,7 +23,7 @@ public class WebUtils {
      *            The URL to open
      */
     public static void openUrlInNewWindow(final String name, final String url) {
-        openUrlInNewWindow(name, url, null);
+        openUrlInNewWindow(name, url, DEFAULT_OPTIONS);
     }
 
     /**
