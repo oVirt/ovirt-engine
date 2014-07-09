@@ -391,4 +391,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("{0} {1} have been written in the current profiling interval out of {2} {3} during profiling")
     String bytesWrittenInCurrentProfileInterval(String currentBytesWritten, String currentBytesWrittenUnit, String totalBytes, String totalBytesUnit);
+
+    @DefaultMessage("Default ({0})")
+    String defaultMtu(int mtu);
 }

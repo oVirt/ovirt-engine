@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewDataCenterNetworkPopupPresenterWidget;
@@ -14,8 +15,8 @@ public class NewDataCenterNetworkPopupView extends NewNetworkPopupView implement
     @Inject
     public NewDataCenterNetworkPopupView(EventBus eventBus,
             ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates) {
-        super(eventBus, resources, constants, templates);
+            ApplicationConstants constants, ApplicationTemplates templates, ApplicationMessages messages) {
+        super(eventBus, resources, constants, templates, messages);
     }
 
     @Override

@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.datacenter;
 
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.EditNetworkModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
@@ -23,8 +24,9 @@ public class EditNetworkPopupView extends AbstractNetworkPopupView<EditNetworkMo
     public EditNetworkPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants,
-            ApplicationTemplates templates) {
-        super(eventBus, resources, constants, templates);
+            ApplicationTemplates templates,
+            ApplicationMessages messages) {
+        super(eventBus, resources, constants, templates, messages);
         driver.initialize(this);
     }
 

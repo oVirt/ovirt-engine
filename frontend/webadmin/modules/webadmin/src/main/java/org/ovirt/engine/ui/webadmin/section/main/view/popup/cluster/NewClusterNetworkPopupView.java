@@ -20,7 +20,7 @@ public class NewClusterNetworkPopupView extends NewNetworkPopupView implements N
             ApplicationConstants constants,
             ApplicationTemplates templates,
             ApplicationMessages messages) {
-        super(eventBus, resources, constants, templates);
+        super(eventBus, resources, constants, templates, messages);
         this.messages = messages;
     }
 

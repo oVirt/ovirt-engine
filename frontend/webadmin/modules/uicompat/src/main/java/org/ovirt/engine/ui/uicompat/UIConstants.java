@@ -2316,5 +2316,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Login")
     String loginButtonLabel();
+
+    @DefaultStringValue("Default")
+    String defaultMtu();
+
+    @DefaultStringValue("Custom")
+    String customMtu();
 }
 
