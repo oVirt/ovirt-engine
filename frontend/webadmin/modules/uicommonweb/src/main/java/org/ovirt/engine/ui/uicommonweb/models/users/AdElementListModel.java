@@ -323,27 +323,7 @@ public class AdElementListModel extends SearchableListModel
                     }
                 }
                 adElementListModel.setgroups(new ArrayList<EntityModel>());
-                for (IVdcQueryable item : (Collection<IVdcQueryable>) ((VdcQueryReturnValue) ReturnValue).getReturnValue())
-                {
-                    DirectoryGroup a = (DirectoryGroup) item;
-                    if (!excludeUsers.contains(a.getId()))
-                    {
-                        // XXX: This should use DbGroup and not DbUser.
-                        DbUser tempVar3 = new DbUser();
-                        tempVar3.setExternalId(a.getId());
-                        tempVar3.setFirstName(a.getName());
-                        tempVar3.setLastName(""); //$NON-NLS-1$
-                        tempVar3.setLoginName(""); //$NON-NLS-1$
-                        tempVar3.setDomain(a.getDirectoryName());
-                        tempVar3.setNamespace(a.getNamespace());
-                        DbUser user = tempVar3;
-
-                        EntityModel tempVar4 = new EntityModel();
-                        tempVar4.setEntity(user);
-                        adElementListModel.getgroups().add(tempVar4);
-                    }
-                }
-
+                addGroupsToModel(queryReturnValue, excludeUsers);
                 onUserAndAdGroupsLoaded(adElementListModel);
             }
         };
@@ -363,6 +343,28 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
+    protected void addGroupsToModel(VdcQueryReturnValue returnValue, Set<String> excludeUsers) {
+        for (IVdcQueryable item : (Collection<IVdcQueryable>) returnValue.getReturnValue())
+        {
+            DirectoryGroup a = (DirectoryGroup) item;
+            if (!excludeUsers.contains(a.getId()))
+            {
+                // XXX: This should use DbGroup and not DbUser.
+                DbUser tempVar3 = new DbUser();
+                tempVar3.setExternalId(a.getId());
+                tempVar3.setFirstName(a.getName());
+                tempVar3.setLastName(""); //$NON-NLS-1$
+                tempVar3.setLoginName(""); //$NON-NLS-1$
+                tempVar3.setDomain(a.getDirectoryName());
+                tempVar3.setNamespace(a.getNamespace());
+                DbUser user = tempVar3;
+
+                EntityModel tempVar4 = new EntityModel();
+                tempVar4.setEntity(user);
+                getgroups().add(tempVar4);
+            }
+        }
+    }
     protected Set<String> getExcludeUsers() {
         Set<String> excludeUsers = new HashSet<String>();
         if (getExcludeItems() != null) {

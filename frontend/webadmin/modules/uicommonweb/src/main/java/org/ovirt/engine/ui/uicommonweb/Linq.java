@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
@@ -1123,10 +1124,43 @@ public final class Linq
         @Override
         public boolean match(DbUser source)
         {
+            String targetName = target.getLoginName();
+            if (!StringHelper.isNullOrEmpty(targetName)) {
+                targetName = targetName.toLowerCase();
+            }
             return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getLoginName())
                     || "*".equals(target.getLoginName()) //$NON-NLS-1$
-                    || source.getLoginName().toLowerCase().startsWith(target.getLoginName()));
+                    || source.getLoginName().toLowerCase().startsWith(targetName));
+        }
+    }
+
+    public final static class DbGroupPredicate implements IPredicate<DbGroup>
+    {
+        private final DbGroup target;
+
+        public DbGroupPredicate(DbGroup target)
+        {
+            this.target = target;
+        }
+
+        @Override
+        public boolean match(DbGroup source)
+        {
+            String groupName = source.getName().toLowerCase();
+            String targetName = target.getName();
+            if (!StringHelper.isNullOrEmpty(targetName)) {
+                targetName = targetName.toLowerCase();
+            }
+            int lastIndex = groupName.lastIndexOf("/"); //$NON-NLS-1$
+            if (lastIndex != -1) {
+                groupName = groupName.substring(lastIndex+1);
+            }
+            return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
+                    && (StringHelper.isNullOrEmpty(target.getName())
+                    || "*".equals(target.getName()) //$NON-NLS-1$
+                    || groupName.startsWith(targetName))
+                    || source.getName().toLowerCase().startsWith(targetName);
         }
     }
 

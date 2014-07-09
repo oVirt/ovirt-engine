@@ -159,7 +159,7 @@ public enum VdcQueryType implements Serializable {
     GetAvailableNamespaces(VdcQueryAuthType.User),
 
     // Groups queries:
-    GetAllDbGroups,
+    GetAllDbGroups(VdcQueryAuthType.User),
     GetDbGroupById,
 
     // VM pools queries
