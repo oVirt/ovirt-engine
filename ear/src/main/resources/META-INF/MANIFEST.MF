@@ -29,4 +29,5 @@ Dependencies: asm.asm,
  org.quartz,
  org.springframework,
  com.woorea.openstack.sdk services,
- org.yaml.snakeyaml
+ org.yaml.snakeyaml,
+ org.jboss.resteasy.resteasy-jaxrs
