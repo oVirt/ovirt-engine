@@ -52,7 +52,6 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
         Map<Guid, VdsNetworkInterface> hostDisplayNics = getDisplayNics(displayNetwork);
 
         for (VDS host : hosts) {
-            List<String> missingIfs = new ArrayList<>();
             ValidationResult result =
                     validateRequiredNetworksAvailable(host,
                             vm,
@@ -60,14 +59,12 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                             displayNetwork,
                             networksByName,
                             hostNics.get(host.getId()),
-                            hostDisplayNics.get(host.getId()),
-                            missingIfs);
+                            hostDisplayNics.get(host.getId()));
 
             if (!result.isValid()) {
                 toRemoveHostList.add(host);
-                String nics = StringUtils.join(missingIfs, ", ");
-                messages.addMessage(host.getId(), String.format("$networkNames %1$s", nics));
-                messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__NETWORK_MISSING.name());
+                messages.addMessages(host.getId(), result.getVariableReplacements());
+                messages.addMessage(host.getId(), result.getMessage().name());
             }
         }
         hosts.removeAll(toRemoveHostList);
@@ -111,8 +108,9 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
             Network displayNetwork,
             Map<String, Network> networksByName,
             List<String> hostNetworks,
-            VdsNetworkInterface displayNic,
-            List<String> missingNetworks) {
+            VdsNetworkInterface displayNic) {
+
+        List<String> missingIfs = new ArrayList<>();
 
         boolean onlyRequiredNetworks =
                 Config.<Boolean> getValue(ConfigValues.OnlyRequiredNetworksMandatoryForVdsSelection);
@@ -130,17 +128,18 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                     }
                 }
             }
+
             if (!found) {
-                if (missingNetworks != null) {
-                    missingNetworks.add(vmIf.getNetworkName());
-                }
-                StringBuilder sbBuilder = new StringBuilder();
-                sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
-                log.debug("Host '{}' is missing networks required by VM nics '{}'",
-                        vds.getName(),
-                        sbBuilder.toString());
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
+                missingIfs.add(vmIf.getNetworkName());
             }
+        }
+
+        if (!missingIfs.isEmpty()) {
+            String nics = StringUtils.join(missingIfs, ", ");
+            log.warn("host {} is missing networks required by VM nics {}",
+                    vds.getName(), nics);
+            return new ValidationResult(VdcBllMessages.VAR__DETAIL__NETWORK_MISSING,
+                    String.format("$networkNames %1$s", nics));
         }
 
         return validateDisplayNetworkAvailability(vds, onlyRequiredNetworks, displayNic, displayNetwork);
@@ -188,17 +187,20 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
 
         // Check if display network attached to host and has a proper boot protocol
         if (displayNic == null) {
-            log.debug("Host '{}' is missing the cluster's display network", host.getName());
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK);
+            log.warn("host {} is missing the cluster's display network {}",
+                    host.getName(),
+                    displayNetwork.getName());
+            return new ValidationResult(VdcBllMessages.VAR__DETAIL__DISPLAY_NETWORK_MISSING,
+                    String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
         if (displayNic.getBootProtocol() == NetworkBootProtocol.NONE) {
-            log.debug("Host '{}' has the display network '{}' configured with improper boot protocol on interface '{}'.",
+            log.warn("Host {} has the display network {} configured with improper boot protocol on interface {}.",
                     host.getName(),
                     displayNetwork.getName(),
                     displayNic.getName());
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
-                    String.format("$DisplayNetwork %s", displayNetwork.getName()));
+            return new ValidationResult(VdcBllMessages.VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL,
+                    String.format("$DisplayNetwork %1$s", displayNetwork.getName()));
         }
 
         return ValidationResult.VALID;

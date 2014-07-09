@@ -640,12 +640,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The host has lower CPU level than the VM was run with.")
     String ACTION_TYPE_FAILED_VDS_VM_CPU_LEVEL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with all the networks used by the VM.")
-    String ACTION_TYPE_FAILED_VDS_VM_NETWORKS();
-
-    @DefaultStringValue("Cannot ${action} ${type}. There are no available running Hosts with the cluster's display network.")
-    String ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK();
-
     @DefaultStringValue("Cannot ${action} ${type}. There are no available HA hosts in the VM's Cluster.")
     String ACTION_TYPE_FAILED_NO_HA_VDS();
 
@@ -1461,9 +1455,6 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. The following networks cannot be removed from the network interface since they are managed by the label: ${ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC_LIST}. Please remove the label from the network interface in order to remove the network.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC();
-
-    @DefaultStringValue("Cannot ${action} ${type}. The display network ${DisplayNetwork} must have a DHCP or Static boot protocol when configured on a host.")
-    String ACTION_TYPE_FAILED_DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. The following networks are already attached to a different interface: ${AssignedNetworks}. Please remove the networks in order to label the interface.")
     String LABELED_NETWORK_ATTACHED_TO_WRONG_INTERFACE();
@@ -3259,6 +3250,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("$detailMessage network(s) ${networkNames} are missing")
     String VAR__DETAIL__NETWORK_MISSING();
+
+    @DefaultStringValue("$detailMessage display network ${DisplayNetwork} was missing")
+    String VAR__DETAIL__DISPLAY_NETWORK_MISSING();
+
+    @DefaultStringValue("$detailMessage the display network ${DisplayNetwork} must have a DHCP or Static boot protocol when configured on a host")
+    String VAR__DETAIL__DISPLAY_NETWORK_HAS_NO_BOOT_PROTOCOL();
 
     @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
     String VAR__DETAIL__LOW_CPU_LEVEL();
