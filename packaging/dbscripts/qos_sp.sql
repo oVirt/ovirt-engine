@@ -80,3 +80,13 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetQosByDiskProfile(v_disk_profile_id UUID) RETURNS SETOF qos STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT qos.*
+   FROM qos
+   JOIN disk_profiles ON qos.id = disk_profiles.qos_id
+   WHERE disk_profiles.id = v_disk_profile_id;
+END; $procedure$
+LANGUAGE plpgsql;
+

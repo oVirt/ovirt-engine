@@ -97,4 +97,11 @@ public class StorageQosDaoTest extends BaseDAOTestCase {
         assertEquals(2, allForStoragePoolId.size());
     }
 
+    @Test
+    public void getQosByDiskProfileId() {
+        StorageQos qos = dao.getQosByDiskProfileId(FixturesTool.DISK_PROFILE_1);
+        assertNotNull(qos);
+        assertEquals(FixturesTool.QOS_ID_1, qos.getId());
+    }
+
 }
