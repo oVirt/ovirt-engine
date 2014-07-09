@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.compat.Guid;
 
 @RunWith(MockitoJUnitRunner.class)
-public class SyncLunsInfoForIscsiStorageDomainCommandTest {
+public class SyncLunsInfoForBlockStorageDomainCommandTest {
 
     private SyncLunsInfoForBlockStorageDomainCommand<StorageDomainParametersBase> command;
     private StorageDomainParametersBase parameters;
