@@ -57,8 +57,11 @@ public class CanDoActionTestUtils {
      */
     public static void runAndAssertCanDoActionSuccess(CommandBase<?> command) {
         boolean canDoAction = command.canDoAction();
+        List<String> canDoActionMessages = command.getReturnValue().getCanDoActionMessages();
         assertTrue(MessageFormat.format("Command''s canDoAction expected to succeed, but failed, messages are: {0}",
-                command.getReturnValue().getCanDoActionMessages()), canDoAction);
+                canDoActionMessages), canDoAction);
+        assertTrue(MessageFormat.format("Command''s canDoAction succeeded, but added the following messages: {0}",
+                canDoActionMessages), canDoActionMessages.isEmpty());
     }
 
     /**
