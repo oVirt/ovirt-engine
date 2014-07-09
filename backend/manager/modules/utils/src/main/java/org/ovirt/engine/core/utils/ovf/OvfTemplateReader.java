@@ -47,7 +47,7 @@ public class OvfTemplateReader extends OvfReader {
     @Override
     protected void readMonitorItem(XmlNode node) {
         super.readMonitorItem(node);
-        readVmDevice(node, _vmTemplate, Guid.newGuid(), Boolean.TRUE);
+        readManagedVmDevice(node, Guid.newGuid());
     }
 
     @Override
@@ -86,7 +86,7 @@ public class OvfTemplateReader extends OvfReader {
         if (lastModified != null) {
             image.setLastModified(lastModified);
         }
-        readVmDevice(node, _vmTemplate, image.getId(), Boolean.TRUE);
+        readManagedVmDevice(node, image.getId());
     }
 
     @Override

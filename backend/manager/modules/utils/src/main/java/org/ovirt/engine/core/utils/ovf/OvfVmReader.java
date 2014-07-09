@@ -94,7 +94,7 @@ public class OvfVmReader extends OvfReader {
         if (last_modified_date != null) {
             image.setLastModifiedDate(last_modified_date);
         }
-        VmDevice readDevice = readVmDevice(node, _vm.getStaticData(), image.getId(), Boolean.TRUE);
+        VmDevice readDevice = readManagedVmDevice(node, image.getId());
         image.setPlugged(readDevice.getIsPlugged());
         image.setReadOnly(readDevice.getIsReadOnly());
     }
@@ -104,12 +104,12 @@ public class OvfVmReader extends OvfReader {
         super.readMonitorItem(node);
 
         if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
-            readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+            readManagedVmDevice(node, Guid.newGuid());
         } else {
             // before v3.1 we had just one monitor item for all the monitors so in this
             // case we need to add monitor devices according to the numOfMonitors field
             for (int i=0; i<_vm.getStaticData().getNumOfMonitors(); ++i) {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+                readManagedVmDevice(node, Guid.newGuid());
             }
         }
     }

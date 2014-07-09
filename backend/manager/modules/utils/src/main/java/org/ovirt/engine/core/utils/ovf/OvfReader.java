@@ -190,6 +190,22 @@ public abstract class OvfReader implements IOvfBuilder {
         readGeneralData();
     }
 
+    protected VmDevice readManagedVmDevice(XmlNode node, Guid deviceId) {
+        return addManagedVmDevice(readVmDevice(node, deviceId));
+    }
+
+    private VmDevice addManagedVmDevice(VmDevice vmDevice) {
+        vmDevice.setIsManaged(true);
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+        return vmDevice;
+    }
+
+    protected VmDevice readUnmanagedVmDevice(XmlNode node, Guid deviceId) {
+        VmDevice vmDevice = readVmDevice(node, deviceId);
+        vmBase.getUnmanagedDeviceList().add(vmDevice);
+        return vmDevice;
+    }
+
     /**
      * Reads vm device attributes from OVF and stores it in the collection
      *
@@ -197,7 +213,7 @@ public abstract class OvfReader implements IOvfBuilder {
      * @param vmBase
      * @param deviceId
      */
-    public VmDevice readVmDevice(XmlNode node, VmBase vmBase, Guid deviceId, boolean isManaged) {
+    private VmDevice readVmDevice(XmlNode node, Guid deviceId) {
         VmDevice vmDevice = new VmDevice();
         vmDevice.setId(new VmDeviceId(deviceId, vmBase.getId()));
         if (node.SelectSingleNode(OvfProperties.VMD_ADDRESS, _xmlNS) != null
@@ -264,12 +280,6 @@ public abstract class OvfReader implements IOvfBuilder {
             vmDevice.setSnapshotId(new Guid(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_CUSTOM_PROP, _xmlNS).innerText)));
         }
 
-        if (isManaged) {
-            vmDevice.setIsManaged(true);
-            vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
-        } else {
-            vmBase.getUnmanagedDeviceList().add(vmDevice);
-        }
         return vmDevice;
     }
 
@@ -376,14 +386,14 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     private void readCdItem(XmlNode node) {
-        readVmDevice(node, vmBase, Guid.newGuid(), Boolean.TRUE);
+        readManagedVmDevice(node, Guid.newGuid());
     }
 
     private void readNetworkItem(XmlNode node) {
         VmNetworkInterface iface = getNetwotkInterface(node);
         updateSingleNic(node, iface);
         vmBase.getInterfaces().add(iface);
-        readVmDevice(node, vmBase, iface.getId(), Boolean.TRUE);
+        readManagedVmDevice(node, iface.getId());
     }
 
     private void readUsbItem(XmlNode node) {
@@ -402,9 +412,9 @@ public abstract class OvfReader implements IOvfBuilder {
         }
 
         if (managed) {
-            readVmDevice(node, vmBase, Guid.newGuid(), Boolean.TRUE);
+            readManagedVmDevice(node, Guid.newGuid());
         } else {
-            readVmDevice(node, vmBase, Guid.newGuid(), Boolean.FALSE);
+            readUnmanagedVmDevice(node, Guid.newGuid());
         }
     }
 
