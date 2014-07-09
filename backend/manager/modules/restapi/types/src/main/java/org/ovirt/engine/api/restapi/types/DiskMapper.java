@@ -6,6 +6,7 @@ import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.DiskFormat;
 import org.ovirt.engine.api.model.DiskInterface;
+import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskStatus;
 import org.ovirt.engine.api.model.Quota;
 import org.ovirt.engine.api.model.ScsiGenericIO;
@@ -135,6 +136,9 @@ public class DiskMapper {
         if (disk.isSetQuota() && disk.getQuota().isSetId()) {
             diskImage.setQuotaId(GuidUtils.asGuid(disk.getQuota().getId()));
         }
+        if (disk.isSetDiskProfile() && disk.getDiskProfile().isSetId()) {
+            diskImage.setDiskProfileId(GuidUtils.asGuid(disk.getDiskProfile().getId()));
+        }
     }
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.Disk.class, to = Disk.class)
@@ -202,6 +206,11 @@ public class DiskMapper {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
             model.setQuota(quota);
+        }
+        if (entity.getDiskProfileId() != null) {
+            DiskProfile diskProfile = new DiskProfile();
+            diskProfile.setId(entity.getDiskProfileId().toString());
+            model.setDiskProfile(diskProfile);
         }
     }
 
