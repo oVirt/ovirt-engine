@@ -245,8 +245,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable VLAN tagging")
     String enableVlanTagLabel();
 
-    @DefaultStringValue("Override MTU")
-    String overrideMtuLabel();
+    @DefaultStringValue("MTU")
+    String mtuLabel();
 
     @DefaultStringValue("Create subnet")
     String createSubnetLabel();
@@ -2012,9 +2012,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("none")
     String noneVlan();
-
-    @DefaultStringValue("host's default")
-    String defaultMtu();
 
     @DefaultStringValue("New")
     String newNetworkProfile();

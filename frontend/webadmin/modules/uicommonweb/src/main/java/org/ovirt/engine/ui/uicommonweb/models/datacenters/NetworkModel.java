@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -61,8 +62,8 @@ public abstract class NetworkModel extends Model
     private EntityModel<Integer> privateVLanTag;
     private EntityModel<Boolean> privateIsStpEnabled;
     private EntityModel<Boolean> privateHasVLanTag;
-    private EntityModel<Boolean> privateHasMtu;
-    private EntityModel<Integer> privateMtu;
+    private ListModel<MtuSelector> mtuSelector;
+    private EntityModel<Integer> mtu;
     private EntityModel<Boolean> privateIsVmNetwork;
     private ListModel<NetworkQoS> qos;
     private boolean isSupportBridgesReportByVDSM = false;
@@ -124,16 +125,18 @@ public abstract class NetworkModel extends Model
             }
         });
 
-        setMtu(new EntityModel<Integer>());
-        EntityModel<Boolean> hasMtu = new EntityModel<Boolean>();
-        hasMtu.setEntity(false);
-        setHasMtu(hasMtu);
-        getHasMtu().getEntityChangedEvent().addListener(new IEventListener() {
+        ListModel<MtuSelector> mtuSelector = new ListModel<MtuSelector>();
+        mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
+        setMtuSelector(mtuSelector);
+        mtuSelector.getSelectedItemChangedEvent().addListener(new IEventListener() {
+
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                updateMtuChangeability();
+                updateMtuSelectorsChangeability();
             }
         });
+
+        setMtu(new EntityModel<Integer>());
 
         EntityModel<Boolean> isVmNetwork = new EntityModel<Boolean>();
         isVmNetwork.setEntity(true);
@@ -168,7 +171,6 @@ public abstract class NetworkModel extends Model
 
         // Update changeability according to initial values
         updateVlanTagChangeability();
-        updateMtuChangeability();
         updateSubnetChangeability();
     }
 
@@ -299,24 +301,24 @@ public abstract class NetworkModel extends Model
         privateHasVLanTag = value;
     }
 
-    public EntityModel<Boolean> getHasMtu()
+    public ListModel<MtuSelector> getMtuSelector()
     {
-        return privateHasMtu;
+        return mtuSelector;
     }
 
-    private void setHasMtu(EntityModel<Boolean> value)
+    private void setMtuSelector(ListModel<MtuSelector> value)
     {
-        privateHasMtu = value;
+        mtuSelector = value;
     }
 
     public EntityModel<Integer> getMtu()
     {
-        return privateMtu;
+        return mtu;
     }
 
     private void setMtu(EntityModel<Integer> value)
     {
-        privateMtu = value;
+        mtu = value;
     }
 
     public EntityModel<Boolean> getIsVmNetwork()
@@ -361,20 +363,8 @@ public abstract class NetworkModel extends Model
     }
 
     public void setMTUOverrideSupported(boolean mtuOverrideSupported) {
-        if (!mtuOverrideSupported) {
-            getHasMtu().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages()
-                    .mtuOverrideNotSupported(getSelectedDc().getcompatibility_version().toString()));
-            getHasMtu().setIsChangable(false);
-            getMtu().setIsChangable(false);
-            getHasMtu().setEntity(false);
-            getMtu().setEntity(null);
-        } else {
-            if (this.mtuOverrideSupported != mtuOverrideSupported) {
-                initMtu();
-            }
-            getHasMtu().setIsChangable(true);
-        }
         this.mtuOverrideSupported = mtuOverrideSupported;
+        updateMtuSelectorsChangeability();
     }
 
     public ListModel<StoragePool> getDataCenters()
@@ -451,13 +441,9 @@ public abstract class NetworkModel extends Model
             getVLanTag().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar4 });
         }
 
-        getMtu().setIsValid(true);
-        if (getHasMtu().getEntity())
-        {
-            IntegerValidation tempVar5 = new IntegerValidation();
-            tempVar5.setMinimum(68);
-            getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
-        }
+        IntegerValidation tempVar5 = new IntegerValidation();
+        tempVar5.setMinimum(68);
+        getMtu().validateEntity(new IValidation[] { new NotEmptyValidation(), tempVar5 });
 
         getExternalProviders().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
@@ -479,6 +465,10 @@ public abstract class NetworkModel extends Model
         return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
                 && subnetValid && profilesValid && getNetworkLabel().getIsValid();
+    }
+
+    protected boolean isCustomMtu() {
+        return MtuSelector.customMtu == getMtuSelector().getSelectedItem();
     }
 
     public void syncWithBackend() {
@@ -547,7 +537,7 @@ public abstract class NetworkModel extends Model
         network.setLabel(label == null || !label.isEmpty() ? label : null);
 
         network.setMtu(0);
-        if (getHasMtu().getEntity())
+        if (getMtu().getIsChangable())
         {
             network.setMtu(Integer.parseInt(getMtu().getEntity().toString()));
         }
@@ -707,6 +697,8 @@ public abstract class NetworkModel extends Model
         String label = getNetworkLabel().getSelectedItem();
         getNetworkLabel().setItems(externalNetwork ? new HashSet<String>() : dcLabels);
         getNetworkLabel().setSelectedItem(label);
+
+        updateMtuSelectorsChangeability();
     }
 
     private void updateDcLabels() {
@@ -727,11 +719,52 @@ public abstract class NetworkModel extends Model
         getVLanTag().setIsChangable(getHasVLanTag().getEntity());
     }
 
-    private void updateMtuChangeability() {
-        getMtu().setIsChangable(getHasMtu().getEntity() && !getExport().getEntity());
+    private void setMtuSelectorsChangeability(boolean isChangeable, String prohibitionReason) {
+        if (!isChangeable) {
+            getMtuSelector().setChangeProhibitionReason(prohibitionReason);
+            getMtu().setChangeProhibitionReason(prohibitionReason);
+        }
+
+        getMtuSelector().setIsChangable(isChangeable);
+        getMtu().setIsChangable(isChangeable && isCustomMtu());
+    }
+
+    protected void updateMtuSelectorsChangeability() {
+
+        if (getSelectedDc() != null && !isMTUOverrideSupported()) {
+            setMtuSelectorsChangeability(false, ConstantsManager.getInstance().getMessages()
+                    .mtuOverrideNotSupported(getSelectedDc().getcompatibility_version().toString()));
+            return;
+        }
+
+        if (getExport().getEntity()) {
+            setMtuSelectorsChangeability(false, null);
+            return;
+        }
+
+        setMtuSelectorsChangeability(true, null);
     }
 
     private void updateSubnetChangeability() {
         getSubnetModel().toggleChangeability(getCreateSubnet().getEntity());
     }
+
+    public enum MtuSelector {
+        defaultMtu(ConstantsManager.getInstance()
+                .getMessages()
+                .defaultMtu((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMtu))),
+        customMtu(ConstantsManager.getInstance().getConstants().customMtu());
+
+        private String description;
+
+        private MtuSelector(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
+    }
+
 }

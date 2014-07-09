@@ -69,11 +69,7 @@ public class NetworkGeneralModel extends EntityModel
         setRole(role);
         setVlan(extendedNetwork.getVlanId());
 
-        if (extendedNetwork.getMtu() == 0) {
-            setMtu(null);
-        } else {
-            setMtu(extendedNetwork.getMtu());
-        }
+        setMtu(extendedNetwork.getMtu());
 
         if (extendedNetwork.isExternal()) {
             setExternalId(extendedNetwork.getProvidedBy().getExternalId());

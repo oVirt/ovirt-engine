@@ -41,8 +41,15 @@
             width: 100px;
         }
 
-        .checkBox {
+        .noPadding {
             padding: 0px !important;
+        }
+
+        .mtuSelector {
+            width: auto;
+            padding: 0px;
+            float: none;
+            display: inline-block;
         }
 
         .vmNetworkStyle {
@@ -73,7 +80,13 @@
             width: 340px;
         }
 
-        .inlineLabel {
+        .mtuLabel {
+            width: 230px;
+            position: relative;
+            top: -25px;
+        }
+
+        .inlineBlock {
             display: inline-block;
         }
 
@@ -108,10 +121,7 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
                                         <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
                                     </g:HorizontalPanel>
-                                    <g:HorizontalPanel addStyleNames="{style.dependentField}">
-                                        <ge:EntityModelCheckBoxEditor ui:field="hasMtuEditor"/>
-                                        <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="mtuEditor" />
-                                    </g:HorizontalPanel>
+                                    <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField}" />
                                     <w:EntityModelWidgetWithInfo ui:field="networkLabelWithInfo" addStyleNames="{style.dependentField} {style.propertyWidth} anpv_networkLabelPanel_pfly_fix" />
                                     <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
                                         <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />

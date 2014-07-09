@@ -26,6 +26,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         void toggleProfilesVisibility(boolean visible);
 
         UiCommandButton getQosButton();
+
+        void addMtuEditor();
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -75,6 +77,8 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
                 getView().getQosButton().getCommand().execute();
             }
         });
+
+        getView().addMtuEditor();
     }
 
     @Override

@@ -46,19 +46,15 @@ public class EditNetworkModel extends NetworkModel {
     }
 
     @Override
-    public void syncWithBackend() {
-        super.syncWithBackend();
-    }
-
-    @Override
     protected void initIsVm() {
         getIsVmNetwork().setEntity(getNetwork().isVmNetwork());
     }
 
     @Override
     protected void initMtu() {
-        getHasMtu().setEntity(getNetwork().getMtu() != 0);
-        getMtu().setEntity(getNetwork().getMtu() != 0 ? getNetwork().getMtu() : null);
+        boolean isCustomMtu = getNetwork().getMtu() != 0;
+        getMtuSelector().setSelectedItem(isCustomMtu ? MtuSelector.customMtu : MtuSelector.defaultMtu);
+        getMtu().setEntity(isCustomMtu() ? getNetwork().getMtu() : null);
     }
 
     @Override
@@ -74,8 +70,6 @@ public class EditNetworkModel extends NetworkModel {
             getHasVLanTag().setIsChangable(false);
             getVLanTag().setIsChangable(false);
             getIsVmNetwork().setIsChangable(false);
-            getHasMtu().setIsChangable(false);
-            getMtu().setIsChangable(false);
             getNetworkLabel().setIsChangable(false);
         }
         super.onExportChanged();

@@ -51,6 +51,8 @@ public class NewNetworkModel extends NetworkModel {
         setTitle(ConstantsManager.getInstance().getConstants().newLogicalNetworkTitle());
         setHelpTag(HelpTag.new_logical_network);
         setHashName("new_logical_network"); //$NON-NLS-1$
+
+        initMtu();
     }
 
     @Override
@@ -87,7 +89,7 @@ public class NewNetworkModel extends NetworkModel {
 
     @Override
     protected void initMtu() {
-        getHasMtu().setEntity(false);
+        getMtuSelector().setSelectedItem(MtuSelector.defaultMtu);
         getMtu().setEntity(null);
     }
 
@@ -105,11 +107,9 @@ public class NewNetworkModel extends NetworkModel {
     protected void onExportChanged() {
         boolean externalNetwork = (Boolean) getExport().getEntity();
         getExternalProviders().setIsChangable(externalNetwork);
-        getIsVmNetwork().setIsChangable(!externalNetwork);
-        getHasMtu().setIsChangable(!externalNetwork);
+        getIsVmNetwork().setIsChangable(!externalNetwork && isSupportBridgesReportByVDSM());
         if (externalNetwork) {
             getIsVmNetwork().setEntity(true);
-            getHasMtu().setEntity(false);
         }
 
         Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();

@@ -3,7 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.BondNetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
@@ -43,6 +45,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
     SafeHtml alertImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
+    private static int defaultMtu = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMtu);
 
     public ItemInfoPopup() {
         super(true);
@@ -127,8 +130,9 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
         }
 
         // Mtu
-        if (entity.getMtu() != 0) {
-            addRow(constants.mtuItemInfo(), String.valueOf(entity.getMtu()));
+        if (!entity.isExternal()) {
+            addRow(constants.mtuItemInfo(),
+                    entity.getMtu() == 0 ? messages.defaultMtu(defaultMtu) : String.valueOf(entity.getMtu()));
         }
     }
 

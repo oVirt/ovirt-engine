@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
@@ -27,7 +28,9 @@ import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkClusterModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel.MtuSelector;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AbstractNetworkPopupPresenterWidget;
@@ -44,6 +47,7 @@ import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
@@ -109,11 +113,10 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "VLanTag.entity")
     public IntegerEntityModelTextBoxOnlyEditor vlanTag;
 
-    @UiField(provided = true)
-    @Path(value = "hasMtu.entity")
-    public final EntityModelCheckBoxEditor hasMtuEditor;
-
     @UiField
+    @Path(value = "mtuSelector.selectedItem")
+    public ListModelRadioGroupEditor<MtuSelector> mtuSelectorEditor;
+
     @Path(value = "mtu.entity")
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
@@ -180,9 +183,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Ignore
     public Label profilesLabel;
 
- @Inject
- public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
-            ApplicationConstants constants, ApplicationTemplates templates) {
+    @Inject
+    public AbstractNetworkPopupView(EventBus eventBus, ApplicationResources resources,
+            ApplicationConstants constants, ApplicationTemplates templates, final ApplicationMessages messages) {
         super(eventBus, resources);
         // Initialize Editors
         dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
@@ -213,7 +216,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         });
         isVmNetworkEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
-        hasMtuEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         networkLabelLabel = new StringEntityModelLabel();
         networkLabel = new ListModelSuggestBoxOnlyEditor();
@@ -243,7 +246,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
-        hasMtuEditor.setLabel(constants.overrideMtuLabel());
+        mtuSelectorEditor.setLabel(constants.mtuLabel());
         qosEditor.setLabel(constants.hostNetworkQos());
         createSubnetEditor.setLabel(constants.createSubnetLabel());
 
@@ -252,19 +255,21 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
    protected void addStyles() {
         vlanTag.addContentWidgetStyleName(style.valueBox());
+        mtuSelectorEditor.addLabelStyleName(style.noPadding());
+        mtuSelectorEditor.addLabelStyleName(style.mtuLabel());
+        mtuSelectorEditor.addContentWidgetStyleName(style.mtuSelector());
         mtuEditor.addContentWidgetStyleName(style.valueBox());
+        mtuEditor.addWrapperStyleName(style.inlineBlock());
         networkLabel.addContentWidgetStyleName(style.valueBox());
         qosEditor.addContentWidgetStyleName(style.valueBox());
         isVmNetworkEditor.addContentWidgetStyleName(style.vmNetworkStyle());
         isVmNetworkEditor.asCheckBox().addStyleName(style.vmNetworkStyle());
-        vlanTagging.addContentWidgetStyleName(style.checkBox());
-        vlanTagging.asCheckBox().addStyleName(style.checkBox());
-        hasMtuEditor.addContentWidgetStyleName(style.checkBox());
-        hasMtuEditor.asCheckBox().addStyleName(style.checkBox());
-        networkLabelLabel.addStyleName(style.checkBox());
-        networkLabelLabel.addStyleName(style.inlineLabel());
-        qosEditor.addLabelStyleName(style.checkBox());
-        qosEditor.addLabelStyleName(style.inlineLabel());
+        vlanTagging.addContentWidgetStyleName(style.noPadding());
+        vlanTagging.asCheckBox().addStyleName(style.noPadding());
+        networkLabelLabel.addStyleName(style.noPadding());
+        networkLabelLabel.addStyleName(style.inlineBlock());
+        qosEditor.addLabelStyleName(style.noPadding());
+        qosEditor.addLabelStyleName(style.inlineBlock());
     }
 
     @Override
@@ -438,14 +443,23 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         return addQosButton;
     }
 
+    public void addMtuEditor() {
+        FlowPanel panel = mtuSelectorEditor.asRadioGroup().getPanel(MtuSelector.customMtu);
+        panel.add(mtuEditor);
+    }
+
     interface WidgetStyle extends CssResource {
         String valueBox();
 
-        String checkBox();
+        String noPadding();
+
+        String mtuSelector();
 
         String vmNetworkStyle();
 
-        String inlineLabel();
+        String inlineBlock();
+
+        String mtuLabel();
     }
 
 }

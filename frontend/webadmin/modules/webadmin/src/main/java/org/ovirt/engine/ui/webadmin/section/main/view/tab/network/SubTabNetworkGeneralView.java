@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.widget.renderer.MtuRenderer;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.Editor;
@@ -41,7 +42,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel role = new TextBoxLabel();
     ValueLabel<Integer> vlan = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.noneVlan()));
-    ValueLabel<Integer> mtu = new ValueLabel<Integer>(new EmptyValueRenderer<Integer>(constants.defaultMtu()));
+    ValueLabel<Integer> mtu = new ValueLabel<Integer>(new MtuRenderer());
     TextBoxLabel externalId = new TextBoxLabel();
 
     @UiField(provided = true)
@@ -70,7 +71,11 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
         formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
-        formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1));
+        formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1) {
+            public boolean getIsAvailable() {
+                return getDetailModel().getExternalId() == null;
+            }
+        });
 
         formBuilder.addFormItem(new FormItem(constants.externalIdProviderNetwork(), externalId, 3, 0) {
             @Override
