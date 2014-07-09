@@ -45,12 +45,6 @@ public class OvfTemplateReader extends OvfReader {
     }
 
     @Override
-    protected void readMonitorItem(XmlNode node) {
-        super.readMonitorItem(node);
-        readManagedVmDevice(node, Guid.newGuid());
-    }
-
-    @Override
     protected void readDiskImageItem(XmlNode node) {
         final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText);
 

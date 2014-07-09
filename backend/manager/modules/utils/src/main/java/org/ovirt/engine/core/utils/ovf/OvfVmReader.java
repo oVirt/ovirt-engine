@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
@@ -97,21 +96,6 @@ public class OvfVmReader extends OvfReader {
         VmDevice readDevice = readManagedVmDevice(node, image.getId());
         image.setPlugged(readDevice.getIsPlugged());
         image.setReadOnly(readDevice.getIsReadOnly());
-    }
-
-    @Override
-    protected void readMonitorItem(XmlNode node) {
-        super.readMonitorItem(node);
-
-        if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
-            readManagedVmDevice(node, Guid.newGuid());
-        } else {
-            // before v3.1 we had just one monitor item for all the monitors so in this
-            // case we need to add monitor devices according to the numOfMonitors field
-            for (int i=0; i<_vm.getStaticData().getNumOfMonitors(); ++i) {
-                readManagedVmDevice(node, Guid.newGuid());
-            }
-        }
     }
 
     @Override

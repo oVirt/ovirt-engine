@@ -371,6 +371,16 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
             vmBase.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
         }
+
+        if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
+            readManagedVmDevice(node, Guid.newGuid());
+        } else {
+            // before v3.1 we had just one monitor item for all the monitors so in this
+            // case we need to add monitor devices according to the numOfMonitors field
+            for (int i=0; i<vmBase.getNumOfMonitors(); ++i) {
+                readManagedVmDevice(node, Guid.newGuid());
+            }
+        }
     }
 
     private void readCpuItem(XmlNode node) {
