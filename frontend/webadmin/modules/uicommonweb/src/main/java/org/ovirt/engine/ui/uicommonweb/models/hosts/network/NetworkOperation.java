@@ -309,7 +309,7 @@ public enum NetworkOperation {
 
         @Override
         public boolean isDisplayNetworkAffected(NetworkItemModel<?> op1, NetworkItemModel<?> op2) {
-            return isDisplayNetworkAttached((BondNetworkInterfaceModel) op2);
+            return isDisplayNetworkAttached((NetworkInterfaceModel) op2);
         }
 
     },
