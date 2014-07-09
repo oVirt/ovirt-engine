@@ -2160,11 +2160,8 @@ public class HostInterfaceListModel extends SearchableListModel
             return;
         }
 
-        HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this);
+        HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this, getEntity());
         setWindow(setupNetworksWindowModel);
-
-        // set entity
-        setupNetworksWindowModel.setEntity(getEntity());
     }
 
     private void updateActionAvailability()

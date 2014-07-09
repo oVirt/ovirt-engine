@@ -153,6 +153,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Edit Network {0}")
     String editNetworkTitle(String name);
 
+    @DefaultMessage("Setup Host {0} Networks")
+    String setupHostNetworksTitle(String hostName);
+
     @DefaultMessage("({0} bricks selected)")
     String noOfBricksSelected(int brickCount);
 
