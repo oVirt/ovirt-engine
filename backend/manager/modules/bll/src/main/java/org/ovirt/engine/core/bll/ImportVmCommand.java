@@ -226,7 +226,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
     }
 
-    private boolean canDoActionBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
+    protected boolean canDoActionBeforeCloneVm(Map<Guid, StorageDomain> domainsMap) {
         List<String> canDoActionMessages = getReturnValue().getCanDoActionMessages();
 
         if (getVm() != null) {
@@ -359,7 +359,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 canDoActionMessages);
     }
 
-    private boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
+    protected boolean canDoActionAfterCloneVm(Map<Guid, StorageDomain> domainsMap) {
         VM vmFromParams = getParameters().getVm();
 
         // check that the imported vm guid is not in engine
