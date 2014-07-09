@@ -773,9 +773,18 @@ public final class ImagesHandler {
     }
 
     /**
-     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the give disk.
+     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk.
      */
     public static Snapshot prepareSnapshotConfigWithoutImageSingleImage(Snapshot snapshot, Guid imageId) {
+        return prepareSnapshotConfigWithAlternateImage(snapshot, imageId, null);
+    }
+
+
+    /**
+     * Prepare a single {@link org.ovirt.engine.core.common.businessentities.Snapshot} object representing a snapshot of a given VM without the given disk,
+     * substituting a new disk in its place if a new disk is provided to the method.
+     */
+    public static Snapshot prepareSnapshotConfigWithAlternateImage(Snapshot snapshot, Guid oldImageId, DiskImage newImage) {
         try {
             OvfManager ovfManager = new OvfManager();
             String snapConfig = snapshot.getVmConfiguration();
@@ -793,18 +802,23 @@ public final class ImagesHandler {
                 Iterator<DiskImage> diskIter = snapshotImages.iterator();
                 while (diskIter.hasNext()) {
                     DiskImage imageInList = diskIter.next();
-                    if (imageInList.getImageId().equals(imageId)) {
-                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", snapshot.getId(), imageId);
+                    if (imageInList.getImageId().equals(oldImageId)) {
+                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", snapshot.getId(), oldImageId);
                         diskIter.remove();
                         break;
                     }
+                }
+
+                if (newImage != null) {
+                    log.debugFormat("Adding image {0} to vmSnapshot {1}", newImage.getImageId(), snapshot.getId());
+                    snapshotImages.add(newImage);
                 }
 
                 String newOvf = ovfManager.ExportVm(vmSnapshot, snapshotImages, ClusterUtils.getCompatibilityVersion(vmSnapshot));
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {
-            log.errorFormat("Can't remove image {0} from snapshot {1}", imageId, snapshot.getId());
+            log.errorFormat("Can't remove image {0} from snapshot {1}", oldImageId, snapshot.getId());
         }
         return snapshot;
     }

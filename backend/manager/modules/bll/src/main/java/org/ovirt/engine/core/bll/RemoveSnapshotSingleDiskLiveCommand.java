@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -298,6 +299,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             getBaseDiskDao().update(baseImage);
             getImageDao().update(baseImage.getImage());
+
+            updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
+                    baseImage.getImageId(), topImage);
         }
 
         Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
@@ -314,6 +318,28 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 image.setStatus(ImageStatus.ILLEGAL);
                 image.setParentId(Guid.Empty);
                 getImageDao().update(image);
+            }
+        }
+    }
+
+    private void updateVmConfigurationForImageChange(final Guid snapshotId, final Guid oldImageId, final DiskImage newImage) {
+        try {
+            VM vm = getVm();
+            lockVmSnapshotsWithWait(vm);
+
+            TransactionSupport.executeInNewTransaction(
+                    new TransactionMethod<Object>() {
+                        @Override
+                        public Object runInTransaction() {
+                            Snapshot s = getSnapshotDao().get(snapshotId);
+                            s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
+                            getSnapshotDao().update(s);
+                            return null;
+                        }
+                    });
+        } finally {
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
             }
         }
     }
