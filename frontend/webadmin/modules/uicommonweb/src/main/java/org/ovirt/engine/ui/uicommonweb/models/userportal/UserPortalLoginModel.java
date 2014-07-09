@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.userportal;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.ChangeUserPasswordParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -17,57 +15,18 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.ApplicationGuids;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
-import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
-import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class UserPortalLoginModel extends LoginModel
 {
 
     private static final ActionGroup ConsumeQuotaActionGroup = ActionGroup.CONSUME_QUOTA; // 901
-    private UICommand privateChangePasswordCommand;
-
-    public UICommand getChangePasswordCommand()
-    {
-        return privateChangePasswordCommand;
-    }
-
-    public void setChangePasswordCommand(UICommand value)
-    {
-        privateChangePasswordCommand = value;
-    }
-
-    private EntityModel<String> privateNewPassword;
-
-    public EntityModel<String> getNewPassword()
-    {
-        return privateNewPassword;
-    }
-
-    private void setNewPassword(EntityModel<String> value)
-    {
-        privateNewPassword = value;
-    }
-
-    private EntityModel<String> privateVerifyPassword;
-
-    public EntityModel<String> getVerifyPassword()
-    {
-        return privateVerifyPassword;
-    }
-
-    private void setVerifyPassword(EntityModel<String> value)
-    {
-        privateVerifyPassword = value;
-    }
 
     private EntityModel<Boolean> privateIsAutoConnect;
 
@@ -79,22 +38,6 @@ public class UserPortalLoginModel extends LoginModel
     private void setIsAutoConnect(EntityModel<Boolean> value)
     {
         privateIsAutoConnect = value;
-    }
-
-    private boolean isChangingPassword;
-
-    public boolean getIsChangingPassword()
-    {
-        return isChangingPassword;
-    }
-
-    public void setIsChangingPassword(boolean value)
-    {
-        if (isChangingPassword != value)
-        {
-            isChangingPassword = value;
-            onPropertyChanged(new PropertyChangedEventArgs("IsChangingPassword")); //$NON-NLS-1$
-        }
     }
 
     private DbUser privateLoggedUser;
@@ -161,11 +104,6 @@ public class UserPortalLoginModel extends LoginModel
 
     public UserPortalLoginModel()
     {
-        setChangePasswordCommand(new UICommand("ChangePassword", this)); //$NON-NLS-1$
-
-        setNewPassword(new EntityModel<String>());
-        setVerifyPassword(new EntityModel<String>());
-
         EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(true);
         setIsENGINEUser(tempVar);
@@ -220,48 +158,6 @@ public class UserPortalLoginModel extends LoginModel
         };
         Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
                                           getDomain().getSelectedItem(), false, asyncQuery);
-    }
-
-    private void changePassword()
-    {
-        // TODO: Invoke the async query and handle failure correctly
-        Frontend.getInstance().runAction(VdcActionType.ChangeUserPassword,
-                        new ChangeUserPasswordParameters(getUserName().getEntity(), getPassword().getEntity(),
-                                getNewPassword().getEntity(),
-                                getDomain().getSelectedItem()));
-    }
-
-    @Override
-    protected boolean validate()
-    {
-        boolean baseValidation = super.validate();
-
-        if (getIsChangingPassword())
-        {
-            getNewPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-            getVerifyPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-
-            // Check that the verify password field matches new password.
-            if (!getNewPassword().getEntity().equals(getVerifyPassword().getEntity()))
-            {
-                getVerifyPassword().setIsValid(false);
-                getVerifyPassword().getInvalidityReasons()
-                        .add("TODO: Verify password field doesn't match a new password."); //$NON-NLS-1$
-            }
-        }
-
-        return baseValidation && getNewPassword().getIsValid() && getVerifyPassword().getIsValid();
-    }
-
-    @Override
-    public void executeCommand(UICommand command)
-    {
-        super.executeCommand(command);
-
-        if (command == getChangePasswordCommand())
-        {
-            changePassword();
-        }
     }
 
     // Update IsENGINEUser flag.
