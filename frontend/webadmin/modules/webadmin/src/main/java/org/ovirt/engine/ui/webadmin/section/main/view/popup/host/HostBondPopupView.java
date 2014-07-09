@@ -149,7 +149,7 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
                 return value;
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
+        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
 
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
         commitChanges = new EntityModelCheckBoxEditor(Align.RIGHT);

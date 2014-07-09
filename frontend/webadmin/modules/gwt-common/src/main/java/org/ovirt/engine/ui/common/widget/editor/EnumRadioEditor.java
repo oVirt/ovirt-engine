@@ -20,8 +20,8 @@ import com.google.gwt.event.dom.client.KeyUpHandler;
 import com.google.gwt.event.logical.shared.HasValueChangeHandlers;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.logical.shared.ValueChangeHandler;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HandlerManager;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
@@ -201,7 +201,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
     }
 
-    private final EventBus bus;
+    private final HandlerManager handlerManager;
     private TakesValueWithChangeHandlersEditor<E> editor;
     private final EnumRadioCellTable<E> peer;
 
@@ -213,8 +213,8 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
      * @param enumClass
      *            the enum class
      */
-    public EnumRadioEditor(Class<E> enumClass, EventBus bus) {
-        this.bus = bus;
+    public EnumRadioEditor(Class<E> enumClass) {
+        this.handlerManager = new HandlerManager(this);
         peer = new EnumRadioCellTable<E>(enumClass,
                 GWT.<EnumRadioCellTableResources> create(EnumRadioCellTableResources.class));
 
@@ -259,7 +259,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
     @Override
     public HandlerRegistration addValueChangeHandler(final ValueChangeHandler<E> handler) {
         // don't add to peer, since its changed value is the entire item list
-        return bus.addHandler(ValueChangeEvent.getType(), handler);
+        return handlerManager.addHandler(ValueChangeEvent.getType(), handler);
     }
 
     @Override
@@ -277,7 +277,7 @@ public class EnumRadioEditor<E extends Enum<E>> implements EditorWidget<E, LeafV
 
     @Override
     public void fireEvent(GwtEvent<?> event) {
-        bus.fireEvent(event);
+        handlerManager.fireEvent(event);
     }
 
     @Override

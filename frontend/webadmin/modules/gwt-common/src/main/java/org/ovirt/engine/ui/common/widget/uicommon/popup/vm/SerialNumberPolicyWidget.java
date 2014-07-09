@@ -64,7 +64,7 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
                                     CommonApplicationResources applicationResources,
                                     VisibilityRenderer visibilityRenderer) {
         overrideSerialNumberPolicy = new EntityModelCheckBoxEditor(Align.RIGHT, visibilityRenderer, false);
-        serialNumberPolicy = new EnumRadioEditor<SerialNumberPolicy>(SerialNumberPolicy.class, eventBus);
+        serialNumberPolicy = new EnumRadioEditor<SerialNumberPolicy>(SerialNumberPolicy.class);
         serialNumberInfoIcon = new InfoIcon(applicationTemplates.italicText(applicationMessages.serialNumberInfo()), applicationResources);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
