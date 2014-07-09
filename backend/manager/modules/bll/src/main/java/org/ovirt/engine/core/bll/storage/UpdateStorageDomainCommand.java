@@ -27,7 +27,6 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
 
     @Override
     protected boolean canDoAction() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
         boolean returnValue = super.canDoAction() && checkStorageDomain()
                 && checkStorageDomainStatus(StorageDomainStatus.Active) && checkStorageDomainNameLengthValid();
         oldDomain = getStorageDomainStaticDAO().get(getStorageDomain().getId());
@@ -66,6 +65,12 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
             returnValue = false;
         }
         return returnValue;
+    }
+
+    @Override
+    protected void setActionMessageParameters() {
+        super.setActionMessageParameters();
+        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
     }
 
     @Override
