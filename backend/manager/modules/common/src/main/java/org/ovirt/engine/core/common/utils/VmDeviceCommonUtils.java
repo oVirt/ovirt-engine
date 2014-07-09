@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -59,6 +60,21 @@ public class VmDeviceCommonUtils {
     public static boolean isBridge(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE
                 && device.getDevice().equals(VmDeviceType.BRIDGE.getName());
+    }
+
+    public static VmDevice createVirtioSerialDeviceForVm(Guid vmId) {
+        return new VmDevice(new VmDeviceId(Guid.newGuid(), vmId),
+                VmDeviceGeneralType.CONTROLLER,
+                VmDeviceType.VIRTIOSERIAL.getName(),
+                "",
+                0,
+                new HashMap<String, Object>(),
+                true,
+                true,
+                false,
+                "",
+                null,
+                null);
     }
 
     /**

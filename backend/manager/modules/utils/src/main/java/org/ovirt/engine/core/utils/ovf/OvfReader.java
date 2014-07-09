@@ -325,8 +325,9 @@ public abstract class OvfReader implements IOvfBuilder {
     protected abstract void readOsSection(XmlNode section);
 
     protected void readHardwareSection(XmlNode section) {
-        for (XmlNode node : section.SelectNodes("Item")) {
+        boolean readVirtioSerial = false;
 
+        for (XmlNode node : section.SelectNodes("Item")) {
             switch (node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText) {
             case OvfHardware.CPU:
                 readCpuItem(node);
@@ -357,9 +358,15 @@ public abstract class OvfReader implements IOvfBuilder {
                 break;
 
             case OvfHardware.OTHER:
-                readOtherHardwareItem(node);
+                VmDevice vmDevice = readOtherHardwareItem(node);
+                readVirtioSerial = readVirtioSerial ||
+                        VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
                 break;
             }
+        }
+
+        if (!readVirtioSerial) {
+            addManagedVmDevice(VmDeviceCommonUtils.createVirtioSerialDeviceForVm(vmBase.getId()));
         }
     }
 
@@ -411,7 +418,7 @@ public abstract class OvfReader implements IOvfBuilder {
                 UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).innerText));
     }
 
-    private void readOtherHardwareItem(XmlNode node) {
+    private VmDevice readOtherHardwareItem(XmlNode node) {
         boolean managed = false;
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                 && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
@@ -421,11 +428,9 @@ public abstract class OvfReader implements IOvfBuilder {
             managed = VmDeviceCommonUtils.isSpecialDevice(device, type);
         }
 
-        if (managed) {
-            readManagedVmDevice(node, Guid.newGuid());
-        } else {
-            readUnmanagedVmDevice(node, Guid.newGuid());
-        }
+        return managed ?
+                readManagedVmDevice(node, Guid.newGuid())
+                : readUnmanagedVmDevice(node, Guid.newGuid());
     }
 
     protected VmDeviceType getDisplayDevice(DisplayType displayType) {
