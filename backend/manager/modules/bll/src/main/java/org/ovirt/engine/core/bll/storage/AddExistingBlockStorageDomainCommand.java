@@ -46,7 +46,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         return true;
     }
 
-    private List<LUNs> getLUNsFromVgInfo(String vgId) {
+    protected List<LUNs> getLUNsFromVgInfo(String vgId) {
         List<LUNs> luns = new ArrayList<>();
         VDSReturnValue returnValue;
 
@@ -64,7 +64,7 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
         return luns;
     }
 
-    private void saveLUNsInDB(final List<LUNs> luns) {
+    protected void saveLUNsInDB(final List<LUNs> luns) {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
