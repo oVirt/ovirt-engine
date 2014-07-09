@@ -79,7 +79,14 @@ public class EngineExtensionsManager extends ExtensionsManager {
                     sort(files);
                     for (File file : files) {
                         if (file.getName().endsWith(".properties")) {
-                            load(file);
+                            try {
+                                load(file);
+                            } catch (Exception ex) {
+                                log.error("Could not load extension based on configuration file '{}'. Please check the configuration file is valid. Exception message is: {}",
+                                        file.getAbsolutePath(),
+                                        ex.getMessage());
+                                log.debug("", ex);
+                            }
                         }
                     }
                 }
