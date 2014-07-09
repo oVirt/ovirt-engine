@@ -68,14 +68,12 @@ public abstract class NetworkItemPanel extends FocusPanel {
 
             @Override
             public void onClick(ClickEvent event) {
-                actionButton.setVisible(false);
                 dragImage.setVisible(false);
                 NetworkItemPanel.this.onAction();
             }
         });
         actionButton.getDownFace().setImage(new Image(resources.editMouseDown()));
         actionButton.setPixelSize(editImage.getWidth(), editImage.getHeight());
-        actionButton.setVisible(false);
         actionButton.addStyleName("buttonStyle_pfly_fix"); //$NON-NLS-1$
         actionButton.addStyleName("nip_actionButton_pfly_fix"); //$NON-NLS-1$
 
@@ -109,7 +107,6 @@ public abstract class NetworkItemPanel extends FocusPanel {
         if (parentPanel != null) {
             parentPanel.onMouseOver();
         }
-        actionButton.setVisible(false);
     }
 
     protected void onMouseOver() {

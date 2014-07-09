@@ -18,8 +18,6 @@ public abstract class NetworkPanel extends NetworkItemPanel {
 
     public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
-        actionButton.setStyleName(style.actionButtonNetwork());
-        actionButton.addStyleName("np_actionButton_pfly_fix"); //$NON-NLS-1$
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());
         }
@@ -29,6 +27,8 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             actionButton.getUpFace().setImage(new Image(resources.butEraseNetHover()));
             actionButton.getDownFace().setImage(new Image(resources.butEraseNetMousedown()));
         }
+        actionButton.setStyleName(style.actionButtonNetwork());
+        actionButton.addStyleName("np_actionButton_pfly_fix"); //$NON-NLS-1$
     }
 
     @Override
@@ -80,6 +80,9 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             }
         }
 
+        actionButton.setVisible(network.getAttachedToNic() != null
+                && (network.isManaged() || !network.isAttachedViaLabel()));
+
         Grid rowPanel = new Grid(1, 9);
         rowPanel.setCellSpacing(0);
         rowPanel.setWidth("100%"); //$NON-NLS-1$
@@ -104,12 +107,12 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         }
         Label titleLabel = new Label(getItemTitle());
         rowPanel.setWidget(0, 2, titleLabel);
-        rowPanel.setWidget(0, 3, actionButton);
-        rowPanel.setWidget(0, 4, mgmtNetworkImage);
-        rowPanel.setWidget(0, 5, monitorImage);
-        rowPanel.setWidget(0, 6, vmImage);
-        rowPanel.setWidget(0, 7, migrationImage);
-        rowPanel.setWidget(0, 8, notSyncImage);
+        rowPanel.setWidget(0, 3, mgmtNetworkImage);
+        rowPanel.setWidget(0, 4, monitorImage);
+        rowPanel.setWidget(0, 5, vmImage);
+        rowPanel.setWidget(0, 6, migrationImage);
+        rowPanel.setWidget(0, 7, notSyncImage);
+        rowPanel.setWidget(0, 8, actionButton);
         return rowPanel;
     }
 
@@ -132,16 +135,6 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             OperationMap operationMap = item.getSetupModel().commandsFor(item);
             final NetworkCommand detach = operationMap.get(NetworkOperation.REMOVE_UNMANAGED_NETWORK).get(0);
             item.getSetupModel().onOperation(NetworkOperation.REMOVE_UNMANAGED_NETWORK, detach);
-        }
-    }
-
-    @Override
-    protected void onMouseOver() {
-        super.onMouseOver();
-        LogicalNetworkModel network = (LogicalNetworkModel) item;
-        if (network != null && network.getAttachedToNic() != null
-                && (network.isManaged() || !network.isAttachedViaLabel())) {
-            actionButton.setVisible(true);
         }
     }
 

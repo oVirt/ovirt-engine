@@ -67,12 +67,4 @@ public class NicPanel extends NetworkItemPanel {
     protected void onAction() {
        item.edit();
     }
-
-    @Override
-    protected void onMouseOver() {
-        super.onMouseOver();
-        if (parentPanel == null) {
-            actionButton.setVisible(true);
-        }
-    }
 }
