@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.storage;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -15,7 +14,6 @@ import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSComman
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddExistingFileStorageDomainCommand<T extends StorageDomainManagementParameter> extends
         AddNFSStorageDomainCommand<T> {
@@ -55,29 +53,34 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
     }
 
     protected boolean checkExistingStorageDomain() {
-        if (DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
+        if (getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
-        List<Guid> storageIds = (ArrayList<Guid>) runVdsCommand(VDSCommandType.HSMGetStorageDomainsList,
+        List<Guid> storageIds = executeHSMGetStorageDomainsList(
                 new HSMGetStorageDomainsListVDSCommandParameters(getVdsId(), Guid.Empty, getStorageDomain()
-                        .getStorageType(), getStorageDomain().getStorageDomainType(), "")
-        ).getReturnValue();
+                        .getStorageType(), getStorageDomain().getStorageDomainType(), ""));
 
         if (!storageIds.contains(getStorageDomain().getId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
-        Pair<StorageDomainStatic, Guid> domainFromIrs = (Pair<StorageDomainStatic, Guid>) runVdsCommand(
-                VDSCommandType.HSMGetStorageDomainInfo,
-                new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId())
-        ).getReturnValue();
+        Pair<StorageDomainStatic, Guid> domainFromIrs = executeHSMGetStorageDomainInfo(
+                new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId()));
 
         if (domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
         }
 
         return concreteCheckExistingStorageDomain(domainFromIrs);
+    }
+
+    protected List<Guid> executeHSMGetStorageDomainsList(HSMGetStorageDomainsListVDSCommandParameters parameters) {
+        return (List<Guid>) runVdsCommand(VDSCommandType.HSMGetStorageDomainsList, parameters).getReturnValue();
+    }
+
+    protected Pair<StorageDomainStatic, Guid> executeHSMGetStorageDomainInfo(HSMGetStorageDomainInfoVDSCommandParameters parameters) {
+        return (Pair<StorageDomainStatic, Guid>) runVdsCommand(VDSCommandType.HSMGetStorageDomainInfo, parameters).getReturnValue();
     }
 
     protected boolean concreteCheckExistingStorageDomain(Pair<StorageDomainStatic, Guid> domain) {
