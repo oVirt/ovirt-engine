@@ -57,7 +57,6 @@ public enum VdcActionType {
     ImportVmTemplateFromConfiguration(45, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     ProcessDownVm(46, QuotaDependency.NONE),
     // VdsCommands
-    ProvisionVds(100, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     AddVds(101, ActionGroup.CREATE_HOST, QuotaDependency.NONE),
     UpdateVds(102, ActionGroup.EDIT_HOST_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveVds(103, ActionGroup.DELETE_HOST, false, QuotaDependency.NONE),
@@ -156,7 +155,6 @@ public enum VdcActionType {
     // VmPoolCommands
     AddVmPool(301, QuotaDependency.NONE),
     AddVmPoolWithVms(304, ActionGroup.CREATE_VM_POOL, QuotaDependency.BOTH),
-    UpdateUserVm(303, QuotaDependency.NONE),
     UpdateVmPoolWithVms(305, ActionGroup.EDIT_VM_POOL_CONFIGURATION, QuotaDependency.STORAGE),
     AddVmAndAttachToPool(306, QuotaDependency.NONE),
     RemoveVmPool(307, ActionGroup.DELETE_VM_POOL, QuotaDependency.NONE),
@@ -170,7 +168,6 @@ public enum VdcActionType {
     LogoutBySession(410, false, QuotaDependency.NONE),
     RemoveUser(409, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     RemoveGroup(415, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
-    ChangeUserPassword(416, QuotaDependency.NONE),
     LoginAdminUser(418, ActionGroup.LOGIN, false, QuotaDependency.NONE),
     AddUser(419, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
     AddGroup(420, ActionGroup.MANIPULATE_USERS, false, QuotaDependency.NONE),
