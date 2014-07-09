@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
+import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -30,6 +31,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -312,7 +314,99 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void readOsSection(XmlNode section);
 
-    protected abstract void readHardwareSection(XmlNode section);
+    protected void readHardwareSection(XmlNode section) {
+        for (XmlNode node : section.SelectNodes("Item")) {
+
+            switch (node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText) {
+            case OvfHardware.CPU:
+                readCpuItem(node);
+                break;
+
+            case OvfHardware.Memory:
+                readMemoryItem(node);
+                break;
+
+            case OvfHardware.DiskImage:
+                readDiskImageItem(node);
+                break;
+
+            case OvfHardware.Network:
+                readNetworkItem(node);
+                break;
+
+            case OvfHardware.USB:
+                readUsbItem(node);
+                break;
+
+            case OvfHardware.Monitor:
+                readMonitorItem(node);
+                break;
+
+            case OvfHardware.CD:
+                readCdItem(node);
+                break;
+
+            case OvfHardware.OTHER:
+                readOtherHardwareItem(node);
+                break;
+            }
+        }
+    }
+
+    protected abstract void readDiskImageItem(XmlNode node);
+
+    protected void readMonitorItem(XmlNode node) {
+        vmBase.setNumOfMonitors(
+                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
+        if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
+            vmBase.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
+        }
+    }
+
+    private void readCpuItem(XmlNode node) {
+        vmBase.setNumOfSockets(
+                Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).innerText));
+        vmBase.setCpuPerSocket(
+                Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).innerText));
+    }
+
+    private void readMemoryItem(XmlNode node) {
+        vmBase.setMemSizeMb(
+                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
+    }
+
+    private void readCdItem(XmlNode node) {
+        readVmDevice(node, vmBase, Guid.newGuid(), Boolean.TRUE);
+    }
+
+    private void readNetworkItem(XmlNode node) {
+        VmNetworkInterface iface = getNetwotkInterface(node);
+        updateSingleNic(node, iface);
+        vmBase.getInterfaces().add(iface);
+        readVmDevice(node, vmBase, iface.getId(), Boolean.TRUE);
+    }
+
+    private void readUsbItem(XmlNode node) {
+        vmBase.setUsbPolicy(
+                UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).innerText));
+    }
+
+    private void readOtherHardwareItem(XmlNode node) {
+        boolean managed = false;
+        if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
+                && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
+            VmDeviceGeneralType type = VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText));
+            String device = node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).innerText;
+            // special devices are treated as managed devices but still have the OTHER OVF ResourceType
+            managed = VmDeviceCommonUtils.isSpecialDevice(device, type);
+        }
+
+        if (managed) {
+            readVmDevice(node, vmBase, Guid.newGuid(), Boolean.TRUE);
+        } else {
+            readVmDevice(node, vmBase, Guid.newGuid(), Boolean.FALSE);
+        }
+    }
 
     protected VmDeviceType getDisplayDevice(DisplayType displayType) {
         return osRepository.getDisplayDevice(vmBase.getOsId(), new Version(getVersion()), displayType);
@@ -648,11 +742,6 @@ public abstract class OvfReader implements IOvfBuilder {
     }
 
     protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
-
-        iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).innerText);
-        iface.setMacAddress((node.SelectSingleNode("rasd:MACAddress", _xmlNS) != null) ? node.SelectSingleNode(
-                "rasd:MACAddress", _xmlNS).innerText : "");
-
         String networkName = node.SelectSingleNode(OvfProperties.VMD_CONNECTION, _xmlNS).innerText;
         iface.setNetworkName(StringUtils.defaultIfEmpty(networkName, null));
 

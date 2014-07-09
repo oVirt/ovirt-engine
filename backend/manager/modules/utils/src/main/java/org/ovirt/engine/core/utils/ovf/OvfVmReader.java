@@ -7,18 +7,15 @@ import java.util.List;
 
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
-import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
@@ -55,58 +52,7 @@ public class OvfVmReader extends OvfReader {
     }
 
     @Override
-    protected void readHardwareSection(XmlNode section) {
-        for (XmlNode node : section.SelectNodes("Item")) {
-
-            switch (node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText) {
-            case OvfHardware.CPU:
-                readCpuItem(node);
-                break;
-
-            case OvfHardware.Memory:
-                readMemoryItem(node);
-                break;
-
-            case OvfHardware.DiskImage:
-                readDiskImageItem(node);
-                break;
-
-            case OvfHardware.Network:
-                readNetworkItem(node);
-                break;
-
-            case OvfHardware.USB:
-                readUsbItem(node);
-                break;
-
-            case OvfHardware.Monitor:
-                readMonitorItem(node);
-                break;
-
-            case OvfHardware.CD:
-                readCdItem(node);
-                break;
-
-            case OvfHardware.OTHER:
-                readOtherHardwareItem(node);
-                break;
-            }
-        }
-    }
-
-    private void readCpuItem(XmlNode node) {
-        _vm.getStaticData().setNumOfSockets(
-                Integer.parseInt(node.SelectSingleNode("rasd:num_of_sockets", _xmlNS).innerText));
-        _vm.getStaticData().setCpuPerSocket(
-                Integer.parseInt(node.SelectSingleNode("rasd:cpu_per_socket", _xmlNS).innerText));
-    }
-
-    private void readMemoryItem(XmlNode node) {
-        _vm.getStaticData().setMemSizeMb(
-                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
-    }
-
-    private void readDiskImageItem(XmlNode node) {
+    protected void readDiskImageItem(XmlNode node) {
         final Guid guid = new Guid(node.SelectSingleNode("rasd:InstanceId", _xmlNS).innerText);
 
         DiskImage image = LinqUtils.firstOrNull(_images, new Predicate<DiskImage>() {
@@ -153,24 +99,10 @@ public class OvfVmReader extends OvfReader {
         image.setReadOnly(readDevice.getIsReadOnly());
     }
 
-    private void readNetworkItem(XmlNode node) {
-        VmNetworkInterface iface = getNetwotkInterface(node);
-        updateSingleNic(node, iface);
-        _vm.getInterfaces().add(iface);
-        readVmDevice(node, _vm.getStaticData(), iface.getId(), Boolean.TRUE);
-    }
+    @Override
+    protected void readMonitorItem(XmlNode node) {
+        super.readMonitorItem(node);
 
-    private void readUsbItem(XmlNode node) {
-        _vm.getStaticData().setUsbPolicy(
-                UsbPolicy.forStringValue(node.SelectSingleNode("rasd:UsbPolicy", _xmlNS).innerText));
-    }
-
-    private void readMonitorItem(XmlNode node) {
-        _vm.getStaticData().setNumOfMonitors(
-                Integer.parseInt(node.SelectSingleNode("rasd:VirtualQuantity", _xmlNS).innerText));
-        if (node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS) != null) {
-            _vm.setSingleQxlPci(Boolean.parseBoolean(node.SelectSingleNode("rasd:SinglePciQxl", _xmlNS).innerText));
-        }
         if (new Version(getVersion()).compareTo(Version.v3_1) >= 0) {
             readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
         } else {
@@ -182,24 +114,12 @@ public class OvfVmReader extends OvfReader {
         }
     }
 
-    private void readCdItem(XmlNode node) {
-        readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
-    }
-
-    private void readOtherHardwareItem(XmlNode node) {
-        if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
-                && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
-            VmDeviceGeneralType type = VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText));
-            String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).innerText);
-            // special devices are treated as managed devices but still have the OTHER OVF ResourceType
-            if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
-            } else {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
-            }
-        } else {
-            readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
-        }
+    @Override
+    protected void updateSingleNic(XmlNode node, VmNetworkInterface iface) {
+        super.updateSingleNic(node, iface);
+        iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).innerText);
+        iface.setMacAddress((node.SelectSingleNode("rasd:MACAddress", _xmlNS) != null) ? node.SelectSingleNode(
+                "rasd:MACAddress", _xmlNS).innerText : "");
     }
 
     @Override
