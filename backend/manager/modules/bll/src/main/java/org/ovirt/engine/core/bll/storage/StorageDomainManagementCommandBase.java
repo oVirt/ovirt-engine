@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.storage;
 import org.ovirt.engine.core.common.action.StorageDomainManagementParameter;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class StorageDomainManagementCommandBase<T extends StorageDomainManagementParameter> extends
         StorageDomainCommandBase<T> {
@@ -31,6 +30,6 @@ public abstract class StorageDomainManagementCommandBase<T extends StorageDomain
     }
 
     protected boolean isStorageWithSameNameExists() {
-        return DbFacade.getInstance().getStorageDomainStaticDao().getByName(getStorageDomain().getStorageName()) != null;
+        return getStorageDomainStaticDAO().getByName(getStorageDomain().getStorageName()) != null;
     }
 }
