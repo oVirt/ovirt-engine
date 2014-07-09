@@ -5,11 +5,13 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
+import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbGroupDAO;
@@ -17,15 +19,13 @@ import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class DirectoryUtils {
 
-    public static HashSet<Guid> getGroupIdsFromUser(DirectoryUser directoryUser) {
+    public static HashSet<Guid> getGroupIdsFromPrincipal(String authz, ExtMap principal) {
         HashSet<Guid> results = new HashSet<Guid>();
         DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
-        if (directoryUser.getGroups() != null) {
-            for (DirectoryGroup group : directoryUser.getGroups()) {
-                DbGroup dbGroup = dao.getByExternalId(group.getDirectoryName(), group.getId());
-                if (dbGroup != null) {
-                    results.add(dbGroup.getId());
-                }
+        for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+            DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
+            if (dbGroup != null) {
+                results.add(dbGroup.getId());
             }
         }
         return results;
@@ -67,7 +67,7 @@ public class DirectoryUtils {
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive
             ) {
-        return mapPrincipalRecords(
+        return mapPrincipalRecordsToDirectoryUsers(
                 AuthzUtils.getName(extension),
                 AuthzUtils.findPrincipalsByIds(
                         extension,
@@ -117,7 +117,7 @@ public class DirectoryUtils {
             final List<String> ids,
             final boolean resolveGroups,
             final boolean resolveGroupsRecursive) {
-        return mapGroupRecords(AuthzUtils.getName(extension),
+        return mapGroupRecordsToDirectoryGroups(AuthzUtils.getName(extension),
                 AuthzUtils.findGroupRecordsByIds(
                         extension,
                         namespace,
@@ -127,7 +127,11 @@ public class DirectoryUtils {
                         );
     }
 
-    public static DirectoryUser mapPrincipalRecord(final String authzName, final ExtMap principalRecord) {
+    public static DbUser mapPrincipalRecordToDbUser(final String authzName, final ExtMap principalRecord) {
+        return new DbUser(mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
+    }
+
+    public static DirectoryUser mapPrincipalRecordToDirectoryUser(final String authzName, final ExtMap principalRecord) {
         DirectoryUser directoryUser = null;
         if (principalRecord != null) {
             directoryUser = new DirectoryUser(
@@ -145,7 +149,7 @@ public class DirectoryUtils {
             List<ExtMap> groups = principalRecord.<List<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
             if (groups != null) {
                 for (ExtMap group : groups) {
-                    directoryGroups.add(mapGroupRecord(authzName, group));
+                    directoryGroups.add(mapGroupRecordToDirectoryGroup(authzName, group));
                 }
             }
             directoryUser.setGroups(directoryGroups);
@@ -153,7 +157,7 @@ public class DirectoryUtils {
         return directoryUser;
     }
 
-    public static DirectoryGroup mapGroupRecord(final String authzName, final ExtMap group) {
+    public static DirectoryGroup mapGroupRecordToDirectoryGroup(final String authzName, final ExtMap group) {
         DirectoryGroup directoryGroup = null;
         if (group != null) {
             directoryGroup = new DirectoryGroup(
@@ -163,24 +167,35 @@ public class DirectoryUtils {
                     group.<String> get(Authz.GroupRecord.NAME)
                     );
             for (ExtMap memberOf : group.<List<ExtMap>> get(Authz.GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
-                directoryGroup.getGroups().add(mapGroupRecord(authzName, memberOf));
+                directoryGroup.getGroups().add(mapGroupRecordToDirectoryGroup(authzName, memberOf));
             }
         }
         return directoryGroup;
     }
 
-    public static List<DirectoryGroup> mapGroupRecords(final String authzName, final List<ExtMap> groups) {
+    public static DbGroup mapGroupRecordToDbGroup(String directory, ExtMap groupRecord) {
+        return new DbGroup(mapGroupRecordToDirectoryGroup(directory, groupRecord));
+    }
+
+
+    public static void flatGroups(ExtMap principal) {
+        List<ExtMap> accumulator = new ArrayList<>();
+        flatGroups(accumulator, principal.get(GroupRecord.GROUPS, Collections.<ExtMap> emptyList()));
+        principal.put(GroupRecord.GROUPS, accumulator);
+    }
+
+    public static List<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName, final List<ExtMap> groups) {
         List<DirectoryGroup> results = new ArrayList<>();
         for (ExtMap group : groups) {
-            results.add(mapGroupRecord(authzName, group));
+            results.add(mapGroupRecordToDirectoryGroup(authzName, group));
         }
         return results;
     }
 
-    public static List<DirectoryUser> mapPrincipalRecords(final String authzName, final List<ExtMap> users) {
+    public static List<DirectoryUser> mapPrincipalRecordsToDirectoryUsers(final String authzName, final List<ExtMap> users) {
         List<DirectoryUser> results = new ArrayList<>();
         for (ExtMap user : users) {
-            results.add(mapPrincipalRecord(authzName, user));
+            results.add(mapPrincipalRecordToDirectoryUser(authzName, user));
         }
         return results;
     }
@@ -192,7 +207,7 @@ public class DirectoryUtils {
             boolean groupsResolving,
             boolean groupsResolvingRecursive
             ) {
-        return mapPrincipalRecords(AuthzUtils.getName(extension), AuthzUtils.queryPrincipalRecords(extension,
+        return mapPrincipalRecordsToDirectoryUsers(AuthzUtils.getName(extension), AuthzUtils.queryPrincipalRecords(extension,
                 namespace,
                 filter,
                 groupsResolving,
@@ -208,16 +223,17 @@ public class DirectoryUtils {
             ) {
                 List<DirectoryGroup> directoryGroups = new ArrayList<>();
                 for (ExtMap group : AuthzUtils.queryPrincipalRecords(extension, namespace, filter, groupsResolving, groupsResolvingRecursive)) {
-                    directoryGroups.add(mapGroupRecord(AuthzUtils.getName(extension), group));
+                    directoryGroups.add(mapGroupRecordToDirectoryGroup(AuthzUtils.getName(extension), group));
                 }
                 return directoryGroups;
     }
 
-    private static void flatGroups(Set<DirectoryGroup> accumulator, List<DirectoryGroup> groupsFrom) {
-        for (DirectoryGroup group : groupsFrom) {
-            flatGroups(accumulator, group.getGroups());
+    private static void flatGroups(List<ExtMap> accumulator, List<ExtMap> groupsFrom) {
+        for (ExtMap group : groupsFrom) {
+            flatGroups(accumulator, group.get(GroupRecord.GROUPS, Collections.<ExtMap> emptyList()));
             accumulator.add(group);
         }
 
     }
+
 }

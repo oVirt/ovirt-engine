@@ -17,13 +17,13 @@ import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AcctUtils;
 import org.ovirt.engine.core.aaa.AuthType;
 import org.ovirt.engine.core.aaa.AuthenticationProfile;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.AuthzUtils;
-import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.session.SessionDataContainer;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -254,18 +254,18 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
             return false;
         }
-        DirectoryUser directoryUser = DirectoryUtils.mapPrincipalRecord(AuthzUtils.getName(profile.getAuthz()), principalRecord);
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
         DbUser dbUser =
                 getDbUserDAO().getByExternalId(
                         AuthzUtils.getName(profile.getAuthz()),
-                        directoryUser.getId());
+                        principalRecord.<String> get(PrincipalRecord.ID));
         if (dbUser == null) {
-            dbUser = new DbUser(directoryUser);
+            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
             dbUser.setId(Guid.newGuid());
         }
-        dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
+        DirectoryUtils.flatGroups(principalRecord);
+        dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromPrincipal(AuthzUtils.getName(profile.getAuthz()), principalRecord));
         getDbUserDAO().saveOrUpdate(dbUser);
 
         // Check login permissions. We do it here and not via the

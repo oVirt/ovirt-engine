@@ -5,8 +5,10 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -23,7 +25,7 @@ import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
     // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
     // time when actually adding the user to the database:
-    private DirectoryUser directoryUser;
+    private ExtMap principal;
 
     public AddUserCommand(T params) {
         this(params, null);
@@ -78,8 +80,8 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         boolean foundUser = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryUser = DirectoryUtils.findDirectoryUserById(authz, namespace, id, true, true);
-            if (directoryUser != null) {
+            principal = AuthzUtils.fetchPrincipalsByIdsRecursively(authz, namespace, Arrays.asList(id)).get(0);
+            if (principal != null) {
                 foundUser = true;
                 break;
             }
@@ -95,7 +97,7 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
 
         // Populate information for the audit log:
-        addCustomValue("NewUserName", directoryUser.getName());
+        addCustomValue("NewUserName", principal.<String> get(PrincipalRecord.NAME));
 
         return true;
 
@@ -106,17 +108,18 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
         DbUserDAO dao = getDbUserDAO();
 
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
-        HashSet<Guid> groupIds = DirectoryUtils.getGroupIdsFromUser(directoryUser);
-        DbUser dbUser = dao.getByExternalId(directoryUser.getDirectoryName(), directoryUser.getId());
+        DirectoryUtils.flatGroups(principal);
+        HashSet<Guid> groupIds = DirectoryUtils.getGroupIdsFromPrincipal(getParameters().getDirectory(), principal);
+        DbUser dbUser = dao.getByExternalId(getParameters().getDirectory(), principal.<String> get(PrincipalRecord.ID));
         if (dbUser == null) {
-            dbUser = new DbUser(directoryUser);
+            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(getParameters().getDirectory(), principal);
             dbUser.setId(Guid.newGuid());
             dbUser.setGroupIds(groupIds);
             dao.save(dbUser);
         }
         else {
             Guid id = dbUser.getId();
-            dbUser = new DbUser(directoryUser);
+            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(getParameters().getDirectory(), principal);
             dbUser.setId(id);
             dbUser.setGroupIds(groupIds);
             dao.update(dbUser);

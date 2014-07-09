@@ -251,7 +251,6 @@ public class DbUser extends IVdcQueryable {
     public int hashCode() {
         final int prime = 31;
         int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + ((externalId == null) ? 0 : externalId.hashCode());
         result = prime * result + ((department == null) ? 0 : department.hashCode());
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
@@ -280,8 +279,7 @@ public class DbUser extends IVdcQueryable {
             return false;
         }
         DbUser other = (DbUser) obj;
-        return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(externalId, other.externalId)
+        return  ObjectUtils.objectsEqual(externalId, other.externalId)
                 && ObjectUtils.objectsEqual(department, other.department)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(namespace, other.namespace)
@@ -293,7 +291,7 @@ public class DbUser extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(role, other.role)
                 && active == other.active
                 && ObjectUtils.objectsEqual(lastName, other.lastName)
-                && ObjectUtils.objectsEqual(loginName, other.loginName));
+                && ObjectUtils.objectsEqual(loginName, other.loginName);
 
     }
 

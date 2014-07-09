@@ -4,8 +4,10 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
+import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -24,7 +26,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
 
     // We save a reference to the directory group to avoid looking it up once when checking the conditions and another
     // time when actually adding the group to the database:
-    private DirectoryGroup directoryGroup;
+    private ExtMap groupRecord;
 
     public AddGroupCommand(T params) {
         this(params, null);
@@ -53,8 +55,8 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         boolean foundGroup = false;
         for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
                 : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            directoryGroup = DirectoryUtils.findDirectoryGroupById(authz, namespace, id, true, true);
-            if (directoryGroup != null) {
+            groupRecord = AuthzUtils.findGroupRecordsByIds(authz, namespace, Arrays.asList(id), true, true).get(0);
+            if (groupRecord != null) {
                 foundGroup = true;
                 break;
             }
@@ -65,7 +67,7 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
             return false;
         }
 
-        addCustomValue("NewUserName", directoryGroup.getName());
+        addCustomValue("NewUserName", groupRecord.<String> get(GroupRecord.NAME));
 
         return true;
     }
@@ -75,15 +77,15 @@ public class AddGroupCommand<T extends DirectoryIdParameters>
         // First check if the group is already in the database, if it is we
         // need to update, if not we need to insert:
         DbGroupDAO dao = getAdGroupDAO();
-        DbGroup dbGroup = dao.getByExternalId(directoryGroup.getDirectoryName(), directoryGroup.getId());
+        DbGroup dbGroup = dao.getByExternalId(getParameters().getDirectory(), groupRecord.<String> get(GroupRecord.NAME));
         if (dbGroup == null) {
-            dbGroup = new DbGroup(directoryGroup);
+            dbGroup = DirectoryUtils.mapGroupRecordToDbGroup(getParameters().getDirectory(), groupRecord);
             dbGroup.setId(Guid.newGuid());
             dao.save(dbGroup);
         }
         else {
             Guid id = dbGroup.getId();
-            dbGroup = new DbGroup(directoryGroup);
+            dbGroup = DirectoryUtils.mapGroupRecordToDbGroup(getParameters().getDirectory(), groupRecord);
             dbGroup.setId(id);
             dao.update(dbGroup);
         }

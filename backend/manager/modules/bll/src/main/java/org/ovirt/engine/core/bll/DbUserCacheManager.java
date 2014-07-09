@@ -154,7 +154,8 @@ public class DbUserCacheManager {
                 DirectoryUser directoryUser = index.get(dbUser.getExternalId());
                 if (directoryUser != null) {
                     dbUser.setActive(false);
-                    dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
+                    // TODO: will be fixed in next patch in series
+                    // dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromUser(directoryUser));
                     dbUser = refreshUser(dbUser, directoryUser);
                     if (dbUser != null) {
                         refreshed.add(dbUser);
