@@ -10,6 +10,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -43,6 +44,7 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
 import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
@@ -1094,10 +1096,43 @@ public final class Linq
         @Override
         public boolean match(DbUser source)
         {
+            String targetName = target.getLoginName();
+            if (!StringHelper.isNullOrEmpty(targetName)) {
+                targetName = targetName.toLowerCase();
+            }
             return StringHelper.stringsEqual(source.getDomain(), target.getDomain())
                     && (StringHelper.isNullOrEmpty(target.getLoginName())
                     || StringHelper.stringsEqual(target.getLoginName(), "*") //$NON-NLS-1$
-                    || source.getLoginName().toLowerCase().startsWith(target.getLoginName()));
+                    || source.getLoginName().toLowerCase().startsWith(targetName));
+        }
+    }
+
+    public final static class DbGroupPredicate implements IPredicate<DbGroup>
+    {
+        private final DbGroup target;
+
+        public DbGroupPredicate(DbGroup target)
+        {
+            this.target = target;
+        }
+
+        @Override
+        public boolean match(DbGroup source)
+        {
+            String groupName = source.getName().toLowerCase();
+            String targetName = target.getName();
+            if (!StringHelper.isNullOrEmpty(targetName)) {
+                targetName = targetName.toLowerCase();
+            }
+            int lastIndex = groupName.lastIndexOf("/"); //$NON-NLS-1$
+            if (lastIndex != -1) {
+                groupName = groupName.substring(lastIndex+1);
+            }
+            return ObjectUtils.objectsEqual(source.getDomain(), target.getDomain())
+                    && (StringHelper.isNullOrEmpty(target.getName())
+                    || "*".equals(target.getName()) //$NON-NLS-1$
+                    || groupName.startsWith(targetName))
+                    || source.getName().toLowerCase().startsWith(targetName);
         }
     }
 
