@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -262,6 +263,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
         int virtioScsiIndex = controllerIndexMap.get(DiskInterface.VirtIO_SCSI);
         int sPaprVscsiIndex = controllerIndexMap.get(DiskInterface.SPAPR_VSCSI);
+        // map to avoid fetching qos object for same disk profile id
+        Map<Guid, Guid> diskProfileStorageQosMap = new HashMap<>();
+        Map<Guid, Map<String, Integer>> storageQosIoTuneMap = new HashMap<>();
 
         for (Disk disk : disks) {
             Map<String, Object> struct = new HashMap<String, Object>();
@@ -327,6 +331,16 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             .toLowerCase());
                     struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                             .toLowerCase());
+                    if (FeatureSupported.storageQoS(vm.getVdsGroupCompatibilityVersion())) {
+                        Map<String, Integer> ioTune =
+                                buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+                        if (ioTune != null) {
+                            if (vmDevice.getSpecParams() == null) {
+                                vmDevice.setSpecParams(new HashMap<String, Object>());
+                            }
+                            vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
+                        }
+                    }
                 } else {
                     LunDisk lunDisk = (LunDisk) disk;
                     struct.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
@@ -349,6 +363,57 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         }
 
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
+    }
+
+    private Map<String, Integer> buildIoTune(DiskImage diskImage,
+            Map<Guid, Guid> diskProfileStorageQosMap,
+            Map<Guid, Map<String, Integer>> storageQosIoTuneMap) {
+        Guid diskProfileId = diskImage.getDiskProfileId();
+        if (diskProfileId == null) {
+            return null;
+        }
+        Guid storageQosId = diskProfileStorageQosMap.get(diskProfileId);
+        if (storageQosId == null) {
+            StorageQos storageQos = DbFacade.getInstance().getStorageQosDao().getQosByDiskProfileId(diskProfileId);
+            if (storageQos == null) {
+                return null;
+            }
+            storageQosId = storageQos.getId();
+            diskProfileStorageQosMap.put(diskProfileId, storageQosId);
+            storageQosIoTuneMap.put(storageQosId, buildIoTuneMap(storageQos));
+        }
+
+        Map<String, Integer> ioTuneMap = storageQosIoTuneMap.get(storageQosId);
+        // return map with values
+        if (!ioTuneMap.isEmpty()) {
+            return ioTuneMap;
+        }
+        return null;
+    }
+
+    private Map<String, Integer> buildIoTuneMap(StorageQos storageQos) {
+        // build map
+        Map<String, Integer> ioTuneMap = new HashMap<>();
+        if (storageQos.getMaxThroughput() != null) {
+            ioTuneMap.put(VdsProperties.TotalBytesSec, storageQos.getMaxThroughput());
+        }
+        if (storageQos.getMaxReadThroughput() != null) {
+            ioTuneMap.put(VdsProperties.ReadBytesSec, storageQos.getMaxReadThroughput());
+        }
+        if (storageQos.getMaxWriteThroughput() != null) {
+            ioTuneMap.put(VdsProperties.WriteBytesSec, storageQos.getMaxWriteThroughput());
+        }
+        if (storageQos.getMaxIops() != null) {
+            ioTuneMap.put(VdsProperties.TotalIopsSec, storageQos.getMaxIops());
+        }
+        if (storageQos.getMaxReadIops() != null) {
+            ioTuneMap.put(VdsProperties.ReadIopsSec, storageQos.getMaxReadIops());
+        }
+        if (storageQos.getMaxWriteIops() != null) {
+            ioTuneMap.put(VdsProperties.WriteIopsSec, storageQos.getMaxWriteIops());
+        }
+
+        return ioTuneMap;
     }
 
     @Override
