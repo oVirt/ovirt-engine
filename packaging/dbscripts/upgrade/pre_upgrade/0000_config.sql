@@ -1075,6 +1075,7 @@ select fn_db_delete_config_value('DefaultTimeZone','general');
 select fn_db_delete_config_value('NumberOfVmsForTopSizeVms','general');
 select fn_db_delete_config_value_all_versions('EmulatedMachine');
 select fn_db_delete_config_value_all_versions('ENGINEEARLib');
+SELECT fn_db_delete_config_value_all_versions('AdminDomain');
 select fn_db_delete_config_value('AverageToPeakRatio','general');
 select fn_db_delete_config_value('AverageToBurstRatio','general');
 select fn_db_delete_config_value('DocsURL','general');

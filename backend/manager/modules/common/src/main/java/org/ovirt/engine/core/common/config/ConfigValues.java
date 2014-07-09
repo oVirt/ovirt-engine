@@ -849,10 +849,6 @@ public enum ConfigValues {
     AdminUser,
 
     @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("internal")
-    AdminDomain,
-
-    @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.Password)
     AdminPassword,
