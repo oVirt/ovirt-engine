@@ -39,6 +39,13 @@ public class AuthzUtils {
         return ret;
     }
 
+    public static List<ExtMap> fetchPrincipalsByIdsRecursively(
+            final ExtensionProxy extension,
+            final String namespace,
+            final List<String> ids) {
+                return findPrincipalsByIds(extension, namespace, ids, true, true);
+    }
+
     public static List<ExtMap> queryPrincipalRecords(
             final ExtensionProxy extension,
             final String namespace,
