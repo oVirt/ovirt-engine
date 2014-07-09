@@ -1933,6 +1933,8 @@ public class VdsUpdateRunTimeInfo {
             _vmsToRerun.add(runningVm.getId());
             log.infoFormat("Adding VM {0} to re-run list", runningVm.getId());
             vmToUpdate.setMigratingToVds(null);
+            vmToUpdate.setMigrationProgressPercent(0);
+            addVmStatisticsToList(vmToUpdate.getStatisticsData());
         }
     }
 
