@@ -56,7 +56,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
 
     protected boolean checkExistingStorageDomain() {
         if (DbFacade.getInstance().getStorageDomainStaticDao().get(getStorageDomain().getId()) != null) {
-            return  failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
         }
 
         List<Guid> storageIds = (ArrayList<Guid>) runVdsCommand(VDSCommandType.HSMGetStorageDomainsList,
@@ -65,7 +65,7 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
         ).getReturnValue();
 
         if (!storageIds.contains(getStorageDomain().getId())) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
         }
 
         Pair<StorageDomainStatic, Guid> domainFromIrs = (Pair<StorageDomainStatic, Guid>) runVdsCommand(
