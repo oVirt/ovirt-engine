@@ -324,6 +324,14 @@ public final class VdsProperties {
     public static final String Fdc = "fdc";
     public static final String Guid = "GUID";
     public static final String Disk = "disk";
+    // iotune
+    public static final String Iotune = "ioTune";
+    public static final String TotalBytesSec = "total_bytes_sec";
+    public static final String ReadBytesSec = "read_bytes_sec";
+    public static final String WriteBytesSec = "write_bytes_sec";
+    public static final String TotalIopsSec = "total_iops_sec";
+    public static final String ReadIopsSec = "read_iops_sec";
+    public static final String WriteIopsSec = "write_iops_sec";
     // USB controller
     public static final String Model = "model";
     // USB slot
