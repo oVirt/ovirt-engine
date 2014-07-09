@@ -190,7 +190,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
                 return value;
             }
         });
-        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class, eventBus);
+        bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
         qosWidget = new NetworkQosWidget(constants);
         customPropertiesWidget = new KeyValueWidget<KeyValueModel>("310px", "140px"); //$NON-NLS-1$ $NON-NLS-2$
 
