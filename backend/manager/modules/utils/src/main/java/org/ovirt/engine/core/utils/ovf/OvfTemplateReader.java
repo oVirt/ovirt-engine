@@ -8,6 +8,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
 import org.ovirt.engine.core.compat.backendcompat.XmlNode;
@@ -51,6 +53,7 @@ public class OvfTemplateReader extends OvfReader {
 
     @Override
     protected void readHardwareSection(XmlNode section) {
+        boolean readVirtioSerial = false;
         XmlNodeList list = section.SelectNodes("Item");
         for (XmlNode node : list) {
             int resourceType = Integer.parseInt(node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText);
@@ -160,10 +163,16 @@ public class OvfTemplateReader extends OvfReader {
                     // special devices are treated as managed devices but still have the OTHER OVF ResourceType
                     addAsManaged = VmDeviceCommonUtils.isSpecialDevice(device, type);
                 }
-                readVmDevice(node, _vmTemplate, Guid.newGuid(), addAsManaged);
+                VmDevice vmDevice = readVmDevice(node, _vmTemplate, Guid.newGuid(), addAsManaged);
+                readVirtioSerial = readVirtioSerial ||
+                        VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
                 break;
 
             }
+        }
+
+        if (!readVirtioSerial) {
+            addManagedVmDevice(VmDeviceCommonUtils.createVirtioSerialDeviceForVm(_vmTemplate.getId()));
         }
     }
 

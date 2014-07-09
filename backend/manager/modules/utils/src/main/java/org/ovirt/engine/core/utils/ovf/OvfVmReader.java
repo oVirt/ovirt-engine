@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -57,6 +58,7 @@ public class OvfVmReader extends OvfReader {
 
     @Override
     protected void readHardwareSection(XmlNode section) {
+        boolean readVirtioSerial = false;
         for (XmlNode node : section.SelectNodes("Item")) {
 
             switch (node.SelectSingleNode("rasd:ResourceType", _xmlNS).innerText) {
@@ -89,9 +91,15 @@ public class OvfVmReader extends OvfReader {
                 break;
 
             case OvfHardware.OTHER:
-                readOtherHardwareItem(node);
+                VmDevice vmDevice = readOtherHardwareItem(node);
+                readVirtioSerial = readVirtioSerial ||
+                        VmDeviceType.VIRTIOSERIAL.getName().equals(vmDevice.getDevice());
                 break;
             }
+        }
+
+        if (!readVirtioSerial) {
+            addManagedVmDevice(VmDeviceCommonUtils.createVirtioSerialDeviceForVm(_vm.getId()));
         }
     }
 
@@ -187,19 +195,19 @@ public class OvfVmReader extends OvfReader {
         readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
     }
 
-    private void readOtherHardwareItem(XmlNode node) {
+    private VmDevice readOtherHardwareItem(XmlNode node) {
         if (node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS) != null
                 && StringUtils.isNotEmpty(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText)) {
             VmDeviceGeneralType type = VmDeviceGeneralType.forValue(String.valueOf(node.SelectSingleNode(OvfProperties.VMD_TYPE, _xmlNS).innerText));
             String device = String.valueOf(node.SelectSingleNode(OvfProperties.VMD_DEVICE, _xmlNS).innerText);
             // special devices are treated as managed devices but still have the OTHER OVF ResourceType
             if (VmDeviceCommonUtils.isSpecialDevice(device, type)) {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
+                return readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.TRUE);
             } else {
-                readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
+                return readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
             }
         } else {
-            readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
+            return readVmDevice(node, _vm.getStaticData(), Guid.newGuid(), Boolean.FALSE);
         }
     }
 

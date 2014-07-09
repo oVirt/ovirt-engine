@@ -314,6 +314,12 @@ public abstract class OvfReader implements IOvfBuilder {
 
     protected abstract void readHardwareSection(XmlNode section);
 
+    protected VmDevice addManagedVmDevice(VmDevice vmDevice) {
+        vmDevice.setIsManaged(true);
+        vmBase.getManagedDeviceMap().put(vmDevice.getDeviceId(), vmDevice);
+        return vmDevice;
+    }
+
     protected VmDeviceType getDisplayDevice(DisplayType displayType) {
         return osRepository.getDisplayDevice(vmBase.getOsId(), new Version(getVersion()), displayType);
     }
