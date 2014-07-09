@@ -148,11 +148,9 @@ public class NetworkHostListModel extends SearchableListModel
             return;
         }
 
-        HostSetupNetworksModel setupNetworksWindowModel = new HostSetupNetworksModel(this);
-
-        // set entity
-        setupNetworksWindowModel.setEntity(((PairQueryable<VdsNetworkInterface, VDS>) getSelectedItem()).getSecond());
-
+        HostSetupNetworksModel setupNetworksWindowModel =
+                new HostSetupNetworksModel(this,
+                        ((PairQueryable<VdsNetworkInterface, VDS>) getSelectedItem()).getSecond());
         setWindow(setupNetworksWindowModel);
     }
 

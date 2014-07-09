@@ -151,10 +151,11 @@ public class HostSetupNetworksModel extends EntityModel {
     public static final String NETWORK = "network"; //$NON-NLS-1$
     public static final String LABEL = "label"; //$NON-NLS-1$
 
-    public HostSetupNetworksModel(SearchableListModel listModel) {
+    public HostSetupNetworksModel(SearchableListModel listModel, VDS host) {
         this.sourceListModel = listModel;
+        setEntity(host);
 
-        setTitle(ConstantsManager.getInstance().getConstants().setupHostNetworksTitle());
+        setTitle(ConstantsManager.getInstance().getMessages().setupHostNetworksTitle(host.getName()));
         setHelpTag(HelpTag.host_setup_networks);
         setHashName("host_setup_networks"); //$NON-NLS-1$
 
