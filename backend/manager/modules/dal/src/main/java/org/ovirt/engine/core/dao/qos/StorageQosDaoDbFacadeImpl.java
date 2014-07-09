@@ -5,12 +5,22 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class StorageQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<StorageQos> implements StorageQosDao {
     public StorageQosDaoDbFacadeImpl() {
         super(QosType.STORAGE);
+    }
+
+    @Override
+    public StorageQos getQosByDiskProfileId(Guid diskProfileId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_profile_id", diskProfileId);
+        return getCallsHandler().executeRead("GetQosByDiskProfile",
+                createEntityRowMapper(),
+                parameterSource);
     }
 
     @Override
