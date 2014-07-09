@@ -146,6 +146,8 @@
 
         .actionButtonNetwork {
             cursor: pointer;
+            margin-right: 3px;
+            margin-left: 5px;
         }
 
         .actionButtonBond {

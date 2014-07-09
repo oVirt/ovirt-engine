@@ -54,6 +54,7 @@ public class BondPanel extends NicPanel {
         for (NetworkInterfaceModel networkInterfaceModel : bonded) {
             NicPanel nicPanel = new NicPanel(networkInterfaceModel, style);
             nicPanel.parentPanel = this;
+            nicPanel.actionButton.setVisible(false);
             vPanel.add(nicPanel);
         }
 
@@ -63,18 +64,6 @@ public class BondPanel extends NicPanel {
     @Override
     protected void onAction() {
         item.edit();
-    }
-
-    @Override
-    protected void onMouseOut() {
-        super.onMouseOut();
-        actionButton.setVisible(false);
-    }
-
-    @Override
-    protected void onMouseOver() {
-        super.onMouseOver();
-        actionButton.setVisible(true);
     }
 
 }
