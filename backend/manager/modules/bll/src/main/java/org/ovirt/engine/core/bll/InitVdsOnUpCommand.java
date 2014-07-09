@@ -83,7 +83,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
     private boolean connectPoolSucceeded;
     private boolean glusterHostUuidFound, glusterPeerListSucceeded, glusterPeerProbeSucceeded;
     private FenceStatusReturnValue fenceStatusReturnValue;
-    private static int MAX_RETRIES_GLUSTER_PROBE_STATUS = Config.<Integer> getValue(ConfigValues.GlusterPeerStatusRetries);
+    private static Integer MAX_RETRIES_GLUSTER_PROBE_STATUS;
 
     public InitVdsOnUpCommand(HostStoragePoolParametersBase parameters) {
         super(parameters);
@@ -441,7 +441,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                         }
 
                         int retries = 0;
-                        while (retries < MAX_RETRIES_GLUSTER_PROBE_STATUS) {
+                        while (retries < getMaxRetriesGlusterProbeStatus()) {
                             // though gluster peer probe succeeds, it takes some time for the host to be
                             // listed as a peer. Return success only when the host is acknowledged as peer
                             // from another upServer.
@@ -454,7 +454,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                             if (!getGlusterUtil().isHostExists(newGlusterServers, getVds())) {
                                 log.infoFormat("Failed to find host {0} in gluster peer list from {1} on attempt {2}" , getVds(), newUpServer, ++retries);
                                 // if num of attempts done
-                                if (retries == MAX_RETRIES_GLUSTER_PROBE_STATUS) {
+                                if (retries == getMaxRetriesGlusterProbeStatus()) {
                                     customLogValues.put("Command", "gluster peer status " + getVds().getHostName());
                                     setNonOperational(NonOperationalReason.GLUSTER_COMMAND_FAILED, customLogValues);
                                     return false;
@@ -562,5 +562,12 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             base.setVds(getVds());
             AuditLogDirector.log(base, AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS);
         }
+    }
+
+    private int getMaxRetriesGlusterProbeStatus() {
+        if (MAX_RETRIES_GLUSTER_PROBE_STATUS == null) {
+            MAX_RETRIES_GLUSTER_PROBE_STATUS = Config.<Integer> getValue(ConfigValues.GlusterPeerStatusRetries);
+        }
+        return MAX_RETRIES_GLUSTER_PROBE_STATUS;
     }
 }
