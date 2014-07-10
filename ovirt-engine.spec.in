@@ -199,9 +199,9 @@ Requires:	fop
 Requires:	java
 Requires:	java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
 Requires:	jpackage-utils
-Requires:	ovirt-image-uploader >= 3.3.0
-Requires:	ovirt-iso-uploader >= 3.3.0
-Requires:	ovirt-log-collector >= 3.3.0
+Requires:	ovirt-image-uploader >= 3.5.0
+Requires:	ovirt-iso-uploader >= 3.5.0
+Requires:	ovirt-log-collector >= 3.5.0
 Requires:	patternfly1
 Requires:	postgresql-server >= 8.4.7
 Requires:	ws-commons-util
@@ -354,7 +354,7 @@ Requires:	bind-utils
 Requires:	iproute
 Requires:	libxml2-python
 Requires:	logrotate
-Requires:	otopi >= 1.2.0-1
+Requires:	otopi >= 1.2.2
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
@@ -375,8 +375,8 @@ Setup and upgrade scripts for %{ovirt_product_name_short}
 Summary:	Setup and upgrade specific plugins for %{ovirt_product_name_short}
 Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
-Requires:	%{name} >= 3.3.2
-Conflicts:	%{name} < 3.3.2
+Requires:	%{name} >= 3.5.0
+Conflicts:	%{name} < 3.5.0
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
@@ -445,16 +445,6 @@ Requires(post):		systemd
 Requires(preun):	systemd
 Requires(postun):	systemd
 %endif
-
-# Legacy
-Obsoletes:	%{name}-config < 3.3.0
-Obsoletes:	%{name}-genericapi < 3.3.0
-Obsoletes:	%{name}-notification-service < 3.3.0
-Obsoletes:	%{name}-tools-common < 3.3.0
-Provides:	%{name}-config = %{version}-%{release}
-Provides:	%{name}-genericapi = %{version}-%{release}
-Provides:	%{name}-notification-service = %{version}-%{release}
-Provides:	%{name}-tools-common = %{version}-%{release}
 
 %description tools
 %{ovirt_product_name_short} Tools
@@ -549,7 +539,7 @@ Setup and upgrade specific plugins for websocket-proxy
 %package setup-plugin-allinone
 Summary:	All-in-one plugin for %{ovirt_product_name_short}'s setup
 Group:		%{ovirt_product_group}
-Requires:	%{name}-sdk-python >= 3.4.0.7
+Requires:	%{name}-sdk-python >= 3.6.0.0
 Requires:	%{name}-setup-plugin-ovirt-engine = %{version}-%{release}
 Requires:	openssh-server
 Requires:	ovirt-host-deploy >= 1.3.0
@@ -1082,6 +1072,9 @@ fi
 %endif
 
 %changelog
+* Thu Jul 10 2014 Sandro Bonazzola <sbonazzo@redhat.com> - 3.6.0
+- Update dependencies and removed legacy provides / requires
+
 * Thu Jan 17 2013 Juan Hernandez <juan.hernandez@redhat.com> - 3.3.0-1
 - Bump version to 3.3.0
 
