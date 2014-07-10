@@ -1032,6 +1032,10 @@ public class HostGeneralModel extends EntityModel
         setNonOperationalReasonEntity((getEntity().getNonOperationalReason() == NonOperationalReason.NONE ? null
                 : (NonOperationalReason) getEntity().getNonOperationalReason()));
 
+        setHasAnyAlert();
+    }
+
+    public void setHasAnyAlert() {
         setHasAnyAlert(getHasNICsAlert() || getHasUpgradeAlert() || getHasManualFenceAlert()
                 || getHasNoPowerManagementAlert() || getHasReinstallAlertNonResponsive()
                 || getHasReinstallAlertInstallFailed() || getHasReinstallAlertMaintenance());
