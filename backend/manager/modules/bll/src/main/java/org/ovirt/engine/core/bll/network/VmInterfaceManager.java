@@ -140,7 +140,7 @@ public class VmInterfaceManager {
     }
 
     /**
-     * Finds active VMs which uses a network from a given networks list
+     * Finds active VMs which actively uses a network from a given networks list
      *
      * @param vdsId
      *            The host id on which VMs are running
@@ -149,12 +149,18 @@ public class VmInterfaceManager {
      * @return A list of VM names which uses the networks
      */
     public List<String> findActiveVmsUsingNetworks(Guid vdsId, List<String> networks) {
+        if (networks.isEmpty()) {
+            return Collections.emptyList();
+        }
+
         List<VM> runningVms = getVmDAO().getAllRunningForVds(vdsId);
         List<String> vmNames = new ArrayList<String>();
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
-                if (vmNic.getNetworkName() != null && networks.contains(vmNic.getNetworkName())) {
+                if (vmNic.isPlugged() &&
+                    vmNic.getNetworkName() != null &&
+                    networks.contains(vmNic.getNetworkName())) {
                     vmNames.add(vm.getName());
                     break;
                 }

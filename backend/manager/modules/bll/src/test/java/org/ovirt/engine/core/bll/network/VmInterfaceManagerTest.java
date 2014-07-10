@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.network;
 
+import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyList;
@@ -128,7 +129,7 @@ public class VmInterfaceManagerTest {
 
     @Test
     public void findActiveVmsUsingNetworks() {
-        mockDaos();
+        mockDaos(true);
 
         List<String> vmNames =
                 vmInterfaceManager.findActiveVmsUsingNetworks(Guid.newGuid(), Collections.singletonList(NETWORK_NAME));
@@ -136,8 +137,17 @@ public class VmInterfaceManagerTest {
     }
 
     @Test
+    public void findActiveVmsUsingNetworksOnUnpluggedVnic() {
+        mockDaos(false);
+
+        List<String> vmNames =
+                vmInterfaceManager.findActiveVmsUsingNetworks(Guid.newGuid(), Collections.singletonList(NETWORK_NAME));
+        assertFalse(vmNames.contains(VM_NAME));
+    }
+
+    @Test
     public void findNoneOfActiveVmsUsingNetworks() {
-        mockDaos();
+        mockDaos(true);
 
         List<String> vmNames =
                 vmInterfaceManager.findActiveVmsUsingNetworks(Guid.newGuid(),
@@ -158,8 +168,8 @@ public class VmInterfaceManagerTest {
         }
     }
 
-    private void mockDaos() {
-        VM vm = createVM(VM_NAME, NETWORK_NAME);
+    private void mockDaos(boolean pluggedInterface) {
+        VM vm = createVM(VM_NAME, NETWORK_NAME, pluggedInterface);
         when(vmDAO.getAllRunningForVds(any(Guid.class))).thenReturn(Arrays.asList(vm));
         when(vmNetworkInterfaceDAO.getAllForVm(vm.getId())).thenReturn(vm.getInterfaces());
     }
@@ -200,10 +210,11 @@ public class VmInterfaceManagerTest {
         return iface;
     }
 
-    protected VmNetworkInterface createNewViewableInterface() {
+    protected VmNetworkInterface createNewViewableInterface(boolean plugged) {
         VmNetworkInterface iface = new VmNetworkInterface();
         iface.setId(Guid.newGuid());
         iface.setMacAddress(RandomUtils.instance().nextString(10));
+        iface.setPlugged(plugged);
         return iface;
     }
 
@@ -214,13 +225,15 @@ public class VmInterfaceManagerTest {
      *            The VM name to be set
      * @param networkName
      *            The network name to be set for the VM interface
+     * @param pluggedInterface
+     *            whether the VM interface plugged or not
      * @return the VM instance with the appropriate data.
      */
-    private VM createVM(String vmName, String networkName) {
+    private VM createVM(String vmName, String networkName, boolean pluggedInterface) {
         VM vm = new VM();
         vm.setId(Guid.newGuid());
         vm.setName(vmName);
-        VmNetworkInterface vmIface = createNewViewableInterface();
+        VmNetworkInterface vmIface = createNewViewableInterface(pluggedInterface);
         vmIface.setVmId(vm.getId());
         vmIface.setNetworkName(networkName);
         vm.getInterfaces().add(vmIface);

@@ -725,15 +725,11 @@ public class SetupNetworksHelper {
             }
         }
 
-        if (!removedNetworks.isEmpty()) {
-            List<String> vmNames =
-                    getVmInterfaceManager().findActiveVmsUsingNetworks(params.getVdsId(), removedNetworks);
+        List<String> vmNames =
+                getVmInterfaceManager().findActiveVmsUsingNetworks(params.getVdsId(), removedNetworks);
 
-            if (!vmNames.isEmpty()) {
-                for (String vmName : vmNames) {
-                    addViolation(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
-                }
-            }
+        for (String vmName : vmNames) {
+            addViolation(VdcBllMessages.NETWORK_CANNOT_DETACH_NETWORK_USED_BY_VMS, vmName);
         }
     }
 
