@@ -38,28 +38,7 @@ class Plugin(plugin.PluginBase):
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
-        self._needStart = False
         self._enabled = True
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_INIT,
-    )
-    def _init(self):
-        self.environment.setdefault(
-            oenginecons.ConfigEnv.FENCE_KDUMP_LISTENER_CONFIG,
-            True
-        )
-
-    @plugin.event(
-        stage=plugin.Stages.STAGE_LATE_SETUP,
-        condition=lambda self: not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ],
-    )
-    def _late_setup_service_state(self):
-        self._needStart = self.services.status(
-            name=oenginecons.Const.FENCE_KDUMP_LISTENER_SERVICE_NAME,
-        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -75,15 +54,10 @@ class Plugin(plugin.PluginBase):
     def _customization_disable(self):
         if not self.environment[oenginecons.CoreEnv.ENABLE]:
             self._enabled = False
-            self.environment[
-                oenginecons.ConfigEnv.FENCE_KDUMP_LISTENER_CONFIG
-            ] = False
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
-        condition=lambda self: self.environment[
-            oenginecons.ConfigEnv.FENCE_KDUMP_LISTENER_CONFIG
-        ],
+        condition=lambda self: self._enabled,
         before=(
             osetupcons.Stages.DIALOG_TITLES_E_SYSTEM,
         ),
@@ -106,10 +80,8 @@ class Plugin(plugin.PluginBase):
         condition=lambda self: (
             not self.environment[
                 osetupcons.CoreEnv.DEVELOPER_MODE
-            ] and (
-                self._needStart or
-                self._enabled
-            )
+            ] and
+            self._enabled
         ),
     )
     def _closeup(self):

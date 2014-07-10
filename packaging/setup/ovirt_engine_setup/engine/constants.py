@@ -591,15 +591,6 @@ class ConfigEnv(object):
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
-    @osetupattrs(
-        answerfile=True,
-        summary=True,
-        description=_('Configure fence_kdump listener'),
-        postinstallfile=True,
-    )
-    def FENCE_KDUMP_LISTENER_CONFIG(self):
-        return 'OVESETUP_CONFIG/fenceKdumpListenerConfig'
-
 
 @util.export
 @util.codegen
