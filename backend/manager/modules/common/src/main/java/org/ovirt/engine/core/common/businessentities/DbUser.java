@@ -109,7 +109,7 @@ public class DbUser extends IVdcQueryable {
         active = true;
         role = "";
         note = "";
-
+        groupNames = new HashSet<String>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
