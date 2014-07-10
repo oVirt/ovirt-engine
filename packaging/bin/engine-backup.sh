@@ -690,10 +690,24 @@ restoreDB() {
 	cat "${psqllog}" >> "${LOG}"  2>&1 \
 		|| logdie "Failed to append psql log to restore log"
 
-	local IGNORED_ERRORS=$(cat << __EOF | tr '\012' '|' | sed 's/|$//'
+	local IGNORED_ERRORS=$(cat << __EOF | egrep -v '^$|^#' | tr '\012' '|' | sed 's/|$//'
 language "plpgsql" already exists
 must be owner of language plpgsql
 must be owner of extension plpgsql
+#
+# older versions of dwh used uuid-ossp, which requires special privs,
+# is not used anymore, and emits the following errors for normal users.
+permission denied for language c
+function public.uuid_generate_v1\(\) does not exist
+function public.uuid_generate_v1mc\(\) does not exist
+function public.uuid_generate_v3\(uuid, text\) does not exist
+function public.uuid_generate_v4\(\) does not exist
+function public.uuid_generate_v5\(uuid, text\) does not exist
+function public.uuid_nil\(\) does not exist
+function public.uuid_ns_dns\(\) does not exist
+function public.uuid_ns_oid\(\) does not exist
+function public.uuid_ns_url\(\) does not exist
+function public.uuid_ns_x500\(\) does not exist
 __EOF
 )
 	local numerrors=$(grep 'ERROR: ' "${psqllog}" | grep -Ev "${IGNORED_ERRORS}" | wc -l)
