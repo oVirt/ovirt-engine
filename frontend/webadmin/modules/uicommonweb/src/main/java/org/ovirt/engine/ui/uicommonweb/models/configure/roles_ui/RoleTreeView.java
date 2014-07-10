@@ -47,13 +47,9 @@ public class RoleTreeView {
         SelectionTreeNodeModel thirdNode;
         thirdNode = createSelectionTreeNodeModel(isReadOnly, third);
         thirdNode.setIsSelectedNotificationPrevent(true);
-
-        // thirdNode.IsSelected =
-        // attachedActions.Contains((VdcActionType) Enum.Parse(typeof (VdcActionType), name)); //TODO:
-        // suppose to be action group
-
         thirdNode.setIsSelectedNullable(false);
         thirdNode.setTooltip(third.getTooltip());
+
         return thirdNode;
     }
 
