@@ -93,6 +93,8 @@ public class FrontendTest {
     IAsyncConverter<Object> mockConverter;
     @Mock
     EventBus mockEventBus;
+    @Mock
+    XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder;
     @Captor
     ArgumentCaptor<AsyncCallback<VdcQueryReturnValue>> callback;
     @Captor
@@ -102,10 +104,9 @@ public class FrontendTest {
     public void setUp() throws Exception {
         mockService = mock(GenericApiGWTServiceAsync.class, withSettings().extraInterfaces(ServiceDefTarget.class));
         fakeScheduler = new FakeGWTScheduler();
-        XsrfRpcRequestBuilder mockXsrfRpcRequestBuilder = new XsrfRpcRequestBuilder();
         CommunicationProvider communicationsProvider = new GWTRPCCommunicationProvider(mockService, mockXsrfService,
                 mockXsrfRpcRequestBuilder);
-        mockXsrfRpcRequestBuilder.setXsrfToken(new XsrfToken("Something")); //$NON-NLS-1$
+        when(mockXsrfRpcRequestBuilder.getXsrfToken()).thenReturn(new XsrfToken("Something")); //$NON-NLS-1$
         OperationProcessor operationProcessor = new OperationProcessor(communicationsProvider);
         operationProcessor.setScheduler(fakeScheduler);
         VdcOperationManager operationsManager = new VdcOperationManager(operationProcessor);
