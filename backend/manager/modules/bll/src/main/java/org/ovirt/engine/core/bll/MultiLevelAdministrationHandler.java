@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.RoleType;
@@ -136,5 +137,14 @@ public class MultiLevelAdministrationHandler {
 
     public static boolean isMultilevelAdministrationOn() {
         return Config.<Boolean> getValue(ConfigValues.IsMultilevelAdministrationOn);
+    }
+
+    public static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
+        Permissions perms = new Permissions();
+        perms.setad_element_id(userId);
+        perms.setObjectType(objectType);
+        perms.setObjectId(entityId);
+        perms.setrole_id(role.getId());
+        addPermission(perms);
     }
 }

@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MacPoolParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.MacPool;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -84,16 +83,6 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     }
 
     private void addPermission(Guid userId, Guid macPoolId) {
-        addPermission(userId, macPoolId, PredefinedRoles.MAC_POOL_ADMIN, VdcObjectType.MacPool);
+        MultiLevelAdministrationHandler.addPermission(userId, macPoolId, PredefinedRoles.MAC_POOL_ADMIN, VdcObjectType.MacPool);
     }
-
-    private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
-        Permissions perms = new Permissions();
-        perms.setad_element_id(userId);
-        perms.setObjectType(objectType);
-        perms.setObjectId(entityId);
-        perms.setrole_id(role.getId());
-        MultiLevelAdministrationHandler.addPermission(perms);
-    }
-
 }

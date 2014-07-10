@@ -7,7 +7,6 @@ import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.compat.Guid;
@@ -28,7 +27,7 @@ public class NetworkHelper {
      *            the Network ID
      */
     public static void addPermissionsOnNetwork(Guid userId, Guid networkId) {
-        addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
+        MultiLevelAdministrationHandler.addPermission(userId, networkId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.Network);
     }
 
     /**
@@ -43,11 +42,14 @@ public class NetworkHelper {
      *            Indicates of the network is intended for a public user
      */
     public static void addPermissionsOnVnicProfile(Guid userId, Guid vnicProfileId, boolean publicUse) {
-        addPermission(userId, vnicProfileId, PredefinedRoles.NETWORK_ADMIN, VdcObjectType.VnicProfile);
+        MultiLevelAdministrationHandler.addPermission(userId,
+                vnicProfileId,
+                PredefinedRoles.NETWORK_ADMIN,
+                VdcObjectType.VnicProfile);
 
         // if the profile is for public use, set EVERYONE as a VNICProfileUser on the profile
         if (publicUse) {
-            addPermission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
+            MultiLevelAdministrationHandler.addPermission(MultiLevelAdministrationHandler.EVERYONE_OBJECT_ID,
                     vnicProfileId,
                     PredefinedRoles.VNIC_PROFILE_USER,
                     VdcObjectType.VnicProfile);
@@ -61,15 +63,6 @@ public class NetworkHelper {
         profile.setNetworkId(net.getId());
         profile.setPortMirroring(false);
         return profile;
-    }
-
-    private static void addPermission(Guid userId, Guid entityId, PredefinedRoles role, VdcObjectType objectType) {
-        Permissions perms = new Permissions();
-        perms.setad_element_id(userId);
-        perms.setObjectType(objectType);
-        perms.setObjectId(entityId);
-        perms.setrole_id(role.getId());
-        MultiLevelAdministrationHandler.addPermission(perms);
     }
 
     public static Network getNetworkByVnicProfileId(Guid vnicProfileId) {
