@@ -195,15 +195,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
                     getVdsGroup().getcompatibility_version());
         }
 
-        if (getVmTemplate() != null) {
-            getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
-            updateOriginalTemplateNameOnDerivedVms();
-            UpdateVmTemplate();
-            updateWatchdog(getParameters().getVmTemplateData().getId());
-            updateRngDevice(getParameters().getVmTemplateData().getId());
-            checkTrustedService();
-            setSucceeded(true);
-        }
+        getVmStaticDAO().incrementDbGeneration(getVmTemplate().getId());
+        updateOriginalTemplateNameOnDerivedVms();
+        UpdateVmTemplate();
+        updateWatchdog(getParameters().getVmTemplateData().getId());
+        updateRngDevice(getParameters().getVmTemplateData().getId());
+        checkTrustedService();
+        setSucceeded(true);
     }
 
     private void checkTrustedService() {
