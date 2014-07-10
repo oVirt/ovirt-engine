@@ -13,32 +13,21 @@ public class RoleTreeView {
     public static ArrayList<SelectionTreeNodeModel> getRoleTreeView(boolean isReadOnly, boolean isAdmin) {
         RoleNode tree = initTreeView();
         ArrayList<SelectionTreeNodeModel> roleTreeView = new ArrayList<SelectionTreeNodeModel>();
-        SelectionTreeNodeModel firstNode = null, secondNode = null, thirdNode = null;
+        SelectionTreeNodeModel firstNode;
+        SelectionTreeNodeModel secondNode;
+        SelectionTreeNodeModel thirdNode;
 
         for (RoleNode first : tree.getLeafRoles()) {
-            firstNode = new SelectionTreeNodeModel();
-            firstNode.setTitle(first.getName());
-            firstNode.setDescription(first.getName());
-            firstNode.setIsChangable(!isReadOnly);
+            firstNode = createSelectionTreeNodeModel(isReadOnly, first);
 
             for (RoleNode second : first.getLeafRoles()) {
-                secondNode = new SelectionTreeNodeModel();
-                secondNode.setTitle(second.getName());
-                secondNode.setDescription(second.getName());
-                secondNode.setIsChangable(!isReadOnly);
+                secondNode = createSelectionTreeNodeModel(isReadOnly, second);
                 secondNode.setTooltip(second.getTooltip());
+
                 for (RoleNode third : second.getLeafRoles()) {
-                    thirdNode = new SelectionTreeNodeModel();
-                    thirdNode.setTitle(third.getName());
-                    thirdNode.setDescription(third.getDesc());
-                    thirdNode.setIsSelectedNotificationPrevent(true);
-                    // thirdNode.IsSelected =
-                    // attachedActions.Contains((VdcActionType) Enum.Parse(typeof (VdcActionType), name)); //TODO:
-                    // suppose to be action group
-                    thirdNode.setIsChangable(!isReadOnly);
-                    thirdNode.setIsSelectedNullable(false);
-                    thirdNode.setTooltip(third.getTooltip());
-                    if (isAdmin || ActionGroup.valueOf(thirdNode.getTitle()).getRoleType() == RoleType.USER) {
+                    thirdNode = createLeafSelectionTreeNodeModel(isReadOnly, third);
+
+                    if (isAdmin || isUser(thirdNode)) {
                         secondNode.getChildren().add(thirdNode);
                     }
                 }
@@ -52,6 +41,33 @@ public class RoleTreeView {
         }
 
         return roleTreeView;
+    }
+
+    protected static SelectionTreeNodeModel createLeafSelectionTreeNodeModel(boolean isReadOnly, RoleNode third) {
+        SelectionTreeNodeModel thirdNode;
+        thirdNode = createSelectionTreeNodeModel(isReadOnly, third);
+        thirdNode.setIsSelectedNotificationPrevent(true);
+
+        // thirdNode.IsSelected =
+        // attachedActions.Contains((VdcActionType) Enum.Parse(typeof (VdcActionType), name)); //TODO:
+        // suppose to be action group
+
+        thirdNode.setIsSelectedNullable(false);
+        thirdNode.setTooltip(third.getTooltip());
+        return thirdNode;
+    }
+
+    protected static boolean isUser(SelectionTreeNodeModel thirdNode) {
+        return ActionGroup.valueOf(thirdNode.getTitle()).getRoleType() == RoleType.USER;
+    }
+
+    protected static SelectionTreeNodeModel createSelectionTreeNodeModel(boolean isReadOnly, RoleNode roleNode) {
+        SelectionTreeNodeModel nodeModel;
+        nodeModel = new SelectionTreeNodeModel();
+        nodeModel.setTitle(roleNode.getName());
+        nodeModel.setDescription(roleNode.getName());
+        nodeModel.setIsChangable(!isReadOnly);
+        return nodeModel;
     }
 
     private static RoleNode categoryNode(String name, RoleNode... leaves) {
