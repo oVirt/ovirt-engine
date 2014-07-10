@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
@@ -138,6 +137,10 @@ public class KeyValueModel extends BaseKeyModel {
                 builder.append(keyValueLineModel.getValues().getSelectedItem());
             }
             builder.append(PROPERTIES_DELIMETER);
+        }
+        // remove the last delimiter
+        if (builder.toString().endsWith(PROPERTIES_DELIMETER)) {
+            return builder.subSequence(0, builder.length() - PROPERTIES_DELIMETER.length()).toString();
         }
         return builder.toString();
     }
