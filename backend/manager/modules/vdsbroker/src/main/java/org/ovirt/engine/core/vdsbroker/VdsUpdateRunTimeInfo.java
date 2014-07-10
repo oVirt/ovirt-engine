@@ -1236,7 +1236,7 @@ public class VdsUpdateRunTimeInfo {
                 continue;
             }
 
-            Guid deviceId = getDeviceId(device);
+            Guid deviceId = getDeviceId(device, deviceMap);
             VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
             if (deviceId == null || vmDevice == null) {
                 deviceId = addNewVmDevice(vmId, device);
@@ -1326,9 +1326,21 @@ public class VdsUpdateRunTimeInfo {
      * @param device
      * @return
      */
-    private static Guid getDeviceId(Map device) {
+    private static Guid getDeviceId(Map device, Map<VmDeviceId, VmDevice> deviceMap) {
         String deviceId = (String) device.get(VdsProperties.DeviceId);
-        return deviceId == null ? null : new Guid(deviceId);
+        if (deviceId != null) {
+            return new Guid(deviceId);
+        }
+
+        if (VdsProperties.VirtioSerial.equals(device.get(VdsProperties.Device))) {
+            for (VmDevice dev : deviceMap.values()) {
+                if (VmDeviceType.VIRTIOSERIAL.getName().equals(dev.getDevice())) {
+                    return dev.getDeviceId();
+                }
+            }
+        }
+
+        return null;
     }
 
     // if not statistics check if status changed return a list of those
