@@ -96,6 +96,8 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
 @SuppressWarnings("unused")
 public class HostListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
+    private HostGeneralModel generalModel;
+
     private UICommand privateNewCommand;
 
     public UICommand getNewCommand()
@@ -1810,7 +1812,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.initDetailModels();
 
-        HostGeneralModel generalModel = new HostGeneralModel();
+        generalModel = new HostGeneralModel();
         generalModel.getRequestEditEvent().addListener(this);
         generalModel.getRequestGOToEventsTabEvent().addListener(this);
 
@@ -1892,6 +1894,55 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     {
         super.onSelectedItemChanged();
         updateActionAvailability();
+
+        if (getSelectedItem() != null) {
+            updateAlerts();
+        }
+    }
+
+    private void updateAlerts() {
+        final VDS vds = (VDS) getSelectedItem();
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        if (vds.getVdsType() == VDSType.oVirtNode) {
+            AsyncDataProvider.getoVirtISOsList(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object target, Object returnValue) {
+
+                            ArrayList<RpmVersion> isos = (ArrayList<RpmVersion>) returnValue;
+                            if (isos.size() > 0) {
+                                String [] hostOsInfo = vds.getHostOs().split("-"); //$NON-NLS-1$
+                                for (int counter = 0; counter < hostOsInfo.length; counter++) {
+                                    hostOsInfo[counter] = hostOsInfo[counter].trim();
+                                }
+                                generalModel.setHasUpgradeAlert(
+                                        generalModel.shouldAlertUpgrade(
+                                                isos,
+                                                hostOsInfo
+                                        )
+                                );
+                                boolean executionAllowed = vds.getStatus() != VDSStatus.Up
+                                        && vds.getStatus() != VDSStatus.Installing
+                                        && vds.getStatus() != VDSStatus.PreparingForMaintenance
+                                        && vds.getStatus() != VDSStatus.Reboot
+                                        && vds.getStatus() != VDSStatus.PendingApproval;
+
+                                if (!executionAllowed) {
+                                    getUpgradeCommand()
+                                            .getExecuteProhibitionReasons()
+                                            .add(constants
+                                                    .switchToMaintenanceModeToEnableUpgradeReason());
+                                }
+                                getUpgradeCommand().setIsExecutionAllowed(executionAllowed);
+                            }
+
+                            generalModel.setHasAnyAlert();
+
+                        }
+                    }),
+                    vds.getId());
+        }
+
     }
 
     @Override
