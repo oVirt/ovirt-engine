@@ -80,10 +80,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
         }
 
         helper = new SetupNetworksHelper(getParameters(), vds);
-        List<String> validationMesseges = helper.validate();
+        List<String> validationMessages = helper.validate();
 
-        if (!validationMesseges.isEmpty()) {
-            for (String msg : validationMesseges) {
+        if (!validationMessages.isEmpty()) {
+            for (String msg : validationMessages) {
                 addCanDoActionMessage(msg);
             }
             return false;
