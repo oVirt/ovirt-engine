@@ -138,6 +138,6 @@ public class DiskModel extends Model
         getQuota().setIsAvailable(false);
 
         setVolumeType(new ListModel<VolumeType>());
-        getVolumeType().setItems(AsyncDataProvider.getVolumeTypeList());
+        getVolumeType().setItems(AsyncDataProvider.getInstance().getVolumeTypeList());
     }
 }

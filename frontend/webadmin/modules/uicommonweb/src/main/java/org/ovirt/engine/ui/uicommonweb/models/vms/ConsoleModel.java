@@ -294,18 +294,18 @@ public abstract class ConsoleModel extends EntityModel {
     }
 
     protected String getToggleFullScreenKeys() {
-        return (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ConsoleToggleFullScreenKeys);
+        return (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ConsoleToggleFullScreenKeys);
     }
 
     protected String getReleaseCursorKeys() {
-        return (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ConsoleReleaseCursorKeys);
+        return (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ConsoleReleaseCursorKeys);
     }
 
     protected String getClientTitle() {
         String releaseCursorKeys = getReleaseCursorKeys();
         String releaseCursorKeysTranslated =
-                AsyncDataProvider.getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
-                        : "shift+f12"); //$NON-NLS-1$
+                AsyncDataProvider.getInstance().getComplexValueFromSpiceRedKeysResource((releaseCursorKeys != null) ? releaseCursorKeys
+                                                                                                : "shift+f12"); //$NON-NLS-1$
 
         String releaseCursorMsg = ""; //$NON-NLS-1$
 

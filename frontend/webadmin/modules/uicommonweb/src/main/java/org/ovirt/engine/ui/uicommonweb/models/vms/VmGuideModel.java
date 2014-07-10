@@ -35,7 +35,7 @@ public class VmGuideModel extends GuideModel
 
         if (getEntity() != null) {
             startProgress(null);
-            AsyncDataProvider.getVmDiskList(new AsyncQuery(this,  new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this,  new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         Collection<Disk> disks = (Collection<Disk>) returnValue;

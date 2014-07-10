@@ -158,7 +158,7 @@ public abstract class MoveOrCopyDiskModel extends DisksAllocationModel implement
         Collections.sort(getActiveStorageDomains(), new NameableComparator());
 
         if (!storages.isEmpty()) {
-            AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     MoveOrCopyDiskModel model = (MoveOrCopyDiskModel) target;

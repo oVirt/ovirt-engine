@@ -52,7 +52,7 @@ public class TimeZoneModel {
 
     public String getDisplayValue() {
         if (isDefault()) {
-            String defaultTimeZoneKey = (String) AsyncDataProvider.getConfigValuePreConverted(timeZoneType.getDefaultTimeZoneConfigurationKey());
+            String defaultTimeZoneKey = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(timeZoneType.getDefaultTimeZoneConfigurationKey());
             // check if default timezone is correct
             if (!timeZoneType.getTimeZoneList().containsKey(defaultTimeZoneKey)) {
                 // if not show GMT

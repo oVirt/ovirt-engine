@@ -129,7 +129,7 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
                 new TooltipProvider<UserPortalItemModel>() {
                     @Override
                     public String getTooltip(UserPortalItemModel value) {
-                        return AsyncDataProvider.getOsName(value.getOsId());
+                        return AsyncDataProvider.getInstance().getOsName(value.getOsId());
                     }
                 });
         getTable().addColumn(new UserPortalItemSimpleColumn(vmImageColumnWithMaskAndTooltip), constants.empty(), "77px"); //$NON-NLS-1$

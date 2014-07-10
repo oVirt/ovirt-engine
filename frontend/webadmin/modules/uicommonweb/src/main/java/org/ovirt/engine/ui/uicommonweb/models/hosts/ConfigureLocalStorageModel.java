@@ -399,16 +399,16 @@ public class ConfigureLocalStorageModel extends Model {
     private void setDefaultNames7() {
 
         // Get all clusters.
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
+                                                                            new INewAsyncCallback() {
+                                                                                @Override
+                                                                                public void onSuccess(Object target, Object returnValue) {
 
-                        context.storageList = (ArrayList<StorageDomain>) returnValue;
-                        setDefaultNames8();
-                    }
-                },
-                frontendHash));
+                                                                                    context.storageList = (ArrayList<StorageDomain>) returnValue;
+                                                                                    setDefaultNames8();
+                                                                                }
+                                                                            },
+                                                                            frontendHash));
     }
 
     public void setDefaultNames6() {
@@ -433,7 +433,7 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void run(StoragePool item, AsyncIteratorCallback callback) {
 
-                        AsyncDataProvider.getClusterList(callback.getAsyncQuery(), item.getId());
+                        AsyncDataProvider.getInstance().getClusterList(callback.getAsyncQuery(), item.getId());
                     }
                 },
                 new AsyncIteratorPredicate<StoragePool>() {
@@ -470,7 +470,7 @@ public class ConfigureLocalStorageModel extends Model {
                     @Override
                     public void run(StoragePool item, AsyncIteratorCallback callback) {
 
-                        AsyncDataProvider.getLocalStorageHost(callback.getAsyncQuery(), item.getName());
+                        AsyncDataProvider.getInstance().getLocalStorageHost(callback.getAsyncQuery(), item.getName());
                     }
                 },
                 new AsyncIteratorPredicate<StoragePool>() {
@@ -488,7 +488,7 @@ public class ConfigureLocalStorageModel extends Model {
     public void setDefaultNames4() {
 
         // Get data centers containing 'local' in name.
-        AsyncDataProvider.getDataCenterListByName(new AsyncQuery(null,
+        AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(null,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -504,16 +504,16 @@ public class ConfigureLocalStorageModel extends Model {
     public void setDefaultNames3() {
 
         // Get all clusters.
-        AsyncDataProvider.getClusterList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this,
+                                                                      new INewAsyncCallback() {
+                                                                          @Override
+                                                                          public void onSuccess(Object target, Object returnValue) {
 
-                        context.clusterList = (ArrayList<VDSGroup>) returnValue;
-                        setDefaultNames4();
-                    }
-                },
-                frontendHash));
+                                                                              context.clusterList = (ArrayList<VDSGroup>) returnValue;
+                                                                              setDefaultNames4();
+                                                                          }
+                                                                      },
+                                                                      frontendHash));
     }
 
     public void setDefaultNames2() {
@@ -522,7 +522,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Get cluster of the host.
         if (host.getVdsGroupId() != null) {
-            AsyncDataProvider.getClusterById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -544,7 +544,7 @@ public class ConfigureLocalStorageModel extends Model {
 
         // Get data center of the host.
         if (host.getStoragePoolId() != null) {
-            AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {

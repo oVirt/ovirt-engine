@@ -658,7 +658,7 @@ public class VmDiskListModel extends VmDiskListModelBase
 
             boolean isDiskHotpluggableInterface = false;
             if (getEntity() != null) {
-                isDiskHotpluggableInterface = AsyncDataProvider.getDiskHotpluggableInterfaces(getEntity().getOs(),
+                isDiskHotpluggableInterface = AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(getEntity().getOs(),
                         getEntity().getVdsGroupCompatibilityVersion()).contains(disk.getDiskInterface());
             }
 
@@ -807,7 +807,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (clusterCompatibilityVersion == null) {
             setIsDiskHotPlugSupported(false);
         } else {
-            setIsDiskHotPlugSupported((Boolean) !AsyncDataProvider.getDiskHotpluggableInterfaces(
+            setIsDiskHotPlugSupported((Boolean) !AsyncDataProvider.getInstance().getDiskHotpluggableInterfaces(
                     getEntity().getOs(), clusterCompatibilityVersion).isEmpty());
         }
     }
@@ -816,7 +816,7 @@ public class VmDiskListModel extends VmDiskListModelBase
     {
         final VM vm = getEntity();
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmDiskListModel model = (VmDiskListModel) target;
@@ -825,7 +825,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 Version dcCompatibilityVersion = dataCenter.getcompatibility_version() != null
                         ? dataCenter.getcompatibility_version() : new Version();
 
-                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model,
+                AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -864,7 +864,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 model.setDataCenterVersion(storagePool.getcompatibility_version());
             }
         });
-        AsyncDataProvider.getDataCenterById(query, getEntity().getStoragePoolId());
+        AsyncDataProvider.getInstance().getDataCenterById(query, getEntity().getStoragePoolId());
     }
 
     protected void updateExtendImageSizeSupported()
@@ -879,7 +879,7 @@ public class VmDiskListModel extends VmDiskListModelBase
                 model.setExtendImageSizeSupported((Boolean) returnValue);
             }
         });
-        AsyncDataProvider.isCommandCompatible(query, VdcActionType.ExtendImageSize,
+        AsyncDataProvider.getInstance().isCommandCompatible(query, VdcActionType.ExtendImageSize,
                 vm.getVdsGroupCompatibilityVersion(), dataCenterVersion);
     }
 

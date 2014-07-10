@@ -110,7 +110,7 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
         // Required because of type conversion
         monitorCount.setText(String.valueOf(getDetailModel().getMonitorCount()));
         isStateless.setText(Boolean.toString(getDetailModel().getIsStateless()));
-        oS.setText(AsyncDataProvider.getOsName(getDetailModel().getOS()));
+        oS.setText(AsyncDataProvider.getInstance().getOsName(getDetailModel().getOS()));
 
         formBuilder.update(getDetailModel());
     }

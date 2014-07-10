@@ -559,7 +559,7 @@ public class VmGeneralModel extends EntityModel
         setDefinedMemory(vm.getVmMemSizeMb() + " MB"); //$NON-NLS-1$
         setMinAllocatedMemory(vm.getMinAllocatedMem() + " MB"); //$NON-NLS-1$
 
-        setOS(AsyncDataProvider.getOsName(vm.getVmOsId()));
+        setOS(AsyncDataProvider.getInstance().getOsName(vm.getVmOsId()));
 
         Translator translator = EnumTranslator.getInstance();
         setDefaultDisplayType(translator.get(vm.getDefaultDisplayType()));
@@ -568,7 +568,7 @@ public class VmGeneralModel extends EntityModel
 
         setIsHighlyAvailable(vm.isAutoStartup());
 
-        setPriority(AsyncDataProvider.priorityToString(vm.getPriority()));
+        setPriority(AsyncDataProvider.getInstance().priorityToString(vm.getPriority()));
 
         setMonitorCount(vm.getNumOfMonitors());
 
@@ -581,12 +581,12 @@ public class VmGeneralModel extends EntityModel
 
         setGuestCpuCount(vm.getGuestCpuCount());
 
-        setHasDomain(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
+        setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
         if (vm.getVmInit() != null) {
             setDomain(vm.getVmInit().getDomain());
         }
 
-        setHasTimeZone(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
+        setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
         setTimeZone(vm.getTimeZone());
 
         setHasCustomProperties(!StringHelper.isNullOrEmpty(vm.getCustomProperties()));

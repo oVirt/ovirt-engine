@@ -39,7 +39,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
     protected void initClusters(final List<StoragePool> dataCenters) {
         // Get clusters with permitted edit action
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
-        AsyncDataProvider.getClustersWithPermittedAction(new AsyncQuery(new Object[]{this, getModel()},
+        AsyncDataProvider.getInstance().getClustersWithPermittedAction(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -50,7 +50,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                         List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
                         // filter clusters by architecture
-                        clusters = AsyncDataProvider.filterByArchitecture(clusters, vm.getClusterArch());
+                        clusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
                         if (containsVmCluster(clusters)) {
                             Collections.sort(clusters, new NameableComparator());
@@ -89,7 +89,7 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
 
     private void addVmCluster(final List<StoragePool> dataCenters, final List<VDSGroup> clusters)
     {
-        AsyncDataProvider.getClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(new Object[] { getModel(), clusters },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

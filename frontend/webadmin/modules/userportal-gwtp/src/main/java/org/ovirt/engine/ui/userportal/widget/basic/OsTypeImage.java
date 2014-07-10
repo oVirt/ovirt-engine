@@ -22,7 +22,7 @@ public class OsTypeImage extends AbstractDynamicImage<Integer, ApplicationResour
 
     @Override
     protected String imageName(Integer value) {
-        return AsyncDataProvider.getOsUniqueOsNames().get(value) + nameUniquePart + IMAGE;
+        return AsyncDataProvider.getInstance().getOsUniqueOsNames().get(value) + nameUniquePart + IMAGE;
     }
 
     @Override

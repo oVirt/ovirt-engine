@@ -165,7 +165,7 @@ public class VmBackupModel extends ManageBackupModel {
                 }
             }
         };
-        AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery,
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery,
                 getEntity().getId());
     }
 
@@ -402,8 +402,8 @@ public class VmBackupModel extends ManageBackupModel {
 
     protected int getMaxClonedNameLength(Object object) {
         VM vm = ((ImportVmData) object).getVm();
-        return AsyncDataProvider.isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getMaxVmNameLengthWin()
-                : AsyncDataProvider.getMaxVmNameLengthNonWin();
+        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
     }
 
     protected boolean validateName(String newVmName, EntityModel entity, IValidation[] validators) {
@@ -447,7 +447,7 @@ public class VmBackupModel extends ManageBackupModel {
                 DiskImage disk = (DiskImage) entry.getValue();
                 map.put(disk.getId(), importModel.getDiskImportData(disk.getId()).getSelectedStorageDomain().getId());
                 disk.setvolumeFormat(
-                        AsyncDataProvider.getDiskVolumeFormat(
+                        AsyncDataProvider.getInstance().getDiskVolumeFormat(
                                 importModel.getDiskImportData(disk.getId()).getSelectedVolumeType(),
                                 importModel.getDiskImportData(
                                         disk.getId()).getSelectedStorageDomain().getStorageType()));
@@ -579,7 +579,7 @@ public class VmBackupModel extends ManageBackupModel {
                     }
                 }
             };
-            AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery,
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery,
                     getEntity().getId());
         }
     }

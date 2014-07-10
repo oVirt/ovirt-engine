@@ -203,7 +203,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             setGuideContext(dataCenter.getId());
         }
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -309,7 +309,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         model.getComment().setEntity(dataCenter.getComment());
         model.setOriginalName(dataCenter.getName());
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -407,7 +407,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
         windowModel.startProgress(null);
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 windowModel.stopProgress();
@@ -432,8 +432,8 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
 
                 if (models.isEmpty()) {
                     windowModel.setMessage(ConstantsManager.getInstance()
-                            .getConstants()
-                            .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
+                                                   .getConstants()
+                                                   .thereAreNoCompatibleStorageDomainsAttachThisDcMsg());
                     windowModel.getLatch().setIsAvailable(false);
                     UICommand tempVar2 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
                     tempVar2.setTitle(ConstantsManager.getInstance().getConstants().close());
@@ -464,7 +464,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
             return;
         }
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 List<StorageDomain> storageDomainList = (List<StorageDomain>) returnValue;
@@ -877,13 +877,13 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
     }
 
     private void updateIscsiBondListAvailability(StoragePool storagePool) {
-        boolean iscsiBondSupported = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        boolean iscsiBondSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.IscsiMultipathingSupported,
                 storagePool.getcompatibility_version().getValue()
         );
 
         if (iscsiBondSupported) {
-            AsyncDataProvider.getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {

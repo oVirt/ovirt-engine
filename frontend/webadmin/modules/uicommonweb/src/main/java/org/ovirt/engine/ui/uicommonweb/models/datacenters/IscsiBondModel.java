@@ -67,7 +67,7 @@ public class IscsiBondModel extends Model {
     }
 
     private void initializeNetworkList() {
-        AsyncDataProvider.getAllDataCenterNetworks(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllDataCenterNetworks(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<Network> selected = new ArrayList<Network>();
@@ -89,7 +89,7 @@ public class IscsiBondModel extends Model {
     }
 
     private void initializeStorageTargetsList() {
-        AsyncDataProvider.getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionsByDataCenterIdAndStorageType(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<StorageServerConnections> selected = new ArrayList<StorageServerConnections>();

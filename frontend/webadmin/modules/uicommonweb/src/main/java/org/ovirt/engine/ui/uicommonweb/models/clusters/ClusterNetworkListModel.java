@@ -173,7 +173,7 @@ public class ClusterNetworkListModel extends SearchableListModel
             }
         };
         // fetch the list of DC Networks
-        AsyncDataProvider.getNetworkList(_asyncQuery, storagePoolId);
+        AsyncDataProvider.getInstance().getNetworkList(_asyncQuery, storagePoolId);
     }
 
     private ClusterNetworkManageModel createNetworkList(List<Network> dcNetworks) {
@@ -261,7 +261,7 @@ public class ClusterNetworkListModel extends SearchableListModel
 
                 }
             };
-            AsyncDataProvider.getDataCenterById(_asyncQuery, getEntity().getStoragePoolId());
+            AsyncDataProvider.getInstance().getDataCenterById(_asyncQuery, getEntity().getStoragePoolId());
         }
     }
 

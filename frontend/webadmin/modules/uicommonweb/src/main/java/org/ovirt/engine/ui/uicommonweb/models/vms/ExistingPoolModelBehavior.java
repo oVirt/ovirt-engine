@@ -97,7 +97,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -151,7 +151,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
 
     @Override
     protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
-        return AsyncDataProvider.filterByArchitecture(clusters, pool.getClusterArch());
+        return AsyncDataProvider.getInstance().filterByArchitecture(clusters, pool.getClusterArch());
     }
 
     @Override

@@ -48,8 +48,8 @@ public class PoolNameLengthValidation implements IValidation {
 
     protected int getMaxNameLength() {
         return isWindows() ?
-                AsyncDataProvider.getMaxVmNameLengthWin() :
-                AsyncDataProvider.getMaxVmNameLengthNonWin();
+                AsyncDataProvider.getInstance().getMaxVmNameLengthWin() :
+                AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
     }
 
     /**
@@ -58,7 +58,7 @@ public class PoolNameLengthValidation implements IValidation {
      * @return true if this osId is of Windows type
      */
     protected boolean isWindows() {
-        return AsyncDataProvider.isWindowsOsType(osId);
+        return AsyncDataProvider.getInstance().isWindowsOsType(osId);
     }
 
     protected String getReason() {

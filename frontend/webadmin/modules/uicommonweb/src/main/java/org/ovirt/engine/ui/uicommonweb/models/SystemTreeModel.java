@@ -243,7 +243,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 doNetworksSearch();
             }
         };
-        AsyncDataProvider.getDataCenterList(dcQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(dcQuery);
     }
 
     /**
@@ -273,7 +273,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 }
             }
         };
-        AsyncDataProvider.getClusterList(clusterQuery);
+        AsyncDataProvider.getInstance().getClusterList(clusterQuery);
     }
 
     /**
@@ -299,7 +299,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 }
             }
         };
-        AsyncDataProvider.getHostList(hostQuery);
+        AsyncDataProvider.getInstance().getHostList(hostQuery);
     }
 
     /**
@@ -326,7 +326,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 }
             }
         };
-        AsyncDataProvider.getVolumeList(volumeQuery, null);
+        AsyncDataProvider.getInstance().getVolumeList(volumeQuery, null);
     }
 
     /**
@@ -405,7 +405,7 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
                 setProviders((List<Provider>) returnValue);
             }
         };
-        AsyncDataProvider.getAllProviders(providersQuery);
+        AsyncDataProvider.getInstance().getAllProviders(providersQuery);
     }
 
     @Override

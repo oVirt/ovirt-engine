@@ -335,7 +335,7 @@ public class PermissionListModel extends SearchableListModel
 
     protected Guid getEntityGuid()
     {
-        return AsyncDataProvider.getEntityGuid(getEntity());
+        return AsyncDataProvider.getInstance().getEntityGuid(getEntity());
     }
 
     protected VdcObjectType getObjectType()

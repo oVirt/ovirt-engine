@@ -93,7 +93,7 @@ public class TemplateBackupModel extends VmBackupModel
 
     private void onRemove()
     {
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -342,7 +342,7 @@ public class TemplateBackupModel extends VmBackupModel
                     }
                 }
             };
-            AsyncDataProvider.getDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
+            AsyncDataProvider.getInstance().getDataCentersByStorageDomain(_asyncQuery, getEntity().getId());
         }
     }
 

@@ -162,7 +162,7 @@ public class UserListModel extends ListWithDetailsModel
 
         for (Guid userId : userIds)
         {
-            AsyncDataProvider.getAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getInstance().getAttachedTagsToUser(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -183,7 +183,7 @@ public class UserListModel extends ListWithDetailsModel
         }
         for (Guid grpId : grpIds)
         {
-            AsyncDataProvider.getAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getInstance().getAttachedTagsToUserGroup(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {

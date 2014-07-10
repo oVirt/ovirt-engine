@@ -70,7 +70,7 @@ public class ClusterGuideModel extends GuideModel
     private StoragePool dataCenter;
 
     private void updateOptionsNonLocalFSData() {
-        AsyncDataProvider.getHostListByCluster(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -81,18 +81,18 @@ public class ClusterGuideModel extends GuideModel
                     }
                 }), getEntity().getName());
 
-        AsyncDataProvider.getHostList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                        clusterGuideModel.allHosts = hosts;
-                        clusterGuideModel.updateOptionsNonLocalFS();
-                    }
-                }));
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery(this,
+                                                                   new INewAsyncCallback() {
+                                                                       @Override
+                                                                       public void onSuccess(Object target, Object returnValue) {
+                                                                           ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                                                                           ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
+                                                                           clusterGuideModel.allHosts = hosts;
+                                                                           clusterGuideModel.updateOptionsNonLocalFS();
+                                                                       }
+                                                                   }));
         if (getEntity().supportsGlusterService()) {
-            AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -105,7 +105,7 @@ public class ClusterGuideModel extends GuideModel
     }
 
     private void updateOptionsLocalFSData() {
-        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -223,7 +223,7 @@ public class ClusterGuideModel extends GuideModel
         {
             startProgress(null);
 
-            AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -277,7 +277,7 @@ public class ClusterGuideModel extends GuideModel
         model.setHashName("select_host"); //$NON-NLS-1$
 
         // In case of local storage, only one host is allowed in the cluster so we should disable multi selection
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -389,33 +389,32 @@ public class ClusterGuideModel extends GuideModel
         model.getCluster().setSelectedItem(getEntity());
         model.getCluster().setIsChangable(false);
 
-        AsyncDataProvider.getDataCenterList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
-                        HostModel model = (HostModel) clusterGuideModel.getWindow();
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this,
+                                                                         new INewAsyncCallback() {
+                                                                             @Override
+                                                                             public void onSuccess(Object target, Object returnValue) {
+                                                                                 ClusterGuideModel clusterGuideModel = (ClusterGuideModel) target;
+                                                                                 HostModel model = (HostModel) clusterGuideModel.getWindow();
 
-                        ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
-                        model.getDataCenter().setItems(dataCenters);
-                        if (getEntity().getStoragePoolId() != null)
-                        {
-                            model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
-                                    new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
-                                            .getStoragePoolId())));
-                        }
-                        model.getDataCenter().setIsChangable(false);
+                                                                                 ArrayList<StoragePool> dataCenters = (ArrayList<StoragePool>) returnValue;
+                                                                                 model.getDataCenter().setItems(dataCenters);
+                                                                                 if (getEntity().getStoragePoolId() != null) {
+                                                                                     model.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
+                                                                                                                                               new Linq.DataCenterPredicate(clusterGuideModel.getEntity()
+                                                                                                                                                                                    .getStoragePoolId())));
+                                                                                 }
+                                                                                 model.getDataCenter().setIsChangable(false);
 
-                        UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar.setIsDefault(true);
-                        model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar2.setIsCancel(true);
-                        model.getCommands().add(tempVar2);
-                    }
-                }));
+                                                                                 UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
+                                                                                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
+                                                                                 tempVar.setIsDefault(true);
+                                                                                 model.getCommands().add(tempVar);
+                                                                                 UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel); //$NON-NLS-1$
+                                                                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+                                                                                 tempVar2.setIsCancel(true);
+                                                                                 model.getCommands().add(tempVar2);
+                                                                             }
+                                                                         }));
     }
 
     public void onConfirmPMHost()

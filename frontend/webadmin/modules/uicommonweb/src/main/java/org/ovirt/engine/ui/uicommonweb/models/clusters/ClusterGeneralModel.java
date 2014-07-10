@@ -244,7 +244,7 @@ public class ClusterGeneralModel extends EntityModel {
         setEmulatedMachine(vdsGroup.getEmulatedMachine());
         setCompatibilityVersion(vdsGroup.getcompatibility_version().getValue());
         generateClusterType(vdsGroup.supportsGlusterService(), vdsGroup.supportsVirtService());
-        AsyncDataProvider.getNumberOfVmsInCluster(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNumberOfVmsInCluster(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setNumberOfVms((Integer) ((VdcQueryReturnValue) returnValue).getReturnValue());
@@ -297,7 +297,7 @@ public class ClusterGeneralModel extends EntityModel {
                 || getGlusterSwiftStatus() == GlusterServiceStatus.MIXED
                 || getGlusterSwiftStatus() == GlusterServiceStatus.UNKNOWN);
 
-        AsyncDataProvider.getGlusterSwiftServerServices(new AsyncQuery(glusterSwiftModel, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterSwiftServerServices(new AsyncQuery(glusterSwiftModel, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ManageGlusterSwiftModel innerGlusterSwiftModel = (ManageGlusterSwiftModel) model;
@@ -490,7 +490,7 @@ public class ClusterGeneralModel extends EntityModel {
                 hostsModel.stopProgress();
             }
         };
-        AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
+        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
 
     }
 
@@ -605,7 +605,7 @@ public class ClusterGeneralModel extends EntityModel {
                 hostsModel.stopProgress();
             }
         };
-        AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
+        AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), true);
     }
 
     public void onDetachNewGlusterHosts()
@@ -663,11 +663,11 @@ public class ClusterGeneralModel extends EntityModel {
                 setNoOfVolumesDown(volumesDown);
             }
         };
-        AsyncDataProvider.getVolumeList(_asyncQuery, getEntity().getName());
+        AsyncDataProvider.getInstance().getVolumeList(_asyncQuery, getEntity().getName());
 
         getManageGlusterSwiftCommand().setIsExecutionAllowed(getGlusterSwiftStatus() != GlusterServiceStatus.NOT_AVAILABLE);
 
-        AsyncDataProvider.getClusterGlusterSwiftService(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterGlusterSwiftService(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 GlusterClusterService swiftService = (GlusterClusterService) returnValue;
@@ -705,7 +705,7 @@ public class ClusterGeneralModel extends EntityModel {
                     }
                 }
             };
-            AsyncDataProvider.getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), false);
+            AsyncDataProvider.getInstance().getGlusterHostsNewlyAdded(_asyncQuery, getEntity().getId(), false);
         }
         else
         {

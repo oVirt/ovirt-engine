@@ -79,7 +79,7 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     @Override
     protected VnicInstanceType createGhostValue() {
         VmNetworkInterface vnic = new VmNetworkInterface();
-        vnic.setName(AsyncDataProvider.getNewNicName(vnics));
+        vnic.setName(AsyncDataProvider.getInstance().getNewNicName(vnics));
         vnics.add(vnic);
         VnicInstanceType vnicWithProfile = new VnicInstanceType(vnic);
         vnicWithProfile.setItems(vnicProfiles);

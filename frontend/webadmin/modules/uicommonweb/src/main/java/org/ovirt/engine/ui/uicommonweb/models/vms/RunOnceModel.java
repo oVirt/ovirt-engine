@@ -604,7 +604,7 @@ public abstract class RunOnceModel extends Model
         setCustomPropertySheet(new KeyValueModel());
 
         setBootMenuEnabled(new EntityModel<Boolean>(false));
-        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.isBootMenuSupported(vm.getVdsGroupCompatibilityVersion().toString()));
+        getBootMenuEnabled().setIsAvailable(AsyncDataProvider.getInstance().isBootMenuSupported(vm.getVdsGroupCompatibilityVersion().toString()));
         setRunAndPause(new EntityModel<Boolean>(false));
         setRunAsStateless(new EntityModel<Boolean>(false));
 
@@ -621,13 +621,13 @@ public abstract class RunOnceModel extends Model
 
         setSpiceFileTransferEnabled(new EntityModel<Boolean>());
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
-        boolean spiceFileTransferToggle = AsyncDataProvider.isSpiceFileTransferToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        boolean spiceFileTransferToggle = AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
         getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
         getSpiceFileTransferEnabled().setIsAvailable(spiceFileTransferToggle);
 
         setSpiceCopyPasteEnabled(new EntityModel<Boolean>());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
-        boolean spiceCopyPasteToggle = AsyncDataProvider.isSpiceCopyPasteToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
+        boolean spiceCopyPasteToggle = AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(vm.getVdsGroupCompatibilityVersion().toString());
         getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
         getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
 
@@ -675,9 +675,9 @@ public abstract class RunOnceModel extends Model
         getKernel_path().setEntity(vm.getKernelUrl());
         getInitrd_path().setEntity(vm.getInitrdUrl());
 
-        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(vm.getVmOsId()));
+        setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(vm.getVmOsId()));
         getIsLinuxOptionsAvailable().setEntity(getIsLinuxOS());
-        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(vm.getVmOsId()));
+        setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()));
         getIsVmFirstRun().setEntity(!vm.isInitialized());
 
         initVmInitEnabled(vm.getVmInit(), vm.isInitialized());
@@ -700,7 +700,7 @@ public abstract class RunOnceModel extends Model
         EntityModel<DisplayType> qxlProtocol = new EntityModel<DisplayType>(DisplayType.qxl)
            .setTitle(ConstantsManager.getInstance().getConstants().spiceTitle());
 
-        boolean hasSpiceSupport = AsyncDataProvider.hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
+        boolean hasSpiceSupport = AsyncDataProvider.getInstance().hasSpiceSupport(vm.getOs(), vm.getVdsGroupCompatibilityVersion());
 
         if (hasSpiceSupport) {
             getDisplayProtocol().setItems(Arrays.asList(vncProtocol, qxlProtocol));
@@ -796,7 +796,7 @@ public abstract class RunOnceModel extends Model
     }
 
     protected void updateFloppyImages() {
-        AsyncDataProvider.getFloppyImageList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getFloppyImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
 
                     @Override
@@ -804,7 +804,7 @@ public abstract class RunOnceModel extends Model
                         VM selectedVM = vm;
                         List<String> images = (List<String>) returnValue;
 
-                        if (AsyncDataProvider.isWindowsOsType(selectedVM.getVmOsId())) {
+                        if (AsyncDataProvider.getInstance().isWindowsOsType(selectedVM.getVmOsId())) {
                             // Add a pseudo floppy disk image used for Windows' sysprep.
                             if (!selectedVM.isInitialized()) {
                                 images.add(0, "[sysprep]"); //$NON-NLS-1$
@@ -903,7 +903,7 @@ public abstract class RunOnceModel extends Model
     }
 
     public void updateIsoList(boolean forceRefresh) {
-        AsyncDataProvider.getIrsImageList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -927,22 +927,22 @@ public abstract class RunOnceModel extends Model
 
     private void updateDomainList() {
         // Update Domain list
-        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        List<String> domains = (List<String>) returnValue;
-                        String oldDomain = getSysPrepDomainName().getSelectedItem();
-                        if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
-                            domains.add(0, oldDomain);
-                        }
-                        getSysPrepDomainName().setItems(domains);
-                        String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
-                        if (!StringHelper.isNullOrEmpty(selectedDomain)) {
-                            getSysPrepDomainName().setSelectedItem(selectedDomain);
-                        }
-                    }
-                }));
+        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this,
+                                                                          new INewAsyncCallback() {
+                                                                              @Override
+                                                                              public void onSuccess(Object target, Object returnValue) {
+                                                                                  List<String> domains = (List<String>) returnValue;
+                                                                                  String oldDomain = getSysPrepDomainName().getSelectedItem();
+                                                                                  if (oldDomain != null && !oldDomain.equals("") && !domains.contains(oldDomain)) { //$NON-NLS-1$
+                                                                                      domains.add(0, oldDomain);
+                                                                                  }
+                                                                                  getSysPrepDomainName().setItems(domains);
+                                                                                  String selectedDomain = (oldDomain != null) ? oldDomain : Linq.firstOrDefault(domains);
+                                                                                  if (!StringHelper.isNullOrEmpty(selectedDomain)) {
+                                                                                      getSysPrepDomainName().setSelectedItem(selectedDomain);
+                                                                                  }
+                                                                              }
+                                                                          }));
     }
 
     public void sysPrepListBoxChanged() {
@@ -1140,7 +1140,7 @@ public abstract class RunOnceModel extends Model
     private void initVncKeyboardLayout() {
 
         List<String> layouts =
-                (List<String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         List<String> vncKeyboardLayoutItems = new ArrayList<String>();
         vncKeyboardLayoutItems.add(null);
         vncKeyboardLayoutItems.addAll(layouts);

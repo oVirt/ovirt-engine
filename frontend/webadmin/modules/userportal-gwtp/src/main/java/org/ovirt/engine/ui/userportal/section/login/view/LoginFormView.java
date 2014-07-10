@@ -108,7 +108,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
 
             }
         };
-        AsyncDataProvider.getUserMessageOfTheDayViaPublic(_asyncQuery);
+        AsyncDataProvider.getInstance().getUserMessageOfTheDayViaPublic(_asyncQuery);
 
     }
 

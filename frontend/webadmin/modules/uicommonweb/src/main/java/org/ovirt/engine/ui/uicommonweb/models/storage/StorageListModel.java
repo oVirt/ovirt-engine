@@ -302,10 +302,10 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         // putting all Data domains at the beginning on purpose (so when choosing the
         // first selectable storage type/function, it will be a Data one, if relevant).
 
-        items = AsyncDataProvider.getDataStorageModels();
-        items.addAll(AsyncDataProvider.getIsoStorageModels());
+        items = AsyncDataProvider.getInstance().getDataStorageModels();
+        items.addAll(AsyncDataProvider.getInstance().getIsoStorageModels());
 
-        items.addAll(AsyncDataProvider.getExportStorageModels());
+        items.addAll(AsyncDataProvider.getInstance().getExportStorageModels());
 
         model.setItems(items);
 
@@ -428,7 +428,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getPath().setIsChangable(isNfsPathEditable);
         model.getOverride().setIsChangable(isNfsPathEditable);
 
-        AsyncDataProvider.getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -480,7 +480,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         boolean isPathEditable = isPathEditable(storage);
         model.getPath().setIsChangable(isPathEditable);
 
-        AsyncDataProvider.getStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 LocalStorageModel localStorageModel = (LocalStorageModel) target;
@@ -503,7 +503,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getVfsType().setIsChangable(isPathEditable);
         model.getMountOptions().setIsChangable(isPathEditable);
 
-        AsyncDataProvider.getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -546,7 +546,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getVfsType().setIsChangable(false);
         model.getMountOptions().setIsChangable(false);
 
-        AsyncDataProvider.getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageConnectionById(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -588,7 +588,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         VDS host = (VDS) storageModel.getHost().getSelectedItem();
         Guid hostId = host != null && isStorageActive ? host.getId() : null;
 
-        AsyncDataProvider.getLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getLunsByVgId(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SanStorageModel sanStorageModel = (SanStorageModel) target;
@@ -616,7 +616,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         model.getComment().setIsAvailable(false);
         model.getFormat().setIsAvailable(false);
 
-        List<IStorageModel> items = AsyncDataProvider.getIsoStorageModels();
+        List<IStorageModel> items = AsyncDataProvider.getInstance().getIsoStorageModels();
 
         NfsStorageModel tempVar2 = new NfsStorageModel();
         tempVar2.setRole(StorageDomainType.ImportExport);
@@ -693,7 +693,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         String name = model.getName().getEntity();
         model.getName().setIsValid(true);
 
-        AsyncDataProvider.isStorageDomainNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -713,7 +713,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                     storageListModel.postStorageNameValidation();
                 } else {
 
-                    AsyncDataProvider.getStorageDomainMaxNameLength(new AsyncQuery(storageListModel, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery(storageListModel, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target1, Object returnValue1) {
 
@@ -723,9 +723,9 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                             RegexValidation tempVar2 = new RegexValidation();
                             tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
                             tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
-                                .nameCanContainOnlyMsg(nameMaxLength));
+                                                        .nameCanContainOnlyMsg(nameMaxLength));
                             storageModel1.getName().validateEntity(new IValidation[] {
-                                new NotEmptyValidation(), tempVar2});
+                                    new NotEmptyValidation(), tempVar2});
                             storageListModel1.postStorageNameValidation();
 
                         }
@@ -772,7 +772,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         StorageDomain storage = (StorageDomain) getSelectedItem();
         boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
 
-        AsyncDataProvider.getHostsForStorageOperation(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(new Object[]{this, model}, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -1228,7 +1228,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
@@ -1356,7 +1356,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         storageDomain.setStorageFormat((StorageFormatType) model.getFormat().getSelectedItem());
 
         if (isNew) {
-            AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
@@ -1477,7 +1477,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (isNew)
         {
-            AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
@@ -1714,7 +1714,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
 
         if (isNew)
         {
-            AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 
@@ -2005,7 +2005,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     public void importFileStoragePostInit()
     {
         // Check storage domain existence
-        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -2057,7 +2057,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         if (success)
                         {
                             storageListModel.fileConnection.setid((String) returnVal.getActionReturnValue());
-                            AsyncDataProvider.getExistingStorageDomainList(new AsyncQuery(storageListModel,
+                            AsyncDataProvider.getInstance().getExistingStorageDomainList(new AsyncQuery(storageListModel,
                                     new INewAsyncCallback() {
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
@@ -2251,7 +2251,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
                         : new ArrayList<StorageDomain>();
         StorageDomain storage = items.iterator().next();
 
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 

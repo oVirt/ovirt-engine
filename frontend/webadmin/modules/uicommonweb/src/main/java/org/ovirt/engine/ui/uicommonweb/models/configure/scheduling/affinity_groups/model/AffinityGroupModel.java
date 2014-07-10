@@ -62,7 +62,7 @@ public abstract class AffinityGroupModel extends Model {
     public void init() {
         startProgress(null);
         //TODO: should be by cluster id and remove clusterName method from resolver.
-        AsyncDataProvider.getVmListByClusterName(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmListByClusterName(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

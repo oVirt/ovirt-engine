@@ -68,8 +68,8 @@ public class RdpConsoleModel extends ConsoleModel {
         setTitle(ConstantsManager.getInstance().getConstants().RDPTitle());
         this.consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         setRdpImplementation(
-                ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeRdpDefault)));
-        setUseFqdnIfAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.UseFqdnForRdpIfAvailable));
+                ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeRdpDefault)));
+        setUseFqdnIfAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UseFqdnForRdpIfAvailable));
     }
 
     @Override
@@ -105,13 +105,13 @@ public class RdpConsoleModel extends ConsoleModel {
 
     @Override
     public boolean canBeSelected() {
-        return AsyncDataProvider.isWindowsOsType(getEntity().getOs());
+        return AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getOs());
     }
 
     @Override
     public boolean canConnect() {
         return (getEntity().getStatus() == VMStatus.Up || getEntity().getStatus() == VMStatus.PoweringDown)
-                && AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId());
+                && AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getVmOsId());
     }
 
     public void raiseErrorEvent(ErrorCodeEventArgs e) {

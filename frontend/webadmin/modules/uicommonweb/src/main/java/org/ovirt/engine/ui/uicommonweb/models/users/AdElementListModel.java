@@ -173,7 +173,7 @@ public class AdElementListModel extends SearchableListModel
         setIsTimerDisabled(true);
 
 
-        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {
@@ -182,7 +182,7 @@ public class AdElementListModel extends SearchableListModel
         }));
 
 
-        AsyncDataProvider.getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {

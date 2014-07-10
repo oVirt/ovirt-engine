@@ -69,7 +69,7 @@ public class HostBricksListModel extends SearchableListModel
             return;
         }
 
-        AsyncDataProvider.getGlusterBricksForServer(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterBricksForServer(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

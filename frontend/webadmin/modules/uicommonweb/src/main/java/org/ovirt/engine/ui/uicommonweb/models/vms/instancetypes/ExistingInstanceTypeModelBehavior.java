@@ -67,7 +67,7 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 }
         ));
 
-        AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 getModel().getIsVirtioScsiEnabled().setEntity((Boolean) returnValue);
@@ -98,9 +98,9 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 getModel().getNicsWithLogicalNetworks().setSelectedItem(Linq.firstOrDefault(vnicInstanceTypes));
             }
         };
-        AsyncDataProvider.getTemplateNicList(getVmNicsQuery, instanceType.getId());
+        AsyncDataProvider.getInstance().getTemplateNicList(getVmNicsQuery, instanceType.getId());
 
-        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;
@@ -131,7 +131,7 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
     }
 
     protected void initSoundCard(Guid id) {
-        AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(getModel(), new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

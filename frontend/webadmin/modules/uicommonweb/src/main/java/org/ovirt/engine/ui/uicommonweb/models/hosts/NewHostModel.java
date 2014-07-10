@@ -113,7 +113,7 @@ public class NewHostModel extends HostModel {
                     setEnableSearchHost(true);
                 }
             };
-            AsyncDataProvider.getExternalProviderHostList(getHostsQuery, provider.getId(), true, getProviderSearchFilter().getEntity());
+            AsyncDataProvider.getInstance().getExternalProviderHostList(getHostsQuery, provider.getId(), true, getProviderSearchFilter().getEntity());
         } else {
             AsyncQuery getDiscoveredHostsQuery = new AsyncQuery();
             getDiscoveredHostsQuery.asyncCallback = new INewAsyncCallback() {
@@ -126,7 +126,7 @@ public class NewHostModel extends HostModel {
                     externalDiscoveredHostsListModel.setIsChangable(true);
                 }
             };
-            AsyncDataProvider.getExternalProviderDiscoveredHostList(getDiscoveredHostsQuery, provider);
+            AsyncDataProvider.getInstance().getExternalProviderDiscoveredHostList(getDiscoveredHostsQuery, provider);
 
             AsyncQuery getHostGroupsQuery = new AsyncQuery();
             getHostGroupsQuery.asyncCallback = new INewAsyncCallback() {
@@ -139,7 +139,7 @@ public class NewHostModel extends HostModel {
                     externalHostGroupsListModel.setIsChangable(true);
                 }
             };
-            AsyncDataProvider.getExternalProviderHostGroupList(getHostGroupsQuery, provider);
+            AsyncDataProvider.getInstance().getExternalProviderHostGroupList(getHostGroupsQuery, provider);
 
             AsyncQuery getComputeResourceQuery = new AsyncQuery();
             getComputeResourceQuery .asyncCallback = new INewAsyncCallback() {
@@ -152,7 +152,7 @@ public class NewHostModel extends HostModel {
                     externalComputeResourceListModel.setIsChangable(true);
                 }
             };
-            AsyncDataProvider.getExternalProviderComputeResourceList(getComputeResourceQuery, provider);
+            AsyncDataProvider.getInstance().getExternalProviderComputeResourceList(getComputeResourceQuery, provider);
         }
     }
 
@@ -171,7 +171,7 @@ public class NewHostModel extends HostModel {
                 getIsDiscorveredHosts().setEntity(true);
             }
         };
-        AsyncDataProvider.getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
+        AsyncDataProvider.getInstance().getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
     }
 
     @Override

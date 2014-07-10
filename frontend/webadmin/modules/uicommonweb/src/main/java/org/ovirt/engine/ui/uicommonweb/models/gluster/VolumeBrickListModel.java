@@ -295,7 +295,7 @@ public class VolumeBrickListModel extends SearchableListModel {
             return;
         }
 
-        AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(volumeEntity, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(volumeEntity, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object entity, Object returnValue) {
                 boolean clusterHasUpHost = (Boolean) returnValue;
@@ -371,10 +371,10 @@ public class VolumeBrickListModel extends SearchableListModel {
                         volumeBrickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getName());
+                AsyncDataProvider.getInstance().getHostListByCluster(_asyncQueryInner, cluster.getName());
             }
         };
-        AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
+        AsyncDataProvider.getInstance().getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
@@ -1019,7 +1019,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
         cancelCommand.setIsCancel(true);
 
-        AsyncDataProvider.getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 cModel.stopProgress();
@@ -1198,10 +1198,10 @@ public class VolumeBrickListModel extends SearchableListModel {
                         brickModel.getServers().setItems(hostList);
                     }
                 };
-                AsyncDataProvider.getHostListByCluster(_asyncQueryInner, cluster.getName());
+                AsyncDataProvider.getInstance().getHostListByCluster(_asyncQueryInner, cluster.getName());
             }
         };
-        AsyncDataProvider.getClusterById(_asyncQuery, volumeEntity.getClusterId());
+        AsyncDataProvider.getInstance().getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
         UICommand command = new UICommand("OnReplace", this); //$NON-NLS-1$
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1271,7 +1271,7 @@ public class VolumeBrickListModel extends SearchableListModel {
 
     private void showBrickAdvancedDetails() {
         final GlusterVolumeEntity volumeEntity = (GlusterVolumeEntity) getEntity();
-        AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VDSGroup vdsGroup = (VDSGroup) returnValue;
@@ -1311,7 +1311,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         brickModel.setHashName("brick_advanced"); //$NON-NLS-1$
         brickModel.startProgress(null);
 
-        AsyncDataProvider.getGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeBrickDetails(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object result)
             {

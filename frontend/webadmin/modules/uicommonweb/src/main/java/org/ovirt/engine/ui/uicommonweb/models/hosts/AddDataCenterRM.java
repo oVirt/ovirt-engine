@@ -52,7 +52,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         if (!StringHelper.isNullOrEmpty(dataCenterName)) {
 
-            AsyncDataProvider.getDataCenterListByName(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getDataCenterListByName(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
@@ -156,7 +156,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
 
         if (enlistmentContext.getDataCenterId() != null) {
 
-            AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
@@ -180,7 +180,7 @@ public class AddDataCenterRM extends IEnlistmentNotification {
         VDS host = (VDS) model.getSelectedItem();
 
         // Retrieve host to make sure we have an updated status etc.
-        AsyncDataProvider.getHostById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {

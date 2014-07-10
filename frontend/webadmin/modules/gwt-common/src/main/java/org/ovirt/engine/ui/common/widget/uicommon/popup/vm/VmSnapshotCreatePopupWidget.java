@@ -149,7 +149,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
                 }
 
                 boolean memorySnapshotSupported =
-                        AsyncDataProvider.isMemorySnapshotSupported(vm);
+                        AsyncDataProvider.getInstance().isMemorySnapshotSupported(vm);
                 memoryEditor.setVisible(memorySnapshotSupported && vm.isRunning());
                 // The memory option is enabled by default, so in case its checkbox
                 // is not visible, we should disable it explicitly

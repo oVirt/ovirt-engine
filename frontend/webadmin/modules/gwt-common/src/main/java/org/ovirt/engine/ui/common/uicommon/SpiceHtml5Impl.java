@@ -15,7 +15,7 @@ public class SpiceHtml5Impl extends AbstractSpice implements ISpiceHtml5 {
         super();
 
         this.config = new WebsocketProxyConfig(
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy), getHost());
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy), getHost());
     }
 
     @Override

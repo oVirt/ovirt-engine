@@ -292,7 +292,7 @@ public abstract class VnicProfileModel extends Model {
             }
         };
 
-        AsyncDataProvider.getAllNetworkQos(dcId, _asyncQuery);
+        AsyncDataProvider.getInstance().getAllNetworkQos(dcId, _asyncQuery);
     }
 
     public boolean validate()

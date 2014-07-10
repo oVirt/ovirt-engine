@@ -271,7 +271,7 @@ public class UserPortalLoginModel extends LoginModel
         setENGINEUserActionGroupList(new ArrayList<ActionGroup>());
         this.setLoggedUser(LoggedUser);
 
-        AsyncDataProvider.getRoleActionGroupsByRoleId(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getRoleActionGroupsByRoleId(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -292,7 +292,7 @@ public class UserPortalLoginModel extends LoginModel
     // Use only as 'Step2' of 'UpdateIsENGINEUser'
     public void getUserRoles(UserPortalLoginModel loginModel)
     {
-        AsyncDataProvider.getPermissionsByAdElementId(new AsyncQuery(loginModel,
+        AsyncDataProvider.getInstance().getPermissionsByAdElementId(new AsyncQuery(loginModel,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

@@ -57,7 +57,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     private void InitSpmPriorities() {
-        AsyncDataProvider.getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -70,7 +70,7 @@ public class MainTabHostView extends AbstractMainTabWithDetailsTableView<VDS, Ho
     }
 
     private void InitSpmPriorities1() {
-        AsyncDataProvider.getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 

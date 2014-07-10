@@ -90,7 +90,7 @@ public class HostGlusterSwiftListModel extends SearchableListModel {
             return;
         }
 
-        AsyncDataProvider.getGlusterSwiftServices(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterSwiftServices(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setItems((List<GlusterServerService>) returnValue);

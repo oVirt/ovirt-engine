@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
     private static String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private UICommand newCommand;
     private UICommand importCommand;
@@ -138,7 +138,7 @@ public class NetworkListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         // Get all data centers
-        AsyncDataProvider.getDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(NetworkListModel.this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

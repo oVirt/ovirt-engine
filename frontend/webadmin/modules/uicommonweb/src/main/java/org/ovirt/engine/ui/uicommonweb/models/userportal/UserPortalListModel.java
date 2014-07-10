@@ -624,7 +624,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             String name = model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -735,7 +735,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
         };
 
-        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
     }
 
     private void updateActionAvailability()
@@ -784,7 +784,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHelpTag(HelpTag.new_vm);
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
         setWindow(model);
 
@@ -831,9 +831,9 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
         };
         if (vm.isNextRunConfigurationExists()) {
-            AsyncDataProvider.getVmNextRunConfiguration(getVmInitQuery, vm.getId());
+            AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
         } else {
-            AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+            AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
         }
     }
 
@@ -845,7 +845,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(vm.getVmType());
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("up_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
@@ -982,7 +982,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             }
         };
 
-        AsyncDataProvider.getIrsImageList(getImagesQuery, vm.getStoragePoolId());
+        AsyncDataProvider.getInstance().getIrsImageList(getImagesQuery, vm.getStoragePoolId());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1040,7 +1040,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
         model.startProgress(null);
         // Check name uniqueness.
-        AsyncDataProvider.isVmNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1133,7 +1133,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
                         }
                     };
-                    AsyncDataProvider.getTemplateDiskList(_asyncQuery, gettempVm().getVmtGuid());
+                    AsyncDataProvider.getInstance().getTemplateDiskList(_asyncQuery, gettempVm().getVmtGuid());
                 }
                 else
                 {
@@ -1158,7 +1158,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             gettempVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
             if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, gettempVm(), new AsyncQuery(this,
+                AsyncDataProvider.getInstance().isNextRunConfigurationChanged(editedVm, gettempVm(), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
@@ -1267,7 +1267,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     UserPortalListModel userPortalListModel = (UserPortalListModel) model;
                     final UnitVmModel unitModel = (UnitVmModel) userPortalListModel.getWindow();
 
-                    AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
 
                         @Override
                         public void onSuccess(Object model, Object loadedCluster) {
@@ -1280,7 +1280,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     }), vm.getVdsGroupId());
                 }
             };
-            AsyncDataProvider.getDataCenterById(_asyncQuery, vm.getStoragePoolId());
+            AsyncDataProvider.getInstance().getDataCenterById(_asyncQuery, vm.getStoragePoolId());
         } else {
             model.getDataCenterWithClustersList().setSelectedItem(selectedDataCenterWithCluster);
         }
@@ -1348,14 +1348,14 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         if (!model.getIsNew())
         {
             if (cachedMaxPriority == null) {
-                AsyncDataProvider.getMaxVmPriority(new AsyncQuery(model,
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
-                                cachedMaxPriority = (Integer) returnValue;
-                                updatePriority((UnitVmModel) target);
-                            }
-                        }, model.getHash()));
+                AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(model,
+                                                                                new INewAsyncCallback() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Object target, Object returnValue) {
+                                                                                        cachedMaxPriority = (Integer) returnValue;
+                                                                                        updatePriority((UnitVmModel) target);
+                                                                                    }
+                                                                                }, model.getHash()));
             } else {
                 updatePriority(model);
             }
@@ -1365,7 +1365,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     private void updatePriority(UnitVmModel model) {
         UserPortalItemModel selectedItem = (UserPortalItemModel) getSelectedItem();
         VM vm = (VM) selectedItem.getEntity();
-        int roundPriority = AsyncDataProvider.getRoundedPriority(vm.getPriority(), cachedMaxPriority);
+        int roundPriority = AsyncDataProvider.getInstance().getRoundedPriority(vm.getPriority(), cachedMaxPriority);
         EntityModel<Integer> priority = null;
 
         for (EntityModel<Integer> a : model.getPriority().getItems())

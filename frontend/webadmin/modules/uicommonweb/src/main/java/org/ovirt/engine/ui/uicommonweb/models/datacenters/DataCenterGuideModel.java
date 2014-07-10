@@ -151,7 +151,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     private void updateOptionsNonLocalFSData() {
-        AsyncDataProvider.getClusterList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -162,19 +162,19 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     }
                 }), getEntity().getId());
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<StorageDomain> storageDomains =
-                                (ArrayList<StorageDomain>) returnValue;
-                        dataCenterGuideModel.allStorageDomains = storageDomains;
-                        dataCenterGuideModel.updateOptionsNonLocalFS();
-                    }
-                }));
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
+                                                                            new INewAsyncCallback() {
+                                                                                @Override
+                                                                                public void onSuccess(Object target, Object returnValue) {
+                                                                                    DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                                                                    ArrayList<StorageDomain> storageDomains =
+                                                                                            (ArrayList<StorageDomain>) returnValue;
+                                                                                    dataCenterGuideModel.allStorageDomains = storageDomains;
+                                                                                    dataCenterGuideModel.updateOptionsNonLocalFS();
+                                                                                }
+                                                                            }));
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -186,32 +186,32 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                     }
                 }), getEntity().getId());
 
-        AsyncDataProvider.getISOStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<StorageDomain> storageDomains =
-                                (ArrayList<StorageDomain>) returnValue;
-                        dataCenterGuideModel.isoStorageDomains = storageDomains;
-                        dataCenterGuideModel.updateOptionsNonLocalFS();
-                    }
-                }));
+        AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery(this,
+                                                                               new INewAsyncCallback() {
+                                                                                   @Override
+                                                                                   public void onSuccess(Object target, Object returnValue) {
+                                                                                       DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                                                                       ArrayList<StorageDomain> storageDomains =
+                                                                                               (ArrayList<StorageDomain>) returnValue;
+                                                                                       dataCenterGuideModel.isoStorageDomains = storageDomains;
+                                                                                       dataCenterGuideModel.updateOptionsNonLocalFS();
+                                                                                   }
+                                                                               }));
 
-        AsyncDataProvider.getHostList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
-                        dataCenterGuideModel.allHosts = hosts;
-                        dataCenterGuideModel.updateOptionsNonLocalFS();
-                    }
-                }));
+        AsyncDataProvider.getInstance().getHostList(new AsyncQuery(this,
+                                                                   new INewAsyncCallback() {
+                                                                       @Override
+                                                                       public void onSuccess(Object target, Object returnValue) {
+                                                                           DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                                                           ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
+                                                                           dataCenterGuideModel.allHosts = hosts;
+                                                                           dataCenterGuideModel.updateOptionsNonLocalFS();
+                                                                       }
+                                                                   }));
     }
 
     private void updateOptionsLocalFSData() {
-        AsyncDataProvider.getClusterList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -234,7 +234,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                             hosts = new ArrayList<VDS>();
                         }
                         dataCenterGuideModel.allHosts = hosts;
-                        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
+                        AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(dataCenterGuideModel,
                                 new INewAsyncCallback() {
                                     @Override
                                     public void onSuccess(Object target, Object returnValue) {
@@ -565,7 +565,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setItems(list);
         model.setSelectedItem(list.get(0));
 
-        AsyncDataProvider.getLocalStorageHost(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getInstance().getLocalStorageHost(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -620,11 +620,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         if (type == StorageDomainType.Data)
         {
-            items = AsyncDataProvider.getDataStorageModels();
+            items = AsyncDataProvider.getInstance().getDataStorageModels();
         }
         else if (type == StorageDomainType.ISO)
         {
-            items = AsyncDataProvider.getIsoStorageModels();
+            items = AsyncDataProvider.getInstance().getIsoStorageModels();
         }
 
         model.setItems(items);
@@ -646,7 +646,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         StorageModel model = (StorageModel) getWindow();
         String storageName = model.getName().getEntity();
 
-        AsyncDataProvider.isStorageDomainNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().isStorageDomainNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -664,24 +664,24 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                                     .add(ConstantsManager.getInstance().getConstants().nameMustBeUniqueInvalidReason());
                             storageModel.getName().setIsValid(false);
                         }
-                        AsyncDataProvider.getStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
-                                new INewAsyncCallback() {
-                                    @Override
-                                    public void onSuccess(Object target1, Object returnValue1) {
+                        AsyncDataProvider.getInstance().getStorageDomainMaxNameLength(new AsyncQuery(dataCenterGuideModel,
+                                                                                                     new INewAsyncCallback() {
+                                                                                                         @Override
+                                                                                                         public void onSuccess(Object target1, Object returnValue1) {
 
-                                        DataCenterGuideModel dataCenterGuideModel1 = (DataCenterGuideModel) target1;
-                                        StorageModel storageModel1 = (StorageModel) dataCenterGuideModel1.getWindow();
-                                        int nameMaxLength = (Integer) returnValue1;
-                                        RegexValidation tempVar2 = new RegexValidation();
-                                        tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
-                                        tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
-                                                .nameCanContainOnlyMsg(nameMaxLength));
-                                        storageModel1.getName().validateEntity(new IValidation[] {
-                                                new NotEmptyValidation(), tempVar2 });
-                                        dataCenterGuideModel1.postOnAddStorage();
+                                                                                                             DataCenterGuideModel dataCenterGuideModel1 = (DataCenterGuideModel) target1;
+                                                                                                             StorageModel storageModel1 = (StorageModel) dataCenterGuideModel1.getWindow();
+                                                                                                             int nameMaxLength = (Integer) returnValue1;
+                                                                                                             RegexValidation tempVar2 = new RegexValidation();
+                                                                                                             tempVar2.setExpression("^[A-Za-z0-9_-]{1," + nameMaxLength + "}$"); //$NON-NLS-1$ //$NON-NLS-2$
+                                                                                                             tempVar2.setMessage(ConstantsManager.getInstance().getMessages()
+                                                                                                                                         .nameCanContainOnlyMsg(nameMaxLength));
+                                                                                                             storageModel1.getName().validateEntity(new IValidation[] {
+                                                                                                                     new NotEmptyValidation(), tempVar2});
+                                                                                                             dataCenterGuideModel1.postOnAddStorage();
 
-                                    }
-                                }));
+                                                                                                         }
+                                                                                                     }));
 
                     }
                 }),
@@ -739,7 +739,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageDomainType(isNew ? storageModel.getRole() : storageDomain.getStorageDomainType());
         storageDomain.setStorageName(model.getName().getEntity());
 
-        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -886,7 +886,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageName(model.getName().getEntity());
         storageDomain.setStorageFormat(model.getFormat().getSelectedItem());
 
-        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1022,7 +1022,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         storageDomain.setStorageFormat(sanModel.getContainer().getFormat().getSelectedItem());
         storageDomain.setStorageName(model.getName().getEntity());
 
-        AsyncDataProvider.getStorageDomainsByConnection(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainsByConnection(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1203,7 +1203,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void attachIsoStorage()
     {
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1211,41 +1211,37 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         ArrayList<StorageDomain> attachedStorage =
                                 new ArrayList<StorageDomain>();
 
-                        AsyncDataProvider.getISOStorageDomainList(new AsyncQuery(new Object[] { dataCenterGuideModel,
-                                attachedStorage },
-                                new INewAsyncCallback() {
-                                    @Override
-                                    public void onSuccess(Object target, Object returnValue) {
-                                        Object[] array = (Object[]) target;
-                                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
-                                        ArrayList<StorageDomain> attachedStorage =
-                                                (ArrayList<StorageDomain>) array[1];
-                                        ArrayList<StorageDomain> isoStorageDomains =
-                                                (ArrayList<StorageDomain>) returnValue;
-                                        ArrayList<StorageDomain> sdl =
-                                                new ArrayList<StorageDomain>();
+                        AsyncDataProvider.getInstance().getISOStorageDomainList(new AsyncQuery(new Object[] {dataCenterGuideModel,
+                                attachedStorage},
+                                                                                               new INewAsyncCallback() {
+                                                                                                   @Override
+                                                                                                   public void onSuccess(Object target, Object returnValue) {
+                                                                                                       Object[] array = (Object[]) target;
+                                                                                                       DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) array[0];
+                                                                                                       ArrayList<StorageDomain> attachedStorage =
+                                                                                                               (ArrayList<StorageDomain>) array[1];
+                                                                                                       ArrayList<StorageDomain> isoStorageDomains =
+                                                                                                               (ArrayList<StorageDomain>) returnValue;
+                                                                                                       ArrayList<StorageDomain> sdl =
+                                                                                                               new ArrayList<StorageDomain>();
 
-                                        for (StorageDomain a : isoStorageDomains)
-                                        {
-                                            boolean isContains = false;
-                                            for (StorageDomain b : attachedStorage)
-                                            {
-                                                if (b.getId().equals(a.getId()))
-                                                {
-                                                    isContains = true;
-                                                    break;
-                                                }
-                                            }
-                                            if (!isContains)
-                                            {
-                                                sdl.add(a);
-                                            }
-                                        }
-                                        dataCenterGuideModel.attachStorageInternal(sdl, ConstantsManager.getInstance()
-                                                .getConstants()
-                                                .attachISOLibraryTitle());
-                                    }
-                                }));
+                                                                                                       for (StorageDomain a : isoStorageDomains) {
+                                                                                                           boolean isContains = false;
+                                                                                                           for (StorageDomain b : attachedStorage) {
+                                                                                                               if (b.getId().equals(a.getId())) {
+                                                                                                                   isContains = true;
+                                                                                                                   break;
+                                                                                                               }
+                                                                                                           }
+                                                                                                           if (!isContains) {
+                                                                                                               sdl.add(a);
+                                                                                                           }
+                                                                                                       }
+                                                                                                       dataCenterGuideModel.attachStorageInternal(sdl, ConstantsManager.getInstance()
+                                                                                                               .getConstants()
+                                                                                                               .attachISOLibraryTitle());
+                                                                                                   }
+                                                                                               }));
                     }
                 }),
                 getEntity().getId());
@@ -1253,55 +1249,48 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void attachDataStorage()
     {
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
-                        ArrayList<StorageDomain> storageDomains =
-                                (ArrayList<StorageDomain>) returnValue;
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
+                                                                            new INewAsyncCallback() {
+                                                                                @Override
+                                                                                public void onSuccess(Object target, Object returnValue) {
+                                                                                    DataCenterGuideModel dataCenterGuideModel = (DataCenterGuideModel) target;
+                                                                                    ArrayList<StorageDomain> storageDomains =
+                                                                                            (ArrayList<StorageDomain>) returnValue;
 
-                        ArrayList<StorageDomain> unattachedStorage =
-                                new ArrayList<StorageDomain>();
-                        boolean addToList;
-                        Version version3_0 = new Version(3, 0);
-                        for (StorageDomain item : storageDomains)
-                        {
-                            addToList = false;
-                            if (item.getStorageDomainType() == StorageDomainType.Data
-                                    && (item.getStorageType() == StorageType.LOCALFS) == dataCenterGuideModel.getEntity()
-                                            .isLocal()
-                                    && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached)
-                            {
-                                if (getEntity().getStoragePoolFormatType() == null)
-                                {
-                                    // compat logic: in case its not v1 and the version is less than 3.0 continue.
-                                    if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
-                                            && dataCenterGuideModel.getEntity()
-                                                    .getcompatibility_version()
-                                                    .compareTo(version3_0) < 0)
-                                    {
-                                        continue;
-                                    }
-                                    addToList = true;
-                                }
-                                else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData()
-                                        .getStorageFormat())
-                                {
-                                    addToList = true;
-                                }
-                            }
+                                                                                    ArrayList<StorageDomain> unattachedStorage =
+                                                                                            new ArrayList<StorageDomain>();
+                                                                                    boolean addToList;
+                                                                                    Version version3_0 = new Version(3, 0);
+                                                                                    for (StorageDomain item : storageDomains) {
+                                                                                        addToList = false;
+                                                                                        if (item.getStorageDomainType() == StorageDomainType.Data
+                                                                                                && (item.getStorageType() == StorageType.LOCALFS) == dataCenterGuideModel.getEntity()
+                                                                                                .isLocal()
+                                                                                                && item.getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached) {
+                                                                                            if (getEntity().getStoragePoolFormatType() == null) {
+                                                                                                // compat logic: in case its not v1 and the version is less than 3.0 continue.
+                                                                                                if (item.getStorageStaticData().getStorageFormat() != StorageFormatType.V1
+                                                                                                        && dataCenterGuideModel.getEntity()
+                                                                                                        .getcompatibility_version()
+                                                                                                        .compareTo(version3_0) < 0) {
+                                                                                                    continue;
+                                                                                                }
+                                                                                                addToList = true;
+                                                                                            } else if (getEntity().getStoragePoolFormatType() == item.getStorageStaticData()
+                                                                                                    .getStorageFormat()) {
+                                                                                                addToList = true;
+                                                                                            }
+                                                                                        }
 
-                            if (addToList)
-                            {
-                                unattachedStorage.add(item);
-                            }
-                        }
-                        dataCenterGuideModel.attachStorageInternal(unattachedStorage, ConstantsManager.getInstance()
-                                .getConstants()
-                                .attachStorageTitle());
-                    }
-                }));
+                                                                                        if (addToList) {
+                                                                                            unattachedStorage.add(item);
+                                                                                        }
+                                                                                    }
+                                                                                    dataCenterGuideModel.attachStorageInternal(unattachedStorage, ConstantsManager.getInstance()
+                                                                                            .getConstants()
+                                                                                            .attachStorageTitle());
+                                                                                }
+                                                                            }));
     }
 
     public void addCluster()
@@ -1414,7 +1403,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         setWindow(model);
 
-        AsyncDataProvider.getClusterList(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

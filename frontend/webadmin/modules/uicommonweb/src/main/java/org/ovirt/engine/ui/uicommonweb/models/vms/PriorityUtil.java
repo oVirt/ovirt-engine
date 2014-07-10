@@ -22,39 +22,39 @@ public class PriorityUtil {
 
     public void initPriority(int priority)
     {
-        AsyncDataProvider.getMaxVmPriority(new AsyncQuery(new Object[] { model, priority },
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(new Object[] {model, priority},
+                                                                        new INewAsyncCallback() {
+                                                                            @Override
+                                                                            public void onSuccess(Object target, Object returnValue) {
 
-                        Object[] array = (Object[]) target;
-                        UnitVmModel model = (UnitVmModel) array[0];
-                        int vmPriority = (Integer) array[1];
-                        cachedMaxPriority = (Integer) returnValue;
+                                                                                Object[] array = (Object[]) target;
+                                                                                UnitVmModel model = (UnitVmModel) array[0];
+                                                                                int vmPriority = (Integer) array[1];
+                                                                                cachedMaxPriority = (Integer) returnValue;
 
-                        int value = AsyncDataProvider.getRoundedPriority(vmPriority, cachedMaxPriority);
-                        EntityModel tempVar = new EntityModel();
-                        tempVar.setEntity(value);
-                        model.getPriority().setSelectedItem(tempVar);
-                        updatePriority();
+                                                                                int value = AsyncDataProvider.getInstance().getRoundedPriority(vmPriority, cachedMaxPriority);
+                                                                                EntityModel tempVar = new EntityModel();
+                                                                                tempVar.setEntity(value);
+                                                                                model.getPriority().setSelectedItem(tempVar);
+                                                                                updatePriority();
 
-                    }
-                }, model.getHash()));
+                                                                            }
+                                                                        }, model.getHash()));
     }
 
     private void updatePriority()
     {
         if (cachedMaxPriority == null)
         {
-            AsyncDataProvider.getMaxVmPriority(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            cachedMaxPriority = (Integer) returnValue;
-                            postUpdatePriority();
+            AsyncDataProvider.getInstance().getMaxVmPriority(new AsyncQuery(this,
+                                                                            new INewAsyncCallback() {
+                                                                                @Override
+                                                                                public void onSuccess(Object target, Object returnValue) {
+                                                                                    cachedMaxPriority = (Integer) returnValue;
+                                                                                    postUpdatePriority();
 
-                        }
-                    }, model.getHash()));
+                                                                                }
+                                                                            }, model.getHash()));
         }
         else
         {

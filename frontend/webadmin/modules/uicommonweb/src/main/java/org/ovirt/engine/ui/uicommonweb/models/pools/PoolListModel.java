@@ -193,7 +193,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
         PoolModel model = new PoolModel(new NewPoolModelBehavior());
         model.setIsNew(true);
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newPoolTitle());
@@ -283,7 +283,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         });
 
                         PoolModel model = new PoolModel(behavior);
-                        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+                        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
                         model.startProgress("");
                         model.setIsAdvancedModeLocalStorageKey("wa_pool_dialog");  //$NON-NLS-1$
                         setWindow(model);
@@ -418,7 +418,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         final String name = model.getName().getEntity();
 
         // Check name unicitate.
-        AsyncDataProvider.isPoolNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().isPoolNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

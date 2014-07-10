@@ -159,21 +159,21 @@ public class VmItemBehavior extends ItemBehavior {
                 VM.class,
                 VdcActionType.RunVm));
         getItem().getPauseCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
-                VM.class,
-                VdcActionType.HibernateVm)
-                && AsyncDataProvider.canVmsBePaused(entities));
+                                                                                    VM.class,
+                                                                                    VdcActionType.HibernateVm)
+                                                                  && AsyncDataProvider.getInstance().canVmsBePaused(entities));
         getItem().getShutdownCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.ShutdownVm));
         getItem().getStopCommand().setIsExecutionAllowed(VdcActionUtils.canExecute(entities,
                 VM.class,
                 VdcActionType.StopVm));
-        getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.isRebootCommandExecutionAllowed(entities));
+        getItem().getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(entities));
 
         // Check whether a VM is from the manual pool.
         if (entity.getVmPoolId() != null)
         {
-            AsyncDataProvider.getPoolById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getPoolById(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {

@@ -50,7 +50,7 @@ public abstract class NetworkModel extends Model
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
     protected static final String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private EntityModel<String> privateName;
     private EntityModel<String> privateDescription;
@@ -216,7 +216,7 @@ public abstract class NetworkModel extends Model
                 stopProgress();
             }
         };
-        AsyncDataProvider.getAllNetworkProviders(getProvidersQuery);
+        AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
     public EntityModel<String> getName()
@@ -479,13 +479,13 @@ public abstract class NetworkModel extends Model
 
         // Get IsSupportBridgesReportByVDSM
         boolean isSupportBridgesReportByVDSM =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
+                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportBridgesReportByVDSM,
                         dc.getcompatibility_version().toString());
         setSupportBridgesReportByVDSM(isSupportBridgesReportByVDSM);
 
         // Get IsMTUOverrideSupported
         boolean isMTUOverrideSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
+                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MTUOverrideSupported,
                         dc.getcompatibility_version().toString());
 
         setMTUOverrideSupported(isMTUOverrideSupported);
@@ -500,7 +500,7 @@ public abstract class NetworkModel extends Model
                 getQos().setSelectedItem(Linq.findNetworkQosById(qos, getNetwork().getQosId()));
             }
         };
-        AsyncDataProvider.getAllNetworkQos(dc.getId(), query);
+        AsyncDataProvider.getInstance().getAllNetworkQos(dc.getId(), query);
 
         updateDcLabels();
 
@@ -703,7 +703,7 @@ public abstract class NetworkModel extends Model
 
     private void updateDcLabels() {
         startProgress(null);
-        AsyncDataProvider.getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
+        AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getSelectedDc().getId(),
                 new AsyncQuery(new INewAsyncCallback() {
 
                     @Override
@@ -752,7 +752,7 @@ public abstract class NetworkModel extends Model
     public enum MtuSelector {
         defaultMtu(ConstantsManager.getInstance()
                 .getMessages()
-                .defaultMtu((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMtu))),
+                .defaultMtu((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMtu))),
         customMtu(ConstantsManager.getInstance().getConstants().customMtu());
 
         private String description;

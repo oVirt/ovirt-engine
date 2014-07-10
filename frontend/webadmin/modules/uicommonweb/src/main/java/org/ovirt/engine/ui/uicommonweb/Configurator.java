@@ -242,7 +242,7 @@ public abstract class Configurator {
     }
 
     public boolean isWebSocketProxyDefined() {
-        String wsConfig = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
+        String wsConfig = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.WebSocketProxy);
         return wsConfig != null && !"".equals(wsConfig) && !"Off".equalsIgnoreCase(wsConfig); //$NON-NLS-1$ $NON-NLS-2$
     }
 
@@ -279,7 +279,7 @@ public abstract class Configurator {
 
     private void updateIsUsbEnabled() {
         // Get 'EnableUSBAsDefault' value from database
-        AsyncDataProvider.isUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isUSBEnabledByDefault(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 // Update IsUsbEnabled value
@@ -289,13 +289,13 @@ public abstract class Configurator {
     }
 
     private void updateSpiceUsbAutoShare(final ISpice spice) {
-        AsyncDataProvider.getSpiceUsbAutoShare(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        spice.setUsbAutoShare((Boolean) returnValue);
-                    }
-                }));
+        AsyncDataProvider.getInstance().getSpiceUsbAutoShare(new AsyncQuery(this,
+                                                                            new INewAsyncCallback() {
+                                                                                @Override
+                                                                                public void onSuccess(Object target, Object returnValue) {
+                                                                                    spice.setUsbAutoShare((Boolean) returnValue);
+                                                                                }
+                                                                            }));
     }
 
     public void updateSpice32Version() {

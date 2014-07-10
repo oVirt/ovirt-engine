@@ -871,7 +871,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nonEditableWhileVmNotDownInfo =
                 new InfoIcon(applicationTemplates.italicText(constants.nonEditableMigrationFieldsWhileVmNotDownInfo()),
                         resources);
-        final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
+        final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
         migrationDowntimeInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)), resources);
         priorityEditor = new EntityModelCellTable<ListModel>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
@@ -1114,7 +1114,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         oSTypeEditor = new ListModelListBoxEditor<Integer>(new AbstractRenderer<Integer>() {
             @Override
             public String render(Integer object) {
-                return AsyncDataProvider.getOsName(object);
+                return AsyncDataProvider.getInstance().getOsName(object);
             }
         }, new ModeSwitchingVisibilityRenderer());
 
@@ -1521,7 +1521,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 VDSGroup vdsGroup = object.getSelectedCluster();
                 if (vdsGroup != null && vdsGroup.getcompatibility_version() != null) {
-                    boolean enabled = AsyncDataProvider.isSerialNumberPolicySupported(vdsGroup.getcompatibility_version().getValue());
+                    boolean enabled = AsyncDataProvider.getInstance().isSerialNumberPolicySupported(vdsGroup.getcompatibility_version().getValue());
                     changeApplicationLevelVisibility(serialNumberPolicyEditor, enabled);
                 }
             }
@@ -1544,7 +1544,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         changeApplicationLevelVisibility(nativeUsbWarningMessage,
                 object.getUsbPolicy().getSelectedItem() == UsbPolicy.ENABLED_NATIVE
                         && vdsGroupVersion != null
-                        && !(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
+                        && !(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MigrationSupportForNativeUsb,
                                 vdsGroupVersion.getValue()));
     }
 

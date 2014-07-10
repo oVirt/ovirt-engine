@@ -1528,13 +1528,13 @@ public class UnitVmModel extends Model {
         setOSType(new NotChangableForVmInPoolListModel<Integer>() {
             @Override
             public void setSelectedItem(Integer value) {
-                if (!AsyncDataProvider.osNameExists(value)) {
+                if (!AsyncDataProvider.getInstance().osNameExists(value)) {
                     DataCenterWithCluster dataCenterWithCluster = getDataCenterWithClustersList().getSelectedItem();
                     VDSGroup cluster = dataCenterWithCluster == null ? null : dataCenterWithCluster.getCluster();
                     if (cluster == null) {
                         return;
                     }
-                    super.setSelectedItem(AsyncDataProvider.getDefaultOs(cluster.getArchitecture()));
+                    super.setSelectedItem(AsyncDataProvider.getInstance().getDefaultOs(cluster.getArchitecture()));
                 } else {
                     super.setSelectedItem(value);
                 }
@@ -1890,24 +1890,24 @@ public class UnitVmModel extends Model {
 
     protected void initNumOfMonitors()
     {
-        AsyncDataProvider.getNumOfMonitorList(new AsyncQuery(this,
-                                                             new INewAsyncCallback() {
-                                                                 @Override
-                                                                 public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getNumOfMonitorList(new AsyncQuery(this,
+                                                                           new INewAsyncCallback() {
+                                                                               @Override
+                                                                               public void onSuccess(Object target, Object returnValue) {
 
-                                                                     UnitVmModel model = (UnitVmModel) target;
-                                                                     Integer oldNumOfMonitors = null;
-                                                                     if (model.getNumOfMonitors().getSelectedItem() != null) {
-                                                                         oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
-                                                                     }
-                                                                     ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
-                                                                     model.getNumOfMonitors().setItems(numOfMonitors);
-                                                                     if (oldNumOfMonitors != null) {
-                                                                         model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
-                                                                     }
+                                                                                   UnitVmModel model = (UnitVmModel) target;
+                                                                                   Integer oldNumOfMonitors = null;
+                                                                                   if (model.getNumOfMonitors().getSelectedItem() != null) {
+                                                                                       oldNumOfMonitors = model.getNumOfMonitors().getSelectedItem();
+                                                                                   }
+                                                                                   ArrayList<Integer> numOfMonitors = (ArrayList<Integer>) returnValue;
+                                                                                   model.getNumOfMonitors().setItems(numOfMonitors);
+                                                                                   if (oldNumOfMonitors != null) {
+                                                                                       model.getNumOfMonitors().setSelectedItem(oldNumOfMonitors);
+                                                                                   }
 
-                                                                 }
-                                                             }, getHash()
+                                                                               }
+                                                                           }, getHash()
         ));
 
     }
@@ -1931,11 +1931,11 @@ public class UnitVmModel extends Model {
         UsbPolicy prevSelectedUsbPolicy = getUsbPolicy().getSelectedItem();
 
         if (Version.v3_1.compareTo(cluster.getcompatibility_version()) > 0) {
-            if (AsyncDataProvider.isWindowsOsType(osType)) {
+            if (AsyncDataProvider.getInstance().isWindowsOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
                         UsbPolicy.ENABLED_LEGACY
-                        ));
+                ));
             } else {
                 getUsbPolicy().setItems(Arrays.asList(UsbPolicy.DISABLED));
                 getUsbPolicy().setIsChangable(false);
@@ -1943,18 +1943,18 @@ public class UnitVmModel extends Model {
         }
 
         if (Version.v3_1.compareTo(cluster.getcompatibility_version()) <= 0) {
-            if (AsyncDataProvider.isLinuxOsType(osType)) {
+            if (AsyncDataProvider.getInstance().isLinuxOsType(osType)) {
                 getUsbPolicy().setItems(Arrays.asList(
                         UsbPolicy.DISABLED,
                         UsbPolicy.ENABLED_NATIVE
-                        ));
+                ));
             } else {
                 getUsbPolicy().setItems(
                         Arrays.asList(
                                 UsbPolicy.DISABLED,
                                 UsbPolicy.ENABLED_LEGACY,
                                 UsbPolicy.ENABLED_NATIVE
-                                ));
+                        ));
             }
         }
 
@@ -1981,8 +1981,8 @@ public class UnitVmModel extends Model {
         VDSGroup cluster = dataCenterWithCluster.getCluster();
 
         Boolean isMigrationSupported =
-                AsyncDataProvider.isMigrationSupported(cluster.getArchitecture(),
-                                                       cluster.getcompatibility_version());
+                AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(),
+                                                                     cluster.getcompatibility_version());
 
         if (isMigrationSupported) {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
@@ -2004,7 +2004,7 @@ public class UnitVmModel extends Model {
             return;
         }
 
-        List<DisplayType> displayTypes = AsyncDataProvider.getDisplayTypes(osType, cluster.getcompatibility_version());
+        List<DisplayType> displayTypes = AsyncDataProvider.getInstance().getDisplayTypes(osType, cluster.getcompatibility_version());
         initDisplayProtocolWithTypes(displayTypes);
     }
 
@@ -2053,7 +2053,7 @@ public class UnitVmModel extends Model {
             return;
         }
 
-        boolean isBalloonEnabled = AsyncDataProvider.isBalloonEnabled(osType,
+        boolean isBalloonEnabled = AsyncDataProvider.getInstance().isBalloonEnabled(osType,
                         cluster.getcompatibility_version());
 
         getMemoryBalloonDeviceEnabled().setIsChangable(isBalloonEnabled);
@@ -2094,7 +2094,7 @@ public class UnitVmModel extends Model {
     private void initVncKeyboardLayout() {
 
         final List<String> layouts =
-                (List<String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
+                (List<String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues);
         final ArrayList<String> vncKeyboardLayoutItems = new ArrayList<String>();
         vncKeyboardLayoutItems.add(null); // null value means the global VncKeyboardLayout from vdc_options will be used
         vncKeyboardLayoutItems.addAll(layouts);
@@ -2123,7 +2123,7 @@ public class UnitVmModel extends Model {
     private void updateBootMenu() {
         if (getSelectedCluster() != null) {
             Version version = getSelectedCluster().getcompatibility_version();
-            final boolean supported = AsyncDataProvider.isBootMenuSupported(version.toString());
+            final boolean supported = AsyncDataProvider.getInstance().isBootMenuSupported(version.toString());
             if (!supported) {
                 getBootMenuEnabled().setEntity(false);
                 getBootMenuEnabled().setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().bootMenuNotSupported(version.toString(2)));
@@ -2148,14 +2148,14 @@ public class UnitVmModel extends Model {
         if (getSelectedCluster() != null) {
             boolean isQxl = getDisplayType() == DisplayType.qxl;
             boolean spiceFileTransferToggle = isQxl
-                    && AsyncDataProvider.isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+                    && AsyncDataProvider.getInstance().isSpiceFileTransferToggleSupported(getSelectedCluster().getcompatibility_version().toString());
             if (!spiceFileTransferToggle) {
                 handleQxlChangeProhibitionReason(getSpiceFileTransferEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
             }
             getSpiceFileTransferEnabled().setIsChangable(spiceFileTransferToggle);
 
             boolean spiceCopyPasteToggle = isQxl
-                    && AsyncDataProvider.isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
+                    && AsyncDataProvider.getInstance().isSpiceCopyPasteToggleSupported(getSelectedCluster().getcompatibility_version().toString());
             if (!spiceCopyPasteToggle) {
                 handleQxlChangeProhibitionReason(getSpiceCopyPasteEnabled(), getSelectedCluster().getcompatibility_version().toString(), isQxl);
             }
@@ -2192,8 +2192,8 @@ public class UnitVmModel extends Model {
     {
         Integer osType = getOSType().getSelectedItem();
 
-        setIsWindowsOS(AsyncDataProvider.isWindowsOsType(osType));
-        setIsLinuxOS(AsyncDataProvider.isLinuxOsType(osType));
+        setIsWindowsOS(AsyncDataProvider.getInstance().isWindowsOsType(osType));
+        setIsLinuxOS(AsyncDataProvider.getInstance().isLinuxOsType(osType));
 
         getInitrd_path().setIsChangable(getIsLinuxOS());
         getInitrd_path().setIsAvailable(getIsLinuxOS());
@@ -2233,8 +2233,8 @@ public class UnitVmModel extends Model {
 
                 }
             };
-            AsyncDataProvider.getVmWatchdogTypes(osType,
-                                                 cluster.getcompatibility_version(), asyncQuery);
+            AsyncDataProvider.getInstance().getVmWatchdogTypes(osType,
+                                                               cluster.getcompatibility_version(), asyncQuery);
         }
     }
 
@@ -2615,8 +2615,8 @@ public class UnitVmModel extends Model {
                             new LengthValidation(
                                     (getBehavior() instanceof TemplateVmModelBehavior || getBehavior() instanceof NewTemplateVmModelBehavior)
                                             ? VM_TEMPLATE_NAME_MAX_LIMIT
-                                            : AsyncDataProvider.isWindowsOsType(osType) ? AsyncDataProvider.getMaxVmNameLengthWin()
-                                                    : AsyncDataProvider.getMaxVmNameLengthNonWin()),
+                                            : AsyncDataProvider.getInstance().isWindowsOsType(osType) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                                            : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin()),
                             isPoolTabValid ? new PoolNameValidation() : new I18NNameValidation()
                     });
 

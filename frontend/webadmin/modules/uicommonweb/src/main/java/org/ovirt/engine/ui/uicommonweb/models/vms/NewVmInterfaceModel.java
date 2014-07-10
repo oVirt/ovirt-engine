@@ -63,12 +63,12 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
                 postNicInit();
             }
         };
-        AsyncDataProvider.getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
+        AsyncDataProvider.getInstance().getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
     }
 
     private void postNicInit() {
         initSelectedType();
-        getName().setEntity(AsyncDataProvider.getNewNicName(getVmNicList()));
+        getName().setEntity(AsyncDataProvider.getInstance().getNewNicName(getVmNicList()));
         initMAC();
 
         if (!allowPlug()) {
@@ -102,7 +102,7 @@ public class NewVmInterfaceModel extends VmInterfaceModel {
 
     @Override
     protected void initSelectedType() {
-        getNicType().setSelectedItem(AsyncDataProvider.getDefaultNicType(getNicType().getItems()));
+        getNicType().setSelectedItem(AsyncDataProvider.getInstance().getDefaultNicType(getNicType().getItems()));
     }
 
     @Override

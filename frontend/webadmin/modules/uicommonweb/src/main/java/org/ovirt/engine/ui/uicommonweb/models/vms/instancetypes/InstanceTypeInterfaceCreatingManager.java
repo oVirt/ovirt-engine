@@ -34,7 +34,7 @@ public class InstanceTypeInterfaceCreatingManager extends BaseInterfaceCreatingM
 
     @Override
     protected void getNics(final AsyncQuery getNicsQuery, final Guid vmId, final UnitVmModel unitVmModel) {
-        AsyncDataProvider.getTemplateNicList(getNicsQuery, vmId);
+        AsyncDataProvider.getInstance().getTemplateNicList(getNicsQuery, vmId);
     }
 
     @Override

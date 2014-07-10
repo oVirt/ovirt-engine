@@ -86,7 +86,7 @@ public class UserPortalNewTemplateVmModelBehavior extends NewTemplateVmModelBeha
             templatesList.add(0, blankTemplate);
         }
 
-        List<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templatesList,
+        List<VmTemplate> filteredTemplates = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesList,
                 dataCenterWithCluster.getCluster().getArchitecture());
 
         VmTemplate currentTemplate = Linq.firstOrDefault(templates,

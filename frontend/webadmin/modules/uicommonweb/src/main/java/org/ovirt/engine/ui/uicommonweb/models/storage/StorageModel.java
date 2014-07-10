@@ -221,7 +221,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         setActivateDomain(new EntityModel<Boolean>(true));
         getActivateDomain().setIsAvailable(false);
 
-        localFSPath = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        localFSPath = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
     }
 
     @Override
@@ -450,41 +450,38 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
             // -> fill DataCenters drop-down with all possible Data-Centers, choose the empty one:
             // [TODO: In case of an Unattached SD, choose only DCs of the same type]
             {
-                AsyncDataProvider.getDataCenterList(new AsyncQuery(new Object[] { this, behavior },
-                        new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object target, Object returnValue) {
+                AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new Object[] {this, behavior},
+                                                                                 new INewAsyncCallback() {
+                                                                                     @Override
+                                                                                     public void onSuccess(Object target, Object returnValue) {
 
-                                Object[] array = (Object[]) target;
-                                StorageModel storageModel = (StorageModel) array[0];
-                                StorageModelBehavior storageModelBehavior = (StorageModelBehavior) array[1];
-                                List<StoragePool> dataCenters =
-                                        (ArrayList<StoragePool>) returnValue;
-                                dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
-                                StorageModel.addEmptyDataCenterToList(dataCenters);
-                                StoragePool oldSelectedItem =
-                                        storageModel.getDataCenter().getSelectedItem();
-                                storageModel.getDataCenter().setItems(dataCenters);
-                                if (oldSelectedItem != null)
-                                {
-                                    storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
-                                            new Linq.DataCenterPredicate(oldSelectedItem.getId())));
-                                }
-                                else
-                                {
-                                    storageModel.getDataCenter()
-                                            .setSelectedItem(getStorage() == null ? Linq.firstOrDefault(dataCenters)
-                                                    : Linq.firstOrDefault(dataCenters,
-                                                            new Linq.DataCenterPredicate(UnassignedDataCenterId)));
-                                }
+                                                                                         Object[] array = (Object[]) target;
+                                                                                         StorageModel storageModel = (StorageModel) array[0];
+                                                                                         StorageModelBehavior storageModelBehavior = (StorageModelBehavior) array[1];
+                                                                                         List<StoragePool> dataCenters =
+                                                                                                 (ArrayList<StoragePool>) returnValue;
+                                                                                         dataCenters = storageModelBehavior.filterDataCenter(dataCenters);
+                                                                                         StorageModel.addEmptyDataCenterToList(dataCenters);
+                                                                                         StoragePool oldSelectedItem =
+                                                                                                 storageModel.getDataCenter().getSelectedItem();
+                                                                                         storageModel.getDataCenter().setItems(dataCenters);
+                                                                                         if (oldSelectedItem != null) {
+                                                                                             storageModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters,
+                                                                                                                                                              new Linq.DataCenterPredicate(oldSelectedItem.getId())));
+                                                                                         } else {
+                                                                                             storageModel.getDataCenter()
+                                                                                                     .setSelectedItem(getStorage() == null ? Linq.firstOrDefault(dataCenters)
+                                                                                                                              : Linq.firstOrDefault(dataCenters,
+                                                                                                                                                    new Linq.DataCenterPredicate(UnassignedDataCenterId)));
+                                                                                         }
 
-                            }
-                        }, getHash()));
+                                                                                     }
+                                                                                 }, getHash()));
             }
 
             else // "Edit Storage" mode:
             {
-                AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
+                AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -538,7 +535,7 @@ public class StorageModel extends ListModel<IStorageModel> implements ISupportSy
         boolean localFsOnly = getSelectedItem() instanceof LocalStorageModel;
         Guid dataCenterId = dataCenter == null ? null : dataCenter.getId();
 
-        AsyncDataProvider.getHostsForStorageOperation(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostsForStorageOperation(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 StorageModel storageModel = (StorageModel) model;

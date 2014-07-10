@@ -59,7 +59,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
             }
         };
 
-        AsyncDataProvider.getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
+        AsyncDataProvider.getInstance().getNicTypeList(getVm().getOsId(), getClusterCompatibilityVersion(), asyncQuery);
     }
 
     private void postNicInit() {
@@ -107,7 +107,7 @@ public abstract class BaseEditVmInterfaceModel extends VmInterfaceModel {
 
         if (selectedNicType == null || !nicTypes.contains(selectedNicType))
         {
-            selectedNicType = AsyncDataProvider.getDefaultNicType(nicTypes);
+            selectedNicType = AsyncDataProvider.getInstance().getDefaultNicType(nicTypes);
         }
 
         getNicType().setSelectedItem(selectedNicType);

@@ -145,17 +145,17 @@ public class TemplateDiskListModel extends SearchableListModel
             setDisks(value);
         }
         else {
-            AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
-                    new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object target, Object returnValue) {
-                            ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
+                                                                                new INewAsyncCallback() {
+                                                                                    @Override
+                                                                                    public void onSuccess(Object target, Object returnValue) {
+                                                                                        ArrayList<StorageDomain> storageDomains = (ArrayList<StorageDomain>) returnValue;
 
-                            Collections.sort(storageDomains, new NameableComparator());
-                            setStorageDomains(storageDomains);
-                            setDisks(value);
-                        }
-                    }));
+                                                                                        Collections.sort(storageDomains, new NameableComparator());
+                                                                                        setStorageDomains(storageDomains);
+                                                                                        setDisks(value);
+                                                                                    }
+                                                                                }));
         }
 
         updateActionAvailability();

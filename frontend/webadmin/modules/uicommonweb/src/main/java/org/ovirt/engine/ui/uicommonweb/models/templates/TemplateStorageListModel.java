@@ -107,7 +107,7 @@ public class TemplateStorageListModel extends SearchableListModel
         {
             this.value = value;
             VmTemplate template = (VmTemplate) getEntity();
-            AsyncDataProvider.getTemplateDiskList(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {

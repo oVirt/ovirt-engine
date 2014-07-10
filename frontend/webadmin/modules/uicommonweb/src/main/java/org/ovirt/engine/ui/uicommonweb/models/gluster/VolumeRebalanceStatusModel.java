@@ -145,7 +145,7 @@ public class VolumeRebalanceStatusModel extends Model {
     }
 
     public void refreshDetails(GlusterVolumeEntity volumeEntity) {
-        AsyncDataProvider.getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

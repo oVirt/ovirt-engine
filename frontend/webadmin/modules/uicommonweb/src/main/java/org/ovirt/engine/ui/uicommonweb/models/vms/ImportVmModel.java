@@ -175,7 +175,7 @@ public class ImportVmModel extends ListWithDetailsModel {
 
     protected void doInit(final Guid storageDomainId) {
        // get Storage pool
-       AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+       AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
 
            @Override
            public void onSuccess(Object model, Object returnValue) {
@@ -196,7 +196,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                }
                // get cluster
                if (dataCenter != null) {
-                   AsyncDataProvider.getClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
+                   AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
                        @Override
                        public void onSuccess(Object model, Object returnValue) {
                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
@@ -205,7 +205,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                            ArchitectureType targetArch = importModel.getTargetArchitecture();
 
                            if (targetArch != null) {
-                               List<VDSGroup> filteredClusters = AsyncDataProvider.filterByArchitecture(clusters,
+                               List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                        targetArch);
                                getCluster().setItems(filteredClusters);
                                getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
@@ -215,7 +215,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                            }
 
                            // get storage domains
-                           AsyncDataProvider.getStorageDomainList(new AsyncQuery(ImportVmModel.this,
+                           AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                    new INewAsyncCallback() {
 
                                        @Override

@@ -56,7 +56,7 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     private void updateSuggestedDiskAlias() {
-        AsyncDataProvider.getNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNextAvailableDiskAliasNameByVMId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 String suggestedDiskAlias = (String) returnValue;
@@ -138,7 +138,7 @@ public class NewDiskModel extends AbstractDiskModel
         }
         else {
             getIsWipeAfterDelete().setIsChangable(true);
-            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
+            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
         }
     }
 
@@ -238,7 +238,7 @@ public class NewDiskModel extends AbstractDiskModel
         IntegerValidation sizeValidation = new IntegerValidation();
         sizeValidation.setMinimum(1);
         if (storageType.isBlockDomain()) {
-            sizeValidation.setMaximum((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
+            sizeValidation.setMaximum((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MaxBlockDiskSize));
         }
         getSize().validateEntity(new IValidation[] { new NotEmptyValidation(), sizeValidation });
         getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });

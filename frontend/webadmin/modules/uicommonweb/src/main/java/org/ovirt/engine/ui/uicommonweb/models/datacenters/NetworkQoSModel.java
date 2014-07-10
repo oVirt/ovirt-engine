@@ -35,17 +35,17 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
         getDataCenters().setSelectedItem(dataCenter);
         getDataCenters().setIsChangable(false);
         getInbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundAverageDefaultValue));
         getInbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundPeakDefaultValue));
         getInbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSInboundBurstDefaultValue));
         getOutbound().getAverage()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundAverageDefaultValue));
         getOutbound().getPeak()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundPeakDefaultValue));
         getOutbound().getBurst()
-                .setEntity((Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue));
+                .setEntity((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.QoSOutboundBurstDefaultValue));
         addCommands();
     }
 

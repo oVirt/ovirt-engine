@@ -118,7 +118,7 @@ public class ImportNetworksModel extends Model {
 
     protected void initProviderList() {
         startProgress(null);
-        AsyncDataProvider.getAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllNetworkProviders(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -183,12 +183,12 @@ public class ImportNetworksModel extends Model {
                 dataCenters.addAll((Collection<StoragePool>) returnValue);
                 Collections.sort(dataCenters, new NameableComparator());
 
-                AsyncDataProvider.getExternalNetworkMap(networkQuery, provider.getId());
+                AsyncDataProvider.getInstance().getExternalNetworkMap(networkQuery, provider.getId());
             }
         };
 
         startProgress(null);
-        AsyncDataProvider.getDataCenterList(dcQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(dcQuery);
     }
 
     public void cancel() {
@@ -233,7 +233,7 @@ public class ImportNetworksModel extends Model {
         if (dcClusters.containsKey(dcId)) {
             attachNetworkToClusters(network, dcClusters.get(dcId), publicUse);
         } else {
-            AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
@@ -242,7 +242,7 @@ public class ImportNetworksModel extends Model {
 
                         @Override
                         public boolean match(VDSGroup source) {
-                                    return (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
+                                    return (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
                                             source.getcompatibility_version().getValue());
                         }
                     });

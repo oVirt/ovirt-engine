@@ -299,7 +299,7 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setStorageType(new ListModel<StorageType>());
         getStorageType().setIsAvailable(false);
-        getStorageType().setItems(AsyncDataProvider.getStorageTypeList());
+        getStorageType().setItems(AsyncDataProvider.getInstance().getStorageTypeList());
         getStorageType().getSelectedItemChangedEvent().addListener(this);
 
         setHost(new ListModel<VDS>());
@@ -365,7 +365,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     protected void updateStorageDomains(final StoragePool datacenter) {
-        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 DiskModel diskModel = (DiskModel) target;
@@ -397,7 +397,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateHosts(StoragePool datacenter) {
-        AsyncDataProvider.getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getHostListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -421,7 +421,7 @@ public abstract class AbstractDiskModel extends DiskModel
         setMessage(""); //$NON-NLS-1$
 
         if (isInVm) {
-            AsyncDataProvider.getDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterById((new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -442,7 +442,7 @@ public abstract class AbstractDiskModel extends DiskModel
             }, getHash())), getVm().getStoragePoolId());
         }
         else {
-            AsyncDataProvider.getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -466,7 +466,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateBootableDiskAvailable() {
-        AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
@@ -494,7 +494,7 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateShareableDiskEnabled(StoragePool datacenter) {
-        boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
@@ -507,7 +507,7 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        boolean isDirectLUNDiskkEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.DirectLUNDiskEnabled, datacenter.getcompatibility_version().getValue());
 
         getIsDirectLunDiskAvaialable().setEntity(isDirectLUNDiskkEnabled);
@@ -526,12 +526,12 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     private void updateVolumeFormat(VolumeType volumeType, StorageType storageType) {
-        setVolumeFormat(AsyncDataProvider.getDiskVolumeFormat(volumeType, storageType));
+        setVolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(volumeType, storageType));
     }
 
     public void updateInterface(final Version clusterVersion) {
         if (getVm() != null) {
-            AsyncDataProvider.isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isVirtioScsiEnabledForVm(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue1) {
                     getIsVirtioScsiEnabled().setEntity(Boolean.TRUE.equals(returnValue1));
@@ -549,12 +549,12 @@ public abstract class AbstractDiskModel extends DiskModel
                         }
                     });
 
-                    AsyncDataProvider.getDiskInterfaceList(getVm().getOs(), clusterVersion, asyncQuery);
+                    AsyncDataProvider.getInstance().getDiskInterfaceList(getVm().getOs(), clusterVersion, asyncQuery);
 
                 }
             }), getVm().getId());
         } else {
-            setInterfaces(AsyncDataProvider.getDiskInterfaceList());
+            setInterfaces(AsyncDataProvider.getInstance().getDiskInterfaceList());
         }
     }
 
@@ -722,7 +722,7 @@ public abstract class AbstractDiskModel extends DiskModel
         {
             getIsPlugged().setIsAvailable(true);
             // Get internal attachable disks
-            AsyncDataProvider.getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;
@@ -736,7 +736,7 @@ public abstract class AbstractDiskModel extends DiskModel
             }, getHash()), getVm().getStoragePoolId(), getVm().getId());
 
             // Get external attachable disks
-            AsyncDataProvider.getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     AbstractDiskModel model = (AbstractDiskModel) target;

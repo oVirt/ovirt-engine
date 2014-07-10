@@ -119,7 +119,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     protected void performLogout() {
         getLoginModel().resetAfterLogout();
         user.onUserLogout();
-        AsyncDataProvider.clearCache();
+        AsyncDataProvider.getInstance().clearCache();
         CleanupModelEvent.fire(eventBus);
     }
 

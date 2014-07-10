@@ -26,8 +26,8 @@ public class WebadminRunOnceModel extends RunOnceModel {
         getIsAutoAssign().setEntity(true);
 
         // Custom Properties
-        getCustomPropertySheet().setKeyValueMap(AsyncDataProvider.getCustomPropertiesList()
-                .get(vm.getVdsGroupCompatibilityVersion()));
+        getCustomPropertySheet().setKeyValueMap(AsyncDataProvider.getInstance().getCustomPropertiesList()
+                                                        .get(vm.getVdsGroupCompatibilityVersion()));
         getCustomPropertySheet().deserialize(vm.getCustomProperties());
 
         loadHosts();
@@ -38,7 +38,7 @@ public class WebadminRunOnceModel extends RunOnceModel {
      */
     private void loadHosts() {
         // append just active hosts
-        AsyncDataProvider.getHostListByCluster(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {

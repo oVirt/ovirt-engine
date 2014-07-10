@@ -54,7 +54,7 @@ public class EditDiskModel extends AbstractDiskModel
             getSizeExtend().setIsChangable(isExtendImageSizeEnabled);
 
             Guid storageDomainId = diskImage.getStorageIds().get(0);
-            AsyncDataProvider.getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getStorageDomainById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     DiskModel diskModel = (DiskModel) target;

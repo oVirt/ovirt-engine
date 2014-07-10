@@ -345,7 +345,7 @@ public class TemplateGeneralModel extends EntityModel {
         setHostCluster(template.getVdsGroupName());
         setDefinedMemory(template.getMemSizeMb() + " MB"); //$NON-NLS-1$
         setIsHighlyAvailable(template.isAutoStartup());
-        setPriority(AsyncDataProvider.priorityToString(template.getPriority()));
+        setPriority(AsyncDataProvider.getInstance().priorityToString(template.getPriority()));
         setMonitorCount(template.getNumOfMonitors());
         setAllowConsoleReconnect(template.isAllowConsoleReconnect());
         setCpuInfo(ConstantsManager.getInstance().getMessages().cpuInfoLabel(
@@ -353,19 +353,19 @@ public class TemplateGeneralModel extends EntityModel {
                 template.getNumOfSockets(),
                 template.getCpuPerSocket()));
 
-        setOS(AsyncDataProvider.getOsName(template.getOsId()));
+        setOS(AsyncDataProvider.getInstance().getOsName(template.getOsId()));
 
         Translator translator = EnumTranslator.getInstance();
         setDefaultDisplayType(translator.get(template.getDefaultDisplayType()));
 
         setOrigin(translator.get(template.getOrigin()));
 
-        setHasDomain(AsyncDataProvider.isWindowsOsType(template.getOsId()));
+        setHasDomain(AsyncDataProvider.getInstance().isWindowsOsType(template.getOsId()));
         if (template.getVmInit() != null) {
             setDomain(template.getVmInit().getDomain());
         }
 
-        setHasTimeZone(AsyncDataProvider.isWindowsOsType(template.getOsId()));
+        setHasTimeZone(AsyncDataProvider.getInstance().isWindowsOsType(template.getOsId()));
         setTimeZone(template.getTimeZone());
 
         setHasUsbPolicy(true);

@@ -268,7 +268,7 @@ public class GlusterHookResolveConflictsModel extends Model {
 
         if (selectedServer.getContentType() == GlusterHookContentType.TEXT) {
             startProgress(null);
-            AsyncDataProvider.getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     String content = (String) returnValue;

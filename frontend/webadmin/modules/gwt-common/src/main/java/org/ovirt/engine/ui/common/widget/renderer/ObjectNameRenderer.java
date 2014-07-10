@@ -13,7 +13,7 @@ public class ObjectNameRenderer extends AbstractRenderer<Object[]> {
         VdcObjectType vdcObjectType = (VdcObjectType) arg[0];
         String objectType = "(" + new EnumRenderer<VdcObjectType>().render(vdcObjectType) + ")"; //$NON-NLS-1$ //$NON-NLS-2$
         String objectName = (String) arg[1];
-        if (arg.length == 4 && AsyncDataProvider.getEntityGuid(arg[2]).equals(arg[3])) {
+        if (arg.length == 4 && AsyncDataProvider.getInstance().getEntityGuid(arg[2]).equals(arg[3])) {
             return ""; //$NON-NLS-1$
         }
         if (vdcObjectType.equals(VdcObjectType.System)) {

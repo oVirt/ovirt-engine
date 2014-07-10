@@ -213,7 +213,7 @@ public class TemplateInterfaceListModel extends SearchableListModel
         super.setEntity(value);
 
         if (getEntity() != null) {
-            AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object listModel, Object returnValue) {

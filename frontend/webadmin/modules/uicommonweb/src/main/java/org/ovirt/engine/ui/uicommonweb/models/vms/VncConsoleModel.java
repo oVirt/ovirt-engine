@@ -70,7 +70,7 @@ public class VncConsoleModel extends ConsoleModel {
      */
     private ClientConsoleMode readDefaultConsoleClientMode() {
         try {
-            return ClientConsoleMode.valueOf((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClientModeVncDefault));
+            return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeVncDefault));
         } catch (Exception e) {
             return ClientConsoleMode.Native;
         }

@@ -44,7 +44,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
         {
             if (item.getRole() == StorageDomainType.ISO)
             {
-                AsyncDataProvider.getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -59,7 +59,7 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
-                AsyncDataProvider.getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -86,14 +86,14 @@ public class ImportStorageModelBehavior extends StorageModelBehavior
 
         boolean isUnassignedDC = StorageModel.UnassignedDataCenterId.equals(datacenter.getId());
         Version dcVersion = !isUnassignedDC ? datacenter.getcompatibility_version() : Version.v3_5;
-        boolean ovfStoreOnAnyDomainEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        boolean ovfStoreOnAnyDomainEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.ImportDataStorageDomain, dcVersion.getValue());
 
         if (ovfStoreOnAnyDomainEnabled && !isItemsContainDataDomains()) {
             Collection<IStorageModel> items = new ArrayList<IStorageModel>();
             items.addAll(getModel().getItems());
-            items.addAll(AsyncDataProvider.getFileDataStorageModels());
-            items.addAll(AsyncDataProvider.getImportBlockDataStorageModels());
+            items.addAll(AsyncDataProvider.getInstance().getFileDataStorageModels());
+            items.addAll(AsyncDataProvider.getInstance().getImportBlockDataStorageModels());
 
             // Set items manually to invoke itemsChanged event
             getModel().setItems(items);

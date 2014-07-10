@@ -47,7 +47,7 @@ public class ClusterPopupPresenterWidget extends AbstractModelBoundPopupPresente
         });
 
         String spiceProxyInConfig =
-                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         String spiceProxyMessage =
                 StringHelper.isNullOrEmpty(spiceProxyInConfig) ? messages.noSpiceProxyDefined() : spiceProxyInConfig;
         getView().setSpiceProxyOverrideExplanation(messages.consoleOverrideSpiceProxyMessage(messages.consoleOverrideDefinedInGlobalConfig(),

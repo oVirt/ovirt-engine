@@ -75,7 +75,7 @@ public class HostNetworkProviderModel extends EntityModel {
             }
         };
         startProgress(null);
-        AsyncDataProvider.getAllNetworkProviders(getProvidersQuery);
+        AsyncDataProvider.getInstance().getAllNetworkProviders(getProvidersQuery);
     }
 
     public boolean validate() {

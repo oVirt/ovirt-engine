@@ -272,7 +272,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     private void retrieveMaxSpmPriority() {
-        AsyncDataProvider.getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 spmMaxPriorityValue = (Integer) returnValue;
@@ -282,7 +282,7 @@ public class HostGeneralModel extends EntityModel
     }
 
     private void retrieveDefaultSpmPriority() {
-        AsyncDataProvider.getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 spmDefaultPriorityValue = (Integer) returnValue;

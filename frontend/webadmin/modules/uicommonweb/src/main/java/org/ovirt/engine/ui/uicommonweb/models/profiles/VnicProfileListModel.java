@@ -212,7 +212,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                     setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
-            AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, network.getId());
+            AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(asyncQuery, network.getId());
             return;
         }
 
@@ -230,7 +230,7 @@ public class VnicProfileListModel extends ListWithDetailsModel implements ISuppo
                     setItems((Collection<VnicProfileView>) returnValue);
                 }
             };
-            AsyncDataProvider.getVnicProfilesByDcId(asyncQuery, dc.getId());
+            AsyncDataProvider.getInstance().getVnicProfilesByDcId(asyncQuery, dc.getId());
         }
     }
 

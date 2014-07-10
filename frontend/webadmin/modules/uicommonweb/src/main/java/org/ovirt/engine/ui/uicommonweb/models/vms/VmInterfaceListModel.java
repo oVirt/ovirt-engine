@@ -129,7 +129,7 @@ public class VmInterfaceListModel extends SearchableListModel
                 VmInterfaceListModel.super.syncSearch(VdcQueryType.GetVmInterfacesByVmId, new IdQueryParameters(vm.getId()));
             }
         };
-        AsyncDataProvider.getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
+        AsyncDataProvider.getInstance().getVmGuestAgentInterfacesByVmId(getVmGuestAgentInterfacesByVmIdQuery, vm.getId());
     }
 
     private void newEntity()

@@ -252,7 +252,7 @@ public abstract class InstanceTypeManager {
 
         activate();
 
-        AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(model, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(model, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 deactivate();
@@ -274,7 +274,7 @@ public abstract class InstanceTypeManager {
     }
 
     private void updateWatchdog(final VmBase vmBase) {
-        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 deactivate();

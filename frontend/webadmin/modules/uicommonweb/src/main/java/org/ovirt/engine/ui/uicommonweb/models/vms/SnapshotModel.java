@@ -207,7 +207,7 @@ public class SnapshotModel extends EntityModel
     }
 
     private void initVmSnapshots() {
-        AsyncDataProvider.getVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmSnapshotList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
@@ -227,7 +227,7 @@ public class SnapshotModel extends EntityModel
     }
 
     private void initVmDisks() {
-        AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;
@@ -260,7 +260,7 @@ public class SnapshotModel extends EntityModel
             return;
         }
 
-        AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 SnapshotModel snapshotModel = (SnapshotModel) target;

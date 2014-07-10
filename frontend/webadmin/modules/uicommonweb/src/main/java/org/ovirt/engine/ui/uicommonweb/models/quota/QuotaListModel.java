@@ -160,7 +160,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         qModel.startProgress(null);
 
         if(populateDataCenter){
-            AsyncDataProvider.getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
@@ -174,13 +174,12 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                     quotaModel.getDataCenter().setSelectedItem(dataCenterList.get(0));
 
                     if (quotaListModel.getSystemTreeSelectedItem() != null
-                            && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter)
-                    {
+                            && quotaListModel.getSystemTreeSelectedItem().getType() == SystemTreeItemType.DataCenter) {
                         StoragePool selectDataCenter =
                                 (StoragePool) quotaListModel.getSystemTreeSelectedItem().getEntity();
 
                         quotaModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenterList,
-                                new Linq.DataCenterPredicate(selectDataCenter.getId())));
+                                                                                       new Linq.DataCenterPredicate(selectDataCenter.getId())));
                         quotaModel.getDataCenter().setIsChangable(false);
                     }
                 }
@@ -195,7 +194,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 if(selectedDataCenter == null){
                     return;
                 }
-                AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusterList = (ArrayList<VDSGroup>) returnValue;
@@ -219,7 +218,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
 
                     }
                 }), selectedDataCenter.getId());
-                AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -440,7 +439,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                     @Override
                     public void eventRaised(Event ev, Object sender, EventArgs args) {
                         StoragePool selectedDataCenter = (StoragePool) qModel.getDataCenter().getSelectedItem();
-                        AsyncDataProvider.getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
+                        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
                             public void onSuccess(Object model, Object returnValue) {
@@ -485,7 +484,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                                 }
                             }
                         }), selectedDataCenter.getId());
-                        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+                        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
 
                             @Override
                             public void onSuccess(Object model, Object returnValue) {

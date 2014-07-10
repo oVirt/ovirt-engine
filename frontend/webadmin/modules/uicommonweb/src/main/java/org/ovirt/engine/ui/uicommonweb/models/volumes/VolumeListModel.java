@@ -312,7 +312,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                 innerVolumeModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.getDataCenterByClusterServiceList(_asyncQuery, false, true);
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(_asyncQuery, false, true);
 
     }
 
@@ -713,7 +713,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         rebalanceStatusOk.setIsCancel(true);
         cModel.getCommands().add(rebalanceStatusOk);
 
-        AsyncDataProvider.getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRebalanceStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 cModel.stopProgress();
@@ -850,18 +850,18 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                             }
                         };
 
-                        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
-                                AsyncDataProvider.getDefaultConfigurationVersion()),
+                        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerGroupVirtValue,
+                                                                                                 AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                                 aQueryInner1);
                     }
                 };
-                AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
-                        AsyncDataProvider.getDefaultConfigurationVersion()),
+                AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionOwnerUserVirtValue,
+                                                                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                         aQueryInner);
             }
         };
-        AsyncDataProvider.getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
-                AsyncDataProvider.getDefaultConfigurationVersion()),
+        AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
+                                                                                 AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                 aQuery);
     }
 

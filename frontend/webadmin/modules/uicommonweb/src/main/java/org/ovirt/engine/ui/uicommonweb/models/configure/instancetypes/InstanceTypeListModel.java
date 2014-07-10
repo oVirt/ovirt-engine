@@ -176,7 +176,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
             return;
         }
 
-        AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

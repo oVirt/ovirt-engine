@@ -330,7 +330,7 @@ public class VolumeModel extends Model {
                 volumeBrickModel.getServers().setItems(hostList);
             }
         };
-        AsyncDataProvider.getHostListByCluster(_asyncQuery, getCluster().getSelectedItem().getName());
+        AsyncDataProvider.getInstance().getHostListByCluster(_asyncQuery, getCluster().getSelectedItem().getName());
 
         // TODO: fetch the mount points to display
         if (getBricks().getItems() != null)
@@ -477,7 +477,7 @@ public class VolumeModel extends Model {
         {
             final VDSGroup cluster = getCluster().getSelectedItem();
 
-            AsyncDataProvider.isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().isAnyHostUpInCluster(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -558,7 +558,7 @@ public class VolumeModel extends Model {
             };
 
             // load clusters of Gluster type
-            AsyncDataProvider.getClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
+            AsyncDataProvider.getInstance().getClusterByServiceList(_asyncQuery, dataCenter.getId(), false, true);
         }
     }
 

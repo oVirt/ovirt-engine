@@ -308,7 +308,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
         if (syntaxChecker == null) {
             syntaxChecker = SyntaxCheckerFactory.createUISyntaxChecker(
-                    (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
+                    (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.AuthenticationMethod));
         }
     }
 
@@ -1001,7 +1001,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
                     privateAsyncCallback1.ApplySearchPageSize((Integer) result1);
                 }
             };
-            AsyncDataProvider.getSearchResultsLimit(_asyncQuery1);
+            AsyncDataProvider.getInstance().getSearchResultsLimit(_asyncQuery1);
         }
 
         public void requestSearch()

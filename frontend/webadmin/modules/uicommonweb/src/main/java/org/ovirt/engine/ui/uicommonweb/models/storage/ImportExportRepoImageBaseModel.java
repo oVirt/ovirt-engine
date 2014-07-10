@@ -167,7 +167,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         };
 
         startProgress(null);
-        AsyncDataProvider.getDataCenterList(new AsyncQuery(this, callback));
+        AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(this, callback));
     }
 
     protected void updateControlsAvailability() {
@@ -198,9 +198,9 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         startProgress(null);
 
         if (storagePoolId != null) {
-            AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, callback), storagePoolId);
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, callback), storagePoolId);
         } else {
-            AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, callback));
+            AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, callback));
         }
     }
 
@@ -209,7 +209,7 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ImportExportRepoImageBaseModel model = (ImportExportRepoImageBaseModel) target;
-                List<VDSGroup> clusters = AsyncDataProvider.filterClustersWithoutArchitecture((List<VDSGroup>) returnValue);
+                List<VDSGroup> clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture((List<VDSGroup>) returnValue);
                 model.getCluster().setItems(clusters);
                 model.getCluster().setIsEmpty(clusters.isEmpty());
                 model.updateControlsAvailability();
@@ -220,9 +220,9 @@ public abstract class ImportExportRepoImageBaseModel extends EntityModel impleme
         startProgress(null);
 
         if (storagePoolId != null) {
-            AsyncDataProvider.getClusterList(new AsyncQuery(this, callback), storagePoolId);
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, callback), storagePoolId);
         } else {
-            AsyncDataProvider.getClusterList(new AsyncQuery(this, callback));
+            AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, callback));
         }
     }
 

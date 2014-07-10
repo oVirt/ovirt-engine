@@ -40,7 +40,7 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
 
     private void setSpiceProxyOverrideExplanation(VDSGroup selectedCluster) {
         String spiceProxyInConfig =
-                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         String spiceProxyOnCluster = selectedCluster.getSpiceProxy();
 
         if (!StringHelper.isNullOrEmpty(spiceProxyOnCluster)) {

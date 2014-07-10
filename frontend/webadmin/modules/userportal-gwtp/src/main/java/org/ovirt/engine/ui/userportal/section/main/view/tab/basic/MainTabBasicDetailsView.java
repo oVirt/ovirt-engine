@@ -119,7 +119,7 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
 
             @Override
             public String render(Integer object) {
-                return AsyncDataProvider.getOsName(object);
+                return AsyncDataProvider.getInstance().getOsName(object);
             }
         });
         consoleClientResourcesUrl = new Anchor(dynamicMessages.clientResources());

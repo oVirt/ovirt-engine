@@ -50,7 +50,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         getModel().getVmType().setIsChangable(true);
 
         // Get datacenters with permitted create action
-        AsyncDataProvider.getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getDataCentersWithPermittedActionOnClusters(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -65,7 +65,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                         }
 
                         if (!dataCenters.isEmpty()) {
-                            AsyncDataProvider.getClustersWithPermittedAction(
+                            AsyncDataProvider.getInstance().getClustersWithPermittedAction(
                                     new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                                         @Override
@@ -73,7 +73,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                                             UnitVmModel model = (UnitVmModel) target;
                                             List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
                                             // filter clusters without cpu name
-                                            clusters = AsyncDataProvider.filterClustersWithoutArchitecture(clusters);
+                                            clusters = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
                                             model.setDataCentersAndClusters(model,
                                                     dataCenters,
                                                     clusters, null);
@@ -160,7 +160,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
             templatesList.add(0, blankTemplate);
         }
 
-        List<VmTemplate> filteredTemplates = AsyncDataProvider.filterTemplatesByArchitecture(templatesList,
+        List<VmTemplate> filteredTemplates = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesList,
                 dataCenterWithCluster.getCluster().getArchitecture());
 
         // If there was some template selected before, try select it again.

@@ -13,7 +13,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class NetworkGeneralModel extends EntityModel
 {
     private final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private String name;
     private String role;

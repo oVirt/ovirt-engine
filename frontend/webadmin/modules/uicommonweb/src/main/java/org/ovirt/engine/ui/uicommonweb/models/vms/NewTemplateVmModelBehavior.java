@@ -58,7 +58,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         DisksAllocationModel disksAllocationModel = getModel().getDisksAllocationModel();
         disksAllocationModel.setIsAliasChangable(true);
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -73,7 +73,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                         else
                         {
 
-                            AsyncDataProvider.getClusterListByService(
+                            AsyncDataProvider.getInstance().getClusterListByService(
                                     new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                                         @Override
@@ -83,7 +83,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                             List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
                                             List<VDSGroup> filteredClusters =
-                                                    AsyncDataProvider.filterByArchitecture(clusters,
+                                                    AsyncDataProvider.getInstance().filterByArchitecture(clusters,
                                                             vm.getClusterArch());
 
                                             model.setDataCentersAndClusters(model,
@@ -98,7 +98,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                     true,
                                     false);
 
-                            AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(),
+                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(getModel(),
                                     new INewAsyncCallback() {
 
                                         @Override
@@ -128,7 +128,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target1, Object returnValue1) {
@@ -136,7 +136,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                             Object[] array1 = (Object[]) target1;
                             NewTemplateVmModelBehavior behavior1 = (NewTemplateVmModelBehavior) array1[0];
                             StorageDomain storage1 = (StorageDomain) array1[1];
-                            AsyncDataProvider.getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
+                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
                                     returnValue1 },
                                     new INewAsyncCallback() {
                                         @Override
@@ -156,7 +156,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
 
-                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
+                                            ArrayList<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
                                             behavior2.postInitTemplate(templateList);
@@ -171,7 +171,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         }
         else
         {
-            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -180,7 +180,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
 
                             ArrayList<VmTemplate> templates = (ArrayList<VmTemplate>) returnValue;
 
-                            behavior.postInitTemplate(AsyncDataProvider.filterTemplatesByArchitecture(templates,
+                            behavior.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }
@@ -207,7 +207,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         super.dataCenterWithClusterSelectedItemChanged();
 
         // If a VM has at least one disk, present its storage domain.
-        AsyncDataProvider.getVmDiskList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -250,8 +250,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
                 size.setEntity(diskImage.getSizeInGigabytes());
                 diskModel.setSize(size);
                 ListModel volumes = new ListModel();
-                volumes.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                        : AsyncDataProvider.getVolumeTypeList()));
+                volumes.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))
+                        : AsyncDataProvider.getInstance().getVolumeTypeList()));
                 volumes.setSelectedItem(diskImage.getVolumeType());
                 diskModel.setVolumeType(volumes);
                 diskModel.getAlias().setEntity(diskImage.getDiskAlias());
@@ -354,7 +354,7 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     @Override
     public void initStorageDomains()
     {
-        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

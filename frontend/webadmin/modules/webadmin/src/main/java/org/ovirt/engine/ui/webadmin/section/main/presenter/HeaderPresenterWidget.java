@@ -135,6 +135,6 @@ public class HeaderPresenterWidget extends AbstractHeaderPresenterWidget<HeaderP
                 }
             }
         };
-        AsyncDataProvider.getRpmVersion(_asyncQuery);
+        AsyncDataProvider.getInstance().getRpmVersion(_asyncQuery);
     }
 }

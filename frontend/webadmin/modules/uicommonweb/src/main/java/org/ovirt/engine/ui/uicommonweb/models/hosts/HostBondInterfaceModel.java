@@ -199,7 +199,7 @@ public class HostBondInterfaceModel extends Model
         RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
                 new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
         ArrayList<Map.Entry<String, EntityModel<String>>> list =
-                AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
+                AsyncDataProvider.getInstance().getBondingOptionList(tempRef_defaultItem);
         defaultItem = tempRef_defaultItem.argvalue;
         getBondingOptions().setItems(list);
         getBondingOptions().setSelectedItem(defaultItem);

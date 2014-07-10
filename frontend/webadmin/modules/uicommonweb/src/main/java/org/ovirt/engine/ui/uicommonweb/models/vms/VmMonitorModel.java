@@ -148,6 +148,6 @@ public class VmMonitorModel extends EntityModel
                         : vm1.getUsageNetworkPercent()));
             }
         };
-        AsyncDataProvider.getVmById(_asyncQuery, vm.getId());
+        AsyncDataProvider.getInstance().getVmById(_asyncQuery, vm.getId());
     }
 }

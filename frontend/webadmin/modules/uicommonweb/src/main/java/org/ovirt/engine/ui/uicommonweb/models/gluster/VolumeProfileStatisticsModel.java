@@ -208,7 +208,7 @@ public class VolumeProfileStatisticsModel extends Model {
     public void queryBackend(final boolean isBrickSelected) {
         startProgress(ConstantsManager.getInstance().getConstants().fetchingDataMessage());
 
-        AsyncDataProvider.getGlusterVolumeProfilingStatistics(new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterVolumeProfilingStatistics(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 stopProgress();

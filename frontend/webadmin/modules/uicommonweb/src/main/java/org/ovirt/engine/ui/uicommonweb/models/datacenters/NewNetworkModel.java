@@ -59,7 +59,7 @@ public class NewNetworkModel extends NetworkModel {
     public void syncWithBackend() {
         super.syncWithBackend();
         // Get dc- cluster list
-        AsyncDataProvider.getClusterList(new AsyncQuery(NewNetworkModel.this,
+        AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(NewNetworkModel.this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object ReturnValue)
@@ -115,7 +115,7 @@ public class NewNetworkModel extends NetworkModel {
         Iterable<NetworkClusterModel> networkClusters = getNetworkClusterList().getItems();
         if (networkClusters != null) {
             for (NetworkClusterModel networkCluster : networkClusters) {
-                if (!(Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
+                if (!(Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SupportCustomDeviceProperties,
                         networkCluster.getEntity().getcompatibility_version().getValue())) {
                     networkCluster.setIsChangable(!externalNetwork);
                     networkCluster.setAttached(!externalNetwork);

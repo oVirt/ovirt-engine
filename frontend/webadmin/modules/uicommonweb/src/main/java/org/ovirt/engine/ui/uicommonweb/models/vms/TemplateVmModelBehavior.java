@@ -43,12 +43,12 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
 
         if (template.getStoragePoolId() != null && !template.getStoragePoolId().equals(Guid.Empty))
         {
-            AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
+            AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
                             final StoragePool dataCenter = (StoragePool) returnValue;
-                            AsyncDataProvider.getClusterListByService(
+                            AsyncDataProvider.getInstance().getClusterListByService(
                                     new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                                         @Override
@@ -65,7 +65,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                             }
 
                                             List<VDSGroup> filteredClusters =
-                                                    AsyncDataProvider.filterByArchitecture(clustersSupportingVirt,
+                                                    AsyncDataProvider.getInstance().filterByArchitecture(clustersSupportingVirt,
                                                             template.getClusterArch());
 
                                             model.setDataCentersAndClusters(model,
@@ -73,7 +73,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                                                     filteredClusters,
                                                     template.getVdsGroupId());
 
-                                            AsyncDataProvider.isSoundcardEnabled(new AsyncQuery(getModel(),
+                                            AsyncDataProvider.getInstance().isSoundcardEnabled(new AsyncQuery(getModel(),
                                                     new INewAsyncCallback() {
 
                                                         @Override
@@ -93,7 +93,7 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                     template.getStoragePoolId());
         }
 
-        AsyncDataProvider.getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 UnitVmModel model = (UnitVmModel) target;

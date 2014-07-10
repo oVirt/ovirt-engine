@@ -57,7 +57,7 @@ public class HostInterfaceListModel extends SearchableListModel
 {
 
     public static final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
     private UICommand privateEditCommand;
 
@@ -907,7 +907,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
                             new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
                     ArrayList<Map.Entry<String, EntityModel<String>>> list =
-                            AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
+                            AsyncDataProvider.getInstance().getBondingOptionList(tempRef_defaultItem);
                     defaultItem = tempRef_defaultItem.argvalue;
                     Map.Entry<String, EntityModel<String>> selectBondingOpt =
                             new KeyValuePairCompat<String, EntityModel<String>>();
@@ -924,7 +924,7 @@ public class HostInterfaceListModel extends SearchableListModel
                     }
                     if (containsSelectBondingOpt == false)
                     {
-                        if (ObjectUtils.objectsEqual(item.getBondOptions(), AsyncDataProvider.getDefaultBondingOption()))
+                        if (ObjectUtils.objectsEqual(item.getBondOptions(), AsyncDataProvider.getInstance().getDefaultBondingOption()))
                         {
                             selectBondingOpt = defaultItem;
                         }
@@ -975,7 +975,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void editManagementNetwork()
@@ -1017,7 +1017,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
                 final StringBuilder tmpDefaultInterfaceName = new StringBuilder();
 
-                AsyncDataProvider.getInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getInterfaceOptionsForEditNetwork(new AsyncQuery(this, new INewAsyncCallback() {
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
@@ -1050,7 +1050,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             RefObject<Map.Entry<String, EntityModel<String>>> tempRef_defaultItem =
                                     new RefObject<Map.Entry<String, EntityModel<String>>>(defaultItem);
                             ArrayList<Map.Entry<String, EntityModel<String>>> list =
-                                    AsyncDataProvider.getBondingOptionList(tempRef_defaultItem);
+                                    AsyncDataProvider.getInstance().getBondingOptionList(tempRef_defaultItem);
                             defaultItem = tempRef_defaultItem.argvalue;
                             Map.Entry<String, EntityModel<String>> selectBondingOpt =
                                     new KeyValuePairCompat<String, EntityModel<String>>();
@@ -1068,7 +1068,7 @@ public class HostInterfaceListModel extends SearchableListModel
                             if (containsSelectBondingOpt == false)
                             {
                                 if (ObjectUtils.objectsEqual(item.getBondOptions(),
-                                        AsyncDataProvider.getDefaultBondingOption()))
+                                                             AsyncDataProvider.getInstance().getDefaultBondingOption()))
                                 {
                                     selectBondingOpt = defaultItem;
                                 }
@@ -1102,7 +1102,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void onEditManagementNetworkConfirmation(boolean isBond)
@@ -1436,7 +1436,7 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void postBond(HostInterfaceListModel hostInterfaceListModel,
@@ -1799,7 +1799,7 @@ public class HostInterfaceListModel extends SearchableListModel
 
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void onSave()
@@ -1909,7 +1909,7 @@ public class HostInterfaceListModel extends SearchableListModel
                                 hostInterfaceListModel);
                     }
                 };
-                AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+                AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
             }
         }
         else
@@ -2140,7 +2140,7 @@ public class HostInterfaceListModel extends SearchableListModel
                         hostInterfaceListModel);
             }
         };
-        AsyncDataProvider.getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(_asyncQuery, getEntity().getVdsGroupId());
     }
 
     public void cancel()

@@ -155,7 +155,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
     private void onSetParameter() {
@@ -270,7 +270,7 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
+        AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
     }
 
     private GlusterVolumeOptionInfo getCifsVolumeOption() {

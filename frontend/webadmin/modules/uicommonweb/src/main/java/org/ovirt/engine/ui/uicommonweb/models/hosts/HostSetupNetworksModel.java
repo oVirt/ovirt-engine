@@ -390,7 +390,7 @@ public class HostSetupNetworksModel extends EntityModel {
                 networkDialogModel.getName().setIsAvailable(false);
                 networkDialogModel.getNetwork().setIsChangable(false);
                 networkDialogModel.getGateway()
-                        .setIsAvailable((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
+                        .setIsAvailable((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.MultipleGatewaysSupported,
                                 version));
             }
 
@@ -402,26 +402,26 @@ public class HostSetupNetworksModel extends EntityModel {
             networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(entity.getBootProtocol());
-            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
+            if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
                 networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
                 networkDialogModel.getQosModel().init(entity.getQos());
             }
-            if ((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
+            if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
                     version)) {
                 KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
                 customPropertiesModel.setIsAvailable(true);
                 Map<String, String> validProperties =
-                        KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
+                        KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.PreDefinedNetworkCustomProperties,
                                 version));
                 // TODO: extract this (and as much surrounding code as possible) into a custom properties utility common
                 // to backend and frontend (lvernia)
                 if (!logicalNetwork.getEntity().isVmNetwork()) {
                     validProperties.remove("bridge_opts"); //$NON-NLS-1$
                 }
-                validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
+                validProperties.putAll(KeyValueModel.convertProperties((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.UserDefinedNetworkCustomProperties,
                         version)));
                 customPropertiesModel.setKeyValueMap(validProperties);
                 customPropertiesModel.deserialize(KeyValueModel.convertProperties(entity.getCustomProperties()));
@@ -828,7 +828,7 @@ public class HostSetupNetworksModel extends EntityModel {
     }
 
     private void queryLabels() {
-        AsyncDataProvider.getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(), new AsyncQuery(new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getNetworkLabelsByDataCenterId(getEntity().getStoragePoolId(), new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 dcLabels = (SortedSet<String>) returnValue;
@@ -903,7 +903,7 @@ public class HostSetupNetworksModel extends EntityModel {
         };
 
         VDS vds = getEntity();
-        AsyncDataProvider.getClusterNetworkList(asyncQuery, vds.getVdsGroupId());
+        AsyncDataProvider.getInstance().getClusterNetworkList(asyncQuery, vds.getVdsGroupId());
     }
 
     private void initDcNetworkParams() {
@@ -968,14 +968,14 @@ public class HostSetupNetworksModel extends EntityModel {
 
     public void onSetupNetworks() {
         // Determines the connectivity timeout in seconds
-        AsyncDataProvider.getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        getConnectivityTimeout().setEntity((Integer) returnValue);
-                        postOnSetupNetworks();
-                    }
-                }));
+        AsyncDataProvider.getInstance().getNetworkConnectivityCheckTimeoutInSeconds(new AsyncQuery(sourceListModel,
+                                                                                                   new INewAsyncCallback() {
+                                                                                                       @Override
+                                                                                                       public void onSuccess(Object target, Object returnValue) {
+                                                                                                           getConnectivityTimeout().setEntity((Integer) returnValue);
+                                                                                                           postOnSetupNetworks();
+                                                                                                       }
+                                                                                                   }));
     }
 
     public void postOnSetupNetworks() {

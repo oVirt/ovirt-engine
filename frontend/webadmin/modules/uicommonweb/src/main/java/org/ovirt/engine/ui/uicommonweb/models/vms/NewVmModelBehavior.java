@@ -36,7 +36,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         getModel().getIsSoundcardEnabled().setIsChangable(true);
         getModel().getVmType().setIsChangable(true);
 
-        AsyncDataProvider.getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -49,14 +49,14 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                         }
 
                         if (!dataCenters.isEmpty()) {
-                            AsyncDataProvider.getClusterListByService(
+                            AsyncDataProvider.getInstance().getClusterListByService(
                                     new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                                         @Override
                                         public void onSuccess(Object target, Object returnValue) {
                                             UnitVmModel model = (UnitVmModel) target;
                                             List<VDSGroup> clusterList = (List<VDSGroup>) returnValue;
-                                            List<VDSGroup> filteredClusterList = AsyncDataProvider.filterClustersWithoutArchitecture(clusterList);
+                                            List<VDSGroup> filteredClusterList = AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusterList);
                                             model.setDataCentersAndClusters(model,
                                                     dataCenters,
                                                     filteredClusterList, null);
@@ -249,7 +249,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         {
             StorageDomain storage = (StorageDomain) getSystemTreeSelectedItem().getEntity();
 
-            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(new Object[] { this, storage },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target1, Object returnValue1) {
@@ -257,7 +257,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                             Object[] array1 = (Object[]) target1;
                             NewVmModelBehavior behavior1 = (NewVmModelBehavior) array1[0];
                             StorageDomain storage1 = (StorageDomain) array1[1];
-                            AsyncDataProvider.getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
+                            AsyncDataProvider.getInstance().getTemplateListByStorage(new AsyncQuery(new Object[] { behavior1,
                                     returnValue1 },
                                     new INewAsyncCallback() {
                                         @Override
@@ -275,7 +275,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
                                                 templatesByStorage.add(0, blankTemplate);
                                             }
 
-                                            List<VmTemplate> templateList = AsyncDataProvider.filterTemplatesByArchitecture(templatesByStorage,
+                                            List<VmTemplate> templateList = AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templatesByStorage,
                                                             dataCenterWithCluster.getCluster().getArchitecture());
 
                                             behavior2.postInitTemplate(templateList);
@@ -290,7 +290,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
         else
         {
-            AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -299,7 +299,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
                             List<VmTemplate> templates = (List<VmTemplate>) returnValue;
 
-                            behavior.postInitTemplate(AsyncDataProvider.filterTemplatesByArchitecture(templates,
+                            behavior.postInitTemplate(AsyncDataProvider.getInstance().filterTemplatesByArchitecture(templates,
                                     dataCenterWithCluster.getCluster().getArchitecture()));
 
                         }

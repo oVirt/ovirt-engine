@@ -12,7 +12,7 @@ public class VncKeyMapRenderer extends AbstractRenderer<String> {
     CommonApplicationMessages messages;
 
     public VncKeyMapRenderer( CommonApplicationMessages messages) {
-        globalLayout = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
+        globalLayout = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayout);
         this.messages = messages;
     }
 

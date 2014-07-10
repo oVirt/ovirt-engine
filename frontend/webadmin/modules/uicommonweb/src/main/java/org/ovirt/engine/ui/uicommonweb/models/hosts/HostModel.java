@@ -1140,7 +1140,7 @@ public abstract class HostModel extends Model
                 }
             }
         };
-        AsyncDataProvider.getHostPublicKey(aQuery);
+        AsyncDataProvider.getInstance().getHostPublicKey(aQuery);
     }
 
     private void fetchSSHFingerprint() {
@@ -1177,7 +1177,7 @@ public abstract class HostModel extends Model
         }
         else {
             getFetchResult().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
-            AsyncDataProvider.getHostFingerprint(aQuery, getHost().getEntity());
+            AsyncDataProvider.getInstance().getHostFingerprint(aQuery, getHost().getEntity());
         }
     }
 
@@ -1187,7 +1187,7 @@ public abstract class HostModel extends Model
 
     private void initSpmPriorities() {
 
-        AsyncDataProvider.getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getMaxSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -1201,7 +1201,7 @@ public abstract class HostModel extends Model
 
     private void initSpmPriorities1() {
 
-        AsyncDataProvider.getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultSpmPriority(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -1344,14 +1344,14 @@ public abstract class HostModel extends Model
                                 }
                             };
 
-                            AsyncDataProvider.getHostArchitecture(architectureQuery, hostModel.getHostId());
+                            AsyncDataProvider.getInstance().getHostArchitecture(architectureQuery, hostModel.getHostId());
 
                         }
                     }
                 }
             };
 
-            AsyncDataProvider.getClusterList(_asyncQuery, dataCenter.getId());
+            AsyncDataProvider.getInstance().getClusterList(_asyncQuery, dataCenter.getId());
         }
     }
 
@@ -1382,7 +1382,7 @@ public abstract class HostModel extends Model
         VDSGroup cluster = getCluster().getSelectedItem();
         if (cluster != null)
         {
-            AsyncDataProvider.getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getPmTypeList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -1498,13 +1498,13 @@ public abstract class HostModel extends Model
         getPmOptions().setIsValid(true);
         getPmSecure().setIsChangable(isPm);
         VDSGroup cluster = getCluster().getSelectedItem();
-        String version = AsyncDataProvider.getDefaultConfigurationVersion();
+        String version = AsyncDataProvider.getInstance().getDefaultConfigurationVersion();
         if (cluster != null) {
             version = cluster.getcompatibility_version().toString();
         }
         String pmType = getPmType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmType)) {
-            AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 
@@ -1543,7 +1543,7 @@ public abstract class HostModel extends Model
 
         String pmSecondaryType = getPmSecondaryType().getSelectedItem();
         if (!StringHelper.isNullOrEmpty(pmSecondaryType)) {
-            AsyncDataProvider.getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getPmOptions(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
 

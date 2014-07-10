@@ -52,13 +52,13 @@ public class ReportInit {
         // As this class has it's state, it needs to be inited again
         initState();
 
-        AsyncDataProvider.getRedirectServletReportsPage(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        setReportBaseUrl((String) returnValue);
-                    }
-                }));
+        AsyncDataProvider.getInstance().getRedirectServletReportsPage(new AsyncQuery(this,
+                                                                                     new INewAsyncCallback() {
+                                                                                         @Override
+                                                                                         public void onSuccess(Object target, Object returnValue) {
+                                                                                             setReportBaseUrl((String) returnValue);
+                                                                                         }
+                                                                                     }));
 
         parseReportsXML();
     }

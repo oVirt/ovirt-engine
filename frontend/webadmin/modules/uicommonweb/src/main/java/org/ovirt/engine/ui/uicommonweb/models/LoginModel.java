@@ -203,7 +203,7 @@ public class LoginModel extends Model
 
             }
         };
-        AsyncDataProvider.getAAAProfilesListViaPublic(_asyncQuery);
+        AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery);
     }
 
     @Override
@@ -299,7 +299,7 @@ public class LoginModel extends Model
 
     protected void raiseLoggedInEvent() {
         // Cache all configurations values before logging-in
-        AsyncDataProvider.initCache(this);
+        AsyncDataProvider.getInstance().initCache(this);
     }
 
     public void autoLogin(DbUser user)

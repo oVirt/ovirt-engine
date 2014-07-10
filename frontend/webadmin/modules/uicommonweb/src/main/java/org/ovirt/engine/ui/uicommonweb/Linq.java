@@ -814,8 +814,8 @@ public final class Linq
             diskModel.setSize(sizeEntity);
             ListModel volumeList = new ListModel();
             volumeList.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ?
-                    new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] { VolumeType.Preallocated }))
-                    : AsyncDataProvider.getVolumeTypeList()));
+                    new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))
+                    : AsyncDataProvider.getInstance().getVolumeTypeList()));
             volumeList.setSelectedItem(diskImage.getVolumeType());
             diskModel.setVolumeType(volumeList);
         }

@@ -63,7 +63,7 @@ public class MoveHost extends ListModel
     {
         if (getCluster().getSelectedItem() != null)
         {
-            AsyncDataProvider.getHostList(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getHostList(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
 

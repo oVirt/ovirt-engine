@@ -564,7 +564,7 @@ public class VmInitModel extends Model {
                     }
                 }));
 
-        isWindowsOS = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
+        isWindowsOS = vm != null ? AsyncDataProvider.getInstance().isWindowsOsType(vm.getOsId()) : true;
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
@@ -591,7 +591,7 @@ public class VmInitModel extends Model {
 
             final String tz = vmInit.getTimeZone();
             if (!StringHelper.isNullOrEmpty(tz)) {
-                if (AsyncDataProvider.isWindowsOsType(vm.getOsId())) {
+                if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getOsId())) {
                     getWindowsSysprepTimeZoneEnabled().setEntity(true);
                     selectTimeZone(getWindowsSysprepTimeZone(), windowsTimezones, tz);
                 } else {
@@ -1050,7 +1050,7 @@ public class VmInitModel extends Model {
     }
 
     public void osTypeChanged(Integer selectedItem) {
-        isWindowsOS = AsyncDataProvider.isWindowsOsType(selectedItem);
+        isWindowsOS = AsyncDataProvider.getInstance().isWindowsOsType(selectedItem);
     }
 
     private String currentDomain = null;
@@ -1059,20 +1059,20 @@ public class VmInitModel extends Model {
         // Can't use domain since onSuccess is async call and it have
         // a different stack call.
         currentDomain = domain;
-        AsyncDataProvider.getAAAProfilesList(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        @SuppressWarnings("unchecked")
-                        List<String> domains = (List<String>) returnValue;
-                        getSysprepDomain().setItems(domains);
-                        if (!StringHelper.isNullOrEmpty(currentDomain)) {
-                            if (!domains.contains(currentDomain)) {
-                                domains.add(currentDomain);
-                            }
-                            getSysprepDomain().setSelectedItem(currentDomain);
-                        }
-                    }
-                }));
+        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this,
+                                                                          new INewAsyncCallback() {
+                                                                              @Override
+                                                                              public void onSuccess(Object target, Object returnValue) {
+                                                                                  @SuppressWarnings("unchecked")
+                                                                                  List<String> domains = (List<String>) returnValue;
+                                                                                  getSysprepDomain().setItems(domains);
+                                                                                  if (!StringHelper.isNullOrEmpty(currentDomain)) {
+                                                                                      if (!domains.contains(currentDomain)) {
+                                                                                          domains.add(currentDomain);
+                                                                                      }
+                                                                                      getSysprepDomain().setSelectedItem(currentDomain);
+                                                                                  }
+                                                                              }
+                                                                          }));
     }
 }

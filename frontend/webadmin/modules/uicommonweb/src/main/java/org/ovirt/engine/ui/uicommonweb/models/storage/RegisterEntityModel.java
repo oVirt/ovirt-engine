@@ -69,7 +69,7 @@ public abstract class RegisterEntityModel extends Model {
     }
 
     private void updateClusters() {
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<StoragePool> storagePools = (ArrayList<StoragePool>) returnValue;
@@ -78,13 +78,13 @@ public abstract class RegisterEntityModel extends Model {
                     return;
                 }
 
-                AsyncDataProvider.getClusterByServiceList(new AsyncQuery(target, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(target, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
                         ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
                         for (ImportEntityData entityData : entities.getItems()) {
-                            List<VDSGroup> filteredClusters = AsyncDataProvider.filterByArchitecture(clusters, entityData.getArchType());
+                            List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters, entityData.getArchType());
                             entityData.getCluster().setItems(filteredClusters);
                             entityData.getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
                         }

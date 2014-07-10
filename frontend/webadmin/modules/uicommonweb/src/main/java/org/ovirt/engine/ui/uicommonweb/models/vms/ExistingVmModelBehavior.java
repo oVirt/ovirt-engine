@@ -64,7 +64,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     private void loadDataCenter() {
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -100,7 +100,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     protected void initClusters(final List<StoragePool> dataCenters) {
-        AsyncDataProvider.getClusterListByService(
+        AsyncDataProvider.getInstance().getClusterListByService(
                 new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                     @Override
@@ -110,7 +110,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                         List<VDSGroup> clusters = (List<VDSGroup>) returnValue;
 
                         List<VDSGroup> filteredClusters =
-                                AsyncDataProvider.filterByArchitecture(clusters, vm.getClusterArch());
+                                AsyncDataProvider.getInstance().filterByArchitecture(clusters, vm.getClusterArch());
 
                         model.setDataCentersAndClusters(model,
                                 dataCenters,
@@ -174,7 +174,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             getModel().getCoresPerSocket().getSelectedItemChangedEvent().removeListener(getModel());
             getModel().getNumOfSockets().getSelectedItemChangedEvent().removeListener(getModel());
 
-            AsyncDataProvider.getHostById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getHostById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object model, Object returnValue) {
                     ExistingVmModelBehavior existingVmModelBehavior = (ExistingVmModelBehavior) model;
@@ -338,8 +338,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     public boolean isHotSetCpuSupported() {
         VDSGroup selectedCluster = getModel().getSelectedCluster();
         Version clusterVersion = selectedCluster.getcompatibility_version();
-        Boolean hotplugEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled, clusterVersion.getValue());
-        boolean hotplugCpuSupported = Boolean.parseBoolean(((Map<String, String>) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.HotPlugCpuSupported,
+        Boolean hotplugEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugEnabled, clusterVersion.getValue());
+        boolean hotplugCpuSupported = Boolean.parseBoolean(((Map<String, String>) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HotPlugCpuSupported,
                 clusterVersion.getValue())).get(selectedCluster.getArchitecture().name()));
 
         return getVm().getStatus() == VMStatus.Up && hotplugEnabled && hotplugCpuSupported;

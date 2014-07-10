@@ -228,7 +228,7 @@ public class DisksAllocationModel extends EntityModel
             if (diskModel.getVolumeType().getIsAvailable()) {
                 VolumeType volumeType = (VolumeType) diskModel.getVolumeType().getSelectedItem();
                 diskImage.setVolumeType(volumeType);
-                diskImage.setvolumeFormat(AsyncDataProvider.getDiskVolumeFormat(
+                diskImage.setvolumeFormat(AsyncDataProvider.getInstance().getDiskVolumeFormat(
                         volumeType, storageDomain.getStorageType()));
             }
 

@@ -182,6 +182,6 @@ public class InstallModel extends Model {
                 }
             }
         };
-        AsyncDataProvider.getHostPublicKey(aQuery);
+        AsyncDataProvider.getInstance().getHostPublicKey(aQuery);
     }
 }

@@ -490,7 +490,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getSearchPreviousPageCommand().setIsAvailable(true);
 
         // Call 'IsCommandCompatible' for precaching
-        AsyncDataProvider.isCommandCompatible(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -546,7 +546,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         for (Guid id : vmIds)
         {
-            AsyncDataProvider.getAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getInstance().getAttachedTagsToVm(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -652,7 +652,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             setGuideContext(vm.getId());
         }
 
-        AsyncDataProvider.getVmById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getVmById(new AsyncQuery(this,
                                                    new INewAsyncCallback() {
                                                        @Override
                                                        public void onSuccess(Object target, Object returnValue) {
@@ -720,7 +720,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("new_vm"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getVmType().setSelectedItem(VmType.Server);
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
         model.setIsAdvancedModeLocalStorageKey("wa_vm_dialog");  //$NON-NLS-1$
 
         setWindow(model);
@@ -788,9 +788,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             }
         };
         if (vm.isNextRunConfigurationExists()) {
-            AsyncDataProvider.getVmNextRunConfiguration(getVmInitQuery, vm.getId());
+            AsyncDataProvider.getInstance().getVmNextRunConfiguration(getVmInitQuery, vm.getId());
         } else {
-            AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+            AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
         }
 
     }
@@ -805,7 +805,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 .getConstants().editVmTitle());
         model.setHelpTag(HelpTag.edit_vm);
         model.setHashName("edit_vm"); //$NON-NLS-1$
-        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
         model.initialize(this.getSystemTreeSelectedItem());
 
@@ -1030,7 +1030,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1051,7 +1051,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         if (storagePool != null)
         {
-            AsyncDataProvider.getAllTemplatesFromExportDomain(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1259,7 +1259,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     @Override
     protected void sendWarningForNonExportableDisks(VM entity) {
         // load VM disks and check if there is one which doesn't allow snapshot
-        AsyncDataProvider.getVmDiskList(new AsyncQuery(getWindow(),
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(getWindow(),
                                                        new INewAsyncCallback() {
                                                            @Override
                                                            public void onSuccess(Object target, Object returnValue) {
@@ -1288,7 +1288,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 runOnceModel.init();
             }
         };
-        AsyncDataProvider.getVmById(getVmInitQuery, vm.getId());
+        AsyncDataProvider.getInstance().getVmById(getVmInitQuery, vm.getId());
 
 
     }
@@ -1352,7 +1352,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             String name = model.getName().getEntity();
 
             // Check name unicitate.
-            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1457,7 +1457,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setIsAutoSelect(true);
         model.setVmList(Linq.<VM> cast(getSelectedItems()));
 
-        AsyncDataProvider.getUpHostListByCluster(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1619,7 +1619,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         if (clusterId == null) {
             powerAction(actionName, title, message, false);
         } else {
-            AsyncDataProvider.getClusterById(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1883,7 +1883,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             }
         };
-        AsyncDataProvider.getIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
+        AsyncDataProvider.getInstance().getIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
 
         UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1961,7 +1961,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        AsyncDataProvider.isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -2013,7 +2013,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
             if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, getcurrentVm(), new AsyncQuery(this,
+                AsyncDataProvider.getInstance().isNextRunConfigurationChanged(editedVm, getcurrentVm(), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
@@ -2208,7 +2208,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
                     }
                 };
-                AsyncDataProvider.getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
+                AsyncDataProvider.getInstance().getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
             }
             else
             {
@@ -2377,13 +2377,13 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getCloneVmCommand().setIsExecutionAllowed(items.size() == 1
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.CloneVm));
         getPauseCommand().setIsExecutionAllowed(items.size() > 0
-                && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm)
-                && AsyncDataProvider.canVmsBePaused(items));
+                                                        && VdcActionUtils.canExecute(items, VM.class, VdcActionType.HibernateVm)
+                                                        && AsyncDataProvider.getInstance().canVmsBePaused(items));
         getShutdownCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.ShutdownVm));
         getStopCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.StopVm));
-        getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.isRebootCommandExecutionAllowed(items));
+        getRebootCommand().setIsExecutionAllowed(AsyncDataProvider.getInstance().isRebootCommandExecutionAllowed(items));
         getMigrateCommand().setIsExecutionAllowed(items.size() > 0
                 && VdcActionUtils.canExecute(items, VM.class, VdcActionType.MigrateVm));
         getCancelMigrateCommand().setIsExecutionAllowed(items.size() > 0

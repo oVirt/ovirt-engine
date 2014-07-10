@@ -13,7 +13,7 @@ public class GroupNameRenderer extends AbstractRenderer<Object[]> {
         Object entity = arg[0];
         Guid objectGuid = (Guid) arg[1];
 
-        if (AsyncDataProvider.getEntityGuid(entity).equals(objectGuid)) {
+        if (AsyncDataProvider.getInstance().getEntityGuid(entity).equals(objectGuid)) {
             return ""; //$NON-NLS-1$
         }
         String ownerName = (String) arg[2];

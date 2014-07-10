@@ -151,7 +151,7 @@ public class NetworkProfileListModel extends SearchableListModel
                 setItems((Collection<VnicProfileView>) returnValue);
             }
         };
-        AsyncDataProvider.getVnicProfilesByNetworkId(asyncQuery, getEntity().getId());
+        AsyncDataProvider.getInstance().getVnicProfilesByNetworkId(asyncQuery, getEntity().getId());
     }
 
     @Override

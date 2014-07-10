@@ -457,7 +457,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         for (Guid hostId : hostIds)
         {
-            AsyncDataProvider.getAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
+            AsyncDataProvider.getInstance().getAttachedTagsToHost(new AsyncQuery(new Object[] { this, model },
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -635,7 +635,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         hostModel.getConsoleAddressEnabled().setEntity(false);
         hostModel.getConsoleAddress().setIsChangable(false);
 
-        AsyncDataProvider.getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
 
@@ -752,7 +752,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 innerHostModel.getCommands().add(command);
             }
         };
-        AsyncDataProvider.getDataCenterList(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
     private void goToEventsTab()
@@ -788,7 +788,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 if (host.getPmProxyPreferences() != null) {
                     hostModel.setPmProxyPreferences(host.getPmProxyPreferences());
                 } else {
-                    AsyncDataProvider.getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
+                    AsyncDataProvider.getInstance().getDefaultPmProxyPreferences(new AsyncQuery(null, new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object model, Object returnValue) {
 
@@ -816,7 +816,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
             }
         };
-        AsyncDataProvider.getDataCenterList(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
 
 
     }
@@ -1120,7 +1120,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
         // - the cluster should be a gluster only cluster
         if (clusters.size() == 1) {
             model.startProgress(null);
-            AsyncDataProvider.getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this, new INewAsyncCallback() {
                 @Override
                 public void onSuccess(Object target, Object returnValue) {
                     VDSGroup cluster = (VDSGroup) returnValue;
@@ -1291,7 +1291,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
                 innerHostModel.getCommands().add(tempVar2);
             }
         };
-        AsyncDataProvider.getDataCenterList(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
     public void onApprove()
@@ -1374,7 +1374,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
-        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -1419,7 +1419,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
 
         getWindow().startProgress(null);
 
-        AsyncDataProvider.getoVirtISOsList(new AsyncQuery(model,
+        AsyncDataProvider.getInstance().getoVirtISOsList(new AsyncQuery(model,
                 new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -1500,7 +1500,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
             param.setNetworkMappings((String) model.getInterfaceMappings().getEntity());
         }
 
-        AsyncDataProvider.getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(param, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -1689,7 +1689,7 @@ public class HostListModel extends ListWithDetailsModel implements ISupportSyste
     }
 
     private void configureLocalStorage2(ConfigureLocalStorageModel model) {
-        String prefix = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
+        String prefix = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.RhevhLocalFSPath);
         if (!StringHelper.isNullOrEmpty(prefix)) {
             EntityModel pathModel = model.getStorage().getPath();
             pathModel.setEntity(prefix);

@@ -38,7 +38,7 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
 
     @Override
     public boolean isSpiceProxyDefined(VM vm) {
-        return !StringHelper.isNullOrEmpty((String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault)) ||
+        return !StringHelper.isNullOrEmpty((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault)) ||
             !StringHelper.isNullOrEmpty(vm.getVdsGroupSpiceProxy()) ||
             !StringHelper.isNullOrEmpty(vm.getVmPoolSpiceProxy());
     }

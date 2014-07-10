@@ -170,7 +170,7 @@ public class DataCenterModel extends Model
         getStoragePoolType().setItems(Arrays.asList(Boolean.FALSE, Boolean.TRUE));
 
         setQuotaEnforceTypeListModel(new ListModel<QuotaEnforcementTypeEnum>());
-        List<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getQuotaEnforcmentTypes();
+        List<QuotaEnforcementTypeEnum> list = AsyncDataProvider.getInstance().getQuotaEnforcmentTypes();
         getQuotaEnforceTypeListModel().setItems(list);
         getQuotaEnforceTypeListModel().setSelectedItem(list.get(0));
 
@@ -185,7 +185,7 @@ public class DataCenterModel extends Model
                 dataCenterModel.setMaxNameLength((Integer) result);
             }
         };
-        AsyncDataProvider.getDataCenterMaxNameLength(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterMaxNameLength(_asyncQuery);
 
     }
 
@@ -217,7 +217,7 @@ public class DataCenterModel extends Model
 
                 for (Version item : versions)
                 {
-                    if (AsyncDataProvider.isVersionMatchStorageType(item, isLocalType))
+                    if (AsyncDataProvider.getInstance().isVersionMatchStorageType(item, isLocalType))
                     {
                         list.add(item);
                     }
@@ -260,7 +260,7 @@ public class DataCenterModel extends Model
 
             }
         };
-        AsyncDataProvider.getDataCenterVersions(_asyncQuery, getDataCenterId());
+        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery, getDataCenterId());
     }
 
     private boolean isVersionInit = false;

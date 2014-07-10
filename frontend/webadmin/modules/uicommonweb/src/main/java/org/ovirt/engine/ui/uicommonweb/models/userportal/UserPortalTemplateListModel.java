@@ -24,7 +24,7 @@ public class UserPortalTemplateListModel extends TemplateListModel
     @Override
     protected void syncSearch()
     {
-        AsyncDataProvider.getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllVmTemplates(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 ((UserPortalTemplateListModel) model).setItems((Collection) returnValue);

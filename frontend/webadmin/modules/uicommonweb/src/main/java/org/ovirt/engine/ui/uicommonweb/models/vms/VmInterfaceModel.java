@@ -79,7 +79,7 @@ public abstract class VmInterfaceModel extends Model
         this.profileBehavior = profileBehavior;
         // get management network name
         ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
         this.vm = vm;
         this.vmNicList = vmNicList;
@@ -88,11 +88,11 @@ public abstract class VmInterfaceModel extends Model
         this.clusterCompatibilityVersion = clusterCompatibilityVersion;
 
         hotPlugSupported =
-                AsyncDataProvider.getNicHotplugSupport(vm.getOsId(),
+                AsyncDataProvider.getInstance().getNicHotplugSupport(vm.getOsId(),
                         clusterCompatibilityVersion);
 
         hotUpdateSupported =
-                (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
+                (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkLinkingSupported,
                         clusterCompatibilityVersion.toString());
 
         setName(new EntityModel<String>());

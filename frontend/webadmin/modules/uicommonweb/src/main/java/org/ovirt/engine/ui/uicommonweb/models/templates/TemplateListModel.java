@@ -225,7 +225,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         ExportVmModel model = (ExportVmModel) getWindow();
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
 
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -246,7 +246,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (storagePool != null)
         {
-            AsyncDataProvider.getAllTemplatesFromExportDomain(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().getAllTemplatesFromExportDomain(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {
@@ -444,7 +444,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                 vmInitLoaded((VmTemplate) result);
             }
         };
-        AsyncDataProvider.getTemplateById(getVmInitQuery, template.getId());
+        AsyncDataProvider.getInstance().getTemplateById(getVmInitQuery, template.getId());
 
     }
 
@@ -563,7 +563,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         if (((TemplateVmModelBehavior) model.getBehavior()).getVmTemplate().isBaseTemplate()) {
 
-            AsyncDataProvider.isTemplateNameUnique(new AsyncQuery(this,
+            AsyncDataProvider.getInstance().isTemplateNameUnique(new AsyncQuery(this,
                     new INewAsyncCallback() {
                         @Override
                         public void onSuccess(Object target, Object returnValue) {

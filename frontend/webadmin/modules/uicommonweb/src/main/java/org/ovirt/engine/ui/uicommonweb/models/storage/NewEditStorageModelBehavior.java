@@ -36,7 +36,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
 
             if (item.getRole() == StorageDomainType.ISO)
             {
-                AsyncDataProvider.getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -51,7 +51,7 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
             }
             else if (item.getRole() == StorageDomainType.ImportExport)
             {
-                AsyncDataProvider.getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
+                AsyncDataProvider.getInstance().getExportDomainByDataCenterId(new AsyncQuery(new Object[] { this, item },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -128,26 +128,26 @@ public class NewEditStorageModelBehavior extends StorageModelBehavior
                 return;
             }
 
-            if (AsyncDataProvider.isMixedStorageDomainsSupported(dataCenter.getcompatibility_version())) {
+            if (AsyncDataProvider.getInstance().isMixedStorageDomainsSupported(dataCenter.getcompatibility_version())) {
                 updateItemSelectability(item, true);
                 return;
             } else {
                 IdQueryParameters params = new IdQueryParameters(dataCenter.getId());
                 Frontend.getInstance().runQuery(VdcQueryType.GetStorageTypesInPoolByPoolId, params,
-                        new AsyncQuery(this, new INewAsyncCallback() {
-                            @Override
-                            public void onSuccess(Object model, Object ReturnValue) {
-                                List<StorageType> storageTypes = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
-                                for (StorageType storageType : storageTypes) {
-                                    if (storageType.isBlockDomain() != item.getType().isBlockDomain()) {
-                                        updateItemSelectability(item, false);
-                                        return;
-                                    }
-                                }
-                                updateItemSelectability(item, true);
-                                return;
-                            }
-                        }));
+                                                new AsyncQuery(this, new INewAsyncCallback() {
+                                                    @Override
+                                                    public void onSuccess(Object model, Object ReturnValue) {
+                                                        List<StorageType> storageTypes = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                                        for (StorageType storageType : storageTypes) {
+                                                            if (storageType.isBlockDomain() != item.getType().isBlockDomain()) {
+                                                                updateItemSelectability(item, false);
+                                                                return;
+                                                            }
+                                                        }
+                                                        updateItemSelectability(item, true);
+                                                        return;
+                                                    }
+                                                }));
                 return;
             }
         }

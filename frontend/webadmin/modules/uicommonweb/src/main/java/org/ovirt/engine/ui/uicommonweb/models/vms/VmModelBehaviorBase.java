@@ -281,7 +281,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void updateUserCdImage(Guid storagePoolId) {
-        AsyncDataProvider.getIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(getModel(), new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         UnitVmModel model = (UnitVmModel) target;
@@ -317,7 +317,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getIrsImageList(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getIrsImageList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -359,7 +359,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public TimeZoneType getTimeZoneType() {
         // can be null as a consequence of setItems on ListModel
         Integer vmOsType = getModel().getOSType().getSelectedItem();
-        return AsyncDataProvider.isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
+        return AsyncDataProvider.getInstance().isWindowsOsType(vmOsType) ? TimeZoneType.WINDOWS_TIMEZONE
                 : TimeZoneType.GENERAL_TIMEZONE;
     }
 
@@ -459,7 +459,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
      * By default admin query is fired, UserPortal overrides it to fire user query
      */
     protected void getHostListByCluster(VDSGroup cluster, AsyncQuery query) {
-        AsyncDataProvider.getHostListByCluster(query, cluster.getName());
+        AsyncDataProvider.getInstance().getHostListByCluster(query, cluster.getName());
     }
 
     protected void updateCustomPropertySheet() {
@@ -481,22 +481,22 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public int maxNumOfSockets = 0;
 
     public void updataMaxVmsInPool() {
-        AsyncDataProvider.getMaxVmsInPool(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
-                        behavior.setMaxVmsInPool((Integer) returnValue);
-                        behavior.updateMaxNumOfVmCpus();
-                    }
-                }
+        AsyncDataProvider.getInstance().getMaxVmsInPool(new AsyncQuery(this,
+                                                                       new INewAsyncCallback() {
+                                                                           @Override
+                                                                           public void onSuccess(Object target, Object returnValue) {
+                                                                               VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
+                                                                               behavior.setMaxVmsInPool((Integer) returnValue);
+                                                                               behavior.updateMaxNumOfVmCpus();
+                                                                           }
+                                                                       }
         ));
     }
 
     public void updateMaxNumOfVmCpus() {
         String version = getClusterCompatibilityVersion().toString();
 
-        AsyncDataProvider.getMaxNumOfVmCpus(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getMaxNumOfVmCpus(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -512,7 +512,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     public void postUpdateNumOfSockets2() {
         String version = getClusterCompatibilityVersion().toString();
 
-        AsyncDataProvider.getMaxNumOfCPUsPerSocket(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getMaxNumOfCPUsPerSocket(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -528,7 +528,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     {
         VmTemplate template = getModel().getTemplate().getSelectedItem();
 
-        AsyncDataProvider.getTemplateDiskList(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getTemplateDiskList(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -549,8 +549,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 tempVar.setEntity(diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
-                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[]{VolumeType.Preallocated}))
-                                        : AsyncDataProvider.getVolumeTypeList()));
+                                tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))
+                                        : AsyncDataProvider.getInstance().getVolumeTypeList()));
                                 tempVar2.setSelectedItem(diskImage.getVolumeType());
                                 diskModel.setVolumeType(tempVar2);
                                 diskModel.getVolumeType().setIsAvailable(false);
@@ -600,7 +600,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
         ActionGroup actionGroup = getModel().isCreateInstanceOnly() ? ActionGroup.CREATE_INSTANCE : ActionGroup.CREATE_VM;
         StoragePool dataCenter = getModel().getSelectedDataCenter();
-        AsyncDataProvider.getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getPermittedStorageDomainsByStoragePoolId(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmModelBehaviorBase behavior = (VmModelBehaviorBase) target;
@@ -710,7 +710,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
     private boolean isRngDeviceSupported(UnitVmModel model) {
         Version clusterVersion = clusterVersionOrNull(model);
-        return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        return clusterVersion == null ? false : (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.VirtIoRngDeviceSupported, clusterVersion.getValue());
     }
 
@@ -736,13 +736,13 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
 
     protected void updateVirtioScsiAvailability() {
         VDSGroup cluster = getModel().getSelectedCluster();
-        boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getConfigValuePreConverted(
+        boolean isVirtioScsiEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.VirtIoScsiEnabled, cluster.getcompatibility_version().getValue());
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
     protected void setupTemplate(Guid templateId, final boolean useLatest) {
-        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(getModel(),
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
@@ -771,7 +771,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     protected void setupBaseTemplate(Guid baseTemplateId) {
-        AsyncDataProvider.getTemplateById(new AsyncQuery(getModel(),
+        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(getModel(),
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -798,11 +798,11 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             // cpu pinning is available on Local SD with no consideration for auto assign value
             boolean hasCpuPinning = Boolean.FALSE.equals(getModel().getIsAutoAssign().getEntity()) || isLocalSD;
 
-            if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
+            if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuPinningEnabled,
                     compatibilityVersion))) {
                 hasCpuPinning = false;
-            } else if (Boolean.FALSE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
-                    AsyncDataProvider.getDefaultConfigurationVersion()))
+            } else if (Boolean.FALSE.equals(AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.CpuPinMigrationEnabled,
+                                                                                         AsyncDataProvider.getInstance().getDefaultConfigurationVersion()))
                     && isVmMigratable()
                     && !isLocalSD) {
                 hasCpuPinning = false;
@@ -1013,7 +1013,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             return;
         }
 
-        AsyncDataProvider.getMaxNumOfVmSockets(new AsyncQuery(new Object[]{this, getModel()},
+        AsyncDataProvider.getInstance().getMaxNumOfVmSockets(new AsyncQuery(new Object[]{this, getModel()},
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -1068,7 +1068,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         VDSGroup cluster = getModel().getSelectedCluster();
 
         if (cluster != null) {
-            vmOsValues = AsyncDataProvider.getOsIds(cluster.getArchitecture());
+            vmOsValues = AsyncDataProvider.getInstance().getOsIds(cluster.getArchitecture());
             Integer selectedOsId = getModel().getOSType().getSelectedItem();
             getModel().getOSType().setItems(vmOsValues);
             if (selectedOsId != null && vmOsValues.contains(selectedOsId)) {
@@ -1146,7 +1146,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     protected void setSelectedOSType(VmBase vmBase,
             ArchitectureType architectureType) {
         if (vmBase.getId().equals(Guid.Empty)) {
-            Integer osId = AsyncDataProvider.getDefaultOs(architectureType);
+            Integer osId = AsyncDataProvider.getInstance().getDefaultOs(architectureType);
             if (osId != null) {
                 setSelectedOSTypeById(osId.intValue());
             }

@@ -51,7 +51,7 @@ public class CloneVmModel extends Model {
 
         startProgress(null);
 
-        AsyncDataProvider.isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().isVmNameUnique(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -87,8 +87,8 @@ public class CloneVmModel extends Model {
     }
 
     public boolean validate() {
-        int nameLength = AsyncDataProvider.isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getMaxVmNameLengthWin()
-                : AsyncDataProvider.getMaxVmNameLengthNonWin();
+        int nameLength = AsyncDataProvider.getInstance().isWindowsOsType(vm.getOs()) ? AsyncDataProvider.getInstance().getMaxVmNameLengthWin()
+                : AsyncDataProvider.getInstance().getMaxVmNameLengthNonWin();
 
         getCloneName().validateEntity(
                 new IValidation[]{

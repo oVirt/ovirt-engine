@@ -49,7 +49,7 @@ public class ProviderModel extends Model {
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
     private final String keystoneUrl =
-            (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.KeystoneAuthUrl);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.KeystoneAuthUrl);
 
     protected final SearchableListModel sourceListModel;
     private final VdcActionType action;
@@ -328,7 +328,7 @@ public class ProviderModel extends Model {
                             }
                         }
                     };
-                    AsyncDataProvider.getProviderCertificateChain(getCertChainQuery, provider);
+                    AsyncDataProvider.getInstance().getProviderCertificateChain(getCertChainQuery, provider);
                 } else {
                     stopProgress();
                     setTestResultValue(res);

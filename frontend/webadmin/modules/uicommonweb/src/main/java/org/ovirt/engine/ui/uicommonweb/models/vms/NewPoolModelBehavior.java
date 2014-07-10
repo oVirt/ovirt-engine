@@ -51,7 +51,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
             return;
         }
 
-        AsyncDataProvider.getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getTemplateListByDataCenter(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target1, Object returnValue1) {
 
@@ -59,7 +59,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                         filterNotBaseTemplates((List<VmTemplate>) returnValue1);
 
                 List<VmTemplate> filteredTemplates =
-                        AsyncDataProvider.filterTemplatesByArchitecture(baseTemplates,
+                        AsyncDataProvider.getInstance().filterTemplatesByArchitecture(baseTemplates,
                                 dataCenterWithCluster.getCluster().getArchitecture());
 
                 List<VmTemplate> templatesWithoutBlank = new ArrayList<VmTemplate>();
@@ -107,20 +107,20 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     private void templateValidate() {
-         AsyncDataProvider.countAllTemplates(new AsyncQuery(getModel(), new INewAsyncCallback() {
-             @Override
-             public void onSuccess(Object model, Object returnValue) {
-                 int count = (Integer) returnValue;
-                 if(count <= 1) {
-                     getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
-                 }
-             }
-         }));
+        AsyncDataProvider.getInstance().countAllTemplates(new AsyncQuery(getModel(), new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                int count = (Integer) returnValue;
+                if (count <= 1) {
+                    getModel().disableEditing(ConstantsManager.getInstance().getConstants().notAvailableWithNoTemplates());
+                }
+            }
+        }));
     }
 
     @Override
     protected List<VDSGroup> filterClusters(List<VDSGroup> clusters) {
-        return AsyncDataProvider.filterClustersWithoutArchitecture(clusters);
+        return AsyncDataProvider.getInstance().filterClustersWithoutArchitecture(clusters);
     }
 
     @Override

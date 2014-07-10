@@ -74,7 +74,7 @@ public class RemoveBrickStatusModel extends VolumeRebalanceStatusModel {
 
     @Override
     public void refreshDetails(GlusterVolumeEntity volumeEntity) {
-        AsyncDataProvider.getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterRemoveBricksStatus(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 VdcQueryReturnValue vdcValue = (VdcQueryReturnValue) returnValue;

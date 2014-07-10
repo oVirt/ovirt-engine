@@ -63,10 +63,10 @@ public abstract class ProfileBehavior {
                 List<Network> clusterNetworks = (List<Network>) result1;
 
                 profilesQuery.setModel(clusterNetworks);
-                AsyncDataProvider.getVnicProfilesByDcId(profilesQuery, dcId);
+                AsyncDataProvider.getInstance().getVnicProfilesByDcId(profilesQuery, dcId);
             }
         };
-        AsyncDataProvider.getClusterNetworkList(networksQuery, clusterId);
+        AsyncDataProvider.getInstance().getClusterNetworkList(networksQuery, clusterId);
     }
 
     public abstract void initSelectedProfile(ListModel profileLists, VmNetworkInterface networkInterface);

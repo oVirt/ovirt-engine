@@ -226,7 +226,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             setGuideContext(cluster.getId());
         }
 
-        AsyncDataProvider.getClusterById(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -346,7 +346,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 cModel.getCommands().add(tempVar2);
             }
         };
-        AsyncDataProvider.getDataCenterList(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
     }
 
     public void edit()
@@ -399,7 +399,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         clusterModel.getAllowOverbooking()
                 .setEntity(OptimizationType.ALLOW_OVERBOOKING == cluster.getOptimizationType());
 
-        AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 final boolean isVirtGlusterAllowed = (Boolean) returnValue;
@@ -407,57 +407,49 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 asyncQuery.setModel(clusterModel);
                 asyncQuery.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model1, Object result)
-                    {
+                    public void onSuccess(Object model1, Object result) {
                         ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
-                        if (volumes.size() > 0)
-                        {
+                        if (volumes.size() > 0) {
                             clusterModel.getEnableGlusterService().setIsChangable(false);
-                            if (!isVirtGlusterAllowed)
-                            {
+                            if (!isVirtGlusterAllowed) {
                                 clusterModel.getEnableOvirtService().setIsChangable(false);
                             }
                         }
                     }
                 };
-                AsyncDataProvider.getVolumeList(asyncQuery, cluster.getName());
+                AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
 
                 AsyncQuery asyncQuery1 = new AsyncQuery();
                 asyncQuery1.setModel(clusterModel);
                 asyncQuery1.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model1, Object result)
-                    {
+                    public void onSuccess(Object model1, Object result) {
                         ArrayList<VM> vmList = (ArrayList<VM>) result;
-                        if (vmList.size() > 0)
-                        {
+                        if (vmList.size() > 0) {
                             clusterModel.getEnableOvirtService().setIsChangable(false);
-                            if (!isVirtGlusterAllowed)
-                            {
+                            if (!isVirtGlusterAllowed) {
                                 clusterModel.getEnableGlusterService().setIsChangable(false);
                             }
                         }
                     }
                 };
-                AsyncDataProvider.getVmListByClusterName(asyncQuery1, cluster.getName());
+                AsyncDataProvider.getInstance().getVmListByClusterName(asyncQuery1, cluster.getName());
                 AsyncQuery asyncQuery2 = new AsyncQuery();
                 asyncQuery2.setModel(clusterModel);
                 asyncQuery2.asyncCallback = new INewAsyncCallback() {
                     @Override
-                    public void onSuccess(Object model1, Object result)
-                    {
+                    public void onSuccess(Object model1, Object result) {
                         ArrayList<VDS> vdsList = (ArrayList<VDS>) result;
-                        if (vdsList.size() > 0)
-                        {
+                        if (vdsList.size() > 0) {
                             clusterModel.getEnableTrustedService().setIsChangable(false);
                             clusterModel.getEnableTrustedService().setChangeProhibitionReason(
                                     ConstantsManager.getInstance()
-                                    .getConstants()
-                                    .trustedServiceDisabled());
+                                            .getConstants()
+                                            .trustedServiceDisabled());
                         }
                     }
                 };
-                AsyncDataProvider.getHostListByCluster(asyncQuery2, cluster.getName());
+                AsyncDataProvider.getInstance().getHostListByCluster(asyncQuery2, cluster.getName());
             }
         }));
 
@@ -652,7 +644,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 }
             }
         };
-        AsyncDataProvider.getNumberOfActiveVmsInCluster(_asyncQuery, ((VDSGroup) getSelectedItem()).getId());
+        AsyncDataProvider.getInstance().getNumberOfActiveVmsInCluster(_asyncQuery, ((VDSGroup) getSelectedItem()).getId());
     }
 
     private void cpuLevelConfirmationWindow() {
@@ -826,7 +818,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
                 importClusterHosts(clusterModel, list);
             }
         };
-        AsyncDataProvider.getGlusterHosts(aQuery,
+        AsyncDataProvider.getInstance().getGlusterHosts(aQuery,
                 clusterModel.getGlusterHostAddress().getEntity(),
                 clusterModel.getGlusterHostPassword().getEntity(),
                 clusterModel.getGlusterHostFingerprint().getEntity());

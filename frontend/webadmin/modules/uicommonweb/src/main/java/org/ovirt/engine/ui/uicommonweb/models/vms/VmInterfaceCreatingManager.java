@@ -39,12 +39,12 @@ public class VmInterfaceCreatingManager extends BaseInterfaceCreatingManager {
         AsyncQuery osInfoQuery = new AsyncQuery(new INewAsyncCallback() {
                @Override
                public void onSuccess(Object model, Object returnValue) {
-                       defaultType = AsyncDataProvider.getDefaultNicType((Collection<VmInterfaceType>) returnValue);
+                   defaultType = AsyncDataProvider.getInstance().getDefaultNicType((Collection<VmInterfaceType>) returnValue);
                        supportedInterfaceTypes = (Collection<VmInterfaceType>) returnValue;
-                       AsyncDataProvider.getVmNicList(getNicsQuery, vmId);
+                       AsyncDataProvider.getInstance().getVmNicList(getNicsQuery, vmId);
                    }
            });
-       AsyncDataProvider.getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
+       AsyncDataProvider.getInstance().getNicTypeList(unitVmModel.getOSType().getSelectedItem(),
                        unitVmModel.getDataCenterWithClustersList().getSelectedItem().getCluster().getcompatibility_version(),
                        osInfoQuery);
     }

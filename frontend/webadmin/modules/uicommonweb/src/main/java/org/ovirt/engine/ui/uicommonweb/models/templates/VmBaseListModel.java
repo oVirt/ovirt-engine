@@ -46,7 +46,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
         model.setHashName("export_virtual_machine"); //$NON-NLS-1$
         setupExportModel(model);
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this,
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
@@ -143,7 +143,7 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsModel {
 
     protected void showWarningOnExistingEntities(ExportVmModel model, final VdcQueryType getVmOrTemplateQuery) {
         Guid storageDomainId = ((StorageDomain) model.getStorage().getSelectedItem()).getId();
-        AsyncDataProvider.getDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
+        AsyncDataProvider.getInstance().getDataCentersByStorageDomain(new AsyncQuery(new Object[] { this, model },
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {

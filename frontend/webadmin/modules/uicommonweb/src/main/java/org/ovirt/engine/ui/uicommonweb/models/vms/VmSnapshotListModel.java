@@ -551,7 +551,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         model.startProgress(null);
 
-        AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) target;
@@ -564,7 +564,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 model.setTitle(ConstantsManager.getInstance().getConstants().cloneVmFromSnapshotTitle());
                 model.setHelpTag(HelpTag.clone_vm_from_snapshot);
                 model.setHashName("clone_vm_from_snapshot"); //$NON-NLS-1$
-                model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
+                model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
                 model.initialize(vmSnapshotListModel.getSystemTreeSelectedItem());
 
                 VmBasedWidgetSwitchModeCommand switchModeCommand = new VmBasedWidgetSwitchModeCommand();
@@ -739,7 +739,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) getEntity();
 
-        AsyncDataProvider.getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterById(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 VmSnapshotListModel model = (VmSnapshotListModel) target;
@@ -749,7 +749,7 @@ public class VmSnapshotListModel extends SearchableListModel
                 Version minClusterVersion = vm.getVdsGroupCompatibilityVersion();
                 Version minDcVersion = dataCenter.getcompatibility_version();
 
-                AsyncDataProvider.isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
+                AsyncDataProvider.getInstance().isCommandCompatible(new AsyncQuery(model, new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
                         VmSnapshotListModel model = (VmSnapshotListModel) target;
@@ -767,7 +767,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) entity;
 
-        setMemorySnapshotSupported(AsyncDataProvider.isMemorySnapshotSupported(vm));
+        setMemorySnapshotSupported(AsyncDataProvider.getInstance().isMemorySnapshotSupported(vm));
     }
 
     private void updateIsLiveMergeSupported(Object entity) {
@@ -777,7 +777,7 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) entity;
 
-        setLiveMergeSupported(AsyncDataProvider.isLiveMergeSupported(vm));
+        setLiveMergeSupported(AsyncDataProvider.getInstance().isLiveMergeSupported(vm));
     }
 
     @Override

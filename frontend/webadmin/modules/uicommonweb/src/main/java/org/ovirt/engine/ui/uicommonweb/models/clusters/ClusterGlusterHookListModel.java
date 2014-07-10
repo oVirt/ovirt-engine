@@ -213,7 +213,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
         contentModel.startProgress(null);
 
-        AsyncDataProvider.getGlusterHookContent(new AsyncQuery(contentModel, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterHookContent(new AsyncQuery(contentModel, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 String content = (String) returnValue;
@@ -263,7 +263,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         setWindow(conflictsModel);
         conflictsModel.startProgress(null);
 
-        AsyncDataProvider.getGlusterHook(new AsyncQuery(conflictsModel, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterHook(new AsyncQuery(conflictsModel, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
 
@@ -484,7 +484,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
             return;
         }
 
-        AsyncDataProvider.getGlusterHooks(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getGlusterHooks(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object returnValue) {

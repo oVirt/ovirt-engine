@@ -51,7 +51,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getProvisioning().setIsAvailable(false);
         getModel().getProvisioning().setEntity(false);
 
-        AsyncDataProvider.getDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(new AsyncQuery(getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
 
@@ -84,7 +84,7 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
     }
 
     protected void postDataCentersLoaded(final List<StoragePool> dataCenters) {
-        AsyncDataProvider.getClusterListByService(
+        AsyncDataProvider.getInstance().getClusterListByService(
                 new AsyncQuery(getModel(), new INewAsyncCallback() {
 
                     @Override

@@ -339,7 +339,7 @@ public class DataCenterStorageListModel extends SearchableListModel
 
                 }
             };
-            AsyncDataProvider.getISOStorageDomainList(_asyncQuery);
+            AsyncDataProvider.getInstance().getISOStorageDomainList(_asyncQuery);
         }
         else
         {
@@ -418,7 +418,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                     dcStorageModel.postAttachInternal(models);
                 }
             };
-            AsyncDataProvider.getStorageDomainList(_asyncQuery);
+            AsyncDataProvider.getInstance().getStorageDomainList(_asyncQuery);
         }
 
     }
@@ -604,7 +604,7 @@ public class DataCenterStorageListModel extends SearchableListModel
                     dataCenterStorageListModel.postDetach(dataCenterStorageListModel.getWindow());
                 }
             };
-            AsyncDataProvider.getLocalStorageHost(_asyncQuery, localStorgaeDC);
+            AsyncDataProvider.getInstance().getLocalStorageHost(_asyncQuery, localStorgaeDC);
         }
         else
         {

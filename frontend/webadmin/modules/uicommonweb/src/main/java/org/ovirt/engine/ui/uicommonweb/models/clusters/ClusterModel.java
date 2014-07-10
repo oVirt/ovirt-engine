@@ -740,19 +740,19 @@ public class ClusterModel extends EntityModel<VDSGroup>
             return getOptimizationCustom().getEntity();
         }
 
-        return AsyncDataProvider.getClusterDefaultMemoryOverCommit();
+        return AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit();
     }
 
     public String getSchedulerOptimizationInfoMessage() {
         return ConstantsManager.getInstance()
                 .getMessages()
-                .schedulerOptimizationInfo(AsyncDataProvider.getOptimizeSchedulerForSpeedPendingRequests());
+                .schedulerOptimizationInfo(AsyncDataProvider.getInstance().getOptimizeSchedulerForSpeedPendingRequests());
     }
 
     public String getAllowOverbookingInfoMessage() {
         return ConstantsManager.getInstance()
                 .getMessages()
-                .schedulerAllowOverbookingInfo(AsyncDataProvider.getSchedulerAllowOverbookingPendingRequestsThreshold());
+                .schedulerAllowOverbookingInfo(AsyncDataProvider.getInstance().getSchedulerAllowOverbookingPendingRequestsThreshold());
     }
 
     public void setMemoryOverCommit(int value)
@@ -786,7 +786,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         setEnableHaReservation(new EntityModel<Boolean>(false));
         setEnableOptionalReason(new EntityModel<Boolean>(false));
         setAllowClusterWithVirtGlusterEnabled(true);
-        AsyncDataProvider.getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 setAllowClusterWithVirtGlusterEnabled((Boolean) returnValue);
@@ -956,9 +956,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getEnableBallooning().setEntity(false);
         // Optimization methods:
         // default value =100;
-        setDefaultMemoryOvercommit(AsyncDataProvider.getClusterDefaultMemoryOverCommit());
+        setDefaultMemoryOvercommit(AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit());
 
-        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getClusterDefaultCountThreadsAsCores()));
+        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
 
         setVersionSupportsCpuThreads(new EntityModel<Boolean>(true));
 
@@ -976,7 +976,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getAllowOverbooking().getEntityChangedEvent().addListener(this);
         getGuarantyResources().getEntityChangedEvent().addListener(this);
 
-        boolean overbookingSupported = AsyncDataProvider.getScheudulingAllowOverbookingSupported();
+        boolean overbookingSupported = AsyncDataProvider.getInstance().getScheudulingAllowOverbookingSupported();
         getAllowOverbooking().setIsAvailable(overbookingSupported);
         if (overbookingSupported) {
             getOptimizeForSpeed().getEntityChangedEvent().addListener(new IEventListener() {
@@ -1051,10 +1051,10 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
                     }
                 };
-                AsyncDataProvider.getClusterServerMemoryOverCommit(_asyncQuery1);
+                AsyncDataProvider.getInstance().getClusterServerMemoryOverCommit(_asyncQuery1);
             }
         };
-        AsyncDataProvider.getClusterDesktopMemoryOverCommit(_asyncQuery);
+        AsyncDataProvider.getInstance().getClusterDesktopMemoryOverCommit(_asyncQuery);
 
         setDataCenter(new ListModel<StoragePool>());
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
@@ -1205,7 +1205,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 }
             }
         };
-        AsyncDataProvider.getHostFingerprint(aQuery, hostAddress);
+        AsyncDataProvider.getInstance().getHostFingerprint(aQuery, hostAddress);
         getGlusterHostFingerprint().setEntity(ConstantsManager.getInstance().getConstants().loadingFingerprint());
     }
 
@@ -1248,7 +1248,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 clusterModel.setMigrateOnErrorOption(clusterModel.getEntity().getMigrateOnError());
             }
         };
-        AsyncDataProvider.getDataCenterList(_asyncQuery);
+        AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
 
     }
 
@@ -1388,13 +1388,13 @@ public class ClusterModel extends EntityModel<VDSGroup>
                         }
                     };
 
-                    AsyncDataProvider.isClusterEmpty(emptyQuery, clusterModel.getEntity().getId());
+                    AsyncDataProvider.getInstance().isClusterEmpty(emptyQuery, clusterModel.getEntity().getId());
                 } else {
                     populateCPUList(clusterModel, cpus, true);
                 }
             }
         };
-        AsyncDataProvider.getCPUList(_asyncQuery, version);
+        AsyncDataProvider.getInstance().getCPUList(_asyncQuery, version);
 
         // CPU Thread support is only available for clusters of version 3.2 or greater
         getVersionSupportsCpuThreads().setEntity(version.compareTo(Version.v3_2) >= 0);
@@ -1428,7 +1428,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         getMigrateOnErrorOption_NO().setIsAvailable(true);
 
-        if (AsyncDataProvider.isMigrationSupported(cpu.getArchitecture(), version)) {
+        if (AsyncDataProvider.getInstance().isMigrationSupported(cpu.getArchitecture(), version)) {
             getMigrateOnErrorOption_YES().setIsAvailable(true);
             getMigrateOnErrorOption_HA_ONLY().setIsAvailable(true);
         } else {
@@ -1570,7 +1570,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 }
             }
         };
-        AsyncDataProvider.getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
+        AsyncDataProvider.getInstance().getDataCenterVersions(_asyncQuery, selectedDataCenter.getId());
     }
 
     private void clusterPolicyChanged() {
@@ -1704,14 +1704,14 @@ public class ClusterModel extends EntityModel<VDSGroup>
             return false;
         }
 
-        Boolean supported = (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.VirtIoRngDeviceSupported, version.toString());
+        Boolean supported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.VirtIoRngDeviceSupported, version.toString());
         return (supported == null)
                 ? false
                 : supported;
     }
 
     private String defaultClusterRngSourcesCsv(Version ver) {
-        String srcs = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.ClusterRequiredRngSourcesDefault, ver.toString());
+        String srcs = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClusterRequiredRngSourcesDefault, ver.toString());
         return (srcs == null)
                 ? ""
                 : srcs;

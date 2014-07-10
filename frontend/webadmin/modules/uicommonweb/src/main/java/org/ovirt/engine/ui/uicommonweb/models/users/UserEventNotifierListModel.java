@@ -109,7 +109,7 @@ public class UserEventNotifierListModel extends SearchableListModel
         ArrayList<EventNotificationEntity> eventTypes =
                 ApplicationModeHelper.getModeSpecificEventNotificationTypeList();
         Map<EventNotificationEntity, HashSet<AuditLogType>> availableEvents =
-                AsyncDataProvider.getAvailableNotificationEvents();
+                AsyncDataProvider.getInstance().getAvailableNotificationEvents();
 
         Translator translator = EnumTranslator.getInstance();
 

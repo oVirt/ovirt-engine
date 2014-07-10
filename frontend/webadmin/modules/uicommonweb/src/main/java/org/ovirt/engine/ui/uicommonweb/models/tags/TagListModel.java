@@ -190,21 +190,21 @@ public class TagListModel extends SearchableListModel
     {
         super.syncSearch();
 
-        AsyncDataProvider.getRootTag(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
+        AsyncDataProvider.getInstance().getRootTag(new AsyncQuery(this,
+                                                                  new INewAsyncCallback() {
+                                                                      @Override
+                                                                      public void onSuccess(Object target, Object returnValue) {
 
-                        TagListModel tagListModel = (TagListModel) target;
-                        TagModel rootTag =
-                                tagListModel.tagToModel((Tags) returnValue);
-                        rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
-                        rootTag.setType(TagModelType.Root);
-                        rootTag.setIsChangable(false);
-                        tagListModel.setItems(new ArrayList<TagModel>(Arrays.asList(new TagModel[] {rootTag})));
+                                                                          TagListModel tagListModel = (TagListModel) target;
+                                                                          TagModel rootTag =
+                                                                                  tagListModel.tagToModel((Tags) returnValue);
+                                                                          rootTag.getName().setEntity(ConstantsManager.getInstance().getConstants().rootTag());
+                                                                          rootTag.setType(TagModelType.Root);
+                                                                          rootTag.setIsChangable(false);
+                                                                          tagListModel.setItems(new ArrayList<TagModel>(Arrays.asList(new TagModel[] {rootTag})));
 
-                    }
-                }));
+                                                                      }
+                                                                  }));
     }
 
     @Override

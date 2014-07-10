@@ -92,8 +92,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     protected ClientConsoleMode getDefaultConsoleMode() {
-        return ClientConsoleMode.valueOf((String) AsyncDataProvider
-                .getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
+        return ClientConsoleMode.valueOf((String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ClientModeSpiceDefault));
     }
 
     public ISpice getspice() {
@@ -101,7 +100,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     public boolean isWanOptionsAvailableForMyVm() {
-        boolean isWindowsVm = AsyncDataProvider.isWindowsOsType(getEntity().getOs());
+        boolean isWindowsVm = AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getOs());
         boolean spiceGuestAgentInstalled = getEntity().getSpiceDriverVersion() != null;
 
         return isWindowsVm && spiceGuestAgentInstalled;
@@ -166,7 +165,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
 
             // If it is not windows or SPICE guest agent is not installed, make sure the WAN options are disabled.
-            if (!AsyncDataProvider.isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
+            if (!AsyncDataProvider.getInstance().isWindowsOsType(getEntity().getVmOsId()) || !getEntity().getHasSpiceDriver()) {
                 getspice().setWanOptionsEnabled(false);
             }
 
@@ -185,7 +184,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         DisplayType displayType = getEntity().getDisplayType() != null
                 ? getEntity().getDisplayType()
                 : getEntity().getDefaultDisplayType();
-        boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.hasSpiceSupport(getEntity().getOs(), getEntity().getVdsGroupCompatibilityVersion()));
+        boolean hasVmSpiceSupport = Boolean.TRUE.equals(AsyncDataProvider.getInstance().hasSpiceSupport(getEntity().getOs(), getEntity().getVdsGroupCompatibilityVersion()));
 
         return displayType == DisplayType.qxl && hasVmSpiceSupport;
     }
@@ -293,11 +292,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
 
                 ArrayList<VdcQueryParametersBase> parametersList =
                         new ArrayList<VdcQueryParametersBase>();
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, AsyncDataProvider.getDefaultConfigurationVersion()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, AsyncDataProvider.getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SSLEnabled, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.CipherSuite, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
                 parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.SpiceSecureChannels,
                         thisVm.getVdsGroupCompatibilityVersion().toString()));
-                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getDefaultConfigurationVersion()));
+                parametersList.add(new GetConfigurationValueParameters(ConfigurationValues.EnableSpiceRootCertificateValidation, AsyncDataProvider.getInstance().getDefaultConfigurationVersion()));
                 parametersList.add(new IdQueryParameters(thisVm.getId()));
                 parametersList.add(new VdcQueryParametersBase());
 
@@ -313,7 +312,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             }
         };
 
-        AsyncDataProvider.getIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
+        AsyncDataProvider.getInstance().getIsoDomainByDataCenterId(_asyncQuery0, vm.getStoragePoolId());
     }
 
     private String ticket;
@@ -485,7 +484,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
             return getEntity().getVdsGroupSpiceProxy();
         }
 
-        String globalSpiceProxy = (String) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
+        String globalSpiceProxy = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.SpiceProxyDefault);
         if (!StringHelper.isNullOrEmpty(globalSpiceProxy)) {
             return globalSpiceProxy;
         }

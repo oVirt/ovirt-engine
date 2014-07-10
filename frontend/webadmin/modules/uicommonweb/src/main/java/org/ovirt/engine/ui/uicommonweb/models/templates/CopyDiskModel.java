@@ -33,7 +33,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
     public void init(ArrayList<DiskImage> disksImages) {
         setDiskImages(disksImages);
 
-        AsyncDataProvider.getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;
@@ -52,7 +52,7 @@ public class CopyDiskModel extends MoveOrCopyDiskModel
             return;
         }
 
-        AsyncDataProvider.getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 CopyDiskModel copyDiskModel = (CopyDiskModel) target;

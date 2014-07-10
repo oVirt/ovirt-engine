@@ -654,7 +654,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             public void eventRaised(Event ev, Object sender, EventArgs args) {
                 if (object.getVersion().getSelectedItem() != null) {
                     String clusterVersion = object.getVersion().getSelectedItem().getValue();
-                    serialNumberPolicyEditor.setVisible(AsyncDataProvider.isSerialNumberPolicySupported(clusterVersion));
+                    serialNumberPolicyEditor.setVisible(AsyncDataProvider.getInstance().isSerialNumberPolicySupported(clusterVersion));
                 }
             }
         });
