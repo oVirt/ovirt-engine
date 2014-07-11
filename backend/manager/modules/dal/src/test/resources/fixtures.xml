@@ -7250,4 +7250,25 @@
             <value>["192.168.122.18", 2222]</value>
         </row>
     </table>
+
+    <table name="gluster_georep_session">
+        <column>session_id</column>
+        <column>master_volume_id</column>
+        <column>session_key</column>
+        <column>slave_host_name</column>
+        <column>slave_host_uuid</column>
+        <column>slave_volume_name</column>
+        <column>slave_volume_id</column>
+        <column>status</column>
+        <row>
+            <value>61c94fc7-26b0-43e3-9d26-fc9d8cd6a755</value>
+            <value>0c3f45f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>192.168.122.17:slave-replica</value>
+            <value>192.168.122.17</value>
+            <value>44f645f6-3fe9-4b35-a30c-be0d1a835ea8</value>
+            <value>slave-replica</value>
+            <value>44f645f6-3fe9-4b35-a30c-11111a835ea8</value>
+            <value>NOTSTARTED</value>
+        </row>
+     </table>
 </dataset>
