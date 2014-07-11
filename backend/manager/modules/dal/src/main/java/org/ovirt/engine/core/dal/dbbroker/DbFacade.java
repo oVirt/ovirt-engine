@@ -123,6 +123,7 @@ import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.dwh.DwhHistoryTimekeepingDao;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
@@ -941,6 +942,15 @@ public class DbFacade {
      */
     public GlusterHooksDao getGlusterHooksDao() {
         return getDao(GlusterHooksDao.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link GlusterGeoRepDao}.
+     *
+     * @return the dao
+     */
+    public GlusterGeoRepDao getGlusterGeoRepDao() {
+        return getDao(GlusterGeoRepDao.class);
     }
 
     /**

@@ -561,6 +561,11 @@ public class FixturesTool {
     public static final Guid GLUSTER_ASYNC_TASK_ID1 = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a763");
 
     /**
+     * Gluster Geo rep session
+     */
+    public static final Guid GLUSTER_GEOREP_SESSION_ID = new Guid("61c94fc7-26b0-43e3-9d26-fc9d8cd6a755");
+
+    /**
      * A test provider that exists.
      */
     public static final String PROVIDER_NAME = "provider";
