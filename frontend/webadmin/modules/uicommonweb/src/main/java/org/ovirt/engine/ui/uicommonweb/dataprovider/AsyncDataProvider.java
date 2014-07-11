@@ -182,7 +182,7 @@ public class AsyncDataProvider {
         instance = provider;
     }
 
-    private final String GENERAL = "general"; //$NON-NLS-1$
+    private static final String GENERAL = "general"; //$NON-NLS-1$
 
     // dictionary to hold cache of all config values (per version) queried by client, if the request for them succeeded.
     private HashMap<KeyValuePairCompat<ConfigurationValues, String>, Object> cachedConfigValues =
@@ -2696,7 +2696,7 @@ public class AsyncDataProvider {
         cachedConfigValues.clear();
     }
 
-    private class TemplateConverter implements IAsyncConverter {
+    private static class TemplateConverter implements IAsyncConverter {
 
         @Override
         public Object Convert(Object source, AsyncQuery asyncQuery) {
