@@ -3721,6 +3721,8 @@ actions:
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
           template.bios.boot_menu.enabled: xs:boolean
+          template.cluster.id: xs:string
+          template.cluster.name: xs:string
         description: add a new template to the system
     urlparams: {}
     headers:
