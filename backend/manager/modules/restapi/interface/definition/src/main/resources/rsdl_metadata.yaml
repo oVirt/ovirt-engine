@@ -1974,13 +1974,16 @@ actions:
     body:
       parameterType: DataCenter
       signatures:
-      - mandatoryArguments: {datacenter.name: 'xs:string', datacenter.version.major: 'xs:int', datacenter.version.minor: 'xs:int'}
-        optionalArguments:
-          datacenter.storage_type--DEPRECATED: xs:string
+      - mandatoryArguments:
           datacenter.local: xs:boolean
-          datacenter.description: xs:string
+          datacenter.name: xs:string
+        optionalArguments:
           datacenter.comment: xs:string
+          datacenter.description: xs:string
           datacenter.storage_format: xs:string
+          datacenter.storage_type--DEPRECATED: xs:string
+          datacenter.version.major: xs:int
+          datacenter.version.minor: xs:int
         description: add a new data center to the system
     urlparams: {}
     headers:
