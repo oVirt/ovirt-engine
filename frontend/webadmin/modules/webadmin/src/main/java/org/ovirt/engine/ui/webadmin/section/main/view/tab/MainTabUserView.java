@@ -60,12 +60,11 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
             @Override
             public String getValue(DbUser object) {
                 StringBuilder builder = new StringBuilder();
-                int counter = 0;
                 for (String name : object.getGroupNames()) {
-                    builder.append(name);
-                    if (counter < object.getGroupNames().size() - 1) {
+                    if (builder.length() > 0) {
                         builder.append(","); //$NON-NLS-1$
                     }
+                    builder.append(name);
                 }
                 return builder.toString();
             }
