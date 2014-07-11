@@ -4,7 +4,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager-modules</artifactId>
-    <version>3.4.3-SNAPSHOT</version>
+    <version>3.4.4-SNAPSHOT</version>
   </parent>
 
   <artifactId>restapi-parent</artifactId>
@@ -20,7 +20,7 @@
   </modules>
 
   <properties>
-    <engine.api.version>3.4.3-SNAPSHOT</engine.api.version>
+    <engine.api.version>3.4.4-SNAPSHOT</engine.api.version>
     <resteasy.version>2.3.2.Final</resteasy.version>
     <maven-jaxb22-plugin.version>0.8.1</maven-jaxb22-plugin.version>
     <easymock.version>3.0</easymock.version>
