@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetNewVdsFenceStatusParameters;
@@ -1754,7 +1755,7 @@ public abstract class HostModel extends Model
     {
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
-        getProtocol().setIsAvailable(showTransportProperties());
+        getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
