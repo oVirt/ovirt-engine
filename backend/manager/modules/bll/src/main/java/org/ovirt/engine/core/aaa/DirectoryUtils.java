@@ -222,7 +222,7 @@ public class DirectoryUtils {
             boolean groupsResolvingRecursive
             ) {
                 List<DirectoryGroup> directoryGroups = new ArrayList<>();
-                for (ExtMap group : AuthzUtils.queryPrincipalRecords(extension, namespace, filter, groupsResolving, groupsResolvingRecursive)) {
+                for (ExtMap group : AuthzUtils.queryGroupRecords(extension, namespace, filter, groupsResolving, groupsResolvingRecursive)) {
                     directoryGroups.add(mapGroupRecordToDirectoryGroup(AuthzUtils.getName(extension), group));
                 }
                 return directoryGroups;
