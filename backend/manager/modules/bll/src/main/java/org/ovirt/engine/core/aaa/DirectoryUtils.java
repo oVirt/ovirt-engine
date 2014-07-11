@@ -6,10 +6,11 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 
+import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
@@ -177,11 +178,16 @@ public class DirectoryUtils {
         return new DbGroup(mapGroupRecordToDirectoryGroup(directory, groupRecord));
     }
 
-
     public static void flatGroups(ExtMap principal) {
-        List<ExtMap> accumulator = new ArrayList<>();
-        flatGroups(accumulator, principal.get(GroupRecord.GROUPS, Collections.<ExtMap> emptyList()));
-        principal.put(GroupRecord.GROUPS, accumulator);
+        principal.put(PrincipalRecord.GROUPS, flatGroups(principal, PrincipalRecord.GROUPS, new ArrayList<ExtMap>()));
+    }
+
+    private static List<ExtMap> flatGroups(ExtMap entity, ExtKey key, List<ExtMap> accumulator) {
+        for (ExtMap group : entity.get(key, Collections.<ExtMap> emptyList())) {
+            accumulator.add(group);
+            flatGroups(group, GroupRecord.GROUPS, accumulator);
+        }
+        return accumulator;
     }
 
     public static List<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName, final List<ExtMap> groups) {
@@ -226,14 +232,6 @@ public class DirectoryUtils {
                     directoryGroups.add(mapGroupRecordToDirectoryGroup(AuthzUtils.getName(extension), group));
                 }
                 return directoryGroups;
-    }
-
-    private static void flatGroups(List<ExtMap> accumulator, List<ExtMap> groupsFrom) {
-        for (ExtMap group : groupsFrom) {
-            flatGroups(accumulator, group.get(GroupRecord.GROUPS, Collections.<ExtMap> emptyList()));
-            accumulator.add(group);
-        }
-
     }
 
 }
