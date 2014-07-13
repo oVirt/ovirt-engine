@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -55,16 +56,16 @@ public class AdElementListModel extends SearchableListModel
         privateExcludeItems = value;
     }
 
-    private ListModel privateDomain;
+    private ListModel privateProfile;
 
-    public ListModel getDomain()
+    public ListModel getProfile()
     {
-        return privateDomain;
+        return privateProfile;
     }
 
-    private void setDomain(ListModel value)
+    private void setProfile(ListModel value)
     {
-        privateDomain = value;
+        privateProfile = value;
     }
 
     private ListModel privateRole;
@@ -155,7 +156,7 @@ public class AdElementListModel extends SearchableListModel
     public AdElementListModel()
     {
         setRole(new ListModel());
-        setDomain(new ListModel());
+        setProfile(new ListModel());
 
         setSelectAll(new EntityModel());
         getSelectAll().setEntity(false);
@@ -173,11 +174,11 @@ public class AdElementListModel extends SearchableListModel
         setIsTimerDisabled(true);
 
 
-        AsyncDataProvider.getInstance().getAAAProfilesList(new AsyncQuery(this, new INewAsyncCallback() {
+        AsyncDataProvider.getInstance().getAAAProfilesEntriesList(new AsyncQuery(this, new INewAsyncCallback() {
 
             @Override
             public void onSuccess(Object model, Object result) {
-                populateDomains((List<String>) result);
+                populateProfiles((List<ProfileEntry>) result);
             }
         }));
 
@@ -192,9 +193,9 @@ public class AdElementListModel extends SearchableListModel
         }));
     }
 
-    protected void populateDomains(List<String> domains){
-        getDomain().setItems(domains);
-        getDomain().setSelectedItem(Linq.firstOrDefault(domains));
+    protected void populateProfiles(List<ProfileEntry> profiles) {
+        getProfile().setItems(profiles);
+        getProfile().setSelectedItem(Linq.firstOrDefault(profiles));
     }
 
     protected void populateRoles(List<Role> roles){
@@ -337,11 +338,15 @@ public class AdElementListModel extends SearchableListModel
     }
 
     protected void findGroups(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADGROUP@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance()
+                .runQuery(VdcQueryType.Search,
+                        new SearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
-        Frontend.getInstance().runQuery(VdcQueryType.Search, new SearchParameters("ADUSER@" + getDomain().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$
+        Frontend.getInstance()
+                .runQuery(VdcQueryType.Search,
+                        new SearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)

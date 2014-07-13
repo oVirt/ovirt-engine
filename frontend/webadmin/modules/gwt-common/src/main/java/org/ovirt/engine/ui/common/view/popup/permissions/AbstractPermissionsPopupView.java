@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup.permissions;
 
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
@@ -48,9 +49,9 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     public UiCommandButton searchButton;
 
     @UiField(provided = true)
-    @Path("domain.selectedItem")
-    @WithElementId("domain")
-    public ListModelListBoxEditor<Object> domainSelection;
+    @Path("profile.selectedItem")
+    @WithElementId("profile")
+    public ListModelListBoxEditor<Object> profileSelection;
 
     @UiField
     @Ignore
@@ -115,10 +116,10 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     protected abstract T doFlush();
 
     private void initListBoxEditors() {
-        domainSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        profileSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
             @Override
             public String renderNullSafe(Object object) {
-                return object.toString();
+                return ((ProfileEntry) object).toString();
             }
         });
 
@@ -213,7 +214,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     @Override
     public void changeStateOfElementsWhenAccessIsForEveryone(boolean isEveryone) {
-        domainSelection.setEnabled(!isEveryone);
+        profileSelection.setEnabled(!isEveryone);
         searchStringEditor.setEnabled(!isEveryone);
         searchButton.getCommand().setIsExecutionAllowed(!isEveryone);
         searchItems.setVisible(!isEveryone);
