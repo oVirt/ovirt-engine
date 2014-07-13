@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -150,7 +150,7 @@ public class BackendUsersResourceTest
     @Test
     public void testAddUser_4() throws Exception {
         setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
-                GetDomainListParameters.class,
+                VdcQueryParametersBase.class,
                 new String[] { },
                 new Object[] { },
                 setUpDomains());

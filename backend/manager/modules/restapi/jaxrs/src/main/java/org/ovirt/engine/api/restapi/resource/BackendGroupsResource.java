@@ -20,7 +20,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
-import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -77,7 +76,7 @@ public class BackendGroupsResource
             List<String> domains = getBackendCollection(
                 String.class,
                 VdcQueryType.GetDomainList,
-                new GetDomainListParameters());
+                new VdcQueryParametersBase());
             for (String domain :domains) {
                 Guid domainId = new Guid(domain.getBytes(), true);
                 if (domainId.toString().equals(group.getDomain().getId())) {

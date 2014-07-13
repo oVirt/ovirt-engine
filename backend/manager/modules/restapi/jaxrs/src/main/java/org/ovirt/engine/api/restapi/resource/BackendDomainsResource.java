@@ -12,7 +12,7 @@ import org.ovirt.engine.api.model.Domains;
 import org.ovirt.engine.api.resource.DomainResource;
 import org.ovirt.engine.api.resource.DomainsResource;
 import org.ovirt.engine.api.restapi.model.Directory;
-import org.ovirt.engine.core.common.queries.GetDomainListParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -62,7 +62,7 @@ public class BackendDomainsResource extends AbstractBackendCollectionResource<Do
         return getBackendCollection(
                 String.class,
                 VdcQueryType.GetDomainList,
-                new GetDomainListParameters());
+                new VdcQueryParametersBase());
     }
 
     public Domain lookupDirectoryById(String id, boolean addlinks) {
