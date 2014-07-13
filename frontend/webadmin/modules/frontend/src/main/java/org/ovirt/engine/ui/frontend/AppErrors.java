@@ -1645,6 +1645,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be set as required in the cluster.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REQUIRED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. External network with vlan must be labeled.")
+    String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED();
+
     @DefaultStringValue("Cannot ${action} ${type}. External network cannot be used when port mirroring is set.")
     String ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_PORT_MIRRORED();
 
