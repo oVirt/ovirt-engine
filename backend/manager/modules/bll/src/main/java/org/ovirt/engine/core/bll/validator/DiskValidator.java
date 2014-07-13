@@ -100,17 +100,16 @@ public class DiskValidator {
     }
 
     public ValidationResult isReadOnlyPropertyCompatibleWithInterface() {
-        if (Boolean.TRUE.equals(disk.getReadOnly()) && disk.getDiskInterface() == DiskInterface.IDE) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
-        }
+        if (Boolean.TRUE.equals(disk.getReadOnly())) {
+            DiskInterface diskInterface = disk.getDiskInterface();
 
-        return ValidationResult.VALID;
-    }
+            if (diskInterface == DiskInterface.IDE) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+            }
 
-    public ValidationResult isReadOnlyPropertyCompatibleWithLunInterface() {
-        if (Boolean.TRUE.equals(disk.getReadOnly()) && disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
-            return new ValidationResult(
-                    VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+            if (disk.isScsiPassthrough()) {
+                return new ValidationResult(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK);
+            }
         }
 
         return ValidationResult.VALID;

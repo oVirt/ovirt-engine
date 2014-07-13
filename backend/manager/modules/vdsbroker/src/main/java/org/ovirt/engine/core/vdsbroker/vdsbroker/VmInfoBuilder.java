@@ -286,7 +286,9 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                     break;
                 case VirtIO_SCSI:
                     struct.put(VdsProperties.INTERFACE, VdsProperties.Scsi);
-                    if (disk.getDiskStorageType() == DiskStorageType.LUN) {
+                    // If SCSI pass-through is enabled (DirectLUN disk and SGIO is defined),
+                    // set device type as 'lun' (instead of 'disk') and set the specified SGIO.
+                    if (disk.getDiskStorageType() == DiskStorageType.LUN && disk.isScsiPassthrough()) {
                         struct.put(VdsProperties.Device, VmDeviceType.LUN.getName());
                         struct.put(VdsProperties.Sgio, disk.getSgio().toString().toLowerCase());
                     }

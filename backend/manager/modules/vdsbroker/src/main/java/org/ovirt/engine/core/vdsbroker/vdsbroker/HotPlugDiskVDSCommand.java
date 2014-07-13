@@ -68,7 +68,24 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
         } else {
             LunDisk lunDisk = (LunDisk) disk;
-            drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+
+            // If SCSI pass-through is enabled (VirtIO-SCSI/DirectLUN disk and SGIO is defined),
+            // set device type as 'lun' (instead of 'disk') and set the specified SGIO
+            boolean isVirtioScsi = getParameters().getDisk().getDiskInterface() == DiskInterface.VirtIO_SCSI;
+            boolean isScsiPassthrough = getParameters().getDisk().isScsiPassthrough();
+            if (isVirtioScsi) {
+                if (isScsiPassthrough) {
+                    drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+                    drive.put(VdsProperties.Sgio, getParameters().getDisk().getSgio().toString().toLowerCase());
+                }
+                else {
+                    drive.put(VdsProperties.Device, VmDeviceType.DISK.getName());
+                }
+            }
+            else {
+                drive.put(VdsProperties.Device, VmDeviceType.LUN.getName());
+            }
+
             drive.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
             drive.put(VdsProperties.Format, VolumeFormat.RAW.toString().toLowerCase());
             drive.put(VdsProperties.PropagateErrors, PropagateErrors.Off.toString()

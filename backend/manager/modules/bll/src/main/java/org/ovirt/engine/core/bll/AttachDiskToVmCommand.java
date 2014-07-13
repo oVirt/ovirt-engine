@@ -131,11 +131,6 @@ public class AttachDiskToVmCommand<T extends AttachDettachVmDiskParameters> exte
             return false;
         }
 
-        if (disk.getDiskStorageType() == DiskStorageType.LUN &&
-                !validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) {
-            return false;
-        }
-
         if (!isVmNotInPreviewSnapshot()) {
             return false;
         }

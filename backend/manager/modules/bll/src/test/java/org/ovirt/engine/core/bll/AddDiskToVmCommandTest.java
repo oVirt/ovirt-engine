@@ -851,10 +851,11 @@ public class AddDiskToVmCommandTest {
     }
 
     @Test
-    public void testCanDoFailOnAddLunVirtIOSCSIReadOnlyDisk() {
+    public void testCanDoSuccessOnAddLunVirtIOSCSIReadOnlyDisk() {
         LunDisk disk = createISCSILunDisk();
         disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setReadOnly(true);
+        disk.setSgio(null);
 
         AddDiskParameters parameters = createParameters();
         parameters.setDiskInfo(disk);
@@ -868,12 +869,9 @@ public class AddDiskToVmCommandTest {
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(ValidationResult.VALID);
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        when(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface()).thenReturn(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_VIRT_IO_SCSI_INTERFACE_FOR_LUN_DISKS_DOES_NOT_SUPPORT_READ_ONLY_ATTR);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {

@@ -19,6 +19,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+
+import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -38,7 +41,9 @@ public class DiskValidatorTest {
     @Mock
     private VmDAO vmDAO;
     private DiskValidator validator;
+    private DiskValidator lunValidator;
     private DiskImage disk;
+    private LunDisk lunDisk;
 
     private static DiskImage createDisk() {
         DiskImage disk = new DiskImage();
@@ -71,6 +76,12 @@ public class DiskValidatorTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         validator = spy(new DiskValidator(disk));
         doReturn(vmDAO).when(validator).getVmDAO();
+    }
+
+    private void setupForLun() {
+        lunDisk = new LunDisk();
+        lunValidator = spy(new DiskValidator(lunDisk));
+        doReturn(vmDAO).when(lunValidator).getVmDAO();
     }
 
     private VmDevice createVmDeviceForDisk(VM vm, Disk disk, Guid snapshotId, boolean isPlugged) {
@@ -147,6 +158,13 @@ public class DiskValidatorTest {
 
         assertThat(validator.isReadOnlyPropertyCompatibleWithInterface(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IDE_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR));
+
+        setupForLun();
+        lunDisk.setReadOnly(true);
+        lunDisk.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        lunDisk.setSgio(ScsiGenericIO.FILTERED);
+        assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(),
+                failsWith(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
     }
 
     @Test

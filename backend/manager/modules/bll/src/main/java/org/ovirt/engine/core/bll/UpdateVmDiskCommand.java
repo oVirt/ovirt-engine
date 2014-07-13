@@ -159,7 +159,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         return validateCanUpdateShareable() && validateCanUpdateReadOnly() &&
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
                 validate(diskValidator.isReadOnlyPropertyCompatibleWithInterface()) &&
-                !(getNewDisk().getDiskStorageType() == DiskStorageType.LUN && !validate(diskValidator.isReadOnlyPropertyCompatibleWithLunInterface())) &&
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm())));
     }

@@ -62,10 +62,11 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel isBootable;
     private EntityModel isShareable;
     private EntityModel isPlugged;
-    private EntityModel isReadOnly;
     private EntityModel isAttachDisk;
-    private EntityModel isInternal;
     private EntityModel isDirectLunDiskAvaialable;
+    private EntityModel isInternal;
+    private EntityModel isReadOnly;
+    private EntityModel isScsiPassthrough;
     private EntityModel isSgIoUnfiltered;
     private EntityModel sizeExtend;
 
@@ -117,20 +118,20 @@ public abstract class AbstractDiskModel extends DiskModel
         this.isPlugged = isPlugged;
     }
 
-    public EntityModel getIsReadOnly() {
-        return isReadOnly;
-    }
-
-    public void setIsReadOnly(EntityModel isReadOnly) {
-        this.isReadOnly = isReadOnly;
-    }
-
     public EntityModel getIsAttachDisk() {
         return isAttachDisk;
     }
 
     public void setIsAttachDisk(EntityModel isAttachDisk) {
         this.isAttachDisk = isAttachDisk;
+    }
+
+    public EntityModel getIsDirectLunDiskAvaialable() {
+        return isDirectLunDiskAvaialable;
+    }
+
+    public void setIsDirectLunDiskAvaialable(EntityModel isDirectLunDiskAvaialable) {
+        this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
     }
 
     public EntityModel getIsInternal() {
@@ -141,12 +142,20 @@ public abstract class AbstractDiskModel extends DiskModel
         this.isInternal = isInternal;
     }
 
-    public EntityModel getIsDirectLunDiskAvaialable() {
-        return isDirectLunDiskAvaialable;
+    public EntityModel getIsReadOnly() {
+        return isReadOnly;
     }
 
-    public void setIsDirectLunDiskAvaialable(EntityModel isDirectLunDiskAvaialable) {
-        this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
+    public void setIsReadOnly(EntityModel isReadOnly) {
+        this.isReadOnly = isReadOnly;
+    }
+
+    public EntityModel getIsScsiPassthrough() {
+        return isScsiPassthrough;
+    }
+
+    public void setIsScsiPassthrough(EntityModel isScsiPassthrough) {
+        this.isScsiPassthrough = isScsiPassthrough;
     }
 
     public EntityModel getIsSgIoUnfiltered() {
@@ -284,9 +293,17 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsReadOnly(new EntityModel());
         getIsReadOnly().setEntity(false);
+        getIsReadOnly().getEntityChangedEvent().addListener(this);
+
+        setIsScsiPassthrough(new EntityModel<Boolean>());
+        getIsScsiPassthrough().setIsAvailable(false);
+        getIsScsiPassthrough().setEntity(true);
+        getIsScsiPassthrough().getEntityChangedEvent().addListener(this);
 
         setIsSgIoUnfiltered(new EntityModel());
         getIsSgIoUnfiltered().setIsAvailable(false);
+        getIsSgIoUnfiltered().setEntity(false);
+        getIsSgIoUnfiltered().getEntityChangedEvent().addListener(this);
 
         setIsDirectLunDiskAvaialable(new EntityModel());
         getIsDirectLunDiskAvaialable().setEntity(true);
@@ -657,9 +674,28 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isInternal = (Boolean) getIsInternal().getEntity();
         DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
         getIsSgIoUnfiltered().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
+        getIsScsiPassthrough().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
 
+        updateScsiPassthroughChangeability();
         updateReadOnlyChangeability();
         updatePlugChangeability();
+    }
+
+    protected void updateScsiPassthroughChangeability() {
+        getIsScsiPassthrough().setIsChangable(!Boolean.TRUE.equals(getIsReadOnly().getEntity()) && isEditEnabled());
+        getIsScsiPassthrough().setChangeProhibitionReason(CONSTANTS.cannotEnableScsiPassthroughForLunReadOnlyDisk());
+
+        updateSgIoUnfilteredChangeability();
+    }
+
+    protected void updateSgIoUnfilteredChangeability() {
+        if (!Boolean.TRUE.equals(getIsScsiPassthrough().getEntity())) {
+            getIsSgIoUnfiltered().setChangeProhibitionReason(CONSTANTS.cannotEnableSgioWhenScsiPassthroughDisabled());
+            getIsSgIoUnfiltered().setIsChangable(false);
+            getIsSgIoUnfiltered().setEntity(false);
+            return;
+        }
+        getIsSgIoUnfiltered().setIsChangable(isEditEnabled());
     }
 
     protected void updateReadOnlyChangeability() {
@@ -673,13 +709,17 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         boolean isDirectLUN = Boolean.FALSE.equals(getIsInternal().getEntity());
-        if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN) {
-            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk());
+        boolean isScsiPassthrough = Boolean.TRUE.equals(getIsScsiPassthrough().getEntity());
+        if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN && isScsiPassthrough) {
+            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableReadonlyWhenScsiPassthroughEnabled());
             getIsReadOnly().setIsChangable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
+
+
         getIsReadOnly().setIsChangable(isEditEnabled());
+        getIsReadOnly().setEntity(getIsNew() ? Boolean.FALSE : getDisk().getReadOnly());
     }
 
     private void updatePlugChangeability() {
@@ -853,7 +893,8 @@ public abstract class AbstractDiskModel extends DiskModel
             LunDisk lunDisk = getLunDisk();
             DiskInterface diskInterface = (DiskInterface) getDiskInterface().getSelectedItem();
             if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
-                lunDisk.setSgio(Boolean.TRUE.equals(getIsSgIoUnfiltered().getEntity()) ?
+                lunDisk.setSgio(Boolean.FALSE.equals(getIsScsiPassthrough().getEntity()) ? null :
+                        Boolean.TRUE.equals(getIsSgIoUnfiltered().getEntity()) ?
                         ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
             }
             setDisk(lunDisk);
@@ -889,17 +930,19 @@ public abstract class AbstractDiskModel extends DiskModel
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsWipeAfterDelete())
-        {
-            wipeAfterDelete_EntityChanged(args);
-        }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsAttachDisk())
-        {
-            attachDisk_EntityChanged(args);
-        }
-        else if (ev.matchesDefinition(ListModel.entityChangedEventDefinition) && sender == getIsInternal())
-        {
-            isInternal_EntityChanged();
+        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
+            if (sender == getIsWipeAfterDelete()) {
+                wipeAfterDelete_EntityChanged(args);
+            } else if (sender == getIsAttachDisk()) {
+                attachDisk_EntityChanged(args);
+            } else if (sender == getIsReadOnly()) {
+                updateScsiPassthroughChangeability();
+            } else if (sender == getIsScsiPassthrough()) {
+                updateSgIoUnfilteredChangeability();
+                updateReadOnlyChangeability();
+            } else if (sender == getIsInternal()) {
+                isInternal_EntityChanged();
+            }
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
         {

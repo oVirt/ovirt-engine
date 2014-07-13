@@ -2223,8 +2223,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to place the following storage domain(s) into maintenance mode?")
     String areYouSureYouWantToPlaceFollowingStorageDomainsIntoMaintenanceModeMsg();
 
-    @DefaultStringValue("A VirtIO-ISCSI direct LUN disk can't be read-only.")
-    String cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk();
+    @DefaultStringValue("A VirtIO-SCSI DirectLUN disk can't be set as read-only when SCSI pass-through is enabled.")
+    String cannotEnableReadonlyWhenScsiPassthroughEnabled();
+
+    @DefaultStringValue("Privileged SCSI I/O can be set only when SCSI pass-through is enabled.")
+    String cannotEnableSgioWhenScsiPassthroughDisabled();
+
+    @DefaultStringValue("SCSI pass-through is not supported for read-only disks.")
+    String cannotEnableScsiPassthroughForLunReadOnlyDisk();
 
     @DefaultStringValue("Global Maintenance Enabled")
     String haGlobalMaintenance();
