@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.GetDomainListParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -85,7 +84,7 @@ public class BackendUsersResource
             List<String> domains = getBackendCollection(
                String.class,
                VdcQueryType.GetDomainList,
-               new GetDomainListParameters());
+               new VdcQueryParametersBase());
             for (String domain :domains) {
                 Guid domainId = asGuid(domain.getBytes(), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
