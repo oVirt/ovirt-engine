@@ -108,47 +108,96 @@ public class StorageDomainValidator {
         return Config.<Integer> getValue(ConfigValues.FreeSpaceCriticalLowInGB);
     }
 
+    /**
+     * Verify there's enough space in the storage domain for creating new DiskImages.
+     * Some space should be allocated on the storage domain according to the volumes type and format, and allocation policy,
+     * according to the following table:
+     *
+     *      | File Domain                             | Block Domain
+     * -----|-----------------------------------------|-------------
+     * qcow | 1M (header size)                        | 1G
+     * -----|-----------------------------------------|-------------
+     * raw  | preallocated: disk capacity (getSize()) | disk capacity
+     *      | thin (sparse): 1M                       | (there is no raw sparse on
+     *      |                                         | block domains)
+     *
+     */
+    private double getTotalSizeForNewDisks(Collection<DiskImage> diskImages) {
+        double totalSizeForDisks = 0.0;
+        if (diskImages != null) {
+            for (DiskImage diskImage : diskImages) {
+                double sizeForDisk = diskImage.getSize();
+
+                if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    if (storageDomain.getStorageType().isFileDomain()) {
+                        sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+                    } else {
+                        sizeForDisk = INITIAL_BLOCK_ALLOCATION_SIZE;
+                    }
+                } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
+                    sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
+                }
+                totalSizeForDisks += sizeForDisk;
+            }
+        }
+        return totalSizeForDisks;
+    }
+
+    /**
+     * Verify there's enough space in the storage domain for creating cloned DiskImages.
+     * Space should be allocated according to the volumes type and format, and allocation policy,
+     * according to the following table:
+     *
+     *      | File Domain                             | Block Domain
+     * -----|-----------------------------------------|-------------
+     * qcow | preallocated : 1.1 * disk capacity      |1.1 * min(used ,capacity)
+     *      | sparse: 1.1 * min(used ,capacity)       |
+     * -----|-----------------------------------------|-------------
+     * raw  | preallocated: disk capacity             |disk capacity
+     *      | sparse: min(used,capacity)              |
+     *
+     * */
+    private double getTotalSizeForClonedDisks(Collection<DiskImage> diskImages) {
+        double totalSizeForDisks = 0.0;
+        if (diskImages != null) {
+            for (DiskImage diskImage : diskImages) {
+                double diskCapacity = diskImage.getSize();
+                double sizeForDisk = diskCapacity;
+
+                if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
+                        storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    double usedSapce = diskImage.getActualDiskWithSnapshotsSizeInBytes();
+                    sizeForDisk = Math.min(diskCapacity, usedSapce);
+                }
+
+                if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
+                }
+                totalSizeForDisks += sizeForDisk;
+            }
+        }
+        return totalSizeForDisks;
+    }
+
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
         double availableSize = storageDomain.getAvailableDiskSizeInBytes();
-        double totalSizeForDisks = 0.0;
-
-        for (DiskImage diskImage : diskImages) {
-            double sizeForDisk = diskImage.getSize();
-
-            if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                if (storageDomain.getStorageType().isFileDomain()) {
-                    sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
-                } else {
-                    sizeForDisk = INITIAL_BLOCK_ALLOCATION_SIZE;
-                }
-            } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
-                sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
-            }
-            totalSizeForDisks += sizeForDisk;
-        }
+        double totalSizeForDisks = getTotalSizeForNewDisks(diskImages);
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
     public ValidationResult hasSpaceForClonedDisks(Collection<DiskImage> diskImages) {
         double availableSize = storageDomain.getAvailableDiskSizeInBytes();
-        double totalSizeForDisks = 0.0;
+        double totalSizeForDisks = getTotalSizeForClonedDisks(diskImages);
 
-        for (DiskImage diskImage : diskImages) {
-            double diskCapacity = diskImage.getSize();
-            double sizeForDisk = diskCapacity;
+        return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
 
-            if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
-                    storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                double usedSapce = diskImage.getActualDiskWithSnapshotsSizeInBytes();
-                sizeForDisk = Math.min(diskCapacity, usedSapce);
-            }
-
-            if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
-            }
-            totalSizeForDisks += sizeForDisk;
-        }
+    public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
+        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
+        double totalSizeForClonedDisks = getTotalSizeForClonedDisks(clonedDiskImages);
+        double totalSizeForDisks = totalSizeForNewDisks + totalSizeForClonedDisks;
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }

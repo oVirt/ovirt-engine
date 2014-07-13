@@ -85,4 +85,19 @@ public class StorageDomainValidatorFreeSpaceTest {
                 sdValidator.hasSpaceForNewDisk(disk).isValid());
     }
 
+    @Test
+    public void testValidateAllDisks() {
+        StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
+        String assertData = disk.getVolumeFormat() + ", " + disk.getVolumeType() + ", " + sd.getStorageType();
+        List<DiskImage> disksList = Collections.singletonList(disk);
+        assertEquals(assertData,
+                isValidForNew,
+                sdValidator.hasSpaceForAllDisks(disksList, null).isValid());
+        assertEquals(assertData,
+                isValidForCloned,
+                sdValidator.hasSpaceForAllDisks(null, disksList).isValid());
+        assertEquals(assertData,
+                isValidForNew && isValidForCloned,
+                sdValidator.hasSpaceForAllDisks(disksList, disksList).isValid());
+    }
 }

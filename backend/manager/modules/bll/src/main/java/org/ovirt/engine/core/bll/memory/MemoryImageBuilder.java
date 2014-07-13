@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+
 public interface MemoryImageBuilder {
     /**
      * Create the images
@@ -17,4 +21,6 @@ public interface MemoryImageBuilder {
      * @return true if tasks are created in {@link #build()}, false otherwise
      */
     boolean isCreateTasks();
+
+    List<DiskImage> getDisksToBeCreated();
 }

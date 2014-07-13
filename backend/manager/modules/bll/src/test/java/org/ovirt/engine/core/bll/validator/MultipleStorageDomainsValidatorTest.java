@@ -48,6 +48,7 @@ public class MultipleStorageDomainsValidatorTest {
 
     private Guid sdId1;
     private Guid sdId2;
+    private Guid sdId3;
 
     private StorageDomain domain1;
     private StorageDomain domain2;
@@ -114,41 +115,46 @@ public class MultipleStorageDomainsValidatorTest {
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForNewDisksSuccess(){
-        List<DiskImage> disksList = generateDisksList(NUM_DISKS);
+    public void testAllDomainsHaveSpaceForAllDisksSuccess(){
+        List<Guid> sdIdsForNew = Arrays.asList(sdId1, sdId2);
+        List<Guid> sdIdsForCloned = Arrays.asList(sdId2, sdId3);
+        List<DiskImage> disksListForNew = generateDisksList(NUM_DISKS, sdIdsForNew);
+        List<DiskImage> disksListForCloned = generateDisksList(NUM_DISKS, sdIdsForCloned);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForAllDisks(anyList(), anyList());
         doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
-        assertTrue(validator.allDomainsHaveSpaceForNewDisks(disksList).isValid());
-        verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForNewDisks(anyList());
+        assertTrue(validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned).isValid());
+        verify(storageDomainValidator, times(NUM_DOMAINS)).hasSpaceForAllDisks(anyList(), anyList());
     }
 
     @Test
-    public void testAllDomainsHaveSpaceForNewDisksFail(){
-        List<DiskImage> disksList = generateDisksList(NUM_DISKS);
+    public void testAllDomainsHaveSpaceForAllDisksFail(){
+        List<Guid> sdIdsForNew = Arrays.asList(sdId1, sdId2);
+        List<Guid> sdIdsForCloned = Arrays.asList(sdId2, sdId3);
+        List<DiskImage> disksListForNew = generateDisksList(NUM_DISKS, sdIdsForNew);
+        List<DiskImage> disksListForCloned = generateDisksList(NUM_DISKS, sdIdsForCloned);
 
         StorageDomainValidator storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(storageDomainValidator).hasSpaceForNewDisks(anyList());
+               when(storageDomainValidator).hasSpaceForAllDisks(anyList(), anyList());
+        doReturn(storageDomainValidator).when(validator).getStorageDomainValidator(any(Map.Entry.class));
 
-        ValidationResult result = validator.allDomainsHaveSpaceForNewDisks(disksList);
+        ValidationResult result = validator.allDomainsHaveSpaceForAllDisks(disksListForNew, disksListForCloned);
         assertFalse(result.isValid());
         assertEquals("Wrong validation error",
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 result.getMessage());
     }
 
-    private List<DiskImage> generateDisksList(int size) {
+    private List<DiskImage> generateDisksList(int size, List<Guid> sdIds) {
         List<DiskImage> disksList = new ArrayList<>();
-        ArrayList<Guid> sdIds = new ArrayList<>();
-        sdIds.add(sdId1);
-        sdIds.add(sdId2);
+        ArrayList<Guid> _sdIds = new ArrayList<>(sdIds);
         for (int i = 0; i < size; ++i) {
             DiskImage diskImage = new DiskImage();
             diskImage.setImageId(Guid.newGuid());
-            diskImage.setStorageIds(sdIds);
+            diskImage.setStorageIds(_sdIds);
             disksList.add(diskImage);
         }
         return disksList;

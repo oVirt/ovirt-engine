@@ -71,6 +71,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     private Guid cachedStorageDomainId = Guid.Empty;
     private String cachedSnapshotIsBeingTakenMessage;
     private Guid newActiveSnapshotId = Guid.newGuid();
+    private MemoryImageBuilder memoryBuilder;
 
     protected CreateAllSnapshotsFromVmCommand(Guid commandId) {
         super(commandId);
@@ -144,6 +145,29 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return toReturn;
     }
 
+    private boolean validateStorageDomains(List<DiskImage> vmDisksList) {
+        List<DiskImage> memoryDisksList = getMemoryImageBuilder().getDisksToBeCreated();
+        List<DiskImage> disksList = getAllDisks(vmDisksList, memoryDisksList);
+        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
+        return validate(sdValidator.allDomainsExistAndActive())
+                && validate(sdValidator.allDomainsWithinThresholds())
+                && validate(sdValidator.allDomainsHaveSpaceForAllDisks(vmDisksList, memoryDisksList));
+    }
+
+    private static List<DiskImage> getAllDisks(List<DiskImage> newDisksList, List<DiskImage> cloneDisksList) {
+        List<DiskImage> disksList = new ArrayList<>();
+        disksList.addAll(newDisksList);
+        disksList.addAll(cloneDisksList);
+        return disksList;
+    }
+
+    protected MemoryImageBuilder getMemoryImageBuilder() {
+        if (memoryBuilder == null) {
+            memoryBuilder = createMemoryImageBuilder();
+        }
+        return memoryBuilder;
+    }
+
     private void incrementVmGeneration() {
         getVmStaticDAO().incrementDbGeneration(getVm().getId());
     }
@@ -166,7 +190,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         setActionReturnValue(createdSnapshotId);
 
-        MemoryImageBuilder memoryImageBuilder = createMemoryImageBuilder();
+        MemoryImageBuilder memoryImageBuilder = getMemoryImageBuilder();
         addSnapshotToDB(createdSnapshotId, memoryImageBuilder);
         createSnapshotsForDisks();
         fastForwardDisksToActiveSnapshot();
@@ -480,15 +504,15 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
         List<DiskImage> disksList = getDisksListForChecks();
         if (disksList.size() > 0) {
-            MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
             DiskImagesValidator diskImagesValidator = createDiskImageValidator(disksList);
             if (!(validate(diskImagesValidator.diskImagesNotLocked())
-                    && validate(diskImagesValidator.diskImagesNotIllegal())
-                    && validate(sdValidator.allDomainsExistAndActive())
-                    && validate(sdValidator.allDomainsWithinThresholds())
-                    && validate(sdValidator.allDomainsHaveSpaceForNewDisks(disksList)))) {
+                    && validate(diskImagesValidator.diskImagesNotIllegal()))) {
                 return false;
             }
+        }
+
+        if (!validateStorageDomains(disksList)) {
+            return false;
         }
 
         if (getParameters().isSaveMemory() && Guid.Empty.equals(getStorageDomainIdForVmMemory())) {

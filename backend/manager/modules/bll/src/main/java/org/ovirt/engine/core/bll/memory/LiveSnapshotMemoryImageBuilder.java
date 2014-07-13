@@ -1,9 +1,15 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.HibernateVmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -32,6 +38,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     private VM vm;
     private TaskHandlerCommand<?> enclosingCommand;
     private StoragePool storagePool;
+    private VolumeType volumeTypeForDomain;
 
     public LiveSnapshotMemoryImageBuilder(VM vm, Guid storageDomainId,
             StoragePool storagePool, TaskHandlerCommand<?> enclosingCommand) {
@@ -81,7 +88,6 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     }
 
     private void createImageForMemoryDump() {
-        StorageDomainStatic storageDomainStatic = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
         VDSReturnValue retVal =
                 Backend
                 .getInstance()
@@ -93,7 +99,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storageDomainId,
                                 memoryDumpImageGroupId,
                                 vm.getTotalMemorySizeInBytes(),
-                                HibernateVmCommand.getMemoryVolumeTypeForStorageDomain(storageDomainStatic.getStorageType()),
+                                getVolumeTypeForDomain(),
                                 VolumeFormat.RAW,
                                 memoryDumpVolumeId,
                                 ""));
@@ -113,6 +119,15 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         enclosingCommand.getTaskIdList().add(guid);
     }
 
+    private VolumeType getVolumeTypeForDomain() {
+        if (volumeTypeForDomain == null) {
+            StorageDomainStatic sdStatic = DbFacade.getInstance().getStorageDomainStaticDao().get(storageDomainId);
+            volumeTypeForDomain = HibernateVmCommand.getMemoryVolumeTypeForStorageDomain(sdStatic.getStorageType());
+        }
+        return volumeTypeForDomain;
+    }
+
+
     public String getVolumeStringRepresentation() {
         return MemoryUtils.createMemoryStateString(
                 storageDomainId,
@@ -125,5 +140,20 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     public boolean isCreateTasks() {
         return true;
+    }
+
+    public List<DiskImage> getDisksToBeCreated() {
+        DiskImage imageForMemory = new DiskImage();
+        imageForMemory.setStorageIds(new ArrayList<Guid>(Collections.singletonList(storageDomainId)));
+        imageForMemory.setStoragePoolId(storagePool.getId());
+        imageForMemory.setSize(vm.getTotalMemorySizeInBytes());
+        imageForMemory.setVolumeType(getVolumeTypeForDomain());
+        imageForMemory.setvolumeFormat(VolumeFormat.RAW);
+
+        DiskImage imageForMetadata = DiskImage.copyOf(imageForMemory);
+        imageForMetadata.setSize(HibernateVmCommand.META_DATA_SIZE_IN_BYTES);
+        imageForMetadata.setVolumeType(VolumeType.Sparse);
+        imageForMetadata.setvolumeFormat(VolumeFormat.COW);
+        return Arrays.asList(imageForMemory, imageForMetadata);
     }
 }
