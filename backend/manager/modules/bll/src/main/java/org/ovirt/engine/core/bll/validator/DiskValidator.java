@@ -102,10 +102,14 @@ public class DiskValidator {
     public ValidationResult isReadOnlyPropertyCompatibleWithInterface() {
         if (Boolean.TRUE.equals(disk.getReadOnly())) {
             DiskInterface diskInterface = disk.getDiskInterface();
-            if (diskInterface == DiskInterface.IDE ||
-                    (diskInterface == DiskInterface.VirtIO_SCSI  && disk.getDiskStorageType() == DiskStorageType.LUN )) {
+
+            if (diskInterface == DiskInterface.IDE) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR,
                         String.format("$interface %1$s", diskInterface));
+            }
+
+            if (disk.isScsiPassthrough()) {
+                return new ValidationResult(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK);
             }
         }
         return ValidationResult.VALID;

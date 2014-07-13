@@ -166,6 +166,11 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     EntityModelCheckBoxEditor isReadOnlyEditor;
 
     @UiField(provided = true)
+    @Path("isScsiPassthrough.entity")
+    @WithElementId("isScsiPassthrough")
+    EntityModelCheckBoxEditor isScsiPassthroughEditor;
+
+    @UiField(provided = true)
     @Path("isSgIoUnfiltered.entity")
     @WithElementId("isSgIoUnfiltered")
     EntityModelCheckBoxEditor isSgIoUnfilteredEditor;
@@ -276,6 +281,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor.setLabel(constants.isBootableVmDiskPopup());
         isShareableEditor.setLabel(constants.isShareableVmDiskPopup());
         isReadOnlyEditor.setLabel(constants.isReadOnlyVmDiskPopup());
+        isScsiPassthroughEditor.setLabel(constants.isScsiPassthroughEditor());
         isSgIoUnfilteredEditor.setLabel(constants.isSgIoUnfilteredEditor());
         attachEditor.setLabel(constants.attachDiskVmDiskPopup());
         isPluggedEditor.setLabel(constants.activateVmDiskPopup());
@@ -318,6 +324,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isBootableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isShareableEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isReadOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         attachEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -804,11 +811,12 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         storageTypeEditor.setTabIndex(nextTabIndex++);
         plugDiskToVmEditor.setTabIndex(nextTabIndex++);
         wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);
+        isPluggedEditor.setTabIndex(nextTabIndex++);
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);
-        isSgIoUnfilteredEditor.setTabIndex(nextTabIndex++);
         isReadOnlyEditor.setTabIndex(nextTabIndex++);
-        isPluggedEditor.setTabIndex(nextTabIndex++);
+        isScsiPassthroughEditor.setTabIndex(nextTabIndex++);
+        isSgIoUnfilteredEditor.setTabIndex(nextTabIndex++);
 
         return nextTabIndex;
     }
