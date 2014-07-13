@@ -163,7 +163,7 @@ public class IsoDomainListSyncronizer {
         ThreadPoolUtil.invokeAll(tasks);
 
         // After refresh for all Iso domains finished, handle the log.
-        handleErrorLog(problematicRepoFileList);
+        handleErrorLog(new ArrayList<>(problematicRepoFileList));
     }
 
     /**
