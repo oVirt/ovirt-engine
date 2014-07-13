@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.Collections;
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -29,4 +33,9 @@ public class StatelessSnapshotMemoryImageBuilder implements MemoryImageBuilder {
     public boolean isCreateTasks() {
         return false;
     }
+
+    public List<DiskImage> getDisksToBeCreated() {
+        return Collections.emptyList();
+    }
+
 }
