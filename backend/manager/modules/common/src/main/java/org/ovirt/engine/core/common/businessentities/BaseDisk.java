@@ -171,6 +171,10 @@ public class BaseDisk extends IVdcQueryable implements BusinessEntity<Guid> {
         this.sgio = sgio;
     }
 
+    public boolean isScsiPassthrough() {
+        return getSgio() != null;
+    }
+
     public DiskAlignment getAlignment() {
         return alignment;
     }

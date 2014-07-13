@@ -62,6 +62,10 @@
 			padding-left: 75px;
 		}
 
+        .checkBoxSecondary {
+            margin-left: 20px;
+        }
+
 		.externalDiskPanel {
 			height: 298px;
 			width: 100%;
@@ -119,8 +123,9 @@
 					<ge:EntityModelCheckBoxEditor ui:field="wipeAfterDeleteEditor" addStyleNames="{style.checkBoxEditor}"/>
 					<ge:EntityModelCheckBoxEditor ui:field="isBootableEditor" addStyleNames="{style.checkBoxEditor}" />
 					<ge:EntityModelCheckBoxEditor ui:field="isShareableEditor" addStyleNames="{style.checkBoxEditor}"/>
-					<ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor}"/>
                     <ge:EntityModelCheckBoxEditor ui:field="isReadOnlyEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isScsiPassthroughEditor" addStyleNames="{style.checkBoxEditor}"/>
+                    <ge:EntityModelCheckBoxEditor ui:field="isSgIoUnfilteredEditor" addStyleNames="{style.checkBoxEditor} {style.checkBoxSecondary}"/>
 				</g:VerticalPanel>
 			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />

@@ -23,6 +23,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
+import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -165,13 +166,12 @@ public class DiskValidatorTest {
                 both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
                         and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.IDE)))));
 
-
         setupForLun();
         lunDisk.setReadOnly(true);
         lunDisk.setDiskInterface(DiskInterface.VirtIO_SCSI);
+        lunDisk.setSgio(ScsiGenericIO.FILTERED);
         assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(),
-                both(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR)).
-                        and(replacements(hasItem(String.format("$interface %1$s", DiskInterface.VirtIO_SCSI)))));
+                failsWith(VdcBllMessages.SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK));
     }
 
     @Test

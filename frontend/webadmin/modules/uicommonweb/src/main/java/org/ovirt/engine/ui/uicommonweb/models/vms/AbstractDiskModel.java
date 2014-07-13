@@ -66,6 +66,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel<Boolean> isAttachDisk;
     private EntityModel<Boolean> isInternal;
     private EntityModel<Boolean> isDirectLunDiskAvaialable;
+    private EntityModel<Boolean> isScsiPassthrough;
     private EntityModel<Boolean> isSgIoUnfiltered;
     private EntityModel<String> sizeExtend;
 
@@ -147,6 +148,14 @@ public abstract class AbstractDiskModel extends DiskModel
 
     public void setIsDirectLunDiskAvaialable(EntityModel<Boolean> isDirectLunDiskAvaialable) {
         this.isDirectLunDiskAvaialable = isDirectLunDiskAvaialable;
+    }
+
+    public EntityModel<Boolean> getIsScsiPassthrough() {
+        return isScsiPassthrough;
+    }
+
+    public void setIsScsiPassthrough(EntityModel<Boolean> isScsiPassthrough) {
+        this.isScsiPassthrough = isScsiPassthrough;
     }
 
     public EntityModel<Boolean> getIsSgIoUnfiltered() {
@@ -284,9 +293,17 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsReadOnly(new EntityModel<Boolean>());
         getIsReadOnly().setEntity(false);
+        getIsReadOnly().getEntityChangedEvent().addListener(this);
+
+        setIsScsiPassthrough(new EntityModel<Boolean>());
+        getIsScsiPassthrough().setIsAvailable(false);
+        getIsScsiPassthrough().setEntity(true);
+        getIsScsiPassthrough().getEntityChangedEvent().addListener(this);
 
         setIsSgIoUnfiltered(new EntityModel<Boolean>());
         getIsSgIoUnfiltered().setIsAvailable(false);
+        getIsSgIoUnfiltered().setEntity(false);
+        getIsSgIoUnfiltered().getEntityChangedEvent().addListener(this);
 
         setIsDirectLunDiskAvaialable(new EntityModel<Boolean>());
         getIsDirectLunDiskAvaialable().setEntity(true);
@@ -654,9 +671,28 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isInternal = getIsInternal().getEntity();
         DiskInterface diskInterface = getDiskInterface().getSelectedItem();
         getIsSgIoUnfiltered().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
+        getIsScsiPassthrough().setIsAvailable(!isInternal && DiskInterface.VirtIO_SCSI.equals(diskInterface));
 
+        updateScsiPassthroguhChangeability();
         updateReadOnlyChangeability();
         updatePlugChangeability();
+    }
+
+    protected void updateScsiPassthroguhChangeability() {
+        getIsScsiPassthrough().setIsChangable(!getIsReadOnly().getEntity() && isEditEnabled());
+        getIsScsiPassthrough().setChangeProhibitionReason(CONSTANTS.cannotEnableScsiPassthroughForLunReadOnlyDisk());
+
+        updateSgIoUnfilteredChangeability();
+    }
+
+    protected void updateSgIoUnfilteredChangeability() {
+        if (!getIsScsiPassthrough().getEntity()) {
+            getIsSgIoUnfiltered().setChangeProhibitionReason(CONSTANTS.cannotEnableSgioWhenScsiPassthroughDisabled());
+            getIsSgIoUnfiltered().setIsChangable(false);
+            getIsSgIoUnfiltered().setEntity(false);
+            return;
+        }
+        getIsSgIoUnfiltered().setIsChangable(isEditEnabled());
     }
 
     protected void updateReadOnlyChangeability() {
@@ -669,14 +705,18 @@ public abstract class AbstractDiskModel extends DiskModel
             return;
         }
 
-        boolean isDirectLUN = Boolean.FALSE.equals(getIsInternal().getEntity());
-        if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN) {
-            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk());
+        boolean isDirectLUN = !getIsInternal().getEntity();
+        boolean isScsiPassthrough = getIsScsiPassthrough().getEntity();
+        if (diskInterface == DiskInterface.VirtIO_SCSI && isDirectLUN && isScsiPassthrough) {
+            getIsReadOnly().setChangeProhibitionReason(CONSTANTS.cannotEnableReadonlyWhenScsiPassthroughEnabled());
             getIsReadOnly().setIsChangable(false);
             getIsReadOnly().setEntity(false);
             return;
         }
+
+
         getIsReadOnly().setIsChangable(isEditEnabled());
+        getIsReadOnly().setEntity(getIsNew() ? Boolean.FALSE : getDisk().getReadOnly());
     }
 
     private void updatePlugChangeability() {
@@ -862,7 +902,8 @@ public abstract class AbstractDiskModel extends DiskModel
             LunDisk lunDisk = getLunDisk();
             DiskInterface diskInterface = getDiskInterface().getSelectedItem();
             if (DiskInterface.VirtIO_SCSI.equals(diskInterface)) {
-                lunDisk.setSgio(Boolean.TRUE.equals(getIsSgIoUnfiltered().getEntity()) ?
+                lunDisk.setSgio(!getIsScsiPassthrough().getEntity() ? null :
+                        getIsSgIoUnfiltered().getEntity() ?
                         ScsiGenericIO.UNFILTERED : ScsiGenericIO.FILTERED);
             }
             setDisk(lunDisk);
@@ -898,17 +939,19 @@ public abstract class AbstractDiskModel extends DiskModel
     public void eventRaised(Event ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsWipeAfterDelete())
-        {
-            wipeAfterDelete_EntityChanged(args);
-        }
-        else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getIsAttachDisk())
-        {
-            attachDisk_EntityChanged(args);
-        }
-        else if (ev.matchesDefinition(ListModel.entityChangedEventDefinition) && sender == getIsInternal())
-        {
-            isInternal_EntityChanged();
+        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
+            if (sender == getIsWipeAfterDelete()) {
+                wipeAfterDelete_EntityChanged(args);
+            } else if (sender == getIsAttachDisk()) {
+                attachDisk_EntityChanged(args);
+            } else if (sender == getIsReadOnly()) {
+                updateScsiPassthroguhChangeability();
+            } else if (sender == getIsScsiPassthrough()) {
+                updateSgIoUnfilteredChangeability();
+                updateReadOnlyChangeability();
+            } else if (sender == getIsInternal()) {
+                isInternal_EntityChanged();
+            }
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
         {

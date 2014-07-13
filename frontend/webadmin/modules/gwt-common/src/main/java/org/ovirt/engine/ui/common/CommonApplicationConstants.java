@@ -1139,6 +1139,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Read Only")
     String isReadOnlyVmDiskPopup();
 
+    @DefaultStringValue("Enable SCSI Pass-Through")
+    String isScsiPassthroughEditor();
+
     @DefaultStringValue("Allow Privileged SCSI I/O")
     String isSgIoUnfilteredEditor();
 

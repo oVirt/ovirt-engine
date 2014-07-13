@@ -2625,6 +2625,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. SCSI Generic IO is not supported for image disk.")
     String SCSI_GENERIC_IO_IS_NOT_SUPPORTED_FOR_IMAGE_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. SCSI device pass-throguh is not supported for a read-only disk.")
+    String SCSI_PASSTHROUGH_IS_NOT_SUPPORTED_FOR_READ_ONLY_DISK();
+
     @DefaultStringValue("VirtIO-SCSI interface is only available on cluster level 3.3 or higher.")
     String VIRTIO_SCSI_INTERFACE_IS_NOT_AVAILABLE_FOR_CLUSTER_LEVEL();
 
