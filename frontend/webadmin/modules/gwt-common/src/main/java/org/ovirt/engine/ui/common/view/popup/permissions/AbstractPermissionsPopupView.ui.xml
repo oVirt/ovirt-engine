@@ -34,7 +34,7 @@
             margin-bottom: 3px;
         }
 
-        .domainSelection {
+        .profileSelection {
             width: 300px;
             height: 30px;
         }
@@ -73,7 +73,7 @@
                     </g:HorizontalPanel>
                 </g:SimplePanel>
                 <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
-                    <e:ListModelListBoxEditor addStyleNames="{style.domainSelection}" label="{constants.searchPermissionsPopup}" ui:field="domainSelection" />
+                    <e:ListModelListBoxEditor addStyleNames="{style.profileSelection}" label="{constants.searchPermissionsPopup}" ui:field="profileSelection" />
                     <e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
                     <w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton} appv_searchButton_pfly_fix" />
                 </g:HorizontalPanel>

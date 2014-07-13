@@ -17,6 +17,7 @@
 		<include name="common/businessentities/LdapUser.java" />
 		<include name="aaa/AuthType.java" />
 		<include name="aaa/DirectoryEntry.java" />
+		<include name="aaa/ProfileEntry.java" />
 		<include name="aaa/DirectoryEntryStatus.java" />
 		<include name="aaa/DirectoryGroup.java" />
 		<include name="aaa/DirectoryUser.java" />

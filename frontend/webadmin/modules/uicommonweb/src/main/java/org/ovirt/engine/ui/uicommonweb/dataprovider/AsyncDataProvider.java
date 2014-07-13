@@ -16,6 +16,7 @@ import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
+import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationEntity;
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -471,16 +472,25 @@ public final class AsyncDataProvider {
         return diskInterfaces;
     }
 
+    public static void getAAAProfilesList(AsyncQuery aQuery) {
+        convertAAAProfilesResult(aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
+    }
+
     public static void getAAAProfilesListViaPublic(AsyncQuery aQuery) {
+        convertAAAProfilesResult(aQuery);
+        Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
+    }
+
+    public static void getAAAProfilesEntriesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
-                return source != null ? new ArrayList<String>((ArrayList<String>) source)
-                        : new ArrayList<String>();
+                return source != null ? (Collection<ProfileEntry>) source : new ArrayList<ProfileEntry>();
             }
         };
-        Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
@@ -1195,18 +1205,6 @@ public final class AsyncDataProvider {
 
     public static HashMap<Integer, String> getOsUniqueOsNames() {
         return uniqueOsNames;
-    }
-
-    public static void getAAAProfilesList(AsyncQuery aQuery) {
-        aQuery.converterCallback = new IAsyncConverter() {
-            @Override
-            public Object Convert(Object source, AsyncQuery _asyncQuery)
-            {
-                return source != null ? new ArrayList<String>((ArrayList<String>) source)
-                        : new ArrayList<String>();
-            }
-        };
-        Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
     public static void getRoleList(AsyncQuery aQuery) {
@@ -3765,4 +3763,19 @@ public final class AsyncDataProvider {
             model.setRole(storageDomainType);
         }
     }
+
+    private static void convertAAAProfilesResult(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                List<String> results = new ArrayList<String>();
+                for (ProfileEntry profileEntry : (Collection<ProfileEntry>) source) {
+                    results.add(profileEntry.getProfile());
+                }
+                return results;
+            }
+        };
+    }
+
 }
