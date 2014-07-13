@@ -89,7 +89,8 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
                 new ProviderValidator(getDbFacade().getProviderDao().get(getNetwork().getProvidedBy().getProviderId()));
         return validate(providerValidator.providerIsSet())
                 && validate(validator.externalNetworkNewInDataCenter())
-                && validate(validator.externalNetworkIsVmNetwork());
+                && validate(validator.externalNetworkIsVmNetwork())
+                && validate(validator.externalNetworkVlanValid());
     }
 
     @Override
@@ -127,6 +128,11 @@ public class AddNetworkCommand<T extends AddNetworkStoragePoolParameters> extend
 
         public AddNetworkValidator(Network network) {
             super(network);
+        }
+
+        public ValidationResult externalNetworkVlanValid() {
+            return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED)
+                    .when(network.getVlanId() != null && network.getLabel() == null);
         }
 
         @Override

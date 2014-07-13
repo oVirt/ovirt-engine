@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkDao;
+import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddNetworkValidatorTest {
@@ -96,5 +97,25 @@ public class AddNetworkValidatorTest {
         when(network.isVmNetwork()).thenReturn(false);
         assertThat(validator.externalNetworkIsVmNetwork(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_MUST_BE_VM_NETWORK));
+    }
+
+    @Test
+    public void externalNetworkVlanValid() {
+        when(network.getVlanId()).thenReturn(RandomUtils.instance().nextInt());
+        when(network.getLabel()).thenReturn(RandomUtils.instance().nextString(10));
+        assertThat(validator.externalNetworkVlanValid(), isValid());
+    }
+
+    @Test
+    public void externalNetworkVlanInvalid() {
+        when(network.getVlanId()).thenReturn(RandomUtils.instance().nextInt());
+        assertThat(validator.externalNetworkVlanValid(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_WITH_VLAN_MUST_BE_LABELED));
+    }
+
+    @Test
+    public void externalNetworkNoVlanWithLabel() {
+        when(network.getLabel()).thenReturn(RandomUtils.instance().nextString(10));
+        assertThat(validator.externalNetworkVlanValid(), isValid());
     }
 }
