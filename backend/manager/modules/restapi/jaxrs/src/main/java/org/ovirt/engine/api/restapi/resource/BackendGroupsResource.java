@@ -14,7 +14,7 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.GroupResource;
 import org.ovirt.engine.api.resource.GroupsResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
@@ -163,10 +163,8 @@ public class BackendGroupsResource
                 .entity("No such group: " + group.getName() + " in directory " + directoryName)
                 .build();
         }
-        DirectoryIdParameters parameters = new DirectoryIdParameters();
-        parameters.setDirectory(directoryName);
-        parameters.setId(directoryGroup.getId());
-        parameters.setNamespace(directoryGroup.getNamespace());
+        AddGroupParameters parameters = new AddGroupParameters();
+        parameters.setGroupToAdd(new DbGroup(directoryGroup));
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbGroupById, IdQueryParameters.class);
         return performCreate(VdcActionType.AddGroup, parameters, resolver, BaseResource.class);
     }

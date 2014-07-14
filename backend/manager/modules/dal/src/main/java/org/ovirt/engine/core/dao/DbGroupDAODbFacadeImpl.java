@@ -86,6 +86,9 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
 
     @Override
     public void save(DbGroup group) {
+        if (Guid.isNullOrEmpty(group.getId())) {
+            group.setId(Guid.newGuid());
+        }
         insertOrUpdate(group, "InsertGroup");
     }
 

@@ -64,14 +64,14 @@ public class SyncUsers {
                             log.info(String.format("The user %1$s from authz extension %2$s got updated since last interval",
                                     activeUser.getLoginName(),
                                     activeUser.getDomain()));
-                            DbFacade.getInstance().getDbUserDao().update(activeUser);
+                            DbFacade.getInstance().getDbUserDao().saveOrUpdate(activeUser);
                         }
                     } else {
                         log.info(String.format("The user %1$s from authz extension %2$s could not be found, and will be marked as inactive",
                                 dbUser.getLoginName(),
                                 dbUser.getDomain()));
                         dbUser.setActive(false);
-                        DbFacade.getInstance().getDbUserDao().update(dbUser);
+                        DbFacade.getInstance().getDbUserDao().saveOrUpdate(dbUser);
                     }
                 }
             } catch (Exception ex) {

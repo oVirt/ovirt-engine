@@ -7,7 +7,8 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddGroupParameters;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -105,7 +106,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 user = existing;
             }
             else {
-                user = addUser(id, directory, externalId, user.getNamespace());
+                user = addUser(user);
                 if (user == null) {
                     setSucceeded(false);
                     return;
@@ -122,7 +123,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
                 group = existing;
             }
             else {
-                group = addGroup(id, directory, externalId, group.getNamespace());
+                group = addGroup(group);
                 if (group == null) {
                     setSucceeded(false);
                     return;
@@ -206,16 +207,13 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return permissionsSubject;
     }
 
-    private DbUser addUser(Guid id, String directory, String externalId, String namespace) {
+    private DbUser addUser(DbUser dbUser) {
         // Try to add the user with the external id:
-        if (directory != null && externalId != null) {
-            DirectoryIdParameters parameters = new DirectoryIdParameters();
-            parameters.setDirectory(directory);
-            parameters.setId(externalId);
-            parameters.setNamespace(namespace);
+        if (dbUser.getDomain() != null && dbUser.getExternalId() != null) {
+            AddUserParameters parameters = new AddUserParameters(dbUser);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddUser, parameters, cloneContextAndDetachFromParent());
             if (result.getCanDoAction()) {
-                id = (Guid) result.getActionReturnValue();
+                Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
                     return getDbUserDAO().get(id);
                 }
@@ -226,16 +224,13 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         return null;
     }
 
-    private DbGroup addGroup(Guid id, String directory, String externalId, String namespace) {
+    private DbGroup addGroup(DbGroup groupToAdd) {
         // Try to add the user with the external id:
-        if (directory != null && externalId != null) {
-            DirectoryIdParameters parameters = new DirectoryIdParameters();
-            parameters.setDirectory(directory);
-            parameters.setId(externalId);
-            parameters.setNamespace(namespace);
+        if (groupToAdd.getDomain() != null && groupToAdd.getExternalId() != null) {
+            AddGroupParameters parameters = new AddGroupParameters(groupToAdd);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
             if (result.getCanDoAction()) {
-                id = (Guid) result.getActionReturnValue();
+                Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
                     return getAdGroupDAO().get(id);
                 }

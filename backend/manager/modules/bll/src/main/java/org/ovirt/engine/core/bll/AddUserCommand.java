@@ -2,30 +2,17 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.HashSet;
 import java.util.List;
 
-import org.ovirt.engine.api.extensions.ExtMap;
-import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
-import org.ovirt.engine.core.aaa.AuthzUtils;
-import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DbUserDAO;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
-public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase<T> {
-    // We save a reference to the directory user to avoid looking it up once when checking the conditions and another
-    // time when actually adding the user to the database:
-    private ExtMap principal;
+public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
 
     public AddUserCommand(T params) {
         this(params, null);
@@ -43,90 +30,17 @@ public class AddUserCommand<T extends DirectoryIdParameters> extends CommandBase
 
     @Override
     protected boolean canDoAction() {
-        // Check that the directory name has been provided:
-        String directoryName = getParameters().getDirectory();
-        if (directoryName == null) {
-            log.error(
-                "Can't add user because directory name hasn't been provided."
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-            return false;
-        }
-
-        // Check that the identifier of the directory user has been provided:
-        String id = getParameters().getId();
-        if (id == null) {
-            log.errorFormat(
-                "Can't add user from directory \"{0}\" because the user identifier hasn't been provided.",
-                directoryName
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-            return false;
-        }
-
-        // Check that the directory exists:
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(directoryName);
-        if (authz == null) {
-            log.errorFormat(
-                "Can't add user with id \"{0}\" because directory \"{1}\" doesn't exist.",
-                id, directoryName
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-            return false;
-        }
-
-        // Check that the user is available in the directory (and save the reference to avoid looking it up later when
-        // actually adding the user to the database):
-        boolean foundUser = false;
-        for (String namespace : getParameters().getNamespace() != null ? Arrays.asList(getParameters().getNamespace())
-                : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            principal = AuthzUtils.fetchPrincipalsByIdsRecursively(authz, namespace, Arrays.asList(id)).get(0);
-            if (principal != null) {
-                foundUser = true;
-                break;
-            }
-        }
-        if (!foundUser) {
-            log.errorFormat(
-                "Can't add user with id \"{0}\" because it doesn't exist in directory \"{1}\".",
-                id, directoryName
-            );
-            addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
-            return false;
-        }
-
-
-        // Populate information for the audit log:
-        addCustomValue("NewUserName", principal.<String> get(PrincipalRecord.NAME));
-
+        addCustomValue("NewUserName", getParameters().getUserToAdd().getLoginName());
         return true;
 
     }
 
     @Override
     protected void executeCommand() {
-        DbUserDAO dao = getDbUserDAO();
-
         // First check if the user is already in the database, if it is we need to update, if not we need to insert:
-        DirectoryUtils.flatGroups(principal);
-        HashSet<Guid> groupIds = DirectoryUtils.getGroupIdsFromPrincipal(getParameters().getDirectory(), principal);
-        DbUser dbUser = dao.getByExternalId(getParameters().getDirectory(), principal.<String> get(PrincipalRecord.ID));
-        if (dbUser == null) {
-            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(getParameters().getDirectory(), principal);
-            dbUser.setId(Guid.newGuid());
-            dbUser.setGroupIds(groupIds);
-            dao.save(dbUser);
-        }
-        else {
-            Guid id = dbUser.getId();
-            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(getParameters().getDirectory(), principal);
-            dbUser.setId(id);
-            dbUser.setGroupIds(groupIds);
-            dao.update(dbUser);
-        }
-
-        // Return the identifier of the created user:
-        setActionReturnValue(dbUser.getId());
+        DbUser userToAdd = getParameters().getUserToAdd();
+        SyncUsers.sync(Arrays.asList(userToAdd));
+        setActionReturnValue(DbFacade.getInstance().getDbUserDao().getByExternalId(userToAdd.getDomain(), userToAdd.getExternalId()).getId());
         setSucceeded(true);
     }
 

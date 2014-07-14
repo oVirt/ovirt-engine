@@ -15,7 +15,7 @@ import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -186,9 +186,9 @@ public class BackendUsersResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddUser,
-            DirectoryIdParameters.class,
-            new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
+            AddUserParameters.class,
+            new String[] { "UserToAdd" },
+            new Object[] { new DbUser(getDirectoryUser(0)) },
             true,
             true,
             GUIDS[0],

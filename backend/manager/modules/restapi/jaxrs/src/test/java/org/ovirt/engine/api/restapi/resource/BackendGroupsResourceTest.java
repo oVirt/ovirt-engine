@@ -11,7 +11,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
@@ -208,9 +208,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            DirectoryIdParameters.class,
-            new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
+            AddGroupParameters.class,
+            new String[] { "GroupToAdd" },
+            new Object[] { new DbGroup(getDirectoryGroup(0)) },
             true,
             true,
             GUIDS[0],
@@ -247,9 +247,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            DirectoryIdParameters.class,
-            new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
+            AddGroupParameters.class,
+                new String[] { "GroupToAdd" },
+                new Object[] { new DbGroup(getDirectoryGroup(0)) },
             true,
             true,
             GUIDS[0],
@@ -305,9 +305,9 @@ public class BackendGroupsResourceTest
         );
         setUpCreationExpectations(
             VdcActionType.AddGroup,
-            DirectoryIdParameters.class,
-            new String[] { "Directory", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
+            AddGroupParameters.class,
+            new String[] { "GroupToAdd" },
+            new Object[] { new DbGroup(getDirectoryGroup(0)) },
             true,
             true,
             GUIDS[0],
