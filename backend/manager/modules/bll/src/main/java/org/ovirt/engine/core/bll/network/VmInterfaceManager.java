@@ -9,6 +9,7 @@ import java.util.Map;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -158,7 +159,7 @@ public class VmInterfaceManager {
         for (VM vm : runningVms) {
             List<VmNetworkInterface> vmInterfaces = getVmNetworkInterfaceDao().getAllForVm(vm.getId());
             for (VmNetworkInterface vmNic : vmInterfaces) {
-                if (vmNic.isPlugged() &&
+                if (VmNetworkCanBeUpdatedPredicate.getInstance().eval(vmNic) &&
                     vmNic.getNetworkName() != null &&
                     networks.contains(vmNic.getNetworkName())) {
                     vmNames.add(vm.getName());
