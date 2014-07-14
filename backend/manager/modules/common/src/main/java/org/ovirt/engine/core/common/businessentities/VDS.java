@@ -1291,6 +1291,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         mVdsStatic.setSshKeyFingerprint(sshKeyFingerprint);
     }
 
+    public Guid getHostProviderId() {
+        return mVdsStatic.getHostProviderId();
+    }
+
+    public void setHostProviderId(Guid hostProviderId) {
+        mVdsStatic.setHostProviderId(hostProviderId);
+    }
+
     private float maxSchedulingMemory;
 
     public void calculateFreeVirtualMemory() {

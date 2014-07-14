@@ -423,7 +423,8 @@ Create or replace FUNCTION InsertVdsStatic(
     v_console_address VARCHAR(255),
     v_ssh_port INTEGER,
     v_ssh_username VARCHAR(255),
-    v_disable_auto_pm BOOLEAN)
+    v_disable_auto_pm BOOLEAN,
+    v_host_provider_id UUID)
 RETURNS VOID
 
    AS $procedure$
@@ -434,12 +435,12 @@ BEGIN
                                vds_type,vds_strength,pm_type,pm_user,pm_password,pm_port,pm_options,pm_enabled,
                                pm_proxy_preferences, pm_secondary_ip, pm_secondary_type, pm_secondary_user,
                                pm_secondary_password, pm_secondary_port, pm_secondary_options, pm_secondary_concurrent, pm_detect_kdump,
-                               vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username, disable_auto_pm)
+                               vds_spm_priority, sshKeyFingerprint, console_address, ssh_port, ssh_username, disable_auto_pm, host_provider_id)
 			VALUES(v_vds_id,v_host_name, v_free_text_comment, v_ip, v_vds_unique_id, v_port, v_protocol, v_vds_group_id, v_vds_name, v_server_SSL_enabled,
                                v_vds_type,v_vds_strength,v_pm_type,v_pm_user,v_pm_password,v_pm_port,v_pm_options,v_pm_enabled,
                                v_pm_proxy_preferences, v_pm_secondary_ip, v_pm_secondary_type, v_pm_secondary_user,
                                v_pm_secondary_password, v_pm_secondary_port, v_pm_secondary_options, v_pm_secondary_concurrent, v_pm_detect_kdump,
-                               v_vds_spm_priority, v_sshKeyFingerprint, v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm);
+                               v_vds_spm_priority, v_sshKeyFingerprint, v_console_address, v_ssh_port, v_ssh_username, v_disable_auto_pm, v_host_provider_id);
       END;
    end if;
    RETURN;
@@ -483,7 +484,8 @@ Create or replace FUNCTION UpdateVdsStatic(v_host_name VARCHAR(255),
     v_console_address VARCHAR(255),
     v_ssh_port INTEGER,
     v_ssh_username VARCHAR(255),
-    v_disable_auto_pm BOOLEAN)
+    v_disable_auto_pm BOOLEAN,
+    v_host_provider_id UUID)
 RETURNS VOID
 
 	--The [vds_static] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -502,7 +504,7 @@ BEGIN
       pm_secondary_user = v_pm_secondary_user, pm_secondary_password = v_pm_secondary_password,
       pm_secondary_port = v_pm_secondary_port, pm_secondary_options = v_pm_secondary_options,
       pm_secondary_concurrent = v_pm_secondary_concurrent, pm_detect_kdump = v_pm_detect_kdump,
-      otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint,
+      otp_validity = v_otp_validity, vds_spm_priority = v_vds_spm_priority, sshKeyFingerprint = v_sshKeyFingerprint, host_provider_id = v_host_provider_id,
       console_address = v_console_address, ssh_port = v_ssh_port, ssh_username = v_ssh_username, disable_auto_pm = v_disable_auto_pm
       WHERE vds_id = v_vds_id;
    END;
