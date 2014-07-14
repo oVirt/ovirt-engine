@@ -74,7 +74,7 @@ public class BackendApiResource
     private static final String SCHEMA_CONSTRAINT_PARAMETER = "schema";
     private static final String SCHEMA_NAME = "ovirt-engine-api-schema.xsd";
 
-    private static RSDL rsdl = null;
+    private RSDL rsdl = null;
 
     protected final ObjectFactory OBJECT_FACTORY = new ObjectFactory();
     ApplicationMode appMode = ApplicationMode.AllModes;
@@ -272,7 +272,10 @@ public class BackendApiResource
 
     public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
         if (rsdl == null) {
-            rsdl = RsdlManager.loadRsdl(getCurrent().get(ApplicationMode.class));
+            rsdl = RsdlManager.loadRsdl(
+                getCurrent().get(ApplicationMode.class),
+                getUriInfo().getBaseUri().getPath()
+            );
         }
         return rsdl;
     }

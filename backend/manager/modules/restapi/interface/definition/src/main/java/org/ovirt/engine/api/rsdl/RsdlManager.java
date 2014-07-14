@@ -7,11 +7,22 @@ import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.bind.JAXB;
+import javax.xml.bind.JAXBElement;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.transform.dom.DOMSource;
+import javax.xml.xpath.XPath;
+import javax.xml.xpath.XPathConstants;
+import javax.xml.xpath.XPathFactory;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.yaml.snakeyaml.Yaml;
 import org.yaml.snakeyaml.constructor.Constructor;
 import org.yaml.snakeyaml.constructor.CustomClassLoaderConstructor;
@@ -41,8 +52,8 @@ public class RsdlManager {
 
         MetaData metadata = loadMetaData();
         validateActionLinksFormat(metadata);
-        generateRsdlFile(metadata, baseUri, outputFileName, ApiRootLinksCreator.getAllRels(baseUri));
-        generateRsdlFile(metadata, baseUri, outputFileNameGluster, ApiRootLinksCreator.getGlusterRels(baseUri));
+        generateRsdlFile(metadata, outputFileName, ApiRootLinksCreator.getAllRels(baseUri));
+        generateRsdlFile(metadata, outputFileNameGluster, ApiRootLinksCreator.getGlusterRels(baseUri));
 
         System.out.println("The following files have been generated: \n" + outputFileName + "\n"
                 + outputFileNameGluster);
@@ -62,51 +73,72 @@ public class RsdlManager {
         }
     }
 
-    private static void generateRsdlFile(MetaData metadata, String baseUri, String outputFileName, List<String> rels)
+    private static void generateRsdlFile(MetaData metadata, String outputFileName, List<String> rels)
             throws IOException, ClassNotFoundException {
-        RSDL rsdl = buildRsdl(metadata, rels, baseUri);
+        RSDL rsdl = buildRsdl(metadata, rels);
         serializeRsdl(rsdl, outputFileName);
     }
 
-    public static RSDL loadRsdl(ApplicationMode applicationMode) throws IOException {
+    public static RSDL loadRsdl(ApplicationMode applicationMode, String prefix) throws IOException {
+        // Decide what version of the RSDL document to load:
         String fileName =
                 applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
                         : ("/" + RsdlIOManager.RSDL_RESOURCE_NAME);
-        InputStream rsdlAsStrem = null;
+
+        // Load the RSDL document into a DOM tree and then modify all the "href" attributes to include the prefix given
+        // as parameter:
+        Document document;
         try {
-            rsdlAsStrem = RsdlIOManager.loadAsStream(fileName);
-            return JAXB.unmarshal(rsdlAsStrem, RSDL.class);
-        } finally {
-            if (rsdlAsStrem != null) {
-                rsdlAsStrem.close();
+            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            try (InputStream in = RsdlIOManager.loadAsStream(fileName)) {
+                document = parser.parse(in);
+            }
+            XPath xpath = XPathFactory.newInstance().newXPath();
+            NodeList nodes = (NodeList) xpath.evaluate("//@href", document, XPathConstants.NODESET);
+            for (int i = 0; i < nodes.getLength(); i++) {
+                Node node = nodes.item(i);
+                String href = node.getNodeValue();
+                if (href.startsWith(QUERY_PARAMETER)) {
+                    href = prefix + href;
+                }
+                else {
+                    href = prefix + "/" + href;
+                }
+                node.setNodeValue(href);
             }
         }
+        catch (Exception exception) {
+            throw new IOException(exception);
+        }
 
+        // Convert the modified DOM tree to the RSDL object:
+        return JAXB.unmarshal(new DOMSource(document), RSDL.class);
     }
 
     private static void serializeRsdl(RSDL rsdl, String rsdlLocation) {
-        JAXB.marshal(rsdl, new File(rsdlLocation));
+        ObjectFactory factory = new ObjectFactory();
+        JAXBElement<RSDL> element = factory.createRsdl(rsdl);
+        JAXB.marshal(element, new File(rsdlLocation));
     }
 
-    private static RSDL buildRsdl(MetaData metadata, List<String> rels, String baseUri) throws IOException,
+    private static RSDL buildRsdl(MetaData metadata, List<String> rels) throws IOException,
             ClassNotFoundException {
-        RsdlBuilder builder = new RsdlBuilder(baseUri, rels, metadata)
+        RsdlBuilder builder = new RsdlBuilder(rels, metadata)
         .description(RSDL_DESCRIPTION)
         .rel(RSDL_REL)
-                .href(baseUri + QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
+                .href(QUERY_PARAMETER + RSDL_CONSTRAINT_PARAMETER)
         .schema(new SchemaBuilder()
-                .rel(SCHEMA_REL)
-                        .href(baseUri +
-                        QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
-                .name(SCHEMA_NAME)
-                .description(SCHEMA_DESCRIPTION)
-                .build())
+            .rel(SCHEMA_REL)
+            .href(QUERY_PARAMETER + SCHEMA_CONSTRAINT_PARAMETER)
+            .name(SCHEMA_NAME)
+            .description(SCHEMA_DESCRIPTION)
+            .build())
         .generalMetadata(new GeneralMetadataBuilder()
-                .rel(GENERAL_METADATA_REL)
-                        .href(baseUri.replace("api", "*"))
-                .name(GENERAL_METADATA_NAME)
-                .description(GENERAL_METADATA_DESCRIPTION)
-                        .build());
+            .rel(GENERAL_METADATA_REL)
+            .href("*")
+            .name(GENERAL_METADATA_NAME)
+            .description(GENERAL_METADATA_DESCRIPTION)
+            .build());
         RSDL rsdl = builder.build();
         return rsdl;
     }
