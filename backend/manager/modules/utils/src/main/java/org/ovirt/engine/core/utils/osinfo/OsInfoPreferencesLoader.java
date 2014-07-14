@@ -53,6 +53,8 @@ public enum OsInfoPreferencesLoader implements OsLoader {
                 Arrays.sort(files);
 
                 for (File file : files) {
+                    log.info("Loading file " + file.getPath());
+                    OsinfoPropertiesParser.parse(file.getAbsolutePath());
                     loadFile(file.toPath());
                 }
             }
@@ -71,8 +73,6 @@ public enum OsInfoPreferencesLoader implements OsLoader {
         try(BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             properties = new Properties(properties);
             properties.load(reader);
-
-            log.info("Loaded file " + path);
         } catch (IOException e) {
             log.error("Failed loading file "  + path);
         }
