@@ -1107,7 +1107,7 @@ public enum AuditLogType {
     }
 
     private AuditLogType(int value) {
-        this(value, AuditLogSeverity.NORMAL, 0);
+        this(value, null, 0);
     }
 
     private AuditLogType(int value, AuditLogSeverity severity) {
@@ -1115,13 +1115,17 @@ public enum AuditLogType {
     }
 
     private AuditLogType(int value, int eventFloodRate) {
-        this(value, AuditLogSeverity.NORMAL, eventFloodRate);
+        this(value, null, eventFloodRate);
     }
 
     private AuditLogType(int value, AuditLogSeverity severity, int eventFloodRate) {
         intValue = value;
         this.eventFloodRate = eventFloodRate;
-        this.severity = severity;
+        this.severity = getDefaultSeverity(severity);
+    }
+
+    private static AuditLogSeverity getDefaultSeverity(AuditLogSeverity severity) {
+        return severity == null ? AuditLogSeverity.NORMAL : severity;
     }
 
     public int getValue() {

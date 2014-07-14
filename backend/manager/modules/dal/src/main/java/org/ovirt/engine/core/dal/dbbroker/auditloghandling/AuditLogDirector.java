@@ -115,10 +115,6 @@ public final class AuditLogDirector {
         String message = null;
         String resolvedMessage = null;
         AuditLogSeverity severity = logType.getSeverity();
-        if (severity == null) {
-            severity = AuditLogSeverity.NORMAL;
-            log.info("No severity for '{}' audit log type, assuming Normal severity", logType);
-        }
         AuditLog auditLog = null;
         // handle external log messages invoked by plugins via the API
         if (auditLogable.isExternal()) {
