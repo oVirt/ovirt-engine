@@ -198,11 +198,13 @@ public class ClusterMapper {
     @Mapping(from = SchedulingPolicy.class, to = VDSGroup.class)
     public static VDSGroup map(SchedulingPolicy model, VDSGroup template) {
         VDSGroup entity = template != null ? template : new VDSGroup();
-        if (model.isSetId()) {
-            entity.setClusterPolicyId(GuidUtils.asGuid(model.getId()));
-        }
         if (model.isSetPolicy() || model.isSetName()) {
             entity.setClusterPolicyName(model.isSetName() ? model.getName() : model.getPolicy());
+            entity.setClusterPolicyId(null);
+        }
+        // id will override name
+        if (model.isSetId()) {
+            entity.setClusterPolicyId(GuidUtils.asGuid(model.getId()));
         }
         if (model.isSetThresholds()) {
             SchedulingPolicyThresholds thresholds = model.getThresholds();
@@ -219,6 +221,10 @@ public class ClusterMapper {
                 int round = Math.round(thresholds.getDuration() / 60.0f);
                 entity.getClusterPolicyProperties().put(CPU_OVER_COMMIT_DURATION_MINUTES, Integer.toString(round));
             }
+        }
+        // properties will override thresholds
+        if (model.isSetProperties()) {
+            entity.setClusterPolicyProperties(CustomPropertiesParser.toMap(model.getProperties()));
         }
         return entity;
     }
