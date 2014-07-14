@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
-import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 
@@ -32,6 +31,7 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Anchor;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
@@ -85,6 +85,10 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     Label bytesWritten;
 
     @UiField
+    @WithElementId
+    Anchor brickProfileAnchor;
+
+    @UiField
     DialogTab nfsTab;
 
     @UiField
@@ -120,24 +124,32 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
     @WithElementId
     Label nfsBytesWritten;
 
+    @UiField
+    @WithElementId
+    Anchor nfsProfileAnchor;
+
+    private final ApplicationConstants constants;
+    private final ApplicationResources resources;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
     public VolumeProfileStatisticsPopupView(EventBus eventBus,
             ApplicationResources resources,
-            ApplicationConstants constants,
-            ApplicationMessages messages) {
+            ApplicationConstants constants) {
         super(eventBus, resources);
-        initEditors(constants, resources);
+        this.constants = constants;
+        this.resources = resources;
+        initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        localize(constants, messages);
+        localize();
         nfsErrorLabel.setVisible(false);
         bricksErrorLabel.setVisible(false);
         driver.initialize(this);
     }
 
-    private void localize(ApplicationConstants constants, ApplicationMessages messages) {
+    private void localize() {
         bricks.setLabel(constants.selectBrickToViewFopStats());
         nfsServers.setLabel(constants.selectServerToViewFopStats());
         bricksTab.setLabel(constants.volumeProfileBricksTab());
@@ -146,7 +158,7 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
         nfsErrorLabel.setText(constants.nfsProfileErrorMessage());
     }
 
-    private void initEditors(ApplicationConstants constants, ApplicationResources resources) {
+    private void initEditors() {
         nfsRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
         brickRefreshIcon = new RefreshActionIcon(SafeHtmlUtils.EMPTY_SAFE_HTML, resources);
         bricks = new ListModelListBoxEditor<BrickProfileDetails>(new NullSafeRenderer<BrickProfileDetails>() {
@@ -237,6 +249,12 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
 
     }
 
+    private void initAnchor(String url, Anchor anchor) {
+        anchor.setHref(url);
+        anchor.setText(constants.exportToPdf());
+        anchor.setTarget("_blank");//$NON-NLS-1$
+    }
+
     @Override
     public void edit(final VolumeProfileStatisticsModel object) {
         driver.edit(object);
@@ -291,6 +309,11 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
                 }
                 if(e.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
                     boolean disableErrorLabels = !(object.isSuccessfulProfileStatsFetch());
+                    if(!disableErrorLabels) {
+                        String url = object.getProfileExportUrl();
+                        boolean isBrickTabSelected = !(url.contains(";nfsStatistics=true"));//$NON-NLS-1$
+                        initAnchor(url, (isBrickTabSelected) ? brickProfileAnchor : nfsProfileAnchor);
+                    }
                     bricksErrorLabel.setVisible(disableErrorLabels);
                     nfsErrorLabel.setVisible(disableErrorLabels);
                 }
