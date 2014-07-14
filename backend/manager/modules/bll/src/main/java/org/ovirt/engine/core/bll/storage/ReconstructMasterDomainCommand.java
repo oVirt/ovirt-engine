@@ -46,7 +46,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
     }
 
     public ReconstructMasterDomainCommand(T parameters) {
-        super(parameters, null);
+        this(parameters, null);
     }
 
     public ReconstructMasterDomainCommand(T parameters, CommandContext commandContext) {
