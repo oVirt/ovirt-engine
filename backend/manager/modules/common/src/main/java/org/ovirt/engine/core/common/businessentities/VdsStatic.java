@@ -169,6 +169,8 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
     @Size(max = BusinessEntitiesDefinitions.SSH_KEY_FINGERPRINT_SIZE)
     private String sshKeyFingerprint;
 
+    private Guid hostProviderId;
+
     public boolean isAutoRecoverable() {
         return autoRecoverable;
     }
@@ -192,10 +194,11 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         disablePowerManagementPolicy = false;
         pmKdumpDetection = true;
         this.protocol = VdsProtocol.XML;
+        this.hostProviderId = null;
     }
 
     public VdsStatic(String host_name, String ip, String uniqueId, int port, int ssh_port, String ssh_username, Guid vds_group_id, Guid vds_id,
-            String vds_name, boolean server_SSL_enabled, VDSType vds_type) {
+            String vds_name, boolean server_SSL_enabled, VDSType vds_type, Guid host_provider_id) {
         this();
         this.hostName = host_name;
         this.managementIp = ip;
@@ -212,6 +215,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.name = vds_name;
         this.serverSslEnabled = server_SSL_enabled;
         this.setVdsType(vds_type);
+        this.hostProviderId = host_provider_id;
     }
 
     public boolean isServerSslEnabled() {
@@ -510,6 +514,10 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         this.consoleAddress = consoleAddress;
     }
 
+    public void setHostProviderId (Guid hostProviderId) { this.hostProviderId = hostProviderId; }
+
+    public Guid getHostProviderId () { return hostProviderId; }
+
     /**
      * Converts a PM Options map to string
      *
@@ -597,6 +605,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
         result = prime * result + ((vdsStrength == null) ? 0 : vdsStrength.hashCode());
         result = prime * result + ((vdsType == null) ? 0 : vdsType.hashCode());
         result = prime * result + (disablePowerManagementPolicy ? 0 : 1);
+        result = prime * result + ((hostProviderId == null) ? 0 : hostProviderId.hashCode());
         return result;
     }
 
@@ -644,6 +653,7 @@ public class VdsStatic implements BusinessEntity<Guid>, Commented {
                 && ObjectUtils.objectsEqual(vdsStrength, other.vdsStrength)
                 && vdsType == other.vdsType
                 && ObjectUtils.objectsEqual(sshKeyFingerprint, other.sshKeyFingerprint))
-                && disablePowerManagementPolicy == other.disablePowerManagementPolicy;
+                && disablePowerManagementPolicy == other.disablePowerManagementPolicy
+                && ObjectUtils.objectsEqual(hostProviderId, other.hostProviderId);
     }
 }

@@ -102,20 +102,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                AddVdsStaticToDb();
-                AddVdsDynamicToDb();
-                AddVdsStatisticsToDb();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
-
         if (getParameters().getAddProvisioned()) {
             HostProviderProxy proxy =
                     ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
+            getParameters().getvds().getStaticData().setHostProviderId(getParameters().getProviderId());
             proxy.provisionHost(
                     getParameters().getvds(),
                     getParameters().getHostGroup(),
@@ -130,6 +120,17 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             logable.addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
             AuditLogDirector.log(logable, AuditLogType.VDS_PROVISION);
         }
+
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                AddVdsStaticToDb();
+                AddVdsDynamicToDb();
+                AddVdsStatisticsToDb();
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
 
         // set vds spm id
         if (getVdsGroup().getStoragePoolId() != null) {

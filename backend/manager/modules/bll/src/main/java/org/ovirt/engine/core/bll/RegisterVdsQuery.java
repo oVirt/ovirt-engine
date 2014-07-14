@@ -285,7 +285,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                     getParameters().getSSHUser(),
                     vdsGroupId, Guid.Empty,
                     getParameters().getVdsName(), Config.<Boolean> getValue(ConfigValues.SSLEnabled),
-                    VDSType.VDS);
+                    VDSType.VDS, null);
         vds.setSshKeyFingerprint(getParameters().getSSHFingerprint());
 
                 log.debugFormat(
