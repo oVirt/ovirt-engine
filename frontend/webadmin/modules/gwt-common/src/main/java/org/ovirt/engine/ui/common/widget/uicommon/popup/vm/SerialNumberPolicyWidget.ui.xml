@@ -15,6 +15,7 @@
 
     .serialNumberPolicy {
       float: left;
+      -moz-box-sizing: content-box;
     }
 
     .customSerialNumber {
