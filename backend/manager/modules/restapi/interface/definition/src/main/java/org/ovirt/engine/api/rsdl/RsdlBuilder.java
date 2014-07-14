@@ -66,7 +66,6 @@ public class RsdlBuilder {
     private Schema schema;
     private GeneralMetadata generalMetadata;
     private String description;
-    private String baseUri;
     private List<String> rels;
     private MetaData metadata;
 
@@ -78,17 +77,7 @@ public class RsdlBuilder {
 
     private static final String RESOURCES_PACKAGE = "org.ovirt.engine.api.resource";
 
-    public RsdlBuilder(String baseUri, List<String> rels, MetaData metadata) {
-        /**
-         * uriInfo.getBaseUri().getPath() might be: /ovirt-engine/api/ (with trailing '/') or: /ovirt-engine/api
-         * (without trailing '/') - depending on the context of the request. The reason for this variability is not
-         * clear. In any case - we assume no trailing '/' when creating the action name, so we add a check and eliminate
-         * the trailing slash if necessary.
-         */
-        if (baseUri.endsWith("/")) {
-            baseUri = baseUri.substring(0, baseUri.length() - 1);
-        }
-        this.baseUri = baseUri;
+    public RsdlBuilder(List<String> rels, MetaData metadata) {
         this.rels = rels;
         this.metadata = metadata;
         this.parametersMetaData = addParametersMetaData();
@@ -97,7 +86,7 @@ public class RsdlBuilder {
     public Map<String, Action> addParametersMetaData() {
         parametersMetaData = new HashMap<String, Action>();
         for (Action action : metadata.getActions()) {
-            parametersMetaData.put(baseUri + action.getName(), action);
+            parametersMetaData.put(action.getName(), action);
         }
         return parametersMetaData;
     }
@@ -233,8 +222,7 @@ public class RsdlBuilder {
         List<Class<?>> classes = ReflectionHelper.getClasses(RESOURCES_PACKAGE);
         for (String path : rels) {
             Class<?> resource = findResource(path, classes);
-            String prefix = baseUri + "/" + path;
-            results.addAll(describe(resource, prefix, new HashMap<String, Type>()));
+            results.addAll(describe(resource, path, new HashMap<String, Type>()));
         }
         return results;
     }
