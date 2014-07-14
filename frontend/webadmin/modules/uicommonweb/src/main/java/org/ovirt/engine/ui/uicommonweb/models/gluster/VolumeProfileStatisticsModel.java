@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.utils.SizeConverter.SizeUnit;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -44,6 +45,8 @@ public class VolumeProfileStatisticsModel extends Model {
     private Guid clusterId;
     private Guid volumeId;
     private String volumeName;
+
+    private String profileExportUrl;
 
     private GlusterVolumeProfileInfo profileInfo;
 
@@ -225,6 +228,7 @@ public class VolumeProfileStatisticsModel extends Model {
                     GlusterVolumeProfileInfo aggregatedProfileInfo = new GlusterVolumeProfileInfo();
                     aggregatedProfileInfo.setBrickProfileDetails((profileInfoEntity.getBrickProfileDetails() != null) ? profileInfoEntity.getBrickProfileDetails() : getProfileInfo().getBrickProfileDetails());
                     aggregatedProfileInfo.setNfsProfileDetails((profileInfoEntity.getNfsProfileDetails() != null) ? profileInfoEntity.getNfsProfileDetails() : getProfileInfo().getNfsProfileDetails());
+                    setProfileExportUrl(formProfileUrl(clusterId.toString(), volumeId.toString(), isBrickSelected));
                     setProfileInfo(aggregatedProfileInfo);
                     setSuccessfulProfileStatsFetch(true);
                     setTitle(ConstantsManager.getInstance().getMessages().volumeProfilingStatsTitle(volumeName));
@@ -281,6 +285,20 @@ public class VolumeProfileStatisticsModel extends Model {
         Pair<SizeUnit, Double> dataWrittenInCurrentInterval = SizeConverter.autoConvert(bytesWrittenInCurrentInterval, SizeUnit.BYTES);
         Pair<SizeUnit, Double> dataWritten = SizeConverter.autoConvert(totalBytesWritten, SizeUnit.BYTES);
         return messages.bytesWrittenInCurrentProfileInterval(formatSize(dataWrittenInCurrentInterval.getSecond()), dataWrittenInCurrentInterval.getFirst().toString(), formatSize(dataWritten.getSecond()), dataWritten.getFirst().toString());
+    }
+
+    private String formProfileUrl(String clusterId, String volumeId, boolean isBrickProfileSelected)
+    {
+        String apiMatrixParam = ((!isBrickProfileSelected) ? ";nfsStatistics=true" : "");//$NON-NLS-1$//$NON-NLS-2$
+        return StringFormat.format("/ovirt-engine/api/clusters/%s/glustervolumes/%s/profilestatistics%s?accept=application/pdf", clusterId, volumeId, apiMatrixParam);//$NON-NLS-1$
+    }
+
+    public String getProfileExportUrl() {
+        return profileExportUrl;
+    }
+
+    public void setProfileExportUrl(String profileExportUrl) {
+        this.profileExportUrl = profileExportUrl;
     }
 
     public String formatSize(double size) {

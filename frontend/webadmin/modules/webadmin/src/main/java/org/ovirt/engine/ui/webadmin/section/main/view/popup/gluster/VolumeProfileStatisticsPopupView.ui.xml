@@ -44,6 +44,7 @@
                     <g:Label ui:field="bytesRead" />
                     <g:Label ui:field="bytesWritten" />
                 </g:VerticalPanel>
+                <g:Anchor ui:field="brickProfileAnchor"/>
             </g:VerticalPanel>
             </g:SimplePanel>
             </t:content>
@@ -70,6 +71,7 @@
                     <g:Label ui:field="nfsBytesRead" />
                     <g:Label ui:field="nfsBytesWritten" />
                 </g:VerticalPanel>
+                <g:Anchor ui:field="nfsProfileAnchor"/>
             </g:VerticalPanel>
             </g:SimplePanel>
             </t:content>

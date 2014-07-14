@@ -3740,4 +3740,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Could not fetch brick profile stats")
     String brickProfileErrorMessage();
+
+    @DefaultStringValue("Save As Pdf")
+    String exportToPdf();
 }
