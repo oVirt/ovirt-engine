@@ -23,6 +23,8 @@ import java.lang.annotation.Annotation;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Type;
+import java.util.HashMap;
+import java.util.Map;
 import javax.ws.rs.Consumes;
 import javax.ws.rs.Produces;
 import javax.ws.rs.WebApplicationException;
@@ -63,7 +65,12 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
     /**
      * The factory used to create JAXB elements.
      */
-    private ObjectFactory objectFactory;
+    private ObjectFactory objectFactory = new ObjectFactory();
+
+    /**
+     * A index used to speed up finding the factory method used to create JAXB elements.
+     */
+    private Map<Class<?>, Method> factoryMethods = new HashMap<>();
 
     /**
      * The factory used to create XML document readers.
@@ -81,8 +88,15 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
     private ValidationEventHandler jaxbHandler = new JAXBValidationEventHandler();
 
     public JAXBProvider() {
-        // Create the object factory:
-        objectFactory = new ObjectFactory();
+        // In order to create the JAXB element that wraps the object we need to call the method of the object factory
+        // that uses the correct element name, and in order to avoid doing this with every request we populate this
+        // map in advance:
+        for (Method factoryMethod : ObjectFactory.class.getDeclaredMethods()) {
+            Class<?>[] parameterTypes = factoryMethod.getParameterTypes();
+            if (parameterTypes.length == 1) {
+                factoryMethods.put(parameterTypes[0], factoryMethod);
+            }
+        }
 
         // Create a factory that will produce XML parsers that ignore entity references and DTDs:
         parserFactory = XMLInputFactory.newFactory();
@@ -182,16 +196,8 @@ public class JAXBProvider implements MessageBodyReader<Object>, MessageBodyWrite
     public void writeTo(Object object, Class<?> type, Type genericType, Annotation[] annotations, MediaType mediaType,
             MultivaluedMap<String, Object> httpHeaders, OutputStream entityStream)
             throws IOException, WebApplicationException {
-        // In order to create the JAXB element that wraps the object we need to iterate the object factory and find the
-        // method that creates it:
-        Method factoryMethod = null;
-        for (Method currentMethod : ObjectFactory.class.getDeclaredMethods()) {
-            Class<?>[] parameterTypes = currentMethod.getParameterTypes();
-            if (parameterTypes.length == 1 && parameterTypes[0] == type) {
-                factoryMethod = currentMethod;
-                break;
-            }
-        }
+        // Find the factory method used to create the JAXB element with the right tag:
+        Method factoryMethod = factoryMethods.get(type);
         if (factoryMethod == null) {
             throw new IOException("Can't find factory method for type \"" + type.getName() + "\".");
         }
