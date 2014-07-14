@@ -21,7 +21,6 @@ public interface OsRepository {
 
     public final static int DEFAULT_X86_OS = 0;
     public final static int DEFAULT_PPC_OS = 1001;
-    public final static int OLD_OTHER_ID = 6;
 
     /*
      * This value is used to enable the auto selection of an appropriate OS when

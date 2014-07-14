@@ -113,6 +113,7 @@
     <!-- https://jira.codehaus.org/browse/MGWT-350 -->
     <gwt-maven-plugin.workingRefresh.version>2.4.0</gwt-maven-plugin.workingRefresh.version>
     <cdi.api.version>1.0-SP4</cdi.api.version>
+    <antlr.version>4.2.2</antlr.version>
   </properties>
   <dependencyManagement>
     <dependencies>
@@ -331,6 +332,11 @@
         <artifactId>cdi-api</artifactId>
         <version>${cdi.api.version}</version>
         <scope>provided</scope>
+      </dependency>
+      <dependency>
+        <groupId>org.antlr</groupId>
+        <artifactId>antlr4-runtime</artifactId>
+        <version>${antlr.version}</version>
       </dependency>
     </dependencies>
   </dependencyManagement>

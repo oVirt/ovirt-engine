@@ -347,6 +347,10 @@
       <version>${jaxb-impl.version}</version>
     </dependency>
 
+      <dependency>
+          <groupId>org.antlr</groupId>
+          <artifactId>antlr4-runtime</artifactId>
+      </dependency>
   </dependencies>
 
   <build>
@@ -676,6 +680,12 @@
                 <groupId>com.sun.xml.bind</groupId>
                 <artifactId>jaxb-xjc</artifactId>
                 <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <moduleName>org.antlr.antlr4-runtime</moduleName>
               </module>
 
             </modules>
