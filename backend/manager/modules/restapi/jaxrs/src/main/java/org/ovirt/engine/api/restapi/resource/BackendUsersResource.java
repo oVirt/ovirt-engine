@@ -16,7 +16,7 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.UserResource;
 import org.ovirt.engine.api.resource.UsersResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DbUser;
@@ -187,10 +187,7 @@ public class BackendUsersResource
                     .entity("No such user: " + user.getUserName() + " in domain " + domain)
                     .build();
         }
-        DirectoryIdParameters parameters = new DirectoryIdParameters();
-        parameters.setDirectory(directoryUser.getDirectoryName());
-        parameters.setId(directoryUser.getId());
-        parameters.setNamespace(directoryUser.getNamespace());
+        AddUserParameters parameters = new AddUserParameters(new DbUser(directoryUser));
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
     }

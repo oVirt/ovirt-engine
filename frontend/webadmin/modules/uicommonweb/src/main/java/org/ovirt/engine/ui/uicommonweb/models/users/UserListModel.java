@@ -5,11 +5,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.AddGroupParameters;
+import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
-import org.ovirt.engine.core.common.action.DirectoryIdParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -455,21 +457,26 @@ public class UserListModel extends ListWithDetailsModel
 
         ArrayList<VdcActionType> actionsList = new ArrayList<VdcActionType>(items.size());
         ArrayList<VdcActionParametersBase> parametersList = new ArrayList<VdcActionParametersBase>(items.size());
+        VdcActionParametersBase parameters = null;
         for (DbUser item : items)
         {
             if (item.isGroup())
             {
                 actionsList.add(VdcActionType.AddGroup);
-
+                DbGroup grp = new DbGroup();
+                grp.setExternalId(item.getExternalId());
+                grp.setName(item.getFirstName());
+                grp.setNamespace(item.getNamespace());
+                grp.setId(item.getId());
+                grp.setDomain(item.getDomain());
+                grp.setActive(item.isActive());
+                parameters = new AddGroupParameters(grp);
             }
             else
             {
                 actionsList.add(VdcActionType.AddUser);
+                parameters = new AddUserParameters(item);
             }
-            DirectoryIdParameters parameters = new DirectoryIdParameters();
-            parameters.setDirectory(item.getDomain());
-            parameters.setId(item.getExternalId());
-            parameters.setNamespace(item.getNamespace());
             parametersList.add(parameters);
         }
 

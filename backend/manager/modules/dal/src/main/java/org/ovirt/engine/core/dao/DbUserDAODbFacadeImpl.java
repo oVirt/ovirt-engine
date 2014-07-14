@@ -163,6 +163,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
     @Override
     public void save(DbUser user) {
+        setIdIfNeeded(user);
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertUser").execute(new DbUserMapSqlParameterSource(user));
     }
 
@@ -181,7 +182,14 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
     @Override
     public void saveOrUpdate(DbUser user) {
+        setIdIfNeeded(user);
         new SimpleJdbcCall(jdbcTemplate).withProcedureName("InsertOrUpdateUser").execute(new DbUserMapSqlParameterSource(user));
+    }
+
+    private void setIdIfNeeded(DbUser user) {
+        if (Guid.isNullOrEmpty(user.getId())) {
+            user.setId(Guid.newGuid());
+        }
     }
 
 }
