@@ -176,7 +176,6 @@ Requires:	jboss-as >= 7.1.1-9.3
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.4.0
 Requires:	ovirt-iso-uploader >= 3.4.0
-Requires:	ovirt-log-collector >= 3.4.0
 Requires:	postgresql-server >= 8.4.7
 Requires:	ws-commons-util
 Requires:	yum-plugin-versionlock
