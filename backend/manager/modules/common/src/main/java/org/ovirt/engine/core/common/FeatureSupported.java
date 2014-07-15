@@ -385,4 +385,14 @@ public class FeatureSupported {
         return supportedInConfig(ConfigValues.LiveMergeSupported, version);
 
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if skip fencing when host connected to SD feature is supported for the given version.
+     */
+    public static boolean isSkipFencingIfSDActiveSupported(Version version) {
+        return supportedInConfig(ConfigValues.SkipFencingIfSDActiveSupported, version);
+
+    }
 }

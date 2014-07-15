@@ -1868,5 +1868,12 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     CSRFProtection,
 
+    /**
+     * Feature to skip fencing if host is connected to at least one storage domain
+     */
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    SkipFencingIfSDActiveSupported,
+
     Invalid
 }
