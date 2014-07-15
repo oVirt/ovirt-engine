@@ -23,8 +23,8 @@ limitations under the License.
   version="3.0">
 
   <context-param>
-    <param-name>resteasy.media.type.mappings</param-name>
-    <param-value>json: application/json, xml: application/xml, pdf: application/pdf</param-value>
+    <param-name>resteasy.media.type.param.mapping</param-name>
+    <param-value>accept</param-value>
   </context-param>
 
   <filter>
