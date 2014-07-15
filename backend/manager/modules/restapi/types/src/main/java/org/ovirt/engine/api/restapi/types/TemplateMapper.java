@@ -192,6 +192,9 @@ public class TemplateMapper {
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
         }
+        if (model.isSetStartPaused()) {
+            entity.setRunAndPause(model.isStartPaused());
+        }
 
         return entity;
     }
@@ -322,6 +325,9 @@ public class TemplateMapper {
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), staticVm);
         }
+        if (model.isSetStartPaused()) {
+            staticVm.setRunAndPause(model.isStartPaused());
+        }
         return staticVm;
     }
 
@@ -431,6 +437,8 @@ public class TemplateMapper {
         if (entity.getSerialNumberPolicy() != null) {
             model.setSerialNumber(SerialNumberMapper.map(entity, null));
         }
+
+        model.setStartPaused(entity.isRunAndPause());
 
         return model;
     }

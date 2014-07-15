@@ -129,6 +129,7 @@ public class VmMapper {
         staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
         staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+        staticVm.setRunAndPause(entity.isRunAndPause());
         return staticVm;
     }
 
@@ -328,6 +329,10 @@ public class VmMapper {
             if (mode != null) {
                 staticVm.setNumaTuneMode(map(mode, null));
             }
+        }
+
+        if (vm.isSetStartPaused()) {
+            staticVm.setRunAndPause(vm.isStartPaused());
         }
 
         return staticVm;
@@ -575,6 +580,7 @@ public class VmMapper {
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
         model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
+        model.setStartPaused(entity.isRunAndPause());
         return model;
     }
 

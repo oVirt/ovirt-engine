@@ -150,6 +150,7 @@ public class VmMapperTest extends
         assertEquals(model.getSerialNumber().getValue(), transform.getSerialNumber().getValue());
         assertEquals(model.getDisplay().isFileTransferEnabled(), transform.getDisplay().isFileTransferEnabled());
         assertEquals(model.getDisplay().isCopyPasteEnabled(), transform.getDisplay().isCopyPasteEnabled());
+        assertEquals(model.isStartPaused(), transform.isStartPaused());
     }
 
     @Test
