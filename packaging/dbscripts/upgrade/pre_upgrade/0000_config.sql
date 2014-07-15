@@ -790,6 +790,12 @@ select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 
 select fn_db_add_config_value('CSRFProtection','false','general');
 
+select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.0');
+select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.1');
+select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.2');
+select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.3');
+select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.4');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
