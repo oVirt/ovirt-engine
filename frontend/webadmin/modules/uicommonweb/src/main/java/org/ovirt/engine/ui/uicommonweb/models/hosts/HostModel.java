@@ -1868,6 +1868,14 @@ public abstract class HostModel extends Model
         getHost().setEntity(constants.empty());
         getUserPassword().setEntity(constants.empty());
         getFetchSshFingerprint().setEntity(constants.empty());
+        getExternalHostName().setItems(null);
+        getExternalHostName().setIsChangable(false);
+        getExternalDiscoveredHosts().setItems(null);
+        getExternalDiscoveredHosts().setIsChangable(false);
+        getExternalHostGroups().setItems(null);
+        getExternalHostGroups().setIsChangable(false);
+        getExternalComputeResource().setItems(null);
+        getExternalComputeResource().setIsChangable(false);
 
     }
 
