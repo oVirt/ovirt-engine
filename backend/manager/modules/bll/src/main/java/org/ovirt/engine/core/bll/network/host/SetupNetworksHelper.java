@@ -158,8 +158,7 @@ public class SetupNetworksHelper {
                 Set<String> existingLabels =
                         NetworkUtils.isLabeled(existingNic) ? existingNic.getLabels() : Collections.<String> emptySet();
                 if (!CollectionUtils.isEqualCollection(newLabels, existingLabels)
-                        || nic.isQosOverridden() != existingNic.isQosOverridden()
-                        || customPropertiesChanged(nic, existingNic)) {
+                        || (StringUtils.isNotEmpty(nic.getNetworkName()) && qosOrCustomPropertiesChanged(nic, existingNic))) {
                     existingNic.setLabels(newLabels);
                     existingNic.setQosOverridden(nic.isQosOverridden());
                     existingNic.setCustomProperties(nic.getCustomProperties());
@@ -167,6 +166,10 @@ public class SetupNetworksHelper {
                 }
             }
         }
+    }
+
+    private boolean qosOrCustomPropertiesChanged(VdsNetworkInterface nic, VdsNetworkInterface existingNic) {
+        return nic.isQosOverridden() != existingNic.isQosOverridden() || customPropertiesChanged(nic, existingNic);
     }
 
     /**
@@ -270,27 +273,21 @@ public class SetupNetworksHelper {
         Map<String, String> validPropertiesNonVm = new HashMap<String, String>(validProperties);
         validPropertiesNonVm.remove("bridge_opts");
         for (VdsNetworkInterface iface : params.getInterfaces()) {
-            if (iface.hasCustomProperties()) {
-                String networkName = iface.getNetworkName();
-                if (StringUtils.isEmpty(networkName)) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK,
-                            iface.getName());
-                } else {
-                    if (!networkCustomPropertiesSupported) {
-                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED,
-                                networkName);
-                    }
+            String networkName = iface.getNetworkName();
+            if (iface.hasCustomProperties() && StringUtils.isNotEmpty(networkName)) {
+                if (!networkCustomPropertiesSupported) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED, networkName);
+                }
 
-                    Network network = existingClusterNetworks.get(networkName);
-                    List<ValidationError> errors =
-                            util.validateProperties(network == null || network.isVmNetwork() ? validProperties
-                                    : validPropertiesNonVm, iface.getCustomProperties());
-                    if (!errors.isEmpty()) {
-                        addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
-                        List<String> messages = new ArrayList<>();
-                        util.handleCustomPropertiesError(errors, messages);
-                        log.error(StringUtils.join(translateErrorMessages(messages), ','));
-                    }
+                Network network = existingClusterNetworks.get(networkName);
+                List<ValidationError> errors =
+                        util.validateProperties(network == null || network.isVmNetwork() ? validProperties
+                                : validPropertiesNonVm, iface.getCustomProperties());
+                if (!errors.isEmpty()) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT, networkName);
+                    List<String> messages = new ArrayList<>();
+                    util.handleCustomPropertiesError(errors, messages);
+                    log.error(StringUtils.join(translateErrorMessages(messages), ','));
                 }
             }
         }

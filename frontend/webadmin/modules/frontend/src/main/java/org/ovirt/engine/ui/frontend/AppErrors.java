@@ -595,9 +595,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Network custom properties are not supported in the cluster's compatibility version, but they were supplied for the following network(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED_LIST}.")
     String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Network custom properties can only be configured on an interface to which a network is attached, but were supplied for the following interface(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK_LIST}.")
-    String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK();
-
     @DefaultStringValue("Cannot ${action} ${type}. Some network custom properties contained errors (bad syntax, non-existing keys or invalid values), please take a closer look at the following network(s): ${ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT_LIST}. Refer to the engine log for further details.")
     String ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_BAD_INPUT();
 

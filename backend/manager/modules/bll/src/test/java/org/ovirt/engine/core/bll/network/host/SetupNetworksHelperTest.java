@@ -431,9 +431,20 @@ public class SetupNetworksHelperTest {
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
 
-        validateAndExpectViolation(helper,
-                VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_CUSTOM_PROPERTIES_NO_NETWORK,
-                iface.getName());
+        validateAndAssertNoChanges(helper);
+    }
+
+    @Test
+    public void customPropertiesNetworkRemoved() {
+        mockExistingNetworks();
+        VdsNetworkInterface iface = createNic("eth0", MANAGEMENT_NETWORK_NAME);
+        iface.setCustomProperties(createCustomProperties());
+        mockExistingIfaces(iface);
+        iface.setNetworkName(null);
+
+        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_5);
+
+        validateAndAssertNetworkRemoved(helper, MANAGEMENT_NETWORK_NAME);
     }
 
     @Test
@@ -1517,6 +1528,15 @@ public class SetupNetworksHelperTest {
         assertNoBondsModified(helper);
         assertNetworkModified(helper, net);
         assertNoNetworksRemoved(helper);
+        assertNoBondsRemoved(helper);
+        assertNoInterfacesModified(helper);
+    }
+
+    private void validateAndAssertNetworkRemoved(SetupNetworksHelper helper, String networkName) {
+        validateAndExpectNoViolations(helper);
+        assertNoBondsModified(helper);
+        assertNoNetworksModified(helper);
+        assertNetworkRemoved(helper, networkName);
         assertNoBondsRemoved(helper);
         assertNoInterfacesModified(helper);
     }
