@@ -201,7 +201,6 @@ Requires:	java-1.7.0-openjdk >= 1:1.7.0.9-2.3.3.2
 Requires:	jpackage-utils
 Requires:	ovirt-image-uploader >= 3.5.0
 Requires:	ovirt-iso-uploader >= 3.5.0
-Requires:	ovirt-log-collector >= 3.5.0
 Requires:	patternfly1
 Requires:	postgresql-server >= 8.4.7
 Requires:	ws-commons-util
