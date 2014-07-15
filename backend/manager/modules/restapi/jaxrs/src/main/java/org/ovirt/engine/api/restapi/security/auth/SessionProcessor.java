@@ -66,7 +66,7 @@ public class SessionProcessor implements PreProcessInterceptor, PostProcessInter
         current.set(backend.runPublicQuery(
                 VdcQueryType.GetValueBySession,
                 new GetValueBySessionQueryParameters(engineSessionId, "user")
-                ));
+                ).getReturnValue());
         return null;
     }
 
