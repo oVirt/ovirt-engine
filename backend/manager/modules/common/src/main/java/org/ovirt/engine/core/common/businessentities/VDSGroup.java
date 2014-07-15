@@ -102,12 +102,16 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private Set<VmRngDevice.Source> requiredRngSources;
 
+    private FencingPolicy fencingPolicy;
+
+
     public VDSGroup() {
         migrateOnError = MigrateOnErrorOptions.YES;
         name = "";
         virtService = true;
         optimizationType = OptimizationType.NONE;
         requiredRngSources = new HashSet<VmRngDevice.Source>();
+        fencingPolicy = new FencingPolicy();
     }
 
     @Override
@@ -375,6 +379,14 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         return requiredRngSources;
     }
 
+    public FencingPolicy getFencingPolicy() {
+        return fencingPolicy;
+    }
+
+    public void setFencingPolicy(FencingPolicy fencingPolicy) {
+        this.fencingPolicy = fencingPolicy;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -406,6 +418,7 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
         result = prime * result + (serialNumberPolicy == null ? 0 : serialNumberPolicy.hashCode());
         result = prime * result + (customSerialNumber == null ? 0 : customSerialNumber.hashCode());
         result = prime * result + (groupHostsAndVms == null ? 0 : groupHostsAndVms.hashCode());
+        result = prime * result + (fencingPolicy == null ? 0 : fencingPolicy.hashCode());
         return result;
     }
 
@@ -459,7 +472,8 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
                 && serialNumberPolicy == other.serialNumberPolicy
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
                 && ObjectUtils.objectsEqual(groupHostsAndVms, other.groupHostsAndVms)
-                && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources);
+                && ObjectUtils.objectsEqual(requiredRngSources, other.requiredRngSources)
+                && ObjectUtils.objectsEqual(fencingPolicy, other.fencingPolicy);
     }
 
 }

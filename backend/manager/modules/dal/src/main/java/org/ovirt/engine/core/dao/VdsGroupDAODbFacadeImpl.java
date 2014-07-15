@@ -228,7 +228,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("enable_ksm", group.isEnableKsm())
                 .addValue("spice_proxy", group.getSpiceProxy())
                 .addValue("serial_number_policy", group.getSerialNumberPolicy() == null ? null : group.getSerialNumberPolicy().getValue())
-                .addValue("custom_serial_number", group.getCustomSerialNumber());
+                .addValue("custom_serial_number", group.getCustomSerialNumber())
+                .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive());
 
         return parameterSource;
     }
@@ -289,6 +290,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setSpiceProxy(rs.getString("spice_proxy"));
             entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
             entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
+            entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
 
             return entity;
         }
