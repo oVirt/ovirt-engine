@@ -59,8 +59,6 @@ import org.ovirt.engine.api.restapi.resource.BackendVmPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVmsResource;
 import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;
 import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
-import org.ovirt.engine.api.restapi.resource.validation.JaxbExceptionMapper;
-import org.ovirt.engine.api.restapi.resource.validation.JaxbMarshallExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MappingExceptionMapper;
@@ -162,8 +160,6 @@ public class BackendApplication extends Application {
 
         // Intercepter that maps exceptions cause by illegal guid string to 400 status (BAD_REQUEST).
         singletons.add(new MalformedIdExceptionMapper());
-        singletons.add(new JaxbExceptionMapper());
-        singletons.add(new JaxbMarshallExceptionMapper());
         singletons.add(new JsonExceptionMapper());
         singletons.add(new MappingExceptionMapper());
         singletons.add(new IOExceptionMapper());
