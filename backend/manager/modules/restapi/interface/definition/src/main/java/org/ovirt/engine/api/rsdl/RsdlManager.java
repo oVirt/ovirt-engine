@@ -85,6 +85,11 @@ public class RsdlManager {
                 applicationMode == ApplicationMode.GlusterOnly ? ("/" + RsdlIOManager.GLUSTER_RSDL_RESOURCE_NAME)
                         : ("/" + RsdlIOManager.RSDL_RESOURCE_NAME);
 
+        // During runtime the RSDL document is loaded lazily, and the prefix is extracted from the request URL. As a
+        // result, depending on what URL is requested first, it may contain trailing slashes. So to make sure that the
+        // RSDL document will always be the same we need to explicitly remove the trailing slashes.
+        prefix = prefix.replaceAll("/+$", "");
+
         // Load the RSDL document into a DOM tree and then modify all the "href" attributes to include the prefix given
         // as parameter:
         Document document;
