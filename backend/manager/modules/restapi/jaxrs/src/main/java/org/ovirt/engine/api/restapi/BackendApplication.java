@@ -28,10 +28,6 @@ import org.apache.log4j.Logger;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
-import org.ovirt.engine.api.restapi.logging.RequestPayloadLogger;
-import org.ovirt.engine.api.restapi.logging.RequestVerbLogger;
-import org.ovirt.engine.api.restapi.logging.ResponsePayloadLogger;
-import org.ovirt.engine.api.restapi.logging.ResponseStatusLogger;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 import org.ovirt.engine.api.restapi.resource.BackendBookmarksResource;
 import org.ovirt.engine.api.restapi.resource.BackendCapabilitiesResource;
@@ -151,12 +147,6 @@ public class BackendApplication extends Application {
         processor.setCurrent(current);
         processor.setSessionHelper(sessionHelper);
         singletons.add(processor);
-
-        // Logging infrastructure:
-        singletons.add(new RequestVerbLogger());
-        singletons.add(new RequestPayloadLogger());
-        singletons.add(new ResponseStatusLogger());
-        singletons.add(new ResponsePayloadLogger());
 
         // Intercepter that maps exceptions cause by illegal guid string to 400 status (BAD_REQUEST).
         singletons.add(new MalformedIdExceptionMapper());
