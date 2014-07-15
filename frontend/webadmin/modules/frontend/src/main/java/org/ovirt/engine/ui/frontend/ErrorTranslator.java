@@ -206,7 +206,7 @@ public class ErrorTranslator {
      *            the string that may be a dynamic variable
      * @return true if input is dynamic variable, false otherwise.
      */
-    private final boolean isDynamicVariable(String strMessage) {
+    private boolean isDynamicVariable(String strMessage) {
         return strMessage.startsWith("$"); //$NON-NLS-1$
     }
 

@@ -205,7 +205,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return model;
     }
 
-    private final <T> Response fetchCreatedEntity(IResolver<T, Q> entityResolver,
+    private <T> Response fetchCreatedEntity(IResolver<T, Q> entityResolver,
             boolean block,
             Class<? extends BaseResource> suggestedParentType,
             VdcReturnValueBase createResult) {
@@ -247,7 +247,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         return createResult;
     }
 
-    private final R mapEntity(Class<? extends BaseResource> suggestedParentType, Q created) {
+    private R mapEntity(Class<? extends BaseResource> suggestedParentType, Q created) {
         R model = map(created);
         model = deprecatedPopulate(model, created);
         model = doPopulate(model, created);

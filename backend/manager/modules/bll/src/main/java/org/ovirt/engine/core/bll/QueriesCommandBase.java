@@ -49,7 +49,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
         user = initUser();
     }
 
-    private final VdcQueryType initQueryType() {
+    private VdcQueryType initQueryType() {
         try {
             String name = getClass().getSimpleName();
             name = name.substring(0, name.length() - QuerySuffix.length());
@@ -107,7 +107,7 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     * @return <code>true</code> if the query is OK (i.e., the issuing user has enough permissions to execute it), or
     *         <code>false</code> otherwise.
     */
-    private final boolean validatePermissions() {
+    private boolean validatePermissions() {
         // If the user requests filtered execution, his permissions are inconsequential.
         // If the query supports filtering it should be allowed, and if not - not.
         if (parameters.isFiltered()) {

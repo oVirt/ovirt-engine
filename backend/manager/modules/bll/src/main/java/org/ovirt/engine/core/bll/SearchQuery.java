@@ -232,12 +232,12 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return genericSearch(getDbFacade().getVmTemplateDao(), true);
     }
 
-    private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
             final boolean useCache) {
         return genericSearch(dao, useCache, null);
     }
 
-    private final <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
+    private <T extends IVdcQueryable> List<T> genericSearch(final SearchDAO<T> dao,
             final boolean useCache,
             final Filter<T> filter) {
         final QueryData data = initQueryData(useCache);

@@ -70,7 +70,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         return messages;
     }
 
-    private final List<String> translate(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
+    private List<String> translate(List<String> errorMsg, boolean changeIfNotFound, Locale locale) {
         List<String> translatedMessages = doTranslation(errorMsg, changeIfNotFound, locale);
         return ResolveMessages(translatedMessages);
     }
@@ -130,7 +130,7 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
         return translate(errorMsg, true, locale);
     }
 
-    private final String translate(String errorMsg, boolean changeIfNotFound, Locale locale) {
+    private String translate(String errorMsg, boolean changeIfNotFound, Locale locale) {
         String ret = "";
         Map<String, String> messages = getMessages(locale);
         if (messages != null && messages.containsKey(errorMsg)) {
