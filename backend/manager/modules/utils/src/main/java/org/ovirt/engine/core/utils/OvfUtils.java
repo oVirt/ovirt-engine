@@ -68,6 +68,7 @@ public class OvfUtils {
         List<OvfEntityData> ovfEntityDataFromTar = new ArrayList<>();
         InputStream is = new ByteArrayInputStream(tar);
 
+        log.infoFormat("Start fetching OVF files from tar file");
         Map<String, ByteBuffer> filesFromTar;
         try (TarInMemoryExport memoryTar = new TarInMemoryExport(is)) {
             filesFromTar = memoryTar.unTar();
@@ -96,10 +97,18 @@ public class OvfUtils {
                                 getEntityName(ovfData),
                                 archType,
                                 getEntityId(fileEntry.getKey()));
+                log.infoFormat("Retrieve OVF Entity from storage domain ID {0} for entity ID {1}, entity name {2} and VM Type of {3}",
+                        storageDomainId,
+                        getEntityId(fileEntry.getKey()),
+                        getEntityName(ovfData),
+                        vmType.name());
                 ovfEntityDataFromTar.add(ovfEntityData);
+            } else {
+                log.infoFormat("File {0} is not an OVF file, will be ignored.", fileEntry.getKey());
             }
         }
-
+        log.infoFormat("Finish to fetch OVF files from tar file. The number of OVF entities are {0}",
+                ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
     }
 
