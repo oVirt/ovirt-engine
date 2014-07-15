@@ -191,7 +191,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     protected List<OvfEntityData> getEntitiesFromStorageOvfDisk() {
         List<OvfEntityData> ovfEntitiesFromTar = Collections.emptyList();
-        boolean isOvfDataRetrieved = false;
         // Get all unregistered disks.
         List<Disk> unregisteredDisks = getBackend().runInternalQuery(VdcQueryType.GetUnregisteredDisks,
                 new GetUnregisteredDisksQueryParameters(getParameters().getStorageDomainId(),
@@ -214,19 +213,25 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                         ovfEntitiesFromTar =
                                 OvfUtils.getOvfEntities((byte[]) retrievedByteData.getReturnValue(),
                                         getParameters().getStorageDomainId());
-                        isOvfDataRetrieved  = true;
+                    } else {
+                        log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}",
+                                ovfDisk.getId(),
+                                getParameters().getStorageDomainId());
+                        AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
                     }
                 } catch (RuntimeException e) {
                     // We are catching RuntimeException, since the call for OvfUtils.getOvfEntities will throw
                     // a RuntimeException if there is a problem to untar the file.
                     log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}. Error: {2}",
                             ovfDisk.getId(),
-                            getParameters().getStorageDomainId(), e);
+                            getParameters().getStorageDomainId(),
+                            e);
+                    AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
                 }
             }
-        }
-        if (!isOvfDataRetrieved) {
-            AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
+        } else {
+            log.warnFormat("There are no OVF_STORE disks on storage domain id {0}",
+                    getParameters().getStorageDomainId());
         }
         return ovfEntitiesFromTar;
     }
