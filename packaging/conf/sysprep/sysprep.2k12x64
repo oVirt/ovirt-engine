@@ -15,7 +15,7 @@
                 </Credentials>
                 <DebugJoin>true</DebugJoin>
                 <JoinDomain>$JoinDomain$</JoinDomain>
-                <MachineObjectOU>$MachineObjectOU$<MachineObjectOU>
+                <MachineObjectOU>$MachineObjectOU$</MachineObjectOU>
             </Identification>
         </component>
     </settings>
