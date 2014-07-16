@@ -455,6 +455,7 @@ public class SetupNetworksHelper {
 
                 if (existingIface != null && existingIface.getNetworkImplementationDetails() != null
                         && !existingIface.getNetworkImplementationDetails().isInSync()) {
+                    iface.setVlanId(existingIface.getVlanId());
                     if (networkShouldBeSynced(networkName)) {
                         modifiedNetworks.add(network);
                         if (network.getQosId() != null && !hostNetworkQosSupported) {
