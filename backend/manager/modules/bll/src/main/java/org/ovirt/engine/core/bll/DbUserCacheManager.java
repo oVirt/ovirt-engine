@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.businessentities.DbGroup;
+import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -52,7 +55,15 @@ public class DbUserCacheManager {
      */
     @OnTimerMethodAnnotation("refreshAllUsers")
     public void refreshAllUsers() {
-      SyncUsers.sync(DbFacade.getInstance().getDbUserDao().getAll());
+        List<DbUser> activeUsers = new ArrayList<>();
+        for (DbUser dbUser : DbFacade.getInstance().getDbUserDao().getAll()) {
+            if (dbUser.isActive()) {
+                activeUsers.add(dbUser);
+            }
+        }
+        for (DbUser user : SyncUsers.sync(activeUsers)) {
+            DbFacade.getInstance().getDbUserDao().update(user);
+        }
     }
 
 }

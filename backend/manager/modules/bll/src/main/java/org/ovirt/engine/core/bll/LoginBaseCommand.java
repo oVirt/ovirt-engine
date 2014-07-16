@@ -266,6 +266,14 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
         DirectoryUtils.flatGroups(principalRecord);
         dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromPrincipal(AuthzUtils.getName(profile.getAuthz()), principalRecord));
+        if (!dbUser.isActive()) {
+            dbUser.setActive(true);
+            log.info(
+                    String.format("The user %1$s was reactivated as it was found in authz provider %2$s during login attempt.",
+                    dbUser.getLoginName(),
+                            dbUser.getDomain())
+                    );
+        }
         getDbUserDAO().saveOrUpdate(dbUser);
 
         // Check login permissions. We do it here and not via the

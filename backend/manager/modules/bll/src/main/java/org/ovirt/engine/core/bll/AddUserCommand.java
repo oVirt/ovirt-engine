@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
@@ -37,11 +38,20 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
 
     @Override
     protected void executeCommand() {
-        // First check if the user is already in the database, if it is we need to update, if not we need to insert:
         DbUser userToAdd = getParameters().getUserToAdd();
-        SyncUsers.sync(Arrays.asList(userToAdd));
-        setActionReturnValue(DbFacade.getInstance().getDbUserDao().getByExternalId(userToAdd.getDomain(), userToAdd.getExternalId()).getId());
-        setSucceeded(true);
+        for (DbUser syncedUser : SyncUsers.sync(Arrays.asList(userToAdd))) {
+            if (Guid.isNullOrEmpty(syncedUser.getId())) {
+                if (syncedUser.isActive()) {
+                    DbFacade.getInstance().getDbUserDao().save(syncedUser);
+                }
+            } else {
+                DbFacade.getInstance().getDbUserDao().update(syncedUser);
+            }
+        }
+        DbUser userFromDb =
+                DbFacade.getInstance().getDbUserDao().getByExternalId(userToAdd.getDomain(), userToAdd.getExternalId());
+        setActionReturnValue(userFromDb.getId());
+        setSucceeded(userFromDb.isActive());
     }
 
     @Override
