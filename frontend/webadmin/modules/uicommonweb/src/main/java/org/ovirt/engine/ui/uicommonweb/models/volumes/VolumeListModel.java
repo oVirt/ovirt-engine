@@ -391,14 +391,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
 
     @Override
     protected void syncSearch() {
-        SearchParameters tempVar = new SearchParameters(applySortOptions(getSearchString()), SearchType.GlusterVolume, isCaseSensitiveSearch());
+        SearchParameters tempVar = new SearchParameters(getSearchString(), SearchType.GlusterVolume, isCaseSensitiveSearch());
         tempVar.setMaxCount(getSearchPageSize());
         super.syncSearch(VdcQueryType.Search, tempVar);
-    }
-
-    @Override
-    public boolean supportsServerSideSorting() {
-        return true;
     }
 
     @Override

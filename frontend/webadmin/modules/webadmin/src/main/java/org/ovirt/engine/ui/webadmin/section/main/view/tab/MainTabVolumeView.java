@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -8,13 +9,13 @@ import org.ovirt.engine.core.common.asynctasks.gluster.GlusterTaskType;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterTaskSupport;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
-import org.ovirt.engine.core.searchbackend.gluster.GlusterVolumeConditionFieldAutoCompleter;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
+import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -55,7 +56,14 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new VolumeStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        VolumeStatusColumn statusColumn = new VolumeStatusColumn();
+        statusColumn.makeSortable(new Comparator<GlusterVolumeEntity>() {
+            @Override
+            public int compare(GlusterVolumeEntity o1, GlusterVolumeEntity o2) {
+                return GlusterVolumeUtils.getVolumeStatus(o1).ordinal() - GlusterVolumeUtils.getVolumeStatus(o2).ordinal();
+            }
+        });
+        getTable().addColumn(statusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> nameColumn = new TextColumnWithTooltip<GlusterVolumeEntity>() {
             @Override
@@ -63,7 +71,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return object.getName();
             }
         };
-        nameColumn.makeSortable(GlusterVolumeConditionFieldAutoCompleter.FIELDS.NAME.toString());
+        nameColumn.makeSortable();
 
         getTable().addColumn(nameColumn, constants.NameVolume(), "150px"); //$NON-NLS-1$
 
@@ -73,6 +81,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                 return object.getVdsGroupName();
             }
         };
+        clusterColumn.makeSortable();
         getTable().addColumn(clusterColumn, constants.clusterVolume(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
@@ -83,7 +92,7 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
                         return object.getVolumeType();
                     }
                 };
-        volumeTypeColumn.makeSortable(GlusterVolumeConditionFieldAutoCompleter.FIELDS.TYPE.toString());
+        volumeTypeColumn.makeSortable();
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
         getTable().addColumn(new VolumeBrickStatusColumn(), constants.bricksStatusVolume(), "150px"); //$NON-NLS-1$
