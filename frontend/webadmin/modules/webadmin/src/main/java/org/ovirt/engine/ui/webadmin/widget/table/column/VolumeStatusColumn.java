@@ -1,10 +1,9 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 
-import com.google.gwt.user.cellview.client.Column;
-
-public class VolumeStatusColumn extends Column<GlusterVolumeEntity, GlusterVolumeEntity> {
+public class VolumeStatusColumn extends SortableColumn<GlusterVolumeEntity, GlusterVolumeEntity> {
 
     public VolumeStatusColumn() {
         super(new VolumeStatusCell());
@@ -14,5 +13,4 @@ public class VolumeStatusColumn extends Column<GlusterVolumeEntity, GlusterVolum
     public GlusterVolumeEntity getValue(GlusterVolumeEntity object) {
         return object;
     }
-
 }

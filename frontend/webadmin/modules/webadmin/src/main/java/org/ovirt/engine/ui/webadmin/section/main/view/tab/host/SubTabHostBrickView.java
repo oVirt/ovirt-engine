@@ -26,7 +26,9 @@ public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBri
     void initTable(ApplicationConstants constants) {
         getTable().enableColumnResizing();
 
-        getTable().addColumn(new BrickStatusColumn(), constants.empty(), "30px"); //$NON-NLS-1$
+        BrickStatusColumn brickStatusColumn = new BrickStatusColumn();
+        brickStatusColumn.makeSortable();
+        getTable().addColumn(brickStatusColumn, constants.empty(), "30px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterBrickEntity> volNameColumn = new TextColumnWithTooltip<GlusterBrickEntity>() {
             @Override

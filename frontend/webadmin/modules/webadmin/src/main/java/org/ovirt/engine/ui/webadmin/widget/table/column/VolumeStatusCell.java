@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.webadmin.widget.table.column;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils;
+import org.ovirt.engine.ui.frontend.utils.GlusterVolumeUtils.VolumeStatus;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
@@ -23,62 +23,55 @@ public class VolumeStatusCell extends AbstractCell<GlusterVolumeEntity> {
 
     ApplicationTemplates applicationTemplates = ClientGinjectorProvider.getApplicationTemplates();
 
+    protected ImageResource downImage = resources.downImage();
+    protected ImageResource upImage = resources.upImage();
+    protected ImageResource allBricksDownImage = resources.volumeAllBricksDownWarning();
+    protected ImageResource volumeSomeBricksDownImage = resources.volumeBricksDownWarning();
+
+    protected ImageResource getStatusImage(VolumeStatus vStatus) {
+     // Find the image corresponding to the status of the volume:
+        ImageResource statusImage = null;
+
+        switch (vStatus) {
+        case DOWN:
+            return downImage;
+        case UP :
+            return upImage;
+        case ALL_BRICKS_DOWN :
+            return allBricksDownImage;
+        case SOME_BRICKS_DOWN :
+            return volumeSomeBricksDownImage;
+        }
+        return statusImage;
+    }
+
+    private String getToolTip(VolumeStatus status) {
+        switch (status) {
+        case DOWN:
+            return constants.down();
+        case UP:
+            return constants.up();
+        case SOME_BRICKS_DOWN:
+            return constants.volumeBricksDown();
+        case ALL_BRICKS_DOWN:
+            return constants.volumeAllBricksDown();
+        default:
+            return constants.down();
+        }
+    }
+
     @Override
     public void render(Context context, GlusterVolumeEntity volume, SafeHtmlBuilder sb) {
         // Nothing to render if no volume is provided:
         if (volume == null) {
             return;
         }
-        int brickCount = volume.getBricks().size();
-        int count = 0;
-
-        // Find the image corresponding to the status of the volume:
-        GlusterStatus status = volume.getStatus();
-        ImageResource statusImage = null;
-        String tooltip;
-
-        switch (status) {
-        case DOWN:
-            statusImage = resources.downImage();
-            tooltip = constants.down();
-            break;
-        case UP:
-            count = countDownBricks(volume);
-            if (count == 0) {
-                statusImage = resources.upImage();
-                tooltip = constants.up();
-            } else if (count < brickCount) {
-                statusImage = resources.volumeBricksDownWarning();
-                tooltip = constants.volumeBricksDown();
-            } else {
-                statusImage = resources.volumeAllBricksDownWarning();
-                tooltip = constants.volumeAllBricksDown();
-            }
-            break;
-        default:
-            statusImage = resources.downImage();
-            tooltip = constants.down();
-        }
-
+        VolumeStatus status = GlusterVolumeUtils.getVolumeStatus(volume);
+        ImageResource statusImage = getStatusImage(status);
+        String tooltip = getToolTip(status);
         // Generate the HTML for the image:
         SafeHtml statusImageHtml =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(statusImage).getHTML());
         sb.append(applicationTemplates.statusTemplate(statusImageHtml, tooltip));
-    }
-
-    public int countDownBricks(GlusterVolumeEntity volume) {
-        int downCount = 0;
-        int upCount = 0;
-        for (GlusterBrickEntity brick : volume.getBricks()) {
-            if (brick.getStatus() == GlusterStatus.UP) {
-                upCount++;
-            } else {
-                downCount++;
-            }
-            if (upCount > 0 && downCount > 0) {
-                return downCount;
-            }
-        }
-        return downCount;
     }
 }
