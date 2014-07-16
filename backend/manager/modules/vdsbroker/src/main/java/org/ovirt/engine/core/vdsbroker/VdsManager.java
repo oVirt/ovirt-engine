@@ -196,8 +196,9 @@ public class VdsManager {
         // Get the values of the timeouts:
         int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
         int connectionTimeOut = Config.<Integer> getValue(ConfigValues.vdsConnectionTimeout) * 1000;
+        int heartbeat = Config.<Integer> getValue(ConfigValues.vdsHeartbeatInSeconds) * 1000;
         int clientRetries = Config.<Integer> getValue(ConfigValues.vdsRetries);
-        _vdsProxy = TransportFactory.createVdsServer(_vds.getProtocol(), _vds.getHostName(), _vds.getPort(), clientTimeOut, connectionTimeOut, clientRetries);
+        _vdsProxy = TransportFactory.createVdsServer(_vds.getProtocol(), _vds.getHostName(), _vds.getPort(), clientTimeOut, connectionTimeOut, clientRetries, heartbeat);
     }
 
     public void updateVmDynamic(VmDynamic vmDynamic) {

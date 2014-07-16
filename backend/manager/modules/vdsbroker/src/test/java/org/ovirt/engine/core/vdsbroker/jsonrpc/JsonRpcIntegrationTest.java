@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
-import static junit.framework.Assert.assertTrue;
+import static org.junit.Assert.assertTrue;
 
 import java.util.Map;
 import java.util.concurrent.ExecutionException;
@@ -27,7 +27,7 @@ public class JsonRpcIntegrationTest {
 
     @Test
     public void testGetVdsCapabilities() throws InterruptedException, ExecutionException, ClientConnectionException {
-        JsonRpcClient client = JsonRpcUtils.createStompClient(HOST_ADDRESS, PORT, TIMEOUT, 0, TIMEOUT, true);
+        JsonRpcClient client = JsonRpcUtils.createStompClient(HOST_ADDRESS, PORT, TIMEOUT, 0, TIMEOUT, TIMEOUT, true);
         final JsonRpcRequest request = new RequestBuilder("Host.getCapabilities").build();
         Map<String, Object> map = new FutureMap(client, request);
         assertTrue(map.isEmpty());
