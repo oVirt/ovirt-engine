@@ -49,6 +49,13 @@ public enum ConfigValues {
     vdsRetries,
 
     /**
+     * Timeout in seconds how often we should receive heart-beat.
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("10")
+    vdsHeartbeatInSeconds,
+
+    /**
      * Timeout for establishment of connections with hosts. This should be quite
      * small, a few seconds at most, as it the TCP handshake with hosts should
      * be very quick in most networks.

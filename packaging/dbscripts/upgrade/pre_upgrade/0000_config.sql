@@ -640,6 +640,7 @@ select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs
 select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.4');
 select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.5');
 select fn_db_add_config_value('CustomVdsFenceType','','general');
+select fn_db_add_config_value('vdsHeartbeatInSeconds','10','general');
 select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
 select fn_db_add_config_value('VdsLocalDisksCriticallyLowFreeSpace','100','general');
 select fn_db_add_config_value('VdsLocalDisksLowFreeSpace','500','general');

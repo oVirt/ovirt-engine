@@ -15,11 +15,11 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class TransportFactory {
     public static IIrsServer createIrsServer(VdsProtocol vdsProtocol, String hostname, int port, int clientTimeOut,
-            int connectionTimeOut, int clientRetries) {
+            int connectionTimeOut, int clientRetries, int heartbeat) {
         IIrsServer irsServer = null;
         if (VdsProtocol.STOMP == vdsProtocol) {
             irsServer = new JsonRpcIIrsServer(JsonRpcUtils.createStompClient(hostname,
-                    port, connectionTimeOut, clientTimeOut, clientRetries,
+                    port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)));
         } else if (VdsProtocol.XML == vdsProtocol){
             Pair<IrsServerConnector, HttpClient> returnValue =
@@ -32,11 +32,11 @@ public class TransportFactory {
     }
 
     public static IVdsServer createVdsServer(VdsProtocol vdsProtocol, String hostname, int port, int clientTimeOut,
-            int connectionTimeOut, int clientRetries) {
+            int connectionTimeOut, int clientRetries, int heartbeat) {
         IVdsServer vdsServer = null;
         if (VdsProtocol.STOMP == vdsProtocol) {
             vdsServer = new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname,
-                    port, connectionTimeOut, clientTimeOut, clientRetries,
+                    port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
                     Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)));
         } else if (VdsProtocol.XML == vdsProtocol) {
             Pair<VdsServerConnector, HttpClient> returnValue =
