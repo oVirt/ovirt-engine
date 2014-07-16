@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.config.Config;
@@ -21,7 +22,11 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
      *            command parameters
      */
     public SshSoftFencingCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public SshSoftFencingCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     /**
