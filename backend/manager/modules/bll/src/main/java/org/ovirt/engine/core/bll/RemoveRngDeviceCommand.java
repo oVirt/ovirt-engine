@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
+@InternalCommandAttribute
 public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
     RemoveRngDeviceCommand(RngDeviceParameters parameters) {

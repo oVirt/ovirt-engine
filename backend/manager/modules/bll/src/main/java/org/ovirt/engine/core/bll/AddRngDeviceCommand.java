@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
+@InternalCommandAttribute
 public class AddRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
     public AddRngDeviceCommand(RngDeviceParameters parameters) {
