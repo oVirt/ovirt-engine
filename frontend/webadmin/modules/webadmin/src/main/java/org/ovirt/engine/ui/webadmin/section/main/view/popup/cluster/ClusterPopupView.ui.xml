@@ -268,6 +268,18 @@
                         </t:content>
                     </t:DialogTab>
                 </t:tab>
+                <t:tab>
+                    <t:DialogTab ui:field="fencingPolicyTab">
+                        <t:content>
+                            <g:FlowPanel addStyleNames="cvp_fencingPolicyContent_pfly_fix">
+                                <g:HorizontalPanel>
+                                    <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" />
+                                    <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" addStyleNames="cpv_skipFencingIfSDActiveInfo_pfly_fix" />
+                                </g:HorizontalPanel>
+                            </g:FlowPanel>
+                        </t:content>
+                    </t:DialogTab>
+                </t:tab>
             </t:DialogTabPanel>
         </d:content>
     </d:SimpleDialogPanel>

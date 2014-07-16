@@ -3681,6 +3681,18 @@ public class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.SerialNumberPolicySupported, version);
     }
 
+    public boolean isSkipFencingIfSDActiveSupported(String version) {
+        boolean result = false;
+        if (version != null) {
+            Boolean b = (Boolean) getConfigValuePreConverted(
+                    ConfigurationValues.SkipFencingIfSDActiveSupported,
+                    version
+            );
+            result = (b != null) && b;
+        }
+        return result;
+    }
+
     public boolean isBootMenuSupported(String version) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.BootMenuSupported, version);
     }
