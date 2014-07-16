@@ -2401,10 +2401,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Data Center must have at least one quota associated with it. Please try to add another Quota, or change the existing one.")
     String ACTION_TYPE_FAILED_DATA_CENTER_MUST_HAVE_AT_LEAST_ONE_QUOTA();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Quota has no sufficient storage resources.")
+    @DefaultStringValue("Cannot ${action} ${type}. Quota has insufficient storage resources.")
     String ACTION_TYPE_FAILED_QUOTA_STORAGE_LIMIT_EXCEEDED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Quota has no sufficient cluster resources.")
+    @DefaultStringValue("Cannot ${action} ${type}. Quota has insufficient cluster resources.")
     String ACTION_TYPE_FAILED_QUOTA_VDS_GROUP_LIMIT_EXCEEDED();
 
     @DefaultStringValue("Cannot ${action} ${type}. The user is not a consumer of the Quota assigned to the resource.")
