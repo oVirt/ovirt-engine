@@ -11,7 +11,6 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryUtils;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
@@ -22,7 +21,8 @@ public class SyncUsers {
 
     private static final Log log = LogFactory.getLog(SyncUsers.class);
 
-    public static void sync(List<DbUser> dbUsers) {
+    public static List<DbUser> sync(List<DbUser> dbUsers) {
+        List<DbUser> usersToUpdate = new ArrayList<>();
         Map<String, Map<String, Set<String>>> authzToNamespaceToUserIds = new HashMap<>();
         Map<DirectoryEntryKey, DbUser> originalDbUsersMap = new HashMap<>();
         Map<String, List<DbUser>> dbUsersPerAuthz = new HashMap<>();
@@ -64,14 +64,14 @@ public class SyncUsers {
                             log.info(String.format("The user %1$s from authz extension %2$s got updated since last interval",
                                     activeUser.getLoginName(),
                                     activeUser.getDomain()));
-                            DbFacade.getInstance().getDbUserDao().saveOrUpdate(activeUser);
+                            usersToUpdate.add(activeUser);
                         }
                     } else {
                         log.info(String.format("The user %1$s from authz extension %2$s could not be found, and will be marked as inactive",
                                 dbUser.getLoginName(),
                                 dbUser.getDomain()));
                         dbUser.setActive(false);
-                        DbFacade.getInstance().getDbUserDao().saveOrUpdate(dbUser);
+                        usersToUpdate.add(dbUser);
                     }
                 }
             } catch (Exception ex) {
@@ -80,5 +80,6 @@ public class SyncUsers {
                 log.debug("", ex);
             }
         }
+        return usersToUpdate;
     }
 }
