@@ -347,6 +347,18 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelCheckBoxOnlyEditor spiceProxyOverrideEnabled;
 
+    @UiField
+    @Ignore
+    DialogTab fencingPolicyTab;
+
+    @UiField(provided = true)
+    InfoIcon skipFencingIfSDActiveInfo;
+
+    @UiField(provided = true)
+    @Path(value = "skipFencingIfSDActiveEnabled.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor skipFencingIfSDActiveCheckBox;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -450,6 +462,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         spiceProxyEditor.setLabel(constants.overriddenSpiceProxyAddress());
 
         consoleTab.setLabel(constants.consoleTabLabel());
+
+        fencingPolicyTab.setLabel(constants.fencingPolicyTabLabel());
+
+        skipFencingIfSDActiveCheckBox.setLabel(constants.skipFencingIfSDActive());
     }
 
     private void initRadioButtonEditors() {
@@ -531,6 +547,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         rngRandomSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
         rngHwrngSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
+
+        skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
@@ -546,6 +565,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         label.setWidth("250px"); //$NON-NLS-1$
         spiceProxyOverrideEnabled = new EntityModelCheckBoxOnlyEditor();
         spiceProxyEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(label, spiceProxyOverrideEnabled);
+
+        skipFencingIfSDActiveInfo = new InfoIcon(
+                templates.italicFixedWidth("400px", constants.skipFencingIfSDActiveInfo()), //$NON-NLS-1$
+                resources);
     }
 
     @Override
@@ -559,6 +582,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
             resiliencePolicyTab.setVisible(false);
             clusterPolicyTab.setVisible(false);
             consoleTab.setVisible(false);
+            fencingPolicyTab.setVisible(false);
             dataCenterPanel.addStyleName(style.generalTabTopDecoratorEmpty());
         }
     }
@@ -658,6 +682,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 }
             }
         });
+        object.getSkipFencingIfSDActiveEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateFencingPolicyTabVisibility(object);
+            }
+        });
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {
@@ -686,6 +716,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                     .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
                             String.valueOf(object.getMemoryOverCommit()))));
         }
+    }
+
+    private void updateFencingPolicyTabVisibility(ClusterModel object) {
+        fencingPolicyTab.setVisible(
+                object.getSkipFencingIfSDActiveEnabled().getIsChangable()
+        );
     }
 
     @Override

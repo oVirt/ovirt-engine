@@ -772,6 +772,16 @@ public class ClusterModel extends EntityModel<VDSGroup>
         }
     }
 
+    private EntityModel<Boolean> skipFencingIfSDActiveEnabled;
+
+    public EntityModel<Boolean> getSkipFencingIfSDActiveEnabled() {
+        return skipFencingIfSDActiveEnabled;
+    }
+
+    public void setSkipFencingIfSDActiveEnabled(EntityModel<Boolean> skipFencingIfSDActiveEnabled) {
+        this.skipFencingIfSDActiveEnabled = skipFencingIfSDActiveEnabled;
+    }
+
     public ClusterModel()
     {
         super();
@@ -803,6 +813,8 @@ public class ClusterModel extends EntityModel<VDSGroup>
         setSpiceProxy(new EntityModel<String>());
         getSpiceProxy().setIsChangable(false);
 
+        setSkipFencingIfSDActiveEnabled(new EntityModel<Boolean>());
+        getSkipFencingIfSDActiveEnabled().setEntity(true);
 
         setEnableOvirtService(new EntityModel());
         setEnableGlusterService(new EntityModel());
@@ -1215,6 +1227,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getComment().setEntity(getEntity().getComment());
 
         initSpiceProxy();
+        getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
 
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
@@ -1403,6 +1416,8 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         setRngSourcesCheckboxes(version);
 
+        updateFencingPolicyContent(version);
+
         boolean isSmallerThanVersion3_4 = version.compareTo(Version.v3_4) < 0;
         getEnableKsm().setIsChangable(!isSmallerThanVersion3_4);
         getEnableKsm().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().ksmNotAvailable());
@@ -1458,6 +1473,21 @@ public class ClusterModel extends EntityModel<VDSGroup>
             getRngHwrngSourceRequired().setEntity(false);
             getRngRandomSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
             getRngHwrngSourceRequired().setChangeProhibitionReason(ConstantsManager.getInstance().getConstants().rngNotSupportedByClusterCV());
+        }
+    }
+
+    private void updateFencingPolicyContent(Version ver) {
+        boolean supported = AsyncDataProvider.isSkipFencingIfSDActiveSupported(ver.getValue());
+        getSkipFencingIfSDActiveEnabled().setIsChangable(supported);
+        if (supported) {
+            if (getEntity() == null) {
+                // this can happen when creating new cluster and cluster dialog is shown
+                getSkipFencingIfSDActiveEnabled().setEntity(true);
+            } else {
+                getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
+            }
+        } else {
+            getSkipFencingIfSDActiveEnabled().setEntity(false);
         }
     }
 

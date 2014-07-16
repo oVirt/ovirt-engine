@@ -208,7 +208,7 @@ div.avw_contentWidget_pfly_fix {
         top: -32px;
     }
 }
-.cvp_consoleContent_pfly_fix, .cvp_clusterPolicyContent_pfly_fix {
+.cvp_consoleContent_pfly_fix, .cvp_clusterPolicyContent_pfly_fix, .cvp_fencingPolicyContent_pfly_fix {
     padding-top: 5px;
 }
 .cpv_spiceProxyEnabledCheckbox_pfly_fix span.gwt-CheckBox {
@@ -418,6 +418,11 @@ a.dropdown-toggle {
 .cpv_infoIcon_pfly_fix {
     position: relative;
     top: -3px;
+    left: 5px;
+}
+.cpv_skipFencingIfSDActiveInfo_pfly_fix {
+    position: relative;
+    top: 5px;
     left: 5px;
 }
 .appv_searchButton_pfly_fix {

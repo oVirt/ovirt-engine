@@ -755,6 +755,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         if (model.getSpiceProxyEnabled().getEntity()) {
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
+
+        cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
+
         cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
 

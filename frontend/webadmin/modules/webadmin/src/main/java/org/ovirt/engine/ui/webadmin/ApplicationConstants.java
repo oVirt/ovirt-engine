@@ -800,6 +800,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Define SPICE proxy for Cluster")
     String clusterSpiceProxyEnable();
 
+    @DefaultStringValue("Skip fencing if host has live lease on storage")
+    String skipFencingIfSDActive();
+
     @DefaultStringValue("Name")
     String bookmarkPopupNameLabel();
 
@@ -3604,6 +3607,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Console")
     String consoleTabLabel();
 
+    @DefaultStringValue("Fencing Policy")
+    String fencingPolicyTabLabel();
+
     @DefaultStringValue("Name")
     String nameAffinityGroup();
 
@@ -3743,4 +3749,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Save As Pdf")
     String exportToPdf();
+
+    @DefaultStringValue("This will skip fencing for a Host that has live lease on Storage Domains")
+    String skipFencingIfSDActiveInfo();
 }

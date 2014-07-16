@@ -3671,6 +3671,18 @@ public final class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.BootMenuSupported, version);
     }
 
+    public static boolean isSkipFencingIfSDActiveSupported(String version) {
+        boolean result = false;
+        if (version != null) {
+            Boolean b = (Boolean) getConfigValuePreConverted(
+                    ConfigurationValues.SkipFencingIfSDActiveSupported,
+                    version
+            );
+            result = (b != null) && b;
+        }
+        return result;
+    }
+
     public static boolean isSpiceFileTransferToggleSupported(String version) {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.SpiceFileTransferToggleSupported, version);
     }
