@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
@@ -361,9 +360,8 @@ public class BackendStorageDomainVmResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
-                                       control.createMock(VmStatistics.class),
-                                       index);
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        return setUpEntityExpectations(vm, vm.getStatisticsData(), index);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.VM> setUpVms(boolean notFound) {

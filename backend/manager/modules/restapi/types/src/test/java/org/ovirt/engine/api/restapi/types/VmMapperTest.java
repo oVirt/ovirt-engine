@@ -270,22 +270,6 @@ public class VmMapperTest extends
     }
 
     @Test
-    public void testMapOriginTypeRhev() {
-        String s = VmMapper.map(OriginType.RHEV, null);
-        assertEquals(s, "rhev");
-        OriginType s2 = VmMapper.map(s, OriginType.RHEV);
-        assertEquals(s2, OriginType.RHEV);
-    }
-
-    @Test
-    public void testMapOriginTypeOvirt() {
-        String s = VmMapper.map(OriginType.OVIRT, null);
-        assertEquals(s, "ovirt");
-        OriginType s2 = VmMapper.map(s, OriginType.OVIRT);
-        assertEquals(s2, OriginType.OVIRT);
-    }
-
-    @Test
     public void testMapHostId() {
         org.ovirt.engine.core.common.businessentities.VM entity =
                 new org.ovirt.engine.core.common.businessentities.VM();

@@ -2669,38 +2669,11 @@
 
   <xs:complexType name="Template">
     <xs:complexContent>
-      <xs:extension base="BaseResource">
+      <xs:extension base="VmBase">
         <xs:sequence>
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="type" type="xs:string" minOccurs="0"/>
-          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="memory" type="xs:long" minOccurs="0"/>
-          <xs:element name="cpu" type="CPU" minOccurs="0"/>
-          <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="bios" type="Bios" minOccurs="0" maxOccurs="1" />
-          <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
-          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="creation_time" type="xs:dateTime" minOccurs="0"/>
-          <xs:element name="origin" type="xs:string" minOccurs="0"/>
-          <xs:element name="high_availability" type="HighAvailability" minOccurs="0"/>
-          <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
-          <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
-          <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
-          <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
           <xs:element name="version" type="TemplateVersion" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
-          <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3062,6 +3035,47 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:complexType name="VmBase">
+    <xs:annotation>
+      <xs:appinfo>
+        <jaxb:class name="VmBase" />
+      </xs:appinfo>
+    </xs:annotation>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="type" type="xs:string" minOccurs="0"/>
+          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="memory" type="xs:long" minOccurs="0"/>
+          <xs:element name="cpu" type="CPU" minOccurs="0"/>
+          <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="bios" type="Bios" minOccurs="0" maxOccurs="1" />
+          <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
+          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="creation_time" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="origin" type="xs:string" minOccurs="0"/>
+          <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
+          <xs:element name="high_availability" type="HighAvailability" minOccurs="0"/>
+          <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
+          <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:element name="vms" type="VMs"/>
   <xs:element name="vm" type="VM"/>
 
@@ -3072,34 +3086,14 @@
       </xs:appinfo>
     </xs:annotation>
     <xs:complexContent>
-      <xs:extension base="BaseResource">
+      <xs:extension base="VmBase">
         <xs:sequence>
-          <xs:element name="type" type="xs:string" minOccurs="0"/>
-          <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
           <xs:element name="stop_reason" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="memory" type="xs:long" minOccurs="0"/>
-          <xs:element name="cpu" type="CPU" minOccurs="0"/>
-          <xs:element name="cpu_shares" type="xs:int" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="bios" type="Bios" minOccurs="0" maxOccurs="1" />
-          <xs:element name="os" type="OperatingSystem" minOccurs="0"/>
-          <xs:element name="high_availability" type="HighAvailability" minOccurs="0"/>
-          <xs:element name="display" type="Display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="instance_type" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="start_time" type="xs:dateTime" minOccurs="0"/>
           <xs:element name="stop_time" type="xs:dateTime" minOccurs="0"/>
-          <xs:element name="creation_time" type="xs:dateTime" minOccurs="0"/>
-          <xs:element name="origin" type="xs:string" minOccurs="0"/>
-          <xs:element name="stateless" type="xs:boolean" minOccurs="0"/>
-          <xs:element name="delete_protected" type="xs:boolean" minOccurs="0"/>
-          <xs:element ref="sso" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="console" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>
           <xs:element name="payloads" type="Payloads" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>
@@ -3112,11 +3106,6 @@
           <xs:element name="memory_policy" type="MemoryPolicy" minOccurs="0" maxOccurs="1"/>
           <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
-          <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:appinfo>
@@ -3136,10 +3125,8 @@
           <xs:element ref="reported_devices" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="watchdogs" minOccurs="0" maxOccurs="1"/>
           <xs:element name="use_latest_template_version" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="next_run_configuration_exists" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="numa_tune_mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

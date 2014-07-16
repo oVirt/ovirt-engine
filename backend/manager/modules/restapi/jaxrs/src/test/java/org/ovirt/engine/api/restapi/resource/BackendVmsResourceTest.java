@@ -45,11 +45,11 @@ import org.ovirt.engine.core.common.businessentities.ConfigurationType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -544,19 +544,15 @@ public class BackendVmsResourceTest
         org.ovirt.engine.core.common.businessentities.VM vmConfiguration = getEntity(0);
         Map<Guid, org.ovirt.engine.core.common.businessentities.Disk> diskImageMap = new HashMap<Guid, org.ovirt.engine.core.common.businessentities.Disk>();
         diskImageMap.put(Guid.newGuid(), new DiskImage());
-        expect(vmConfiguration.getDiskMap()).andReturn(diskImageMap).anyTimes();
-        VmStatic vmStatic = new VmStatic();
-        vmStatic.setId(GUIDS[0]);
-        vmStatic.setName(NAMES[0]);
-        expect(vmConfiguration.getStaticData()).andReturn(vmStatic).anyTimes();
+        vmConfiguration.setDiskMap(diskImageMap);
         setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
         setUpGetCertuficateExpectations(1, 2);
-        setUpGetConsoleExpectations(new int[]{0, 2});
-        setUpGetVmOvfExpectations(new int[]{2});
-        setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetRngDeviceExpectations(new int[]{2});
+        setUpGetConsoleExpectations(2, 2);
+        setUpGetVmOvfExpectations(2);
+        setUpGetVirtioScsiExpectations(2);
+        setUpGetRngDeviceExpectations(2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmConfigurationBySnapshot,
                 IdQueryParameters.class,
                 new String[] { "Id" },
@@ -586,13 +582,12 @@ public class BackendVmsResourceTest
     @Test
     public void testClone() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        setUriInfo(setUpBasicUriExpectations());
         setUpGetPayloadExpectations(1, 2);
         setUpGetBallooningExpectations(1, 2);
-        setUpGetConsoleExpectations(new int[]{1, 2});
-        setUpGetVmOvfExpectations(new int[]{2});
-        setUpGetVirtioScsiExpectations(new int[]{2});
-        setUpGetRngDeviceExpectations(new int[]{2});
+        setUpGetConsoleExpectations(1, 2);
+        setUpGetVmOvfExpectations(2);
+        setUpGetVirtioScsiExpectations(2);
+        setUpGetRngDeviceExpectations(2);
         setUpGetCertuficateExpectations(1, 2);
         setUpEntityQueryExpectations(VdcQueryType.GetVmTemplate,
                                      GetVmTemplateParameters.class,
@@ -645,9 +640,9 @@ public class BackendVmsResourceTest
                                     getVdsGroupEntity());
 
         org.ovirt.engine.core.common.businessentities.VM vm = getEntity(2);
-        expect(vm.getVmtGuid()).andReturn(GUIDS[1]).anyTimes();
-        expect(vm.isStateless()).andReturn(true).anyTimes();
-        expect(vm.isUseLatestVersion()).andReturn(true).anyTimes();
+        vm.setVmtGuid(GUIDS[1]);
+        vm.setStateless(true);
+        vm.setUseLatestVersion(true);
 
         setUpCreationExpectations(VdcActionType.AddVm,
                 VmManagementParametersBase.class,
@@ -1328,19 +1323,20 @@ public class BackendVmsResourceTest
 
     static org.ovirt.engine.core.common.businessentities.VM setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics, int index, Guid vmId) {
-        expect(entity.getId()).andReturn(vmId).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getVmDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
-        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getUsageMemPercent()).andReturn(Integer.valueOf(20)).anyTimes();
-        expect(entity.getDisplayType()).andReturn(DisplayType.vnc).anyTimes();
-        expect(entity.getDisplaySecurePort()).andReturn(5900).anyTimes();
-        expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
-        expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
-        expect(entity.getRunOnVdsName()).andReturn(NAMES[NAMES.length -1]).anyTimes();
-        expect(entity.isHostedEngine()).andReturn(index == 0).anyTimes();
+        entity.setId(vmId);
+        entity.setVdsGroupId(GUIDS[2]);
+        entity.setName(NAMES[index]);
+        entity.setVmDescription(DESCRIPTIONS[index]);
+        entity.setCpuPerSocket(4);
+        entity.setNumOfSockets(2);
+        entity.setUsageMemPercent(20);
+        entity.setDisplayType(DisplayType.vnc);
+        entity.setDisplaySecurePort(5900);
+        entity.setNumOfMonitors(2);
+        entity.setVmType(VmType.Server);
+        entity.setRunOnVdsName(NAMES[NAMES.length -1]);
+        entity.setOrigin(index == 0 ? OriginType.HOSTED_ENGINE : OriginType.OVIRT);
+        entity.setBootSequence(null);
         setUpStatisticalEntityExpectations(entity, statistics);
         return entity;
     }
@@ -1352,27 +1348,27 @@ public class BackendVmsResourceTest
 
     static org.ovirt.engine.core.common.businessentities.VmTemplate setUpEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VmTemplate entity, int index) {
-        expect(entity.getId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getVdsGroupId()).andReturn(GUIDS[2]).anyTimes();
-        expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
-        expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
-        expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
-        expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getDefaultDisplayType()).andReturn(DisplayType.vnc).anyTimes();
-        expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
-        expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
+        entity.setId(GUIDS[index]);
+        entity.setVdsGroupId(GUIDS[2]);
+        entity.setName(NAMES[index]);
+        entity.setDescription(DESCRIPTIONS[index]);
+        entity.setCpuPerSocket(4);
+        entity.setNumOfSockets(2);
+        entity.setDefaultDisplayType(DisplayType.vnc);
+        entity.setNumOfMonitors(2);
+        entity.setVmType(VmType.Server);
         return entity;
     }
 
     static org.ovirt.engine.core.common.businessentities.VM setUpStatisticalEntityExpectations(
             org.ovirt.engine.core.common.businessentities.VM entity, VmStatistics statistics) {
-        expect(entity.getMemSizeMb()).andReturn(10).anyTimes();
-        expect(entity.getStatisticsData()).andReturn(statistics).anyTimes();
-        expect(statistics.getusage_mem_percent()).andReturn(20).anyTimes();
-        expect(statistics.getcpu_user()).andReturn(Double.valueOf(30L)).anyTimes();
-        expect(statistics.getcpu_sys()).andReturn(Double.valueOf(40L)).anyTimes();
-        expect(statistics.getusage_cpu_percent()).andReturn(50).anyTimes();
-        expect(entity.getMigrationProgressPercent()).andReturn(50).anyTimes();
+        entity.setVmMemSizeMb(10);
+        entity.setStatisticsData(statistics);
+        statistics.setusage_mem_percent(20);
+        statistics.setcpu_user(30.0);
+        statistics.setcpu_sys(40.0);
+        statistics.setusage_cpu_percent(50);
+        entity.setMigrationProgressPercent(50);
         return entity;
     }
 
@@ -1380,7 +1376,7 @@ public class BackendVmsResourceTest
         VM model = new VM();
         model.setName(NAMES[index]);
         model.setDescription(DESCRIPTIONS[index]);
-        model.setId(GUIDS[0].toString());
+        model.setId(GUIDS[index].toString());
         model.setCluster(new Cluster());
         model.getCluster().setId(GUIDS[2].toString());
         return model;
@@ -1448,24 +1444,18 @@ public class BackendVmsResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
-        return setUpEntityExpectations(
-                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
-                control.createMock(VmStatistics.class),
-                index);
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        return setUpEntityExpectations(vm, vm.getStatisticsData(), index);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getEntityWithProvidedId(int index, Guid vmId) {
-        return setUpEntityExpectations(
-                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
-                control.createMock(VmStatistics.class),
-                index,
-                vmId);
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        return setUpEntityExpectations(vm, vm.getStatisticsData(), index, vmId);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VmTemplate getTemplateEntity(int index) {
-        return setUpEntityExpectations(
-                control.createMock(org.ovirt.engine.core.common.businessentities.VmTemplate.class),
-                index);
+        org.ovirt.engine.core.common.businessentities.VmTemplate template = new org.ovirt.engine.core.common.businessentities.VmTemplate();
+        return setUpEntityExpectations(template, index);
     }
 
     protected org.ovirt.engine.core.common.businessentities.VDSGroup getVdsGroupEntity() {

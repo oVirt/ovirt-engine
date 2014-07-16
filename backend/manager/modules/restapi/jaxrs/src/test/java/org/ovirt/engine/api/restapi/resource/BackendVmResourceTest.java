@@ -70,7 +70,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.GetVmOvfByVmIdParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -346,10 +345,10 @@ public class BackendVmResourceTest
         setUpGetPayloadExpectations(0, 2);
         setUpGetBallooningExpectations();
         setUpGetBallooningExpectations();
-        setUpGetConsoleExpectations(new int[]{0});
-        setUpGetVmOvfExpectations(new int[]{0});
-        setUpGetVirtioScsiExpectations(new int[] {0});
-        setUpGetRngDeviceExpectations(new int[]{0});
+        setUpGetConsoleExpectations(0);
+        setUpGetVmOvfExpectations(0);
+        setUpGetVirtioScsiExpectations(0);
+        setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
                                            new String[] {"ClusterId", "VmId"},
@@ -927,10 +926,8 @@ public class BackendVmResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM setUpStatisticalExpectations() throws Exception {
-        VmStatistics stats = control.createMock(VmStatistics.class);
-        org.ovirt.engine.core.common.businessentities.VM entity =
-            control.createMock(org.ovirt.engine.core.common.businessentities.VM.class);
-        setUpStatisticalEntityExpectations(entity, stats);
+        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        setUpStatisticalEntityExpectations(entity, entity.getStatisticsData());
         setUpGetEntityExpectations(1, false, entity);
         control.replay();
         return entity;
@@ -1019,15 +1016,13 @@ public class BackendVmResourceTest
 
     @Override
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
-        return setUpEntityExpectations(
-                control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
-                control.createMock(VmStatistics.class),
-                index);
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        return setUpEntityExpectations(vm, vm.getStatisticsData(), index);
     }
 
     protected void verifyModelOnNewCluster(VM model, int index) {
         assertNotNull(model.getCluster().getId());
-        assertEquals(GUIDS[2].toString(), model.getCluster().getId());
+        assertEquals(GUIDS[1].toString(), model.getCluster().getId());
         verifyModel(model, index);
     }
 

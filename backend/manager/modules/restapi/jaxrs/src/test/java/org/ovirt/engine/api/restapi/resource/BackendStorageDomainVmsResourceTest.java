@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.RemoveVmFromImportExportParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -123,9 +122,8 @@ public class BackendStorageDomainVmsResourceTest
     }
 
     protected org.ovirt.engine.core.common.businessentities.VM getEntity(int index) {
-        return setUpEntityExpectations(control.createMock(org.ovirt.engine.core.common.businessentities.VM.class),
-                                       control.createMock(VmStatistics.class),
-                                       index);
+        org.ovirt.engine.core.common.businessentities.VM vm = new org.ovirt.engine.core.common.businessentities.VM();
+        return setUpEntityExpectations(vm, vm.getStatisticsData(), index);
     }
 
     protected List<org.ovirt.engine.core.common.businessentities.VM> setUpVms() {
