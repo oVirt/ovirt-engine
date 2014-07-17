@@ -9,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
@@ -46,7 +47,7 @@ public class NicLabelModel extends ListModel<ListModel<String>> {
             containedIfaces.add(iface.getName());
         }
 
-        Collections.sort(originalLabels);
+        Collections.sort(originalLabels, new LexoNumericComparator());
         LinkedList<ListModel<String>> items = new LinkedList<ListModel<String>>();
         for (String label : originalLabels) {
             ListModel<String> labelModel = new ListModel<String>();

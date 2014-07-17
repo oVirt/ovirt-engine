@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.widget.host;
 import java.util.Arrays;
 import java.util.Set;
 
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.ui.common.widget.label.LabelWithCustomToolTip;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -49,7 +50,7 @@ public class InterfaceLabelWithToolTip extends Composite {
         }
 
         String[] sortedLabels = labels.toArray(new String[] {});
-        Arrays.sort(sortedLabels);
+        Arrays.sort(sortedLabels, new LexoNumericComparator());
 
         for (String label : sortedLabels) {
             if (isFirst) {
