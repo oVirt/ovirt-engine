@@ -1,6 +1,6 @@
 package org.ovirt.engine.extensions.aaa.builtin.internal;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Properties;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -57,7 +57,7 @@ public class InternalAuthn implements Extension {
 
     private void doLoad(ExtMap input, ExtMap output) {
         context = input.<ExtMap> get(Base.InvokeKeys.CONTEXT);
-        context.<List<String>> get(
+        context.<Collection<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
                 ).add("config.authn.user.password");
         context.mput(

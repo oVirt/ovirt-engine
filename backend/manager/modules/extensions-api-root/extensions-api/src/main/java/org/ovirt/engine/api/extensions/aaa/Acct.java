@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.extensions.aaa;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -192,8 +192,8 @@ public class Acct {
         public static final ExtKey NAME = new ExtKey("AAA_ACCT_OPERATION_RECORD_NAME", String.class, "47d9102d-6c70-46f8-a2ec-1e4e728c213b");
         /**
          * Parameters.
-         * List of {@link ExtMap}.
+         * Collection of {@link ExtMap}.
          */
-        public static final ExtKey PARAMETERS = new ExtKey("AAA_ACCT_OPERATION_RECORD_PARAMETERS", List/*<ExtMap>*/.class, "e752f6c5-2806-44e2-a80d-3f283aa8b54d");
+        public static final ExtKey PARAMETERS = new ExtKey("AAA_ACCT_OPERATION_RECORD_PARAMETERS", Collection/*<ExtMap>*/.class, "e752f6c5-2806-44e2-a80d-3f283aa8b54d");
     }
 }

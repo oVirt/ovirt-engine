@@ -5,6 +5,7 @@ import java.io.FileInputStream;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -149,7 +150,7 @@ public class ExtensionsManager extends Observable {
     private void dumpConfig(ExtensionProxy extension) {
         Logger logger = extension.getContext().<Logger> get(TRACE_LOG_CONTEXT_KEY);
         if (logger.isDebugEnabled()) {
-            List sensitive = extension.getContext().<List>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
+            Collection sensitive = extension.getContext().<Collection>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
             logger.debug("Config BEGIN");
             for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
                 logger.debug(
@@ -164,7 +165,7 @@ public class ExtensionsManager extends Observable {
         }
     }
 
-    private List<String> splitString(String s) {
+    private Collection<String> splitString(String s) {
         return new ArrayList<String>(Arrays.asList(s.trim().split("\\s*,\\s*", 0)));
     }
 
@@ -251,7 +252,7 @@ public class ExtensionsManager extends Observable {
     public List<ExtensionProxy> getExtensionsByService(String provides) {
         List<ExtensionProxy> results = new ArrayList<>();
         for (ExtensionEntry entry : initializedEntries.values()) {
-            if (entry.extension.getContext().<List> get(Base.ContextKeys.PROVIDES).contains(provides)) {
+            if (entry.extension.getContext().<Collection<String>> get(Base.ContextKeys.PROVIDES).contains(provides)) {
                 results.add(entry.extension);
             }
         }
@@ -305,7 +306,7 @@ public class ExtensionsManager extends Observable {
         entry.initialized = true;
         initializedEntries.put(extensionName, entry);
         synchronized (globalContext) {
-            globalContext.<List<ExtMap>> get(Base.GlobalContextKeys.EXTENSIONS).add(
+            globalContext.<Collection<ExtMap>> get(Base.GlobalContextKeys.EXTENSIONS).add(
                     new ExtMap().mput(
                             Base.ExtensionRecord.INSTANCE_NAME,
                             entry.extension.getContext().get(Base.ContextKeys.INSTANCE_NAME)

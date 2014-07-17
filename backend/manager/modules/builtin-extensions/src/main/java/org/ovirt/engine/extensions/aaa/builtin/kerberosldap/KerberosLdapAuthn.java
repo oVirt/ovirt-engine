@@ -1,6 +1,6 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
@@ -52,7 +52,7 @@ public class KerberosLdapAuthn implements Extension {
         configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         Utils.setDefaults(configuration, getAuthzName());
         broker = LdapFactory.getInstance(getAuthzName());
-        context.<List<String>> get(
+        context.<Collection<String>> get(
                 Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS
                 ).add("config.authn.user.password");
         context.mput(
