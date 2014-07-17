@@ -31,6 +31,7 @@ import org.ovirt.engine.core.vdsbroker.SetNumberOfCpusVDSCommand;
 public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> extends VmManagementCommandBase<T> implements QuotaVdsDependent {
 
     public static final String LOGABLE_FIELD_NUMBER_OF_CPUS = "numberOfCpus";
+    public static final String LOGABLE_FIELD_PREVIOUS_NUMBER_OF_CPUS = "previousNumberOfCpus";
     public static final String LOGABLE_FIELD_ERROR_MESSAGE = "ErrorMessage";
 
     public HotSetNumberOfCpusCommand(T parameters) {
@@ -93,6 +94,7 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
     @Override
     public AuditLogType getAuditLogTypeValue() {
         addCustomValue(LOGABLE_FIELD_NUMBER_OF_CPUS, String.valueOf(getParameters().getVm().getNumOfCpus()));
+        addCustomValue(LOGABLE_FIELD_PREVIOUS_NUMBER_OF_CPUS, String.valueOf(getVm().getNumOfCpus()));
 
         if (getSucceeded()) {
             return AuditLogType.HOT_SET_NUMBER_OF_CPUS;
