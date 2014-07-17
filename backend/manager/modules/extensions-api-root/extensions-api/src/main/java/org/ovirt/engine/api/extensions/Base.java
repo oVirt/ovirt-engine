@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.extensions;
 
-import java.util.List;
+import java.util.Collection;
 import java.util.Properties;
 
 /**
@@ -157,7 +157,7 @@ public class Base {
          * Loaded extension list.
          * @see ExtensionRecord
          */
-        public static final ExtKey EXTENSIONS = new ExtKey("GLOBAL_EXTENSIONS", List/*<ExtMap>*/.class, "246498c0-2f4d-4135-8cb7-c5eabfd2f6ff");
+        public static final ExtKey EXTENSIONS = new ExtKey("GLOBAL_EXTENSIONS", Collection/*<ExtMap>*/.class, "246498c0-2f4d-4135-8cb7-c5eabfd2f6ff");
 
         /**
          * Application name.
@@ -186,17 +186,17 @@ public class Base {
         public static final ExtKey INTERFACE_VERSION_MAX = new ExtKey("EXTENSION_INTERFACE_VERSION_MAX", Integer.class, "f4cff49f-2717-4901-8ee9-df362446e3e7");
         /**
          * Sensitive configuration keys.
-         * List of String.
+         * Collection of String.
          * Values should not be printed.
          */
-        public static final ExtKey CONFIGURATION_SENSITIVE_KEYS = new ExtKey("EXTENSION_CONFIGURATION_SENSITIVE_KEYS", List/*<String>*/.class, "a456efa1-73ff-4204-9f9b-ebff01e35263");
+        public static final ExtKey CONFIGURATION_SENSITIVE_KEYS = new ExtKey("EXTENSION_CONFIGURATION_SENSITIVE_KEYS", Collection/*<String>*/.class, "a456efa1-73ff-4204-9f9b-ebff01e35263");
         /** Locale to use. */
         public static final ExtKey LOCALE = new ExtKey("EXTENSION_LOCALE", String.class, "0780b112-0ce0-404a-b85e-8765d778bb29");
         /**
          * Extensions' interfaces.
-         * List of String.
+         * Collection of String.
          */
-        public static final ExtKey PROVIDES = new ExtKey("EXTENSION_PROVIDES", List/*<String>*/.class, "8cf373a6-65b5-4594-b828-0e275087de91");
+        public static final ExtKey PROVIDES = new ExtKey("EXTENSION_PROVIDES", Collection/*<String>*/.class, "8cf373a6-65b5-4594-b828-0e275087de91");
         /** Extension instance name. */
         public static final ExtKey INSTANCE_NAME = new ExtKey("EXTENSION_INSTANCE_NAME", String.class, "65c67ff6-aeca-4bd5-a245-8674327f011b");
         /**
@@ -303,9 +303,9 @@ public class Base {
         public static final ExtKey INSTANCE_NAME = new ExtKey("EXTENSION_RECORD_INSTANCE_NAME", String.class, "6e1f2c27-b89e-42bd-94c1-e709eb8ce0d4");
         /**
          * Extensions' interfaces.
-         * List of String.
+         * Collection of String.
          */
-        public static final ExtKey PROVIDES = new ExtKey("EXTENSION_RECORD_PROVIDES", List/*<String>*/.class, "701129bb-5956-427a-b962-6b1c1a13e4e7");
+        public static final ExtKey PROVIDES = new ExtKey("EXTENSION_RECORD_PROVIDES", Collection/*<String>*/.class, "701129bb-5956-427a-b962-6b1c1a13e4e7");
     }
 
     /**

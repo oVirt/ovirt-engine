@@ -1,6 +1,6 @@
 package org.ovirt.engine.api.extensions.aaa;
 
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -28,7 +28,7 @@ public class Authn {
          * (unauthorized) response message as a value of the
          * WWW-Authenticate header.
          */
-        public static final ExtKey HTTP_AUTHENTICATION_SCHEME = new ExtKey("AAA_HTTP_AUTHENTICATION_SCHEME", List/*<String>*/.class, "c0a5c8b4-870b-436e-aeb9-1cd5307b2058");
+        public static final ExtKey HTTP_AUTHENTICATION_SCHEME = new ExtKey("AAA_HTTP_AUTHENTICATION_SCHEME", Collection/*<String>*/.class, "c0a5c8b4-870b-436e-aeb9-1cd5307b2058");
     }
 
     /**
@@ -84,16 +84,16 @@ public class Authn {
         public static final ExtKey AUTH_RECORD = new ExtKey("AAA_AUTHN_AUTH_RECORD", ExtMap.class, "e9462168-b53b-44ac-9af5-f25e1697173e");
         /**
          * Credentials challenge record.
-         * List of {@link ExtMap}
+         * Collection of {@link ExtMap}
          * @see CredentialsChallengeRecord
          */
-        public static final ExtKey CREDENTIALS_CHALLENGE_RECORD = new ExtKey("AAA_AUTHN_CREDENTIALS_CHALLENGE_RECORD", List/*<ExtMap>*/.class, "c3fce607-4a07-43a5-986c-399cbdb5ac90");
+        public static final ExtKey CREDENTIALS_CHALLENGE_RECORD = new ExtKey("AAA_AUTHN_CREDENTIALS_CHALLENGE_RECORD", Collection/*<ExtMap>*/.class, "c3fce607-4a07-43a5-986c-399cbdb5ac90");
         /**
          * Credentials challenge response record.
-         * List of {@link ExtMap}
+         * Collection of {@link ExtMap}
          * @see CredentialsChallengeResponseRecord
          */
-        public static final ExtKey CREDENTIALS_CHALLENGE_RESPONSE_RECORD = new ExtKey("AAA_AUTHN_CREDENTIALS_CHALLENGE_RESPONSE_RECORD", List/*<ExtMap>*/.class, "5b25f21e-f2df-4f50-a110-a60b360d67e8");
+        public static final ExtKey CREDENTIALS_CHALLENGE_RESPONSE_RECORD = new ExtKey("AAA_AUTHN_CREDENTIALS_CHALLENGE_RESPONSE_RECORD", Collection/*<ExtMap>*/.class, "5b25f21e-f2df-4f50-a110-a60b360d67e8");
     }
 
     /**

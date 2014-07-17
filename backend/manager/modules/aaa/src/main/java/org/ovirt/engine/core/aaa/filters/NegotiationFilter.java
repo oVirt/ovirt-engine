@@ -3,6 +3,7 @@ package org.ovirt.engine.core.aaa.filters;
 import java.io.IOException;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.List;
@@ -72,7 +73,7 @@ public class NegotiationFilter implements Filter {
      * stacks of profiles later when processing requests.
      */
     private void findNegotiatingProfiles(ServletRequest req) {
-        List<String> schemes = new ArrayList<String>();
+        Collection<String> schemes = new ArrayList<String>();
         if (profiles == null) {
             synchronized (this) {
                 if (profiles == null) {
@@ -84,7 +85,7 @@ public class NegotiationFilter implements Filter {
                             ExtMap authnContext = profile.getAuthn().getContext();
                             if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) != 0) {
                                 profiles.add(0, profile);
-                                schemes.addAll(authnContext.<List<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
+                                schemes.addAll(authnContext.<Collection<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
                             }
                         }
                     }
