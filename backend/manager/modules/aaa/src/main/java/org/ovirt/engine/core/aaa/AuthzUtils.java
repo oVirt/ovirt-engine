@@ -2,12 +2,22 @@ package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
+import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
+import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 
 public class AuthzUtils {
 
@@ -43,7 +53,52 @@ public class AuthzUtils {
             final ExtensionProxy extension,
             final String namespace,
             final Collection<String> ids) {
-                return findPrincipalsByIds(extension, namespace, ids, true, true);
+
+        Map<String, ExtMap> groupsCache = new HashMap<>();
+        Map<String, Set<String>> idsToFetchPerNamespace = new HashMap<String, Set<String>>();
+        Collection<ExtMap> principals = findPrincipalsByIds(extension, namespace, ids, true, false);
+        for (ExtMap principal : principals) {
+            for (ExtMap memberOf : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+                addIdToFetch(idsToFetchPerNamespace, memberOf);
+            }
+        }
+        while (!idsToFetchPerNamespace.isEmpty()) {
+            List<ExtMap> groups = new ArrayList<>();
+            for (Entry<String, Set<String>> entry : idsToFetchPerNamespace.entrySet()) {
+                groups.addAll(findGroupRecordsByIds(extension,
+                        entry.getKey(),
+                        entry.getValue(),
+                        true,
+                        false));
+            }
+            idsToFetchPerNamespace.clear();
+            for (ExtMap group : groups) {
+                groupsCache.put(group.<String> get(GroupRecord.ID), group);
+                for (ExtMap memberOf : group.get(GroupRecord.GROUPS, Collections.<ExtMap> emptyList())) {
+                    if (!groupsCache.containsKey(memberOf.get(GroupRecord.ID))) {
+                        addIdToFetch(idsToFetchPerNamespace, memberOf);
+                    }
+                }
+            }
+        }
+        // After the groups are fetched, the "group membership" tree for the principals should be modified accordingly.
+        for (ExtMap principal : principals) {
+            constructGroupsMembershipTree(principal, PrincipalRecord.GROUPS, groupsCache);
+        }
+        return principals;
+    }
+
+    private static void addIdToFetch(Map<String, Set<String>> idsToFetchPerNamespace, ExtMap memberOf) {
+        MultiValueMapUtils.addToMapOfSets(memberOf.<String>get(GroupRecord.NAMESPACE), memberOf.<String> get(GroupRecord.ID), idsToFetchPerNamespace);
+    }
+
+    private static void constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache) {
+        List<ExtMap> groups = new ArrayList<>();
+        for (ExtMap memberOf : entity.get(key, Collections.<ExtMap> emptyList())) {
+            constructGroupsMembershipTree(memberOf, GroupRecord.GROUPS, groupsCache);
+            groups.add(groupsCache.get(memberOf.get(GroupRecord.ID)));
+        }
+        entity.put(key, groups);
     }
 
     public static Collection<ExtMap> queryPrincipalRecords(
