@@ -17,12 +17,12 @@ import org.ovirt.engine.core.common.constants.SessionConstants;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SessionValidationFilter implements Filter {
 
-    private static final Log log = LogFactory.getLog(SessionValidationFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class);
 
 
     @Override
