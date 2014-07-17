@@ -366,6 +366,9 @@ install_artifacts:
 	sed -i \
 		's|<context-root>/ovirt-engine/api</context-root>|<context-root>/api</context-root>|' \
 		"$(DESTDIR)$(DATA_DIR)/legacy_restapi.war/WEB-INF/jboss-web.xml"
+	sed -i \
+		's|<param-value>Basic realm="RESTAPI"</param-value>|<param-value>Basic realm="ENGINE"</param-value>|' \
+		"$(DESTDIR)$(DATA_DIR)/legacy_restapi.war/WEB-INF/web.xml"
 	install -dm 0755 "$(DESTDIR)$(PKG_HTML_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*-javadoc.jar' -type f | grep -v tmp.repos | while read f; do \
 		comp="$$(basename "$${f}" | sed 's/-[0-9].*//')"; \

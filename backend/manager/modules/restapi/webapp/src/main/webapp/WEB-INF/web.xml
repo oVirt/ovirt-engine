@@ -91,7 +91,7 @@ limitations under the License.
 Add an init-param per each scheme -->
     <init-param>
       <param-name>scheme.basic_auth</param-name>
-      <param-value>Basic realm="ENGINE"</param-value>
+      <param-value>Basic realm="RESTAPI"</param-value>
     </init-param>
   </filter>
   <filter-mapping>
