@@ -13,26 +13,26 @@ public class FenceVdsActionParameters extends VdsActionParameters {
      *
      * If the user triggered this action, clear the flag.
      */
-    private boolean keepPolicyPMEnabled = false;
+    private boolean keepPolicyPMEnabled;
+
+    private FenceActionType action;
+
+    public FenceVdsActionParameters() {
+        this(null, FenceActionType.Restart);
+    }
 
     public FenceVdsActionParameters(Guid vdsId, FenceActionType action) {
-        super(vdsId);
-        _action = action;
+        this(vdsId, action, false);
     }
 
     public FenceVdsActionParameters(Guid vdsId, FenceActionType action, boolean keepPolicyPMEnabled) {
-        this(vdsId, action);
+        super(vdsId);
+        this.action = action;
         this.keepPolicyPMEnabled = keepPolicyPMEnabled;
     }
 
-    private FenceActionType _action;
-
     public FenceActionType getAction() {
-        return _action;
-    }
-
-    public FenceVdsActionParameters() {
-        _action = FenceActionType.Restart;
+        return action;
     }
 
     public boolean getKeepPolicyPMEnabled() {
