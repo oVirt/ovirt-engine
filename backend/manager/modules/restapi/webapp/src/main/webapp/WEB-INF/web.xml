@@ -22,6 +22,11 @@ limitations under the License.
   xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
   version="3.0">
 
+  <context-param>
+    <param-name>resteasy.media.type.param.mapping</param-name>
+    <param-value>accept</param-value>
+  </context-param>
+
   <filter>
     <filter-name>CSRFProtection</filter-name>
     <filter-class>org.ovirt.engine.api.common.security.CSRFProtectionFilter</filter-class>
