@@ -53,7 +53,7 @@ public class SyncUsers {
                         ExtMap principal :
                         AuthzUtils.fetchPrincipalsByIdsRecursively(
                                 authzExtension, userIdsPerNamespace.getKey(),
-                                new ArrayList<String>(userIdsPerNamespace.getValue()))
+                                userIdsPerNamespace.getValue())
                         ) {
                             DirectoryUtils.flatGroups(principal);
                             DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(authz, principal);

@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
-import java.util.List;
+import java.util.Collection;
 
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -13,7 +13,7 @@ public class AuthzUtils {
 
 
     private static interface QueryResultHandler {
-        public boolean handle(List<ExtMap> queryResults);
+        public boolean handle(Collection<ExtMap> queryResults);
     }
 
     private static final int QUERIES_RESULTS_LIMIT = 1000;
@@ -39,14 +39,14 @@ public class AuthzUtils {
         return ret;
     }
 
-    public static List<ExtMap> fetchPrincipalsByIdsRecursively(
+    public static Collection<ExtMap> fetchPrincipalsByIdsRecursively(
             final ExtensionProxy extension,
             final String namespace,
-            final List<String> ids) {
+            final Collection<String> ids) {
                 return findPrincipalsByIds(extension, namespace, ids, true, true);
     }
 
-    public static List<ExtMap> queryPrincipalRecords(
+    public static Collection<ExtMap> queryPrincipalRecords(
             final ExtensionProxy extension,
             final String namespace,
             final ExtMap filter,
@@ -73,7 +73,7 @@ public class AuthzUtils {
 
     }
 
-    public static List<ExtMap> queryGroupRecords(
+    public static Collection<ExtMap> queryGroupRecords(
             final ExtensionProxy extension,
             final String namespace,
             final ExtMap filter,
@@ -100,15 +100,15 @@ public class AuthzUtils {
 
     }
 
-    public static List<ExtMap> populatePrincipalRecords(
+    public static Collection<ExtMap> populatePrincipalRecords(
             final ExtensionProxy extension,
             final String namespace,
             final ExtMap input) {
-        final List<ExtMap> principalRecords = new ArrayList<>();
+        final Collection<ExtMap> principalRecords = new ArrayList<>();
         queryImpl(extension, namespace, input, new QueryResultHandler() {
 
             @Override
-            public boolean handle(List<ExtMap> queryResults) {
+            public boolean handle(Collection<ExtMap> queryResults) {
                 boolean result = true;
                 for (ExtMap queryResult : queryResults) {
                     if (principalRecords.size() < QUERIES_RESULTS_LIMIT) {
@@ -124,12 +124,12 @@ public class AuthzUtils {
         return principalRecords;
     }
 
-    public static List<ExtMap> populateGroups(final ExtensionProxy extension, final String namespace,
+    public static Collection<ExtMap> populateGroups(final ExtensionProxy extension, final String namespace,
             final ExtMap input) {
-        final List<ExtMap> groups = new ArrayList<>();
+        final Collection<ExtMap> groups = new ArrayList<>();
         queryImpl(extension, namespace, input, new QueryResultHandler() {
             @Override
-            public boolean handle(List<ExtMap> queryResults) {
+            public boolean handle(Collection<ExtMap> queryResults) {
 
                 boolean result = true;
                 for (ExtMap queryResult : queryResults) {
@@ -163,7 +163,7 @@ public class AuthzUtils {
                                 input
                         )
                 ).get(Authz.InvokeKeys.QUERY_OPAQUE);
-        List<ExtMap> result = null;
+        Collection<ExtMap> result = null;
         try {
             do {
                 result = extension.invoke(new ExtMap().mput(
@@ -190,15 +190,15 @@ public class AuthzUtils {
         }
     }
 
-    public static List<ExtMap> findPrincipalsByIds(
+    public static Collection<ExtMap> findPrincipalsByIds(
             final ExtensionProxy extension,
             final String namespace,
-            final List<String> ids,
+            final Collection<String> ids,
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive
             ) {
-        List<ExtMap> results = new ArrayList<>();
-        for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
+        Collection<ExtMap> results = new ArrayList<>();
+        for (Collection<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
             results.addAll(
                     queryPrincipalRecords(
                             extension,
@@ -215,15 +215,15 @@ public class AuthzUtils {
         return results;
     }
 
-    public static List<ExtMap> findGroupRecordsByIds(
+    public static Collection<ExtMap> findGroupRecordsByIds(
             final ExtensionProxy extension,
             final String namespace,
-            final List<String> ids,
+            final Collection<String> ids,
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive
             ) {
-        List<ExtMap> results = new ArrayList<>();
-        for (List<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
+        Collection<ExtMap> results = new ArrayList<>();
+        for (Collection<String> batch : SearchQueryParsingUtils.getIdsBatches(extension.getContext(), ids)) {
             results.addAll(
                     queryGroupRecords(
                             extension,

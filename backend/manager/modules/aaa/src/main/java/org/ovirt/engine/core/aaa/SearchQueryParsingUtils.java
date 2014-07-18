@@ -2,6 +2,7 @@ package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -40,7 +41,7 @@ public class SearchQueryParsingUtils {
         attributesToKeys.put("$PRINCIPAL_NAME", Authz.PrincipalRecord.NAME);
     }
 
-    public static ExtMap generateQueryMap(List<String> ids, ExtUUID queryEntity) {
+    public static ExtMap generateQueryMap(Collection<String> ids, ExtUUID queryEntity) {
         ExtMap result = new ExtMap().mput(
                 Authz.InvokeKeys.QUERY_ENTITY,
                 queryEntity);
@@ -128,12 +129,13 @@ public class SearchQueryParsingUtils {
         return queryPrefix;
     }
 
-    public static List<List<String>> getIdsBatches(final ExtMap context, final List<String> ids) {
+    public static Collection<? extends Collection<String>> getIdsBatches(final ExtMap context, final Collection<String> ids) {
 
+        List<String> idsList = new ArrayList<String>(ids);
         int chunk = context.<Integer> get(Authz.ContextKeys.QUERY_MAX_FILTER_SIZE, 100) - 10;
         List<List<String>> batchOfIdsList = new ArrayList<>();
         for (int counter = 0; counter < ids.size(); counter = counter + chunk) {
-            batchOfIdsList.add(ids.subList(counter, counter + chunk > ids.size() ? ids.size() : counter + chunk));
+            batchOfIdsList.add(idsList.subList(counter, counter + chunk > idsList.size() ? idsList.size() : counter + chunk));
         }
         return batchOfIdsList;
     }
