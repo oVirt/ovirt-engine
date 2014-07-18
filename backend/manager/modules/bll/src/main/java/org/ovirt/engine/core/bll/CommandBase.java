@@ -2153,7 +2153,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (updateDB) {
             Transaction transaction = TransactionSupport.suspend();
             try {
-                TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
+                TaskManagerUtil.updateCommandStatus(getCommandId(), commandStatus);
             } finally {
                 if (transaction != null) {
                     TransactionSupport.resume(transaction);

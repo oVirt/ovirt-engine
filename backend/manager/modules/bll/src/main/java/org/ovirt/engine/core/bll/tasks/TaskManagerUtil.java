@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
@@ -160,8 +159,8 @@ public class TaskManagerUtil {
         return coco.getCommandStatus(commandId);
     }
 
-    public static void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
-         coco.updateCommandStatus(commandId, taskType, status);
+    public static void updateCommandStatus(Guid commandId, CommandStatus status) {
+         coco.updateCommandStatus(commandId, status);
     }
 
     public static CommandExecutionStatus getCommandExecutionStatus(Guid commandId) {

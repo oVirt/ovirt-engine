@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll.tasks.interfaces;
 
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -21,7 +20,7 @@ public interface CommandCRUDOperations {
     public void removeCommand(Guid commandId);
     public void removeAllCommandsInHierarchy(Guid commandId);
     public void removeAllCommandsBeforeDate(DateTime cutoff);
-    public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status);
+    public void updateCommandStatus(Guid commandId, CommandStatus status);
     public void updateCommandExecuted(Guid commandId);
     public void updateCallBackNotified(Guid commandId);
 }
