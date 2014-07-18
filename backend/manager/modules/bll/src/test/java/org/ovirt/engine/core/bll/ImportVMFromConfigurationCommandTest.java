@@ -23,8 +23,10 @@ import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -70,6 +72,10 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
             mockConfig(ConfigValues.VirtIoScsiEnabled, Version.v3_2, false)
             );
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
+
     @Mock
     private OsRepository osRepository;
 
@@ -85,6 +91,8 @@ public class ImportVMFromConfigurationCommandTest extends BaseCommandTest {
         storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
         storagePoolId = Guid.newGuid();
         clusterId = Guid.newGuid();
+        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+
 
         // init the injector with the osRepository instance
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);

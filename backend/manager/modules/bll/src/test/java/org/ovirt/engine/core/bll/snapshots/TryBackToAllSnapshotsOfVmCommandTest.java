@@ -2,14 +2,18 @@ package org.ovirt.engine.core.bll.snapshots;
 
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.BaseCommandTest;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.InjectorRule;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -21,6 +25,10 @@ import org.ovirt.engine.core.dao.VmDao;
 
 /** A test case for the {@link TryBackToAllSnapshotsOfVmCommand} class. */
 public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private TryBackToAllSnapshotsOfVmCommand<TryBackToAllSnapshotsOfVmParameters> cmd;
 
     @Mock
@@ -35,6 +43,8 @@ public class TryBackToAllSnapshotsOfVmCommandTest extends BaseCommandTest {
 
     @Before
     public void setUp() {
+        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+
         vmId = Guid.newGuid();
         vm = new VM();
         vm.setId(vmId);

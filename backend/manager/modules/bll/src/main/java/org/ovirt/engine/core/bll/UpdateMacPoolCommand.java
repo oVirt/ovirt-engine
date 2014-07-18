@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -68,7 +67,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
     protected void executeCommand() {
 
         getMacPoolDao().update(getMacPoolEntity());
-        MacPoolPerDcSingleton.getInstance().modifyPool(getMacPoolEntity());
+        poolPerDc.modifyPool(getMacPoolEntity());
 
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getMacPoolId());
@@ -86,7 +85,7 @@ public class UpdateMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> 
     @Override
     public void rollback() {
         super.rollback();
-        MacPoolPerDcSingleton.getInstance().modifyPool(oldMacPool);
+        poolPerDc.modifyPool(oldMacPool);
     }
 
     static ValidationResult validateDefaultFlagIsNotChanged(MacPool macPoolFromDb, MacPool newMacPool) {

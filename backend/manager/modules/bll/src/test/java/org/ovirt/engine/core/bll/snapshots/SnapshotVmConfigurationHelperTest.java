@@ -7,9 +7,12 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.InjectorRule;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
@@ -22,6 +25,10 @@ import org.ovirt.engine.core.dao.VmDao;
 
 @RunWith(MockitoJUnitRunner.class)
 public class SnapshotVmConfigurationHelperTest {
+
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private SnapshotDao snapshotDaoMock;
     private DiskImageDao diskImageDaoMock;
     private VmDao vmDaoMock;
@@ -39,6 +46,8 @@ public class SnapshotVmConfigurationHelperTest {
 
     @Before
     public void setUp() throws Exception {
+        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingVm = createVm(existingVmId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration

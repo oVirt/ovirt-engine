@@ -11,7 +11,6 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
 import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.hostdev.HostDeviceManager;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
 import org.ovirt.engine.core.bll.scheduling.AffinityRulesEnforcementManager;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
@@ -24,7 +23,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
-import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,12 +62,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             CommandCoordinatorUtil.initAsyncTaskManager();
             loadService(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
-            ThreadPoolUtil.execute(new Runnable() {
-                @Override
-                public void run() {
-                    MacPoolPerDcSingleton.getInstance().initialize();
-                }
-            });
             StoragePoolStatusHandler.init();
 
             GlusterJobsManager.init();

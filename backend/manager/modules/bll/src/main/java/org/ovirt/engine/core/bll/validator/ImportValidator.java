@@ -10,7 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.validator.storage.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.storage.StorageDomainValidator;
@@ -32,6 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StorageDomainDao;
 import org.ovirt.engine.core.dao.StoragePoolDao;
+import org.ovirt.engine.core.di.Injector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -181,7 +182,7 @@ public class ImportValidator {
     }
 
     protected MacPoolManagerStrategy getMacPool() {
-        return MacPoolPerDcSingleton.getInstance().poolForDataCenter(params.getStoragePoolId());
+        return Injector.get(MacPoolPerDc.class).poolForDataCenter(params.getStoragePoolId());
     }
 
     public StorageDomainDao getStorageDomainDao() {

@@ -13,7 +13,6 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -62,6 +61,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private VmDao vmDao;
 
     @Inject VmNicDao vmNicDao;
+
+    @Inject
+    private MacPoolPerDc poolPerDc;
 
     public UpdateStoragePoolCommand(T parameters) {
         this(parameters, null);
@@ -127,7 +129,6 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
     private void moveMacsOfUpdatedDataCenter(Guid oldMacPoolId, Guid newMacPoolId, List<String> vmInterfaceMacs) {
         Objects.requireNonNull(vmInterfaceMacs);
 
-        MacPoolPerDc poolPerDc = MacPoolPerDcSingleton.getInstance();
         MacPoolManagerStrategy sourcePool = poolPerDc.getPoolById(oldMacPoolId);
         MacPoolManagerStrategy targetPool = poolPerDc.getPoolById(newMacPoolId);
 

@@ -65,12 +65,11 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
         macPool = createMacPool(MAC_FROM, MAC_TO);
         dataCenter = createStoragePool(macPool);
         vmNic = createVmNic();
-        pool = new MacPoolPerDc();
+        pool = new MacPoolPerDc(macPoolDao);
     }
 
     @Test()
     public void testInitCanBeCalledTwice() throws Exception {
-        MacPoolPerDc pool = new MacPoolPerDc();
         pool.initialize();
         Mockito.verify(macPoolDao).getAll();
 
@@ -260,24 +259,24 @@ public class MacPoolPerDcTest extends DbDependentTestBase {
     @Test
     public void testPoolForDataCenterMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().poolForDataCenter(Guid.newGuid());
+        pool.poolForDataCenter(Guid.newGuid());
     }
 
     @Test
     public void testCreatePoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().createPool(new MacPool());
+        pool.createPool(new MacPool());
     }
 
     @Test
     public void testModifyPoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().modifyPool(new MacPool());
+        pool.modifyPool(new MacPool());
     }
 
     @Test
     public void testRemovePoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().removePool(Guid.newGuid());
+        pool.removePool(Guid.newGuid());
     }
 }

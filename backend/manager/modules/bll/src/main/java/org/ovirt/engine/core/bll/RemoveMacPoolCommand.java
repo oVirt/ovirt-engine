@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -40,7 +39,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
     protected void executeCommand() {
 
         getMacPoolDao().remove(getMacPoolId());
-        MacPoolPerDcSingleton.getInstance().removePool(getMacPoolId());
+        poolPerDc.removePool(getMacPoolId());
 
         getReturnValue().setSucceeded(true);
     }
@@ -79,7 +78,7 @@ public class RemoveMacPoolCommand extends MacPoolCommandBase<RemoveMacPoolByIdPa
     @Override
     public void rollback() {
         super.rollback();
-        MacPoolPerDcSingleton.getInstance().createPool(getOldMacPool());
+        poolPerDc.createPool(getOldMacPool());
     }
 
     private MacPool getOldMacPool() {

@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.storage.disk.image.ImagesHandler;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -51,6 +51,7 @@ import org.ovirt.engine.core.dao.VmDynamicDao;
 import org.ovirt.engine.core.dao.VmStaticDao;
 import org.ovirt.engine.core.dao.VmTemplateDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
@@ -62,6 +63,12 @@ import org.slf4j.LoggerFactory;
  */
 public class SnapshotsManager {
     private final static Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
+
+    private final MacPoolPerDc poolPerDc;
+
+    public SnapshotsManager() {
+        poolPerDc = Injector.get(MacPoolPerDc.class);
+    }
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -628,7 +635,7 @@ public class SnapshotsManager {
     }
 
     private MacPoolManagerStrategy getMacPool(Guid storagePoolId) {
-        return MacPoolPerDcSingleton.getInstance().poolForDataCenter(storagePoolId);
+        return poolPerDc.poolForDataCenter(storagePoolId);
     }
 
     /**

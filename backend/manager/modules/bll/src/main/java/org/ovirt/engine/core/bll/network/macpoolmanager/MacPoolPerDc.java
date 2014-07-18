@@ -6,6 +6,11 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
 
+import javax.annotation.PostConstruct;
+import javax.ejb.Singleton;
+import javax.ejb.Startup;
+import javax.inject.Inject;
+
 import org.apache.commons.lang.math.LongRange;
 import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.MacRange;
@@ -19,7 +24,12 @@ import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@Singleton
+@Startup
 public class MacPoolPerDc {
+
+    @Inject
+    private MacPoolDao macPoolDao;
 
     static final String UNABLE_TO_CREATE_MAC_POOL_IT_ALREADY_EXIST = "This MAC Pool already exist";
     static final String INEXISTENT_POOL_EXCEPTION_MESSAGE = "Coding error, pool for requested GUID does not exist";
@@ -33,34 +43,34 @@ public class MacPoolPerDc {
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private boolean initialized = false;
 
-    public MacPoolPerDc() {
+    public MacPoolPerDc() {}
+
+    MacPoolPerDc(MacPoolDao macPoolDao) {
+        this.macPoolDao = macPoolDao;
     }
 
-    public final void initialize() {
-        try(AutoCloseableLock lock = writeLockResource()) {
+    @PostConstruct
+    void initialize() {
+        try (AutoCloseableLock lock = writeLockResource()) {
             if (initialized) {
                 log.error("Trying to initialize multiple times.");
                 return;
             }
 
-            final List<MacPool> macPools = getMacPoolDao().getAll();
+            final List<MacPool> macPools = macPoolDao.getAll();
             for (MacPool macPool : macPools) {
                 initializeMacPool(macPool);
             }
             initialized = true;
             log.info("Successfully initialized");
-        } catch(RuntimeException e) {
+        } catch (RuntimeException e) {
             log.error("Error initializing: {}", e.getMessage());
             throw e;
         }
     }
 
-    private MacPoolDao getMacPoolDao() {
-        return DbFacade.getInstance().getMacPoolDao();
-    }
-
     private void initializeMacPool(MacPool macPool) {
-        List<String> macsForMacPool = getMacPoolDao().getAllMacsForMacPool(macPool.getId());
+        List<String> macsForMacPool = macPoolDao.getAllMacsForMacPool(macPool.getId());
 
         final MacPoolManagerStrategy pool = createPoolWithoutLocking(macPool);
         for (String mac : macsForMacPool) {
@@ -69,7 +79,7 @@ public class MacPoolPerDc {
     }
 
     public MacPoolManagerStrategy poolForDataCenter(Guid dataCenterId) {
-        try(AutoCloseableLock lock = readLockResource()) {
+        try (AutoCloseableLock lock = readLockResource()) {
             checkInitialized();
             return getPoolWithoutLocking(getMacPoolId(dataCenterId));
         }
@@ -96,11 +106,10 @@ public class MacPoolPerDc {
     }
 
     /**
-     *
      * @param macPool pool definition
      */
-    public final void createPool(MacPool macPool) {
-        try(AutoCloseableLock lock = writeLockResource();) {
+    public void createPool(MacPool macPool) {
+        try (AutoCloseableLock lock = writeLockResource()) {
             checkInitialized();
             createPoolWithoutLocking(macPool);
         }
@@ -121,9 +130,8 @@ public class MacPoolPerDc {
     /**
      * @param macPool pool definition to re-init the pool
      */
-    public final void modifyPool(MacPool macPool) {
-
-        try(AutoCloseableLock lock = writeLockResource()) {
+    public void modifyPool(MacPool macPool) {
+        try (AutoCloseableLock lock = writeLockResource()) {
             checkInitialized();
 
             if (!macPools.containsKey(macPool.getId())) {
@@ -151,7 +159,7 @@ public class MacPoolPerDc {
     }
 
     public void removePool(Guid macPoolId) {
-        try(AutoCloseableLock lock = writeLockResource()) {
+        try (AutoCloseableLock lock = writeLockResource()) {
             checkInitialized();
             removeWithoutLocking(macPoolId);
         }

@@ -10,7 +10,9 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.snapshots.SnapshotVmConfigurationHelper;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -26,6 +28,9 @@ import org.ovirt.engine.core.dao.SnapshotDao;
  * the Daos, and just tests the flow of the query itself.
  */
 public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest<IdQueryParameters, GetVmConfigurationBySnapshotQuery<IdQueryParameters>> {
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     private SnapshotDao snapshotDaoMock;
     private Guid existingSnapshotId = Guid.newGuid();
     private Guid existingVmId = Guid.newGuid();
@@ -41,6 +46,9 @@ public class GetVmConfigurationBySnapshotQueryTest extends AbstractUserQueryTest
     @Override
     public void setUp() throws Exception {
         super.setUp();
+
+        injectorRule.bind(MacPoolPerDc.class, mock(MacPoolPerDc.class));
+
         existingSnapshot = createSnapshot(existingSnapshotId);
         existingSnapshot.setVmConfiguration(EXISTING_VM_NAME); // Dummy configuration
         snapshotVmConfigurationHelper = spy(new SnapshotVmConfigurationHelper());

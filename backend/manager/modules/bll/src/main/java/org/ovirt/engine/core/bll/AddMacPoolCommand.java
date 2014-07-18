@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -61,7 +60,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
         getMacPoolDao().save(getMacPoolEntity());
         addPermission(getCurrentUser().getId(), getMacPoolEntity().getId());
 
-        MacPoolPerDcSingleton.getInstance().createPool(getMacPoolEntity());
+        poolPerDc.createPool(getMacPoolEntity());
         setSucceeded(true);
         getReturnValue().setActionReturnValue(getMacPoolId());
     }
@@ -79,7 +78,7 @@ public class AddMacPoolCommand extends MacPoolCommandBase<MacPoolParameters> {
     @Override
     public void rollback() {
         super.rollback();
-        MacPoolPerDcSingleton.getInstance().removePool(getMacPoolId());
+        poolPerDc.removePool(getMacPoolId());
     }
 
     private void addPermission(Guid userId, Guid macPoolId) {

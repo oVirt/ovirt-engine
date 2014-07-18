@@ -31,6 +31,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDc;
 import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -75,6 +76,9 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
+    @Rule
+    public InjectorRule injectorRule = new InjectorRule();
+
     @Mock
     OsRepository osRepository;
 
@@ -84,10 +88,14 @@ public class ImportVmCommandTest extends BaseCommandTest {
     @Mock
     private VdsGroupDao vdsGroupDao;
 
+    @Mock
+    private MacPoolPerDc macPoolPerDc;
+
     @Before
     public void setUp() {
         // init the injector with the osRepository instance
         SimpleDependencyInjector.getInstance().bind(OsRepository.class, osRepository);
+        injectorRule.bind(MacPoolPerDc.class, macPoolPerDc);
 
         final int osId = 0;
 
@@ -248,6 +256,8 @@ public class ImportVmCommandTest extends BaseCommandTest {
         doReturn(vdsGroup).when(cmd).getVdsGroup();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
+        when(macPoolPerDc.poolForDataCenter(any(Guid.class))).thenReturn(macPoolManagerStrategy);
+
         ArrayList<Guid> sdIds = new ArrayList<>(Collections.singletonList(Guid.newGuid()));
         for (DiskImage image : parameters.getVm().getImages()) {
             image.setStorageIds(sdIds);
@@ -378,7 +388,7 @@ public class ImportVmCommandTest extends BaseCommandTest {
     }
 
     /**
-     * Checking that other fields in {@link org.ovirt.engine.core.common.businessentities.VmStatic.VmStatic} don't get
+     * Checking that other fields in {@link org.ovirt.engine.core.common.businessentities.VmStatic#VmStatic} don't get
      * validated when importing a VM.
      */
     @Test
