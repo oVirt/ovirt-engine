@@ -149,11 +149,19 @@ public class RsdlManager {
     }
 
     private static MetaData loadMetaData() throws IOException {
+        // Load the metadata file:
         InputStream stream = RsdlManager.class.getResourceAsStream(METADATA_FILE_NAME);
         Constructor constructor = new CustomClassLoaderConstructor(Thread.currentThread().getContextClassLoader());
-        Object result = new Yaml(constructor).load(stream);
+        MetaData metaData = (MetaData) new Yaml(constructor).load(stream);
         stream.close();
-        MetaData metadata = (MetaData) result;
-        return metadata;
+
+        // Remove leading slashes from all the action names:
+        for (Action action : metaData.getActions()) {
+            String name = action.getName();
+            name = name.replaceAll("^/?", "");
+            action.setName(name);
+        }
+
+        return metaData;
     }
 }
