@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.tasks;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
@@ -64,13 +63,11 @@ public class CommandsCacheImpl implements CommandsCache {
         initializeCache();
     }
 
-    public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
+    public void updateCommandStatus(Guid commandId, CommandStatus status) {
         final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCommandStatus(status);
-            if (taskType.equals(AsyncTaskType.notSupported) || cmdEntity.isCallBackEnabled()) {
-                DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
-            }
+            DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
         }
     }
 

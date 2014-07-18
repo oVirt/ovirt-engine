@@ -174,8 +174,8 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
-    public void updateCommandStatus(final Guid commandId, final AsyncTaskType taskType, final CommandStatus status) {
-        commandsCache.updateCommandStatus(commandId, taskType, status);
+    public void updateCommandStatus(final Guid commandId, final CommandStatus status) {
+        commandsCache.updateCommandStatus(commandId, status);
     }
 
     public void updateCommandExecuted(Guid commandId) {

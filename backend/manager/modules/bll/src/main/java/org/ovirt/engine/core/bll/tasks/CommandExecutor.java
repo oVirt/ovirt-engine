@@ -60,25 +60,56 @@ public class CommandExecutor {
             Guid cmdId = entry.getKey();
             CommandCallBack callBack = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
-            switch (status) {
-            case FAILED:
-                callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
-                coco.updateCallBackNotified(cmdId);
-                iterator.remove();
-                break;
-            case SUCCEEDED:
-                callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
-                coco.updateCallBackNotified(cmdId);
-                iterator.remove();
-                break;
-            case ACTIVE:
-                if (coco.getCommandEntity(cmdId).isExecuted()) {
-                    callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+            boolean errorInCallback = false;
+            try {
+                switch (status) {
+                    case FAILED:
+                        callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
+                        break;
+                    case SUCCEEDED:
+                        callBack.onSucceeded(cmdId, coco.getChildCommandIds(cmdId));
+                        break;
+                    case ACTIVE:
+                        if (coco.getCommandEntity(cmdId).isExecuted()) {
+                            callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                        }
+                        break;
+                    default:
+                        break;
                 }
-                break;
-            default:
-                break;
+            } catch (Exception ex) {
+                errorInCallback = true;
+                handleError(ex, status, cmdId);
+            } finally {
+                if (CommandStatus.FAILED.equals(status) || (CommandStatus.SUCCEEDED.equals(status) && !errorInCallback)) {
+                    coco.updateCallBackNotified(cmdId);
+                    iterator.remove();
+                }
             }
+        }
+    }
+
+    private void handleError(Exception ex, CommandStatus status, Guid cmdId) {
+        log.errorFormat("Error invoking callback method {0} for {1} command {2}",
+                getCallBackMethod(status),
+                status.toString(),
+                cmdId.toString());
+        log.error(ex);
+        if (!CommandStatus.FAILED.equals(status)) {
+            coco.updateCommandStatus(cmdId, CommandStatus.FAILED);
+        }
+    }
+
+    private String getCallBackMethod(CommandStatus status) {
+        switch (status) {
+            case FAILED:
+                return "onFailed";
+            case SUCCEEDED:
+                return "onSucceeded";
+            case ACTIVE:
+                return "doPolling";
+            default:
+                return "Unknown";
         }
     }
 
