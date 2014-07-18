@@ -38,7 +38,7 @@
     <set-configuration-property name="locale.useragent" value="Y" />
 
     <!-- Supported locales (defined via maven property) -->
-    <extend-property name="locale" values="en_US,es_ES,fr_FR,ja_JP,pt_BR,zh_CN,de_DE,ko_KR" />
+    <extend-property name="locale" values="${gwt.availableLocales}" />
     <set-property name="locale" value="${gwt.locale}" />
     <set-property-fallback name="locale" value="en_US" />
 
