@@ -2,6 +2,7 @@ package org.ovirt.engine.core.aaa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -32,7 +33,7 @@ public class DirectoryUtils {
         return results;
     }
 
-    public static List<DirectoryUser> findDirectoryUsersByQuery(
+    public static Collection<DirectoryUser> findDirectoryUsersByQuery(
             final ExtensionProxy extension,
             final String namespace,
             final String query) {
@@ -53,18 +54,18 @@ public class DirectoryUtils {
             final boolean resolveGroups,
             final boolean resolveGroupsRecursive
             ) {
-        List<DirectoryGroup> groups =
+        Collection<DirectoryGroup> groups =
                 findDirectoryGroupsByIds(extension, namespace, Arrays.asList(id), resolveGroups, resolveGroupsRecursive);
-        if (groups.isEmpty()) {
+        if (groups.size() == 0) {
             return null;
         }
-        return groups.get(0);
+        return new ArrayList<DirectoryGroup>(groups).get(0);
     }
 
-    public static List<DirectoryUser> findDirectoryUserByIds(
+    public static Collection<DirectoryUser> findDirectoryUserByIds(
             final ExtensionProxy extension,
             final String namespace,
-            final List<String> ids,
+            final Collection<String> ids,
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive
             ) {
@@ -87,20 +88,20 @@ public class DirectoryUtils {
             final boolean groupsResolving,
             final boolean groupsResolvingRecursive
             ) {
-        List<DirectoryUser> users =
+        Collection<DirectoryUser> users =
                 findDirectoryUserByIds(
                         extension,
                         namespace,
                         Arrays.asList(id),
                         groupsResolving,
                         groupsResolvingRecursive);
-        if (users.isEmpty()) {
+        if (users.size() == 0) {
             return null;
         }
-        return users.get(0);
+        return new ArrayList<DirectoryUser>(users).get(0);
     }
 
-    public static List<DirectoryGroup> findDirectoryGroupsByQuery(
+    public static Collection<DirectoryGroup> findDirectoryGroupsByQuery(
             final ExtensionProxy extension,
             final String namespace,
             final String query) {
@@ -112,10 +113,10 @@ public class DirectoryUtils {
                 false);
     }
 
-    public static List<DirectoryGroup> findDirectoryGroupsByIds(
+    public static Collection<DirectoryGroup> findDirectoryGroupsByIds(
             final ExtensionProxy extension,
             final String namespace,
-            final List<String> ids,
+            final Collection<String> ids,
             final boolean resolveGroups,
             final boolean resolveGroupsRecursive) {
         return mapGroupRecordsToDirectoryGroups(AuthzUtils.getName(extension),
@@ -190,7 +191,8 @@ public class DirectoryUtils {
         return accumulator;
     }
 
-    public static List<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName, final List<ExtMap> groups) {
+    public static Collection<DirectoryGroup> mapGroupRecordsToDirectoryGroups(final String authzName,
+            final Collection<ExtMap> groups) {
         List<DirectoryGroup> results = new ArrayList<>();
         for (ExtMap group : groups) {
             results.add(mapGroupRecordToDirectoryGroup(authzName, group));
@@ -198,7 +200,8 @@ public class DirectoryUtils {
         return results;
     }
 
-    public static List<DirectoryUser> mapPrincipalRecordsToDirectoryUsers(final String authzName, final List<ExtMap> users) {
+    public static Collection<DirectoryUser> mapPrincipalRecordsToDirectoryUsers(final String authzName,
+            final Collection<ExtMap> users) {
         List<DirectoryUser> results = new ArrayList<>();
         for (ExtMap user : users) {
             results.add(mapPrincipalRecordToDirectoryUser(authzName, user));
@@ -206,7 +209,7 @@ public class DirectoryUtils {
         return results;
     }
 
-    private static List<DirectoryUser> queryDirectoryUsers(
+    private static Collection<DirectoryUser> queryDirectoryUsers(
             final ExtensionProxy extension,
             final String namespace,
             final ExtMap filter,
