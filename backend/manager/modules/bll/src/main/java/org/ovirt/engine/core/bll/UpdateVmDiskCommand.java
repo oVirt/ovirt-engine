@@ -556,8 +556,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 getOldDisk().getDiskInterface() != getNewDisk().getDiskInterface() ||
                 getOldDisk().getPropagateErrors() != getNewDisk().getPropagateErrors() ||
                 getOldDisk().isShareable() != getNewDisk().isShareable() ||
-                getOldDisk().getSgio() != getNewDisk().getSgio() ||
-                !StringUtils.equals(getOldDisk().getDiskDescription(), getNewDisk().getDiskDescription());
+                getOldDisk().getSgio() != getNewDisk().getSgio();
     }
 
     private boolean updateImageParametersRequiringVmDownRequested() {

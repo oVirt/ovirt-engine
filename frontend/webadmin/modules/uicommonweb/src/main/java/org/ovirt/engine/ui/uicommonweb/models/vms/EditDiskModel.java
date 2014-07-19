@@ -147,7 +147,6 @@ public class EditDiskModel extends AbstractDiskModel
         getSize().setIsChangable(false);
 
         if (!isEditEnabled()) {
-            getDescription().setIsChangable(false);
             getIsShareable().setIsChangable(false);
             getIsBootable().setIsChangable(false);
             getIsWipeAfterDelete().setIsChangable(false);
