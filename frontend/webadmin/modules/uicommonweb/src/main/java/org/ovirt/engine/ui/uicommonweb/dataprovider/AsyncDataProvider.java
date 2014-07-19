@@ -65,6 +65,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClusterService;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
@@ -144,6 +145,7 @@ import org.ovirt.engine.core.common.queries.gluster.GlusterParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServersQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterServiceQueryParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeAdvancedDetailsParameters;
+import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeGeoRepEligibilityParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeProfileParameters;
 import org.ovirt.engine.core.common.queries.gluster.GlusterVolumeQueriesParameters;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -1649,6 +1651,21 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetGlusterVolumeGeoRepSessions, new IdQueryParameters(masterVolumeId), aQuery);
+    }
+
+    public void getGlusterVolumeGeoRepRecommendationViolations(AsyncQuery aQuery,
+            Guid masterVolumeId,
+            Guid slaveVolumeId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object returnValue, AsyncQuery asyncQuery) {
+                return returnValue == null ? new ArrayList<GlusterGeoRepNonEligibilityReason>()
+                        : (List<GlusterGeoRepNonEligibilityReason>) returnValue;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetNonEligibilityReasonsOfVolumeForGeoRepSession,
+                new GlusterVolumeGeoRepEligibilityParameters(masterVolumeId, slaveVolumeId),
+                aQuery);
     }
 
     public void getGlusterVolumeSnapshotsForVolume(AsyncQuery aQuery, Guid volumeId) {

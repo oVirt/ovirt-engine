@@ -524,6 +524,8 @@ public enum HelpTag {
     volume_deactivate_snapshot_confirmation(
             "volume_deactivate_snapshot_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Snapshots sub-tab -> 'Deactivate Snapshot' dialog"), //$NON-NLS-1$//$NON-NLS-2$
 
+    volume_geo_rep_create("volume_geo_rep_create", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'New' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     volume_geo_rep_start_confirmation("volume_geo_rep_start_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Start' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     volume_geo_rep_stop_confirmation("volume_geo_rep_stop_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Stop' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -531,6 +533,8 @@ public enum HelpTag {
     volume_geo_rep_pause_confirmation("volume_geo_rep_pause_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Pause' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     volume_geo_rep_resume_confirmation("volume_geo_rep_resume_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Resume' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    volume_geo_rep_remove_confirmation("volume_geo_rep_remove_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Remove' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     volume_geo_rep_configuration_display("volume_geo_rep_configuration_display", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Options' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 

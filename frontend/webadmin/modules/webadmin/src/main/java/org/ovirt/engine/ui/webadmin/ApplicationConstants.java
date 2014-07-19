@@ -4062,15 +4062,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("NUMA Support")
     String numaSupport();
 
-    @DefaultStringValue("Master Volume")
-    String geoRepMasterVolume();
-
-    @DefaultStringValue("Host name (or) IP")
-    String geoRepSlaveHostIp();
-
-    @DefaultStringValue("Slave Volume")
-    String geoRepSlaveVolume();
-
     // Volume snapshots
     @DefaultStringValue("New")
     String newVolumeSnapshot();
@@ -4221,4 +4212,49 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Choose storage devices of RAID type: ")
     String getStorageDeviceSelectionInfo();
+
+    @DefaultStringValue("Auto-start geo-replication session after creation")
+    String geoRepSessionCreateAndStart();
+
+    @DefaultStringValue("Master Volume")
+    String geoRepMasterVolume();
+
+    @DefaultStringValue("Destination host")
+    String geoRepSlaveHostIp();
+
+    @DefaultStringValue("Slave User")
+    String geoRepSlaveUserName();
+
+    @DefaultStringValue("User")
+    String geoRepUserSessionCreate();
+
+    @DefaultStringValue("Show volumes eligible for geo-replication")
+    String geoRepShowEligibleVolumes();
+
+    @DefaultStringValue("User Name")
+    String geoRepSessionUserName();
+
+    @DefaultStringValue("User Group")
+    String slaveUserGroupName();
+
+    @DefaultStringValue("Password")
+    String geoRepSlaveNodePassword();
+
+    @DefaultStringValue("Destination cluster")
+    String geoRepSessionSlaveCluster();
+
+    @DefaultStringValue("Destination volume")
+    String geoRepSlaveVolume();
+
+    @DefaultStringValue("Geo-replication")
+    String geoReplicationMainTabTitle();
+
+    @DefaultStringValue("Show Volumes")
+    String selectGeoRepSlaveVolumeButtonLabel();
+
+    @DefaultStringValue("Fetching Data")
+    String fetchingDataMessage();
+
+    @DefaultStringValue("Warning : Recommendations for geo-replication not met -")
+    String geoReplicationRecommendedConfigViolation();
 }

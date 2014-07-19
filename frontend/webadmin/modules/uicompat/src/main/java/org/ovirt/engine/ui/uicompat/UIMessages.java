@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicompat;
 
 import java.util.List;
 
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepNonEligibilityReason;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeSnapshotScheduleRecurrence;
 
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
@@ -464,4 +465,16 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Session DB Id:{0}, User:{1}")
     String userSessionRow(long sessionId, String UserName);
+
+    @DefaultMessage("")
+    @AlternateMessage({
+        "SLAVE_AND_MASTER_VOLUMES_SHOULD_NOT_BE_IN_SAME_CLUSTER", "Destination and master volumes should not be from same cluster.",
+        "SLAVE_VOLUME_SIZE_SHOULD_BE_GREATER_THAN_MASTER_VOLUME_SIZE", "Capacity of destination volume should be greater than or equal to that of master volume.",
+        "SLAVE_CLUSTER_AND_MASTER_CLUSTER_COMPATIBILITY_VERSIONS_DO_NOT_MATCH", "Cluster Compatibility version of destination and master volumes should be same.",
+        "SLAVE_VOLUME_SHOULD_NOT_BE_SLAVE_OF_ANOTHER_GEO_REP_SESSION", "Destination volume is already a part of another geo replication session.",
+        "SLAVE_VOLUME_SHOULD_BE_UP", "Destination volume should be up.",
+        "SLAVE_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the destination volume is not available.",
+        "MASTER_VOLUME_SIZE_TO_BE_AVAILABLE", "Capacity information of the master volume is not available."
+    })
+    String geoRepEligibilityViolations(@Select GlusterGeoRepNonEligibilityReason reason);
 }

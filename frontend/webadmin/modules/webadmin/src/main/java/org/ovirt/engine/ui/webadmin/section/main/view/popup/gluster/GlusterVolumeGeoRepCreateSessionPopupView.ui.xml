@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+
+	<ui:style
+		type="org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupView.WidgetStyle">
+		.forceWarningLabel {
+		width: 470px;
+		font-size: 13px;
+		left: 10px;
+		padding-left: 15px;
+		padding-bottom: 10px;
+		color: #FF0000;
+		}
+
+		.messageLabel {
+		color: #FF0000;
+		left: 10px;
+		padding-left: 5px;
+		}
+
+		.panelStyle{
+		width:490px;
+		}
+
+		.checkBoxEditorWidget{
+		width: 470px;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="500px" height="440px">
+		<d:content>
+			<g:FlowPanel addStyleNames="{style.panelStyle}">
+				<e:ListModelTypeAheadListBoxEditor ui:field="slaveClusterEditor" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="slaveVolumeEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="showEligibleVolumes" />
+				<e:ListModelTypeAheadListBoxEditor ui:field="slaveHostIpEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="slaveUserName" />
+				<ge:StringEntityModelTextBoxEditor ui:field="slaveUserGroupNameEditor" />
+				<ge:EntityModelCheckBoxEditor ui:field="startSessionEditor" />
+				<g:TextArea ui:field="suggestedConfigViolations" addStyleNames="{style.forceWarningLabel}" />
+				<g:Label ui:field="message" addStyleNames="{style.messageLabel}" />
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+</ui:UiBinder>

@@ -24,6 +24,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("N/A")
     String notAvailableLabel();
 
+    @DefaultStringValue("")
+    String emptyString();
+
     @DefaultStringValue("[N/A]")
     String bracketedNotAvailableLabel();
 
@@ -304,6 +307,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Resume Geo-Replication")
     String geoReplicationResumeTitle();
 
+    @DefaultStringValue("Remove Geo-Replication")
+    String geoReplicationRemoveTitle();
+
     @DefaultStringValue("Start")
     String startGeoRepProgressText();
 
@@ -316,6 +322,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Resume")
     String resumeGeoRepProgressText();
 
+    @DefaultStringValue("Remove")
+    String removeGeoRepProgressText();
+
     @DefaultStringValue("start")
     String startGeoRep();
 
@@ -327,6 +336,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("resume")
     String resumeGeoRep();
+
+    @DefaultStringValue("remove")
+    String removeGeoRep();
 
     @DefaultStringValue("Geo-Replication Options")
     String geoReplicationOptions();
@@ -2670,4 +2682,13 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("No volume type")
     String noCinderVolumeType();
+
+    @DefaultStringValue("New Geo-Replication Session")
+    String newGeoRepSessionTitle();
+
+    @DefaultStringValue("root")
+    String rootUser();
+
+    @DefaultStringValue("Warning : Recommendations for geo-replication not met -")
+    String geoReplicationRecommendedConfigViolation();
 }
