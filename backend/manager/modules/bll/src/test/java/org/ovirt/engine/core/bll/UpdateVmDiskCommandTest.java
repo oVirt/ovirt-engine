@@ -28,6 +28,7 @@ import java.util.Map;
 
 import org.infinispan.transaction.tm.DummyTransactionManager;
 import org.junit.ClassRule;
+import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -74,6 +75,8 @@ import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
+import org.ovirt.engine.core.utils.RandomUtils;
+import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 
 
@@ -124,6 +127,9 @@ public class UpdateVmDiskCommandTest {
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.ShareableDiskEnabled, Version.v3_1.toString(), true)
     );
+
+    @Rule
+    public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     /**
      * The command under test.
@@ -327,6 +333,28 @@ public class UpdateVmDiskCommandTest {
         UpdateVmDiskParameters parameters = createParameters();
         parameters.getDiskInfo().setReadOnly(false);
         parameters.getDiskInfo().setWipeAfterDelete(true);
+        initializeCommand(parameters, Collections.singletonList(createVm(status)));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void canDoActionUpdateDescriptionVmDown() {
+        canDoActionUpdateDescription(VMStatus.Down);
+    }
+
+    @Test
+    public void canDoActionUpdateDescriptionVmUp() {
+        canDoActionUpdateDescription(VMStatus.Up);
+    }
+
+    private void canDoActionUpdateDescription(VMStatus status) {
+        DiskImage disk  = createDiskImage();
+        disk.setReadOnly(false);
+        when(diskDao.get(diskImageGuid)).thenReturn(disk);
+        UpdateVmDiskParameters parameters = createParameters();
+        parameters.getDiskInfo().setReadOnly(false);
+        disk.setDescription(RandomUtils.instance().nextString(10));
         initializeCommand(parameters, Collections.singletonList(createVm(status)));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
@@ -708,6 +736,7 @@ public class UpdateVmDiskCommandTest {
         disk.setDiskInterface(DiskInterface.VirtIO);
         disk.setStorageIds(new ArrayList<>(Collections.singleton(sdId)));
         disk.setStoragePoolId(spId);
+        disk.setDescription(RandomUtils.instance().nextString(10));
         return disk;
     }
 
