@@ -47,6 +47,7 @@ public class AddGroupCommand<T extends AddGroupParameters>
         }
         else {
             dao.update(dbGroup);
+            groupToAdd = dbGroup;
         }
 
         // Return the identifier of the created group:

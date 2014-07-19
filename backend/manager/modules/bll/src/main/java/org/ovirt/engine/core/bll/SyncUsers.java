@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -20,6 +21,11 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class SyncUsers {
 
     private static final Log log = LogFactory.getLog(SyncUsers.class);
+
+    public static DbUser sync(DbUser dbUser) {
+        List<DbUser> synchedUsers = sync(Arrays.asList(dbUser));
+        return synchedUsers.isEmpty() ? null : synchedUsers.get(0);
+    }
 
     public static List<DbUser> sync(List<DbUser> dbUsers) {
         List<DbUser> usersToUpdate = new ArrayList<>();
@@ -61,22 +67,22 @@ public class SyncUsers {
                     if (activeUser != null) {
                         if (!activeUser.equals(dbUser)) {
                             activeUser.setId(dbUser.getId());
-                            log.info(String.format("The user %1$s from authz extension %2$s got updated since last interval",
+                            log.infoFormat("Principal {0}::{1} synchronized",
                                     activeUser.getLoginName(),
-                                    activeUser.getDomain()));
+                                    activeUser.getDomain());
                             usersToUpdate.add(activeUser);
                         }
                     } else {
-                        log.info(String.format("The user %1$s from authz extension %2$s could not be found, and will be marked as inactive",
+                        log.infoFormat("Deactivating non existing principal {0}::{1}",
                                 dbUser.getLoginName(),
-                                dbUser.getDomain()));
+                                dbUser.getDomain());
                         dbUser.setActive(false);
                         usersToUpdate.add(dbUser);
                     }
                 }
             } catch (Exception ex) {
-                log.error(String.format("Error during user synchronization of extension %1$s. Exception message is %2$s",
-                        authz, ex.getMessage()));
+                log.errorFormat("Error during user synchronization of extension {0}. Exception message is {1}",
+                        authz, ex.getMessage());
                 log.debug("", ex);
             }
         }

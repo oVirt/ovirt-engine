@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
@@ -10,7 +9,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> {
@@ -38,20 +36,21 @@ public class AddUserCommand<T extends AddUserParameters> extends CommandBase<T> 
 
     @Override
     protected void executeCommand() {
-        DbUser userToAdd = getParameters().getUserToAdd();
-        for (DbUser syncedUser : SyncUsers.sync(Arrays.asList(userToAdd))) {
-            if (Guid.isNullOrEmpty(syncedUser.getId())) {
-                if (syncedUser.isActive()) {
-                    DbFacade.getInstance().getDbUserDao().save(syncedUser);
-                }
-            } else {
-                DbFacade.getInstance().getDbUserDao().update(syncedUser);
-            }
-        }
+        DbUser user = getParameters().getUserToAdd();
+        DbUser syncResult = SyncUsers.sync(user);
+        user = syncResult != null ? syncResult : user;
         DbUser userFromDb =
-                DbFacade.getInstance().getDbUserDao().getByExternalId(userToAdd.getDomain(), userToAdd.getExternalId());
-        setActionReturnValue(userFromDb.getId());
-        setSucceeded(userFromDb.isActive());
+                DbFacade.getInstance().getDbUserDao().getByExternalId(user.getDomain(), user.getExternalId());
+        if (userFromDb == null) {
+            if (user.isActive()) {
+                DbFacade.getInstance().getDbUserDao().save(user);
+            }
+        } else {
+            user.setId(userFromDb.getId());
+            DbFacade.getInstance().getDbUserDao().update(user);
+        }
+        setActionReturnValue(user.getId());
+        setSucceeded(user.isActive());
     }
 
     @Override

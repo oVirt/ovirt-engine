@@ -62,7 +62,7 @@ BEGIN
       external_id = v_external_id,
       namespace = v_namespace,
       _update_date = CURRENT_TIMESTAMP
-      WHERE user_id = v_user_id;
+      WHERE external_id = v_external_id AND domain = v_domain;
       GET DIAGNOSTICS updated_rows = ROW_COUNT;
       RETURN updated_rows;
 
@@ -95,7 +95,7 @@ BEGIN
       PERFORM UpdateUserImpl(v_department, v_domain, v_email, v_groups, v_name, v_note, v_role, v_active, v_surname, v_user_id, v_username, v_group_ids, v_external_id, v_namespace);
       UPDATE users SET
       last_admin_check_status = v_last_admin_check_status
-      WHERE user_id = v_user_id;
+      WHERE domain = v_domain AND external_id = v_external_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
