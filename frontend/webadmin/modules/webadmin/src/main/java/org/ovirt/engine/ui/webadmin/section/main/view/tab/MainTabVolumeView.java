@@ -92,11 +92,11 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         TextColumnWithTooltip<GlusterVolumeEntity> volumeTypeColumn =
                 new EnumColumn<GlusterVolumeEntity, GlusterVolumeType>() {
 
-                    @Override
-                    protected GlusterVolumeType getRawValue(GlusterVolumeEntity object) {
-                        return object.getVolumeType();
-                    }
-                };
+            @Override
+            protected GlusterVolumeType getRawValue(GlusterVolumeEntity object) {
+                return object.getVolumeType();
+            }
+        };
         volumeTypeColumn.makeSortable();
         getTable().addColumn(volumeTypeColumn, constants.volumeTypeVolume(), "150px"); //$NON-NLS-1$
 
@@ -147,13 +147,13 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         }, constants.volumeCapacity(), "100px");//$NON-NLS-1$
 
         getTable().addColumn(new VolumeActivityColumn<GlusterVolumeEntity>(new VolumeActivityCompositeCell<GlusterTaskSupport>(compositeList) {
-                @Override
-                protected boolean isVisible(GlusterTaskSupport value) {
-                    return !(value == null || value.getAsyncTask() == null);
-                }
-                }),
-                constants.activitiesOnVolume(),
-                "100px"); //$NON-NLS-1$
+            @Override
+            protected boolean isVisible(GlusterTaskSupport value) {
+                return !(value == null || value.getAsyncTask() == null);
+            }
+        }),
+        constants.activitiesOnVolume(),
+        "100px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<GlusterVolumeEntity> snapshotCountColumn =
                 new TextColumnWithTooltip<GlusterVolumeEntity>() {
@@ -239,6 +239,24 @@ public class MainTabVolumeView extends AbstractMainTabWithDetailsTableView<Glust
         getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.volumeSnapshotMainTabTitle(),
                 getVolumeSnapshotMenu(constants),
                 CommandLocation.ContextAndToolBar));
+
+        getTable().addActionButton(new WebAdminMenuBarButtonDefinition<GlusterVolumeEntity>(constants.geoReplicationMainTabTitle(),
+                getGeoRepCreateMenu(constants),
+                CommandLocation.ContextAndToolBar));
+    }
+
+    private List<ActionButtonDefinition<GlusterVolumeEntity>> getGeoRepCreateMenu(ApplicationConstants constants) {
+        List<ActionButtonDefinition<GlusterVolumeEntity>> geoRepMenu =
+                new ArrayList<ActionButtonDefinition<GlusterVolumeEntity>>();
+        WebAdminButtonDefinition<GlusterVolumeEntity> geoRepButton =
+                new WebAdminButtonDefinition<GlusterVolumeEntity>(constants.newGeoRepSession()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getMainModel().getNewGeoRepSessionCommand();
+                    }
+                };
+        geoRepMenu.add(geoRepButton);
+        return geoRepMenu;
     }
 
     private List<ActionButtonDefinition<GlusterVolumeEntity>> getVolumeSnapshotMenu(ApplicationConstants constants) {

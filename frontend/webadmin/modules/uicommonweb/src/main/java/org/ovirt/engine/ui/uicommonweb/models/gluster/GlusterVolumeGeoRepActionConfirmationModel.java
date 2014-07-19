@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -26,11 +25,11 @@ public class GlusterVolumeGeoRepActionConfirmationModel extends Model {
 
     }
 
-    protected void initWindow(GlusterGeoRepSession selectedSession) {
+    protected void initWindow(String masterVolume, String slaveVolume, String slaveHost) {
         getForce().setEntity(false);
-        getMasterVolume().setEntity(selectedSession.getMasterVolumeName());
-        getSlaveVolume().setEntity(selectedSession.getSlaveVolumeName());
-        getSlaveHost().setEntity(selectedSession.getSlaveHostName());
+        getMasterVolume().setEntity(masterVolume);
+        getSlaveVolume().setEntity(slaveVolume);
+        getSlaveHost().setEntity(slaveHost);
     }
 
     public EntityModel<String> getMasterVolume() {

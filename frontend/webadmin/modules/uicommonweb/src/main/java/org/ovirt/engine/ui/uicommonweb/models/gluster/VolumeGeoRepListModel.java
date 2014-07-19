@@ -5,18 +5,20 @@ import java.util.Collections;
 import java.util.LinkedHashMap;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeGeoRepSessionParameters;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -185,11 +187,13 @@ public class VolumeGeoRepListModel extends SearchableListModel{
     }
 
     private void updateActionAvailability(GlusterVolumeEntity volumeEntity) {
+        boolean allowNewGeoRepSessionCommand = true;
         boolean allowStartSessionCommand = false;
         boolean allowStopSessionCommand = false;
         boolean allowResumeSessionCommand = false;
         boolean allowPauseSessionCommand = false;
         boolean allowSessionOptionsCommand = false;
+        boolean allowRemoveSessionCommand = false;
         if(volumeEntity == null) {
             return;
         }
@@ -203,9 +207,11 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             allowPauseSessionCommand =
                     sessionStatus == GeoRepSessionStatus.ACTIVE || sessionStatus == GeoRepSessionStatus.INITIALIZING;
             allowSessionOptionsCommand = true;
+            allowNewGeoRepSessionCommand = volumeEntity.getStatus() == GlusterStatus.UP;
+            allowRemoveSessionCommand = true;
         }
-        getNewSessionCommand().setIsAvailable(true);
-        getRemoveSessionCommand().setIsAvailable(false);
+        getNewSessionCommand().setIsExecutionAllowed(allowNewGeoRepSessionCommand);
+        getRemoveSessionCommand().setIsExecutionAllowed(allowRemoveSessionCommand);
         getStartSessionCommand().setIsExecutionAllowed(allowStartSessionCommand);
         getStopSessionCommand().setIsExecutionAllowed(allowStopSessionCommand);
         getPauseSessionCommand().setIsExecutionAllowed(allowPauseSessionCommand);
@@ -218,8 +224,10 @@ public class VolumeGeoRepListModel extends SearchableListModel{
     @Override
     public void executeCommand(UICommand command) {
         super.executeCommand(command);
-        if (command.equals(getRemoveSessionCommand())) {
-
+        if (command.equals(getNewSessionCommand())) {
+            createGeoRepSession();
+        } else if (command.equals(getRemoveSessionCommand())) {
+            removeGeoRepSession();
         } else if(command.equals(getStartSessionCommand())) {
             startGeoRepSession();
         } else if(command.equals(getStopSessionCommand())) {
@@ -234,6 +242,8 @@ public class VolumeGeoRepListModel extends SearchableListModel{
 
         } else if (command.equals(getRefreshSessionsCommand())) {
             refreshSessions();
+        } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
+            onCreateSession();
         } else if (command.getName().equalsIgnoreCase("onStartGeoRepSession")) {//$NON-NLS-1$
             onGeoRepSessionAction(VdcActionType.StartGlusterVolumeGeoRep);
         } else if (command.getName().equalsIgnoreCase("onStopGeoRepSession")) {//$NON-NLS-1$
@@ -242,6 +252,8 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             onGeoRepSessionAction(VdcActionType.PauseGlusterVolumeGeoRepSession);
         } else if (command.getName().equalsIgnoreCase("onResumeGeoRepSession")) {//$NON-NLS-1$
             onGeoRepSessionAction(VdcActionType.ResumeGeoRepSession);
+        } else if (command.getName().equalsIgnoreCase("onRemoveGeoRepSession")) {//$NON-NLS-1$
+            onGeoRepSessionAction(VdcActionType.DeleteGeoRepSession);
         } else if (command.getName().equalsIgnoreCase("ok")) {//$NON-NLS-1$
             updateConfig();
         } else if (command.getName().equalsIgnoreCase("closeWindow")) {//$NON-NLS-1$
@@ -359,6 +371,88 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         geoRepConfigModel.addCancelCommand(cancelCommand);
     }
 
+    private void onCreateSession() {
+        final GlusterVolumeGeoRepCreateModel createModel = (GlusterVolumeGeoRepCreateModel) getWindow();
+        if (!createModel.validate()) {
+            return;
+        }
+        createModel.startProgress(null);
+        final Guid masterVolumeId = getEntity().getId();
+        final String remoteVolumeName = createModel.getSlaveVolumes().getSelectedItem().getName();
+        final String remoteHostName = createModel.getSlaveHosts().getSelectedItem();
+        String remoteUserName = createModel.getSlaveUserName().getEntity();
+        String remoteUserGroup = createModel.getSlaveUserGroupName().getEntity();
+        Frontend.getInstance().runAction(VdcActionType.CreateGlusterVolumeGeoRepSession,
+                new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
+                        remoteVolumeName,
+                        remoteHostName,
+                        remoteUserName,
+                        remoteUserGroup,
+                        !createModel.getShowEligibleVolumes().getEntity()),
+                new IFrontendActionAsyncCallback() {
+                    @Override
+                    public void executed(FrontendActionAsyncResult result) {
+                        createModel.stopProgress();
+                        if (result.getReturnValue().getSucceeded()) {
+                            closeWindow();
+                            if (createModel.getStartSession().getEntity()) {
+                                initializeGeoRepActionConfirmation(constants.geoReplicationStartTitle(), HelpTag.volume_geo_rep_start_confirmation, "volume_geo_rep_start_confirmation", constants.geoRepForceHelp(), messages.geoRepForceTitle(constants.startGeoRep()), "onStartGeoRepSession", getEntity().getName(), remoteVolumeName, remoteHostName);//$NON-NLS-1$//$NON-NLS-2$
+                                final GlusterVolumeGeoRepActionConfirmationModel cModel = (GlusterVolumeGeoRepActionConfirmationModel) getWindow();
+                                cModel.startProgress(null);
+                                Frontend.getInstance().runAction(VdcActionType.StartGlusterVolumeGeoRep,
+                                        new GlusterVolumeGeoRepSessionParameters(masterVolumeId,
+                                                remoteVolumeName,
+                                                remoteHostName),
+                                        new IFrontendActionAsyncCallback() {
+                                            @Override
+                                            public void executed(FrontendActionAsyncResult result) {
+                                                cModel.stopProgress();
+                                                if (!result.getReturnValue().getSucceeded()) {
+                                                    cModel.setMessage(result.getReturnValue().getFault().getMessage());
+                                                } else {
+                                                    closeWindow();
+                                                }
+                                            }
+                                        },
+                                        VolumeGeoRepListModel.this,
+                                        false);
+                            }
+                        } else {
+                            createModel.setQueryFailureMessage(result.getReturnValue().getFault().getMessage());
+                        }
+                    }
+                },
+                this,
+                false);
+    }
+
+    private void createGeoRepSession() {
+        if (getWindow() != null || getEntity() == null) {
+            return;
+        }
+
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+
+        GlusterVolumeEntity selectedMasterVolume = getEntity();
+
+        final GlusterVolumeGeoRepCreateModel geoRepCreateModel =
+                new GlusterVolumeGeoRepCreateModel(selectedMasterVolume);
+        setWindow(geoRepCreateModel);
+
+        geoRepCreateModel.getSlaveUserName().setEntity(constants.rootUser());
+        geoRepCreateModel.getShowEligibleVolumes().setEntity(true);
+
+        UICommand ok = new UICommand("onCreateSession", this);//$NON-NLS-1$
+        ok.setTitle(constants.ok());
+        ok.setIsDefault(true);
+        geoRepCreateModel.getCommands().add(ok);
+
+        UICommand close = new UICommand("closeWindow", this);//$NON-NLS-1$
+        close.setTitle(constants.cancel());
+        close.setIsCancel(true);
+        geoRepCreateModel.getCommands().add(close);
+    }
+
     private void closeWindow() {
         setWindow(null);
     }
@@ -379,6 +473,10 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         performGeoRepAction("onResumeGeoRepSession", constants.geoReplicationResumeTitle(), HelpTag.volume_geo_rep_resume_confirmation, "volume_geo_rep_resume_confirmation", constants.resumeGeoRep(), VdcActionType.ResumeGeoRepSession, constants.resumeGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
     }
 
+    private void removeGeoRepSession() {
+        performGeoRepAction("onRemoveGeoRepSession", constants.geoReplicationRemoveTitle(), HelpTag.volume_geo_rep_remove_confirmation, "volume_geo_rep_remove_confirmation", constants.removeGeoRep(), VdcActionType.DeleteGeoRepSession, constants.removeGeoRepProgressText());//$NON-NLS-1$//$NON-NLS-2$
+    }
+
     private void performGeoRepAction(String commandName,
             String confirmTitle,
             HelpTag helpTag,
@@ -391,12 +489,11 @@ public class VolumeGeoRepListModel extends SearchableListModel{
             return;
         }
 
-        initializeGeoRepActionConfirmation(confirmTitle, helpTag, hashName, constants.geoRepForceHelp(), messages.geoRepForceTitle(action), commandName);
+        initializeGeoRepActionConfirmation(confirmTitle, helpTag, hashName, constants.geoRepForceHelp(), messages.geoRepForceTitle(action), commandName, selectedSession.getMasterVolumeName(), selectedSession.getSlaveVolumeName(), selectedSession.getSlaveHostName());
         onGeoRepSessionAction(actionType);
     }
 
-    private void initializeGeoRepActionConfirmation(String title, HelpTag helpTag, String hashName, String forceHelp, String forceLabelText, String commandName) {
-        GlusterGeoRepSession selectedSession = (GlusterGeoRepSession) getSelectedItem();
+    private void initializeGeoRepActionConfirmation(String title, HelpTag helpTag, String hashName, String forceHelp, String forceLabelText, String commandName, String masterVolumeName, String slaveVolumeName, String slaveHostName) {
         GlusterVolumeGeoRepActionConfirmationModel cModel = new GlusterVolumeGeoRepActionConfirmationModel();
         cModel.setTitle(title);
         cModel.setHelpTag(helpTag);
@@ -404,7 +501,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
 
         setWindow(cModel);
 
-        cModel.initWindow(selectedSession);
+        cModel.initWindow(masterVolumeName, slaveVolumeName, slaveHostName);
 
         cModel.setForceHelp(forceHelp);
         cModel.setForceLabel(forceLabelText);

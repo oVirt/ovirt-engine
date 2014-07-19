@@ -67,7 +67,7 @@ implements SubTabVolumeGeoRepPresenter.ViewDef {
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.removeGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
-                return null;
+                return getDetailModel().getRemoveSessionCommand();
             }
         });
 

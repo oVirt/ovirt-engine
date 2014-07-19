@@ -115,6 +115,15 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     private UICommand configureVolumeSnapshotOptionsCommand;
     private UICommand createSnapshotCommand;
     private UICommand editSnapshotScheduleCommand;
+    private UICommand newGeoRepSessionCommand;
+
+    public UICommand getNewGeoRepSessionCommand() {
+        return newGeoRepSessionCommand;
+    }
+
+    public void setNewGeoRepSessionCommand(UICommand newGeoRepSessionCommand) {
+        this.newGeoRepSessionCommand = newGeoRepSessionCommand;
+    }
 
     public UICommand getStartRebalanceCommand() {
         return startRebalanceCommand;
@@ -275,6 +284,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         setConfigureVolumeSnapshotOptionsCommand(new UICommand("configureVolumeSnapshotOptions", this)); //$NON-NLS-1$
         setCreateSnapshotCommand(new UICommand("createSnapshot", this)); //$NON-NLS-1$
         setEditSnapshotScheduleCommand(new UICommand("editSnapshotSchedule", this)); //$NON-NLS-1$
+        setNewGeoRepSessionCommand(new UICommand("createGeoRepSession", this));//$NON-NLS-1$
 
         getRemoveVolumeCommand().setIsExecutionAllowed(false);
         getStartCommand().setIsExecutionAllowed(false);
@@ -505,6 +515,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         boolean allowConfigureVolumeSnapshotOptions = false;
         boolean allowCreateSnapshot = false;
         boolean allowEditSnapshotSchedule = false;
+        boolean allowCreateGeoRepSession = false;
 
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             allowStart = false;
@@ -546,6 +557,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 && asyncTask.getType() == GlusterTaskType.REBALANCE
                                 && asyncTask.getStatus() == JobExecutionStatus.STARTED;
                 allowConfigureVolumeSnapshotOptions = volumeEntity.getStatus() == GlusterStatus.UP;
+                allowCreateGeoRepSession = volumeEntity.getStatus() == GlusterStatus.UP;
             }
             else {
                 allowStopRebalance = false;
@@ -576,6 +588,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         getStartVolumeProfilingCommand().setIsExecutionAllowed(allowStartProfiling);
         getStopVolumeProfilingCommand().setIsExecutionAllowed(allowStopProfiling);
         getShowVolumeProfileDetailsCommand().setIsExecutionAllowed(allowProfileStatisticsDetails);
+        getNewGeoRepSessionCommand().setIsExecutionAllowed(allowCreateGeoRepSession);
     }
 
     private boolean isCreateSnapshotAvailable(List<GlusterVolumeEntity> list) {
@@ -667,6 +680,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             startRebalance();
         } else if (command.equals(getStopRebalanceCommand())) {
             stopRebalance();
+        } else if (command.equals(getNewGeoRepSessionCommand())) {
+            getGeoRepListModel().getNewSessionCommand().execute();
         } else if (command.getName().equals("onStopRebalance")) { //$NON-NLS-1$
             onStopRebalance();
         } else if (command.equals(getStatusRebalanceCommand())) {

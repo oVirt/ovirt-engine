@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAd
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.DetachGlusterHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
@@ -175,13 +176,13 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.HostSubTabPa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBrickPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGeneralPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterSwiftPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostInterfacePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostVmPresenter;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGlusterStorageDevicesPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.NetworkSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNetworkExternalSubnetPresenter;
@@ -286,6 +287,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.BrickAdvance
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.DetachGlusterHostsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GeoRepActionConfirmPopUpView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster.GlusterVolumeSnapshotCreatePopupView;
@@ -422,13 +424,13 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.HostSubTabPanelVi
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostBrickView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGeneralView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterStorageDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterSwiftView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHardwareView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostInterfaceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostVmView;
-import org.ovirt.engine.ui.webadmin.section.main.view.tab.host.SubTabHostGlusterStorageDevicesView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.NetworkSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.network.SubTabNetworkExternalSubnetView;
@@ -1188,6 +1190,10 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget.class,
                 GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget.ViewDef.class,
                 GlusterVolumeGeoReplicationSessionConfigPopupView.class);
+
+        bindPresenterWidget(GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.class,
+                GlusterVolumeGeoRepCreateSessionPopupPresenterWidget.ViewDef.class,
+                GlusterVolumeGeoRepCreateSessionPopupView.class);
 
         bindPresenterWidget(RemoveBrickStatusPopupPresenterWidget.class,
                 RemoveBrickStatusPopupPresenterWidget.ViewDef.class,

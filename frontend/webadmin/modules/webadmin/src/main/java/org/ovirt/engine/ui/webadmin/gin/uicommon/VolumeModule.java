@@ -34,6 +34,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBric
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterClusterSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepCreateSessionPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotConfigureOptionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeSnapshotCreatePopupPresenterWidget;
@@ -285,6 +286,38 @@ public class VolumeModule extends AbstractGinModule {
                 }
             }
         };
+    }
+
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus,
+            final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget> geoRepActionConfirmationPopupProvider,
+            final Provider<GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget> geoRepConfigPopupProvider,
+            final Provider<GlusterVolumeGeoRepCreateSessionPopupPresenterWidget> geoRepSessionCreatePopupProvider,
+            final Provider<VolumeListModel> mainModelProvider,
+            final Provider<VolumeGeoRepListModel> modelProvider) {
+        return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus,
+                        defaultConfirmPopupProvider, VolumeListModel.class, VolumeGeoRepListModel.class) {
+                    @Override
+                    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source,
+                            UICommand lastExecutedCommand,
+                            Model windowModel) {
+                        if (lastExecutedCommand == getModel().getStartSessionCommand()
+                                || lastExecutedCommand == getModel().getStopSessionCommand()
+                                || lastExecutedCommand == getModel().getPauseSessionCommand()
+                                || lastExecutedCommand == getModel().getResumeSessionCommand()
+                                || lastExecutedCommand == getModel().getRemoveSessionCommand()) {
+                            return geoRepActionConfirmationPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getSessionOptionsCommand()) {
+                            return geoRepConfigPopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getNewSessionCommand()) {
+                            return geoRepSessionCreatePopupProvider.get();
+                        } else {
+                            return geoRepActionConfirmationPopupProvider.get();
+                        }
+                    }
+                };
     }
 
     @Override
