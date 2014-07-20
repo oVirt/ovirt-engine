@@ -109,6 +109,7 @@ public class IrsProxyData {
 
     private String privatemCurrentIrsHost;
     private IIrsServer irsProxy;
+    private Guid fencedIrs;
 
     private IIrsServer getmIrsProxy() {
         return irsProxy;
@@ -132,6 +133,14 @@ public class IrsProxyData {
 
     private void setProtocol(VdsProtocol value) {
         this.privateProtocol = value;
+    }
+
+    public Guid getFencedIrs() {
+        return fencedIrs;
+    }
+
+    public void setFencedIrs(Guid fencedIrs) {
+        this.fencedIrs = fencedIrs;
     }
 
     private Guid _storagePoolId = Guid.Empty;
@@ -772,6 +781,7 @@ public class IrsProxyData {
                     .getEventListener()
                     .storagePoolStatusChanged(storagePool.getId(), storagePool.getStatus());
 
+            setFencedIrs(null);
             returnValue = selectedVds.argvalue.getHostName();
             log.infoFormat("Initialize Irs proxy from vds: {0}", returnValue);
             AuditLogableBase logable = new AuditLogableBase(selectedVds.argvalue.getId());
@@ -821,6 +831,12 @@ public class IrsProxyData {
         DbFacade.getInstance().getStoragePoolDao().update(storagePool);
     }
 
+    private boolean wasVdsManuallyFenced(int spmId) {
+        vds_spm_id_map map = DbFacade.getInstance().getVdsSpmIdMapDao().get(
+                _storagePoolId, spmId);
+        return map != null && map.getId().equals(getFencedIrs());
+    }
+
     private SpmStatusResult handleSpmStatusResult(Guid curVdsId,
                                                   List<VDS> vdsByPool,
                                                   final StoragePool storagePool,
@@ -829,7 +845,7 @@ public class IrsProxyData {
         if (spmStatus.getSpmStatus() == SpmStatus.Free) {
             int vdsSpmIdToFence = -1;
             boolean startSpm = true;
-            if (spmStatus.getSpmId() != -1) {
+            if (spmStatus.getSpmId() != -1 && !wasVdsManuallyFenced(spmStatus.getSpmId())) {
                 int spmId = spmStatus.getSpmId();
                 Guid spmVdsId = Guid.Empty;
                 VDS spmVds = null;
@@ -872,6 +888,7 @@ public class IrsProxyData {
                         }
                     }
                 }
+
                 try {
                     if (!spmVdsId.equals(Guid.Empty)) {
                         SpmStatusResult destSpmStatus = (SpmStatusResult) ResourceManager

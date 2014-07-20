@@ -8,6 +8,8 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
 
     private Guid preferredSPMId;
 
+    private boolean vdsAlreadyRebooted;
+
     public ResetIrsVDSCommandParameters() {
     }
 
@@ -27,6 +29,14 @@ public class ResetIrsVDSCommandParameters extends IrsBaseVDSCommandParameters {
 
     public void setVdsId(Guid value) {
         privateVdsId = value;
+    }
+
+    public boolean isVdsAlreadyRebooted() {
+        return vdsAlreadyRebooted;
+    }
+
+    public void setVdsAlreadyRebooted(boolean vdsAlreadyRebooted) {
+        this.vdsAlreadyRebooted = vdsAlreadyRebooted;
     }
 
     private boolean privateIgnoreStopFailed;
