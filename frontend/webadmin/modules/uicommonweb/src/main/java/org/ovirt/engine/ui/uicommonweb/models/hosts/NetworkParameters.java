@@ -54,7 +54,7 @@ public class NetworkParameters {
         return customProperties;
     }
 
-    private void setCustomProperties(Map<String, String> customProperties) {
+    public void setCustomProperties(Map<String, String> customProperties) {
         this.customProperties = customProperties;
     }
 
