@@ -10,6 +10,7 @@ import java.util.Set;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -50,8 +51,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @LockIdNameAttribute
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<RemoveVmParameters> {
-
-    private Set<String> memoryStates;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -95,6 +94,8 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             new ExternalNetworkManager(nic).deallocateIfExternal();
         }
 
+        removeMemoryVolumes();
+
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
             public Void runInTransaction() {
@@ -123,12 +124,12 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
 
-        removeMemoryVolumes();
-
         return true;
     }
 
     private void removeMemoryVolumes() {
+        Set<String> memoryStates =
+                MemoryUtils.getMemoryVolumesFromSnapshots(getDbFacade().getSnapshotDao().getAll(getVmId()));
         for (String memoryState : memoryStates) {
             VdcReturnValueBase retVal = getBackend().runInternalAction(
                     VdcActionType.RemoveMemoryVolumes,
@@ -310,7 +311,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         removeLunDisks();
         removeVmUsers();
         removeVmNetwork();
-        memoryStates = removeVmSnapshots();
+        removeVmSnapshots();
         removeVmStatic(getParameters().isRemovePermissions());
     }
 
