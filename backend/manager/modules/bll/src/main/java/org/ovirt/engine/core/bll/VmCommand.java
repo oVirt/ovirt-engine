@@ -243,8 +243,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         }
     }
 
-    protected Set<String> removeVmSnapshots() {
-        return new SnapshotsManager().removeSnapshots(getVmId());
+    protected void removeVmSnapshots() {
+        new SnapshotsManager().removeSnapshots(getVmId());
     }
 
     protected void removeVmUsers() {
