@@ -47,23 +47,8 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         List<LogicalNetworkModel> networksOnTarget = targetNic.getItems();
         networksOnTarget.add(this);
 
-        NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
-
         if (!hasVlan()) {
-            if (netParams != null) {
-                targetNic.getEntity().setBootProtocol(netParams.getBootProtocol());
-                targetNic.getEntity().setAddress(netParams.getAddress());
-                targetNic.getEntity().setSubnet(netParams.getSubnet());
-                targetNic.getEntity().setGateway(netParams.getGateway());
-            } else {
-                if (targetNic.getEntity().getBootProtocol() == null) {
-                    if (!isManagement()) {
-                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.NONE);
-                    } else {
-                        targetNic.getEntity().setBootProtocol(NetworkBootProtocol.DHCP);
-                    }
-                }
-            }
+            restoreNetworkParameters(targetNic.getEntity());
         }
 
         if (isManagement()) {
@@ -86,26 +71,26 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             bridge.setVdsId(targetNicEntity.getVdsId());
             bridge.setVdsName(targetNicEntity.getVdsName());
             bridge.setBridged(getEntity().isVmNetwork());
-            if (netParams != null) {
-                bridge.setBootProtocol(netParams.getBootProtocol());
-                bridge.setAddress(netParams.getAddress());
-                bridge.setSubnet(netParams.getSubnet());
-                bridge.setGateway(netParams.getGateway());
-            } else {
-                if (bridge.getBootProtocol() == null) {
-                    if (!isManagement()) {
-                        bridge.setBootProtocol(NetworkBootProtocol.NONE);
-                    } else {
-                        bridge.setBootProtocol(NetworkBootProtocol.DHCP);
-                    }
-                }
-            }
+            restoreNetworkParameters(bridge);
             return bridge;
         } else {
             targetNicEntity.setNetworkName(getName());
             targetNicEntity.setMtu(getEntity().getMtu());
             targetNicEntity.setBridged(getEntity().isVmNetwork());
             return null;
+        }
+    }
+
+    private void restoreNetworkParameters(VdsNetworkInterface nic) {
+        NetworkParameters netParams = getSetupModel().getNetworkToLastDetachParams().get(getName());
+        if (netParams != null) {
+            nic.setBootProtocol(netParams.getBootProtocol());
+            nic.setAddress(netParams.getAddress());
+            nic.setSubnet(netParams.getSubnet());
+            nic.setGateway(netParams.getGateway());
+            nic.setCustomProperties(netParams.getCustomProperties());
+        } else if (nic.getBootProtocol() == null) {
+            nic.setBootProtocol(isManagement() ? NetworkBootProtocol.DHCP : NetworkBootProtocol.NONE);
         }
     }
 
@@ -126,18 +111,12 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
         VdsNetworkInterface nicEntity = attachingNic.getEntity();
 
         NetworkParameters netParams = new NetworkParameters();
-        if (!hasVlan()) {
-            netParams.setBootProtocol(nicEntity.getBootProtocol());
-            netParams.setAddress(nicEntity.getAddress());
-            netParams.setSubnet(nicEntity.getSubnet());
-            netParams.setGateway(nicEntity.getGateway());
-        } else {
-            netParams.setBootProtocol(vlanNicModel.getEntity().getBootProtocol());
-            netParams.setAddress(vlanNicModel.getEntity().getAddress());
-            netParams.setSubnet(vlanNicModel.getEntity().getSubnet());
-            netParams.setGateway(vlanNicModel.getEntity().getGateway());
-        }
-
+        VdsNetworkInterface detachedDevice = hasVlan() ? vlanNicModel.getEntity() : nicEntity;
+        netParams.setBootProtocol(detachedDevice.getBootProtocol());
+        netParams.setAddress(detachedDevice.getAddress());
+        netParams.setSubnet(detachedDevice.getSubnet());
+        netParams.setGateway(detachedDevice.getGateway());
+        netParams.setCustomProperties(detachedDevice.getCustomProperties());
         getSetupModel().getNetworkToLastDetachParams().put(getName(), netParams);
 
         if (!hasVlan()) {
@@ -146,6 +125,7 @@ public class LogicalNetworkModel extends NetworkItemModel<NetworkStatus> {
             nicEntity.setAddress(null);
             nicEntity.setSubnet(null);
             nicEntity.setGateway(null);
+            nicEntity.setCustomProperties(null);
             nicEntity.setNetworkImplementationDetails(null);
         }
         setVlanNicModel(null);
