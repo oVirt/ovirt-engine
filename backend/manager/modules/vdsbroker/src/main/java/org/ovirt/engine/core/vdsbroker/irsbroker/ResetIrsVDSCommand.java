@@ -20,7 +20,8 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
     protected void executeVDSCommand() {
         P parameters = getParameters();
         Guid vdsId = parameters.getVdsId();
-        if (ResourceManager
+        if (getParameters().isVdsAlreadyRebooted() ||
+                ResourceManager
                 .getInstance()
                 .runVdsCommand(VDSCommandType.SpmStop,
                         new SpmStopVDSCommandParameters(vdsId, parameters.getStoragePoolId())).getSucceeded()
@@ -28,7 +29,13 @@ public class ResetIrsVDSCommand<P extends ResetIrsVDSCommandParameters> extends 
             if (getParameters().getPreferredSPMId() != null) {
                 getCurrentIrsProxyData().setPreferredHostId(getParameters().getPreferredSPMId());
             }
+
+            if (getParameters().isVdsAlreadyRebooted()) {
+                getCurrentIrsProxyData().setFencedIrs(vdsId);
+            }
+
             getCurrentIrsProxyData().resetIrs();
+
             StoragePool pool = DbFacade.getInstance().getStoragePoolDao().get(parameters.getStoragePoolId());
             if (pool != null && (pool.getStatus() == StoragePoolStatus.NotOperational)) {
                 ResourceManager
