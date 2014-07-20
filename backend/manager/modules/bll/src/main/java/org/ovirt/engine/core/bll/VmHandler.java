@@ -753,14 +753,15 @@ public class VmHandler {
         }
     }
 
-    public static boolean isUpdateValidForVmDevices(Guid vmId, Object objectWithEditableDeviceFields) {
+    public static boolean isUpdateValidForVmDevices(Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
         if (objectWithEditableDeviceFields == null) {
             return true;
         }
-        return getVmDevicesFieldsToUpdateOnNextRun(vmId, objectWithEditableDeviceFields).isEmpty();
+        return getVmDevicesFieldsToUpdateOnNextRun(vmId, vmStatus, objectWithEditableDeviceFields).isEmpty();
     }
 
-    public static List<Pair<EditableDeviceOnVmStatusField, Boolean>> getVmDevicesFieldsToUpdateOnNextRun(Guid vmId, Object objectWithEditableDeviceFields) {
+    public static List<Pair<EditableDeviceOnVmStatusField, Boolean>> getVmDevicesFieldsToUpdateOnNextRun(
+            Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
         List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList = new ArrayList<>();
 
         List<Pair<EditableDeviceOnVmStatusField , Field>> pairList = BaseHandler.extractAnnotatedFields(
@@ -785,7 +786,7 @@ public class VmHandler {
                 continue;
             }
 
-            if (!VmHandler.isUpdateValidForVmDevice(field.getName(), VMStatus.Up)) {
+            if (!VmHandler.isUpdateValidForVmDevice(field.getName(), vmStatus)) {
                 fieldList.add(new Pair<>(annotation, isEnabled));
             }
         }

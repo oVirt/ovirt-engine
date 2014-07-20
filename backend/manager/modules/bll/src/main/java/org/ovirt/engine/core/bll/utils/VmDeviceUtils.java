@@ -1115,7 +1115,7 @@ public class VmDeviceUtils {
         Map<Guid, VmDevice> vmManagedDeviceMap = vm.getManagedVmDeviceMap();
 
         List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList =
-                VmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), objectWithEditableDeviceFields);
+                VmHandler.getVmDevicesFieldsToUpdateOnNextRun(vm.getId(), vm.getStatus(), objectWithEditableDeviceFields);
 
         // Add the enabled devices and remove the disabled ones
         for (Pair<EditableDeviceOnVmStatusField, Boolean> pair : fieldList) {

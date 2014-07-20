@@ -592,7 +592,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 !VmHandler.isUpdateValid(getVm().getStaticData(),
                         getParameters().getVmStaticData(),
                         getVm().getStatus()) ||
-                !VmHandler.isUpdateValidForVmDevices(getVmId(), getParameters());
+                !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
     }
 
     @Override
