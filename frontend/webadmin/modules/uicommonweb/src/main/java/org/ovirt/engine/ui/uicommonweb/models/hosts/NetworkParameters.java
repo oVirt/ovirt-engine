@@ -59,7 +59,7 @@ public class NetworkParameters {
         return qosOverridden;
     }
 
-    private void setQosOverridden(boolean qosOverridden) {
+    public void setQosOverridden(boolean qosOverridden) {
         this.qosOverridden = qosOverridden;
     }
 
@@ -67,7 +67,7 @@ public class NetworkParameters {
         return qos;
     }
 
-    private void setQos(NetworkQoS qos) {
+    public void setQos(NetworkQoS qos) {
         this.qos = qos;
     }
 
