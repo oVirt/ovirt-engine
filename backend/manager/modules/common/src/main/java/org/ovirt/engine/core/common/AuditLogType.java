@@ -125,10 +125,10 @@ public enum AuditLogType {
     HOST_INTERFACE_HIGH_NETWORK_USE(608, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue() * 30),
 
-    HOST_INTERFACE_STATE_UP(609, AuditLogSeverity.WARNING, AuditLogTimeInterval.MINUTE.getValue() * 30),
+    HOST_INTERFACE_STATE_UP(609, AuditLogSeverity.NORMAL, AuditLogTimeInterval.MINUTE.getValue() * 30),
     HOST_INTERFACE_STATE_DOWN(610, AuditLogSeverity.WARNING, AuditLogTimeInterval.MINUTE.getValue() * 30),
     HOST_BOND_SLAVE_STATE_UP(611, AuditLogSeverity.NORMAL, AuditLogTimeInterval.MINUTE.getValue() * 30),
-    HOST_BOND_SLAVE_STATE_DOWN(612, AuditLogSeverity.NORMAL, AuditLogTimeInterval.MINUTE.getValue() * 30),
+    HOST_BOND_SLAVE_STATE_DOWN(612, AuditLogSeverity.WARNING, AuditLogTimeInterval.MINUTE.getValue() * 30),
 
     // Disk alignment audit logs
     DISK_ALIGNMENT_SCAN_START(700),
