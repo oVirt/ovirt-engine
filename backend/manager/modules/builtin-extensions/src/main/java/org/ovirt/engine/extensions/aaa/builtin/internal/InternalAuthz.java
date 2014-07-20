@@ -112,12 +112,16 @@ public class InternalAuthz implements Extension {
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Arrays.asList(NAMESPACE)
                         );
+        String userName = configuration.getProperty("config.authz.user.name");
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAMESPACE,
                 NAMESPACE
                 ).mput(
                         Authz.PrincipalRecord.NAME,
-                        configuration.getProperty("config.authz.user.name")
+                        userName
+                ).mput(
+                        Authz.PrincipalRecord.FIRST_NAME,
+                        userName
                 ).mput(
                         Authz.PrincipalRecord.ID,
                         configuration.getProperty("config.authz.user.id")
