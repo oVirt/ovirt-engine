@@ -202,12 +202,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void handleSingleAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        executor = new FenceExecutor(getVds(), getParameters().getAction());
+        executor = createFenceExecutor(getParameters().getAction());
         if (executor.findProxyHost()) {
             vdsReturnValue = executor.fence();
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = new FenceExecutor(getVds(), FenceActionType.Status);
+                executor = createFenceExecutor(FenceActionType.Status);
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
@@ -229,17 +229,17 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void handleMultipleSequentialAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        executor = new FenceExecutor(getVds(), getParameters().getAction());
+        executor = createFenceExecutor(getParameters().getAction());
         if (executor.findProxyHost()) {
             vdsReturnValue = executor.fence(FenceAgentOrder.Primary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = new FenceExecutor(getVds(), FenceActionType.Status);
+                executor = createFenceExecutor(FenceActionType.Status);
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
                     handleSpecificCommandActions();
                 } else {
                     // set the executor to perform the action
-                    executor = new FenceExecutor(getVds(), getParameters().getAction());
+                    executor = createFenceExecutor(getParameters().getAction());
                     tryOtherSequentialAgent(lastStatus, vdsReturnValue);
                 }
             } else {
@@ -257,12 +257,12 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void tryOtherSequentialAgent(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        executor = new FenceExecutor(getVds(), getParameters().getAction());
+        executor = createFenceExecutor(getParameters().getAction());
         if (executor.findProxyHost()) {
             vdsReturnValue = executor.fence(FenceAgentOrder.Secondary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = new FenceExecutor(getVds(), FenceActionType.Status);
+                executor = createFenceExecutor(FenceActionType.Status);
                 if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
                     // raise an alert that secondary agent was used
                     AuditLogableBase logable = new AuditLogableBase();
@@ -292,8 +292,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      * @param lastStatus
      */
     private void handleMultipleConcurrentAgents(VDSStatus lastStatus, VDSReturnValue vdsReturnValue) {
-        primaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
-        secondaryExecutor = new FenceExecutor(getVds(), getParameters().getAction());
+        primaryExecutor = createFenceExecutor(getParameters().getAction());
+        secondaryExecutor = createFenceExecutor(getParameters().getAction());
         if (primaryExecutor.findProxyHost() && secondaryExecutor.findProxyHost()) {
             primaryResult = new FenceInvocationResult();
             secondaryResult = new FenceInvocationResult();
@@ -392,7 +392,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         fenceInvocationResult.setOrder(order);
         fenceInvocationResult.setValue(fenceExecutor.fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
-            this.executor = new FenceExecutor(getVds(), FenceActionType.Status);
+            this.executor = createFenceExecutor(FenceActionType.Status);
             fenceInvocationResult.setSucceeded(waitForStatus(getVds().getName(), getParameters().getAction(), order));
         }
         return fenceInvocationResult;
@@ -404,11 +404,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // invocation and not on its result), we have to try the Start command again
         // before giving up
         if (getParameters().getAction() == FenceActionType.Start) {
-            executor = new FenceExecutor(getVds(), FenceActionType.Start);
+            executor = createFenceExecutor(FenceActionType.Start);
             vdsReturnValue = executor.fence(order);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = new FenceExecutor(getVds(), FenceActionType.Status);
+                executor = createFenceExecutor(FenceActionType.Status);
                 if (waitForStatus(getVds().getName(), FenceActionType.Start, order)) {
                     handleSpecificCommandActions();
                 } else {
@@ -610,5 +610,15 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         return Collections.singletonMap(vdsId.toString(), LockMessagesMatchUtil.makeLockingPair(
                 LockingGroup.VDS_FENCE,
                 VdcBllMessages.POWER_MANAGEMENT_ACTION_ON_ENTITY_ALREADY_IN_PROGRESS));
+    }
+
+    /**
+     * Creates {@code FenceExecutor} instance with default VDS and specified fence action type
+     */
+    private FenceExecutor createFenceExecutor(FenceActionType actionType) {
+        return new FenceExecutor(
+                getVds(),
+                actionType
+        );
     }
 }
