@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
 public class TaskManagerUtil {
 
@@ -161,6 +162,16 @@ public class TaskManagerUtil {
 
     public static void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status) {
          coco.updateCommandStatus(commandId, taskType, status);
+    }
+
+    public static CommandExecutionStatus getCommandExecutionStatus(Guid commandId) {
+        CommandEntity cmdEntity = coco.getCommandEntity(commandId);
+        return cmdEntity == null ? CommandExecutionStatus.UNKNOWN :
+                cmdEntity.isExecuted() ? CommandExecutionStatus.EXECUTED : CommandExecutionStatus.NOT_EXECUTED;
+    }
+
+    public static void updateCommandExecuted(Guid commandId) {
+        coco.updateCommandExecuted(commandId);
     }
 
     public static Future<VdcReturnValueBase> executeAsyncCommand(VdcActionType actionType,

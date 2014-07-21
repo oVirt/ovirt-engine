@@ -12,6 +12,8 @@ public interface CommandEntityDao extends GenericDao<CommandEntity, Guid> {
 
     void updateStatus(Guid command, CommandStatus status);
 
+    void updateExecuted(Guid id);
+
     void updateNotified(Guid id);
 
     void removeAllBeforeDate(Date cutoff);

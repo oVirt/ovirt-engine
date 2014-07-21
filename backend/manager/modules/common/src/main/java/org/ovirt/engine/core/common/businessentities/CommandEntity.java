@@ -23,6 +23,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private CommandStatus commandStatus = CommandStatus.UNKNOWN;
     private boolean callBackEnabled = false;
     private boolean callBackNotified = false;
+    private boolean executed = false;
 
     @Override
     public int hashCode() {
@@ -160,5 +161,13 @@ public class CommandEntity implements BusinessEntity<Guid> {
 
     public void setStepId(Guid stepId) {
         this.stepId = stepId;
+    }
+
+    public boolean isExecuted() {
+        return executed;
+    }
+
+    public void setExecuted(boolean executed) {
+        this.executed = executed;
     }
 }

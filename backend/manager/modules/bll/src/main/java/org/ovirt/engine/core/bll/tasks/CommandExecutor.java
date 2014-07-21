@@ -74,7 +74,9 @@ public class CommandExecutor {
                 break;
             case ACTIVE:
             case ACTIVE_ASYNC:
-                callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                if (coco.getCommandEntity(cmdId).isExecuted()) {
+                    callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
+                }
                 break;
             default:
                 break;
@@ -85,16 +87,10 @@ public class CommandExecutor {
     private void initCommandExecutor() {
         if (!cmdExecutorInitialized) {
             for (CommandEntity cmdEntity : coco.getCommandsWithCallBackEnabled()) {
-                switch(cmdEntity.getCommandStatus()) {
-                    case ACTIVE_SYNC:
-                    case NOT_STARTED:
-                        coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
-                        break;
-                    default:
-                        if (!cmdEntity.isCallBackNotified()) {
-                            addToCallBackMap(cmdEntity);
-                        }
-                        break;
+                if (!cmdEntity.isExecuted()) {
+                    coco.retrieveCommand(cmdEntity.getId()).setCommandStatus(CommandStatus.FAILED_RESTARTED);
+                } else if (!cmdEntity.isCallBackNotified()) {
+                    addToCallBackMap(cmdEntity);
                 }
             }
             cmdExecutorInitialized = true;
