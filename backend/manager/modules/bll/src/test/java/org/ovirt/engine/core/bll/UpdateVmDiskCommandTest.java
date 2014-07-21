@@ -327,7 +327,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void canDoActionUpdateWipeAfterDelete(VMStatus status) {
-        DiskImage disk  = createDiskImage();
+        DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         UpdateVmDiskParameters parameters = createParameters();
@@ -349,7 +349,7 @@ public class UpdateVmDiskCommandTest {
     }
 
     private void canDoActionUpdateDescription(VMStatus status) {
-        DiskImage disk  = createDiskImage();
+        DiskImage disk = createDiskImage();
         disk.setReadOnly(false);
         when(diskDao.get(diskImageGuid)).thenReturn(disk);
         UpdateVmDiskParameters parameters = createParameters();
