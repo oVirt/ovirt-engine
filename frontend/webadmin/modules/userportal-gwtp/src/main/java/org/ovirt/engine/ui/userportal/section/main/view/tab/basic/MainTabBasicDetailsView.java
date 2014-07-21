@@ -144,14 +144,8 @@ public class MainTabBasicDetailsView extends AbstractView implements MainTabBasi
     }
 
     @Override
-    public void setConsoleWarningMessage(String message) {
+    public void setConsoleProtocolMessage(String message) {
         protocolMessage.setText(message);
-        protocolMessage.setStyleName(style.protocolWarning());
-    }
-
-    @Override
-    public void setConsoleProtocol(String protocolName) {
-        protocolMessage.setText(protocolName);
         protocolMessage.setStyleName(style.protocolWarning());
     }
 
