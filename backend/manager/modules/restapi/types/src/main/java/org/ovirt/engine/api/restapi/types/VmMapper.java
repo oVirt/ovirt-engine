@@ -564,7 +564,7 @@ public class VmMapper {
 
         if (entity.getVmInit() != null) {
             model.setInitialization(map(entity.getVmInit(), null));
-            if (entity.getVmInit().getDomain() != null) {
+            if (StringUtils.isNotBlank(entity.getVmInit().getDomain())) {
                 Domain domain = new Domain();
                 domain.setName(entity.getVmInit().getDomain());
                 model.setDomain(domain);
@@ -1121,7 +1121,7 @@ public class VmMapper {
         if (entity.getHostname() != null) {
             model.setHostName(entity.getHostname());
         }
-        if (entity.getDomain() != null) {
+        if (StringUtils.isNotBlank(entity.getDomain())) {
             model.setDomain(entity.getDomain());
         }
         if (entity.getTimeZone() != null) {
