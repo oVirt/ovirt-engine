@@ -81,7 +81,7 @@ public class KerberosLdapAuthz implements Extension {
     public KerberosLdapAuthz() {
     }
 
-    public ExtMap queryGroups(ExtMap input, ExtMap output, long pageSize) {
+    public ExtMap queryGroups(ExtMap input, ExtMap output) {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchGroups);
         queryData.setDomain(getDirectoryName());
@@ -98,14 +98,12 @@ public class KerberosLdapAuthz implements Extension {
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
         List<ExtMap> results = new ArrayList<>();
         for (LdapGroup ldapGroup : ldapGroups) {
-            if (results.size() < pageSize) {
-                results.add(mapLdapGroup(ldapGroup));
-            }
+            results.add(mapLdapGroup(ldapGroup));
         }
         return output.mput(Authz.InvokeKeys.QUERY_RESULT, results);
     }
 
-    public ExtMap queryUsers(ExtMap input, ExtMap output, long pageSize) {
+    public ExtMap queryUsers(ExtMap input, ExtMap output) {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchUsers);
         queryData.setDomain(getDirectoryName());
@@ -122,11 +120,8 @@ public class KerberosLdapAuthz implements Extension {
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
         List<ExtMap> results = new ArrayList<>();
-        int addedUsers = 0;
         for (LdapUser ldapUser : ldapUsers) {
-            if (addedUsers++ < pageSize) {
-                results.add(mapLdapUser(ldapUser));
-            }
+            results.add(mapLdapUser(ldapUser));
         }
         return output.mput(Authz.InvokeKeys.QUERY_RESULT, results);
     }
@@ -198,16 +193,15 @@ public class KerberosLdapAuthz implements Extension {
 
     private void doQueryExecute(ExtMap input, ExtMap output) {
         Opaque opaque = input.<Opaque> get(Authz.InvokeKeys.QUERY_OPAQUE);
-        int pageSize = input.<Integer> get(Authz.InvokeKeys.PAGE_SIZE);
         if (opaque.getQueryInfo() == null) {
             output.mput(Authz.InvokeKeys.QUERY_RESULT, null);
         } else {
             if (opaque.getQueryInfo().<ExtUUID> get(Authz.InvokeKeys.QUERY_ENTITY).equals(Authz.QueryEntity.GROUP)) {
-                queryGroups(opaque.getQueryInfo(), output, pageSize);
+                queryGroups(opaque.getQueryInfo(), output);
             } else if (opaque.getQueryInfo()
                     .<ExtUUID> get(Authz.InvokeKeys.QUERY_ENTITY)
                     .equals(Authz.QueryEntity.PRINCIPAL)) {
-                queryUsers(opaque.getQueryInfo(), output, pageSize);
+                queryUsers(opaque.getQueryInfo(), output);
             }
             opaque.resetQueryInfo();
         }
