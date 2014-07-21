@@ -21,7 +21,6 @@ import org.slf4j.LoggerFactory;
 
 public final class CommandsFactory {
     private static final Logger log = LoggerFactory.getLogger(CommandsFactory.class);
-    private static final Injector injector = new Injector();
     private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
     private static final String CommandSuffix = "Command";
     private static final String QueryPrefix = "Query";
@@ -53,7 +52,7 @@ public final class CommandsFactory {
         };
 
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
-            new ConcurrentHashMap<String, Class<CommandBase<? extends VdcActionParametersBase>>>(VdcActionType.values().length);
+            new ConcurrentHashMap<>(VdcActionType.values().length);
 
     @SuppressWarnings("unchecked")
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
@@ -107,7 +106,7 @@ public final class CommandsFactory {
                 isAcessible = constructor.isAccessible();
                 constructor.setAccessible(true);
             }
-            CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(new Object[]{commandId});
+            CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(commandId);
             return Injector.injectMembers(cmd);
         } catch (Exception e) {
             log.error("CommandsFactory : Failed to get type information using reflection for Class  '{}', Command Id '{}': {}",
@@ -127,7 +126,7 @@ public final class CommandsFactory {
         Class<?> type = null;
         try {
             type = getCommandClass(query.name(), QueryPrefix);
-            QueriesCommandBase<?> result = null;
+            QueriesCommandBase<?> result;
             if (engineContext == null) {
                 result =
                         (QueriesCommandBase<?>) findCommandConstructor(type, parameters.getClass()).newInstance(parameters);
