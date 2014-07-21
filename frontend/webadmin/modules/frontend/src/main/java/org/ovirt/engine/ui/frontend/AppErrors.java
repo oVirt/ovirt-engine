@@ -199,8 +199,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. There is no OVF for the specific entity.")
     String ACTION_TYPE_FAILED_UNSUPPORTED_OVF();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The operation can be performed only for disks that are in ${status} status.")
-    String ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS();
+    @DefaultStringValue("Cannot ${action} ${type}. The operation can be performed only for OVF disks that are in ${status} status.")
+    String ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS();
 
     @DefaultStringValue("Cannot remove default Host Cluster.")
     String VDS_CANNOT_REMOVE_DEFAULT_VDS_GROUP();
