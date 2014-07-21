@@ -119,7 +119,9 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
         DiskImage diskImage = getDiskImage();
         DiskImagesValidator diskImagesValidator = new DiskImagesValidator(Collections.singletonList(diskImage));
 
-        if (diskImage.isOvfStore() && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL))) {
+        if (diskImage.isOvfStore()
+                && !validate(diskImagesValidator.disksInStatus(ImageStatus.ILLEGAL,
+                        VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS))) {
             return false;
         }
 

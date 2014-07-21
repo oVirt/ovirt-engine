@@ -98,6 +98,6 @@ public class RemoveDiskCommandTest {
         disk.setImageStatus(ImageStatus.OK);
         disk.setOvfStore(true);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
-                VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS);
+                VdcBllMessages.ACTION_TYPE_FAILED_OVF_DISK_NOT_IN_APPLICABLE_STATUS);
     }
 }
