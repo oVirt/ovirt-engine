@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_FAILED_VDS_RESTAR
 import static org.ovirt.engine.core.common.AuditLogType.SYSTEM_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_FAILED_VDS_RESTART;
 import static org.ovirt.engine.core.common.AuditLogType.USER_VDS_RESTART;
+import static org.ovirt.engine.core.common.AuditLogType.VDS_NOT_RESTARTED_DUE_TO_POLICY;
 import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__ACTION__RESTART;
 import static org.ovirt.engine.core.common.errors.VdcBllMessages.VAR__TYPE__HOST;
 import static org.ovirt.engine.core.common.errors.VdcBllMessages.VDS_FENCE_OPERATION_FAILED;
@@ -44,6 +45,8 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
 
+    private boolean skippedDueToFencingPolicy;
+
     protected List<VM> getVmList() {
         return mVmList;
     }
@@ -55,6 +58,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
      */
     protected RestartVdsCommand(Guid commandId) {
         super(commandId);
+        skippedDueToFencingPolicy = false;
     }
 
     public RestartVdsCommand(T parameters) {
@@ -63,6 +67,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
 
     public RestartVdsCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+        skippedDueToFencingPolicy = false;
     }
 
 
@@ -89,12 +94,20 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Stop, VdcActionType.StopVds);
         }
         if (returnValueBase.getSucceeded()) {
-            executeFenceVdsManuallyAction(vdsId, sessionId);
+            if (wasSkippedDueToPolicy(returnValueBase.getActionReturnValue())) {
+                // fence execution was skipped due to fencing policy, host should be alive
+                setSucceeded(true);
+                setFenceSucceeded(true);
+                skippedDueToFencingPolicy = true;
+                return;
+            } else {
+                executeFenceVdsManuallyAction(vdsId, sessionId);
 
-            // execute StartVds action
-            returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Start, VdcActionType.StartVds);
-            setSucceeded(returnValueBase.getSucceeded());
-            setFenceSucceeded(getSucceeded());
+                // execute StartVds action
+                returnValueBase = executeVdsFenceAction(vdsId, sessionId, FenceActionType.Start, VdcActionType.StartVds);
+                setSucceeded(returnValueBase.getSucceeded());
+                setFenceSucceeded(getSucceeded());
+            }
         } else {
             super.handleError();
             setSucceeded(false);
@@ -126,6 +139,8 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         FenceVdsActionParameters params = new FenceVdsActionParameters(vdsId, fenceAction);
         params.setParentCommand(VdcActionType.RestartVds);
         params.setSessionId(sessionId);
+        params.setFencingPolicy(getParameters().getFencingPolicy());
+
         // If Host was in Maintenance, and was restarted manually , it should preserve its status after reboot
         if (getParameters().getParentCommand() != VdcActionType.VdsNotRespondingTreatment && getVds().getStatus() == VDSStatus.Maintenance) {
             params.setChangeHostToMaintenanceOnStart(true);
@@ -149,7 +164,11 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
     @Override
     public AuditLogType getAuditLogTypeValue() {
         if (getSucceeded()) {
-            return isInternalExecution() ? SYSTEM_VDS_RESTART : USER_VDS_RESTART;
+            if (skippedDueToFencingPolicy) {
+                return VDS_NOT_RESTARTED_DUE_TO_POLICY;
+            } else {
+                return isInternalExecution() ? SYSTEM_VDS_RESTART : USER_VDS_RESTART;
+            }
         } else {
             return isInternalExecution() ? SYSTEM_FAILED_VDS_RESTART : USER_FAILED_VDS_RESTART;
         }

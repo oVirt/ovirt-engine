@@ -207,11 +207,17 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             vdsReturnValue = executor.fence();
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = createFenceExecutor(FenceActionType.Status);
-                if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
-                    handleSpecificCommandActions();
+                if (wasSkippedDueToPolicy(vdsReturnValue.getReturnValue())) {
+                    // fencing execution was skipped due to fencing policy
+                    handleFencingSkippedDueToPolicy(vdsReturnValue);
+                    return;
                 } else {
-                    handleWaitFailure(lastStatus, FenceAgentOrder.Primary);
+                    executor = createFenceExecutor(FenceActionType.Status);
+                    if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
+                        handleSpecificCommandActions();
+                    } else {
+                        handleWaitFailure(lastStatus, FenceAgentOrder.Primary);
+                    }
                 }
             } else {
                 handleError(lastStatus, vdsReturnValue, FenceAgentOrder.Primary);
@@ -234,13 +240,19 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             vdsReturnValue = executor.fence(FenceAgentOrder.Primary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = createFenceExecutor(FenceActionType.Status);
-                if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
-                    handleSpecificCommandActions();
+                if (wasSkippedDueToPolicy(vdsReturnValue.getReturnValue())) {
+                    // fencing execution was skipped due to fencing policy
+                    handleFencingSkippedDueToPolicy(vdsReturnValue);
+                    return;
                 } else {
-                    // set the executor to perform the action
-                    executor = createFenceExecutor(getParameters().getAction());
-                    tryOtherSequentialAgent(lastStatus, vdsReturnValue);
+                    executor = createFenceExecutor(FenceActionType.Status);
+                    if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Primary)) {
+                        handleSpecificCommandActions();
+                    } else {
+                        // set the executor to perform the action
+                        executor = createFenceExecutor(getParameters().getAction());
+                        tryOtherSequentialAgent(lastStatus, vdsReturnValue);
+                    }
                 }
             } else {
                 tryOtherSequentialAgent(lastStatus, vdsReturnValue);
@@ -262,17 +274,22 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             vdsReturnValue = executor.fence(FenceAgentOrder.Secondary);
             setFenceSucceeded(vdsReturnValue.getSucceeded());
             if (getFenceSucceeded()) {
-                executor = createFenceExecutor(FenceActionType.Status);
-                if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
-                    // raise an alert that secondary agent was used
-                    AuditLogableBase logable = new AuditLogableBase();
-                    logable.setVdsId(getVds().getId());
-                    logable.addCustomValue("Operation", getParameters().getAction().name());
-                    AuditLogDirector.log(logable, AuditLogType.VDS_ALERT_SECONDARY_AGENT_USED_FOR_FENCE_OPERATION);
-                    handleSpecificCommandActions();
-                }
-                else {
-                    handleWaitFailure(lastStatus, FenceAgentOrder.Secondary);
+                if (wasSkippedDueToPolicy(vdsReturnValue.getReturnValue())) {
+                    // fencing execution was skipped due to fencing policy
+                    handleFencingSkippedDueToPolicy(vdsReturnValue);
+                    return;
+                } else {
+                    executor = createFenceExecutor(FenceActionType.Status);
+                    if (waitForStatus(getVds().getName(), getParameters().getAction(), FenceAgentOrder.Secondary)) {
+                        // raise an alert that secondary agent was used
+                        AuditLogableBase logable = new AuditLogableBase();
+                        logable.setVdsId(getVds().getId());
+                        logable.addCustomValue("Operation", getParameters().getAction().name());
+                        AuditLogDirector.log(logable, AuditLogType.VDS_ALERT_SECONDARY_AGENT_USED_FOR_FENCE_OPERATION);
+                        handleSpecificCommandActions();
+                    } else {
+                        handleWaitFailure(lastStatus, FenceAgentOrder.Secondary);
+                    }
                 }
             }
             else {
@@ -342,8 +359,21 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                         secondaryResult = f1.get();
                     }
                     if (primaryResult.isSucceeded() && secondaryResult.isSucceeded()) {
-                        handleSpecificCommandActions();
-                        setFenceSucceeded(true);
+                        boolean primarySkipped = wasSkippedDueToPolicy(primaryResult.getValue());
+                        boolean secondarySkipped = wasSkippedDueToPolicy(secondaryResult.getValue());
+                        if (primarySkipped && secondarySkipped) {
+                            // fencing execution was skipped due to fencing policy
+                            handleFencingSkippedDueToPolicy(vdsReturnValue);
+                            return;
+                        } else if (primarySkipped || secondarySkipped) {
+                            // fence execution on one agents was skipped and on the other executed
+                            handleError(lastStatus,
+                                    primarySkipped ? primaryResult.getValue() : secondaryResult.getValue(),
+                                    primarySkipped ? FenceAgentOrder.Primary : FenceAgentOrder.Secondary);
+                        } else {
+                            handleSpecificCommandActions();
+                            setFenceSucceeded(true);
+                        }
                     } else {
                         handleError(lastStatus,
                                 !primaryResult.isSucceeded() ? primaryResult.getValue() : secondaryResult.getValue(),
@@ -392,8 +422,11 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         fenceInvocationResult.setOrder(order);
         fenceInvocationResult.setValue(fenceExecutor.fence(order));
         if (fenceInvocationResult.getValue().getSucceeded()) {
-            this.executor = createFenceExecutor(FenceActionType.Status);
-            fenceInvocationResult.setSucceeded(waitForStatus(getVds().getName(), getParameters().getAction(), order));
+            if (!wasSkippedDueToPolicy(fenceInvocationResult.getValue().getReturnValue())) {
+                // execution was not skipped due to policy, get status
+                this.executor = createFenceExecutor(FenceActionType.Status);
+                fenceInvocationResult.setSucceeded(waitForStatus(getVds().getName(), getParameters().getAction(), order));
+            }
         }
         return fenceInvocationResult;
     }
@@ -618,7 +651,25 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private FenceExecutor createFenceExecutor(FenceActionType actionType) {
         return new FenceExecutor(
                 getVds(),
-                actionType
+                actionType,
+                getParameters().getFencingPolicy()
         );
+    }
+
+    /**
+     * Returns {@code true}, if fencing execution was skipped due to fencing policy
+     */
+    protected boolean wasSkippedDueToPolicy(Object returnValue) {
+        FenceStatusReturnValue fenceResult = null;
+        if (returnValue instanceof FenceStatusReturnValue) {
+            fenceResult = (FenceStatusReturnValue) returnValue;
+        }
+        return fenceResult != null && fenceResult.getIsSkipped();
+    }
+
+    private void handleFencingSkippedDueToPolicy(VDSReturnValue vdsReturnValue) {
+        setFenceSucceeded(true);
+        vdsReturnValue.setSucceeded(true);
+        vdsReturnValue.setReturnValue(FenceStatusReturnValue.SKIPPED);
     }
 }

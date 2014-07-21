@@ -8,6 +8,7 @@ public class FenceStatusReturnValue implements Serializable {
     private static final long serialVersionUID = 8070963676213797507L;
     // indicates that operation was skipped because Host is already in requested state.
     public static final String SKIPPED = "skipped";
+    public static final String INITIATED = "initiated";
     public FenceStatusReturnValue(String status, String message) {
         _status = status;
         _message = message;
@@ -30,7 +31,11 @@ public class FenceStatusReturnValue implements Serializable {
     }
 
     public boolean getIsSkipped() {
-        return _status.equalsIgnoreCase(SKIPPED);
+        return SKIPPED.equalsIgnoreCase(_status);
+    }
+
+    public boolean getIsInitiated() {
+        return INITIATED.equalsIgnoreCase(_status);
     }
 
     @Override

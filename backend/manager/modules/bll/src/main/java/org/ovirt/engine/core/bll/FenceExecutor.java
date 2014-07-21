@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
+import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -16,11 +17,13 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
+import org.ovirt.engine.core.common.utils.FencingPolicyHelper;
 import org.ovirt.engine.core.common.vdscommands.FenceVdsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SpmStopVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
@@ -38,8 +41,14 @@ public class FenceExecutor {
     private Guid proxyHostId;
     private String proxyHostName;
     private Guid skippedProxyHostId=null;
+    private FencingPolicy fencingPolicy;
+    private Version minVersionSupportingFencingPol;
 
     public FenceExecutor(VDS vds, FenceActionType actionType) {
+        this(vds, actionType, null);
+    }
+
+    public FenceExecutor(VDS vds, FenceActionType actionType, FencingPolicy fencingPolicy) {
         // TODO remove if block after UI patch that should set also cluster & proxy preferences in GetNewVdsFenceStatusParameters
         if (! vds.getId().equals(Guid.Empty)) {
             VDS dbVds =  DbFacade.getInstance().getVdsDao().get(vds.getId());
@@ -52,6 +61,8 @@ public class FenceExecutor {
         }
         _vds = vds;
         _action = actionType;
+        this.fencingPolicy = fencingPolicy;
+        minVersionSupportingFencingPol = FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
     }
 
     public boolean findProxyHost() {
@@ -210,8 +221,10 @@ public class FenceExecutor {
         String managementOptions = getManagementOptions(order);
 
         log.infoFormat("Executing <{0}> Power Management command, Proxy Host:{1}, "
-                + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}", actionType, proxyHostName,
-                managementAgent, _vds.getName(), managementIp, managementUser, managementOptions);
+                + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}, Fencing policy:{7}",
+                actionType, proxyHostName, managementAgent, _vds.getName(), managementIp, managementUser,
+                managementOptions,
+                fencingPolicy);
         return Backend
                     .getInstance()
                     .getResourceManager()
@@ -219,7 +232,7 @@ public class FenceExecutor {
                             VDSCommandType.FenceVds,
                         new FenceVdsVDSCommandParameters(proxyHostId, _vds.getId(), managementIp,
                                     managementPort, managementAgent, managementUser, managementPassword,
-                                    managementOptions, actionType));
+                                    managementOptions, actionType, fencingPolicy));
     }
 
     private String getManagementOptions(FenceAgentOrder order) {
@@ -409,6 +422,10 @@ public class FenceExecutor {
                 if (StringUtils.isNotEmpty(_vds.getPmSecondaryIp())) {
                     ret = options.isAgentSupported(_vds.getPmSecondaryType());
                 }
+
+                // check if host supports minimal cluster level needed by fencing policy
+                ret = ret && _vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
+
                 return ret;
             }
         });

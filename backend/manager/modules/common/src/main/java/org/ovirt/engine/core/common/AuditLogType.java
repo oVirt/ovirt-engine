@@ -103,6 +103,7 @@ public enum AuditLogType {
     SYSTEM_VDS_RESTART(121, AuditLogTimeInterval.MINUTE.getValue()),
     SYSTEM_FAILED_VDS_RESTART(122, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
+    VDS_NOT_RESTARTED_DUE_TO_POLICY(618),
 
     // Host time drift Alert
     VDS_TIME_DRIFT_ALERT(604, AuditLogSeverity.WARNING,

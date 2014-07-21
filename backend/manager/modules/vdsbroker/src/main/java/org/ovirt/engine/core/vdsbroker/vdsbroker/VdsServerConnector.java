@@ -78,6 +78,9 @@ public interface VdsServerConnector {
     public Map<String, Object> fenceNode(String ip, String port, String type, String user, String password,
             String action, String secured, String options);
 
+    public Map<String, Object> fenceNode(String ip, String port, String type, String user, String password,
+            String action, String secured, String options, Map<String, Object> fencingPolicy);
+
     public Map<String, Object> connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 
     public Map<String, Object> disconnectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
