@@ -94,7 +94,7 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc setSafeNetworkConfig();
 
     FenceStatusReturnForXmlRpc fenceNode(String ip, String port, String type, String user, String password,
-            String action, String secured, String options);
+             String action, String secured, String options,  Map<String, Object> fencingPolicy);
 
     ServerConnectionStatusReturnForXmlRpc connectStorageServer(int serverType, String spUUID, Map<String, String>[] args);
 

@@ -400,10 +400,17 @@ public class VdsServerWrapper implements IVdsServer {
 
     @Override
     public FenceStatusReturnForXmlRpc fenceNode(String ip, String port, String type, String user, String password,
-            String action, String secured, String options) {
+                                                String action, String secured, String options,  Map<String, Object> fencingPolicy) {
         try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.fenceNode(ip, port, type, user, password, action,
-                    secured, options);
+            Map<String, Object> xmlRpcReturnValue;
+            if (fencingPolicy == null) {
+                // if fencing policy is null, fence proxy does not support fencing policy parameter
+                xmlRpcReturnValue = vdsServer.fenceNode(ip, port, type, user, password, action,
+                        secured, options);
+            } else {
+                xmlRpcReturnValue = vdsServer.fenceNode(ip, port, type, user, password, action,
+                        secured, options, fencingPolicy);
+            }
             FenceStatusReturnForXmlRpc wrapper = new FenceStatusReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
         } catch (UndeclaredThrowableException ute) {

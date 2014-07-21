@@ -365,6 +365,10 @@ public final class VdsProperties {
     public static final String QOS_PEAK = "peak";
     public static final String QOS_BURST = "burst";
 
+    // fencing policy parameters
+    public static final String STORAGE_DOMAIN_HOST_ID_MAP = "storageDomainHostIdMap";
+
+
     public static String migrationMethodtoString(MigrationMethod method) {
         switch (method) {
         case OFFLINE:

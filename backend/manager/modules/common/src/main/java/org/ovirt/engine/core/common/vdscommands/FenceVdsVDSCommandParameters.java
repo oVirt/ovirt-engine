@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase {
     public FenceVdsVDSCommandParameters(Guid vdsId, Guid targetVdsId, String ip, String port, String type, String user,
-            String password, String options, FenceActionType action) {
+            String password, String options, FenceActionType action, FencingPolicy fencingPolicy) {
         super(vdsId);
         _targetVdsId = targetVdsId;
         _ip = ip;
@@ -15,6 +16,7 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
         _password = password;
         _action = action;
         _options = options;
+        this.fencingPolicy = fencingPolicy;
     }
 
     private Guid _targetVdsId;
@@ -25,6 +27,8 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
     private String _password;
     private String _options;
     private FenceActionType _action;
+
+    private FencingPolicy fencingPolicy;
 
     public Guid getTargetVdsID() {
         return _targetVdsId;
@@ -63,10 +67,15 @@ public class FenceVdsVDSCommandParameters extends VdsIdVDSCommandParametersBase 
         _action = FenceActionType.Restart;
     }
 
+    public FencingPolicy getFencingPolicy() {
+        return fencingPolicy;
+    }
+
     @Override
     public String toString() {
         return String.format("%s, targetVdsId = %s, action = %s, ip = %s, port = %s, type = %s, user = %s, " +
-                "password = %s, options = '%s'", super.toString(), getTargetVdsID(), getAction(), getIp(), getPort(),
-                getType(), getUser(), (getPassword() == null ? null : "******"), getOptions());
+                "password = %s, options = '%s', policy = '%s'", super.toString(), getTargetVdsID(), getAction(),
+                getIp(), getPort(), getType(), getUser(), (getPassword() == null ? null : "******"), getOptions(),
+                getFencingPolicy());
     }
 }

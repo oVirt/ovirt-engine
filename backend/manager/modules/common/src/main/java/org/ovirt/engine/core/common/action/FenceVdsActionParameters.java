@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
+import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.compat.Guid;
 
 public class FenceVdsActionParameters extends VdsActionParameters {
@@ -16,6 +17,8 @@ public class FenceVdsActionParameters extends VdsActionParameters {
     private boolean keepPolicyPMEnabled;
 
     private FenceActionType action;
+
+    private FencingPolicy fencingPolicy;
 
     public FenceVdsActionParameters() {
         this(null, FenceActionType.Restart);
@@ -49,5 +52,13 @@ public class FenceVdsActionParameters extends VdsActionParameters {
 
     public void setChangeHostToMaintenanceOnStart(boolean changeHostStatusOnStart) {
         this.changeHostToMaintenanceOnStart = changeHostStatusOnStart;
+    }
+
+    public FencingPolicy getFencingPolicy() {
+        return fencingPolicy;
+    }
+
+    public void setFencingPolicy(FencingPolicy fencingPolicy) {
+        this.fencingPolicy = fencingPolicy;
     }
 }

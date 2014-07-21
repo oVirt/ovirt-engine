@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.SetStoragePoolStatusParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 
@@ -80,6 +81,12 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 getReturnValue().setSucceeded(true);
                 return;
             }
+
+            // load cluster fencing policy
+            FencingPolicy fencingPolicy = getDbFacade().getVdsGroupDao().get(
+                    getVds().getVdsGroupId()
+            ).getFencingPolicy();
+            getParameters().setFencingPolicy(fencingPolicy);
 
             // Make sure that the StopVdsCommand that runs by the RestartVds
             // don't write over our job, and disrupt marking the job status correctly
