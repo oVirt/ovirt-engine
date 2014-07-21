@@ -22,5 +22,6 @@ public interface CommandCRUDOperations {
     public void removeAllCommandsInHierarchy(Guid commandId);
     public void removeAllCommandsBeforeDate(DateTime cutoff);
     public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status);
+    public void updateCommandExecuted(Guid commandId);
     public void updateCallBackNotified(Guid commandId);
 }

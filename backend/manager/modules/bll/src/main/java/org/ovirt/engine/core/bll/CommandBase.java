@@ -1150,6 +1150,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } finally {
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
             if (exceptionOccurred || !getSucceeded()) {
+                setCommandStatus(CommandStatus.FAILED);
                 setSucceeded(false);
                 compensate();
             } else {
@@ -1277,6 +1278,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             // Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
+            setCommandExecuted();
             try {
                 if (getCommandShouldBeLogged()) {
                     logRenamedEntity();
@@ -2129,7 +2131,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         getReturnValue()),
                     cmdContext);
         } finally {
-            TransactionSupport.resume(transaction);
+            if (transaction != null) {
+                TransactionSupport.resume(transaction);
+            }
         }
     }
 
@@ -2138,7 +2142,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         try {
             TaskManagerUtil.removeCommand(getCommandId());
         } finally {
-            TransactionSupport.resume(transaction);
+            if (transaction != null) {
+                TransactionSupport.resume(transaction);
+            }
         }
     }
 
@@ -2153,6 +2159,19 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             try {
                 TaskManagerUtil.updateCommandStatus(getCommandId(), getTaskType(), commandStatus);
             } finally {
+                if (transaction != null) {
+                    TransactionSupport.resume(transaction);
+                }
+            }
+        }
+    }
+
+    public void setCommandExecuted() {
+        Transaction transaction = TransactionSupport.suspend();
+        try {
+            TaskManagerUtil.updateCommandExecuted(getCommandId());
+        } finally {
+            if (transaction != null) {
                 TransactionSupport.resume(transaction);
             }
         }

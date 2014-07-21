@@ -34,6 +34,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setActionParameters(deserializeParameters(resultSet.getString("action_parameters"), resultSet.getString("action_parameters_class")));
             result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
             result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
+            result.setExecuted(resultSet.getBoolean("executed"));
             result.setCallBackEnabled(resultSet.getBoolean("callback_enabled"));
             result.setCallBackNotified(resultSet.getBoolean("callback_notified"));
             return result;
@@ -63,6 +64,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
                 .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
+                .addValue("executed", entity.isExecuted())
                 .addValue("callback_enabled", entity.isCallBackEnabled())
                 .addValue("return_value", serializeReturnValue(entity.getReturnValue()))
                 .addValue("return_value_class", entity.getReturnValue() == null ? null : entity.getReturnValue().getClass().getName());
@@ -120,6 +122,11 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
     @Override
     public void updateNotified(Guid id) {
         getCallsHandler().executeModification("UpdateCommandEntityNotified", createIdParameterMapper(id).addValue("callback_notified", true));
+    }
+
+    @Override
+    public void updateExecuted(Guid id) {
+        getCallsHandler().executeModification("UpdateCommandEntityExecuted", createIdParameterMapper(id).addValue("executed", true));
     }
 
     @Override

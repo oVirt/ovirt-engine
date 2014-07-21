@@ -22,6 +22,8 @@ public interface CommandsCache {
 
     public void updateCommandStatus(Guid commandId, AsyncTaskType taskType, CommandStatus status);
 
+    public void updateCommandExecuted(Guid commandId);
+
     public void updateCallBackNotified(Guid commandId);
 
 }

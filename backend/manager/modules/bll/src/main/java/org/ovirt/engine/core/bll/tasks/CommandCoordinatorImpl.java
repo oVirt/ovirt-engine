@@ -68,6 +68,11 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommand(CommandEntity cmdEntity) {
+        CommandEntity existingCmdEntity = commandsCache.get(cmdEntity.getId());
+        if (existingCmdEntity != null) {
+            cmdEntity.setExecuted(existingCmdEntity.isExecuted());
+            cmdEntity.setCallBackNotified(existingCmdEntity.isCallBackNotified());
+        }
         commandsCache.put(cmdEntity);
         if (cmdEntity.isCallBackEnabled()) {
             buildCmdHierarchy(cmdEntity);
@@ -171,6 +176,10 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     public void updateCommandStatus(final Guid commandId, final AsyncTaskType taskType, final CommandStatus status) {
         commandsCache.updateCommandStatus(commandId, taskType, status);
+    }
+
+    public void updateCommandExecuted(Guid commandId) {
+        commandsCache.updateCommandExecuted(commandId);
     }
 
     public void updateCallBackNotified(final Guid commandId) {

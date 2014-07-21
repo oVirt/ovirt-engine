@@ -86,6 +86,10 @@ public class CommandBaseTest {
         @Override
         public void setCommandStatus(CommandStatus status) {
         }
+
+        @Override
+        public void setCommandExecuted() {
+        }
     }
 
     @Before
