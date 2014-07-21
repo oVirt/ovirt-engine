@@ -47,6 +47,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
         super(commandId);
     }
 
+    protected RemoveImageCommand(T parameters) {
+        super(parameters);
+    }
+
     protected void initImage() {
         setDiskImage(((getParameters().getDiskImage()) != null) ? getParameters().getDiskImage() : getImage());
     }
