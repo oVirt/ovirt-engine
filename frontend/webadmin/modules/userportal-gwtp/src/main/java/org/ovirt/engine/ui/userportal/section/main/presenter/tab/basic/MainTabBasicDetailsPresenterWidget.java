@@ -37,9 +37,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
         void editDistItems(Iterable<DiskImage> diskImages);
 
-        void setConsoleWarningMessage(String message);
-
-        void setConsoleProtocol(String protocol);
+        void setConsoleProtocolMessage(String protocol);
 
         void setConsoleConnectLinkEnabled(boolean enabled);
 
@@ -197,14 +195,9 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     private void setupConsole(final UserPortalBasicListProvider modelProvider) {
         UserPortalItemModel item = modelProvider.getModel().getSelectedItem();
 
-        getView().setConsoleConnectLinkEnabled(canConnectToConsole(item));
         getView().setEditConsoleEnabled(isEditConsoleEnabled(item));
-
-        if (!item.getVmConsoles().canConnectToConsole()) {
-            getView().setConsoleWarningMessage(item.getVmConsoles().cannotConnectReason());
-        } else {
-            getView().setConsoleProtocol(determineProtocolMessage(item.getVmConsoles()));
-        }
+        getView().setConsoleConnectLinkEnabled(canConnectToConsole(item));
+        getView().setConsoleProtocolMessage(determineProtocolMessage(item));
     }
 
     private boolean canConnectToConsole(UserPortalItemModel item) {
@@ -215,15 +208,24 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
         return item.getVmConsoles().canConnectToConsole();
     }
 
-    private String determineProtocolMessage(VmConsoles vmConsoles) {
-        boolean smartcardEnabled = vmConsoles.getSelectedProcotol() == ConsoleProtocol.SPICE && vmConsoles.getVm().isSmartcardEnabled();
+    private String determineProtocolMessage(UserPortalItemModel item) {
+        VmConsoles vmConsoles = (item == null)
+            ? null
+            : item.getVmConsoles();
+
+        if (item == null || vmConsoles == null || !canConnectToConsole(item)) {
+            return "";
+        }
+
+        ConsoleProtocol selectedProcotol = vmConsoles.getSelectedProcotol();
+        boolean smartcardEnabled = selectedProcotol == ConsoleProtocol.SPICE && vmConsoles.getVm().isSmartcardEnabled();
         boolean smartcardOverriden = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().isSmartcardEnabledOverridden();
 
         if (smartcardEnabled && !smartcardOverriden) {
-            return messages.consoleWithSmartcard(consoleTypeToName.get(vmConsoles.getSelectedProcotol()));
+            return messages.consoleWithSmartcard(consoleTypeToName.get(selectedProcotol));
         }
 
-        return consoleTypeToName.get(vmConsoles.getSelectedProcotol());
+        return consoleTypeToName.get(selectedProcotol);
     }
 
     private boolean isEditConsoleEnabled(UserPortalItemModel item) {
