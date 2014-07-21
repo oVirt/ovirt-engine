@@ -1861,16 +1861,5 @@ public enum ConfigValues {
     @DefaultValueAttribute("false")
     CSRFProtection,
 
-    @Reloadable
-    @TypeConverterAttribute(List.class)
-    @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    UnsupportedLocalesFilterOverrides,
-
-    @TypeConverterAttribute(List.class)
-    @DefaultValueAttribute("")
-    @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
-    UnsupportedLocalesFilter,
-
     Invalid
 }

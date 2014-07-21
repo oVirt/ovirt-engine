@@ -86,13 +86,6 @@
       <version>${engine.version}</version>
       <scope>provided</scope>
     </dependency>
-    <dependency>
-      <groupId>${engine.core.groupId}</groupId>
-      <artifactId>utils</artifactId>
-      <version>${engine.version}</version>
-      <type>test-jar</type>
-      <scope>test</scope>
-    </dependency>
   </dependencies>
   <build>
     <resources>
