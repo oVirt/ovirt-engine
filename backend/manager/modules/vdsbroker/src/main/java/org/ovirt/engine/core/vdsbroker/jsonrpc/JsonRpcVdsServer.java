@@ -747,14 +747,6 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc fenceSpmStorage(String spUUID, int prevID, String prevLVER) {
-        // no prevID and prevLVER not used and can be removed from the interface
-        JsonRpcRequest request = new RequestBuilder("StoragePool.fence").withParameter("storagepoolID", spUUID).build();
-        Map<String, Object> response = new FutureMap(this.client, request);
-        return new StatusOnlyReturnForXmlRpc(response);
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion) {
         JsonRpcRequest request =
                 new RequestBuilder("StoragePool.refresh").withParameter("storagepoolID", spUUID)

@@ -139,8 +139,6 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getSpmStatus(String spUUID);
 
-    public Map<String, Object> fenceSpmStorage(String spUUID, int prevID, String prevLVER);
-
     public Map<String, Object> refreshStoragePool(String spUUID, String msdUUID, int masterVersion);
 
     public Map<String, Object> getTaskStatus(String taskUUID);

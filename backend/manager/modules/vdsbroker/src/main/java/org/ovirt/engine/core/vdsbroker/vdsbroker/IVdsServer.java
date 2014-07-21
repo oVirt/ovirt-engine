@@ -156,8 +156,6 @@ public interface IVdsServer {
 
     SpmStatusReturnForXmlRpc spmStatus(String spUUID);
 
-    StatusOnlyReturnForXmlRpc fenceSpmStorage(String spUUID, int prevID, String prevLVER);
-
     StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion);
 
     TaskStatusReturnForXmlRpc getTaskStatus(String taskUUID);
