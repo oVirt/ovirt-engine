@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -74,7 +73,6 @@ public class BackendVmPoolResourceTest
     @Test
     public void testAllocateVm() throws Exception {
         setUpGetVmExpectations(1);
-        setUpGetUserExpectations();
         setUriInfo(setUpActionExpectations(VdcActionType.AttachUserToVmFromPoolAndRun,
                                            VmPoolUserParameters.class,
                                            new String[] { "VmPoolId", "IsInternal" },
@@ -82,13 +80,6 @@ public class BackendVmPoolResourceTest
                                            GUIDS[0]));
 
         verifyTestAllocateVmActionResponse(resource.allocatevm(new Action()));
-    }
-
-
-    private void setUpGetUserExpectations() {
-        DbUser user = new DbUser();
-        user.setId(GUIDS[0]);
-        expect(sessionHelper.getCurrent().get(DbUser.class)).andReturn(user).anyTimes();
     }
 
     private void setUpGetVmExpectations(int times) throws Exception {

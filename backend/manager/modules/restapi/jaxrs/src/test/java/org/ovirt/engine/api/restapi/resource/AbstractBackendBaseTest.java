@@ -27,7 +27,6 @@ import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
 import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
@@ -41,6 +40,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -109,7 +109,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected BackendLocal backend;
     protected Current current;
-    protected Principal principal;
     protected SessionHelper sessionHelper;
     protected MappingLocator mapperLocator;
     protected ValidatorLocator validatorLocator;
@@ -121,16 +120,25 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected MessageBundle messageBundle;
     protected IMocksControl control;
 
+    protected DbUser currentUser;
+
     @Before
     public void setUp() {
         control = EasyMock.createNiceControl();
         backend = control.createMock(BackendLocal.class);
         current = control.createMock(Current.class);
+
+        currentUser = new DbUser();
+        currentUser.setFirstName(USER);
+        currentUser.setLastName(USER);
+        currentUser.setDomain(DOMAIN);
+        currentUser.setNamespace(NAMESPACE);
+        currentUser.setId(GUIDS[0]);
+        expect(current.get(DbUser.class)).andReturn(currentUser).anyTimes();
+
         sessionHelper = new SessionHelper();
         sessionHelper.setCurrent(current);
         sessionHelper.setSessionId(sessionId);
-        principal = new Principal(USER, SECRET, DOMAIN);
-        expect(current.get(Principal.class)).andReturn(principal).anyTimes();
         httpHeaders = control.createMock(HttpHeaders.class);
         locales = new ArrayList<Locale>();
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();

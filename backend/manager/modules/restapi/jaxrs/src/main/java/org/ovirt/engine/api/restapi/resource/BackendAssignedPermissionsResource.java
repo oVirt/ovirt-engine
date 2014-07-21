@@ -10,7 +10,6 @@ import java.util.TreeSet;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Permission;
@@ -207,7 +206,7 @@ public class BackendAssignedPermissionsResource
             User user = permission.getUser();
             DbUser dbUser = UserMapper.map(user, null);
             if (dbUser.getDomain() == null) {
-                dbUser.setDomain(getCurrent().get(Principal.class).getDomain());
+                dbUser.setDomain(getCurrent().get(DbUser.class).getDomain());
             }
             return dbUser;
         }
@@ -215,7 +214,7 @@ public class BackendAssignedPermissionsResource
             Group group = permission.getGroup();
             DbGroup dbGroup = GroupMapper.map(group, null);
             if (dbGroup.getDomain() == null) {
-                dbGroup.setDomain(getCurrent().get(Principal.class).getDomain());
+                dbGroup.setDomain(getCurrent().get(DbUser.class).getDomain());
             }
             return dbGroup;
         }
