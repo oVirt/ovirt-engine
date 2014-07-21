@@ -712,18 +712,6 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StatusOnlyReturnForXmlRpc fenceSpmStorage(String spUUID, int prevID, String prevLVER) {
-        try {
-            Map<String, Object> xmlRpcReturnValue = vdsServer.fenceSpmStorage(spUUID, prevID, prevLVER);
-            StatusOnlyReturnForXmlRpc wrapper = new StatusOnlyReturnForXmlRpc(xmlRpcReturnValue);
-            return wrapper;
-        } catch (UndeclaredThrowableException ute) {
-            throw new XmlRpcRunTimeException(ute);
-        }
-
-    }
-
-    @Override
     public StatusOnlyReturnForXmlRpc refreshStoragePool(String spUUID, String msdUUID, int masterVersion) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.refreshStoragePool(spUUID, msdUUID, masterVersion);

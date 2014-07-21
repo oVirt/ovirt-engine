@@ -4,10 +4,12 @@ import org.ovirt.engine.core.common.businessentities.RecoveryMode;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParameters {
+public class SpmStartVDSCommandParameters extends GetStorageConnectionsListVDSCommandParameters {
     public SpmStartVDSCommandParameters(Guid vdsId, Guid storagePoolId, int prevID, String prevLVER,
             RecoveryMode recoveryMode, boolean SCSIfencing, StorageFormatType storagePoolFormatType) {
-        super(vdsId, storagePoolId, prevID, prevLVER);
+        super(vdsId, storagePoolId);
+        setPrevId(prevID);
+        setPrevLVER((prevLVER != null) ? prevLVER : "-1");
         setRecoveryMode(recoveryMode);
         setSCSIFencing(SCSIfencing);
         setStoragePoolFormatType(storagePoolFormatType);
@@ -47,10 +49,32 @@ public class SpmStartVDSCommandParameters extends FenceSpmStorageVDSCommandParam
         privateRecoveryMode = RecoveryMode.Manual;
     }
 
+    private int privatePrevId;
+
+    public int getPrevId() {
+        return privatePrevId;
+    }
+
+    private void setPrevId(int value) {
+        privatePrevId = value;
+    }
+
+    private String privatePrevLVER;
+
+    public String getPrevLVER() {
+        return privatePrevLVER;
+    }
+
+    private void setPrevLVER(String value) {
+        privatePrevLVER = value;
+    }
+
     @Override
     public String toString() {
-        return String.format("%s, storagePoolFormatType=%s, recoveryMode=%s, SCSIFencing=%s",
+        return String.format("%s, prevId=%s, prevLVER=%s, storagePoolFormatType=%s, recoveryMode=%s, SCSIFencing=%s",
                 super.toString(),
+                getPrevId(),
+                getPrevLVER(),
                 getStoragePoolFormatType(),
                 getRecoveryMode(),
                 getSCSIFencing());
