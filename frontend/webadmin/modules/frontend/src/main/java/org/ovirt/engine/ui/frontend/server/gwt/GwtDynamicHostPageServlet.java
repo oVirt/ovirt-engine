@@ -14,7 +14,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.xml.bind.annotation.adapters.HexBinaryAdapter;
 
-import org.apache.commons.lang.StringUtils;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ArrayNode;
 import org.codehaus.jackson.node.ObjectNode;
@@ -22,14 +21,12 @@ import org.ovirt.engine.core.branding.BrandingFilter;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.constants.SessionConstants;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
-import org.ovirt.engine.core.utils.servlet.UnsupportedLocaleHelper;
 
 /**
  * Renders the HTML host page of a GWT application.
@@ -51,8 +48,7 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         ATTR_BASE_CONTEXT_PATH("baseContextPath"), //$NON-NLS-1$
         ATTR_LOCALE(LocaleFilter.LOCALE),
         ATTR_SSO_TOKEN("ssoToken"), //$NON-NLS-1$
-        ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME),
-        ATTR_DISPLAY_LOCALES("visibleLocales"); //$NON-NLS-1$
+        ATTR_APPLICATION_TYPE(BrandingFilter.APPLICATION_NAME);
 
         private final String attributeKey;
 
@@ -114,11 +110,6 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                 getBrandingMessages(getApplicationTypeFromRequest(request), getLocaleFromRequest(request)));
         request.setAttribute(MD5Attributes.ATTR_BASE_CONTEXT_PATH.getKey(),
                 getValueObject(ServletUtils.getBaseContextPath(request)));
-        request.setAttribute(MD5Attributes.ATTR_DISPLAY_LOCALES.getKey(), getValueObject(
-                StringUtils.join(UnsupportedLocaleHelper.getDisplayedLocales(LocaleFilter.getLocaleKeys(),
-                        UnsupportedLocaleHelper.getLocalesKeys(ConfigValues.UnsupportedLocalesFilterOverrides),
-                        UnsupportedLocaleHelper.getLocalesKeys(ConfigValues.UnsupportedLocalesFilter)),
-                        ","))); //$NON-NLS-1$
         // Set attribute for userInfo object
         DbUser loggedInUser =
                 getLoggedInUser(getEngineSessionId(request));
