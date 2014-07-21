@@ -1,10 +1,14 @@
 package org.ovirt.engine.ui.webadmin.widget.table.cell;
 
 import org.ovirt.engine.core.common.businessentities.GuestAgentStatus;
+import org.ovirt.engine.core.common.businessentities.OsType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
+import org.ovirt.engine.core.common.TimeZoneType;
+import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.ui.common.widget.table.cell.AbstractCell;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -111,7 +115,10 @@ public class VmStatusCell extends AbstractCell<VM> {
 
     SafeHtml getResourceImage(VM vm) {
         boolean updateNeeded = vm.getStatus() == VMStatus.Up && vm.getGuestAgentStatus() == GuestAgentStatus.UpdateNeeded;
-        if (!updateNeeded && (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)) {
+        boolean timezoneDiffers = hasDifferentTimezone(vm);
+        boolean osTypeDiffers = hasDifferentOSType(vm);
+        if (!timezoneDiffers && !osTypeDiffers && !updateNeeded
+            && (vm.getVmPauseStatus() != VmPauseStatus.NONE || vm.getVmPauseStatus() != VmPauseStatus.NOERR)) {
             return null;
         }
         else {
@@ -124,11 +131,57 @@ public class VmStatusCell extends AbstractCell<VM> {
 
             // Append tooltip
             EnumTranslator translator = EnumTranslator.getInstance();
-            String toolTip = updateNeeded ? constants.newtools() : translator.translate(vm.getVmPauseStatus());
+            String toolTip = ""; //$NON-NLS-1$
+            if(updateNeeded) {
+               toolTip = constants.newtools();
+            } else if(vm.getStatus() != VMStatus.Up) {
+               toolTip = translator.translate(vm.getVmPauseStatus());
+            }
+            if(timezoneDiffers) {
+                if(toolTip.length() > 0) {
+                    toolTip += " | "; //$NON-NLS-1$
+                }
+                toolTip += constants.guestTimezoneDiffers();
+            }
+            if(osTypeDiffers) {
+                if(toolTip.length() > 0) {
+                    toolTip += " | "; //$NON-NLS-1$
+                }
+                toolTip += constants.guestOSDiffers();
+            }
+
             html = html.replaceFirst("img", "img " + "title='" + toolTip + "' "); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$ //$NON-NLS-4$
 
             return SafeHtmlUtils.fromTrustedString(html);
         }
+    }
+
+    private boolean hasDifferentOSType(VM vm) {
+        return AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId()) != (vm.getGuestOsType() == OsType.Windows);
+    }
+
+    private boolean hasDifferentTimezone(VM vm) {
+        String timeZone = vm.getTimeZone();
+        if(timeZone != null && !timeZone.isEmpty()) {
+            int offset = 0;
+            String javaZoneId = null;
+            if (AsyncDataProvider.getInstance().isWindowsOsType(vm.getVmOsId())) {
+                // convert to java & calculate offset
+                javaZoneId = WindowsJavaTimezoneMapping.windowsToJava.get(timeZone);
+            } else {
+                javaZoneId = timeZone;
+            }
+
+            if (javaZoneId != null) {
+                offset = TimeZoneType.GENERAL_TIMEZONE.getStandardOffset(javaZoneId);
+            }
+
+            if(vm.getGuestOsTimezoneOffset() != offset) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
 }

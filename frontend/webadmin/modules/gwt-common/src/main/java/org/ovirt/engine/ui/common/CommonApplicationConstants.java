@@ -2241,4 +2241,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Timezone")
     String guestOsTimezone();
+
+    @DefaultStringValue("Actual operating system type differs from the configuration")
+    String guestOSDiffers();
+
+    @DefaultStringValue("Actual timezone in the guest differs from the configuration")
+    String guestTimezoneDiffers();
 }

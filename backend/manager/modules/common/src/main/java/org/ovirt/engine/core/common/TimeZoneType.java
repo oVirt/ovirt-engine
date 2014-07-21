@@ -215,6 +215,31 @@ public enum TimeZoneType {
         return timeZones;
     }
 
+    // we get a string like "(GMT-04:30) Afghanistan Standard Time"
+    // we use regex to extract the time only and replace it to number
+    // in this sample we get -430
+    private static final String TimeZoneExtractTimePattern = ".*(GMT[+,-]\\d{2}:\\d{2}).*";
+
+    private static int extractOffsetFromMatch(Match match) {
+        return Integer.parseInt(match.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
+    }
+
+    public int getStandardOffset(String timeZoneKey) {
+        String s = getTimeZoneList().get(timeZoneKey);
+        Match match = Regex.Match(s, TimeZoneExtractTimePattern);
+        int value = 0;
+        if(match.success() && match.groups().size() > 0) {
+            value = extractOffsetFromMatch(match);
+            boolean neg = value < 0;
+            value = Math.abs(value);
+            value = ((value / 100) * 60 + value % 100);
+            if(neg) {
+                value *= -1;
+            }
+        }
+        return value;
+    }
+
     protected abstract Map<String, String> initializeTimeZoneList();
 
 
@@ -225,21 +250,16 @@ public enum TimeZoneType {
         // we get a string like "(GMT-04:30) Afghanistan Standard Time"
         // we use regex to extract the time only and replace it to number
         // in this sample we get -430
-        public static final String TimeZoneExtractTimePattern = ".*(GMT[+,-]\\d{2}:\\d{2}).*";
-
-        // we get a string like "(GMT-04:30) Afghanistan Standard Time"
-        // we use regex to extract the time only and replace it to number
-        // in this sample we get -430
         @Override
         public int compare(Map.Entry<String, String> o1, Map.Entry<String, String> o2) {
             int a = 0, b = 0;
             Match match1 = Regex.Match(o1.toString(), TimeZoneExtractTimePattern);
             Match match2 = Regex.Match(o2.toString(), TimeZoneExtractTimePattern);
             if (match1.success() && match1.groups().size() > 0) {
-                a = Integer.parseInt(match1.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
+                a = extractOffsetFromMatch(match1);
             }
             if (match2.success() && match2.groups().size() > 0) {
-                b = Integer.parseInt(match2.groups().get(0).getValue().substring(3).replace(":", "").replace("+", ""));
+                b = extractOffsetFromMatch(match2);
             }
 
             if (a == b) {
