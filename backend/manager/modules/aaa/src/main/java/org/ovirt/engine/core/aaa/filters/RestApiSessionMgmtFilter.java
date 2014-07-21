@@ -62,7 +62,7 @@ public class RestApiSessionMgmtFilter implements Filter {
                     session.setMaxInactiveInterval(ttlValue);
                 }
             } catch (NumberFormatException ex) {
-                log.error("Session-TTL header was not passed. Not setting TTL value");
+                // ignore error
             }
         }
 
