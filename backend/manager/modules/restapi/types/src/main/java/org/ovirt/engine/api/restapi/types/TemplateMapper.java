@@ -366,9 +366,7 @@ public class TemplateMapper {
         if (entity.getCreationDate() != null) {
             model.setCreationTime(DateMapper.map(entity.getCreationDate(), null));
         }
-        if (entity.getVmInit() != null &&
-                entity.getVmInit().getDomain() != null &&
-                !entity.getVmInit().getDomain().isEmpty()) {
+        if (entity.getVmInit() != null && StringUtils.isNotBlank(entity.getVmInit().getDomain())) {
             Domain domain = new Domain();
             domain.setName(entity.getVmInit().getDomain());
             model.setDomain(domain);
