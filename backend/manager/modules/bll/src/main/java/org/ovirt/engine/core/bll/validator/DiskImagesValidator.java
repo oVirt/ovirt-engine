@@ -233,7 +233,7 @@ public class DiskImagesValidator {
         for (DiskImage diskImage : diskImages) {
             if (diskImage.getImageStatus() != applicableStatus) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_IN_APPLICABLE_STATUS,
-                        String.format("$status %s", diskImage.getImageStatus().name()));
+                        String.format("$status %s", applicableStatus.name()));
             }
         }
 
