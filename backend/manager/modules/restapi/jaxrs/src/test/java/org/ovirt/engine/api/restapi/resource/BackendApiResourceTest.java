@@ -23,7 +23,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
@@ -52,7 +51,6 @@ public class BackendApiResourceTest extends Assert {
 
     protected BackendLocal backend;
     protected Current current;
-    protected Principal principal;
     protected SessionHelper sessionHelper;
     protected HttpHeaders httpHeaders;
 
@@ -213,8 +211,6 @@ public class BackendApiResourceTest extends Assert {
     @Before
     public void setUp() {
         current = createMock(Current.class);
-        principal = new Principal(USER, SECRET, DOMAIN);
-        expect(current.get(Principal.class)).andReturn(principal).anyTimes();
 
         sessionHelper = new SessionHelper();
         sessionHelper.setCurrent(current);

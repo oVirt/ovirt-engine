@@ -16,7 +16,6 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.ovirt.engine.api.common.invocation.Current;
-import org.ovirt.engine.api.common.security.auth.Principal;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Capabilities;
@@ -376,8 +375,6 @@ public class BackendCapabilitiesResourceTest extends AbstractBackendResourceTest
     public void setUp() {
         control = EasyMock.createNiceControl();
         current = createMock(Current.class);
-        principal = new Principal(USER, SECRET, DOMAIN);
-        expect(current.get(Principal.class)).andReturn(principal).anyTimes();
 
         sessionHelper = new SessionHelper();
         sessionHelper.setCurrent(current);
