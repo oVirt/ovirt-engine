@@ -158,23 +158,13 @@
         <!-- Have to have this here as this dynamic property doesn't persist between poms so can't move it to parent -->
         <groupId>com.github.goldin</groupId>
         <artifactId>properties-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>set-properties</id>
-            <phase>validate</phase>
-            <goals>
-                <goal>set-properties</goal>
-            </goals>
-            <configuration>
-              <properties>
-                <property>
-                  <name>gwt.availableLocales</name>
-                  <value>{{ new File("${project.basedir}" + "/" + "${allLocaleFile}").withInputStream { def prop = new Properties();prop.load(it);prop.keySet().sort().join(',')} }}</value>
-                </property>
-              </properties>
-            </configuration>
-          </execution>
-        </executions>
+        <version>0.2.5</version>
+        <configuration>
+          <property>
+            <name>gwt.availableLocales</name>
+            <value>{{ def bd=project.basedir; new File(bd + allLocaleFile).withInputStream { def prop = new Properties();prop.load(it);prop.keySet().sort().join(',')} }}</value>
+          </property>
+        </configuration>
       </plugin>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

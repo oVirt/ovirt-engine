@@ -65,9 +65,7 @@
     <engine.port.http>8080</engine.port.http>
     <!-- GWT CSS obfuscation style. production should be 'obf', use 'pretty' in development for easier css debugging -->
     <gwt.cssResourceStyle>obf</gwt.cssResourceStyle>
-    <!-- I need relative paths here, due to unknown file system, so I need to construct the path from the base dir + this path.
-         the base dir is too far into the tree, so I need to back out a bit -->
-    <allLocaleFile>../../../../backend/manager/modules/utils/src/main/resources/languages.properties</allLocaleFile>
+    <allLocaleFile>backend/manager/modules/utils/src/main/resources/languages.properties</allLocaleFile>
   </properties>
   <dependencyManagement>
     <dependencies>
