@@ -455,12 +455,7 @@ public class VmMapper extends VmBaseMapper {
             params.setRunAsStateless(true);
         }
         if (vm.isSetDisplay()) {
-            if (vm.getDisplay().isSetType()) {
-                DisplayType displayType = DisplayType.fromValue(vm.getDisplay().getType());
-                if (displayType != null) {
-                    params.setUseVnc(displayType == DisplayType.VNC);
-                }
-            }
+            // todo rest api follow up
             if (vm.getDisplay().isSetKeyboardLayout()) {
                 String vncKeyboardLayout = vm.getDisplay().getKeyboardLayout();
                 params.setVncKeyboardLayout(vncKeyboardLayout);
@@ -593,7 +588,7 @@ public class VmMapper extends VmBaseMapper {
     public static org.ovirt.engine.core.common.businessentities.DisplayType map(DisplayType type, org.ovirt.engine.core.common.businessentities.DisplayType incoming) {
         switch(type) {
         case VNC:
-            return org.ovirt.engine.core.common.businessentities.DisplayType.vnc;
+            return org.ovirt.engine.core.common.businessentities.DisplayType.cirrus; // todo restapi follow up
         case SPICE:
             return org.ovirt.engine.core.common.businessentities.DisplayType.qxl;
         default:
@@ -604,7 +599,7 @@ public class VmMapper extends VmBaseMapper {
     @Mapping(from = org.ovirt.engine.core.common.businessentities.DisplayType.class, to = String.class)
     public static String map(org.ovirt.engine.core.common.businessentities.DisplayType type, String incoming) {
         switch(type) {
-        case vnc:
+        case cirrus: // todo restapi follow up
             return DisplayType.VNC.value();
         case qxl:
             return DisplayType.SPICE.value();

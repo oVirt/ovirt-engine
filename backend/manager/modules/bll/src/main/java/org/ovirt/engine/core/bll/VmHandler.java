@@ -9,7 +9,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -34,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusFie
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -878,4 +878,40 @@ public class VmHandler {
         permissionList.add(new PermissionSubject(clusterId, VdcObjectType.VdsGroups, ActionGroup.CREATE_VM));
         return permissionList;
     }
+
+
+    /**
+     * Returns graphics types of devices VM/Template is supposed to have after adding/updating.
+     * <p/>
+     * When adding, VM/Template inherits graphics devices from the template by default.
+     * When updating, VM/Template has already some graphics devices set.
+     * However - these devices can be customized (overriden) in params
+     * (i.e. params can prevent a device to be inherited from a template).
+     * <p/>
+     *
+     * todo doc
+     * @return
+     */
+    public static Set<GraphicsType> getResultingVmGraphics(List<GraphicsType> srcEntityGraphics, Map<GraphicsType, GraphicsDevice> graphicsDevices) {
+        Set<GraphicsType> result = new HashSet<>();
+
+        for (GraphicsType type : GraphicsType.values()) {
+            if (graphicsDevices.get(type) != null || // grapics set in params
+                    srcEntityGraphics.contains(type) && !graphicsResetInParams(type, graphicsDevices)) // graphics is in template and is not nulled in params
+            {
+                result.add(type);
+            }
+        }
+
+        return result;
+    }
+
+    /**
+     * Returns true if given graphics type was reset in params (that means params contain given graphics device which
+     * is set to null).
+     */
+    private static boolean graphicsResetInParams(GraphicsType type, Map<GraphicsType, GraphicsDevice> graphicsDevices) {
+        return graphicsDevices.containsKey(type) && graphicsDevices.get(type) == null;
+    }
+
 }

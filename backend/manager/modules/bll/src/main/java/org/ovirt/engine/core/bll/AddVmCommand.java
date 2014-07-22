@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -1408,11 +1407,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         // todo os info follow up
         if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
                 getParameters().getVmStaticData().getDefaultDisplayType() == null) {
-            DisplayType defaultDisplayType =
-                    osRepository.getDisplayTypes(getParameters().getVmStaticData().getOsId(),
-                            getVdsGroup().getcompatibility_version()).get(0);
-
-            getParameters().getVmStaticData().setDefaultDisplayType(defaultDisplayType);
+            autoSelectDefaultDisplayType(getVmTemplateId());
         }
     }
 
@@ -1429,13 +1424,14 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
     protected boolean checkNumberOfMonitors() {
         // todo os info follow up
-//        Set<GraphicsType> graphicsTypesToBeSet = getParameters().graphicsTypesToBeSet();
+//        Collection<GraphicsType> graphicsTypes = VmHandler.getResultingVmGraphics(getVmTemplateId(), getParameters().getGraphicsDevices());
 //        int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
 //
-//        return VmHandler.isNumOfMonitorsLegal(graphicsTypesToBeSet,
+//        return VmHandler.isNumOfMonitorsLegal(graphicsTypes,
 //                numOfMonitors,
 //                getReturnValue().getCanDoActionMessages());
         return true;
     }
+
 
 }

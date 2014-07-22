@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
@@ -865,8 +866,18 @@ public abstract class OvfReader implements IOvfBuilder {
                         if (virtualQuantity > 1) {
                             vmDevice.setDevice(VmDeviceType.QXL.getName());
                         } else {
-                            VmDeviceType vmDeviceType = getDisplayDevice(DisplayType.vnc);
-                            vmDevice.setDevice(vmDeviceType.getName());
+                            // todo - this is only workaround until OsInfo patchset
+                            List<DisplayType> displayTypes = osRepository.getDisplayTypes(vmBase.getOsId(), new Version(getVersion())); // get display types compatible with OS
+
+                            if (displayTypes.contains(DisplayType.qxl)) { // preserve behavior of previous code - qxl was never set in this branch
+                                displayTypes.remove(DisplayType.qxl);
+                            }
+
+                            DisplayType displayType = (!displayTypes.isEmpty())
+                                    ? displayTypes.get(0) // select first compatible device
+                                    : DisplayType.cirrus;
+
+                            vmDevice.setDevice(displayType.getDefaultVmDeviceType().getName());
                         }
                     } else { // default to spice if quantity not found
                         vmDevice.setDevice(VmDeviceType.QXL.getName());

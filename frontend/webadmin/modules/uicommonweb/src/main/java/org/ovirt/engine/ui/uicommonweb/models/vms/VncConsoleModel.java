@@ -113,7 +113,7 @@ public class VncConsoleModel extends ConsoleModel {
                 ? getEntity().getDisplayType()
                 : getEntity().getDefaultDisplayType();
 
-        return vmDisplayType == DisplayType.vnc;
+        return vmDisplayType == DisplayType.vga;
     }
 
     private void setVmTicket() {

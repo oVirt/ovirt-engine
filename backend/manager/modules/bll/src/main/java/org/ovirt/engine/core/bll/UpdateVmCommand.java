@@ -59,6 +59,7 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -102,6 +103,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(clusterVersion, getVm().getStaticData());
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
+
+        if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
+                getParameters().getVmStaticData().getDefaultDisplayType() == null) {
+            autoSelectDefaultDisplayType(getVmId());
+        }
 
         updateParametersVmFromInstanceType();
     }

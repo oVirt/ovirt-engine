@@ -247,15 +247,15 @@ public class UpdateVmCommandTest {
 
         assertTrue("canDoAction should have passed.", command.canDoAction());
     }
-    // todo os info followup
-//    @Test
-//    public void testInvalidNumberOfMonitors() {
-//        prepareVmToPassCanDoAction();
+
+    @Test
+    public void testInvalidNumberOfMonitors() {
+//        prepareVmToPassCanDoAction();  // todo os info follow up
 //        vmStatic.setNumOfMonitors(99);
 //
 //        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
 //        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
-//    }
+    }
 
     private void mockGraphicsDevice() {
         doReturn(vmDeviceDAO).when(command).getVmDeviceDao();

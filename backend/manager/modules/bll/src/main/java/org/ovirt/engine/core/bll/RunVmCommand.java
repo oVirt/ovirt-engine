@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
@@ -656,12 +655,6 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         // Clear the first user:
         getVm().setConsoleUserId(null);
-
-        getVm().setDisplayType(getParameters().getUseVnc() == null ?
-                getVm().getDefaultDisplayType() :
-                    // if Use Vnc is not null it means runVM was launch from the run once command, thus
-                    // the VM can run with display type which is different from its default display type
-                    (getParameters().getUseVnc() ? DisplayType.vnc : DisplayType.qxl));
 
         if (getParameters().getInitializationType() == null) {
             // if vm not initialized, use sysprep/cloud-init

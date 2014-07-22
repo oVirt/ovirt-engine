@@ -14,7 +14,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -137,13 +137,13 @@ public abstract class VmInfoBuilderBase {
             createInfo.put(VdsProperties.PitReinjection, "false");
         }
 
-        if (vm.getDisplayType() == DisplayType.vnc) {
+        if (vm.getGraphicsInfos().size() == 1 && vm.getGraphicsInfos().containsKey(GraphicsType.VNC)) {
             createInfo.put(VdsProperties.TabletEnable, "true");
         }
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
 
-        if (vm.getDisplayType() == DisplayType.qxl) {
+        if (vm.getGraphicsInfos().containsKey(GraphicsType.SPICE)) {
             createInfo.put(VdsProperties.spiceFileTransferEnable,
                 Boolean.toString(vm.isSpiceFileTransferEnabled()));
             createInfo.put(VdsProperties.spiceCopyPasteEnable,

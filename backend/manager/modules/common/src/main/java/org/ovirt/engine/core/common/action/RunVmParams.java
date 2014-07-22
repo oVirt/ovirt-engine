@@ -14,7 +14,6 @@ public class RunVmParams extends VmOperationParameterBase {
     private String diskPath;
     private boolean kvmEnable;
     private Boolean runAndPause;
-    private Boolean useVnc;
     private boolean acpiEnable;
     private Boolean win2kHackEnable;
     private String customProperties;
@@ -58,7 +57,6 @@ public class RunVmParams extends VmOperationParameterBase {
                 && ObjectUtils.objectsEqual(diskPath, other.diskPath)
                 && kvmEnable == other.kvmEnable
                 && ObjectUtils.objectsEqual(runAndPause, other.runAndPause)
-                && ObjectUtils.objectsEqual(useVnc, other.useVnc)
                 && acpiEnable == other.acpiEnable
                 && ObjectUtils.objectsEqual(win2kHackEnable, other.win2kHackEnable)
                 && ObjectUtils.objectsEqual(customProperties, other.customProperties)
@@ -86,7 +84,6 @@ public class RunVmParams extends VmOperationParameterBase {
         result = prime * result + ((diskPath == null) ? 0 : diskPath.hashCode());
         result = prime * result + (kvmEnable ? 1231 : 1237);
         result = prime * result + ((runAndPause == null) ? 0 : runAndPause.hashCode());
-        result = prime * result + ((useVnc == null) ? 0 : useVnc.hashCode());
         result = prime * result + (acpiEnable ? 1231 : 1237);
         result = prime * result + ((win2kHackEnable == null) ? 0 : win2kHackEnable.hashCode());
         result = prime * result + ((customProperties == null) ? 0 : customProperties.hashCode());
@@ -145,14 +142,6 @@ public class RunVmParams extends VmOperationParameterBase {
 
     public void setRunAndPause(Boolean value) {
         runAndPause = value;
-    }
-
-    public Boolean getUseVnc() {
-        return useVnc;
-    }
-
-    public void setUseVnc(Boolean value) {
-        useVnc = value;
     }
 
     public boolean getAcpiEnable() {

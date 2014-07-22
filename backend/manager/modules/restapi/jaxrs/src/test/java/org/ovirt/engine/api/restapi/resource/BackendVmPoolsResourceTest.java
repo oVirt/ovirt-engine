@@ -53,7 +53,7 @@ public class BackendVmPoolsResourceTest extends
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[1]).anyTimes();
         expect(entity.getNumOfCpus()).andReturn(8).anyTimes();
         expect(entity.getNumOfSockets()).andReturn(2).anyTimes();
-        expect(entity.getDefaultDisplayType()).andReturn(DisplayType.vnc).anyTimes();
+        expect(entity.getDefaultDisplayType()).andReturn(DisplayType.cirrus).anyTimes(); // todo restapi follow up
         expect(entity.getNumOfMonitors()).andReturn(2).anyTimes();
         expect(entity.getVmType()).andReturn(VmType.Server).anyTimes();
         return entity;

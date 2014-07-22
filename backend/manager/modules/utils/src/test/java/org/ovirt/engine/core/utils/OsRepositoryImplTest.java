@@ -49,7 +49,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
-        preferences.node("/os/rhel7/devices/display/protocols").put("value", "vnc/cirrus,qxl/qxl");
+        preferences.node("/os/rhel7/devices/display/protocols").put("value", "vga/cirrus,qxl/qxl"); // todo os info follow up
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
@@ -172,7 +172,7 @@ public class OsRepositoryImplTest {
         List<DisplayType> supportedDisplays = OsRepositoryImpl.INSTANCE.getDisplayTypes().get(777).get(null);
 
         boolean isSizeCorrect = supportedDisplays.size() == 2;
-        boolean containsSameElements = (new HashSet<DisplayType>(supportedDisplays)).equals(new HashSet<DisplayType>(Arrays.asList(DisplayType.qxl, DisplayType.vnc)));
+        boolean containsSameElements = (new HashSet<DisplayType>(supportedDisplays)).equals(new HashSet<DisplayType>(Arrays.asList(DisplayType.qxl, DisplayType.vga)));
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);

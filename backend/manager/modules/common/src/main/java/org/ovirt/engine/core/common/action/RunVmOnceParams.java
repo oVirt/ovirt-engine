@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
+import java.util.HashSet;
+import java.util.Set;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
@@ -16,6 +19,7 @@ public class RunVmOnceParams extends RunVmParams {
     private String sysPrepPassword;
     private VmInit vmInit;
     private Guid destinationVdsId;
+    private Set<GraphicsType> runOnceGraphics;
 
     private String customEmulatedMachine;
     private String customCpuName;
@@ -25,10 +29,16 @@ public class RunVmOnceParams extends RunVmParams {
     private String vncKeyboardLayout;
 
     public RunVmOnceParams() {
+        initRunOnceGraphics();
     }
 
     public RunVmOnceParams(Guid vmId) {
         super(vmId);
+        initRunOnceGraphics();
+    }
+
+    private void initRunOnceGraphics() {
+        runOnceGraphics = new HashSet<GraphicsType>();
     }
 
     @Override
@@ -113,6 +123,14 @@ public class RunVmOnceParams extends RunVmParams {
 
     public void setDestinationVdsId(Guid destinationVdsId) {
         this.destinationVdsId = destinationVdsId;
+    }
+
+    public Set<GraphicsType> getRunOnceGraphics() {
+        return runOnceGraphics;
+    }
+
+    public void setRunOnceGraphics(Set<GraphicsType> runOnceGraphics) {
+        this.runOnceGraphics = runOnceGraphics;
     }
 
     public String getCustomEmulatedMachine() {

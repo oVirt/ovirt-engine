@@ -1369,7 +1369,7 @@ public class BackendVmsResourceTest
         entity.setCpuPerSocket(4);
         entity.setNumOfSockets(2);
         entity.setUsageMemPercent(20);
-        entity.setDisplayType(DisplayType.vnc);
+        entity.setDisplayType(DisplayType.cirrus); // todo restapi follow up
         entity.setDisplaySecurePort(5900);
         entity.setNumOfMonitors(2);
         entity.setVmType(VmType.Server);
@@ -1393,7 +1393,7 @@ public class BackendVmsResourceTest
         entity.setDescription(DESCRIPTIONS[index]);
         entity.setCpuPerSocket(4);
         entity.setNumOfSockets(2);
-        entity.setDefaultDisplayType(DisplayType.vnc);
+        entity.setDefaultDisplayType(DisplayType.cirrus); // todo restapi follow up
         entity.setNumOfMonitors(2);
         entity.setVmType(VmType.Server);
         return entity;

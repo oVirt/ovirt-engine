@@ -242,7 +242,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public VmDynamic() {
         id = Guid.Empty;
         status = VMStatus.Down;
-        displayType = DisplayType.vnc;
+        displayType = DisplayType.vga;
         pauseStatus = VmPauseStatus.NONE;
         exitStatus = VmExitStatus.Normal;
         win2kHackEnabled = false;

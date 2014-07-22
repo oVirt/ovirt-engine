@@ -733,7 +733,7 @@ public abstract class RunOnceModel extends Model
         setIsBootFromHardDiskAllowedForVm();
 
         // Display protocols.
-        EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>(DisplayType.vnc)
+        EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>(DisplayType.vga)
            .setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
         EntityModel<DisplayType> qxlProtocol = new EntityModel<DisplayType>(DisplayType.qxl)
@@ -748,7 +748,7 @@ public abstract class RunOnceModel extends Model
             getDisplayConsole_Spice_IsSelected().setIsAvailable(false);
         }
 
-        getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vnc ?
+        getDisplayProtocol().setSelectedItem(vm.getDefaultDisplayType() == DisplayType.vga ?
                 vncProtocol : qxlProtocol);
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
@@ -810,14 +810,6 @@ public abstract class RunOnceModel extends Model
         if (getIsCloudInitEnabled() != null && getIsCloudInitEnabled().getEntity() ||
                 getIsSysprepEnabled() != null && getIsSysprepEnabled().getEntity()) {
             params.setVmInit(getVmInit().buildCloudInitParameters(this));
-        }
-
-        EntityModel<? extends DisplayType> displayProtocolSelectedItem = getDisplayProtocol().getSelectedItem();
-        params.setUseVnc(displayProtocolSelectedItem.getEntity() == DisplayType.vnc);
-        if (getDisplayConsole_Vnc_IsSelected().getEntity()
-                || getDisplayConsole_Spice_IsSelected().getEntity())
-        {
-            params.setUseVnc(getDisplayConsole_Vnc_IsSelected().getEntity());
         }
 
         params.setVncKeyboardLayout(getVncKeyboardLayout().getSelectedItem());
@@ -942,7 +934,7 @@ public abstract class RunOnceModel extends Model
     }
 
     private void updateDisplayProtocols() {
-        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vnc;
+        boolean isVncSelected = vm.getDefaultDisplayType() == DisplayType.vga;
         getDisplayConsole_Vnc_IsSelected().setEntity(isVncSelected);
         getDisplayConsole_Spice_IsSelected().setEntity(!isVncSelected);
     }

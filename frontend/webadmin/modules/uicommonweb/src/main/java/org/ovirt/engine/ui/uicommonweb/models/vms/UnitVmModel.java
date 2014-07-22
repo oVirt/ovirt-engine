@@ -2056,12 +2056,12 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         List<EntityModel<DisplayType>> displayProtocolOptions = new ArrayList<EntityModel<DisplayType>>();
-        if (displayTypes.contains(DisplayType.vnc)) {
+        if (displayTypes.contains(DisplayType.vga)) {
             EntityModel<DisplayType> vncProtocol = new EntityModel<DisplayType>();
             vncProtocol.setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
-            vncProtocol.setEntity(DisplayType.vnc);
+            vncProtocol.setEntity(DisplayType.vga);
             displayProtocolOptions.add(vncProtocol);
-            if (DisplayType.vnc == oldDisplayProtocolOption) {
+            if (DisplayType.vga == oldDisplayProtocolOption) {
                 oldDisplayProtocolEntity = vncProtocol;
             }
         }
@@ -2350,7 +2350,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
         DisplayType type = getDisplayType();
 
-        if (type == DisplayType.vnc)
+        if (type == DisplayType.vga)
         {
             getUsbPolicy().setSelectedItem(org.ovirt.engine.core.common.businessentities.UsbPolicy.DISABLED);
             getIsSmartcardEnabled().setEntity(false);
@@ -2361,7 +2361,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getUsbPolicy().setIsChangable(type == DisplayType.qxl);
         getIsSmartcardEnabled().setIsChangable(type == DisplayType.qxl);
 
-        getVncKeyboardLayout().setIsAvailable(type == DisplayType.vnc);
+        getVncKeyboardLayout().setIsAvailable(type == DisplayType.vga);
 
         updateNumOfMonitors();
     }
@@ -2400,7 +2400,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         if (getDisplayProtocol().getSelectedItem() != null)
         {
             DisplayType displayType = getDisplayProtocol().getSelectedItem().getEntity();
-            isVnc = displayType == DisplayType.vnc;
+            isVnc = displayType == DisplayType.vga;
         }
 
         return isVnc;

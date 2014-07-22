@@ -2,7 +2,9 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -19,6 +21,8 @@ import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.SysPrepParams;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -154,7 +158,31 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
         createVmParams.getVm().setVmInit(getParameters().getVmInit());
 
+        fillRunOnceGraphics();
+
         return createVmParams;
+    }
+
+    /**
+     * This methods sets graphics infos of a VM to correspond to graphics set in Run Once.
+     * Note: graphics are set only when Run Once graphics differ from default (static) graphics
+     * (e.g. If user selects SPICE framebuffer for a SPICE VM, nothing is set here).
+     */
+    private void fillRunOnceGraphics() {
+        Set<GraphicsType> vmGraphics = new HashSet<>();
+        for (VmDevice vmDevice : getVmDeviceDao()
+                .getVmDeviceByVmIdAndType(getVmId(), VmDeviceGeneralType.GRAPHICS))
+        {
+            vmGraphics.add(GraphicsType.fromString(vmDevice.getDevice()));
+        }
+
+        if (vmGraphics.equals(getParameters().getRunOnceGraphics())) {
+            return; // do nothing when default VM graphics are same as Run Once graphics
+        }
+
+        for (GraphicsType graphicsType : getParameters().getRunOnceGraphics()) {
+            getVm().getGraphicsInfos().put(graphicsType, new GraphicsInfo());
+        }
     }
 
     @Override

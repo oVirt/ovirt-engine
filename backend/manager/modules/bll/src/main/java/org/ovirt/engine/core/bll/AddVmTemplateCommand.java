@@ -128,7 +128,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             isVmInDb = true;
         } else if (getVdsGroup() != null && parameterMasterVm != null) {
             VM vm = new VM(parameterMasterVm, new VmDynamic(), null);
-            vm.setDisplayType(parameterMasterVm.getDefaultDisplayType());
             vm.setVdsGroupCompatibilityVersion(getVdsGroup().getcompatibility_version());
             setVm(vm);
             setStoragePoolId(getVdsGroup().getStoragePoolId());
