@@ -14,19 +14,23 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
 import javax.ws.rs.Produces;
 
-import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.resource.ApiMediaType;
+import org.ovirt.engine.api.resource.AssignedPermissionsResource;
+import org.ovirt.engine.api.resource.AssignedRolesResource;
+import org.ovirt.engine.api.resource.AssignedTagsResource;
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface UserResource {
+public interface GroupResource {
 
     @GET
-    public User get();
+    public Group get();
 
     @Path("roles")
     public AssignedRolesResource getRolesResource();

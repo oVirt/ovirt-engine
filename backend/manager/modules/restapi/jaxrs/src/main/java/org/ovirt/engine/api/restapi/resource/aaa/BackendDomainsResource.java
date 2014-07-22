@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
@@ -9,9 +9,11 @@ import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Domains;
-import org.ovirt.engine.api.resource.DomainResource;
-import org.ovirt.engine.api.resource.DomainsResource;
+import org.ovirt.engine.api.resource.aaa.DomainResource;
+import org.ovirt.engine.api.resource.aaa.DomainsResource;
 import org.ovirt.engine.api.restapi.model.Directory;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;

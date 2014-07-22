@@ -5,6 +5,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Session;
 import org.ovirt.engine.api.model.Sessions;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.restapi.resource.aaa.BackendUserResource;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

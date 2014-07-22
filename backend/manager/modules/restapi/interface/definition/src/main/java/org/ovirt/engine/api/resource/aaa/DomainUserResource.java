@@ -14,22 +14,17 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import org.ovirt.engine.api.model.Domain;
-import javax.ws.rs.Path;
 
-@Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-public interface DomainResource {
+import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.resource.ApiMediaType;
+
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+public interface DomainUserResource {
 
     @GET
-    public Domain get();
-
-    @Path("users")
-    public DomainUsersResource getDomainUsersResource();
-
-    @Path("groups")
-    public DomainGroupsResource getDomainGroupsResource();
+    public User get();
 }

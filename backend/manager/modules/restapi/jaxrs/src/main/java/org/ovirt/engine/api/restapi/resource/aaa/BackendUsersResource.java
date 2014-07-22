@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
@@ -13,8 +13,10 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Users;
-import org.ovirt.engine.api.resource.UserResource;
-import org.ovirt.engine.api.resource.UsersResource;
+import org.ovirt.engine.api.resource.aaa.UserResource;
+import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.IdParameters;

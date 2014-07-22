@@ -14,7 +14,7 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.Consumes;
 import javax.ws.rs.DELETE;
@@ -25,31 +25,32 @@ import javax.ws.rs.POST;
 import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Group;
-import org.ovirt.engine.api.model.Groups;
+import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.model.Users;
+import org.ovirt.engine.api.resource.ApiMediaType;
 
-@Path("/groups")
+@Path("/users")
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface GroupsResource {
+public interface UsersResource {
 
     @GET
-    public Groups list();
+    public Users list();
 
     @POST
     @Consumes({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-    public Response add(Group Group);
+    public Response add(User User);
 
     @DELETE
     @Path("{id}")
     public Response remove(@PathParam("id") String id);
 
     /**
-     * Sub-resource locator method, returns individual GroupResource on which
-     * the remainder of the URI is dispatched.
+     * Sub-resource locator method, returns individual UserResource on which the
+     * remainder of the URI is dispatched.
      *
-     * @param id  the Group ID
+     * @param id  the User ID
      * @return    matching subresource if found
      */
     @Path("{id}")
-    public GroupResource getGroupSubResource(@PathParam("id") String id);
+    public UserResource getUserSubResource(@PathParam("id") String id);
 }

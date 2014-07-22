@@ -14,12 +14,13 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
 import javax.ws.rs.Path;
 import org.ovirt.engine.api.model.Domains;
+import org.ovirt.engine.api.resource.ApiMediaType;
 import javax.ws.rs.PathParam;
 
 @Path("/domains")

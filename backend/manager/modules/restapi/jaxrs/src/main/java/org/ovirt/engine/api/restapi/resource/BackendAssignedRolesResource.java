@@ -25,7 +25,7 @@ public class BackendAssignedRolesResource
 
     private Guid principalId;
 
-    protected BackendAssignedRolesResource(Guid principalId) {
+    public BackendAssignedRolesResource(Guid principalId) {
         super(Role.class, Permissions.class);
         this.principalId = principalId;
     }
