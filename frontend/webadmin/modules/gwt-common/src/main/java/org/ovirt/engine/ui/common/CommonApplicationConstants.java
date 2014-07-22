@@ -1889,4 +1889,23 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Authorization provider")
     String authz();
+
+    @DefaultStringValue("Name")
+    String diskProfileNameLabel();
+
+    @DefaultStringValue("Description")
+    String diskProfileDescriptionLabel();
+
+    @DefaultStringValue("QoS Name")
+    String storageQosName();
+
+    @DefaultStringValue("New")
+    String newDiskProfile();
+
+    @DefaultStringValue("Edit")
+    String editDiskProfile();
+
+    @DefaultStringValue("Remove")
+    String removeDiskProfile();
+
 }

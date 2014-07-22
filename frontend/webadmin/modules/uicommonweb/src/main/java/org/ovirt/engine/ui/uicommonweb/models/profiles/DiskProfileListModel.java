@@ -20,16 +20,19 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class DiskProfileListModel extends SearchableListModel
-{
+public class DiskProfileListModel extends ListWithDetailsModel {
     private UICommand newCommand;
     private UICommand editCommand;
     private UICommand removeCommand;
     private Map<Guid, StorageQos> qosMap;
+    PermissionListModel permissionListModel;
 
     public DiskProfileListModel() {
         setTitle(ConstantsManager.getInstance().getConstants().diskProfilesTitle());
@@ -41,6 +44,15 @@ public class DiskProfileListModel extends SearchableListModel
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
 
         updateActionAvailability();
+    }
+
+    @Override
+    protected void initDetailModels() {
+        super.initDetailModels();
+        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
+        permissionListModel = new PermissionListModel();
+        list.add(permissionListModel);
+        setDetailModels(list);
     }
 
     public void newProfile() {
@@ -223,6 +235,14 @@ public class DiskProfileListModel extends SearchableListModel
 
     public StorageQos getStorageQos(Guid qosId) {
         return qosMap.get(qosId);
+    }
+
+    public PermissionListModel getPermissionListModel() {
+        return permissionListModel;
+    }
+
+    public void setPermissionListModel(PermissionListModel permissionListModel) {
+        this.permissionListModel = permissionListModel;
     }
 
     @Override

@@ -3325,9 +3325,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String networkQoSName();
 
-    @DefaultStringValue("QoS Name")
-    String storageQosName();
-
     @DefaultStringValue("In Average")
     String networkQoSInboundAverage();
 
@@ -3878,19 +3875,4 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Storage Domain")
     String diskProfileStorageDomainLabel();
-
-    @DefaultStringValue("Name")
-    String diskProfileNameLabel();
-
-    @DefaultStringValue("Description")
-    String diskProfileDescriptionLabel();
-
-    @DefaultStringValue("New")
-    String newDiskProfile();
-
-    @DefaultStringValue("Edit")
-    String editDiskProfile();
-
-    @DefaultStringValue("Remove")
-    String removeDiskProfile();
 }

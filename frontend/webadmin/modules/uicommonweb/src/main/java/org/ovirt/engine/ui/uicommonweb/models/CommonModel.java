@@ -89,7 +89,7 @@ public class CommonModel extends ListModel
     private SearchableListModel dataCenterList;
     private SearchableListModel clusterList;
     private SearchableListModel hostList;
-    private SearchableListModel storageList;
+    private StorageListModel storageList;
     private SearchableListModel vmList;
     private SearchableListModel poolList;
     private SearchableListModel templateList;
@@ -1109,6 +1109,14 @@ public class CommonModel extends ListModel
     public void setSelectedItem(SearchableListModel value)
     {
         super.setSelectedItem(value);
+    }
+
+    public StorageListModel getStorageList() {
+        return storageList;
+    }
+
+    public void setStorageList(StorageListModel storageList) {
+        this.storageList = storageList;
     }
 
     public BookmarkListModel getBookmarkList()
