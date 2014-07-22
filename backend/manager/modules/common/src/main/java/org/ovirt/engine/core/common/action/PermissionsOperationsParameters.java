@@ -1,8 +1,8 @@
 package org.ovirt.engine.core.common.action;
 
-import org.ovirt.engine.core.common.businessentities.DbGroup;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Permissions;
+import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
 public class PermissionsOperationsParameters extends VdcActionParametersBase {
     private static final long serialVersionUID = 8854712438369127152L;

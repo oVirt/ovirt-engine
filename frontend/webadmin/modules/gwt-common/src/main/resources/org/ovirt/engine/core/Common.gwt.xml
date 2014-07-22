@@ -12,9 +12,11 @@
 		<include name="common/businessentities/HasStoragePool.java" />
 		<include name="common/businessentities/BusinessEntity.java" />
 		<include name="common/businessentities/BusinessEntityWithStatus.java" />
-		<include name="common/businessentities/LdapGroup.java" />
 		<include name="common/businessentities/BusinessEntitiesDefinitions.java" />
-		<include name="common/businessentities/LdapUser.java" />
+		<include name="common/businessentities/aaa/DbGroup.java" />
+		<include name="common/businessentities/aaa/DbUser.java" />
+		<include name="common/businessentities/aaa/LdapGroup.java" />
+		<include name="common/businessentities/aaa/LdapUser.java" />
 		<include name="aaa/AuthType.java" />
 		<include name="aaa/DirectoryEntry.java" />
 		<include name="aaa/ProfileEntry.java" />
@@ -39,8 +41,6 @@
 		<include name="common/businessentities/DisplayType.java" />
 		<include name="common/businessentities/event_subscriber.java" />
 		<include name="common/businessentities/event_subscriber_id.java" />
-		<include name="common/businessentities/DbGroup.java" />
-		<include name="common/businessentities/DbUser.java" />
 		<include name="common/businessentities/BootSequence.java" />
 		<include name="common/businessentities/IImage.java" />
 		<include name="common/businessentities/ImageStatus.java" />

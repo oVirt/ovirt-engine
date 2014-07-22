@@ -2,7 +2,7 @@ package org.ovirt.engine.core.common.action;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public class VmPoolUserParameters extends VmPoolSimpleUserParameters implements Serializable {

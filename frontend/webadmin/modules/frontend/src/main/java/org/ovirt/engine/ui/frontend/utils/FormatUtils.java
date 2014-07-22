@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.frontend.utils;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
 /**
  * This class contains static methods useful for formatting text for display in the GUI.

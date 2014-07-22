@@ -1,9 +1,10 @@
-package org.ovirt.engine.core.common.businessentities;
+package org.ovirt.engine.core.common.businessentities.aaa;
 
 import java.util.HashSet;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 

@@ -3,10 +3,10 @@ package org.ovirt.engine.core.bll;
 import org.ovirt.engine.core.bll.context.CommandContext;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
-import org.ovirt.engine.core.common.businessentities.DbUser;
-import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VmLogonVDSCommandParameters;
 
