@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -55,7 +56,11 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
     private Date updateDate;
 
     public ProcessOvfUpdateForStorageDomainCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public ProcessOvfUpdateForStorageDomainCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setStorageDomainId(parameters.getStorageDomainId());
         setStoragePoolId(parameters.getStoragePoolId());
         populateStorageDomainOvfData();
