@@ -8,7 +8,7 @@ import java.util.UUID;
 
 import org.junit.Before;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 

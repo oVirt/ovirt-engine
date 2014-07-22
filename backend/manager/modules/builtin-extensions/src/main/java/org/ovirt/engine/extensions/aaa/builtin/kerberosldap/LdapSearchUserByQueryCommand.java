@@ -3,7 +3,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 
 public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand {
     private boolean populateGroups;

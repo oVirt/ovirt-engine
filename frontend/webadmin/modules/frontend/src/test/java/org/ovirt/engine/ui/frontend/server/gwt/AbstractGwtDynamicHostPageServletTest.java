@@ -36,7 +36,7 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.ovirt.engine.core.branding.BrandingManager;
 import org.ovirt.engine.core.branding.BrandingTheme;
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;

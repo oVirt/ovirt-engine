@@ -1,7 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.compat.Guid;
 
 public abstract class VmPoolUserCommandBase<T extends VmPoolUserParameters> extends VmPoolSimpleUserCommandBase<T> {

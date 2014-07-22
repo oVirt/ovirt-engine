@@ -3,7 +3,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
 
 public class LdapSearchGroupsByQueryCommand extends LdapWithConfiguredCredentialsCommandBase {
 

@@ -3,8 +3,8 @@ package org.ovirt.engine.ui.common.view.popup.permissions;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
-import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.common.businessentities.Role;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;

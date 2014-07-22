@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.Set;
 
 import org.ovirt.engine.core.aaa.ProfileEntry;
-import org.ovirt.engine.core.common.businessentities.DbUser;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

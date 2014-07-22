@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.aaa;
 
-import org.ovirt.engine.core.common.businessentities.DbUser;
-
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 
 public class DirectoryEntryKey {
 

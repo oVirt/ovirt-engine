@@ -9,8 +9,8 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.core.common.businessentities.LdapGroup;
-import org.ovirt.engine.core.common.businessentities.LdapUser;
+import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
+import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
