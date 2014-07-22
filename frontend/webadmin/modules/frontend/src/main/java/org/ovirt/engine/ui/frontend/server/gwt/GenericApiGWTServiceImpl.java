@@ -182,7 +182,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         params.setActionType(loginType);
         VdcLoginReturnValueBase returnValue = (VdcLoginReturnValueBase) getBackend().login(params);
         if (returnValue.getSucceeded()) {
-            this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", getSession().getId()); //$NON-NLS-1$
+            this.getThreadLocalResponse().addHeader("OVIRT-SSO-TOKEN", returnValue.getSessionId()); //$NON-NLS-1$
             getSession().setAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY, returnValue.getSessionId()); //$NON-NLS-1$)
         }
         return returnValue;
