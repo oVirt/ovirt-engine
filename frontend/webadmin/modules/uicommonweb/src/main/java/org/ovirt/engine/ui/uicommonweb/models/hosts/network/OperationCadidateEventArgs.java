@@ -13,17 +13,13 @@ public class OperationCadidateEventArgs extends EventArgs {
 
     private final NetworkItemModel<?> op2;
 
-    private final boolean drop;
-
     public OperationCadidateEventArgs(NetworkOperation candidate,
             NetworkItemModel<?> op1,
-            NetworkItemModel<?> op2,
-            boolean drop) {
+            NetworkItemModel<?> op2) {
 
         this.candidate = candidate;
         this.op1 = op1;
         this.op2 = op2;
-        this.drop = drop;
     }
 
     public NetworkOperation getCandidate() {
@@ -36,10 +32,6 @@ public class OperationCadidateEventArgs extends EventArgs {
 
     public NetworkItemModel<?> getOp2() {
         return op2;
-    }
-
-    public boolean isDrop() {
-        return drop;
     }
 
 }
