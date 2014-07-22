@@ -1,6 +1,6 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.aaa;
 
-import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.GetValueBySessionQueryParameters;
 
 public class GetValueBySessionQuery<P extends GetValueBySessionQueryParameters> extends QueriesCommandBase<P> {

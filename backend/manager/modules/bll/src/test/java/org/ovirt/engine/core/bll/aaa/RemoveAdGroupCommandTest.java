@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.aaa;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;

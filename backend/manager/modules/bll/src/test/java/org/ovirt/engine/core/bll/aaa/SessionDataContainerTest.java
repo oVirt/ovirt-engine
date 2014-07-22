@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.session;
+package org.ovirt.engine.core.bll.aaa;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;

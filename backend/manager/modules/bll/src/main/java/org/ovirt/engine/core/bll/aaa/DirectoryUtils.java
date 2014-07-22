@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.aaa;
+package org.ovirt.engine.core.bll.aaa;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -12,6 +12,10 @@ import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz;
+import org.ovirt.engine.core.aaa.AuthzUtils;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
+import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.core.aaa.SearchQueryParsingUtils;
 import org.ovirt.engine.core.common.businessentities.DbGroup;
 import org.ovirt.engine.core.common.businessentities.DbUser;
 import org.ovirt.engine.core.compat.Guid;
