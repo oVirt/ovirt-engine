@@ -39,8 +39,6 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     @Override
     protected void executeCommand() {
-        setCommandStatus(CommandStatus.ACTIVE_SYNC);
-
         // Our contract with vdsm merge states that if the VM is found down, we
         // have to assume the merge failed.  (It's okay if it really succeeded,
         // we can retry the operation without any issues.)

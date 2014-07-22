@@ -36,7 +36,6 @@ public class MergeCommand<T extends MergeParameters>
     }
 
     public void executeCommand() {
-        setCommandStatus(CommandStatus.ACTIVE_ASYNC);
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.Merge,
                 createVDSParameters());
 

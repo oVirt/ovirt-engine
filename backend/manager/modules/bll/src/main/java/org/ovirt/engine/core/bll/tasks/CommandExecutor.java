@@ -60,7 +60,6 @@ public class CommandExecutor {
             Guid cmdId = entry.getKey();
             CommandCallBack callBack = entry.getValue();
             CommandStatus status = coco.getCommandStatus(cmdId);
-
             switch (status) {
             case FAILED:
                 callBack.onFailed(cmdId, coco.getChildCommandIds(cmdId));
@@ -73,7 +72,6 @@ public class CommandExecutor {
                 iterator.remove();
                 break;
             case ACTIVE:
-            case ACTIVE_ASYNC:
                 if (coco.getCommandEntity(cmdId).isExecuted()) {
                     callBack.doPolling(cmdId, coco.getChildCommandIds(cmdId));
                 }
@@ -149,9 +147,6 @@ public class CommandExecutor {
         cmdEntity.setReturnValue(result);
         if (!result.getCanDoAction()) {
             cmdEntity.setCommandStatus(CommandStatus.FAILED);
-        } else
-        if (CommandStatus.ACTIVE_SYNC.equals(cmdEntity.getCommandStatus())) {
-            cmdEntity.setCommandStatus(result.getSucceeded() ? CommandStatus.SUCCEEDED : CommandStatus.FAILED);
         }
         coco.persistCommand(cmdEntity);
     }
