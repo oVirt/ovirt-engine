@@ -95,8 +95,9 @@ public class AuthzUtils {
     private static void constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache) {
         List<ExtMap> groups = new ArrayList<>();
         for (ExtMap memberOf : entity.get(key, Collections.<ExtMap> emptyList())) {
-            constructGroupsMembershipTree(memberOf, GroupRecord.GROUPS, groupsCache);
-            groups.add(groupsCache.get(memberOf.get(GroupRecord.ID)));
+            ExtMap cachedGroup = groupsCache.get(memberOf.get(GroupRecord.ID));
+            constructGroupsMembershipTree(cachedGroup, GroupRecord.GROUPS, groupsCache);
+            groups.add(cachedGroup);
         }
         entity.put(key, groups);
     }
