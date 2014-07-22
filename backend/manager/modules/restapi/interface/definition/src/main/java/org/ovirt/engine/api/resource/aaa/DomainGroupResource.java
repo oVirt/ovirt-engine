@@ -14,29 +14,20 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Produces;
-import javax.ws.rs.Path;
-import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-import org.ovirt.engine.api.model.Domains;
-import javax.ws.rs.PathParam;
 
-@Path("/domains")
-@Produces( { ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
-public interface DomainsResource {
+import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
+
+import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.resource.ApiMediaType;
+
+@Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
+public interface DomainGroupResource {
 
     @GET
     @Formatted
-    public Domains list();
-
-    /**
-     * Sub-resource locator method, returns individual DomainResource on which the remainder of the URI is dispatched.
-     *
-     * @param id the domain ID
-     * @return matching subresource if found
-     */
-    @Path("{id}")
-    public DomainResource getDomainSubResource(@PathParam("id") String id);
+    public Group get();
 }

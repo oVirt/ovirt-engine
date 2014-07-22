@@ -1,13 +1,14 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
-import static org.ovirt.engine.api.restapi.resource.BackendDomainsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource.SUB_COLLECTIONS;
 
 import org.ovirt.engine.api.model.Domain;
-import org.ovirt.engine.api.resource.DomainGroupsResource;
-import org.ovirt.engine.api.resource.DomainUsersResource;
-import org.ovirt.engine.api.resource.DomainResource;
+import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
+import org.ovirt.engine.api.resource.aaa.DomainResource;
+import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.restapi.model.Directory;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 
 public class BackendDomainResource extends AbstractBackendSubResource<Domain, Directory>
 implements DomainResource {

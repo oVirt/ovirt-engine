@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.util.List;
 
@@ -10,6 +10,7 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;

@@ -1,13 +1,17 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource.SUB_COLLECTIONS;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
-import org.ovirt.engine.api.resource.UserResource;
+import org.ovirt.engine.api.resource.aaa.UserResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
+import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
+import org.ovirt.engine.api.restapi.resource.BackendUserTagsResource;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

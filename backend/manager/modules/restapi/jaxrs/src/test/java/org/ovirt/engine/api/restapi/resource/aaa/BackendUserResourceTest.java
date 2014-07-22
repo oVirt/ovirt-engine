@@ -1,7 +1,7 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.GROUPS;
-import static org.ovirt.engine.api.restapi.resource.BackendUsersResourceTest.PARSED_GROUPS;
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.GROUPS;
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest.PARSED_GROUPS;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -11,6 +11,7 @@ import javax.ws.rs.WebApplicationException;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.User;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.GetDbUserByUserNameAndDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;

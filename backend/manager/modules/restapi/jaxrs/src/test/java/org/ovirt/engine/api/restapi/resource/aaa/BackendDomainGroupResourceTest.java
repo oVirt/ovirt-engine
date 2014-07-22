@@ -1,23 +1,26 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.easymock.EasyMock.expect;
 
+import java.nio.charset.Charset;
+
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
+import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
-import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
-import org.ovirt.engine.core.aaa.DirectoryUser;
+import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 
-public class BackendDomainUserResourceTest
-    extends AbstractBackendSubResourceTest<User, DirectoryUser, BackendDomainUserResource> {
+public class BackendDomainGroupResourceTest
+    extends AbstractBackendSubResourceTest<Group, DirectoryGroup, BackendDomainGroupResource> {
 
-    public BackendDomainUserResourceTest() {
-        super(new BackendDomainUserResource(EXTERNAL_IDS[1], null));
+    public BackendDomainGroupResourceTest() {
+        super(new BackendDomainGroupResource(EXTERNAL_IDS[1], null));
     }
 
     @Override
@@ -28,16 +31,16 @@ public class BackendDomainUserResourceTest
 
     @Test
     public void testGet() throws Exception {
-      UriInfo uriInfo = setUpBasicUriExpectations();
-      setUriInfo(uriInfo);
-      setUpEntityQueryExpectations(1, false);
-      control.replay();
-      verifyModel(resource.get(), 1);
+        UriInfo uriInfo = setUpBasicUriExpectations();
+        setUriInfo(uriInfo);
+        setUpEntityQueryExpectations(1, false);
+        control.replay();
+        verifyModel(resource.get(), 1);
     }
 
     @Override
-    protected void verifyModel(User model, int index) {
-        assertEquals(NAMES[index] + "@" + DOMAIN, model.getUserName());
+    protected void verifyModel(Group model, int index) {
+        assertEquals(NAMES[index], model.getName());
     }
 
     @Test
@@ -56,7 +59,7 @@ public class BackendDomainUserResourceTest
     }
 
     private void setUpParentExpectations() {
-        BackendDomainUsersResource parent = control.createMock(BackendDomainUsersResource.class);
+        BackendDomainGroupsResource parent = control.createMock(BackendDomainGroupsResource.class);
         Domain domain = new Domain();
         domain.setName(DOMAIN);
         expect(parent.getDirectory()).andReturn(domain).anyTimes();
@@ -65,19 +68,18 @@ public class BackendDomainUserResourceTest
 
     private void setUpEntityQueryExpectations(int index, boolean notFound) throws Exception {
         setUpGetEntityExpectations(
-            VdcQueryType.GetDirectoryUserById,
+            VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-                new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]) },
+                new Object[] { DOMAIN, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8"))
+                         },
             notFound? null: getEntity(index)
         );
     }
 
     @Override
-    protected DirectoryUser getEntity(int index) {
-        return new DirectoryUser(DOMAIN, NAMESPACE,
-                DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]),
-                NAMES[index]);
+    protected DirectoryGroup getEntity(int index) {
+        return new DirectoryGroup(DOMAIN, NAMESPACE, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8")), NAMES[index]);
     }
 }
 

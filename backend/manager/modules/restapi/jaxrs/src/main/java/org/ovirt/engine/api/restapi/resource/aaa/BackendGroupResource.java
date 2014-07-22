@@ -1,13 +1,17 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
-import static org.ovirt.engine.api.restapi.resource.BackendGroupsResource.SUB_COLLECTIONS;
+import static org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource.SUB_COLLECTIONS;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AssignedRolesResource;
 import org.ovirt.engine.api.resource.AssignedTagsResource;
-import org.ovirt.engine.api.resource.GroupResource;
+import org.ovirt.engine.api.resource.aaa.GroupResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.api.restapi.resource.BackendAssignedPermissionsResource;
+import org.ovirt.engine.api.restapi.resource.BackendAssignedRolesResource;
+import org.ovirt.engine.api.restapi.resource.BackendGroupTagsResource;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;

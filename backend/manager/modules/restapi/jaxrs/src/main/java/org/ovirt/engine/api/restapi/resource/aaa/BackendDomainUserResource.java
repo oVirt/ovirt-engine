@@ -1,8 +1,9 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.User;
-import org.ovirt.engine.api.resource.DomainUserResource;
+import org.ovirt.engine.api.resource.aaa.DomainUserResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;

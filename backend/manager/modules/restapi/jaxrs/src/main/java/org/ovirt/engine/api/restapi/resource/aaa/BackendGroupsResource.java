@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -11,8 +11,10 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
-import org.ovirt.engine.api.resource.GroupResource;
-import org.ovirt.engine.api.resource.GroupsResource;
+import org.ovirt.engine.api.resource.aaa.GroupResource;
+import org.ovirt.engine.api.resource.aaa.GroupsResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;

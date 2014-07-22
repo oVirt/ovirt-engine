@@ -14,30 +14,25 @@
 * limitations under the License.
 */
 
-package org.ovirt.engine.api.resource;
+package org.ovirt.engine.api.resource.aaa;
 
 import javax.ws.rs.GET;
 import javax.ws.rs.Path;
+import javax.ws.rs.PathParam;
 import javax.ws.rs.Produces;
-
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
 
-import org.ovirt.engine.api.model.Group;
+import org.ovirt.engine.api.model.Groups;
+import org.ovirt.engine.api.resource.ApiMediaType;
 
 
 @Produces({ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML})
-public interface GroupResource {
+public interface DomainGroupsResource {
 
     @GET
     @Formatted
-    public Group get();
+    public Groups list();
 
-    @Path("roles")
-    public AssignedRolesResource getRolesResource();
-
-    @Path("permissions")
-    public AssignedPermissionsResource getPermissionsResource();
-
-    @Path("tags")
-    public AssignedTagsResource getTagsResource();
+    @Path("{id}")
+    public DomainGroupResource getDomainGroupSubResource(@PathParam("id") String id);
 }

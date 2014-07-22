@@ -1,4 +1,4 @@
-package org.ovirt.engine.api.restapi.resource;
+package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.text.MessageFormat;
 import java.util.List;
@@ -8,8 +8,10 @@ import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.model.Groups;
-import org.ovirt.engine.api.resource.DomainGroupResource;
-import org.ovirt.engine.api.resource.DomainGroupsResource;
+import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
+import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 
