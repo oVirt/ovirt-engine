@@ -6,10 +6,10 @@ import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public class GetRootDSETask implements Callable<Boolean> {
 

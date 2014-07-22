@@ -10,7 +10,7 @@ import javax.naming.directory.SearchControls;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginContext;
 
-import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;

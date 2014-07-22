@@ -12,20 +12,6 @@
      </Match>
 
      <!--
-      findbugs warns about using System.exit() only in appropriate places.
-      in this case the tool KrbConfCreator exit with exit code 1 on parsing
-      arguments error
-
-      findbugs reason:
-      Dm: Method invokes System.exit(...) (DM_EXIT)
-     -->
-     <Match>
-       <Class name="org.ovirt.engine.core.utils.kerberos.KrbConfCreator" />
-       <Method name="parseOptions"/>
-       <Bug code="Dm"/>
-     </Match>
-
-     <!--
       findbugs warns about using namespace interface 'Log' is the same name as the
       implemented interface name 'Log'.
       The class is deeply embedded in the code so we are ignoring findbugs warning

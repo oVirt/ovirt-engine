@@ -8,10 +8,10 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.ldap.LdapProviderType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.LdapServersOrderingAlgorithmFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public class DirectorySearcher {
 

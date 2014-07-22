@@ -13,9 +13,9 @@ import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 

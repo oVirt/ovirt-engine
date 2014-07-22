@@ -1,6 +1,3 @@
-/**
- *
- */
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.util.Properties;
@@ -8,15 +5,12 @@ import java.util.Properties;
 import javax.naming.directory.SearchControls;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.springframework.ldap.core.NameClassPairCallbackHandler;
 import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.core.support.SimpleDirContextAuthenticationStrategy;
 
-/**
- *
- */
 public class SimpleLdapTemplateWrapper extends LDAPTemplateWrapper {
 
     /**
