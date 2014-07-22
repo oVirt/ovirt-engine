@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.util.Arrays;
 import java.util.Map;
 
 public class StatusForXmlRpc {
@@ -12,7 +13,12 @@ public class StatusForXmlRpc {
 
     public StatusForXmlRpc(Map<String, Object> innerMap) {
         mCode = (Integer) innerMap.get(CODE);
-        mMessage = (String) innerMap.get(MESSAGE);
+        if (innerMap.get(MESSAGE) instanceof Object[]) {
+            mMessage = Arrays.toString((Object[])innerMap.get(MESSAGE));
+        }
+        else {
+            mMessage = innerMap.get(MESSAGE).toString();
+        }
     }
 
     public StatusForXmlRpc() {
