@@ -1,5 +1,6 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.aaa;
 
+import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 
 @NonTransactiveCommandAttribute

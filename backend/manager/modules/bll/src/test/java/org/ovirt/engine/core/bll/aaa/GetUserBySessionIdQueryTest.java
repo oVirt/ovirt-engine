@@ -1,11 +1,11 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.aaa;
 
 import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.session.SessionDataContainer;
+import org.ovirt.engine.core.bll.AbstractUserQueryTest;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.utils.RandomUtils;
 

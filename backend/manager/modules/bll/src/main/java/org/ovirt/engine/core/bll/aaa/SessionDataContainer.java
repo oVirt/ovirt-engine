@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.bll.session;
+package org.ovirt.engine.core.bll.aaa;
 
 import java.util.Date;
 import java.util.Iterator;

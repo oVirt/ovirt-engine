@@ -1,10 +1,10 @@
-package org.ovirt.engine.core.bll;
+package org.ovirt.engine.core.bll.aaa;
 
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.DirectoryUser;
-import org.ovirt.engine.core.aaa.DirectoryUtils;
+import org.ovirt.engine.core.bll.QueriesCommandBase;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
