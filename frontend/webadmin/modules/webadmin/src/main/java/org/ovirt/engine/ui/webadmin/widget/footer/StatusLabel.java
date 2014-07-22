@@ -44,11 +44,6 @@ abstract class StatusLabel extends Label {
         }
     };
 
-    StatusLabel(String text, String style) {
-        super(text);
-        setStylePrimaryName(style);
-    }
-
     public void setFadeText(String text) {
         pendingText = text;
         fadeInAnimation.cancel();

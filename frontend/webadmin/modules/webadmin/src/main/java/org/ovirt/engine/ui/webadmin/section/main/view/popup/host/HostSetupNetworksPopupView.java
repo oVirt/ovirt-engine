@@ -85,6 +85,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     private final Driver driver = GWT.create(Driver.class);
 
     private boolean rendered = false;
+    private boolean keepStatusText;
 
     private final ApplicationConstants constants;
     private final ApplicationMessages applicationMessages;
@@ -107,7 +108,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         commitChangesInfo = new InfoIcon(templates.italicTwoLines(constants.commitChangesInfoPart1(), constants.commitChangesInfoPart2()), resources);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-
+        initStatusPanel();
         checkConnectivity.setContentWidgetStyleName(style.checkCon());
         commitChanges.setContentWidgetStyleName(style.commitChanges());
         initUnassignedNetworksPanel();
@@ -135,6 +136,10 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
                 List<LogicalNetworkModel> networks = model.getNetworks();
                 List<NetworkInterfaceModel> nics = model.getNics();
+                if (!keepStatusText) {
+                    initStatusPanel();
+                }
+                keepStatusText = false;
                 updateNetworks(networks);
                 updateNics(nics);
                 // mark as rendered
@@ -203,15 +208,22 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         nicList.addAll(groups, !rendered);
     }
 
+    private void initStatusPanel() {
+        setValidStatus(constants.dragToMakeChangesSetupNetwork());
+    }
+
     private void setValidStatus(String message) {
+        keepStatusText = false;
         statusPanel.setTextAndStyle(message, style.statusPanel(), style.statusLabel());
     }
 
     private void setWarningStatus(String message) {
+        keepStatusText = true;
         statusPanel.setTextAndStyle(message, style.warningPanel(), style.warningLabel());
     }
 
     private void setErrorStatus(String message) {
+        keepStatusText = false;
         statusPanel.setTextAndStyle(message, style.errorPanel(), style.errorLabel());
     }
 }

@@ -233,10 +233,7 @@
     <d:SimpleDialogPanel width="900px" height="600px">
         <d:content>
             <g:HTMLPanel>
-                <f:StatusPanel ui:field="statusPanel"
-                               text="{constants.dragToMakeChangesSetupNetwork}"
-                               foregroundStyle="{style.statusLabel}" 
-                               backgroundStyle="{style.statusPanel}"/>
+                <f:StatusPanel ui:field="statusPanel" />
                 <g:HorizontalPanel width="100%" height="77%" verticalAlignment="ALIGN_TOP" addStyleNames="ts10">
                     <g:Cell width="69%" height="100%">
                         <g:VerticalPanel width="100%" horizontalAlignment="ALIGN_LEFT">
