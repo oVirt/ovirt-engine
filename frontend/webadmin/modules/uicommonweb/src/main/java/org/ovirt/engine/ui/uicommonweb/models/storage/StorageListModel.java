@@ -198,7 +198,7 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
     private ListModel isoListModel;
     private ListModel diskListModel;
     private ListModel snapshotListModel;
-    private ListModel diskProfileListModel;
+    private DiskProfileListModel diskProfileListModel;
 
     public StorageDomainStatic storageDomain;
     public TaskContext context;
@@ -2306,5 +2306,13 @@ public class StorageListModel extends ListWithDetailsModel implements ITaskTarge
         command.setTitle(ConstantsManager.getInstance().getConstants().ok());
         command.setIsDefault(true);
         return command;
+    }
+
+    public DiskProfileListModel getDiskProfileListModel() {
+        return diskProfileListModel;
+    }
+
+    public void setDiskProfileListModel(DiskProfileListModel diskProfileListModel) {
+        this.diskProfileListModel = diskProfileListModel;
     }
 }

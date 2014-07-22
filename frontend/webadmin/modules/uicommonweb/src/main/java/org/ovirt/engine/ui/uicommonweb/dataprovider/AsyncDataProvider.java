@@ -80,6 +80,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters.ArchCapabilitiesVerb;
@@ -3274,6 +3275,10 @@ public final class AsyncDataProvider {
         else if (entity instanceof VnicProfile)
         {
             return ((VnicProfile) entity).getId();
+        }
+        else if (entity instanceof DiskProfile)
+        {
+            return ((DiskProfile) entity).getId();
         }
         return Guid.Empty;
     }

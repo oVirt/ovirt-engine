@@ -786,6 +786,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String VdcObjectType___VnicProfile();
 
+    String VdcObjectType___DiskProfile();
+
     String VdsSelectionAlgorithm___None();
 
     String VdsSelectionAlgorithm___EvenlyDistribute();

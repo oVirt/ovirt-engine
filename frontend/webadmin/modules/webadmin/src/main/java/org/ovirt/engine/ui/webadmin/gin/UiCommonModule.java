@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.gin;
 
-import com.google.inject.Singleton;
 import org.ovirt.engine.ui.common.gin.BaseUiCommonModule;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.webadmin.gin.uicommon.ClusterModule;
@@ -25,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvider;
@@ -36,6 +36,8 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.SystemTreeModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TagModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.TaskModelProvider;
+
+import com.google.inject.Singleton;
 
 /**
  * GIN module containing WebAdmin UiCommon model and integration bindings.
@@ -106,6 +108,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         bind(InstanceTypeModelProvider.class).asEagerSingleton();
         bind(InstanceTypeGeneralModelProvider.class).asEagerSingleton();
+
+        // disk profiles permissions
+        bind(DiskProfilePermissionModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {
