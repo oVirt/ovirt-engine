@@ -27,7 +27,7 @@ from otopi import util
 from . import core
 from . import cpu
 from . import sshd
-from . import vdsm
+from . import vdsmi
 from . import storage
 from . import firewall
 
@@ -37,7 +37,7 @@ def createPlugins(context):
     core.Plugin(context=context)
     cpu.Plugin(context=context)
     sshd.Plugin(context=context)
-    vdsm.Plugin(context=context)
+    vdsmi.Plugin(context=context)
     storage.Plugin(context=context)
     firewall.Plugin(context=context)
 

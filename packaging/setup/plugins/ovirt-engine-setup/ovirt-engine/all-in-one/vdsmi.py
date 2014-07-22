@@ -28,7 +28,7 @@ import distutils.version
 
 from otopi import util
 from otopi import plugin
-
+from vdsm import vdscli
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -194,25 +194,52 @@ class Plugin(plugin.PluginBase):
         self.logger.debug('Connecting to the Engine')
         engine_api = self._waitEngineUp()
 
-        SupportedClusterLevels = vdcoption.VdcOption(
+        eSupportedClusterLevels = vdcoption.VdcOption(
             statement=self.environment[
                 oenginecons.EngineDBEnv.STATEMENT
             ]
         ).getVdcOption(
             name='SupportedClusterLevels'
         )
-
         self.logger.debug(
-            'SupportedClusterLevels [{levels}], '
+            'engine SupportedClusterLevels [{levels}], '
             'PACKAGE_VERSION [{pv}],'.format(
-                levels=SupportedClusterLevels,
+                levels=eSupportedClusterLevels,
                 pv=osetupconfig.PACKAGE_VERSION,
             )
         )
-        v = max(
-            distutils.version.LooseVersion(vs).version
-            for vs in SupportedClusterLevels.split(',')
+
+        result = vdscli.connect().getVdsCapabilities()
+        code, message = result['status']['code'], result['status']['message']
+        if code != 0 or 'info' not in result:
+            raise RuntimeError(
+                'Failed to get vds capabilities. Error code: '
+                '"%s" message: "%s"' % (code, message)
+            )
+        vSupportedClusterLevels = result['info']['clusterLevels']
+
+        self.logger.debug(
+            'VDSM SupportedClusterLevels [{levels}], '
+            'PACKAGE_VERSION [{pv}],'.format(
+                levels=vSupportedClusterLevels,
+                pv=result['info']['packages2']['vdsm']['version'],
+            )
         )
+
+        try:
+            v = max(
+                distutils.version.LooseVersion(vs).version
+                for vs in (
+                    set(eSupportedClusterLevels.split(',')) &
+                    set(vSupportedClusterLevels)
+                )
+            )
+        except ValueError:
+            self.logger.debug('exception', exc_info=True)
+            raise RuntimeError(_(
+                'Failed to find a ClusterLevel supported '
+                'by both engine and VDSM'
+            ))
         engine_version = self._ovirtsdk_xml.params.Version(
             major=v[0],
             minor=v[1],
