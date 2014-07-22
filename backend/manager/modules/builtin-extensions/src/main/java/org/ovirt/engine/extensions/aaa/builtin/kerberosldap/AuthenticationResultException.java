@@ -1,6 +1,6 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public class AuthenticationResultException extends DirectoryServiceException {
 

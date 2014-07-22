@@ -1,12 +1,11 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
 

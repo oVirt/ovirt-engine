@@ -3,7 +3,7 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public class RootDSEFactory {
 

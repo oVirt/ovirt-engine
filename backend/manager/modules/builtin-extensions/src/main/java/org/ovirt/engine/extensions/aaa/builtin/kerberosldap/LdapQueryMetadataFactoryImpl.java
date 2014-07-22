@@ -6,7 +6,7 @@ import java.util.Map;
 
 import javax.naming.directory.SearchControls;
 
-import org.ovirt.engine.core.ldap.LdapProviderType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
 

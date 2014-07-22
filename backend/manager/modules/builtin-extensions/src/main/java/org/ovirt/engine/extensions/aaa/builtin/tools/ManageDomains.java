@@ -53,15 +53,15 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.ldap.LdapProviderType;
-import org.ovirt.engine.core.ldap.LdapSRVLocator;
-import org.ovirt.engine.core.utils.dns.DnsSRVLocator;
-import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
-import org.ovirt.engine.core.utils.ipa.ReturnStatus;
-import org.ovirt.engine.core.utils.ipa.SimpleAuthenticationCheck;
-import org.ovirt.engine.core.utils.kerberos.KDCLocator;
-import org.ovirt.engine.core.utils.kerberos.KerberosConfigCheck;
-import org.ovirt.engine.core.utils.kerberos.KrbConfCreator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa.ReturnStatus;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa.SimpleAuthenticationCheck;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KDCLocator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KerberosConfigCheck;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KrbConfCreator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapSRVLocator;
 
 public class ManageDomains {
 

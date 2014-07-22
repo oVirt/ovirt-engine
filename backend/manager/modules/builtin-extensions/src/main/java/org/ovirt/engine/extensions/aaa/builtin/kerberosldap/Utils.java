@@ -13,8 +13,8 @@ import javax.security.auth.login.Configuration;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
-import org.ovirt.engine.core.ldap.LdapSRVLocator;
-import org.ovirt.engine.core.utils.dns.DnsSRVLocator.DnsSRVResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapSRVLocator;
 
 public class Utils {
 

@@ -6,10 +6,10 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.core.utils.kerberos.AuthenticationResult;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;
 
