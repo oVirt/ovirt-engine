@@ -7,6 +7,7 @@ import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.ExternalNetworkManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
@@ -162,7 +163,7 @@ public class ActivateDeactivateVmNicCommand<T extends ActivateDeactivateVmNicPar
     }
 
     private void unplugFromExternalNetwork() {
-        getProviderProxy().deallocate(getParameters().getNic());
+        new ExternalNetworkManager(getParameters().getNic(), getNetwork()).deallocateIfExternal();
     }
 
     private NetworkProviderProxy getProviderProxy() {

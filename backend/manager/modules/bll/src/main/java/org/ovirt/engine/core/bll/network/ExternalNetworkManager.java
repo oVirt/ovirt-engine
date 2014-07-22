@@ -3,9 +3,14 @@ package org.ovirt.engine.core.bll.network;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
+import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
  * Utility class to help manage external networks, such as deallocate NICs.
@@ -53,9 +58,19 @@ public class ExternalNetworkManager {
      */
     public void deallocateIfExternal() {
         if (getNetwork() != null && getNetwork().isExternal()) {
-            NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(
-                    DbFacade.getInstance().getProviderDao().get(getNetwork().getProvidedBy().getProviderId()));
-            providerProxy.deallocate(nic);
+            Provider<?> provider =
+                    DbFacade.getInstance().getProviderDao().get(getNetwork().getProvidedBy().getProviderId());
+            NetworkProviderProxy providerProxy = ProviderProxyFactory.getInstance().create(provider);
+
+            try {
+                providerProxy.deallocate(nic);
+            } catch (VdcBLLException e) {
+                AuditLogableBase removePortFailureEvent = new AuditLogableBase();
+                removePortFailureEvent.addCustomValue("NicName", nic.getName());
+                removePortFailureEvent.addCustomValue("NicId", nic.getId().toString());
+                removePortFailureEvent.addCustomValue("ProviderName", provider.getName());
+                AuditLogDirector.log(removePortFailureEvent, AuditLogType.REMOVE_PORT_FROM_EXTERNAL_PROVIDER_FAILED);
+            }
         }
     }
 }
