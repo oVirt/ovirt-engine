@@ -83,8 +83,6 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
         if (currentChildId != null) {
             switch (TaskManagerUtil.getCommandStatus(currentChildId)) {
             case ACTIVE:
-            case ACTIVE_ASYNC:
-            case ACTIVE_SYNC:
             case NOT_STARTED:
                 log.infoFormat("Waiting on Live Merge command step {0} to complete",
                         getParameters().getCommandStep());

@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
@@ -131,8 +130,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             removeImages();
 
             if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
-                // Enable callbacks in order to monitor for new-style child completion
-                setCommandStatus(CommandStatus.ACTIVE_ASYNC);
                 persistCommand(getParameters().getParentCommand(), true);
                 useTaskManagerToRemoveMemory = true;
             }

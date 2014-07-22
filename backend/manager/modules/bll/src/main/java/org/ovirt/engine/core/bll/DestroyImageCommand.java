@@ -35,7 +35,6 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
-        setCommandStatus(CommandStatus.ACTIVE_ASYNC);
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.DestroyImage);
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,

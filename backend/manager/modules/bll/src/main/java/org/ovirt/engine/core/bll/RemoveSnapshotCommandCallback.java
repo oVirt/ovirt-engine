@@ -23,8 +23,6 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
         for (Guid childCmdId : childCmdIds) {
             switch (TaskManagerUtil.getCommandStatus(childCmdId)) {
             case ACTIVE:
-            case ACTIVE_SYNC:
-            case ACTIVE_ASYNC:
                 log.info("Waiting on Live Merge child commands to complete");
                 return;
             case FAILED:
