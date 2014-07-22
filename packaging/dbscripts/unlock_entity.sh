@@ -25,6 +25,15 @@ Usage: $0 [options] [ENTITIES]
     -q            - Query db and display a list of the locked entites.
     ENTITIES      - The list of object names in case of vm/template, UUIDs in case of a disk
 
+    NOTE: This utility access the database and should have the
+          corresponding credentals.
+
+          In case that a password is used to access the database PGPASSWORD
+          or PGPASSFILE should be set.
+
+    Example:
+        \$ PGPASSWORD=xxxxxx ./unlock_entity.sh -t disk -q
+
 __EOF__
 }
 
