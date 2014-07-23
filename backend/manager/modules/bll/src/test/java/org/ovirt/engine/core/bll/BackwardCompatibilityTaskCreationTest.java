@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.tasks.CommandAsyncTask;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -20,6 +19,7 @@ import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theories;
 import org.junit.experimental.theories.Theory;
 import org.junit.runner.RunWith;
+import org.ovirt.engine.core.bll.tasks.SPMAsyncTask;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
@@ -168,7 +168,7 @@ public class BackwardCompatibilityTaskCreationTest {
         assertEquals("wrong task result", AsyncTaskResultEnum.success, spmAsyncTask.getLastTaskStatus().getResult());
         assertEquals("wrong task status", AsyncTaskStatusEnum.init, spmAsyncTask.getLastTaskStatus().getStatus());
         assertEquals("wrong task state", AsyncTaskState.Initializing, spmAsyncTask.getState());
-        assertTrue("wrong task type", spmAsyncTask instanceof CommandAsyncTask);
+        assertTrue("wrong task type", spmAsyncTask instanceof SPMAsyncTask);
     }
 
     /**
