@@ -1,9 +1,11 @@
 package org.ovirt.engine.core.dao;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertThat;
 import static org.junit.Assert.assertTrue;
 
 import java.util.ArrayList;
@@ -13,8 +15,8 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
-import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -347,6 +349,16 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
         Guid poolId = FixturesTool.STORAGE_POOL_NO_DOMAINS;
         List<StorageType> storageTypes = dao.getStorageTypesInPool(poolId);
         assertTrue("Number of storage types in a non existing pool returned results", storageTypes.isEmpty());
+    }
+
+    @Test
+    public void testGetAllDataCentersByMacPoolId() {
+        assertThat(dao.getAllDataCentersByMacPoolId(FixturesTool.DEFAULT_MAC_POOL_ID).size(), is(6));
+    }
+
+    @Test
+    public void testGetAllDataCentersByMacPoolIdForNonExistingMacPoolId() {
+        assertThat(dao.getAllDataCentersByMacPoolId(Guid.newGuid()).size(), is(0));
     }
 
     private void assertStorageTypes(List<StorageType> typesList, StorageType... expectedTypes) {

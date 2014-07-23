@@ -139,4 +139,11 @@ public interface StoragePoolDAO extends GenericDao<StoragePool, Guid>, StatusAwa
      * @return the list storage types that are existing in the pool.
      */
     List<StorageType> getStorageTypesInPool(Guid storagePoolId);
+
+    /**
+     * @param macPoolId
+     * @return all StoragePool records bound to given macPoolId.
+     */
+    List<StoragePool> getAllDataCentersByMacPoolId(Guid macPoolId);
+
 }

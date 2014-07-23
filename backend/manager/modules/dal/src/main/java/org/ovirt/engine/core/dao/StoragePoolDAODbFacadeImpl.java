@@ -252,4 +252,11 @@ public class StoragePoolDAODbFacadeImpl extends BaseDAODbFacade implements Stora
             return StorageType.forValue(rs.getInt(1));
         }
     };
+
+    @Override
+    public List<StoragePool> getAllDataCentersByMacPoolId(Guid macPoolId) {
+        return getCallsHandler().executeReadList("GetAllDataCentersByMacPoolId",
+                new StoragePoolRawMapper(),
+                getCustomMapSqlParameterSource().addValue("id", macPoolId));
+    }
 }

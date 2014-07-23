@@ -54,13 +54,6 @@ public class MacPoolDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<MacPool, G
     }
 
     @Override
-    public int getDcUsageCount(Guid macPoolId) {
-        return getCallsHandler().executeRead("GetMacPoolUsageCountById",
-                getIntegerMapper(),
-                createIdParameterMapper(macPoolId));
-    }
-
-    @Override
     public List<String> getAllMacsForMacPool(Guid macPoolId) {
         return getCallsHandler().executeReadList("GetAllMacsByMacPoolId",
                 getStringMapper(),

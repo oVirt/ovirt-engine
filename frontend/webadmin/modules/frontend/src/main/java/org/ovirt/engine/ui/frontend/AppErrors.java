@@ -37,10 +37,13 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Not enough MAC addresses left in MAC Address Pool.")
     String MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. ${type} cannot be removed, because some data center is still using it.")
+    @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${DATACENTERS_USING_MAC_POOL_COUNTER}) are using this ${type}:\n${DATACENTERS_USING_MAC_POOL}\n - Please remove it from all ${entities} that are using it and try again.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Default ${type} cannot be removed.")
+    @DefaultStringValue("$entities Data Centers")
+    String VAR__ENTITIES__DATA_CENTERS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Default MAC Pool cannot be removed.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL();
 
     @DefaultStringValue("Cannot ${action} ${type}. ${type} does not exist.")

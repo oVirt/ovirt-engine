@@ -91,17 +91,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetMacPoolUsageCountById(v_id UUID)
-  RETURNS SETOF BIGINT STABLE
-AS $procedure$
-BEGIN
-   RETURN QUERY SELECT count(*)
-   FROM storage_pool sp
-   WHERE sp.mac_pool_id=v_id;
-
-END; $procedure$
-LANGUAGE plpgsql;
-
 CREATE OR REPLACE FUNCTION GetAllMacsByMacPoolId(v_id UUID)
   RETURNS SETOF VARCHAR STABLE
 AS $procedure$

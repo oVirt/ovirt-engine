@@ -5,6 +5,7 @@ public enum VdcBllMessages {
     Unassigned,
     VAR__TYPE__HOST,
     VAR__ENTITIES__HOSTS,
+    VAR__ENTITIES__DATA_CENTERS,
     VAR__TYPE__VM,
     VAR__ENTITIES__VMS,
     VAR__TYPE__QUOTA,

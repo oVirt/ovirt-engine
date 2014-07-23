@@ -940,3 +940,15 @@ BEGIN
    WHERE storage_domain_id = v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetAllDataCentersByMacPoolId(v_id UUID)
+  RETURNS SETOF storage_pool STABLE
+AS $procedure$
+BEGIN
+   RETURN QUERY SELECT sp.*
+   FROM storage_pool sp
+   WHERE sp.mac_pool_id=v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;

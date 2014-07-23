@@ -1,13 +1,14 @@
 package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertThat;
-import static org.mockito.Matchers.eq;
-import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 
 import java.util.Arrays;
+import java.util.Collections;
 
 import org.junit.Before;
 import org.junit.Test;
@@ -15,41 +16,53 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.MacPool;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.MacPoolDao;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 @RunWith(MockitoJUnitRunner.class)
 public class MacPoolValidatorTest {
 
-    private MacPool macPool;
+    private final MacPool macPool = new MacPool();
+
+    private MacPoolValidator macPoolValidator;
 
     @Mock
     private MacPoolDao macPoolDaoMock;
 
+    @Mock
+    private StoragePoolDAO storagePoolDao;
+
+    @Mock
+    private DbFacade dbFacadeMock;
+
     @Before
     public void setUp() throws Exception {
-        macPool = new MacPool();
-
-        final DbFacade dbFacadeMock = mock(DbFacade.class);
-        DbFacadeLocator.setDbFacade(dbFacadeMock);
-
+        this.macPoolValidator = createMacPoolValidator(macPool);
         when(dbFacadeMock.getMacPoolDao()).thenReturn(macPoolDaoMock);
+        when(dbFacadeMock.getStoragePoolDao()).thenReturn(storagePoolDao);
+    }
+
+    private MacPoolValidator createMacPoolValidator(MacPool macPool) {
+        MacPoolValidator macPoolValidator = spy(new MacPoolValidator(macPool));
+        doReturn(dbFacadeMock).when(macPoolValidator).getDbFacade();
+        return macPoolValidator;
     }
 
     @Test
     public void testDefaultPoolFlagIsNotSetValidUsage() throws Exception {
         macPool.setDefaultPool(false);
-        assertThat(new MacPoolValidator(macPool).defaultPoolFlagIsNotSet(),
+        assertThat(macPoolValidator.defaultPoolFlagIsNotSet(),
                 isValid());
     }
 
     @Test
     public void testDefaultPoolFlagIsNotSetInvalidUsage() throws Exception {
         macPool.setDefaultPool(true);
-        assertThat(new MacPoolValidator(macPool).defaultPoolFlagIsNotSet(),
+        assertThat(macPoolValidator.defaultPoolFlagIsNotSet(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED));
     }
 
@@ -102,55 +115,59 @@ public class MacPoolValidatorTest {
             Guid macPool2Id,
             String macPool1Name,
             String macPool2Name) {
-        when(macPoolDaoMock.getAll()).thenReturn(Arrays.asList(createMacPool(macPool1Id, macPool1Name)));
 
-        return new MacPoolValidator(createMacPool(macPool2Id, macPool2Name)).hasUniqueName();
-    }
+        final MacPool existingMacPool = new MacPool();
+        existingMacPool.setId(macPool1Id);
+        existingMacPool.setName(macPool1Name);
+        when(macPoolDaoMock.getAll()).thenReturn(Arrays.asList(existingMacPool));
 
-    private MacPool createMacPool(Guid macPool1Id, String macPool1Name) {
-        final MacPool macPool = new MacPool();
-        macPool.setName(macPool1Name);
-        macPool.setId(macPool1Id);
-        return macPool;
+        macPool.setId(macPool2Id);
+        macPool.setName(macPool2Name);
+        return macPoolValidator.hasUniqueName();
     }
 
     @Test
     public void testNotRemovingDefaultPool() throws Exception {
         macPool.setDefaultPool(true);
-        assertThat(new MacPoolValidator(macPool).notRemovingDefaultPool(),
+        assertThat(macPoolValidator.notRemovingDefaultPool(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_DEFAULT_MAC_POOL));
     }
 
     @Test
     public void testNotRemovingDefaultPoolNonDefaultIsRemoved() throws Exception {
-        assertThat(new MacPoolValidator(macPool).notRemovingDefaultPool(), isValid());
+        assertThat(macPoolValidator.notRemovingDefaultPool(), isValid());
     }
 
     @Test
     public void testNotRemovingUsedPoolRecordIsUsed() throws Exception {
         macPool.setId(Guid.newGuid());
-        when(macPoolDaoMock.getDcUsageCount(eq(macPool.getId()))).thenReturn(1);
+        final StoragePool storagePool = new StoragePool();
+        storagePool.setName("storagePool");
+        when(storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId()))
+                .thenReturn(Collections.singletonList(storagePool));
 
-        assertThat(new MacPoolValidator(macPool).notRemovingUsedPool(),
+        assertThat(macPoolValidator.notRemovingUsedPool(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_STILL_USED_MAC_POOL));
     }
 
     @Test
     public void testNotRemovingUsedPoolRecordNotUsed() throws Exception {
         macPool.setId(Guid.newGuid());
-        when(macPoolDaoMock.getDcUsageCount(eq(macPool.getId()))).thenReturn(0);
 
-        assertThat(new MacPoolValidator(macPool).notRemovingUsedPool(), isValid());
+        when(storagePoolDao.getAllDataCentersByMacPoolId(macPool.getId()))
+                .thenReturn(Collections.<StoragePool>emptyList());
+
+        assertThat(macPoolValidator.notRemovingUsedPool(), isValid());
     }
 
     @Test
     public void testMacPoolExistsEntityNotExist() throws Exception {
-        assertThat(new MacPoolValidator(null).macPoolExists(),
+        assertThat(createMacPoolValidator(null).macPoolExists(),
                 failsWith(VdcBllMessages.ACTION_TYPE_FAILED_MAC_POOL_DOES_NOT_EXIST));
     }
 
     @Test
     public void testMacPoolExistsEntityDoesExist() throws Exception {
-        assertThat(new MacPoolValidator(macPool).macPoolExists(), isValid());
+        assertThat(macPoolValidator.macPoolExists(), isValid());
     }
 }

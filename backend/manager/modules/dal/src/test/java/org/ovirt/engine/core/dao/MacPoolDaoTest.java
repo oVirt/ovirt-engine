@@ -24,17 +24,6 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
     }
 
     @Test
-    public void testGetDefaultMacPoolDcUsageCount() throws Exception {
-        final int dcUsageCount = dao.getDcUsageCount(FixturesTool.DEFAULT_MAC_POOL_ID);
-        assertThat(dcUsageCount, is(6));
-    }
-    @Test
-    public void testGetNonDefaultMacPoolDcUsageCount() throws Exception {
-        final int dcUsageCount = dao.getDcUsageCount(FixturesTool.NON_DEFAULT_MAC_POOL);
-        assertThat(dcUsageCount, is(1));
-    }
-
-    @Test
     public void testGetAllMacsForMacPool() throws Exception {
         final List<String> allMacsForMacPool = dao.getAllMacsForMacPool(FixturesTool.NON_DEFAULT_MAC_POOL);
 
