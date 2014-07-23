@@ -93,7 +93,7 @@
 
     <servlet>
         <servlet-name>XsrfTokenServiceServlet</servlet-name>
-        <servlet-class>com.google.gwt.user.server.rpc.XsrfTokenServiceServlet</servlet-class>
+        <servlet-class>org.ovirt.engine.ui.frontend.server.gwt.OvirtXsrfTokenServiceServlet</servlet-class>
     </servlet>
     <!-- PageNotFound Servlet -->
     <servlet>
