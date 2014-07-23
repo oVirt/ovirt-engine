@@ -35,10 +35,10 @@ public class SubTabDataCenterStorageQosPresenter extends AbstractSubTabPresenter
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StoragePool> {
     }
 
-    @TabInfo(container = DataCenterSubTabPanelPresenter.class)
+    @TabInfo(container = DataCenterQosSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterStorageQosSubTabLabel(), 10, modelProvider);
+        return new ModelBoundTabData(applicationConstants.dataCenterStorageQosSubTabLabel(), 0, modelProvider);
     }
 
     @Inject
@@ -46,7 +46,7 @@ public class SubTabDataCenterStorageQosPresenter extends AbstractSubTabPresenter
             PlaceManager placeManager,
             SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
-                DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
+                DataCenterQosSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override

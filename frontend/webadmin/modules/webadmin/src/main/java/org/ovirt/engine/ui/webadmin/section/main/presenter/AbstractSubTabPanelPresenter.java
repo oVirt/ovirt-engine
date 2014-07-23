@@ -40,8 +40,18 @@ public abstract class AbstractSubTabPanelPresenter<V extends AbstractSubTabPanel
             Type<RequestTabsHandler> requestTabsEventType,
             Type<ChangeTabHandler> changeTabEventType,
             ScrollableTabBarPresenterWidget tabBar) {
+        this(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
+                tabBar, MainContentPresenter.TYPE_SetSubTabPanelContent);
+    }
+
+    public AbstractSubTabPanelPresenter(EventBus eventBus, V view, P proxy,
+            Object tabContentSlot,
+            Type<RequestTabsHandler> requestTabsEventType,
+            Type<ChangeTabHandler> changeTabEventType,
+            ScrollableTabBarPresenterWidget tabBar,
+            Type<RevealContentHandler<?>> slot) {
         super(eventBus, view, proxy, tabContentSlot, requestTabsEventType, changeTabEventType,
-                MainContentPresenter.TYPE_SetSubTabPanelContent);
+                slot);
         getView().setUiHandlers(tabBar);
         this.tabBar = tabBar;
         this.tabBar.setWantsOffset(false);

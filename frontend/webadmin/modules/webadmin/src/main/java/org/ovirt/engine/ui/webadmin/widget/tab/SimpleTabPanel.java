@@ -27,6 +27,10 @@ public class SimpleTabPanel extends AbstractTabPanel implements HasUiHandlers<Ta
     TabWidgetHandler uiHandlers;
 
     public SimpleTabPanel() {
+        initWidget();
+    }
+
+    protected void initWidget() {
         initWidget(WidgetUiBinder.uiBinder.createAndBindUi(this));
     }
 

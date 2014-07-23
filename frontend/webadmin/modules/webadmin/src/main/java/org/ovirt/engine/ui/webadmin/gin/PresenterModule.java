@@ -138,6 +138,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterPermissionPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterServicePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterVmPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterQosSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
@@ -373,6 +374,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterN
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterPermissionView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterServiceView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterVmView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterQosSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
@@ -607,6 +609,10 @@ public class PresenterModule extends BasePresenterModule {
                 DataCenterSubTabPanelPresenter.ViewDef.class,
                 DataCenterSubTabPanelView.class,
                 DataCenterSubTabPanelPresenter.ProxyDef.class);
+        bindPresenter(DataCenterQosSubTabPanelPresenter.class,
+                DataCenterQosSubTabPanelPresenter.ViewDef.class,
+                DataCenterQosSubTabPanelView.class,
+                DataCenterQosSubTabPanelPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterStoragePresenter.class,
                 SubTabDataCenterStoragePresenter.ViewDef.class,
                 SubTabDataCenterStorageView.class,
