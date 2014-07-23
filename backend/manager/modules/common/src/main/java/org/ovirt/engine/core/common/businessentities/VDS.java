@@ -753,7 +753,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
             return 0;
         }
 
-        return ((int) (shared * 100) / physical);
+        return (int) ((shared * 100) / physical);
     }
 
     /**
