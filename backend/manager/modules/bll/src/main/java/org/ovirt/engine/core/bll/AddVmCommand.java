@@ -13,6 +13,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -900,6 +902,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             iface.setSpeed(VmInterfaceType.forValue(iface.getType()).getSpeed());
             iface.setVmTemplateId(null);
             iface.setVmId(getParameters().getVmStaticData().getId());
+            updateProfileOnNic(iface);
             getVmNicDao().save(iface);
             getCompensationContext().snapshotNewEntity(iface);
             DbFacade.getInstance().getVmNetworkStatisticsDao().save(iface.getStatistics());
@@ -1332,4 +1335,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return getVmTemplate().getStoragePoolId().equals(getStoragePoolId());
     }
 
+    protected void updateProfileOnNic(VmNic iface) {
+        Network network = NetworkHelper.getNetworkByVnicProfileId(iface.getVnicProfileId());
+        if (network != null && !NetworkHelper.isNetworkInCluster(network, getVdsGroupId())) {
+            iface.setVnicProfileId(null);
+        }
+    }
 }
