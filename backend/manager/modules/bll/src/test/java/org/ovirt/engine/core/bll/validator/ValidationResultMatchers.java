@@ -1,6 +1,13 @@
 package org.ovirt.engine.core.bll.validator;
 
-import org.hamcrest.CoreMatchers;
+import static org.hamcrest.CoreMatchers.allOf;
+import static org.hamcrest.CoreMatchers.both;
+import static org.hamcrest.CoreMatchers.not;
+
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
 import org.hamcrest.Description;
 import org.hamcrest.Matcher;
 import org.hamcrest.TypeSafeMatcher;
@@ -58,6 +65,10 @@ public class ValidationResultMatchers {
         return new Fails(expectedError);
     }
 
+    public static Matcher<ValidationResult> failsWith(VdcBllMessages expectedError, String... variableReplacements) {
+        return new Fails(expectedError, variableReplacements);
+    }
+
     /**
      * @param matcher
      *            The matcher to match against {@link ValidationResult#getVariableReplacements()}
@@ -67,11 +78,15 @@ public class ValidationResultMatchers {
         return new Replacements(matcher);
     }
 
+    public static Matcher<ValidationResult> hasVariableReplacements(String... variableReplacements) {
+        return new HasVariableReplacements(variableReplacements);
+    }
+
     private static class IsValid extends TypeSafeMatcher<ValidationResult> {
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("valid result");
+            description.appendText("valid ValidationResult");
         }
 
         @Override
@@ -90,7 +105,7 @@ public class ValidationResultMatchers {
 
         @Override
         public void describeTo(Description description) {
-            description.appendText("with message " + expected.name());
+            description.appendText("message \"" + expected.name()+"\"");
         }
 
         @Override
@@ -118,13 +133,44 @@ public class ValidationResultMatchers {
         }
     }
 
+    private static class HasVariableReplacements extends TypeSafeMatcher<ValidationResult> {
+
+        private final String[] variableReplacements;
+
+        public HasVariableReplacements(String... variableReplacements) {
+            this.variableReplacements = variableReplacements;
+        }
+
+        @Override
+        protected boolean matchesSafely(ValidationResult item) {
+            List<String> replacements = item.getVariableReplacements();
+            final List<String> vr = replacements == null ? Collections.<String>emptyList() : replacements;
+            return variableReplacements.length == vr.size() && vr.containsAll(Arrays.asList(variableReplacements));
+        }
+
+        @Override
+        public void describeTo(Description description) {
+            description.appendText("ValidationResult containing exactly these variable replacements: " + Arrays.toString(variableReplacements));
+        }
+    }
+
     private static class Fails extends TypeSafeMatcher<ValidationResult> {
 
         private Matcher<ValidationResult> matcher;
 
         public Fails(VdcBllMessages expected) {
-            matcher = CoreMatchers.both(CoreMatchers.not(isValid())).and(new WithMessage(expected));
+            matcher = both(not(isValid())).and(new WithMessage(expected));
         }
+
+        public Fails(VdcBllMessages expected, String... variableReplacements) {
+            matcher = allOf(
+                    not(isValid()),
+                    new WithMessage(expected),
+                    hasVariableReplacements(variableReplacements));
+
+        }
+
+
 
         @Override
         public void describeTo(Description description) {

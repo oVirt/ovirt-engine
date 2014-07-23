@@ -52,7 +52,7 @@ public final class ValidationResult {
         }
 
         this.message = message;
-        if (variableReplacements.length > 0) {
+        if (variableReplacements != null) {
             this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
         }
     }
@@ -174,7 +174,7 @@ public final class ValidationResult {
 
         private ValidationResult expectedValidation;
 
-        private ValidationResultBuilder(VdcBllMessages expectedError, String[] replacements) {
+        private ValidationResultBuilder(VdcBllMessages expectedError, String... replacements) {
             expectedValidation = new ValidationResult(expectedError, replacements);
         }
 

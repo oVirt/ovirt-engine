@@ -18,6 +18,7 @@ public class ValidationResultTest {
     private static final VdcBllMessages ERROR = VdcBllMessages.values()[0];
     private static final String REPLACEMENT = "replacement";
     private static final String OTHER_REPLACEMENT = "other_replacement";
+    private final String[] variableReplacements = new String[] { "a", "b" };
 
     @Test
     public void invalidWhenConditionOccurs() throws Exception {
@@ -50,5 +51,34 @@ public class ValidationResultTest {
         assertThat(ValidationResult.failWith(ERROR, REPLACEMENT, OTHER_REPLACEMENT).when(true),
                 both(failsWith(ERROR)).and(replacements(hasItem(REPLACEMENT)))
                         .and(replacements(hasItem(OTHER_REPLACEMENT))));
+    }
+
+    @Test
+    public void invalidWhenConditionOccursWithVariableReplacements() throws Exception {
+        assertThat(ValidationResult.failWith(ERROR, variableReplacements).when(true),
+                failsWith(ERROR, variableReplacements));
+    }
+
+    @Test
+    public void validWhenConditionDoesntOccurWithVariableReplacements() throws Exception {
+        assertThat(ValidationResult.failWith(ERROR, variableReplacements).when(false), isValid());
+    }
+
+    @Test
+    public void validUnlessConditionOccursWithVariableReplacements() throws Exception {
+        assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(true), isValid());
+    }
+
+    @Test
+    public void invalidUnlessConditionDoesntOccurWithVariableReplacements() throws Exception {
+        assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(false),
+                failsWith(ERROR, variableReplacements));
+    }
+
+    @Test
+    public void invalidUnlessConditionDoesntOccurWithVariableReplacements2() throws Exception {
+        assertThat(ValidationResult.failWith(ERROR, variableReplacements).unless(false),
+                failsWith(ERROR, variableReplacements));
+
     }
 }
