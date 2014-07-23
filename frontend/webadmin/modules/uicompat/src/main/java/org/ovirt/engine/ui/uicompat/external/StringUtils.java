@@ -17,7 +17,6 @@ package org.ovirt.engine.ui.uicompat.external;
  * limitations under the License.
  */
 import java.util.Iterator;
-import java.util.List;
 
 public class StringUtils {
 
@@ -75,7 +74,7 @@ public class StringUtils {
      * @param delimiter the separator string to use
      * @return
      */
-    public static String join(List<String> list, String delimiter) {
+    public static String join(Iterable<String> list, String delimiter) {
         if (list == null) {
             return "";
         }
