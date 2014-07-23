@@ -36,6 +36,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
+import org.ovirt.engine.core.utils.pm.FenceConfigHelper;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
@@ -206,9 +207,9 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
             if (StringUtils.isEmpty(vdsStatic.getPmType())) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_PM_ENABLED_WITHOUT_AGENT);
                 result = false;
-            } else if (!Regex.IsMatch(Config.<String> getValue(ConfigValues.VdsFenceType,
-                    clusterCompatibilityVersion), String.format("(,|^)%1$s(,|$)",
-                    vdsStatic.getPmType()))) {
+            } else if (!Regex.IsMatch(
+                    FenceConfigHelper.getFenceConfigurationValue(ConfigValues.VdsFenceType.name(), clusterCompatibilityVersion),
+                    String.format("(,|^)%1$s(,|$)", vdsStatic.getPmType()))) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_AGENT_NOT_SUPPORTED);
                 result = false;
             }
