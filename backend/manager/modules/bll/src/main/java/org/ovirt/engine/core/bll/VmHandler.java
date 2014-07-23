@@ -507,23 +507,26 @@ public class VmHandler {
     }
 
     /**
-     * Check if the display type is supported.
+     * Check if the graphics and display types are supported.
      *
      * @param osId
      *            Type of the OS.
-     * @param defaultDisplayType
-     *            The VM default display type.
+     * @param graphics
+     *            Collection of graphics types (SPICE, VNC).
+     * @param displayType
+     *            Display type.
      * @param reasons
      *            The reasons.VdsGroups
      * @param clusterVersion
      *            The cluster version.
      * @return
      */
-    public static boolean isDisplayTypeSupported(int osId,
-                                            DisplayType defaultDisplayType,
-                                            List<String> reasons,
-                                            Version clusterVersion) {
-        boolean result = VmValidationUtils.isDisplayTypeSupported(osId, clusterVersion, defaultDisplayType);
+    public static boolean isGraphicsAndDisplaySupported(int osId,
+                                                        Collection<GraphicsType> graphics,
+                                                        DisplayType displayType,
+                                                        List<String> reasons,
+                                                        Version clusterVersion) {
+        boolean result = VmValidationUtils.isGraphicsAndDisplaySupported(osId, clusterVersion, graphics, displayType);
         if (!result) {
             reasons.add(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS.name());
         }
@@ -889,8 +892,7 @@ public class VmHandler {
      * (i.e. params can prevent a device to be inherited from a template).
      * <p/>
      *
-     * todo doc
-     * @return
+     * @return graphics types of devices VM/Template is supposed to have after adding/updating.
      */
     public static Set<GraphicsType> getResultingVmGraphics(List<GraphicsType> srcEntityGraphics, Map<GraphicsType, GraphicsDevice> graphicsDevices) {
         Set<GraphicsType> result = new HashSet<>();

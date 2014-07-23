@@ -117,4 +117,5 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getClusterId());
     }
+
 }

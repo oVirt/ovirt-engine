@@ -97,7 +97,7 @@ busValue
 
 displayValue
     :
-    valueSpecifier DISPLAY_PROTOCOLS_TYPE(',' WS* DISPLAY_PROTOCOLS_TYPE )*
+    valueSpecifier DISPLAY_PROTOCOL_TYPE(',' WS* DISPLAY_PROTOCOL_TYPE )*
     ;
 
 
@@ -172,9 +172,19 @@ AC97 : 'ac97' ;
 IDE : 'ide' ;
 SCSI : 'scsi' ;
 
-DISPLAY_PROTOCOLS_TYPE
+DISPLAY_PROTOCOL_TYPE
     :
-    'vnc/cirrus' | 'qxl/qxl' | 'vnc/vga'
+    GRAPHICS_TYPE'/'DISPLAY_TYPE
+    ;
+
+GRAPHICS_TYPE
+    :
+    'spice' | 'vnc'
+    ;
+
+DISPLAY_TYPE
+    :
+    'qxl' | 'cirrus' | 'vga'
     ;
 
 NETWORK_DEVICE_TYPE

@@ -138,9 +138,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         // Check if the display type is supported
-        // todo osinfo followup
         if (returnValue) {
-            returnValue = VmHandler.isDisplayTypeSupported(getParameters().getVmTemplateData().getOsId(),
+            returnValue = VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmTemplateData().getOsId(),
+                    VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                     getParameters().getVmTemplateData().getDefaultDisplayType(),
                     getReturnValue().getCanDoActionMessages(),
                     getVdsGroup().getcompatibility_version());

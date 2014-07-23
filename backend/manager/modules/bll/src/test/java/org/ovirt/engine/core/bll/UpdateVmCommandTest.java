@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -50,6 +51,8 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -78,6 +81,9 @@ public class UpdateVmCommandTest {
 
     @Mock
     OsRepository osRepository;
+
+    @Mock
+    DbFacade dbFacade;
 
     private static final Map<String, String> migrationMap = new HashMap<>();
 
@@ -128,10 +134,10 @@ public class UpdateVmCommandTest {
         when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
         when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
 
-        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
-        displayTypeMap.get(osId).put(version, Arrays.asList(DisplayType.qxl));
-        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.get(osId).put(version, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
 
         VmHandler.init();
         vm = new VM();
@@ -250,19 +256,21 @@ public class UpdateVmCommandTest {
 
     @Test
     public void testInvalidNumberOfMonitors() {
-//        prepareVmToPassCanDoAction();  // todo os info follow up
-//        vmStatic.setNumOfMonitors(99);
-//
-//        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
-//        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        prepareVmToPassCanDoAction();
+        vmStatic.setNumOfMonitors(99);
+
+        assertFalse("canDoAction should have failed with invalid number of monitors.", command.canDoAction());
+        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
     }
 
     private void mockGraphicsDevice() {
-        doReturn(vmDeviceDAO).when(command).getVmDeviceDao();
         VmDevice graphicsDevice = new GraphicsDevice(VmDeviceType.SPICE);
         graphicsDevice.setDeviceId(Guid.Empty);
         graphicsDevice.setVmId(vm.getId());
+
         when(vmDeviceDAO.getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
+        doReturn(vmDeviceDAO).when(dbFacade).getVmDeviceDao();
+        DbFacadeLocator.setDbFacade(dbFacade);
     }
 
     @Test

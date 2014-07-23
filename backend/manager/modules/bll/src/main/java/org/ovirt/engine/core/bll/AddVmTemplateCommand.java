@@ -342,8 +342,9 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         // Check if the display type is supported
-        // todo osinfo followup
-        if (!VmHandler.isDisplayTypeSupported(getParameters().getMasterVm().getOsId(),
+        Guid srcId = isVmInDb ? getVmId() : VmTemplateHandler.BLANK_VM_TEMPLATE_ID;
+        if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getMasterVm().getOsId(),
+                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcId), getParameters().getGraphicsDevices()),
                 getParameters().getMasterVm().getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {

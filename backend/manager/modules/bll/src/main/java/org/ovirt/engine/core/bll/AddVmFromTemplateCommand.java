@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.EnumSet;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -18,12 +19,16 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
@@ -150,7 +155,19 @@ public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCo
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_USE_LATEST_WITH_CLONE);
             }
         }
+
         return retValue;
+    }
+
+    private Set<GraphicsType> getEntityGraphicsTypes(Guid id) {
+        Set<GraphicsType> result = new HashSet<>();
+
+        List<VmDevice> devices = getVmDeviceDao().getVmDeviceByVmIdAndType(id, VmDeviceGeneralType.GRAPHICS);
+        for (VmDevice device : devices) {
+            result.add(GraphicsType.fromVmDeviceType(VmDeviceType.getByName(device.getDevice())));
+        }
+
+        return result;
     }
 
     protected boolean validateFreeSpace(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {

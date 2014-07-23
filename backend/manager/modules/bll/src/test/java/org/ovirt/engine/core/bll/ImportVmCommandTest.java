@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -89,10 +91,10 @@ public class ImportVmCommandTest {
 
         final int osId = 0;
 
-        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
-        displayTypeMap.get(osId).put(null, Arrays.asList(DisplayType.qxl));
-        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
     @Test
@@ -153,7 +155,8 @@ public class ImportVmCommandTest {
         cluster.setArchitecture(ArchitectureType.x86_64);
         cluster.setcompatibility_version(Version.getLast());
         doReturn(cluster).when(c).getVdsGroup();
-        osRepository.getDisplayTypes().get(0).put(Version.getLast(), Arrays.asList(DisplayType.qxl));
+        osRepository.getGraphicsAndDisplays().get(0).put(Version.getLast(),
+                Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getcompatibility_version())).thenReturn(true);
         assertTrue(c.validateBallonDevice());
     }

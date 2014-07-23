@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.HttpLocationInfo;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -20,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.DownloadImageVDSCommandParameters;
@@ -128,9 +130,9 @@ public class ImportRepoImageCopyTaskHandler
             masterVm.setVdsGroupId(getEnclosingCommand().getParameters().getClusterId());
             VDSGroup vdsGroup = getVdsGroup(masterVm.getVdsGroupId());
             masterVm.setOsId(osRepository.getDefaultOSes().get(vdsGroup.getArchitecture()));
-            DisplayType defaultDisplayType =
-                    osRepository.getDisplayTypes(masterVm.getOsId(), vdsGroup.getcompatibility_version()).get(0);
-            masterVm.setDefaultDisplayType(defaultDisplayType);
+            Pair<GraphicsType, DisplayType> defaultDisplayType =
+                    osRepository.getGraphicsAndDisplays(masterVm.getOsId(), vdsGroup.getcompatibility_version()).get(0);
+            masterVm.setDefaultDisplayType(defaultDisplayType.getSecond());
         }
 
         VdcReturnValueBase addVmTemplateReturnValue =

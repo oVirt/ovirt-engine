@@ -16,10 +16,7 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
-import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
-import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -280,22 +277,6 @@ public abstract class VmTemplateCommand<T extends VmTemplateParametersBase> exte
                 getReturnValue().setSucceeded(false);
             }
         }
-    }
-
-    List<GraphicsType> getGraphicsTypesOfEntity(Guid entityId) {
-        List<GraphicsType> result = new ArrayList<>();
-
-        if (entityId != null) {
-            List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao()
-                    .getVmDeviceByVmIdAndType(entityId, VmDeviceGeneralType.GRAPHICS);
-            if (devices != null) {
-                for (VmDevice device : devices) {
-                    result.add(GraphicsType.fromString(device.getDevice()));
-                }
-            }
-        }
-
-        return result;
     }
 
 }

@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -62,6 +63,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -80,6 +82,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -462,8 +465,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         // Check if the display type is supported
-        // todo osinfo followup
-        if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
+        if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
+                getGraphicsTypesForVm(),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {
@@ -483,6 +486,18 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         }
 
         return true;
+    }
+
+    Set<GraphicsType> getGraphicsTypesForVm() {
+        Set<GraphicsType> graphicsTypes = new HashSet<>();
+
+        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
+            if (VmDeviceGeneralType.GRAPHICS == vmDevice.getType()) {
+                graphicsTypes.add(GraphicsType.fromVmDeviceType(VmDeviceType.valueOf(vmDevice.getDevice())));
+            }
+        }
+
+        return graphicsTypes;
     }
 
     protected boolean handleDestStorageDomains() {

@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -287,9 +284,9 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      */
     protected void autoSelectDefaultDisplayType(Guid srcEntityId) {
         DisplayType defaultDisplayType = DisplayType.qxl;
-        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = Arrays.asList(
-                new Pair<>(GraphicsType.SPICE, DisplayType.qxl),
-                new Pair<>(GraphicsType.VNC, DisplayType.cirrus)); // todo in os info follow-up. for now this allows spice on qxl and vnc on cirrus
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = osRepository.getGraphicsAndDisplays(
+                getParameters().getVmStaticData().getOsId(),
+                getVdsGroup().getcompatibility_version());
 
         // map holding display type -> set of supported graphics types for this display type
         Map<DisplayType, Set<GraphicsType>> displayGraphicsSupport = new HashMap<>();
@@ -304,7 +301,7 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         }
 
         for (Map.Entry<DisplayType, Set<GraphicsType>> entry : displayGraphicsSupport.entrySet()) {
-            if (entry.getValue().containsAll(VmHandler.getResultingVmGraphics(getGraphicsTypesOfEntity(srcEntityId),
+            if (entry.getValue().containsAll(VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(srcEntityId),
                     getParameters().getGraphicsDevices()))) {
                 defaultDisplayType = entry.getKey();
                 break;
@@ -312,20 +309,5 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
         }
 
         getParameters().getVmStaticData().setDefaultDisplayType(defaultDisplayType);
-    }
-
-    List<GraphicsType> getGraphicsTypesOfEntity(Guid entityId) {
-        List<GraphicsType> result = new ArrayList<>();
-
-        if (entityId != null) {
-            List<VmDevice> devices = getVmDeviceDao().getVmDeviceByVmIdAndType(entityId, VmDeviceGeneralType.GRAPHICS);
-            if (devices != null) {
-                for (VmDevice device : devices) {
-                    result.add(GraphicsType.fromString(device.getDevice()));
-                }
-            }
-        }
-
-        return result;
     }
 }

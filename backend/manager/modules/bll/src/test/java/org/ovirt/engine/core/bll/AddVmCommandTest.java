@@ -43,6 +43,8 @@ import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -52,6 +54,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -62,13 +66,17 @@ import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
+import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -129,6 +137,12 @@ public class AddVmCommandTest {
     @Mock
     OsRepository osRepository;
 
+    @Mock
+    VmDeviceDAO deviceDao;
+
+    @Mock
+    DbFacade dbFacade;
+
     @Before
     public void InitTest() {
         mockOsRepository();
@@ -148,6 +162,10 @@ public class AddVmCommandTest {
         mockConfigSizeDefaults();
         mockMaxPciSlots();
 
+        mockOsRepository();
+        mockOsRepositoryGraphics(0, Version.v3_3, new Pair<GraphicsType, DisplayType>(GraphicsType.SPICE, DisplayType.qxl));
+        mockGraphicsDevices(vm.getId());
+
         mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
@@ -157,6 +175,25 @@ public class AddVmCommandTest {
                 cmd.getReturnValue()
                         .getCanDoActionMessages()
                         .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+    }
+
+    private void mockGraphicsDevices(Guid vmId) {
+        VmDevice graphicsDevice = new GraphicsDevice(VmDeviceType.SPICE);
+        graphicsDevice.setDeviceId(Guid.Empty);
+        graphicsDevice.setVmId(vmId);
+
+        when(deviceDao.getVmDeviceByVmIdAndType(vmId, VmDeviceGeneralType.GRAPHICS)).thenReturn(Arrays.asList(graphicsDevice));
+        DbFacadeLocator.setDbFacade(dbFacade);
+        doReturn(deviceDao).when(dbFacade).getVmDeviceDao();
+    }
+
+    private void mockOsRepositoryGraphics(int osId, Version ver, Pair<GraphicsType, DisplayType> supportedGraphicsAndDisplay) {
+        HashMap<Version, List<Pair<GraphicsType, DisplayType>>> value = new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>();
+        value.put(ver, Collections.singletonList(supportedGraphicsAndDisplay));
+
+        HashMap<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> g = new HashMap<>();
+        g.put(osId, value);
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(g);
     }
 
     protected void mockOsRepository() {
@@ -229,6 +266,7 @@ public class AddVmCommandTest {
         mockStorageDomainDaoGetAllStoragesForPool(20);
         mockUninterestingMethods(cmd);
         mockDisplayTypes(vm.getOs(), vdsGroup.getcompatibility_version());
+        mockGraphicsDevices(vm.getId());
         doReturn(true).when(cmd).checkCpuSockets();
 
         doReturn(vdsGroup).when(cmd).getVdsGroup();
@@ -322,10 +360,10 @@ public class AddVmCommandTest {
 
 
     private void mockDisplayTypes(int osId, Version clusterVersion) {
-        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
-        displayTypeMap.get(osId).put(clusterVersion, Arrays.asList(DisplayType.qxl));
-        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
     protected void mockNonInterestingMethodsForCloneVmFromSnapshot(AddVmFromSnapshotCommand<AddVmFromSnapshotParameters> cmd) {
@@ -451,6 +489,7 @@ public class AddVmCommandTest {
         doReturn(sdDAO).when(cmd).getStorageDomainDAO();
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
         doReturn(vdsGroupDao).when(cmd).getVdsGroupDAO();
+        doReturn(deviceDao).when(cmd).getVmDeviceDao();
     }
 
     private void mockStorageDomainDAOGetForStoragePool(int domainSpaceGB) {

@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -12,13 +11,13 @@ import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -300,58 +299,51 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
-    public Map<Integer, Map<Version, List<DisplayType>>> getDisplayTypes() {
-        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<Integer, Map<Version, List<DisplayType>>>();
+    public Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays() {
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> supportedGraphicsAndDisplaysMap = new HashMap<>();
+
         Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
         versionsWithNull.add(null);
 
         for (Integer osId : getOsIds()) {
-            displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
+            supportedGraphicsAndDisplaysMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
 
             for (Version ver : versionsWithNull) {
-                List<DisplayType> displayTypeList = getDisplayTypes(osId, ver);
-                displayTypeMap.get(osId).put(ver, displayTypeList);
+                List<Pair<GraphicsType, DisplayType>> displayTypeList = getGraphicsAndDisplays(osId, ver);
+                supportedGraphicsAndDisplaysMap.get(osId).put(ver, displayTypeList);
             }
         }
 
-        return displayTypeMap;
+        return supportedGraphicsAndDisplaysMap;
     }
 
-    public List<DisplayType> getDisplayTypes(int osId, Version version) {
-        return new ArrayList<DisplayType>(parseDisplayProtocols(osId, version).keySet());
+    public List<Pair<GraphicsType, DisplayType>> getGraphicsAndDisplays(int osId, Version version) {
+        return parseDisplayProtocols(osId, version);
     }
 
-    private Map<DisplayType, VmDeviceType> parseDisplayProtocols(int osId, Version version) {
-        Map<DisplayType, VmDeviceType> parseDisplayProtocols = new LinkedHashMap<DisplayType, VmDeviceType>();
+    private List<Pair<GraphicsType, DisplayType>> parseDisplayProtocols(int osId, Version version) {
+        List<Pair<GraphicsType, DisplayType>> graphicsAndDisplays = new ArrayList<>();
 
-        String displayProtocolValue = getValueByVersion(idToUnameLookup.get(osId), "devices.display.protocols", version);
-        for (String displayProtocol : displayProtocolValue.split(",")) {
-            Pair<String, String> pairs = parseDisplayProtocol(displayProtocol);
-            if (pairs != null) {
-                parseDisplayProtocols.put(DisplayType.valueOf(pairs.getFirst()),
-                        VmDeviceType.getByName(pairs.getSecond()));
+        String displayAndGraphicsLine = getValueByVersion(idToUnameLookup.get(osId), "devices.display.protocols", version); // todo - use different key?
+        for (String displayAndGraphics : displayAndGraphicsLine.split(",")) {
+            Pair<String, String> pair = parseGraphicsAndDisplayPair(displayAndGraphics);
+            if (pair != null) {
+                GraphicsType graphics = GraphicsType.fromString(pair.getFirst());
+                DisplayType display = DisplayType.valueOf(pair.getSecond());
+
+                graphicsAndDisplays.add(new Pair<>(graphics, display));
             }
         }
 
-        return parseDisplayProtocols;
+        return graphicsAndDisplays;
     }
 
-    private Pair<String, String> parseDisplayProtocol(String displayProtocol) {
-        Pair<String, String> pairs = null;
+    private Pair<String, String> parseGraphicsAndDisplayPair(String displayAndGraphicsString) {
+        ArrayList<String> splitted = trimElements(displayAndGraphicsString.split("/"));
 
-        String[] displayProtocolSplit = displayProtocol.split("/");
-        if (displayProtocolSplit.length == 2) {
-            return new Pair<String, String>(displayProtocolSplit[0].trim(),
-                    displayProtocolSplit[1].trim());
-        }
-
-        return pairs;
-    }
-
-    @Override
-    public VmDeviceType getDisplayDevice(int osId, Version version, DisplayType displayType) {
-        VmDeviceType vmDeviceType = parseDisplayProtocols(osId, version).get(displayType);
-        return vmDeviceType == null ? displayType.getDefaultVmDeviceType() : vmDeviceType;
+        return (splitted.size() == 2)
+            ? new Pair<>(splitted.get(0), splitted.get(1))
+            : null;
     }
 
     @Override

@@ -564,10 +564,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         // Check if number of monitors passed is legal
-        // todo os info follow up
-//        if (!checkNumberOfMonitors()) {
-//            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
-//        }
+        if (!VmHandler.isNumOfMonitorsLegal(
+                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
+                getParameters().getVmStaticData().getNumOfMonitors(),
+                getReturnValue().getCanDoActionMessages())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_NUM_OF_MONITORS);
+        }
 
         // Check PCI and IDE limits are ok
         if (!isValidPciAndIdeLimit(vmFromParams)) {
@@ -617,9 +619,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
-        // Check if the display type is supported
-        // todo address this in os info follow up
-        if (!VmHandler.isDisplayTypeSupported(vmFromParams.getOs(),
+        // Check if the graphics and display from parameters are supported
+        if (!VmHandler.isGraphicsAndDisplaySupported(vmFromParams.getOs(),
+                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmId()), getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {

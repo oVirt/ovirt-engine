@@ -90,7 +90,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
      */
     private void addVideoCardByDisplayType(DisplayType displayType, int numOfMonitors, boolean singleQxlPci) {
         Map<String, Object> struct = new HashMap<String, Object>();
-        VmDeviceType vmDeviceType = getOsRepository().getDisplayDevice(vm.getOs(), vm.getVdsGroupCompatibilityVersion(), displayType);
+        VmDeviceType vmDeviceType = displayType.getDefaultVmDeviceType();
         // create a monitor as an unmanaged device
         struct.put(VdsProperties.Type, VmDeviceGeneralType.VIDEO.getValue());
         struct.put(VdsProperties.Device, vmDeviceType.getName());

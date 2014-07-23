@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -42,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -84,13 +86,26 @@ public class ImportVMFromConfigurationCommandTest {
         // init the injector with the osRepository instance
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         final int osId = 0;
-        Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
-        displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
-        displayTypeMap.get(osId).put(null, Arrays.asList(DisplayType.qxl));
-        when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> graphicsAndDisplays = new HashMap<>();
+        graphicsAndDisplays.put(osId, new HashMap());
+        graphicsAndDisplays.get(osId).put(null, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(
+                Collections.singletonMap(osId,
+                        Collections.singletonMap(Version.getLast(),
+                                Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)))));
         when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
         mockVdsGroup();
+        mockDisplayTypes();
         setXmlOvfData();
+    }
+
+    private void mockDisplayTypes() {
+        Integer osId = 0;
+        Version clusterVersion = null;
+        Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> displayTypeMap = new HashMap<>();
+        displayTypeMap.put(osId, new HashMap<Version, List<Pair<GraphicsType, DisplayType>>>());
+        displayTypeMap.get(osId).put(clusterVersion, Arrays.asList(new Pair<>(GraphicsType.SPICE, DisplayType.qxl)));
+        when(osRepository.getGraphicsAndDisplays()).thenReturn(displayTypeMap);
     }
 
     private void setXmlOvfData() throws IOException {

@@ -7,9 +7,9 @@ import java.util.Map;
 import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 
 /**
@@ -89,24 +89,15 @@ public interface OsRepository {
     public int getMaximumRam(int osId, Version version);
 
     /**
-     * @return The supported display types for the given OS and cluster compatbility version
+     * @return The supported graphics and display pairs for the given OS and cluster compatbility version
      */
-    public List<DisplayType> getDisplayTypes(int osId, Version version);
+    public List<Pair<GraphicsType, DisplayType>> getGraphicsAndDisplays(int osId, Version version);
 
      /**
-      * @return map (osId -> compatibility version -> display types list) for all OSs and
+      * @return map (osId -> compatibility version -> list of (graphics, display) pairs) for all OSs and
       * compatibility versions
      */
-    public Map<Integer, Map<Version, List<DisplayType>>> getDisplayTypes();
-
-    /**
-     * Get device type from display type of the OS
-     * @param osId
-     * @param version
-     * @param displayType
-     * @return
-     */
-    public VmDeviceType getDisplayDevice(int osId, Version version, DisplayType displayType);
+    public Map<Integer, Map<Version, List<Pair<GraphicsType, DisplayType>>>> getGraphicsAndDisplays();
 
     /**
      * @return map (osId -> compatibility version -> Boolean) that indicates balloon disabled for all OSs and

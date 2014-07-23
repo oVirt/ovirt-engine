@@ -15,6 +15,7 @@ import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
@@ -49,7 +50,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/minimum/ram").put("value", "1024");
         preferences.node("/os/rhel7/resources/minimum/ram").put("value.3.1", "512");
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
-        preferences.node("/os/rhel7/devices/display/protocols").put("value", "vga/cirrus,qxl/qxl"); // todo os info follow up
+        preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
@@ -169,10 +170,13 @@ public class OsRepositoryImplTest {
 
     @Test
     public void testDisplayTypes() throws Exception {
-        List<DisplayType> supportedDisplays = OsRepositoryImpl.INSTANCE.getDisplayTypes().get(777).get(null);
+        List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays = OsRepositoryImpl.INSTANCE.getGraphicsAndDisplays().get(777).get(null);
 
-        boolean isSizeCorrect = supportedDisplays.size() == 2;
-        boolean containsSameElements = (new HashSet<DisplayType>(supportedDisplays)).equals(new HashSet<DisplayType>(Arrays.asList(DisplayType.qxl, DisplayType.vga)));
+        boolean isSizeCorrect = supportedGraphicsAndDisplays.size() == 2;
+        boolean containsSameElements = (new HashSet<>(supportedGraphicsAndDisplays))
+                .equals(new HashSet<>(Arrays.asList(
+                        new Pair<>(GraphicsType.SPICE, DisplayType.qxl),
+                        new Pair<>(GraphicsType.VNC, DisplayType.cirrus))));
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);
@@ -184,6 +188,7 @@ public class OsRepositoryImplTest {
         assertTrue(OsRepositoryImpl.INSTANCE.getBalloonSupportMap().get(777).get(null));
     }
 
+    @Test
     public void testGetMaxPciDevices() throws Exception {
         assertTrue(OsRepositoryImpl.INSTANCE.getMaxPciDevices(777, null) == 26);
     }

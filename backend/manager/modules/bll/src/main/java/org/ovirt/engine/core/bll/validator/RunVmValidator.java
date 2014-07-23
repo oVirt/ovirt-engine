@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -30,6 +31,8 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
@@ -155,14 +158,33 @@ public class RunVmValidator {
     }
 
     protected ValidationResult validateDisplayType() {
-        if (!VmValidationUtils.isDisplayTypeSupported(vm.getOs(),
+        if (!VmValidationUtils.isGraphicsAndDisplaySupported(vm.getOs(),
                 vm.getVdsGroupCompatibilityVersion(),
+                getVmActiveGraphics(),
                 vm.getDefaultDisplayType())) {
             return new ValidationResult(
                     VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS);
         }
 
         return ValidationResult.VALID;
+    }
+
+    private Set<GraphicsType> getVmActiveGraphics() {
+        if (vm.getGraphicsInfos() != null && !vm.getGraphicsInfos().isEmpty()) { // graphics overriden in runonce
+            return vm.getGraphicsInfos().keySet();
+        } else {
+            List<VmDevice> graphicDevices =
+                    DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(vm.getId(), VmDeviceGeneralType.GRAPHICS);
+
+            Set<GraphicsType> graphicsTypes = new HashSet<>();
+
+            for (VmDevice graphicDevice : graphicDevices) {
+                GraphicsType type = GraphicsType.fromString(graphicDevice.getDevice());
+                graphicsTypes.add(type);
+            }
+
+            return graphicsTypes;
+        }
     }
 
     protected boolean validateVmProperties(VM vm, String runOnceCustomProperties, List<String> messages) {

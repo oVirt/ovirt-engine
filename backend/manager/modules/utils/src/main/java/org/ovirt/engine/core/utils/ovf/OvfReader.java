@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -432,10 +434,6 @@ public abstract class OvfReader implements IOvfBuilder {
         return managed ?
                 readManagedVmDevice(node, Guid.newGuid())
                 : readUnmanagedVmDevice(node, Guid.newGuid());
-    }
-
-    protected VmDeviceType getDisplayDevice(DisplayType displayType) {
-        return osRepository.getDisplayDevice(vmBase.getOsId(), new Version(getVersion()), displayType);
     }
 
     protected void readGeneralData() {
@@ -853,8 +851,7 @@ public abstract class OvfReader implements IOvfBuilder {
             if (Integer.valueOf(OvfHardware.Monitor) == resourceType) {
                 // if default display type is defined in the ovf, set the video device that is suitable for it
                 if (defaultDisplayType != null) {
-                    VmDeviceType vmDeviceType = getDisplayDevice(defaultDisplayType);
-                    vmDevice.setDevice(vmDeviceType.getName());
+                    vmDevice.setDevice(defaultDisplayType.getDefaultVmDeviceType().getName());
                 }
                 else {
                     // get number of monitors from VirtualQuantity in OVF
@@ -866,18 +863,15 @@ public abstract class OvfReader implements IOvfBuilder {
                         if (virtualQuantity > 1) {
                             vmDevice.setDevice(VmDeviceType.QXL.getName());
                         } else {
-                            // todo - this is only workaround until OsInfo patchset
-                            List<DisplayType> displayTypes = osRepository.getDisplayTypes(vmBase.getOsId(), new Version(getVersion())); // get display types compatible with OS
-
-                            if (displayTypes.contains(DisplayType.qxl)) { // preserve behavior of previous code - qxl was never set in this branch
-                                displayTypes.remove(DisplayType.qxl);
+                            // get first supported display device
+                            List<Pair<GraphicsType, DisplayType>> supportedGraphicsAndDisplays =
+                                    osRepository.getGraphicsAndDisplays(vmBase.getOsId(), new Version(getVersion()));
+                            if (!supportedGraphicsAndDisplays.isEmpty()) {
+                                DisplayType firstDisplayType = supportedGraphicsAndDisplays.get(0).getSecond();
+                                vmDevice.setDevice(firstDisplayType.getDefaultVmDeviceType().getName());
+                            } else {
+                                vmDevice.setDevice(VmDeviceType.CIRRUS.getName());
                             }
-
-                            DisplayType displayType = (!displayTypes.isEmpty())
-                                    ? displayTypes.get(0) // select first compatible device
-                                    : DisplayType.cirrus;
-
-                            vmDevice.setDevice(displayType.getDefaultVmDeviceType().getName());
                         }
                     } else { // default to spice if quantity not found
                         vmDevice.setDevice(VmDeviceType.QXL.getName());

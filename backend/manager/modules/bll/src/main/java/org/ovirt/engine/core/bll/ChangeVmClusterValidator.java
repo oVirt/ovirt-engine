@@ -71,7 +71,8 @@ public class ChangeVmClusterValidator {
             }
 
             // Check if the display type is supported
-            if (!VmHandler.isDisplayTypeSupported(vm.getOs(),
+            if (!VmHandler.isGraphicsAndDisplaySupported(vm.getOs(),
+                    VmDeviceUtils.getGraphicsTypesOfEntity(vm.getId()),
                     vm.getDefaultDisplayType(),
                     parentCommand.getReturnValue().getCanDoActionMessages(),
                     clusterCompatibilityVersion)) {

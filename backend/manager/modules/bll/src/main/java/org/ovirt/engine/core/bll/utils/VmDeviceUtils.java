@@ -55,6 +55,7 @@ public class VmDeviceUtils {
     private final static int VNC_MIN_MONITORS = 1;
     private final static int SINGLE_QXL_MONITORS = 1;
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
+    private static DbFacade dbFacade = SimpleDependecyInjector.getInstance().get(DbFacade.class);
 
     /**
      * Update the vm devices according to changes made in vm static for existing VM
@@ -82,10 +83,9 @@ public class VmDeviceUtils {
                 // add video device per each monitor
                 int monitors = entity.getSingleQxlPci() ? 1 : entity.getNumOfMonitors();
                 for (int i = 0; i<monitors; i++) {
-                    VmDeviceType vmDeviceType = osRepository.getDisplayDevice(entity.getOsId(), ClusterUtils.getCompatibilityVersion(entity), entity.getDefaultDisplayType());
                     addManagedDevice(new VmDeviceId(Guid.newGuid(), entity.getId()),
                             VmDeviceGeneralType.VIDEO,
-                            vmDeviceType,
+                            entity.getDefaultDisplayType().getDefaultVmDeviceType(),
                             getMemExpr(entity.getNumOfMonitors(), entity.getSingleQxlPci()),
                             true,
                             false,
@@ -505,12 +505,10 @@ public class VmDeviceUtils {
     }
 
     private static void addVideoDevice(VmBase vm) {
-        VmDeviceType vmDeviceType = osRepository.getDisplayDevice(vm.getOsId(), ClusterUtils.getCompatibilityVersion(vm), vm.getDefaultDisplayType());
-
         addManagedDevice(
                 new VmDeviceId(Guid.newGuid(), vm.getId()),
                 VmDeviceGeneralType.VIDEO,
-                vmDeviceType,
+                vm.getDefaultDisplayType().getDefaultVmDeviceType(),
                 getMemExpr(vm.getNumOfMonitors(), vm.getSingleQxlPci()),
                 true,
                 true,
@@ -1191,5 +1189,20 @@ public class VmDeviceUtils {
         }
 
         return null;
+    }
+
+    public static List<GraphicsType> getGraphicsTypesOfEntity(Guid entityId) {
+        List<GraphicsType> result = new ArrayList<>();
+
+        if (entityId != null) {
+            List<VmDevice> devices = DbFacade.getInstance().getVmDeviceDao().getVmDeviceByVmIdAndType(entityId, VmDeviceGeneralType.GRAPHICS);
+            if (devices != null) {
+                for (VmDevice device : devices) {
+                    result.add(GraphicsType.fromString(device.getDevice()));
+                }
+            }
+        }
+
+        return result;
     }
 }

@@ -1,9 +1,12 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Collection;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Version;
 
@@ -55,8 +58,14 @@ public class VmValidationUtils {
      *
      * @return a boolean
      */
-    public static boolean isDisplayTypeSupported(int osId, Version version, DisplayType defaultDisplayType) {
-        return getOsRepository().getDisplayTypes().get(osId).get(version).contains(defaultDisplayType);
+    public static boolean isGraphicsAndDisplaySupported(int osId, Version version, Collection<GraphicsType> graphics, DisplayType displayType) {
+        for (GraphicsType graphicType : graphics) {
+            if (!getOsRepository().getGraphicsAndDisplays().get(osId).get(version).contains(new Pair<>(graphicType, displayType))) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     /**

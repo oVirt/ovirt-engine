@@ -45,6 +45,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.GraphicsDevice;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -334,8 +335,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         boolean returnValue = false;
         returnValue = areParametersLegal(getReturnValue().getCanDoActionMessages());
         // Check if number of monitors passed is legal
-        returnValue =
-                returnValue && checkNumberOfMonitors() && checkSingleQxlDisplay();
+        returnValue = returnValue && checkNumberOfMonitors() && checkSingleQxlDisplay();
 
         returnValue =
                 returnValue
@@ -557,9 +557,9 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        // Check if the display type is supported
-        // todo os info follow up
-        if (!VmHandler.isDisplayTypeSupported(getParameters().getVmStaticData().getOsId(),
+        // Check if the graphics and display from parameters are supported
+        if (!VmHandler.isGraphicsAndDisplaySupported(getParameters().getVmStaticData().getOsId(),
+                VmHandler.getResultingVmGraphics(VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()), getParameters().getGraphicsDevices()),
                 vmFromParams.getDefaultDisplayType(),
                 getReturnValue().getCanDoActionMessages(),
                 getVdsGroup().getcompatibility_version())) {
@@ -625,7 +625,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData()
-                .getNumaTuneMode(),
+                        .getNumaTuneMode(),
                 getParameters().getVmStaticData().getvNumaNodeList(), getVmId()))) {
             return false;
         }
@@ -1404,7 +1404,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
 
         // Choose a proper default display type according to the cluster architecture
-        // todo os info follow up
         if (getParameters().getVmStaticData().getOsId() != OsRepository.AUTO_SELECT_OS &&
                 getParameters().getVmStaticData().getDefaultDisplayType() == null) {
             autoSelectDefaultDisplayType(getVmTemplateId());
@@ -1423,15 +1422,13 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
     }
     protected boolean checkNumberOfMonitors() {
-        // todo os info follow up
-//        Collection<GraphicsType> graphicsTypes = VmHandler.getResultingVmGraphics(getVmTemplateId(), getParameters().getGraphicsDevices());
-//        int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
-//
-//        return VmHandler.isNumOfMonitorsLegal(graphicsTypes,
-//                numOfMonitors,
-//                getReturnValue().getCanDoActionMessages());
-        return true;
+        Collection<GraphicsType> graphicsTypes = VmHandler.getResultingVmGraphics(
+                VmDeviceUtils.getGraphicsTypesOfEntity(getVmTemplateId()),
+                getParameters().getGraphicsDevices());
+        int numOfMonitors = getParameters().getVmStaticData().getNumOfMonitors();
+
+        return VmHandler.isNumOfMonitorsLegal(graphicsTypes,
+                numOfMonitors,
+                getReturnValue().getCanDoActionMessages());
     }
-
-
 }

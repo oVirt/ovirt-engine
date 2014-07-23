@@ -46,7 +46,7 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
                 setReturnValue(osRepository.getMinimumRam(getParameters().getOsId(), getParameters().getVersion()));
                 break;
             case GetDisplayTypes:
-                setReturnValue(osRepository.getDisplayTypes());
+                setReturnValue(osRepository.getGraphicsAndDisplays());
                 break;
             case GetBalloonSupportMap:
                 setReturnValue(osRepository.getBalloonSupportMap());

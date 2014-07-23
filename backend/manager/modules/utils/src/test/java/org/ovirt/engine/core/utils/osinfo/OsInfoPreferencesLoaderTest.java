@@ -25,8 +25,8 @@ public class OsInfoPreferencesLoaderTest {
 
     @Test
     public void testLoadOverridingFiles() throws Exception {
-        Assert.assertEquals("qxl/qxl", OsInfoPreferencesLoader.INSTANCE.getPreferences()
+        Assert.assertEquals("spice/qxl", OsInfoPreferencesLoader.INSTANCE.getPreferences()
                 .node("/os/default/devices/display/protocols")
-                .get("value", "qxl/qxl"));
+                .get("value", "spice/qxl"));
     }
 }
