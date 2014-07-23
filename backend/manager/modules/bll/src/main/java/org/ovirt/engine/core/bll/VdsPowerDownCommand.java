@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.utils.EngineSSHClient;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -19,7 +20,11 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 @NonTransactiveCommandAttribute
 public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCommand<T> {
     public VdsPowerDownCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public VdsPowerDownCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
     }
 
     @Override

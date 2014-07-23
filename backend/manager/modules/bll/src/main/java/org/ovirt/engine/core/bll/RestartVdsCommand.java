@@ -61,8 +61,13 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
     }
 
     public RestartVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public RestartVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
