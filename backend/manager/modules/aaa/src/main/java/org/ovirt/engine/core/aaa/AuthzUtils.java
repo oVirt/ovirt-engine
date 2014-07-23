@@ -92,13 +92,19 @@ public class AuthzUtils {
         MultiValueMapUtils.addToMapOfSets(memberOf.<String>get(GroupRecord.NAMESPACE), memberOf.<String> get(GroupRecord.ID), idsToFetchPerNamespace);
     }
 
-    private static void constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache) {
+    private static ExtMap constructGroupsMembershipTree(ExtMap entity, ExtKey key, Map<String, ExtMap> groupsCache) {
         List<ExtMap> groups = new ArrayList<>();
         for (ExtMap memberOf : entity.get(key, Collections.<ExtMap> emptyList())) {
-            constructGroupsMembershipTree(memberOf, GroupRecord.GROUPS, groupsCache);
-            groups.add(groupsCache.get(memberOf.get(GroupRecord.ID)));
+            groups.add(
+                constructGroupsMembershipTree(
+                    groupsCache.get(memberOf.get(GroupRecord.ID)).clone(),
+                    GroupRecord.GROUPS,
+                    groupsCache
+                )
+            );
         }
         entity.put(key, groups);
+        return entity;
     }
 
     public static Collection<ExtMap> queryPrincipalRecords(
