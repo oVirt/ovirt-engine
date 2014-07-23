@@ -8,8 +8,9 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 
-public class GetRngDeviceQuery <P extends IdQueryParameters> extends QueriesCommandBase<P> {
+public class GetRngDeviceQuery<P extends IdQueryParameters> extends QueriesCommandBase<P> {
 
     public GetRngDeviceQuery(P parameters) {
         super(parameters);
@@ -21,8 +22,12 @@ public class GetRngDeviceQuery <P extends IdQueryParameters> extends QueriesComm
 
     @Override
     protected void executeQueryCommand() {
-        final List<VmDevice> vmDevices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdAndType(getParameters().getId(),
-                VmDeviceGeneralType.RNG);
+        final List<VmDevice> vmDevices = getDbFacade().getVmDeviceDao().getVmDeviceByVmIdTypeAndDevice(
+                getParameters().getId(),
+                VmDeviceGeneralType.RNG,
+                VmDeviceType.VIRTIO.getName(),
+                getUserID(),
+                true);
 
         if (vmDevices != null && !vmDevices.isEmpty()) {
             VmDevice dev = vmDevices.get(0);
