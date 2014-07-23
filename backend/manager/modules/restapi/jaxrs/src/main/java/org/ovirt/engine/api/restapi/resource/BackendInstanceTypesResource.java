@@ -74,6 +74,10 @@ public class BackendInstanceTypesResource
         addInstanceTypeParameters.setVirtioScsiEnabled(instanceType.isSetVirtioScsi() && instanceType.getVirtioScsi().isSetEnabled() ?
                 instanceType.getVirtioScsi().isEnabled() : null);
 
+        if(instanceType.isSetSoundcardEnabled()) {
+            addInstanceTypeParameters.setSoundDeviceEnabled(instanceType.isSoundcardEnabled());
+        }
+
 
         return performCreate(VdcActionType.AddVmTemplate,
                                addInstanceTypeParameters,
@@ -110,7 +114,7 @@ public class BackendInstanceTypesResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
-
+        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(entity.getId()).isEmpty());
         List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));

@@ -127,11 +127,13 @@ public class BackendTemplateResource
             VmTemplate updated = getMapper(modelType, VmTemplate.class).map(incoming, entity);
             updated.setUsbPolicy(VmMapper.getUsbPolicyOnUpdate(incoming.getUsb(), entity.getUsbPolicy(),
                     lookupCluster(updated.getVdsGroupId()).getcompatibility_version()));
-
             UpdateVmTemplateParameters params = new UpdateVmTemplateParameters(updated);
             if (incoming.isSetRngDevice()) {
                 params.setUpdateRngDevice(true);
                 params.setRngDevice(RngDeviceMapper.map(incoming.getRngDevice(), null));
+            }
+            if(incoming.isSetSoundcardEnabled()) {
+                params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
             return getMapper(modelType, UpdateVmTemplateParameters.class).map(incoming, params);
         }
@@ -151,6 +153,7 @@ public class BackendTemplateResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(entity.getId()).isEmpty());
         setRngDevice(model);
         return model;
     }

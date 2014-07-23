@@ -24,4 +24,11 @@ public class VmHelper extends ResourceHelper {
                 new IdQueryParameters(id),
                 "GetVirtioScsiControllers", true);
     }
+
+    public List<String> getSoundDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetSoundDevices,
+                new IdQueryParameters(id),
+                "GetSoundDevices", true);
+    }
 }

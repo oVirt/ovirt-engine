@@ -191,6 +191,7 @@ public class BackendVmResourceTest
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
             setUpGetVirtioScsiExpectations(new int[]{0});
+            setUpGetSoundcardExpectations(new int[]{0});
             setUpGetRngDeviceExpectations(new int[]{0});
             setUpGetVmOvfExpectations(new int[]{0});
         }
@@ -236,6 +237,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
                                            VmManagementParametersBase.class,
@@ -264,6 +266,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVm,
@@ -307,6 +310,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVmOvfExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[] {0});
+        setUpGetSoundcardExpectations(new int[] {0});
         setUpGetRngDeviceExpectations(new int[]{0});
         setUpEntityQueryExpectations(VdcQueryType.GetVdsStaticByName,
                 NameQueryParameters.class,
@@ -348,6 +352,7 @@ public class BackendVmResourceTest
         setUpGetConsoleExpectations(0);
         setUpGetVmOvfExpectations(0);
         setUpGetVirtioScsiExpectations(0);
+        setUpGetSoundcardExpectations(0);
         setUpGetRngDeviceExpectations(0);
         setUriInfo(setUpActionExpectations(VdcActionType.ChangeVMCluster,
                                            ChangeVMClusterParameters.class,
@@ -1105,6 +1110,16 @@ public class BackendVmResourceTest
     private void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
+    }
+
+    private void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },

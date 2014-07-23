@@ -96,6 +96,7 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
+          vm.soundcard_enabled: xs:boolean
           vm.use_latest_template_version: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
@@ -184,6 +185,7 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
+          vm.soundcard_enabled: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.initialization.configuration.type: 'xs:string'
           vm.initialization.configuration.data: 'xs:string'
@@ -243,6 +245,7 @@ actions:
           vm.tunnel_migration: xs:boolean
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
+          vm.soundcard_enabled: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
           vm.serial_number.policy: xs:string
@@ -3823,6 +3826,7 @@ actions:
           template.tunnel_migration: xs:boolean
           template.migration_downtime: xs:int
           template.virtio_scsi.enabled: xs:boolean
+          template.soundcard_enabled: xs:boolean
           template.version.version_name: xs:string
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
@@ -3882,6 +3886,7 @@ actions:
           template.tunnel_migration: xs:boolean
           template.migration_downtime: xs:int
           template.virtio_scsi.enabled: xs:boolean
+          template.soundcard_enabled: xs:boolean
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
           template.version.version_name: xs:string
@@ -4400,7 +4405,7 @@ actions:
       - mandatoryArguments: {vmpool.cluster.id|name: 'xs:string', vmpool.template.id|name: 'xs:string',
           vmpool.name: 'xs:string'}
         optionalArguments: {vmpool.comment: 'xs:string', vmpool.size: 'xs:int', vmpool.max_user_vms: 'xs:int', vmpool.display.proxy: 'xs:string',
-          vmpool.description: 'xs:string'}
+          vmpool.description: 'xs:string', vmpool.soundcard_enabled: 'xs:boolean'}
         description: add a new vm pool to the system
     urlparams: {}
     headers:
@@ -5259,6 +5264,7 @@ actions:
           instance_type.usb.type: xs:string
           instance_type.migration_downtime: xs:int
           instance_type.virtio_scsi.enabled: xs:boolean
+          instance_type.soundcard_enabled: xs:boolean
         description: add a new instance type to the system
     urlparams: {}
     headers:

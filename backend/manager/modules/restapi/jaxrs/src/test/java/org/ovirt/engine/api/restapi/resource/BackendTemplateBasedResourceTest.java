@@ -100,6 +100,7 @@ public abstract class BackendTemplateBasedResourceTest<
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0});
             setUpGetVirtioScsiExpectations(new int[]{0});
+            setUpGetSoundcardExpectations(new int[]{0});
             setUpGetRngDeviceExpectations(new int [] {0});
         }
         control.replay();
@@ -115,6 +116,16 @@ public abstract class BackendTemplateBasedResourceTest<
     protected void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
+    }
+
+    protected void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },
@@ -140,6 +151,7 @@ public abstract class BackendTemplateBasedResourceTest<
         setUpGetEntityExpectations(2);
         setUpGetConsoleExpectations(new int[]{0});
         setUpGetVirtioScsiExpectations(new int[]{0});
+        setUpGetSoundcardExpectations(new int[]{0});
         setUpGetRngDeviceExpectations(new int[]{0});
 
         setUriInfo(setUpActionExpectations(VdcActionType.UpdateVmTemplate,
