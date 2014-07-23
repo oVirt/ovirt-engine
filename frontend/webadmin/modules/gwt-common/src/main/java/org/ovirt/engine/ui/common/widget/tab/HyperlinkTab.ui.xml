@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui">
+
+    <ui:style>
+        .tab {
+            height: 28px;
+            min-width: 80px;
+            text-align: center;
+            overflow: visible;
+            font-family: Arial,sans-serif;
+            line-height: 30px;
+        }
+
+        .alignLeft {
+            float: left;
+        }
+
+        .anchor {
+            text-decoration: none;
+            border-style: none;
+        }
+    </ui:style>
+
+	<g:HTMLPanel ui:field="tabContainer" addStyleNames="{style.tab} {style.alignLeft}">
+		<a href="" ui:field="hyperlink" addStyleNames="{style.anchor}">
+			<div>
+				<g:Label ui:field="label" />
+			</div>
+			<div style="clear: both;" />
+		</a>
+	</g:HTMLPanel>
+
+</ui:UiBinder>

@@ -78,6 +78,9 @@ public class ApplicationPlaces {
     public static final String dataCenterEventSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "events"; //$NON-NLS-1$
 
+    public static final String dataCenterQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
+            + "qos"; //$NON-NLS-1$
+
     // Storage
 
     public static final String storageGeneralSubTabPlace = storageMainTabPlace + SUB_TAB_PREFIX

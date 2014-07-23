@@ -35,10 +35,10 @@ public class SubTabDataCenterNetworkQoSPresenter extends AbstractSubTabPresenter
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StoragePool> {
     }
 
-    @TabInfo(container = DataCenterSubTabPanelPresenter.class)
+    @TabInfo(container = DataCenterQosSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
             SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterNetworkQoSSubTabLabel(), 2, modelProvider);
+        return new ModelBoundTabData(applicationConstants.dataCenterNetworkQoSSubTabLabel(), 1, modelProvider);
     }
 
     @Inject
@@ -46,7 +46,7 @@ public class SubTabDataCenterNetworkQoSPresenter extends AbstractSubTabPresenter
             PlaceManager placeManager,
             SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
-                DataCenterSubTabPanelPresenter.TYPE_SetTabContent);
+                DataCenterQosSubTabPanelPresenter.TYPE_SetTabContent);
     }
 
     @Override
