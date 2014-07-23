@@ -20,7 +20,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
 
 
     protected RemoveSnapshotSingleDiskCommandBase(T parameters, CommandContext cmdContext) {
-        super(parameters);
+        super(parameters, cmdContext);
     }
 
     @Override
