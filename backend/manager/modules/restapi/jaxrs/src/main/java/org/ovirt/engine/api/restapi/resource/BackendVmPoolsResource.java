@@ -73,6 +73,7 @@ public class BackendVmPoolsResource
         AddVmPoolWithVmsParameters params = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
         params.setConsoleEnabled(!getConsoleDevicesForEntity(template.getId()).isEmpty());
         params.setVirtioScsiEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(template.getId()).isEmpty());
+        params.setSoundDeviceEnabled((pool.isSetSoundcardEnabled() ? pool.isSoundcardEnabled() : !VmHelper.getInstance().getSoundDevicesForEntity(template.getId()).isEmpty()));
 
         return performCreate(VdcActionType.AddVmPoolWithVms,
                                params,

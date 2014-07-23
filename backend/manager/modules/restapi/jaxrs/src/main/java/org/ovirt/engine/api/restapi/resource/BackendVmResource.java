@@ -473,6 +473,7 @@ public class BackendVmResource extends
     protected VM doPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
         parent.setConsoleDevice(model);
         parent.setVirtioScsiController(model);
+        parent.setSoundcard(model);
         parent.setVmOvfConfiguration(model, entity);
         parent.setRngDevice(model);
         return model;
@@ -532,6 +533,9 @@ public class BackendVmResource extends
             }
             if (incoming.isSetVirtioScsi()) {
                 params.setVirtioScsiEnabled(incoming.getVirtioScsi().isEnabled());
+            }
+            if (incoming.isSetSoundcardEnabled()) {
+                params.setSoundDeviceEnabled(incoming.isSoundcardEnabled());
             }
             if (incoming.isSetRngDevice()) {
                 params.setUpdateRngDevice(true);

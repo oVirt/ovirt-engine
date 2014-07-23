@@ -2639,6 +2639,7 @@
           <xs:element name="timezone" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="domain" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="soundcard_enabled" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
@@ -3059,6 +3060,7 @@
           <xs:element name="guest_info" type="GuestInfo" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="quota" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="usb" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="soundcard_enabled" minOccurs="0" maxOccurs="1"/>
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
@@ -3247,6 +3249,7 @@
           <xs:element name="max_user_vms" type="xs:int" minOccurs="0"/>
           <xs:element ref="display" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="rng_device" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="soundcard_enabled" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3776,6 +3779,8 @@
       <xs:element name="type" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
+
+   <xs:element name="soundcard_enabled" type="xs:boolean"/>
 
   <xs:element name="quota" type="Quota"/>
 

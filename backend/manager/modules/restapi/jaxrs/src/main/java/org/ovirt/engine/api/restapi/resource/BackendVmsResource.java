@@ -49,6 +49,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -182,7 +184,7 @@ public class BackendVmsResource extends
         if (vm.isSetDisks()) {
             prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
         }
-        return cloneVmFromSnapshot(vmConfiguration.getStaticData(),
+        return cloneVmFromSnapshot(vmConfiguration,
                         vm,
                         snapshotId,
                         diskImagesByImageId);
@@ -276,10 +278,11 @@ public class BackendVmsResource extends
                 "Hosts: name=" + hostName).getId().toString();
     }
 
-    private Response cloneVmFromSnapshot(VmStatic staticVm,
+    private Response cloneVmFromSnapshot(org.ovirt.engine.core.common.businessentities.VM configVm,
             VM vm,
             String snapshotId,
             HashMap<Guid, DiskImage> images) {
+        VmStatic staticVm = configVm.getStaticData();
         Guid sourceSnapshotId = asGuid(snapshotId);
         AddVmFromSnapshotParameters params =
                 new AddVmFromSnapshotParameters(staticVm, sourceSnapshotId);
@@ -287,6 +290,11 @@ public class BackendVmsResource extends
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
+        if(vm.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
+        } else {
+            params.setSoundDeviceEnabled(isVMDeviceTypeExist(configVm.getManagedVmDeviceMap(), VmDeviceGeneralType.SOUND));
+        }
 
         params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
                 ? vm.getConsole().isEnabled()
@@ -307,6 +315,12 @@ public class BackendVmsResource extends
         params.setVmPayload(getPayload(vm));
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
+        if(vm.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
+        } else {
+            params.setSoundDeviceEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(templateId).isEmpty());
+        }
+
         params.setBalloonEnabled(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning() ?
                 vm.getMemoryPolicy().isBallooning() : null);
 
@@ -376,6 +390,11 @@ public class BackendVmsResource extends
 
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
+        if(vm.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
+        } else {
+            params.setSoundDeviceEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(templateId).isEmpty());
+        }
 
         if (vm.isSetRngDevice()) {
             params.setUpdateRngDevice(true);
@@ -403,6 +422,9 @@ public class BackendVmsResource extends
         params.setStorageDomainId(storageDomainId);
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);
+        if(vm.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
+        }
 
         if (vm.isSetConsole() && vm.getConsole().isSetEnabled()) {
             params.setConsoleEnabled(vm.getConsole().isEnabled());
@@ -621,6 +643,10 @@ public class BackendVmsResource extends
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(new Guid(model.getId())).isEmpty());
     }
 
+    protected void setSoundcard(VM model) {
+        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(new Guid(model.getId())).isEmpty());
+    }
+
     public void setCertificateInfo(VM model) {
         VdcQueryReturnValue result =
                 runQuery(VdcQueryType.GetVdsCertificateSubjectByVmId,
@@ -651,6 +677,7 @@ public class BackendVmsResource extends
         setBallooning(model);
         setConsoleDevice(model);
         setVirtioScsiController(model);
+        setSoundcard(model);
         setCertificateInfo(model);
         setVmOvfConfiguration(model, entity);
         setRngDevice(model);
@@ -673,6 +700,17 @@ public class BackendVmsResource extends
                 VdcQueryType.GetConsoleDevices,
                 new IdQueryParameters(id),
                 "GetConsoleDevices", true);
+    }
+
+    private boolean isVMDeviceTypeExist(Map<Guid, VmDevice> deviceMap, VmDeviceGeneralType deviceType) {
+        if(deviceMap != null) {
+            for (Map.Entry<Guid, VmDevice> device : deviceMap.entrySet()) {
+                if (device.getValue().getType().equals(deviceType)) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
 }

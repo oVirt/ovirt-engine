@@ -98,6 +98,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
         setUpHttpHeaderExpectations("Expect", "201-created");
 
         setUpGetVirtioScsiExpectations(new int[]{0, 0});
+        setUpGetSoundcardExpectations(new int[]{0, 0});
         setUpGetRngDeviceExpectations(new int[]{0, 0});
         setUpGetEntityExpectations(0);
 
@@ -165,6 +166,7 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
             expect(httpHeaders.getRequestHeader(BackendResource.POPULATE)).andReturn(populates).anyTimes();
             setUpGetConsoleExpectations(new int[]{0, 1, 2});
             setUpGetVirtioScsiExpectations(new int[] {0, 1, 2});
+            setUpGetSoundcardExpectations(new int[] {0, 1, 2});
             setUpGetRngDeviceExpectations(new int[] {0, 1, 2});
         }
 
@@ -188,6 +190,16 @@ public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C
     protected void setUpGetVirtioScsiExpectations(int ... idxs) throws Exception {
         for (int i = 0; i < idxs.length; i++) {
             setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                    IdQueryParameters.class,
+                    new String[] { "Id" },
+                    new Object[] { GUIDS[idxs[i]] },
+                    new ArrayList<>());
+        }
+    }
+
+    protected void setUpGetSoundcardExpectations(int ... idxs) throws Exception {
+        for (int i = 0; i < idxs.length; i++) {
+            setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
                     IdQueryParameters.class,
                     new String[] { "Id" },
                     new Object[] { GUIDS[idxs[i]] },

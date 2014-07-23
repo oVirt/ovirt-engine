@@ -98,6 +98,12 @@ public class BackendVmPoolsResourceTest extends
                 new Object[] { GUIDS[1] },
                 new ArrayList<>());
 
+        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                new ArrayList<>());
+
         setUpGetRngDeviceExpectations(new int[] {0});
 
         setUpCreationExpectations(VdcActionType.AddVmPoolWithVms,
@@ -133,6 +139,12 @@ public class BackendVmPoolsResourceTest extends
         setUpGetRngDeviceExpectations(new int[] {0});
 
         setUpGetEntityExpectations(VdcQueryType.GetVirtioScsiControllers,
+                IdQueryParameters.class,
+                new String[] { "Id" },
+                new Object[] { GUIDS[1] },
+                new ArrayList<>());
+
+        setUpGetEntityExpectations(VdcQueryType.GetSoundDevices,
                 IdQueryParameters.class,
                 new String[] { "Id" },
                 new Object[] { GUIDS[1] },

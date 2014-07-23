@@ -98,7 +98,11 @@ public class BackendTemplatesResource
                         !getConsoleDevicesForEntity(staticVm.getId()).isEmpty());
         params.setVirtioScsiEnabled(template.isSetVirtioScsi() && template.getVirtioScsi().isSetEnabled() ?
                 template.getVirtioScsi().isEnabled() : null);
-
+        if(template.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(template.isSoundcardEnabled());
+        } else {
+            params.setSoundDeviceEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(staticVm.getId()).isEmpty());
+        }
         if (template.isSetRngDevice()) {
             params.setUpdateRngDevice(true);
             params.setRngDevice(RngDeviceMapper.map(template.getRngDevice(), null));
@@ -221,6 +225,7 @@ public class BackendTemplatesResource
             model.setVirtioScsi(new VirtIOSCSI());
         }
         model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
+        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(entity.getId()).isEmpty());
         List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));
