@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -23,8 +24,13 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 @NonTransactiveCommandAttribute
 public class StartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
     public StartVdsCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public StartVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {

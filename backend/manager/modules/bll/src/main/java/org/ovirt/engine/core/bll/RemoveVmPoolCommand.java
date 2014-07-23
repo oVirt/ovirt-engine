@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
@@ -12,7 +13,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class RemoveVmPoolCommand<T extends VmPoolParametersBase> extends VmPoolCommandBase<T> {
     public RemoveVmPoolCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RemoveVmPoolCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         // set group id for logging and job
         if (getVmPool() != null) {
             setVdsGroupId(getVmPool().getVdsGroupId());

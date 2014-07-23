@@ -4,6 +4,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
@@ -16,7 +17,11 @@ import org.ovirt.engine.core.compat.Guid;
 @NonTransactiveCommandAttribute
 public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> extends MigrateVmCommand<T> {
     public MigrateVmToServerCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public MigrateVmToServerCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setDestinationVdsId(parameters.getVdsId());
     }
 

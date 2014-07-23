@@ -4,6 +4,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -28,8 +29,13 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     private static final String RESTART = "Restart";
 
     public VdsNotRespondingTreatmentCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
     }
+
+    public VdsNotRespondingTreatmentCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {

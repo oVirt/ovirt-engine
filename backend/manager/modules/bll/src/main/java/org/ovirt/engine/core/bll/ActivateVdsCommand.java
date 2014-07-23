@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -32,9 +33,13 @@ public class ActivateVdsCommand<T extends VdsActionParameters> extends VdsComman
     private boolean haMaintenanceFailed;
 
     public ActivateVdsCommand(T parameters) {
-        super(parameters);
-        haMaintenanceFailed = false;
+        this(parameters, null);
     }
+
+    public ActivateVdsCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
 
     /**
      * Constructor for command creation when compensation is applied on startup
