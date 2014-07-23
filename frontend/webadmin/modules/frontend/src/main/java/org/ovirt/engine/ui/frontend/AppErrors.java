@@ -682,6 +682,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Domain already contains the target disk(s).")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_ALREADY_CONTAINS_DISK();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Storage Domain hasn't been specified.")
+    String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED();
+
     @DefaultStringValue("Cannot ${action} ${type}. The following VMs/Templates are delete protected: ${vms}.")
     String ACTION_TYPE_FAILED_STORAGE_DELETE_PROTECTED();
 

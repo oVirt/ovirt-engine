@@ -166,6 +166,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     }
 
     protected boolean checkIfImageDiskCanBeAdded(VM vm, DiskValidator diskValidator) {
+        if (Guid.Empty.equals(getStorageDomainId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_SPECIFIED);
+        }
+
         boolean returnValue;
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         // vm agnostic checks
