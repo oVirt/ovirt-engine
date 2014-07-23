@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.provider;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -228,6 +229,11 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     @Override
     public ImportNetworksModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void validateImportedNetworks(List<String> errors) {
+        importedNetworks.validate(errors);
     }
 
 }

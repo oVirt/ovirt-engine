@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.networks;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
@@ -57,6 +58,7 @@ public class ImportNetworksModel extends Model {
     private final ListModel providers = new ListModel();
     private final ListModel providerNetworks = new ListModel();
     private final ListModel importedNetworks = new ListModel();
+    private final ListModel<String> errors = new ListModel<String>();
 
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
@@ -73,6 +75,10 @@ public class ImportNetworksModel extends Model {
 
     public ListModel getProviders() {
         return providers;
+    }
+
+    public ListModel<String> getErrors() {
+        return errors;
     }
 
     public UICommand getAddImportCommand() {
@@ -191,11 +197,42 @@ public class ImportNetworksModel extends Model {
         AsyncDataProvider.getDataCenterList(dcQuery);
     }
 
+    private boolean validate() {
+        String errorDuplicate = ConstantsManager.getInstance().getConstants().importDuplicateName();
+        boolean valid = true;
+        Collection<ExternalNetwork> networks = importedNetworks.getItems();
+        List<String> errors = new ArrayList<String>(networks.size());
+        Map<String, Integer> nameToIndex = new HashMap<String, Integer>();
+        int i = 0;
+        for (ExternalNetwork network : networks) {
+            String networkName = network.getDisplayName();
+            Integer encounteredIndex = nameToIndex.get(networkName);
+
+            // if this name has been encountered, invalidate that entry; else store it for future invalidation
+            if (encounteredIndex != null) {
+                errors.set(encounteredIndex, errorDuplicate);
+                valid = false;
+            } else {
+                nameToIndex.put(networkName, i);
+            }
+
+            // invalidate current entry
+            errors.add(encounteredIndex == null ? null : errorDuplicate);
+            ++i;
+        }
+        getErrors().setItems(errors);
+        return valid;
+    }
+
     public void cancel() {
         sourceListModel.setWindow(null);
     }
 
     public void onImport() {
+        if (!validate()) {
+            return;
+        }
+
         List<VdcActionParametersBase> multipleActionParameters =
                 new LinkedList<VdcActionParametersBase>();
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();

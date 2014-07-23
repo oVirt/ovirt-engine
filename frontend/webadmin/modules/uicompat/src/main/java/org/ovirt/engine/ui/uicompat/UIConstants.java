@@ -2050,6 +2050,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Import")
     String importNetworksButton();
 
+    @DefaultStringValue("Cannot import network, another network with the same name has been marked for import.")
+    String importDuplicateName();
+
     @DefaultStringValue("Interface Mappings")
     String interfaceMappings();
 
