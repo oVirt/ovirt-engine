@@ -28,6 +28,12 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
         UiCommandButton getQosButton();
 
         void addMtuEditor();
+
+        void updateGeneralTabValidity(boolean isValid);
+
+        void updateVnicProfileTabValidity(boolean isValid);
+
+        void updateSubnetTabValidity(boolean isValid);
     }
 
     public AbstractNetworkPopupPresenterWidget(EventBus eventBus, V view) {
@@ -48,6 +54,12 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel, V exten
 
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
+                } else if ("IsGeneralTabValid".equals(propertyName)) { //$NON-NLS-1$
+                    getView().updateGeneralTabValidity(model.getIsGeneralTabValid());
+                } else if ("IsVnicProfileTabValid".equals(propertyName)) { //$NON-NLS-1$
+                    getView().updateVnicProfileTabValidity(model.getIsVnicProfileTabValid());
+                } else if ("IsSubnetTabValid".equals(propertyName)) { //$NON-NLS-1$
+                    getView().updateSubnetTabValidity(model.getIsSubnetTabValid());
                 }
             }
         });

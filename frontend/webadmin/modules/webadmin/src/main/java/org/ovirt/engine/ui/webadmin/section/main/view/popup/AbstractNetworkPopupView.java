@@ -448,6 +448,33 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         panel.add(mtuEditor);
     }
 
+    @Override
+    public void updateGeneralTabValidity(boolean isValid) {
+        if (isValid) {
+            generalTab.markAsValid();
+        } else {
+            generalTab.markAsInvalid(null);
+        }
+    }
+
+    @Override
+    public void updateVnicProfileTabValidity(boolean isValid) {
+        if (isValid) {
+            profilesTab.markAsValid();
+        } else {
+            profilesTab.markAsInvalid(null);
+        }
+    }
+
+    @Override
+    public void updateSubnetTabValidity(boolean isValid) {
+        if (isValid) {
+            subnetTab.markAsValid();
+        } else {
+            subnetTab.markAsInvalid(null);
+        }
+    }
+
     interface WidgetStyle extends CssResource {
         String valueBox();
 
