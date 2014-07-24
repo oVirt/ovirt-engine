@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -636,7 +635,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         VM newvm = tempVar;
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        if (displayProtocolSelectedItem != null) {
+            newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        } else {
+            newvm.setDefaultDisplayType(DisplayType.vnc);
+        }
 
         EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
         newvm.setPriority(prioritySelectedItem.getEntity());
@@ -1094,7 +1097,11 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         gettempVm().setCustomProperties(model.getCustomPropertySheet().serialize());
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        gettempVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        if (displayProtocolSelectedItem != null) {
+            gettempVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        } else {
+            gettempVm().setDefaultDisplayType(DisplayType.vnc);
+        }
 
         EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
         gettempVm().setPriority(prioritySelectedItem.getEntity());

@@ -6,7 +6,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
@@ -1400,7 +1399,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         VM newvm = tempVar;
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        if (displayProtocolSelectedItem != null) {
+            newvm.setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        } else {
+            newvm.setDefaultDisplayType(DisplayType.vnc);
+        }
 
         EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
         newvm.setPriority(prioritySelectedItem.getEntity());
@@ -2007,7 +2010,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         getcurrentVm().setBalloonEnabled(balloonEnabled(model));
 
         EntityModel<DisplayType> displayProtocolSelectedItem = model.getDisplayProtocol().getSelectedItem();
-        getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        if (displayProtocolSelectedItem != null) {
+            getcurrentVm().setDefaultDisplayType(displayProtocolSelectedItem.getEntity());
+        } else {
+            getcurrentVm().setDefaultDisplayType(DisplayType.vnc);
+        }
 
         EntityModel<Integer> prioritySelectedItem = model.getPriority().getSelectedItem();
         getcurrentVm().setPriority(prioritySelectedItem.getEntity());
