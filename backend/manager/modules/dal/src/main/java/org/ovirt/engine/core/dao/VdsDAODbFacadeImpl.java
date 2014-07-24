@@ -360,6 +360,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
+            entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
             return entity;
         }
     }

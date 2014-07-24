@@ -207,14 +207,15 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_auto_numa_balancing SMALLINT,
  v_is_numa_supported BOOLEAN,
  v_supported_rng_sources VARCHAR(255),
- v_is_live_snapshot_supported BOOLEAN)
+ v_is_live_snapshot_supported BOOLEAN,
+ v_is_live_merge_supported BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported);
    END;
 
    RETURN;
@@ -289,7 +290,8 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_auto_numa_balancing SMALLINT,
  v_is_numa_supported BOOLEAN,
  v_supported_rng_sources VARCHAR(255),
- v_is_live_snapshot_supported BOOLEAN)
+ v_is_live_snapshot_supported BOOLEAN,
+ v_is_live_merge_supported BOOLEAN)
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -325,7 +327,8 @@ BEGIN
       auto_numa_balancing = v_auto_numa_balancing,
       is_numa_supported = v_is_numa_supported,
       supported_rng_sources = v_supported_rng_sources,
-      is_live_snapshot_supported = v_is_live_snapshot_supported
+      is_live_snapshot_supported = v_is_live_snapshot_supported,
+      is_live_merge_supported = v_is_live_merge_supported
       WHERE vds_id = v_vds_id;
    END;
 

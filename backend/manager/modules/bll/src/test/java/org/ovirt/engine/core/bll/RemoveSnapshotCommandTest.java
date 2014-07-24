@@ -236,10 +236,20 @@ public class RemoveSnapshotCommandTest {
     }
 
     @Test
-    public void testCanDoActionVmUp() {
+    public void testCanDoActionVmUpHostCapable() {
         prepareForVmValidatorTests();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
         cmd.getVm().setStatus(VMStatus.Up);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+    }
+
+    @Test
+    public void testCanDoActionVmUpHostNotCapable() {
+        prepareForVmValidatorTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE))
+                .when(vmValidator).vmHostCanLiveMerge();
+        cmd.getVm().setStatus(VMStatus.Up);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE);
     }
 
     @Test
