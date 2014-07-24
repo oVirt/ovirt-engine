@@ -46,7 +46,7 @@ public class MergeCommand<T extends MergeParameters>
             getParameters().setVmJobId(jobId);
             // setSucceeded to indicate executeCommand success; doPolling will check commandStatus
             setSucceeded(true);
-            persistCommandWithContext(getParameters().getParentCommand(), true);
+            persistCommand(getParameters().getParentCommand(), true);
             log.debug("Merge started successfully");
         } else {
             log.error("Failed to start Merge on VDS");

@@ -150,7 +150,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             break;
         }
 
-        persistCommandWithContext(getParameters().getParentCommand(), true);
+        persistCommand(getParameters().getParentCommand(), true);
         if (nextCommand != null) {
             TaskManagerUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
         }

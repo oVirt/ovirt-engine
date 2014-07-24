@@ -49,7 +49,7 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
             getReturnValue().getVdsmTaskIdList().add(result);
             getParameters().getVdsmTaskIds().add(result);
             setSucceeded(vdsReturnValue.getSucceeded());
-            persistCommandWithContext(getParameters().getParentCommand(), true);
+            persistCommand(getParameters().getParentCommand(), true);
             log.info("Successfully started task to remove orphaned volumes resulting from live merge");
         } else {
             setSucceeded(false);
