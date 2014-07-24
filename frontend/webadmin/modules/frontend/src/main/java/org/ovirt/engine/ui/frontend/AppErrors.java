@@ -658,6 +658,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The Template is disabled, please try to enable the template first and try again.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED();
 
+    @DefaultStringValue("The specified Template doesn't exist in the current Data Center.")
+    String ACTION_TYPE_FAILED_TEMPLATE_NOT_EXISTS_IN_CURRENT_DC();
+
     @DefaultStringValue("Cannot ${action} ${type}. One of the Template Images already exists.")
     String ACTION_TYPE_FAILED_IMAGE_ALREADY_EXISTS();
 

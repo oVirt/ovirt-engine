@@ -178,4 +178,10 @@ public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> exten
         addPermissionSubjectForAdminLevelProperties(permissionList);
         return permissionList;
     }
+
+    @Override
+    protected boolean isTemplateInValidDc() {
+        return VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplateId()) || super.isTemplateInValidDc();
+    }
+
 }
