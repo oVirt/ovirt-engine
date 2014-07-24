@@ -2107,11 +2107,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 
-    public void persistCommandWithoutContext(VdcActionType parentCommand, boolean enableCallBack) {
-        persistCommand(parentCommand, null, enableCallBack);
-    }
-
-    public void persistCommandWithContext(VdcActionType parentCommand, boolean enableCallBack) {
+    public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
         persistCommand(parentCommand, getContext(), enableCallBack);
     }
 

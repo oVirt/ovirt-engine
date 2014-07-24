@@ -133,7 +133,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             if (getSnapshotActionType() == VdcActionType.RemoveSnapshotSingleDiskLive) {
                 // Enable callbacks in order to monitor for new-style child completion
                 setCommandStatus(CommandStatus.ACTIVE_ASYNC);
-                persistCommandWithoutContext(getParameters().getParentCommand(), true);
+                persistCommand(getParameters().getParentCommand(), true);
                 useTaskManagerToRemoveMemory = true;
             }
         }
