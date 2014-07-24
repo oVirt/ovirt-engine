@@ -452,6 +452,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
 
+        if (!isTemplateInValidDc()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_NOT_EXISTS_IN_CURRENT_DC);
+        }
+
         // A VM cannot be added in a cluster without a defined architecture
         if (getVdsGroup().getArchitecture() == ArchitectureType.undefined) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_UNDEFINED_ARCHITECTURE);
@@ -1323,4 +1327,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             getParameters().getVmStaticData().setDefaultDisplayType(defaultDisplayType);
         }
     }
+
+    protected boolean isTemplateInValidDc() {
+        return getVmTemplate().getStoragePoolId().equals(getStoragePoolId());
+    }
+
 }
