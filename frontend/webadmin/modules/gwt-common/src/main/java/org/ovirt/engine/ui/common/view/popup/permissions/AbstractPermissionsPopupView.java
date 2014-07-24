@@ -53,6 +53,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @WithElementId("profile")
     public ListModelListBoxEditor<Object> profileSelection;
 
+    @UiField(provided = true)
+    @Path("namespace.selectedItem")
+    @WithElementId("namespace")
+    public ListModelListBoxEditor<String> namespaceSelection;
+
     @UiField
     @Ignore
     public Label roleToAssignLabel;
@@ -129,6 +134,13 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
                 return ((Role) object).getname();
             }
         });
+
+        namespaceSelection = new ListModelListBoxEditor<String>(new NullSafeRenderer<String>() {
+            @Override
+            protected String renderNullSafe(String object) {
+                return object;
+            }
+        });
     }
 
     private void initTable(CommonApplicationConstants constants) {
@@ -157,6 +169,8 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     void localize(CommonApplicationConstants constants) {
         searchButton.setLabel(constants.goPermissionsPopup());
+        namespaceSelection.setLabel(constants.namespacePermissionsPopup());
+
     }
 
     @Override

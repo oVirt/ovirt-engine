@@ -1210,6 +1210,18 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
+    public void getAAANamespaces(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (HashMap<String, List<String>>) source : new HashMap<String, List<String>>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase(), aQuery);
+    }
+
+
     public void getAAAProfilesEntriesList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
