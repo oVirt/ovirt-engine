@@ -33,10 +33,10 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("{0} between {1} and {2}.")
     String integerValidationNumberBetweenInvalidReason(String prefixMsg, int min, int max);
 
-    @DefaultMessage("{0} greater than {1}.")
+    @DefaultMessage("{0} greater than or equal to {1}.")
     String integerValidationNumberGreaterInvalidReason(String prefixMsg, int min);
 
-    @DefaultMessage("{0} less than {1}.")
+    @DefaultMessage("{0} less than or equal to {1}.")
     String integerValidationNumberLessInvalidReason(String prefixMsg, int max);
 
     @DefaultMessage("Field content must not exceed {0} characters.")
