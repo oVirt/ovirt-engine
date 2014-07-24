@@ -266,6 +266,8 @@ public class PermissionDAODbFacadeImpl extends BaseDAODbFacade implements Permis
             entity.setRoleName(rs.getString("role_name"));
             entity.setObjectName(rs.getString("object_name"));
             entity.setOwnerName(rs.getString("owner_name"));
+            entity.setNamespace(rs.getString("namespace"));
+            entity.setAuthz(rs.getString("authz"));
             entity.setRoleType(RoleType.getById(rs.getInt("role_type")));
             return entity;
         }

@@ -78,7 +78,23 @@ public class SystemPermissionView extends Composite {
                 return object.getOwnerName();
             }
         };
-        table.addColumn(userColumn, constants.userPermission());
+        table.addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<Permissions> namespaceColumn = new TextColumnWithTooltip<Permissions>() {
+            @Override
+            public String getValue(Permissions object) {
+                return object.getNamespace();
+            }
+        };
+        table.addColumn(namespaceColumn, constants.namespace(), "200px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<Permissions> authzColumn = new TextColumnWithTooltip<Permissions>() {
+            @Override
+            public String getValue(Permissions object) {
+                return object.getAuthz();
+            }
+        };
+        table.addColumn(authzColumn, constants.authz(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
             @Override

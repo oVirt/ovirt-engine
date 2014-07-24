@@ -67,11 +67,23 @@ public abstract class PermissionsCommandBase<T extends PermissionsOperationsPara
         return dbUser == null ? (dbGroup == null ? "" : dbGroup.getName()) : dbUser.getLoginName();
     }
 
+    public String getNamespace() {
+        initUserAndGroupData();
+        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getNamespace()) : dbUser.getNamespace();
+
+    }
+
+    public String getAuthz() {
+        initUserAndGroupData();
+        return dbUser == null ? (dbGroup == null ? "" : dbGroup.getDomain()) : dbUser.getDomain();
+
+    }
+
     public void initUserAndGroupData() {
         if (dbUser == null) {
             dbUser = getDbUserDAO().get(getParameters().getPermission().getad_element_id());
         }
-        if (dbGroup == null) {
+        if (dbUser == null && dbGroup == null) {
             dbGroup = getAdGroupDAO().get(getParameters().getPermission().getad_element_id());
         }
     }

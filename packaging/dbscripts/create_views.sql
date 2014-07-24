@@ -908,7 +908,7 @@ AS
 
 SELECT     permissions.id as id, permissions.role_id as role_id, permissions.ad_element_id as ad_element_id, permissions.object_id as object_id, permissions.object_type_id as object_type_id,
 	       roles.name as role_name, roles.role_type as role_type, roles.allows_viewing_children as allows_viewing_children, roles.app_mode as app_mode, fn_get_entity_name(permissions.object_id,permissions.object_type_id) as object_name,
-			fn_get_ad_element_name(permissions.ad_element_id) as owner_name
+			(fn_authz_entry_info(permissions.ad_element_id)).name as owner_name, (fn_authz_entry_info(permissions.ad_element_id)).namespace as namespace, (fn_authz_entry_info(permissions.ad_element_id)).authz as authz
 FROM         permissions INNER JOIN
 roles ON permissions.role_id = roles.id;
 
