@@ -44,6 +44,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class NetworkModel extends Model
 {
@@ -75,6 +76,9 @@ public abstract class NetworkModel extends Model
     private UICommand addQosCommand;
     private final Network network;
     private final ListModel sourceListModel;
+    private boolean isGeneralTabValid;
+    private boolean isVnicProfileTabValid;
+    private boolean isSubnetTabValid;
 
     public NetworkModel(ListModel sourceListModel)
     {
@@ -172,6 +176,9 @@ public abstract class NetworkModel extends Model
         // Update changeability according to initial values
         updateVlanTagChangeability();
         updateSubnetChangeability();
+
+        setIsGeneralTabValid(true);
+        setIsVnicProfileTabValid(true);
     }
 
     private VnicProfileModel createDefaultProfile() {
@@ -415,7 +422,40 @@ public abstract class NetworkModel extends Model
         return addQosCommand;
     }
 
-    public boolean validate()
+    public boolean getIsGeneralTabValid() {
+        return isGeneralTabValid;
+    }
+
+    public void setIsGeneralTabValid(boolean value) {
+        if (isGeneralTabValid != value) {
+            isGeneralTabValid = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsGeneralTabValid")); //$NON-NLS-1$
+        }
+    }
+
+    public boolean getIsVnicProfileTabValid() {
+        return isVnicProfileTabValid;
+    }
+
+    public void setIsVnicProfileTabValid(boolean value) {
+        if (isVnicProfileTabValid != value) {
+            isVnicProfileTabValid = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsVnicProfileTabValid")); //$NON-NLS-1$
+        }
+    }
+
+    public boolean getIsSubnetTabValid() {
+        return isSubnetTabValid;
+    }
+
+    public void setIsSubnetTabValid(boolean value) {
+        if (isSubnetTabValid != value) {
+            isSubnetTabValid = value;
+            onPropertyChanged(new PropertyChangedEventArgs("IsSubnetTabValid")); //$NON-NLS-1$
+        }
+    }
+
+    private boolean validate()
     {
         RegexValidation tempVar = new RegexValidation();
         tempVar.setExpression("^[A-Za-z0-9_]{1,15}$"); //$NON-NLS-1$
@@ -462,9 +502,12 @@ public abstract class NetworkModel extends Model
 
         getNetworkLabel().validateSelectedItem(new IValidation[] { new AsciiNameValidation() });
 
-        return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
+        setIsGeneralTabValid(getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid()
                 && getMtu().getIsValid() && getExternalProviders().getIsValid() && getComment().getIsValid()
-                && subnetValid && profilesValid && getNetworkLabel().getIsValid();
+                && getNetworkLabel().getIsValid());
+        setIsVnicProfileTabValid(profilesValid);
+        setIsSubnetTabValid(subnetValid);
+        return getIsGeneralTabValid() && getIsVnicProfileTabValid() && getIsSubnetTabValid();
     }
 
     protected boolean isCustomMtu() {
