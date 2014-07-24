@@ -492,6 +492,11 @@ public class VdsBrokerObjectsBuilder {
         if (xmlRpcStruct.containsKey(VdsProperties.liveSnapshotSupport)) {
             vds.setLiveSnapshotSupport(AssignBoolValue(xmlRpcStruct, VdsProperties.liveSnapshotSupport));
         }
+        if (xmlRpcStruct.containsKey(VdsProperties.liveMergeSupport)) {
+            vds.setLiveMergeSupport(AssignBoolValue(xmlRpcStruct, VdsProperties.liveMergeSupport));
+        } else {
+            vds.setLiveMergeSupport(false);
+        }
     }
 
     private static void setRngSupportedSourcesToVds(VDS vds, Map<String, Object> xmlRpcStruct) {

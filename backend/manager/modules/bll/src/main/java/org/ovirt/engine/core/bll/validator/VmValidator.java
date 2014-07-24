@@ -54,7 +54,25 @@ public class VmValidator {
     public ValidationResult vmQualifiedForSnapshotMerge() {
         for (VM vm : vms) {
             if (!vm.isQualifiedForSnapshotMerge()) {
-                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP);
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP,
+                        String.format("$VmName %s", vm.getName()));
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    /**
+     * @return Validation result indicating that if a host is running, then it is running on a host capable
+     * of live merging snapshots.  Should be used in combination with vmQualifiedForSnapshotMerge().
+     */
+    public ValidationResult vmHostCanLiveMerge() {
+        for (VM vm : vms) {
+            if (!vm.isDown() &&
+                    ((vm.getRunOnVds() == null ||
+                    !DbFacade.getInstance().getVdsDao().get(vm.getRunOnVds()).getLiveMergeSupport()))) {
+                    return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE,
+                            String.format("$VmName %s", vm.getName()));
             }
         }
 

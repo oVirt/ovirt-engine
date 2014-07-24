@@ -91,6 +91,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private boolean liveSnapshotSupport;
 
+    private boolean liveMergeSupport;
+
     private VdsTransparentHugePagesState transparentHugePagesState;
 
     @Size(max = BusinessEntitiesDefinitions.GENERAL_NAME_SIZE)
@@ -200,6 +202,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         autoNumaBalancing = AutoNumaBalanceStatus.UNKNOWN;
         supportedRngSources = new HashSet<VmRngDevice.Source>();
         liveSnapshotSupport = true;  // usually supported, exceptional case if it isn't.
+        liveMergeSupport = true;
     }
 
     public Integer getcpu_cores() {
@@ -629,6 +632,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.liveSnapshotSupport = liveSnapshotSupport;
     }
 
+    public boolean getLiveMergeSupport() {
+        return liveMergeSupport;
+    }
+
+    public void setLiveMergeSupport(boolean liveMergeSupport) {
+        this.liveMergeSupport = liveMergeSupport;
+    }
+
     public List<VdsNumaNode> getNumaNodeList() {
         return numaNodeList;
     }
@@ -717,6 +728,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + autoNumaBalancing.getValue();
         result = prime * result + (numaSupport ? 0 : 1);
         result = prime * result + (liveSnapshotSupport ? 0 : 1);
+        result = prime * result + (liveMergeSupport ? 0 : 1);
 
         return result;
     }
@@ -791,7 +803,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && ObjectUtils.objectsEqual(supportedRngSources, other.supportedRngSources)
-                && liveSnapshotSupport == other.liveSnapshotSupport;
+                && liveSnapshotSupport == other.liveSnapshotSupport
+                && liveMergeSupport == other.liveMergeSupport;
     }
 
 }

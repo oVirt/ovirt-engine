@@ -2787,6 +2787,7 @@
         <column>is_numa_supported</column>
         <column>supported_rng_sources</column>
         <column>is_live_snapshot_supported</column>
+        <column>is_live_merge_supported</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -2839,6 +2840,7 @@
             <value>2</value>
             <value>true</value>
             <value>RANDOM</value>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -2894,6 +2896,7 @@
             <value>true</value>
             <value></value>
             <value>false</value>
+            <value>false</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -2947,6 +2950,7 @@
             <value>2</value>
             <value>true</value>
             <value>HWRNG</value>
+            <value>false</value>
             <value>false</value>
         </row>
         <row>
@@ -3002,6 +3006,7 @@
             <value>true</value>
             <value>RANDOM</value>
             <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -3055,6 +3060,7 @@
             <value>2</value>
             <value>true</value>
             <value>RANDOM,HWRNG</value>
+            <value>true</value>
             <value>true</value>
         </row>
     </table>

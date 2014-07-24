@@ -104,6 +104,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setAutoNumaBalancing(AutoNumaBalanceStatus.forValue(rs.getInt("auto_numa_balancing")));
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
+            entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
 
             return entity;
         }
@@ -256,7 +257,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("is_numa_supported", vds.isNumaSupport())
                 .addValue("supported_rng_sources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()))
                 .addValue("supported_emulated_machines", vds.getSupportedEmulatedMachines())
-                .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport());
+                .addValue("is_live_snapshot_supported", vds.getLiveSnapshotSupport())
+                .addValue("is_live_merge_supported", vds.getLiveMergeSupport());
 
         return parameterSource;
     }

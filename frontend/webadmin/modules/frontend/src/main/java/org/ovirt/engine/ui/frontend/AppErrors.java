@@ -463,6 +463,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM ${VmName} must be in status Down, Up or Paused.")
     String ACTION_TYPE_FAILED_VM_IS_NOT_DOWN_OR_UP();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The host running VM ${VmName} is not capable of live merging snapshots.")
+    String ACTION_TYPE_FAILED_VM_HOST_CANNOT_LIVE_MERGE();
+
     @DefaultStringValue("Cannot ${action} ${type}. VM is in saving/restoring state.\n-Please try again when the VM is either up or down.")
     String ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING();
 

@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -777,7 +778,20 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) entity;
 
-        setLiveMergeSupported(AsyncDataProvider.getInstance().isLiveMergeSupported(vm));
+        if (vm.getRunOnVds() == null || !AsyncDataProvider.getInstance().isLiveMergeSupported(vm)) {
+            setLiveMergeSupported(false);
+            return;
+        }
+
+        AsyncQuery query = new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object returnValue) {
+                VmSnapshotListModel vmSnapshotListModel = (VmSnapshotListModel) model;
+                VDS vds = (VDS) returnValue;
+                vmSnapshotListModel.setLiveMergeSupported(vds.getLiveMergeSupport());
+            }
+        });
+        AsyncDataProvider.getInstance().getHostById(query, vm.getRunOnVds());
     }
 
     @Override

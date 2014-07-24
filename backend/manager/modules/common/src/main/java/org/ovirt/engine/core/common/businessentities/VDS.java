@@ -1412,4 +1412,12 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public Boolean getLiveSnapshotSupport() {
         return this.mVdsDynamic.getLiveSnapshotSupport();
     }
+
+    public void setLiveMergeSupport(boolean value) {
+        this.mVdsDynamic.setLiveMergeSupport(value);
+    }
+
+    public boolean getLiveMergeSupport() {
+        return this.mVdsDynamic.getLiveMergeSupport();
+    }
 }
