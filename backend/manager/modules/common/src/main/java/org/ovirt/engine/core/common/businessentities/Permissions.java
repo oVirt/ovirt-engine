@@ -16,6 +16,9 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
     private String roleName;
     private String ownerName;
     private RoleType roleType;
+    private String authz;
+
+    private String namespace;
 
     public Permissions() {
         this (Guid.Empty, Guid.Empty, null, null);
@@ -108,6 +111,22 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         return roleType;
     }
 
+    public String getAuthz() {
+        return authz;
+    }
+
+    public void setAuthz(String authz) {
+        this.authz = authz;
+    }
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -121,6 +140,9 @@ public class Permissions extends IVdcQueryable implements BusinessEntity<Guid> {
         result = prime * result + ((roleName == null) ? 0 : roleName.hashCode());
         result = prime * result + ((roleType == null) ? 0 : roleType.hashCode());
         result = prime * result + ((roleId == null) ? 0 : roleId.hashCode());
+        result = prime * result + ((authz == null) ? 0 : authz.hashCode());
+        result = prime * result + ((namespace == null) ? 0 : namespace.hashCode());
+
         return result;
     }
 

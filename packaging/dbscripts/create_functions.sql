@@ -10,6 +10,8 @@ DROP TYPE IF EXISTS booleanResultType CASCADE;
 CREATE TYPE idTextType AS(id text);
 CREATE TYPE idUuidType AS(id UUID);
 CREATE TYPE booleanResultType AS(result BOOLEAN);
+DROP TYPE IF EXISTS authzEntryInfoType CASCADE;
+CREATE TYPE authzEntryInfoType AS(name text, namespace VARCHAR(2048), authz VARCHAR(255));
 
 
 CREATE OR REPLACE FUNCTION getGlobalIds(v_name VARCHAR(4000))
@@ -464,6 +466,27 @@ BEGIN
    return v_result;
 END; $function$
 LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION public.fn_authz_entry_info(v_ad_element_id IN uuid) RETURNS AuthzEntryInfoType STABLE AS
+$function$
+DECLARE
+    result authzEntryInfoType;
+
+BEGIN
+   if (v_ad_element_id = getGlobalIds('everyone')) then
+      select 'Everyone','*','' into result;
+   else
+      select(COALESCE(name,'') || ' ' || COALESCE(surname,'') || ' (' || COALESCE(username,'') || '@' || COALESCE(domain,'') || ')'), namespace, domain INTO result from users where user_id = v_ad_element_id;
+      if (result is null) then
+         select   name, namespace, domain INTO result from ad_groups where ID = v_ad_element_id;
+      end if;
+   end if;
+   return result;
+END; $function$
+LANGUAGE plpgsql;
+
+
 
 CREATE OR REPLACE FUNCTION public.fn_get_ad_element_name(v_ad_element_id IN uuid) RETURNS text STABLE AS
 $function$

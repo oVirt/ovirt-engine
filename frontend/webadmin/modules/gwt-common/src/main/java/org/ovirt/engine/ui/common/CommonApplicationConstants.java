@@ -1868,4 +1868,10 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Required Random Number Generator sources:")
     String requiredRngSources();
+
+    @DefaultStringValue("Namespace")
+    String namespace();
+
+    @DefaultStringValue("Authorization provider")
+    String authz();
 }
