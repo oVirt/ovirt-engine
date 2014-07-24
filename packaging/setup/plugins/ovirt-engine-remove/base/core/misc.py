@@ -27,6 +27,7 @@ _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 from otopi import constants as otopicons
 from otopi import util
 from otopi import plugin
+import distutils.version
 
 
 from ovirt_engine_setup import constants as osetupcons
@@ -93,6 +94,35 @@ class Plugin(plugin.PluginBase):
             )
             raise RuntimeError(
                 _('Could not detect product setup')
+            )
+
+        rpm_v = distutils.version.LooseVersion(
+            osetupcons.Const.RPM_VERSION
+        ).version
+        inst_v = distutils.version.LooseVersion(
+            self.environment[
+                osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
+            ]
+        ).version
+
+        if (rpm_v[:2] != inst_v[:2]) or (rpm_v < inst_v):
+            self.logger.error(
+                _('Cleanup utility and installed version mismatch')
+            )
+            self.dialog.note(
+                text=_(
+                    'Please use a version of cleanup utility '
+                    'that matches the engine installed version '
+                    '(now engine-cleanup {r_version}, engine {i_version})'
+                ).format(
+                    r_version=osetupcons.Const.RPM_VERSION,
+                    i_version=self.environment[
+                        osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
+                    ],
+                )
+            )
+            raise RuntimeError(
+                _('Cleanup utility version mismatch')
             )
 
     @plugin.event(
