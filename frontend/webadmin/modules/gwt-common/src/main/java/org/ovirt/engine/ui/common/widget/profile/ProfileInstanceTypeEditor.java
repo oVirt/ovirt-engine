@@ -71,22 +71,25 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
     public void edit(final VnicInstanceType model) {
         driver.edit(model);
 
-        final VmNetworkInterface vnic = model.getNetworkInterface();
-        String vnicName = vnic.getName();
-
         profileEditor.addLabelStyleName(style.noDisplay());
         profileEditor.addContentWidgetStyleName(style.contentStyle());
-        profileEditor.setElementId(ElementIdUtils.createElementId(elementId, vnicName));
+        profileEditor.setElementId(ElementIdUtils.createElementId(elementId, model.getNetworkInterface().getName()));
+        syncSelectedItemWithNetworkInterface(model);
         model.getSelectedItemChangedEvent().addListener(new IEventListener() {
 
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                VnicProfileView profile = model.getSelectedItem();
-                vnic.setVnicProfileId(profile != null ? profile.getId() : null);
-                vnic.setNetworkName(profile != null ? profile.getNetworkName() : null);
+                syncSelectedItemWithNetworkInterface(model);
                 ValueChangeEvent.fire(ProfileInstanceTypeEditor.this, model);
             }
         });
+    }
+
+    private void syncSelectedItemWithNetworkInterface(final VnicInstanceType model) {
+        final VmNetworkInterface vnic = model.getNetworkInterface();
+        VnicProfileView profile = model.getSelectedItem();
+        vnic.setVnicProfileId(profile != null ? profile.getId() : null);
+        vnic.setNetworkName(profile != null ? profile.getNetworkName() : null);
     }
 
     @Override
