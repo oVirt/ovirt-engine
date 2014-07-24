@@ -1208,6 +1208,17 @@ public final class AsyncDataProvider {
         return uniqueOsNames;
     }
 
+    public static void getAAANamespaces(AsyncQuery aQuery) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (HashMap<String, List<String>>) source : new HashMap<String, List<String>>();
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase(), aQuery);
+    }
+
     public static void getRoleList(AsyncQuery aQuery) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

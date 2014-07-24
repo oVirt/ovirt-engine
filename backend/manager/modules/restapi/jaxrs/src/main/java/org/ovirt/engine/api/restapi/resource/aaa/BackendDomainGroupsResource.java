@@ -14,6 +14,8 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 
 /**
  * This resource corresponds to the groups that exist in a directory accessible to the engine. Those groups may or may
@@ -38,6 +40,11 @@ public class BackendDomainGroupsResource
 
     public BackendDomainResource getParent() {
         return parent;
+    }
+
+    @Override
+    protected SearchParameters createSearchParameters(SearchType searchType, String constraint) {
+        return new DirectorySearchParameters(constraint, searchType);
     }
 
     public Domain getDirectory() {

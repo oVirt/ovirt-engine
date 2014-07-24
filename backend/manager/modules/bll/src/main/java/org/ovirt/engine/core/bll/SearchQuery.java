@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -33,9 +33,12 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
+import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
-import org.ovirt.engine.core.common.utils.ListUtils.Filter;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Filter;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.dao.SearchDAO;
@@ -179,11 +182,20 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getDomain());
-        List<DirectoryUser> results = new ArrayList<>();
-        for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            results.addAll(DirectoryUtils.findDirectoryUsersByQuery(authz, namespace, data.getQuery()));
+        DirectorySearchParameters directorySearchParams = (DirectorySearchParameters) getParameters();
+        List<String> namespaces = Arrays.asList(directorySearchParams.getNamespace());
+        if (directorySearchParams.getNamespace() == null) {
+            HashMap<String, List<String>> namespacesMap =
+                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
+            namespaces = namespacesMap.get(data.getDomain());
         }
 
+        List<DirectoryUser> results = new ArrayList<>();
+        for (String namespace : namespaces) {
+            results.addAll(DirectoryUtils.findDirectoryUsersByQuery(authz,
+                    namespace,
+                    data.getQuery()));
+        }
         return results;
     }
 
@@ -195,9 +207,19 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         }
 
         ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getDomain());
+        DirectorySearchParameters directorySearchParams = (DirectorySearchParameters) getParameters();
+        List<String> namespaces = Arrays.asList(directorySearchParams.getNamespace());
+        if (directorySearchParams.getNamespace() == null) {
+            HashMap<String, List<String>> namespacesMap =
+                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
+            namespaces = namespacesMap.get(data.getDomain());
+        }
+
         List<DirectoryGroup> results = new ArrayList<>();
-        for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-            results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz, namespace, data.getQuery()));
+        for (String namespace : namespaces) {
+            results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz,
+                    namespace,
+                    data.getQuery()));
         }
         return results;
     }

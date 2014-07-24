@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -14,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.SearchParameters;
+import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -29,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class AdElementListModel extends SearchableListModel
@@ -45,6 +47,8 @@ public class AdElementListModel extends SearchableListModel
     }
 
     private Iterable privateExcludeItems;
+
+    private HashMap<String, List<String>> namespacesMap;
 
     public Iterable getExcludeItems()
     {
@@ -66,6 +70,16 @@ public class AdElementListModel extends SearchableListModel
     private void setProfile(ListModel value)
     {
         privateProfile = value;
+    }
+
+    private ListModel<String> privateNamespace;
+
+    public void setNamespace(ListModel<String> value) {
+        privateNamespace = value;
+    }
+
+    public ListModel<String> getNamespace() {
+        return privateNamespace;
     }
 
     private ListModel privateRole;
@@ -157,6 +171,7 @@ public class AdElementListModel extends SearchableListModel
     {
         setRole(new ListModel());
         setProfile(new ListModel());
+        setNamespace(new ListModel());
 
         setSelectAll(new EntityModel());
         getSelectAll().setEntity(false);
@@ -179,9 +194,25 @@ public class AdElementListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object result) {
                 populateProfiles((List<ProfileEntry>) result);
+                getProfile().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                    @Override
+                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                        populateNamespaces();
+                    }
+                });
             }
         }));
 
+        AsyncDataProvider.getAAANamespaces(new AsyncQuery(this, new INewAsyncCallback() {
+
+            @Override
+            public void onSuccess(Object model, Object result) {
+                if (getProfile().getSelectedItem() != null) {
+                    namespacesMap = (HashMap<String, List<String>>) result;
+                    populateNamespaces();
+                }
+            }
+        }));
 
         AsyncDataProvider.getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -196,6 +227,12 @@ public class AdElementListModel extends SearchableListModel
     protected void populateProfiles(List<ProfileEntry> profiles) {
         getProfile().setItems(profiles);
         getProfile().setSelectedItem(Linq.firstOrDefault(profiles));
+    }
+
+    protected void populateNamespaces() {
+        if (namespacesMap != null) {
+            getNamespace().setItems(namespacesMap.get(((ProfileEntry) getProfile().getSelectedItem()).getAuthz()));
+        }
     }
 
     protected void populateRoles(List<Role> roles){
@@ -340,13 +377,13 @@ public class AdElementListModel extends SearchableListModel
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$
+                        new DirectorySearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryGroup, getNamespace().getSelectedItem()), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$
+                        new DirectorySearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryUser, getNamespace().getSelectedItem()), query); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)

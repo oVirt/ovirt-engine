@@ -27,7 +27,7 @@
         }
 
         .searchStringEditor {
-            width: 250px;
+            width: 200px;
             height: 18px;
             margin-left: 5px;
             margin-top: 3px;
@@ -39,13 +39,18 @@
             height: 30px;
         }
 
+        .namespaceSelection {
+            width: 320px;
+            height: 30px;
+        }
+
         .everyonePanel {
             height: 30px;
             margin-top: 3px;
         }
 
         .searchStringPanel {
-            width: 660px;
+            width: 860px;
             height: 30px;
         }
 
@@ -63,7 +68,7 @@
         }
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="500px">
+    <d:SimpleDialogPanel width="900px" height="500px">
         <d:content>
             <g:FlowPanel>
                 <g:SimplePanel ui:field="everyonePanel" addStyleNames="{style.everyonePanel}">
@@ -74,6 +79,7 @@
                 </g:SimplePanel>
                 <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" addStyleNames="{style.searchStringPanel}">
                     <e:ListModelListBoxEditor addStyleNames="{style.profileSelection}" label="{constants.searchPermissionsPopup}" ui:field="profileSelection" />
+                    <e:ListModelListBoxEditor addStyleNames="{style.namespaceSelection}" label="{constants.namespacePermissionsPopup}" ui:field="namespaceSelection" />
                     <e:TextBoxChanger addStyleNames="{style.searchStringEditor}" ui:field="searchStringEditor" />
                     <w:UiCommandButton ui:field="searchButton" addStyleNames="{style.goButton} appv_searchButton_pfly_fix" />
                 </g:HorizontalPanel>

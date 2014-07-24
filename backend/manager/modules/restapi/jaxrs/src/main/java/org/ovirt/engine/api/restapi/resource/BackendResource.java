@@ -75,7 +75,7 @@ public class BackendResource extends BaseBackendResource {
     protected <T> T getEntity(Class<T> clz, SearchType searchType, String constraint) {
         try {
             VdcQueryReturnValue result = runQuery(VdcQueryType.Search,
-                    new SearchParameters(constraint, searchType));
+                    createSearchParameters(searchType, constraint));
             if (!result.getSucceeded()) {
                 backendFailure(result.getExceptionString());
             }
@@ -85,9 +85,14 @@ public class BackendResource extends BaseBackendResource {
         }
     }
 
+
     protected VdcQueryReturnValue runQuery(VdcQueryType queryType, VdcQueryParametersBase queryParams) {
         queryParams.setFiltered(isFiltered());
         return backend.runQuery(queryType, sessionize(queryParams));
+    }
+
+    protected SearchParameters createSearchParameters(SearchType searchType, String constraint) {
+        return new SearchParameters(constraint, searchType);
     }
 
     protected <T> T getEntity(Class<T> clz, VdcQueryType query, VdcQueryParametersBase queryParams, String identifier) {

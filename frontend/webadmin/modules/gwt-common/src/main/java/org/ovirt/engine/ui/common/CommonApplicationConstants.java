@@ -1190,6 +1190,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Search:")
     String searchPermissionsPopup();
 
+    @DefaultStringValue("Namespace:")
+    String namespacePermissionsPopup();
+
     // Pool General
     @DefaultStringValue("Name")
     String namePoolGeneral();
