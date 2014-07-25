@@ -69,7 +69,7 @@
       .migrationDowntimeLabel {
         display: inline-block;
         float: left;
-        max-width: 200px;
+        max-width: 184px;
       }
 
       .migrationDowntimeInfoIcon {
@@ -84,15 +84,23 @@
       }
       <!-- 			turns off the original styles -->
 
-        .checkboxWithLongLabel, .checkbox {
+        .checkbox {
             margin-left: -9px;
+        }
+
+        .checkboxWithLongLabel {
+            width: 400px;
+            float: left;
+            clear: both;
         }
 
         .checkboxWithLongLabel label {
             margin-left: 26px;
-            margin-top: -26px;
+            margin-top: -18px;
             display: block;
             line-height: 20px;
+            width: 400px;
+            float: left;
         }
 
         .longCheckboxContent {
@@ -343,7 +351,7 @@
         }
 
         .cpuPinningTextBox {
-            width: 202px;
+            width: 197px;
             padding-left: 5px;
         }
 
@@ -359,13 +367,23 @@
             float: left;
         }
 
-        .floatLeft {
+        .floatLeft, .detachableCheckBox {
             float: left;
+        }
+
+
+        .detachableCheckBox {
+            width: 400px;
         }
 
         .fullWidth {
             width: 100%;
         }
+
+        .detachableStyle {
+            display: inline-block;
+        }
+
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -528,15 +546,13 @@
                             <ge:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                         </g:FlowPanel>
 
-                        <g:FlowPanel>
-                            <ge:EntityModelDetachableWidget ui:field="isSoundcardEnabledEditorWithDetachable" addStyleNames="{style.checkbox}" />
-                            <ge:EntityModelDetachableWidget ui:field="isConsoleDeviceEnabledEditorWithDetachable" addStyleNames="{style.checkbox}" />
-                        </g:FlowPanel>
+                        <ge:EntityModelDetachableWidget ui:field="isSoundcardEnabledEditorWithDetachable" addStyleNames="{style.checkboxWithLongLabel}" />
+                        <ge:EntityModelDetachableWidget ui:field="isConsoleDeviceEnabledEditorWithDetachable" addStyleNames="{style.checkboxWithLongLabel}" />
 
                         <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" />
-                        <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor"/>
-                        <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" addStyleNames="{style.checkbox}" />
-                        <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkbox}" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" />
+                        <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                     </g:FlowPanel>
                 </t:content>
             </t:DialogTab>

@@ -508,6 +508,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
         networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
         networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
+
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
         uiLanguageEditor.addStyleName(customizableStyle.primaryOption());
@@ -529,7 +530,6 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         cloudInitPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         sysprepPasswordSetEditor.addStyleName(customizableStyle.primaryOption());
         regenerateKeysEnabledEditor.addStyleName(customizableStyle.primaryOption());
-        networkExpanderContent.addStyleName(customizableStyle.primaryOption());
 
         customScriptEditor.setContentWidgetStyleName(customizableStyle.customScript());
 
@@ -538,6 +538,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         sysprepScriptExpanderContent.addStyleName(customizableStyle.expanderContent());
         sysprepPasswordExpanderContent.addStyleName(customizableStyle.expanderContent());
         sysprepInputsExpanderContent.addStyleName(customizableStyle.expanderContent());
+        networkExpanderContent.addStyleName(customizableStyle.expanderContent());
     }
 
     /* Controls style for network options based on network selection */

@@ -845,7 +845,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         isDeleteProtectedEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isSmartcardEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         isConsoleDeviceEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer(), true);
-
         isRngEnabledEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
         rngPeriodEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
         rngBytesEditor = new IntegerEntityModelTextBoxEditor(new ModeSwitchingVisibilityRenderer());
