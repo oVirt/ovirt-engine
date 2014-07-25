@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHardwareGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
@@ -44,11 +43,6 @@ public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, Ho
             PlaceManager placeManager, DetailModelProvider<HostListModel, HostHardwareGeneralModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 HostSubTabPanelPresenter.TYPE_SetTabContent);
-    }
-
-    @Override
-    public void onUiCommonInit(UiCommonInitEvent event) {
-        super.onUiCommonInit(event);
     }
 
     @Override
