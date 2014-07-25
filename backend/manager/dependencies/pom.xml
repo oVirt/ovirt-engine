@@ -321,6 +321,32 @@
       <version>${batik.version}</version>
     </dependency>
 
+    <!-- This version of the JAXB implementation replaces the default
+         version 2.2.4 provided by JBoss AS 7.1.1, and is needed to avoid
+         the following bug:
+
+         https://java.net/jira/browse/JAXB-860
+
+         It can be removed once we update to WildFly 8, as it uses
+         version 2.2.5, where the bug is fixed. -->
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -632,6 +658,24 @@
                 <groupId>org.apache.xmlgraphics</groupId>
                 <artifactId>batik-css</artifactId>
                 <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-xjc</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
               </module>
 
             </modules>
