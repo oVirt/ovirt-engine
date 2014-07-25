@@ -6,6 +6,7 @@ import java.util.logging.Logger;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
@@ -23,7 +24,6 @@ import com.google.gwt.event.shared.GwtEvent.Type;
 import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
@@ -92,6 +92,14 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 }
             }));
         }
+        registerHandler(addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+            @Override
+            public void onUiCommonInit(UiCommonInitEvent event) {
+                //Re-initialize handlers when UiCommonInit is called (new models need to re-attach handlers).
+                initializeHandlers();
+            }
+        }));
+        initializeHandlers();
     }
 
     /**
@@ -196,8 +204,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         }
     }
 
-    @ProxyEvent
-    public void onUiCommonInit(UiCommonInitEvent event) {
+    public void initializeHandlers() {
         // Notify view when the entity of the detail model changes
         modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
             @Override

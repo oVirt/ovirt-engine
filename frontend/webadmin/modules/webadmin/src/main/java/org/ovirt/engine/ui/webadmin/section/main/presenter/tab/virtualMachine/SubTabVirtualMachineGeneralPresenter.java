@@ -4,7 +4,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -67,8 +66,8 @@ public class SubTabVirtualMachineGeneralPresenter extends AbstractSubTabPresente
     }
 
     @Override
-    public void onUiCommonInit(UiCommonInitEvent event) {
-        super.onUiCommonInit(event);
+    public void initializeHandlers() {
+        super.initializeHandlers();
 
         // Initialize the list of alerts:
         final VmGeneralModel model = getModelProvider().getModel();

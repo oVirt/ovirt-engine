@@ -6,7 +6,6 @@ import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
@@ -84,8 +83,8 @@ public class SubTabHostGeneralPresenter extends AbstractSubTabPresenter<VDS, Hos
     }
 
     @Override
-    public void onUiCommonInit(UiCommonInitEvent event) {
-        super.onUiCommonInit(event);
+    public void initializeHandlers() {
+        super.initializeHandlers();
 
         // Initialize the list of alerts:
         final HostGeneralModel model = getModelProvider().getModel();
