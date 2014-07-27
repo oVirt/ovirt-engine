@@ -1,8 +1,9 @@
 package org.ovirt.engine.ui.uicompat;
 
 
-import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+
+import com.google.gwt.i18n.client.Constants;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -2067,7 +2068,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The given mappings are of an invalid format.")
     String interfaceMappingsInvalid();
 
-    @DefaultStringValue("Remove external network(s) from the provider(s) as well.")
+    @DefaultStringValue("Remove network(s) from the external provider(s) as well.")
     String removeNetworkFromProvider();
 
     // Gluster Hook
