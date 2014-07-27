@@ -13,11 +13,11 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 @InternalCommandAttribute
 public class RemoveRngDeviceCommand extends AbstractRngDeviceCommand<RngDeviceParameters> {
 
-    RemoveRngDeviceCommand(RngDeviceParameters parameters) {
+    public RemoveRngDeviceCommand(RngDeviceParameters parameters) {
         this(parameters, null);
     }
 
-    RemoveRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
+    public RemoveRngDeviceCommand(RngDeviceParameters parameters, CommandContext commandContext) {
         super(parameters, commandContext);
     }
 
