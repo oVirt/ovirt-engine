@@ -2,7 +2,6 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.Date;
 import java.util.UUID;
-
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -40,6 +39,8 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String ID = "ID";
     public static final String DESCRIPTION = "DESCRIPTION";
     public static final String ARCHITECTURE = "ARCHITECTURE";
+
+    private static final int MILISECOND = 1000;
 
     public VmConditionFieldAutoCompleter() {
         // Building the basic verbs Dict
@@ -187,7 +188,7 @@ public class VmConditionFieldAutoCompleter extends BaseConditionFieldAutoComplet
         else if (UPTIME.equals(fieldName)) {
             pair.setSecond(StringHelper.trim(pair.getSecond(), '\''));
             TimeSpan ts = TimeSpan.parse(pair.getSecond());
-            pair.setSecond(StringFormat.format("'%1$s'", ts.TotalSeconds));
+            pair.setSecond(StringFormat.format("'%1$s'", ts.TotalMilliseconds < MILISECOND ? 0 : ts.TotalMilliseconds / MILISECOND));
         }
         else if (CREATIONDATE.equals(fieldName)) {
             Date tmp = new Date(Date.parse(StringHelper.trim(pair.getSecond(), '\'')));
