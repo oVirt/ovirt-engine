@@ -25,18 +25,22 @@ public class EngineEncryptionUtils {
 
     private static final Log log = LogFactory.getLog(EngineEncryptionUtils.class);
 
+    private static final String keystoreType;
     private static final File keystoreFile;
     private static final KeyStore.PasswordProtection keystorePassword;
     private static final String keystoreAlias;
 
+    private static final String truststoreType;
     private static final File truststoreFile;
     private static final KeyStore.PasswordProtection truststorePassword;
 
     static {
         EngineLocalConfig config = EngineLocalConfig.getInstance();
+        keystoreType = config.getPKIEngineStoreType();
         keystoreFile = config.getPKIEngineStore().getAbsoluteFile();
         keystorePassword = new KeyStore.PasswordProtection(config.getPKIEngineStorePassword().toCharArray());
         keystoreAlias = config.getPKIEngineStoreAlias();
+        truststoreType = config.getPKITrustStoreType();
         truststoreFile = config.getPKITrustStore().getAbsoluteFile();
         truststorePassword = new KeyStore.PasswordProtection(config.getPKITrustStorePassword().toCharArray());
     }
@@ -66,7 +70,7 @@ public class EngineEncryptionUtils {
      * @return engine key store.
      */
     public static KeyStore getKeyStore() {
-        return _getKeyStore("PKCS12", keystoreFile, keystorePassword.getPassword());
+        return _getKeyStore(keystoreType, keystoreFile, keystorePassword.getPassword());
     }
 
     /**
@@ -74,7 +78,7 @@ public class EngineEncryptionUtils {
      * @return engine key store.
      */
     public static KeyStore getTrustStore() {
-        return _getKeyStore("JKS", truststoreFile, truststorePassword.getPassword());
+        return _getKeyStore(truststoreType, truststoreFile, truststorePassword.getPassword());
     }
 
     /**

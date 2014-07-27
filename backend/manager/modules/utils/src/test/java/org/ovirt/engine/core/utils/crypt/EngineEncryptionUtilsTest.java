@@ -22,8 +22,10 @@ public class EngineEncryptionUtilsTest {
     static {
         try {
             mockEngineLocalConfigRule = new MockEngineLocalConfigRule(
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE_TYPE", "JKS"),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE", URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_TRUST_STORE_PASSWORD", "NoSoup4U"),
+                new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_TYPE", "PKCS12"),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE", URLDecoder.decode(ClassLoader.getSystemResource("key.p12").getPath(), "UTF-8")),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_PASSWORD", "NoSoup4U"),
                 new MockEngineLocalConfigRule.KeyValue("ENGINE_PKI_ENGINE_STORE_ALIAS", "1")

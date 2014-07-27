@@ -196,12 +196,20 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getFile("ENGINE_PKI_ENGINE_CERT");
     }
 
+    public String getPKITrustStoreType() {
+        return getProperty("ENGINE_PKI_TRUST_STORE_TYPE");
+    }
+
     public File getPKITrustStore() {
         return getFile("ENGINE_PKI_TRUST_STORE");
     }
 
     public String getPKITrustStorePassword() {
         return getProperty("ENGINE_PKI_TRUST_STORE_PASSWORD");
+    }
+
+    public String getPKIEngineStoreType() {
+        return getProperty("ENGINE_PKI_ENGINE_STORE_TYPE");
     }
 
     public File getPKIEngineStore() {
