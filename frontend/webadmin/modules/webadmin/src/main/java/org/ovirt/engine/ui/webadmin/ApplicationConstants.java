@@ -2237,11 +2237,11 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Group Name")
     String groupNameGroup();
 
-    @DefaultStringValue("Organizational Unit")
-    String orgUnitGroup();
+    @DefaultStringValue("Namespace")
+    String namespaceGroup();
 
-    @DefaultStringValue("Domain")
-    String domainGroup();
+    @DefaultStringValue("Authorization provider")
+    String authzGroup();
 
     // Event notifier
     @DefaultStringValue("Event Name")

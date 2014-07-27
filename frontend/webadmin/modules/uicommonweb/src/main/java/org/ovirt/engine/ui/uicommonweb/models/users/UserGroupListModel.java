@@ -39,7 +39,7 @@ public class UserGroupListModel extends SearchableListModel
             ArrayList<UserGroup> items = new ArrayList<UserGroup>();
             for (String groupFullName : getEntity().getGroupNames())
             {
-                items.add(createUserGroup(groupFullName));
+                items.add(createUserGroup(groupFullName, getEntity().getNamespace(), getEntity().getDomain()));
             }
 
             setItems(items);
@@ -50,21 +50,12 @@ public class UserGroupListModel extends SearchableListModel
         }
     }
 
-    private static UserGroup createUserGroup(String groupFullName)
+    private UserGroup createUserGroup(String groupFullName, String namespace, String authz)
     {
-        // Parse 'groupFullName' (representation: Domain/OrganizationalUnit/Group)
-        int firstIndexOfSlash = groupFullName.indexOf('/');
-        int lastIndexOfSlash = groupFullName.lastIndexOf('/');
-        String domain = firstIndexOfSlash >= 0 ? groupFullName.substring(0, firstIndexOfSlash) : ""; //$NON-NLS-1$
-        String groupName = lastIndexOfSlash >= 0 ? groupFullName.substring(lastIndexOfSlash + 1) : ""; //$NON-NLS-1$
-        String organizationalUnit =
-                lastIndexOfSlash > firstIndexOfSlash ? groupFullName.substring(0, lastIndexOfSlash)
-                        .substring(firstIndexOfSlash + 1) : ""; //$NON-NLS-1$
-
         UserGroup tempVar = new UserGroup();
-        tempVar.setGroupName(groupName);
-        tempVar.setOrganizationalUnit(organizationalUnit);
-        tempVar.setDomain(domain);
+        tempVar.setGroupName(groupFullName);
+        tempVar.setNamespace(namespace);
+        tempVar.setAuthz(authz);
         return tempVar;
     }
 

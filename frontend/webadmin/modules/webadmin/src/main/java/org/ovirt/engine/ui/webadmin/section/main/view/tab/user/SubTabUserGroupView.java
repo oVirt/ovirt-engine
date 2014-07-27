@@ -24,6 +24,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
     }
 
     void initTable(ApplicationConstants constants) {
+        getTable().enableColumnResizing();
         TextColumnWithTooltip<UserGroup> nameColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
@@ -31,25 +32,25 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
             }
         };
         nameColumn.makeSortable(UserGroupComparator.NAME);
-        getTable().addColumn(nameColumn, constants.groupNameGroup());
+        getTable().addColumn(nameColumn, constants.groupNameGroup(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<UserGroup> orgUnitColumn = new TextColumnWithTooltip<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> namespaceColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
-                return object.getOrganizationalUnit();
+                return object.getNamespace();
             }
         };
-        orgUnitColumn.makeSortable(UserGroupComparator.ORG_UNIT);
-        getTable().addColumn(orgUnitColumn, constants.orgUnitGroup());
+        namespaceColumn.makeSortable(UserGroupComparator.NAMESPACE);
+        getTable().addColumn(namespaceColumn, constants.namespaceGroup(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<UserGroup> domainColumn = new TextColumnWithTooltip<UserGroup>() {
+        TextColumnWithTooltip<UserGroup> authzColumn = new TextColumnWithTooltip<UserGroup>() {
             @Override
             public String getValue(UserGroup object) {
-                return object.getDomain();
+                return object.getAuthz();
             }
         };
-        domainColumn.makeSortable(UserGroupComparator.DOMAIN);
-        getTable().addColumn(domainColumn, constants.domainGroup());
+        authzColumn.makeSortable(UserGroupComparator.AUTHZ);
+        getTable().addColumn(authzColumn, constants.authzGroup(), "300px"); //$NON-NLS-1$
     }
 
 }

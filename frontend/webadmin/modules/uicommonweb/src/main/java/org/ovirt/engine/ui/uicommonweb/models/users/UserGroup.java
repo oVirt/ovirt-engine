@@ -3,39 +3,35 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 @SuppressWarnings("unused")
 public class UserGroup
 {
-    private String privateGroupName;
+    private String groupName;
+    private String authz;
+    private String namespace;
+
+    public String getNamespace() {
+        return namespace;
+    }
+
+    public void setNamespace(String namespace) {
+        this.namespace = namespace;
+    }
 
     public String getGroupName()
     {
-        return privateGroupName;
+        return groupName;
     }
 
     public void setGroupName(String value)
     {
-        privateGroupName = value;
+        groupName = value;
     }
 
-    private String privateOrganizationalUnit;
-
-    public String getOrganizationalUnit()
+    public String getAuthz()
     {
-        return privateOrganizationalUnit;
+        return authz;
     }
 
-    public void setOrganizationalUnit(String value)
+    public void setAuthz(String value)
     {
-        privateOrganizationalUnit = value;
-    }
-
-    private String privateDomain;
-
-    public String getDomain()
-    {
-        return privateDomain;
-    }
-
-    public void setDomain(String value)
-    {
-        privateDomain = value;
+        authz = value;
     }
 }

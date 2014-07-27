@@ -19,22 +19,22 @@ public class UserGroupComparator {
     };
 
     /**
-     * Comparator for the organizational unit field in {@code UserGroup}.
+     * Comparator for the namespace field in {@code UserGroup}.
      */
-    public static final Comparator<UserGroup> ORG_UNIT = new Comparator<UserGroup>() {
+    public static final Comparator<UserGroup> NAMESPACE = new Comparator<UserGroup>() {
         @Override
         public int compare(UserGroup userGroup1, UserGroup userGroup2) {
-            return lexoNumeric.compare(userGroup1.getOrganizationalUnit(), userGroup2.getOrganizationalUnit());
+            return lexoNumeric.compare(userGroup1.getNamespace(), userGroup2.getNamespace());
         }
     };
 
     /**
-     * Comparator for the group name field in {@code UserGroup}.
+     * Comparator for the authorization provider (authz) field in {@code UserGroup}.
      */
-    public static final Comparator<UserGroup> DOMAIN = new Comparator<UserGroup>() {
+    public static final Comparator<UserGroup> AUTHZ = new Comparator<UserGroup>() {
         @Override
         public int compare(UserGroup userGroup1, UserGroup userGroup2) {
-            return lexoNumeric.compare(userGroup1.getDomain(), userGroup2.getDomain());
+            return lexoNumeric.compare(userGroup1.getAuthz(), userGroup2.getAuthz());
         }
     };
 }
