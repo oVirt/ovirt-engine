@@ -179,4 +179,9 @@ public enum ActionGroup {
     public int getAvailableInModes() {
         return applicationMode;
     }
+
+    @Override
+    public String toString() {
+        return "Action group " + this.name() + " with role type " + this.roleType.name();
+    }
 }
