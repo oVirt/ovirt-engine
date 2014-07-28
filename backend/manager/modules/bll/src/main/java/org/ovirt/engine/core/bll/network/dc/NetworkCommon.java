@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -20,6 +21,10 @@ public abstract class NetworkCommon<T extends VdcActionParametersBase> extends C
 
     public NetworkCommon(T parameters) {
         super(parameters);
+    }
+
+    public NetworkCommon(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     protected abstract Network getNetwork();

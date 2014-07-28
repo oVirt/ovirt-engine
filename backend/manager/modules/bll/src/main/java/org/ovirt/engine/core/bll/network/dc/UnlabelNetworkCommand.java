@@ -27,7 +27,7 @@ public class UnlabelNetworkCommand<T extends UnlabelNetworkParameters> extends C
     @Override
     protected void executeCommand() {
         getNetwork().setLabel(null);
-        VdcReturnValueBase result = getBackend().runAction(VdcActionType.UpdateNetwork,
+        VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getNetwork().getDataCenterId(), getNetwork()));
 
         if (!result.getSucceeded()) {

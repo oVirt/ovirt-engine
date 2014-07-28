@@ -28,7 +28,7 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
     @Override
     protected void executeCommand() {
         getNetwork().setLabel(getLabel());
-        VdcReturnValueBase result = getBackend().runAction(VdcActionType.UpdateNetwork,
+        VdcReturnValueBase result = runInternalAction(VdcActionType.UpdateNetwork,
                 new AddNetworkStoragePoolParameters(getNetwork().getDataCenterId(), getNetwork()));
 
         if (!result.getSucceeded()) {
