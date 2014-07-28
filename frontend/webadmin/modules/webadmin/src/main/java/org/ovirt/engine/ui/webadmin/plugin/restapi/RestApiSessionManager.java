@@ -4,6 +4,7 @@ import java.util.logging.Level;
 import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.utils.HttpUtils;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.communication.StorageCallback;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
@@ -152,7 +153,7 @@ public class RestApiSessionManager {
             protected void processResponse(Response response) {
                 // Obtain session ID from response header, as we're unable to access REST API
                 // JSESSIONID cookie directly (cookie set for different path than WebAdmin page)
-                String sessionIdFromHeader = response.getHeader(SESSION_ID_HEADER);
+                String sessionIdFromHeader = HttpUtils.getHeader(response, SESSION_ID_HEADER);
 
                 if (sessionIdFromHeader != null) {
                     setSessionId(sessionIdFromHeader);
