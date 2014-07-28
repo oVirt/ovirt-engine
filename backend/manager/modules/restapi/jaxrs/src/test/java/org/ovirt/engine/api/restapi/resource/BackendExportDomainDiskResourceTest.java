@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -153,17 +152,10 @@ public class BackendExportDomainDiskResourceTest
                 expect(queryResult.getExceptionString()).andThrow((Exception) failure).anyTimes();
             }
         }
-        if(queryClass == GetPermissionsForObjectParameters.class) {
-            expect(backend.runQuery(eq(query),
-                eqQueryParams(queryClass,
-                        addSession(queryNames),
-                        addSession(queryValues)))).andReturn(queryResult).anyTimes();
-        } else {
-            expect(backend.runQuery(eq(query),
-                eqQueryParams(queryClass,
-                        addSession(queryNames),
-                        addSession(queryValues)))).andReturn(queryResult).anyTimes();
-        }
+        expect(backend.runQuery(eq(query),
+            eqQueryParams(queryClass,
+                    addSession(queryNames),
+                    addSession(queryValues)))).andReturn(queryResult).anyTimes();
     }
 
     protected HashMap<VmTemplate, List<DiskImage>> setUpTemplates(boolean notFound) {
