@@ -10,7 +10,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.TimeUnit;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -127,6 +126,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
+        if (Guid.Empty.equals(getVmTemplateId())) {
+            setVmTemplateId(Guid.newGuid());
+            getParameters().setVmTemplateId(getVmTemplateId());
+            getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
+        }
     }
 
     protected void updateDiskInfoDestinationMap() {
@@ -212,9 +216,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             VmHandler.lockVm(vmDynamic, getCompensationContext());
         }
         setActionReturnValue(Guid.Empty);
-        setVmTemplateId(Guid.newGuid());
-        getParameters().setVmTemplateId(getVmTemplateId());
-        getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VmTemplate, getVmTemplateId()));
 
         // set template id as base for new templates
         if (!isTemplateVersion()) {
