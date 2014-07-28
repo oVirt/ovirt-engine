@@ -33,7 +33,7 @@ public enum OsType {
     RHEL_4X64,
     RHEL_3X64,
     WINDOWS_2008X64,
-    WINDOWS_2008R2,
+    WINDOWS_2008R2X64,
     RHEL_6,
     RHEL_6X64,
     WINDOWS_8,
