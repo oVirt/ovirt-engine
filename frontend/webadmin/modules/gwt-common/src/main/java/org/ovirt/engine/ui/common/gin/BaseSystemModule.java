@@ -14,6 +14,7 @@ import org.ovirt.engine.ui.common.system.ErrorPopupManagerImpl;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.utils.DynamicMessages;
+import org.ovirt.engine.ui.common.utils.HttpUtils;
 import org.ovirt.engine.ui.frontend.AppErrors;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.VdsmErrors;
@@ -124,7 +125,7 @@ public abstract class BaseSystemModule extends AbstractGinModule {
 
                     @Override
                     public void onResponseReceived(Request request, Response response) {
-                        String tokenValue = response.getHeader("OVIRT-SSO-TOKEN"); //$NON-NLS-1$
+                        String tokenValue = HttpUtils.getHeader(response, "OVIRT-SSO-TOKEN"); //$NON-NLS-1$
                         if (tokenValue != null) {
                             //Login result received.
                             SSOTokenChangeEvent.fire(eventBus, tokenValue);
