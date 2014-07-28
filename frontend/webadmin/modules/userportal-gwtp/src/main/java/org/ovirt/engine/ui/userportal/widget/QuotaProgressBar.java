@@ -73,8 +73,16 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
 
     protected void setValues(double limit, double consumedByOthers, double consumedByUser) {
 
-        int othersConsumptionPercent = (int) Math.round(consumedByOthers * 100 / limit);
-        int userConsumptionPercent = (int) Math.round(consumedByUser * 100 / limit);
+        int othersConsumptionPercent;
+        int userConsumptionPercent;
+        //Prevent potential divide by 0
+        if (Math.round(limit) == 0) {
+            othersConsumptionPercent = Integer.MAX_VALUE;
+            userConsumptionPercent = Integer.MAX_VALUE;
+        } else {
+            othersConsumptionPercent = (int) Math.round(consumedByOthers * 100 / limit);
+            userConsumptionPercent = (int) Math.round(consumedByUser * 100 / limit);
+        }
 
         if (limit == UNLIMITED) { // unlimited
             setUnlimited();

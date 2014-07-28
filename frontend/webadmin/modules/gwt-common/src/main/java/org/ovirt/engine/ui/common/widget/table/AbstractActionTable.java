@@ -14,7 +14,6 @@ import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -240,10 +239,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     void addModelSearchStringChangeListener(final SearchableListModel<?> model) {
         if (model.supportsServerSideSorting()) {
-            model.getPropertyChangedEvent().addListener(new IEventListener() {
+            model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
                 @Override
-                public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
-                    if ("SearchString".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                public void eventRaised(org.ovirt.engine.ui.uicompat.Event<PropertyChangedEventArgs> ev, Object sender,
+                        PropertyChangedEventArgs args) {
+                    if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                         if (!model.isSearchValidForServerSideSorting()) {
                             model.clearSortOptions();
                             clearColumnSort();

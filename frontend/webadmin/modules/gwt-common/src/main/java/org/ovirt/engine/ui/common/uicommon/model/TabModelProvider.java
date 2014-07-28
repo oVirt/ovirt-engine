@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -69,10 +68,10 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         popupHandler.addDialogModelListener(getModel());
 
         // Register WidgetModel property change listener
-        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
 
                 if ("WidgetModel".equals(propName)) { //$NON-NLS-1$
                     modelBoundWidgetChange();
