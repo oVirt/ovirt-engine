@@ -23,6 +23,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.RunVmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -38,6 +39,7 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
@@ -851,6 +853,10 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_RNG_SOURCE_NOT_SUPPORTED);
         }
 
+        if (isRunAsStateless()) {
+            return validateSpaceRequirements();
+        }
+
         return true;
     }
 
@@ -873,6 +879,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         }
 
         return true;
+    }
+
+    protected boolean validateSpaceRequirements() {
+        fetchVmDisksFromDb();
+        List<DiskImage> disksList = getVm().getDiskList();
+        MultipleStorageDomainsValidator msdValidator = createMultipleStorageDomainsValidator(disksList);
+        return validate(msdValidator.allDomainsHaveSpaceForNewDisks(disksList));
     }
 
     @Override
