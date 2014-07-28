@@ -925,6 +925,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             final VdcObjectType type,
             final boolean ignoreEveryone) {
         // Grant if there is matching permission in the database:
+        if (log.isDebugEnabled()) {
+            log.debugFormat("Checking whether user {0} or groups {1} have action group {3} on object type {4}",
+                    userId,
+                    StringUtils.join(groupIds, ","),
+                    actionGroup,
+                    object,
+                    type.name());
+        }
         final Guid permId =
                 getPermissionDAO().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
@@ -989,11 +997,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 log.debugFormat("The set of objects to check is null or empty for action {0}.", getActionType());
             }
             addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
+
             return false;
         }
 
         if (isQuotaDependant()) {
             addQuotaPermissionSubject(permSubjects);
+        }
+
+        if (log.isDebugEnabled()) {
+            StringBuilder builder = getPermissionSubjectsAsStringBuilder(permSubjects);
+
+            log.debugFormat("Checking whether user {0} or one of the groups he is member of, have the following permissions: {1}",
+                    getCurrentUser().getId(),
+                    builder.toString());
         }
 
         // If we are here then we should grant the permission:
@@ -1003,6 +1020,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
         for (PermissionSubject permSubject : permSubjects) {
             if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
+                log.infoFormat("No permission found for user {0} or one of the groups he is member of,"
+                        + " when running action {1}, Required permissions are: Action type: {2} Action group: {3}"
+                        + " Object type: {4}  Object ID: {5}.",
+                        getCurrentUser().getId(),
+                        getActionType(),
+                        permSubject.getActionGroup().getRoleType().name(),
+                        permSubject.getActionGroup().name(),
+                        permSubject.getObjectType().getVdcObjectTranslation(),
+                        permSubject.getObjectId());
                 return false;
             }
         }
@@ -1219,20 +1245,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Log if there is entry in the permission map.
         if (permissionSubjectList != null && !permissionSubjectList.isEmpty()) {
             // Build entities string for entities affected by this operation.
-            StringBuilder logEntityIdsInfo = new StringBuilder();
-
-            // Iterate all over the entities , which should be affected.
-            for (PermissionSubject permSubject : permissionSubjectList) {
-                if (permSubject.getObjectId() != null) {
-                    // Add comma when there are more then one entity
-                    // affected.
-                    if (logEntityIdsInfo.length() != 0) {
-                        logEntityIdsInfo.append(", ");
-                    }
-                    logEntityIdsInfo.append(" ID: ").append(permSubject.getObjectId())
-                            .append(" Type: ").append(permSubject.getObjectType());
-                }
-            }
+            StringBuilder logEntityIdsInfo = getPermissionSubjectsAsStringBuilder(permissionSubjectList);
 
             // If found any entities, add the log to the logInfo.
             if (logEntityIdsInfo.length() != 0) {
@@ -1244,6 +1257,27 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // Log the final appended message to the log.
         log.info(logInfo);
+    }
+
+    private StringBuilder getPermissionSubjectsAsStringBuilder(List<PermissionSubject> permissionSubjects) {
+        StringBuilder builder = new StringBuilder();
+
+        // Iterate all over the entities , which should be affected.
+        for (PermissionSubject permSubject : permissionSubjects) {
+            if (permSubject.getObjectId() != null) {
+                // Add comma when there are more then one entity
+                // affected.
+                if (builder.length() != 0) {
+                    builder.append(", ");
+                }
+                builder.append(" ID: ").append(permSubject.getObjectId())
+                        .append(" Type: ").append(permSubject.getObjectType());
+                if (permSubject.getActionGroup() != null) {
+                    builder.append(permSubject.getActionGroup().toString());
+                }
+            }
+        }
+        return builder;
     }
 
     private void executeActionInTransactionScope() {
