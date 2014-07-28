@@ -534,11 +534,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
         return new DiskImagesValidator(disksList);
     }
 
-    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(List<DiskImage> disksList) {
-        return new MultipleStorageDomainsValidator(getVm().getStoragePoolId(),
-                ImagesHandler.getAllStorageIdsForImageIds(disksList));
-    }
-
     protected VmValidator createVmValidator() {
         return new VmValidator(getVm());
     }
