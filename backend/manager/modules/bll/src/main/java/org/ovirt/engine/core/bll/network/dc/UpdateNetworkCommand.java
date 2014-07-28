@@ -54,6 +54,10 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         super(parameters);
     }
 
+    public UpdateNetworkCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
+    }
+
     @Override
     protected void executeCommand() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
