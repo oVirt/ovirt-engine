@@ -80,6 +80,7 @@ public abstract class AbstractDiskModel extends DiskModel
     private VolumeFormat volumeFormat;
     private boolean previousWipeAfterDeleteEntity;
     private boolean previousIsQuotaAvailable;
+    private boolean isVmContainBootableDisk;
 
     private SystemTreeItemModel systemTreeSelectedItem;
     private String hash;
@@ -283,9 +284,11 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsBootable(new EntityModel<Boolean>());
         getIsBootable().setEntity(false);
+        getIsBootable().getEntityChangedEvent().addListener(this);
 
         setIsShareable(new EntityModel<Boolean>());
         getIsShareable().setEntity(false);
+        getIsShareable().getEntityChangedEvent().addListener(this);
 
         setIsPlugged(new EntityModel<Boolean>());
         getIsPlugged().setEntity(true);
@@ -488,11 +491,13 @@ public abstract class AbstractDiskModel extends DiskModel
             public void onSuccess(Object target, Object returnValue) {
                 AbstractDiskModel diskModel = (AbstractDiskModel) target;
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                isVmContainBootableDisk = false;
 
                 diskModel.getIsBootable().setEntity(true);
                 if (getDisk() == null || !getDisk().isDiskSnapshot()) {
                     for (Disk disk : disks) {
                         if (disk.isBoot() && !disk.equals(getDisk())) {
+                            isVmContainBootableDisk = true;
                             diskModel.getIsBootable().setEntity(false);
                             if (!disk.isDiskSnapshot()) {
                                 diskModel.getIsBootable().setChangeProhibitionReason(CONSTANTS.onlyOneBootableDisk());
@@ -514,8 +519,10 @@ public abstract class AbstractDiskModel extends DiskModel
         boolean isShareableDiskEnabled = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(
                 ConfigurationValues.ShareableDiskEnabled, datacenter.getcompatibility_version().getValue());
 
-        getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
-        getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
+        if (getIsShareable().getIsChangable()) {
+            getIsShareable().setChangeProhibitionReason(CONSTANTS.shareableDiskNotSupported());
+            getIsShareable().setIsChangable(isShareableDiskEnabled && isEditEnabled());
+        }
     }
 
     private void updateDirectLunDiskEnabled(StoragePool datacenter) {
@@ -537,7 +544,7 @@ public abstract class AbstractDiskModel extends DiskModel
             getIsShareable().setIsChangable(false);
             getIsShareable().setEntity(false);
         }
-        else {
+        else if (getIsShareable().getIsChangable()) {
             getIsShareable().setIsChangable(isEditEnabled());
         }
     }
@@ -652,6 +659,27 @@ public abstract class AbstractDiskModel extends DiskModel
         getQuota().setIsAvailable(isInternal ? previousIsQuotaAvailable : false);
 
         updateDatacenters();
+    }
+
+    private void isBootable_EntityChanged() {
+        boolean isBootable = getIsBootable().getEntity();
+        if (getIsShareable().getIsChangable() || !isBootable) {
+            getIsShareable().setIsChangable(!isBootable);
+            getIsShareable().setChangeProhibitionReason(CONSTANTS.cannotEnableShareableForBootableDisk());
+        }
+    }
+
+    private void isShareable_EntityChanged() {
+        // When the "isShareable" entity value changes, there are two main cases
+        // in which we want to handle the changeability of the "isBootable" entity:
+        // 1. "isBootable" is changeable.
+        // 2. "isBootable" is not changeable because the disk is already shareable.
+        // Note - if the VM already contains a bootable disk, the changeability of "isBootable" should not change.
+        boolean isShareable = getIsShareable().getEntity();
+        if (getIsBootable().getIsChangable() || (!isVmContainBootableDisk && !isShareable))  {
+            getIsBootable().setIsChangable(!isShareable);
+            getIsBootable().setChangeProhibitionReason(CONSTANTS.cannotEnableBootableForShareableDisk());
+        }
     }
 
     protected void volumeType_SelectedItemChanged() {
@@ -951,6 +979,10 @@ public abstract class AbstractDiskModel extends DiskModel
                 updateReadOnlyChangeability();
             } else if (sender == getIsInternal()) {
                 isInternal_EntityChanged();
+            } else if (sender == getIsBootable()) {
+                isBootable_EntityChanged();
+            } else if (sender == getIsShareable()) {
+                isShareable_EntityChanged();
             }
         }
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())

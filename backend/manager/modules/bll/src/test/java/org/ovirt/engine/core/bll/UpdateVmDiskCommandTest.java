@@ -415,7 +415,7 @@ public class UpdateVmDiskCommandTest {
             public Object answer(InvocationOnMock invocationOnMock) throws Throwable {
             final DiskImage oldDisk = createDiskImage();
             oldDisk.setDiskInterface(DiskInterface.VirtIO);
-            assertNotSame (oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
+            assertNotSame(oldDisk.getDiskInterface(), parameters.getDiskInfo().getDiskInterface());
             return oldDisk;
             }
         });
@@ -551,6 +551,32 @@ public class UpdateVmDiskCommandTest {
         assertFalse(command.validateCanResizeDisk());
         CanDoActionTestUtils.assertCanDoActionMessages
                 ("wrong failure", command, VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_RESIZE_READ_ONLY_DISK);
+    }
+
+    @Test
+    public void canDoActionFailsWhenDiskIsBothShareableAndBootable() {
+        prepareForDiskShareableBootableTest(
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+                command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE);
+    }
+
+    @Test
+    public void canDoActionSucceedsWhenDiskIsNotBothShareableAndBootable() {
+        prepareForDiskShareableBootableTest(ValidationResult.VALID);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    private void prepareForDiskShareableBootableTest(ValidationResult isDiskShareableAndBootableValidationResult) {
+        UpdateVmDiskParameters parameters = createParameters();
+        initializeCommand(parameters);
+
+        DiskImage oldDisk = createDiskImage();
+        doReturn(oldDisk).when(command).getOldDisk();
+
+        when(diskValidator.areBootableAndSharableCompatibleWithDisk()).thenReturn(isDiskShareableAndBootableValidationResult);
+        doReturn(true).when(command).validateCanUpdateReadOnly(diskValidator);
+        doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
     }
 
     private void initializeCommand(UpdateVmDiskParameters params) {

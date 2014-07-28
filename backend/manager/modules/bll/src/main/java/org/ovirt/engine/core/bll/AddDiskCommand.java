@@ -115,6 +115,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             return false;
         }
 
+        if (!validate(diskValidator.areBootableAndSharableCompatibleWithDisk())) {
+            return false;
+        }
+
         if (DiskStorageType.IMAGE == getParameters().getDiskInfo().getDiskStorageType()) {
             return checkIfImageDiskCanBeAdded(vm, diskValidator);
         }

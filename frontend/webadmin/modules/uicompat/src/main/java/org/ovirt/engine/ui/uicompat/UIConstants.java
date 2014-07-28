@@ -2284,8 +2284,17 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Privileged SCSI I/O can be set only when SCSI pass-through is enabled.")
     String cannotEnableSgioWhenScsiPassthroughDisabled();
 
+    @DefaultStringValue("A VirtIO-ISCSI direct LUN disk can't be read-only.")
+    String cannotEnableVirtIoScsiInterfaceForLunReadOnlyDisk();
+
     @DefaultStringValue("SCSI pass-through is not supported for read-only disks.")
     String cannotEnableScsiPassthroughForLunReadOnlyDisk();
+
+    @DefaultStringValue("A shareable disk cannot be bootable.")
+    String cannotEnableBootableForShareableDisk();
+
+    @DefaultStringValue("A bootable disk cannot be shareable.")
+    String cannotEnableShareableForBootableDisk();
 
     @DefaultStringValue("Global Maintenance Enabled")
     String haGlobalMaintenance();

@@ -199,4 +199,33 @@ public class DiskValidatorTest {
         lunDisk.setDiskInterface(DiskInterface.IDE);
         assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
     }
+
+    @Test
+    public void bootableAndShareableDiskFail() {
+        disk.setBoot(true);
+        disk.setShareable(true);
+        assertThat(validator.areBootableAndSharableCompatibleWithDisk(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE));
+    }
+
+    @Test
+    public void bootableAndNotShareableDiskSuccess() {
+        disk.setBoot(true);
+        disk.setShareable(false);
+        assertThat(validator.areBootableAndSharableCompatibleWithDisk(), isValid());
+    }
+
+    @Test
+    public void shareableAndNotBootableDiskSuccess() {
+        disk.setShareable(true);
+        disk.setBoot(false);
+        assertThat(validator.areBootableAndSharableCompatibleWithDisk(), isValid());
+    }
+
+    @Test
+    public void notBootableAndNotShareableDiskSuccess() {
+        disk.setBoot(false);
+        disk.setShareable(false);
+        assertThat(validator.areBootableAndSharableCompatibleWithDisk(), isValid());
+    }
 }
