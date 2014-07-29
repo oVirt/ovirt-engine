@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -14,6 +12,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.AddNetworksByLabelParametersBuilder;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -30,6 +29,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class AttachNetworksToClusterCommand<T extends ClusterNetworksParameters> extends VdsGroupCommandBase<T> {
+
+    public AttachNetworksToClusterCommand(T parameters) {
+        super(parameters);
+    }
 
     public AttachNetworksToClusterCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
