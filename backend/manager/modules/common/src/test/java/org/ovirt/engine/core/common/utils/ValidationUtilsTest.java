@@ -64,4 +64,22 @@ public class ValidationUtilsTest {
         assertFalse(ValidationUtils.validUri("://asdasd:12"));
         assertFalse(ValidationUtils.validUri("asd asd"));
     }
+
+    @Test
+    public void testValidIsoPath() {
+        assertPatternMatches("Valid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "", "foo.iso", "RHEVM-123456-tools.iso");
+        assertPatternDoesNotMatch("Invalid isoPath: ", ValidationUtils.ISO_SUFFIX_PATTERN, "x", "sysprep.vfd", "disk.ISO");
+    }
+
+    private void assertPatternMatches(String message, String pattern, String... validStrings) {
+        for (String s : validStrings) {
+            assertTrue(message + s, Pattern.matches(pattern, s));
+        }
+    }
+
+    private void assertPatternDoesNotMatch(String message, String pattern, String... invalidStrings) {
+        for (String s : invalidStrings) {
+            assertTrue(message + s, !Pattern.matches(pattern, s));
+        }
+    }
 }
