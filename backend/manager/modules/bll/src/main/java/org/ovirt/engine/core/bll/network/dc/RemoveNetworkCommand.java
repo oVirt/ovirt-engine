@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -59,11 +60,24 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
             }
         });
 
-        if (getParameters().isRemoveFromNetworkProvider() && getNetwork().isExternal()) {
-            removeExternalNetwork();
+        if (getNetwork().isExternal()) {
+            if (getParameters().isRemoveFromNetworkProvider()) {
+                removeExternalNetwork();
+            }
+        }
+
+        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getNetwork(), getStoragePool().getcompatibility_version())) {
+            removeNetworkFromHosts();
         }
 
         setSucceeded(true);
+    }
+
+    private void removeNetworkFromHosts() {
+        NetworkHelper.removeNetworkFromHostsInDataCenter(getNetwork(),
+                getStoragePoolId(),
+                cloneContextAndDetachFromParent()
+        );
     }
 
     private void removeExternalNetwork() {
