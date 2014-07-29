@@ -10,15 +10,8 @@ import org.junit.Test;
 public class ValidationUtilsTest {
     @Test
     public void testcontainsIlegalCharacters() {
-        String[] straValid = new String[] { "www_redhat_com", "127001", "www_REDHAT_1" };
-        String[] straInvalid = new String[] { "www.redhatcom", "me@localhost", "no/worries" };
-        for (String s : straValid) {
-            assertTrue("Valid strings: " + s, Pattern.matches(ValidationUtils.NO_SPECIAL_CHARACTERS, s));
-        }
-
-        for (String s : straInvalid) {
-            assertTrue("Invalid strings: " + s, !Pattern.matches(ValidationUtils.NO_SPECIAL_CHARACTERS, s));
-        }
+        assertPatternMatches("Valid strings: ", ValidationUtils.NO_SPECIAL_CHARACTERS, "www_redhat_com", "127001", "www_REDHAT_1");
+        assertPatternDoesNotMatch("Invalid strings: ", ValidationUtils.NO_SPECIAL_CHARACTERS, "www.redhatcom", "me@localhost", "no/worries");
     }
 
     @Test
@@ -39,18 +32,8 @@ public class ValidationUtilsTest {
 
     @Test
     public void testTrimmingWhitespaces() {
-        String[] validStrings = {"", "aoeu", "a o e u ř", "%2123 o ^ ooe#"};
-        String[] inValidStrings = {" ", " aoeu", "a o e u ř ", " %2123 o ^ ooe##", " aoeu "};
-
-        for (String s : validStrings) {
-            assertTrue("Valid strings (no trimming whitespaces)",
-                    Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
-        }
-
-        for (String s : inValidStrings) {
-            assertTrue("Invalid strings (trimming whitespaces)",
-                    !Pattern.matches(ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, s));
-        }
+        assertPatternMatches("Valid string (no trimming whitespaces): ", ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, "", "aoeu", "a o e u ř", "%2123 o ^ ooe#");
+        assertPatternDoesNotMatch("Invalid string (trimming whitespaces): ", ValidationUtils.NO_TRIMMING_WHITE_SPACES_PATTERN, " ", " aoeu", "a o e u ř ", " %2123 o ^ ooe##", " aoeu ");
     }
 
     @Test
