@@ -25,6 +25,9 @@ public class ValidationUtils {
     public static final String IP_PATTERN =
             "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
 
+    public static final String ISO_SUFFIX = ".iso";
+    public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
+
     /** the mask will be replaced with zero-padded number in the generated names of the VMs in the pool,
      * see NameForVmInPoolGeneratorTest PoolNameValidationTest for valid and invalid expressions of this pattern */
     public static final String POOL_NAME_PATTERN = "^[\\p{L}0-9._-]+[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]*$|^[\\p{L}0-9._-]*[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]+$";
