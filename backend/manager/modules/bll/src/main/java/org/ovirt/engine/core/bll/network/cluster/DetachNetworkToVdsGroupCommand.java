@@ -7,23 +7,17 @@ import java.util.List;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
-import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
-import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -47,8 +41,7 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
             }
         });
 
-        if (!getPersistedNetwork().isExternal() && NetworkUtils.isLabeled(getPersistedNetwork())
-                && NetworkHelper.setupNetworkSupported(getVdsGroup().getcompatibility_version())) {
+        if (NetworkHelper.shouldRemoveNetworkFromHostUponNetworkRemoval(getPersistedNetwork(), getVdsGroup().getcompatibility_version())) {
             removeNetworkFromHosts();
         }
 
@@ -101,16 +94,10 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
     }
 
     private void removeNetworkFromHosts() {
-        List<VdsNetworkInterface> nics =
-                getDbFacade().getInterfaceDao().getAllInterfacesByLabelForCluster(getParameters().getVdsGroupId(),
-                        getPersistedNetwork().getLabel());
-        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getPersistedNetwork(), getContext());
-        ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
-
-        if (!parameters.isEmpty()) {
-            NetworkParametersBuilder.updateParametersSequencing(parameters);
-            runInternalMultipleActions(VdcActionType.PersistentSetupNetworks, parameters);
-        }
+        NetworkHelper.removeNetworkFromHostsInCluster(getPersistedNetwork(),
+                getParameters().getVdsGroupId(),
+                cloneContextAndDetachFromParent()
+        );
     }
 
     private class DetachNetworkValidator extends NetworkValidator {

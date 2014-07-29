@@ -245,15 +245,25 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     @Override
+    public List<VdsNetworkInterface> getAllInterfacesByLabelForDataCenter(Guid dataCenterId, String label) {
+        return nicsContainingLabel(getAllInterfacesByDataCenterId(dataCenterId), label);
+    }
+
+    @Override
     public List<VdsNetworkInterface> getAllInterfacesByLabelForCluster(Guid clusterId, String label) {
-        List<VdsNetworkInterface> labelledNics = new ArrayList<>();
-        for (VdsNetworkInterface nic : getAllInterfacesByClusterId(clusterId)) {
-            if (nic.getLabels() != null && nic.getLabels().contains(label)) {
-                labelledNics.add(nic);
+        return nicsContainingLabel(getAllInterfacesByClusterId(clusterId), label);
+    }
+
+    protected List<VdsNetworkInterface> nicsContainingLabel(List<VdsNetworkInterface> interfaces, String label) {
+        List<VdsNetworkInterface> result = new ArrayList<>();
+
+        for (VdsNetworkInterface vdsNetworkInterface : interfaces) {
+            if (vdsNetworkInterface.getLabels() != null && vdsNetworkInterface.getLabels().contains(label)) {
+                result.add(vdsNetworkInterface);
             }
         }
 
-        return labelledNics;
+        return result;
     }
 
     private List<VdsNetworkInterface> getAllInterfacesByDataCenterId(Guid dataCenterId) {
