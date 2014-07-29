@@ -59,7 +59,7 @@ limitations under the License.
     <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
     <init-param>
       <param-name>user-name-format</param-name>
-      <param-value>UPN</param-value>
+      <param-value>RESTAPI_SPECIFIC</param-value>
     </init-param>
   </filter>
   <filter-mapping>
