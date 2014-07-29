@@ -461,25 +461,17 @@ a.dropdown-toggle {
         margin-top: 0 !important;
     }
 }
-.nip_actionButton_pfly_fix img {
-    left: -2px;
-}
-.np_actionButton_pfly_fix {
+.nicp_actionButton_pfly_fix, .np_actionButton_pfly_fix, .bp_actionButton_pfly_fix {
+    width: 18px !important;
+    height: 18px !important;
     cursor: pointer;
     position: relative;
-    top: 1px !important;
-    right: 3px !important;
 }
-.np_actionButton_pfly_fix img {
+.nicp_actionButton_pfly_fix img, .np_actionButton_pfly_fix img, .bp_actionButton_pfly_fix img {
+    position: relative;
+    left: 3px !important;
+    top: -3px !important;
     cursor: pointer;
-    position: relative;
-    left: 2px !important;
-    top: -6px !important;
-}
-.bp_actionButton_pfly_fix img {
-    position: relative;
-    top: -6px !important;
-    right: 3px !important;
 }
 @media screen and (-webkit-min-device-pixel-ratio:0) {
     .cppv_editors_pfly_fix input {

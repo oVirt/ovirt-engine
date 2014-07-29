@@ -19,6 +19,7 @@ public class NicPanel extends NetworkItemPanel {
         super(item, style, draggable);
         getElement().addClassName(style.nicPanel());
         this.actionButton.setStyleName(style.actionButtonNetwork());
+        this.actionButton.addStyleName("nicp_actionButton_pfly_fix"); //$NON-NLS-1$
     }
 
     @Override
