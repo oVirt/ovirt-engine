@@ -17,7 +17,7 @@ import org.ovirt.engine.api.restapi.resource.BackendApiResource;
 public class UsageFinder {
 
     private static final String RESPONSE =
-            "Request syntactically incorrect. See the link description below for the correct usage:";
+            "Request syntactically incorrect. See the description below for the correct usage:";
     private static final String UUID_REGEX =
             "^[a-fA-F0-9]{8}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{4}-[a-fA-F0-9]{12}";
 
