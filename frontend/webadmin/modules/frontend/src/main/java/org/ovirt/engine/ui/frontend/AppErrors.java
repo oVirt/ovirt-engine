@@ -224,13 +224,13 @@ public interface AppErrors extends ConstantsWithLookup {
     String CANNOT_FORCE_SELECT_SPM_VDS_NOT_UP();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Host ${VdsName} is already SPM or contending.")
-    String CANNOT_FORCE_SELECT__SPM_VDS_ALREADY_SPM();
+    String CANNOT_FORCE_SELECT_SPM_VDS_ALREADY_SPM();
 
     @DefaultStringValue("Cannot ${action} ${type}. The SPM priority of Host ${VdsName} is set to 'never'. This Host cannot be elected as SPM.")
-    String CANNOT_FORCE_SELECT__SPM_VDS_MARKED_AS_NEVER_SPM();
+    String CANNOT_FORCE_SELECT_SPM_VDS_MARKED_AS_NEVER_SPM();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Storage Pool has running tasks.")
-    String CANNOT_FORCE_SELECT__SPM_STORAGE_POOL_HAS_RUNNING_TASKS();
+    String CANNOT_FORCE_SELECT_SPM_STORAGE_POOL_HAS_RUNNING_TASKS();
 
     @DefaultStringValue("Cannot ${action} ${type}. The Host is not a part of a Storage Pool.")
     String CANNOT_FORCE_SELECT_SPM_VDS_NOT_IN_POOL();
