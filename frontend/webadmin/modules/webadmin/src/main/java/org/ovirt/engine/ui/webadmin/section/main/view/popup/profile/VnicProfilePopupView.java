@@ -74,7 +74,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     @WithElementId("portMirroring")
     protected EntityModelCheckBoxEditor portMirroringEditor;
 
-    @UiField
+    @UiField(provided = true)
     @Ignore
     public KeyValueWidget<KeyValueModel> customPropertiesSheetEditor;
 
@@ -92,6 +92,7 @@ public class VnicProfilePopupView extends AbstractModelBoundPopupView<VnicProfil
     public VnicProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
         publicUseEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        customPropertiesSheetEditor = new KeyValueWidget<KeyValueModel>("380px"); //$NON-NLS-1$
         networkEditor = new ListModelListBoxEditor<Network>(new NullSafeRenderer<Network>() {
             @Override
             public String renderNullSafe(Network network) {
