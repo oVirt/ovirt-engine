@@ -36,8 +36,8 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     @Template("<table cellspacing='0' cellpadding='0'><tr>" +
             "<td style='background: url({2});width:2px;'></td>" +
             "<td style='text-align:center;'>" +
-            "<div class='db_bg_image {5} {6}' style='background: url({3}) repeat-x; height: 20px;'>" +
-            "<span style='vertical-align: middle; line-height: 20px;' class=\"db_image_container\">{0}</span><div class=\"db_text\">{1}</div></div>" +
+            "<div class='db_bg_image {5} {6}' style='background: url({3}) repeat-x; height: 20px; display: flex;'>" +
+            "<span style='vertical-align: middle; line-height: 20px; margin-top: 2px;' class=\"db_image_container\">{0}</span><div style='line-height: 19px;'>{1}</div></div>" +
             "</td>" +
             "<td style='background: url({4});width:2px;'></td>" +
             "</tr></table>")
