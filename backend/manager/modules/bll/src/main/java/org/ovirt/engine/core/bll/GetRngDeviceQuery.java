@@ -27,7 +27,7 @@ public class GetRngDeviceQuery<P extends IdQueryParameters> extends QueriesComma
                 VmDeviceGeneralType.RNG,
                 VmDeviceType.VIRTIO.getName(),
                 getUserID(),
-                true);
+                getParameters().isFiltered());
 
         if (vmDevices != null && !vmDevices.isEmpty()) {
             VmDevice dev = vmDevices.get(0);
