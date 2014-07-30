@@ -15,7 +15,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.infinispan.transaction.tm.DummyTransactionManager;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
@@ -48,7 +47,6 @@ import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 
 @RunWith(MockitoJUnitRunner.class)
 public class RemoveVdsCommandTest {
@@ -257,7 +255,6 @@ public class RemoveVdsCommandTest {
     }
 
     private void mockForExecute() {
-        ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new DummyTransactionManager());
         doReturn(null).when(vdsBrokerFrontend).RunVdsCommand(any(VDSCommandType.class), any(VDSParametersBase.class));
         doNothing().when(vdsStaticDao).remove(any(Guid.class));
         doNothing().when(vdsStatisticsDao).remove(any(Guid.class));

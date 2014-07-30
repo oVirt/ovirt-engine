@@ -26,7 +26,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.infinispan.transaction.tm.DummyTransactionManager;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -77,7 +76,6 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
-import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 
 
 @RunWith(MockitoJUnitRunner.class)
@@ -591,8 +589,6 @@ public class UpdateVmDiskCommandTest {
         doNothing().when(command).reloadDisks();
         doNothing().when(command).updateBootOrder();
         doNothing().when(vmStaticDAO).incrementDbGeneration(any(Guid.class));
-
-        ejbRule.mockResource(ContainerManagedResourceType.TRANSACTION_MANAGER, new DummyTransactionManager());
 
         SnapshotsValidator snapshotsValidator = mock(SnapshotsValidator.class);
         doReturn(snapshotsValidator).when(command).getSnapshotsValidator();
