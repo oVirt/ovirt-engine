@@ -83,7 +83,7 @@
 			font-size: 10px;
 			font-weight: bold;
 			text-align: center;
-			width: 45px;
+			width: 65px;
 			position: relative;
 			left: 5px;
 		}
@@ -145,6 +145,21 @@
 
         .cloudInitLabel {
             font-weight: bold;
+        }
+
+        .checkboxWithLongLabel {
+            width: 400px;
+            float: left;
+            clear: both;
+        }
+
+        .checkboxWithLongLabel label {
+            margin-left: 26px;
+            margin-top: -18px;
+            display: block;
+            line-height: 20px;
+            width: 400px;
+            float: left;
         }
 	</ui:style>
 
@@ -229,8 +244,8 @@
 				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleVncEditor" />
 				<e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
 				<ge:EntityModelRadioButtonEditor ui:field="displayConsoleSpiceEditor" />
-                <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" />
-                <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" />
+                <ge:EntityModelCheckBoxEditor ui:field="spiceFileTransferEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
+                <ge:EntityModelCheckBoxEditor ui:field="spiceCopyPasteEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 			</g:VerticalPanel>
 		</g:DisclosurePanel>
 
