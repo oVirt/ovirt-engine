@@ -885,7 +885,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         fetchVmDisksFromDb();
         List<DiskImage> disksList = getVm().getDiskList();
         MultipleStorageDomainsValidator msdValidator = createMultipleStorageDomainsValidator(disksList);
-        return validate(msdValidator.allDomainsHaveSpaceForNewDisks(disksList));
+        return validate(msdValidator.allDomainsHaveSpaceForNewDisks(disksList))
+                && validate(msdValidator.allDomainsWithinThresholds());
     }
 
     @Override
