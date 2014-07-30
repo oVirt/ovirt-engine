@@ -1,11 +1,15 @@
 package org.ovirt.engine.core.bll.memory;
 
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.GuidUtils;
 
@@ -41,5 +45,24 @@ public class MemoryUtils {
         }
         memories.remove(StringUtils.EMPTY);
         return memories;
+    }
+
+    public static List<DiskImage> createDiskDummies(long memorySize, long metadataSize) {
+        DiskImage memoryVolume = new DiskImage();
+        memoryVolume.setDiskAlias("memory");
+        memoryVolume.setvolumeFormat(VolumeFormat.RAW);
+        memoryVolume.setSize(memorySize);
+        memoryVolume.setActualSizeInBytes(memorySize);
+        memoryVolume.getSnapshots().add(memoryVolume);
+
+        DiskImage dataVolume = new DiskImage();
+        memoryVolume.setDiskAlias("metadata");
+        dataVolume.setvolumeFormat(VolumeFormat.COW);
+        dataVolume.setVolumeType(VolumeType.Sparse);
+        dataVolume.setSize(metadataSize);
+        dataVolume.setActualSizeInBytes(metadataSize);
+        dataVolume.getSnapshots().add(dataVolume);
+
+        return Arrays.asList(memoryVolume, dataVolume);
     }
 }

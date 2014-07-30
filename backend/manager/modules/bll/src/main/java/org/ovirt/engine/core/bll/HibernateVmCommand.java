@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -88,9 +90,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     public Guid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
-            long sizeNeeded = (getVm().getTotalMemorySizeInBytes()
-                    + META_DATA_SIZE_IN_BYTES) / BYTES_IN_GB;
-            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), sizeNeeded);
+            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), META_DATA_SIZE_IN_BYTES);
+            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), diskDummiesForMemSize);
             if (storageDomain != null) {
                 _storageDomainId = storageDomain.getId();
             }
@@ -273,7 +274,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
 
         return true;
     }
-
 
     @Override
     protected void setActionMessageParameters() {

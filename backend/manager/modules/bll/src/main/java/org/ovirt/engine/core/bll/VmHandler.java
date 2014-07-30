@@ -33,6 +33,7 @@ import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.config.Config;
@@ -704,9 +706,49 @@ public class VmHandler {
         return null;
     }
 
-    protected static boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
+    private static boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         // not calling validate in order not to add the messages per domain
         return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
+    }
+
+    /**
+     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
+     * at least as much as requested free space and can be used to store memory images
+     *
+     * @param storagePoolId
+     *           The storage pool where the search for a domain will be made
+     * @param disksList
+     *           Disks for which space is needed
+     * @return storage domain in the given pool with at least the required amount of free space,
+     *         or null if no such storage domain exists in the pool
+     */
+    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList) {
+        List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
+        return findStorageDomainForMemory(domainsInPool, disksList);
+    }
+
+    protected static StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
+        for (StorageDomain currDomain : domainsInPool) {
+            //There should be two disks in the disksList, first of which is memory disk. Only its volume type should be modified.
+            updateDisksStorageType(currDomain.getStorageType(), disksList.get(0));
+            if (currDomain.getStorageDomainType().isDataDomain()
+                    && currDomain.getStatus() == StorageDomainStatus.Active
+                    && validateSpaceRequirements(currDomain, disksList)) {
+                return currDomain;
+            }
+        }
+        return null;
+    }
+
+    private static void updateDisksStorageType(StorageType storageType, DiskImage disk) {
+        VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
+        disk.setVolumeType(volumeType);
+    }
+
+    private static boolean validateSpaceRequirements(StorageDomain storageDomain, List<DiskImage> disksList) {
+        StorageDomainValidator storageDomainValidator = new StorageDomainValidator(storageDomain);
+        return (storageDomainValidator.isDomainWithinThresholds().isValid() &&
+                storageDomainValidator.hasSpaceForClonedDisks(disksList).isValid());
     }
 
     public static ValidationResult canRunActionOnNonManagedVm(VM vm, VdcActionType actionType) {
