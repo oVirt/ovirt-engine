@@ -513,7 +513,7 @@
                         </g:FlowPanel>
                             <g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />
                             <w:EntityModelWidgetWithInfo ui:field="timeZoneEditorWithInfo" />
-                            <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
+                            <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" checkboxStyle="{style.checkboxWithLongLabel}" />
                         </g:FlowPanel>
                 </t:content>
             </t:DialogTab>

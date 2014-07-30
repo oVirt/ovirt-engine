@@ -83,4 +83,8 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     public SerialNumberPolicyModel flush() {
         return driver.flush();
     }
+
+    public void setCheckboxStyle(String checkboxStyle) {
+        overrideSerialNumberPolicy.addStyleName(checkboxStyle);
+    }
 }
