@@ -8,6 +8,9 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+
+import javax.transaction.Transaction;
 
 public class CommandsCacheImpl implements CommandsCache {
 
@@ -54,7 +57,7 @@ public class CommandsCacheImpl implements CommandsCache {
     @Override
     public void put(final CommandEntity cmdEntity) {
         commandMap.put(cmdEntity.getId(), cmdEntity);
-        DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+        saveOrUpdateWithoutTransaction(cmdEntity);
     }
 
     public void removeAllCommandsBeforeDate(DateTime cutoff) {
@@ -67,7 +70,7 @@ public class CommandsCacheImpl implements CommandsCache {
         final CommandEntity cmdEntity = get(commandId);
         if (cmdEntity != null) {
             cmdEntity.setCommandStatus(status);
-            DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+            saveOrUpdateWithoutTransaction(cmdEntity);
         }
     }
 
@@ -76,6 +79,17 @@ public class CommandsCacheImpl implements CommandsCache {
         if (cmdEntity != null) {
             cmdEntity.setExecuted(true);
             DbFacade.getInstance().getCommandEntityDao().updateExecuted(commandId);
+        }
+    }
+
+    public void saveOrUpdateWithoutTransaction(CommandEntity cmdEntity) {
+        Transaction transaction = TransactionSupport.suspend();
+        try {
+            DbFacade.getInstance().getCommandEntityDao().saveOrUpdate(cmdEntity);
+        } finally {
+            if (transaction != null) {
+                TransactionSupport.resume(transaction);
+            }
         }
     }
 
