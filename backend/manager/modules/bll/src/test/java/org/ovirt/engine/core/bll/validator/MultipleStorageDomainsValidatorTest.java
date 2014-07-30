@@ -64,6 +64,7 @@ public class MultipleStorageDomainsValidatorTest {
 
         sdId1 = Guid.newGuid();
         sdId2 = Guid.newGuid();
+        sdId3 = Guid.newGuid();
 
         domain1 = new StorageDomain();
         domain1.setId(sdId1);
