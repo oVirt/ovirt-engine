@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
-import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
  * Tries to detect if host is kdumping.
@@ -103,9 +102,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         runInternalAction(
                 VdcActionType.FenceVdsManualy,
                 fenceVdsManuallyParams,
-                cloneContext()
-                        .withoutCompensationContext()
-                        .withLock(new EngineLock(getExclusiveLocks(), null)));
+                getContext());
     }
 
     private KdumpDetectionResult detectHostKdumping() {
