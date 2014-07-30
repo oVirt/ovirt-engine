@@ -382,7 +382,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
     void initBootSequenceBox() {
         bootSequenceBox = new ListBox(false);
-        bootSequenceBox.setWidth("370px"); //$NON-NLS-1$
+        bootSequenceBox.setWidth("475px"); //$NON-NLS-1$
         bootSequenceBox.setHeight("60px"); //$NON-NLS-1$
 
         VerticalPanel boxPanel = new VerticalPanel();
