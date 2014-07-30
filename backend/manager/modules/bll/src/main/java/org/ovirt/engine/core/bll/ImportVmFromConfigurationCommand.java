@@ -51,10 +51,12 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
 
     @Override
     protected boolean canDoAction() {
-        if (isImagesAlreadyOnTarget() && !validateUnregisteredEntity(vmFromConfiguration, ovfEntityData)) {
-            return false;
+        if (isImagesAlreadyOnTarget()) {
+            if (!validateUnregisteredEntity(vmFromConfiguration, ovfEntityData)) {
+                return false;
+            }
+            setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
         }
-        setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
         return super.canDoAction();
     }
 
