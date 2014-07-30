@@ -23,6 +23,7 @@
       float: right;
       padding-top: 56px;
       margin-right: 9px;
+      padding-bottom: 20px;
     }
 
     .serialNumberInfoIcon {
