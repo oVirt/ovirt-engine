@@ -2,8 +2,8 @@
 
 This module defines an API for accessing the database.
 
-The main entry point is the DbFacade class which is a singleton factory
-for accessing Database Access Objects (DAO) e.g.
+The main entry point is the DbFacade class which is a singleton
+factory for accessing Database Access Objects (DAO) e.g.
 
   VDS vds = DbFacade.getInstance().getVdsDAO().get(vdsId);
 
@@ -16,11 +16,11 @@ to the latest schema before running the tests.
 
 The DAO interfaces have a significant number of unit tests. These are
 disabled by default because they require a local database to be
-configured and take over 5 minutes to run. However, the tests are run in
-our Hudson continuous integration builds and reports are emailed if a
-regression is introduced.
+configured. However, the tests are run in our Jenkins continuous
+integration builds and reports are emailed if a regression is
+introduced.
 
-To run the unit tests manually you can either do:
+To run the DAO tests manually you can either do:
 
   $> mvn -P enable-dao-tests test
 
@@ -32,18 +32,11 @@ or enable them using your ~/.m2/settings.xml:
 
 You can also choose to run individual tests:
 
-  $> mv -D test=VdcOptionDAOTest test
+  $> mvn -D test=VdcOptionDAOTest test
 
 By default, this will run the tests using the JDBC implementation
-against an MS-SQL database called 'engine' on the 'engine-test-db' using
-the username 'sa' and password 'ENGINEadmin2009'.
-
-To run the tests against and postgres DB, you can run:
-
-  $> mvn clean test
-
-This will default to using a database called 'engine' on localhost using
-the username 'engine' and password 'redhat'.
+against a PostgreSQL database called 'engine-dao-tests' on the
+localhost using the username 'engine' and password 'engine'.
 
 You can change the database configuration in ~/.m2/settings.xml e.g.
 
@@ -57,19 +50,19 @@ You can change the database configuration in ~/.m2/settings.xml e.g.
       <engine.db.password>bar</engine.db.password>
       <engine.db.url>jdbc:postgresql://my-db-host/mydb</engine.db.url>
       <engine.db.url.escaped>jdbc:postgresql://localhost/mydb</engine.db.url.escaped>
-      <engine.db.driver>com.p6spy.engine.spy.P6SpyDriver</engine.db.driver>
+      <engine.db.driver>org.postgresql.Driver</engine.db.driver>
     </properties>
   </profile>
 
 == More on DbFacadeImpl DAOs ==
 
 Most methods in these classes execute a stored procedure (see
-backend/manager/dbscripts*_sp.sql) using the supplied parameters and
-return the results from the stored procedure.
+packaging/dbscripts/*_sp.sql) using the supplied parameters and
+return the results from it.
 
-These methods are implemented Spring Framework's JDBC library.
+These methods are implemented with Spring Framework's JDBC library.
 
-There are four parts to each Java method:
+There are three parts to each Java method:
 
  1) The parameter source:
 
@@ -77,11 +70,12 @@ There are four parts to each Java method:
           MapSqlParameterSource parameterSource = new CustomMapSqlParameterSource()
                   .addValue("vds_id", vds_id);
 
-     which adds the parameters required by the GetVdsByVdsId SP in
-     vds_sp.sql:
+     which adds the parameters required by the GetVdsByVdsId stored
+     procedure in vds_sp.sql:
 
-       ALTER PROCEDURE [dbo].[GetVdsByVdsId]
-            @vds_id int
+
+       Create or replace FUNCTION GetVdsByUniqueID(v_vds_unique_id VARCHAR(128)) RETURNS SETOF vds STABLE
+          AS $procedure$
 
  2) The row mapper:
 
@@ -101,29 +95,16 @@ There are four parts to each Java method:
     instance. The result parameters in the mapper must match the results
     from the stored procedure:
 
-                SELECT
-                distinct([vds].[vds_id]) AS 'vds_id',
-                [vds].[vds_group_id] AS 'vds_group_id',
-                [vds].[vds_group_name] AS 'vds_group_name',
-                [vds].[vds_group_description] AS 'vds_group_description',
+                RETURN QUERY SELECT DISTINCT vds.*
+                FROM vds
+                WHERE vds_unique_id = v_vds_unique_id;
 
     CustomMapSqlParameterSource is a variant of MapSqlParameterSource
     which converts enums to ints and guids to strings.
 
- 3) The JDBC call:
+ 3) The call:
 
-        Map<String, Object> dbResults = new SimpleJdbcCall(dataSource)
-                .withProcedureName("GetVdsByVdsId")
-                .returningResultSet("RETURN_VALUE", mapper)
-                .execute(parameterSource);
-
-    which executes the stored procedure with the supplied parameters
-    using the mapper to map the results to business entities.
-
- 4) Finally, returning the results either as a single object:
-
-        return (VDS) DbFacadeUtils.asSingleResult((List) (dbResults.values().iterator().next()));
-
-    or, more commonly, a list:
-
-        return (ArrayList<VDS>) dbResults.values().iterator().next();
+                return getCallsHandler().executeRead("GetVdsByVdsId",
+                        VdsRowMapper.instance,
+                        getCustomMapSqlParameterSource()
+                               .addValue("vds_id", id));
