@@ -102,15 +102,14 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
     protected abstract void verifyBuiltModel(UnitVmModel model);
 
     protected UnitVmModel createModel(VmModelBehaviorBase behavior) {
+        final VDSGroup cluster = new VDSGroup();
+        cluster.setcompatibility_version(Version.v3_5);
+
         UnitVmModel model = new UnitVmModel(behavior) {
             @Override
             public EntityModel<Boolean> getIsSingleQxlEnabled() {
                 return new EntityModel<Boolean>(true);
             }
-
-            VDSGroup cluster = new VDSGroup() {{
-                setcompatibility_version(new Version(3, 5));
-            }};
 
             @Override
             public VDSGroup getSelectedCluster() {
