@@ -24,7 +24,7 @@
         }
 
         .actionButtonContent {
-            min-width: 415px;
+            min-width: 250px;
             text-align: left;
         }
 
