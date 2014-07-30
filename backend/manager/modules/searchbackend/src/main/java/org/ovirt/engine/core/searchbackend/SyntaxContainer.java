@@ -23,6 +23,7 @@ public class SyntaxContainer implements Iterable<SyntaxObject> {
     public boolean isSearchUsingTags() {
         return mOrigText.contains("tag")
                 || (getSearchObjectStr() != null && (getSearchObjectStr().equals(SearchObjects.VDC_USER_OBJ_NAME)))
+                || (getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_POOL_OBJ_NAME))
                 || (getCrossRefObjList().contains(SearchObjects.VDC_STORAGE_DOMAIN_OBJ_NAME));
     }
 
