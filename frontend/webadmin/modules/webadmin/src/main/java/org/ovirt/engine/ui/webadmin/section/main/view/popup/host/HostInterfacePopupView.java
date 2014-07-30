@@ -192,7 +192,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
         qosWidget = new NetworkQosWidget(constants);
-        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("310px", "140px"); //$NON-NLS-1$ $NON-NLS-2$
+        customPropertiesWidget = new KeyValueWidget<KeyValueModel>("320px", "160px"); //$NON-NLS-1$ $NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);
         checkConnectivity = new EntityModelCheckBoxEditor(Align.RIGHT);
