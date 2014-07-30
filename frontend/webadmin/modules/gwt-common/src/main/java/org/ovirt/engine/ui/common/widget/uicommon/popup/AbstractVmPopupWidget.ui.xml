@@ -711,7 +711,7 @@
         <t:tab>
             <t:DialogTab ui:field="rngDeviceTab">
                 <t:content>
-                    <g:FlowPanel>
+                    <g:FlowPanel addStyleNames="{style.sectionPanel}">
                         <w:EntityModelDetachableWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
                         <g:FlowPanel ui:field="rngPanel">
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor"/>
