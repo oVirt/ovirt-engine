@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.lock.EngineLock;
 
 /**
  * Send a Stop followed by Start action to a power management device.
@@ -44,8 +43,6 @@ import org.ovirt.engine.core.utils.lock.EngineLock;
  */
 @NonTransactiveCommandAttribute
 public class RestartVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
-
-    private CommandContext commandContext;
 
     protected List<VM> getVmList() {
         return mVmList;
@@ -134,13 +131,6 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             params.setChangeHostToMaintenanceOnStart(true);
         }
         return runInternalAction(action, params, getContext());
-    }
-
-    public CommandContext getContext() {
-        if (commandContext == null) {
-            commandContext = cloneContext().withLock(new EngineLock(getExclusiveLocks(), null));
-        }
-        return commandContext;
     }
 
     @Override

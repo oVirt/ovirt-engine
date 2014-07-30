@@ -6,7 +6,6 @@ import java.util.Map;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
-import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
@@ -74,7 +73,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             VdcReturnValueBase retVal =
                     runInternalAction(VdcActionType.VdsKdumpDetection,
                             getParameters(),
-                            ExecutionHandler.createInternalJobContext(getContext()));
+                            getContext());
 
             if (retVal.getSucceeded()) {
                 // kdump on host detected and finished successfully, stop hard fencing execution
