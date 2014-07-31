@@ -73,6 +73,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             log.infoFormat("Cannot shutdown VM {0}, status is not up. Stopping instead.", getVmName());
 
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
+            stopVmParams.setStopReason(getParameters().getStopReason());
             // stopVmParams.ParametersCurrentUser = CurrentUser;
             stopVmParams.setSessionId(getParameters().getSessionId());
             runInternalAction(VdcActionType.StopVm, stopVmParams);
