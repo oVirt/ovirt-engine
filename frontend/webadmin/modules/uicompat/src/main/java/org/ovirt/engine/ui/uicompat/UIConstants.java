@@ -1968,6 +1968,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Enter a valid FS type (e.g. nfs/glusterfs/cifs/smbfs etc.")
     String posixVfsTypeHint();
 
+    @DefaultStringValue("Enter additional Mount Options, as you would normally provide them to the mount command using the -o argument.\nThe mount options should be provided in a comma-separated list. See 'man mount' for a list of valid mount options.")
+    String mountOptionsHint();
+
     @DefaultStringValue("Event Details")
     String eventDetailsTitle();
 

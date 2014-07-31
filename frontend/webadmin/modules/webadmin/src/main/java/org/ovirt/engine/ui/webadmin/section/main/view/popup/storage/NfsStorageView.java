@@ -17,6 +17,10 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.NfsStorageModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
 
@@ -177,13 +181,22 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
     }
 
     @Override
-    public void edit(NfsStorageModel object) {
+    public void edit(final NfsStorageModel object) {
         driver.edit(object);
 
         EntityModel version = (EntityModel) object.getVersion().getSelectedItem();
         versionReadOnlyEditor.asValueBox().setValue(version != null ? version.getTitle() : null);
 
         pathHintLabel.setVisible(object.getPath().getIsChangable());
+
+        object.getMountOptions().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                if (((PropertyChangedEventArgs)args).propertyName.equals("Title")) { //$NON-NLS-1$
+                    mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
+                }
+            }
+        });
 
         styleTextBoxEditor(pathEditor, object.getPath().getIsChangable());
         styleTextBoxEditor(timeoutEditor,  object.getOverride().getIsChangable());

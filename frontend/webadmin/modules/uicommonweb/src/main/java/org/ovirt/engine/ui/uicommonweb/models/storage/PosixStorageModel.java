@@ -87,6 +87,7 @@ public class PosixStorageModel extends Model implements IStorageModel {
         setVfsType(new EntityModel<String>());
         getVfsType().setTitle(ConstantsManager.getInstance().getConstants().posixVfsTypeHint());
         setMountOptions(new EntityModel<String>());
+        getMountOptions().setTitle(ConstantsManager.getInstance().getConstants().mountOptionsHint());
     }
 
     @Override
