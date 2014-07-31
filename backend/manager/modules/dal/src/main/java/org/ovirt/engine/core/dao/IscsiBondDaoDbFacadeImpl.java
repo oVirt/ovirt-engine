@@ -30,6 +30,13 @@ public class IscsiBondDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<IscsiBon
     }
 
     @Override
+    public List<IscsiBond> getIscsiBondsByNetworkId(Guid netowrkId) {
+        return getCallsHandler().executeReadList("GetIscsiBondsByNetworkId",
+                IscsiBondRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("network_id", netowrkId));
+    }
+
+    @Override
     public void addNetworkToIscsiBond(Guid iscsiBondId, Guid networkId) {
         getCallsHandler().executeModification("AddNetworkToIscsiBond",
                 getCustomMapSqlParameterSource()

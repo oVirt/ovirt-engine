@@ -41,6 +41,17 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetIscsiBondsByNetworkId(v_network_id UUID) RETURNS SETOF iscsi_bonds  STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT iscsi_bonds.*
+      FROM iscsi_bonds_networks_map, iscsi_bonds
+      WHERE iscsi_bonds.id = iscsi_bonds_networks_map.iscsi_bond_id
+      AND network_id = v_network_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION InsertIscsiBond(v_id UUID,
   v_name VARCHAR(50),
   v_description VARCHAR(4000),
