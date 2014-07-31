@@ -5,13 +5,26 @@
 ----------------------------------
 
 DROP TYPE IF EXISTS idTextType CASCADE;
+CREATE TYPE idtexttype AS (
+        id text
+);
+
 DROP TYPE IF EXISTS idUuidType CASCADE;
+CREATE TYPE iduuidtype AS (
+        id uuid
+);
+
 DROP TYPE IF EXISTS booleanResultType CASCADE;
-CREATE TYPE idTextType AS(id text);
-CREATE TYPE idUuidType AS(id UUID);
-CREATE TYPE booleanResultType AS(result BOOLEAN);
+CREATE TYPE booleanresulttype AS (
+        result boolean
+);
+
 DROP TYPE IF EXISTS authzEntryInfoType CASCADE;
-CREATE TYPE authzEntryInfoType AS(name text, namespace VARCHAR(2048), authz VARCHAR(255));
+CREATE TYPE authzentryinfotype AS (
+        name text,
+        namespace character varying(2048),
+        authz character varying(255)
+);
 
 
 CREATE OR REPLACE FUNCTION getGlobalIds(v_name VARCHAR(4000))
@@ -68,7 +81,12 @@ LANGUAGE plpgsql;
 
 --All permissions of current user (include groups)
 DROP TYPE IF EXISTS user_permissions CASCADE;
-CREATE TYPE user_permissions AS(permission_id UUID, role_id UUID, user_id UUID);
+CREATE TYPE user_permissions AS (
+        permission_id uuid,
+        role_id uuid,
+        user_id uuid
+);
+
 CREATE OR REPLACE FUNCTION public.fn_user_permissions(v_userId IN uuid) RETURNS SETOF user_permissions STABLE AS
 $function$
 DECLARE
@@ -627,8 +645,10 @@ LANGUAGE plpgsql;
 -- Quota Functions ----
 -----------------------
 DROP TYPE IF EXISTS vds_group_usage_rs CASCADE;
-CREATE TYPE vds_group_usage_rs AS
-    ( virtual_cpu_usage INTEGER,mem_size_mb_usage BIGINT);
+CREATE TYPE vds_group_usage_rs AS (
+        virtual_cpu_usage integer,
+        mem_size_mb_usage bigint
+);
 
 -- returns a set of integers representing vm statuses on which the vm shouldn't
 -- be used for quota calculation
@@ -661,9 +681,16 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS all_vds_group_usage_rs CASCADE;
-CREATE TYPE all_vds_group_usage_rs AS
-    (quota_vds_group_id UUID, quota_id UUID,vds_group_id UUID,vds_group_name character varying(40),virtual_cpu INTEGER,virtual_cpu_usage INTEGER,mem_size_mb BIGINT,mem_size_mb_usage BIGINT);
-
+CREATE TYPE all_vds_group_usage_rs AS (
+        quota_vds_group_id uuid,
+        quota_id uuid,
+        vds_group_id uuid,
+        vds_group_name character varying(40),
+        virtual_cpu integer,
+        virtual_cpu_usage integer,
+        mem_size_mb bigint,
+        mem_size_mb_usage bigint
+);
 
 -- Summarize the VCPU usage and the RAM usage for all the VMs in the quota which are not down or suspended
 -- If vds group id is null, then returns the global usage of the quota, otherwise returns only the sum of all VMs in the specific cluster.
@@ -695,9 +722,14 @@ LANGUAGE plpgsql;
 
 
 DROP TYPE IF EXISTS all_storage_usage_rs CASCADE;
-CREATE TYPE all_storage_usage_rs AS
-    (quota_storage_id UUID,quota_id UUID,storage_id UUID,storage_name character varying(250),storage_size_gb BIGINT,storage_size_gb_usage double precision);
-
+CREATE TYPE all_storage_usage_rs AS (
+        quota_storage_id uuid,
+        quota_id uuid,
+        storage_id uuid,
+        storage_name character varying(250),
+        storage_size_gb bigint,
+        storage_size_gb_usage double precision
+);
 
 CREATE OR REPLACE FUNCTION calculateAllStorageUsage()
 RETURNS SETOF all_storage_usage_rs STABLE

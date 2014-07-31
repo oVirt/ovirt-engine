@@ -3,7 +3,11 @@ select fn_db_add_column('job', 'is_auto_cleared', 'boolean default true');
 select fn_db_add_column('step', 'is_external', 'boolean default false');
 
 -- Add External Task Injection priviledge to super user
-INSERT INTO roles_groups(role_id,action_group_id) VALUES('00000000-0000-0000-0000-000000000001',1500);
+INSERT INTO roles_groups(role_id,action_group_id) SELECT '00000000-0000-0000-0000-000000000001',1500
+    WHERE NOT EXISTS (SELECT role_id,action_group_id
+    from roles_groups
+    WHERE role_id = '00000000-0000-0000-0000-000000000001' and
+          action_group_id = 1500);
 
 -- define a role for External Task injection
 -----------------------------------

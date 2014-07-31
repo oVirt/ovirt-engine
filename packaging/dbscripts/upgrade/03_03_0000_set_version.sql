@@ -1,2 +1,2 @@
 -- This is just a dummy command to init the right version in DB
-select 3020000;
+select 3030000;

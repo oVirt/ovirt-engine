@@ -1,1 +1,0 @@
-select fn_db_add_column('vds_dynamic', 'libvirt_version', 'varchar(256) default null');

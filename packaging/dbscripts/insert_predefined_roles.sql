@@ -23,6 +23,8 @@ RETURNS VOID
    v_TEMPLATE_CREATOR_USER_ID UUID;
    v_TEMPLATE_OWNER_USER_ID UUID;
    v_LOCAL_ADMIN_ID UUID;
+   v_NETWORK_USER_ID UUID;
+   v_EXTERNAL_EVENT_CREATOR_ID UUID;
    --Permissions
    v_CREATE_VM INTEGER;
    v_DELETE_VM INTEGER;
@@ -55,11 +57,11 @@ RETURNS VOID
    v_CREATE_CLUSTER INTEGER;
    v_EDIT_CLUSTER_CONFIGURATION INTEGER;
    v_DELETE_CLUSTER INTEGER;
+   v_ASSIGN_CLUSTER_NETWORK INTEGER;
    v_CONFIGURE_CLUSTER_NETWORK INTEGER;
    v_MANIPULATE_USERS INTEGER;
    v_MANIPULATE_ROLES INTEGER;
    v_MANIPULATE_PERMISSIONS INTEGER;
-   v_CREATE_STORAGE_DOMAIN INTEGER;
    v_EDIT_STORAGE_DOMAIN_CONFIGURATION INTEGER;
    v_DELETE_STORAGE_DOMAIN INTEGER;
    v_MANIPULATE_STORAGE_DOMAIN INTEGER;
@@ -67,12 +69,17 @@ RETURNS VOID
    v_DELETE_STORAGE_POOL INTEGER;
    v_EDIT_STORAGE_POOL_CONFIGURATION INTEGER;
    v_CONFIGURE_STORAGE_POOL_NETWORK INTEGER;
+   v_CREATE_STORAGE_POOL_NETWORK INTEGER;
+   v_DELETE_STORAGE_POOL_NETWORK INTEGER;
    v_CONFIGURE_ENGINE INTEGER;
    v_MANIPULATE_QUOTA INTEGER;
    v_CONSUME_QUOTA INTEGER;
    v_CREATE_GLUSTER_VOLUME INTEGER;
    v_MANIPULATE_GLUSTER_VOLUME INTEGER;
    v_DELETE_GLUSTER_VOLUME INTEGER;
+   v_CREATE_STORAGE_DOMAIN INTEGER;
+   v_LIVE_MIGRATE_DISK INTEGER;
+   v_LIVE_MIGRATE_DISKS INTEGER;
    v_CREATE_DISK INTEGER;
    v_ATTACH_DISK INTEGER;
    v_EDIT_DISK_PROPERTIES INTEGER;
@@ -80,6 +87,24 @@ RETURNS VOID
    v_DELETE_DISK INTEGER;
    v_CONFIGURE_STORAGE_POOL_VM_INTERFACE INTEGER;
    v_LOGIN INTEGER;
+   v_EXTERNAL_EVENT_INJECTION INTEGER;
+   -- Action Types
+   v_CREATE_GLUSTER_VOLUME_BRICKS INTEGER;
+   v_SET_GLUSTER_VOLUME INTEGER;
+   v_START_GLUSTER_VOLUME INTEGER;
+   v_STOP_GLUSTER_VOLUME INTEGER;
+   v_RESET_GLUSTER_VOLUME INTEGER;
+   v_DELETE_GLUSTER_VOLUME_BRICKS INTEGER;
+   v_REMOVE_GLUTER_VOLUME_BRICKS INTEGER;
+   v_REBALANCE_GLUSTER_VOLUME INTEGER;
+   v_REPLACE_GLUSTER_VOLUME_BRICKS INTEGER;
+   v_ADD_GLUSTER_VOLUME_BRICKS INTEGER;
+   v_START_GLUSTER_VOLUME_PROFILE INTEGER;
+   v_STOP_LUSTER_VOLUME_PROFILE INTEGER;
+   v_REMOVE_GLUSTER_SERVER INTEGER;
+
+   --Other
+   v_ADMIN_USER_ID UUID;
 
 BEGIN
    v_SUPER_USER_ID := '00000000-0000-0000-0000-000000000001';
@@ -102,6 +127,8 @@ BEGIN
    v_TEMPLATE_CREATOR_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000E';
    v_TEMPLATE_OWNER_USER_ID := 'DEF0000A-0000-0000-0000-DEF00000000F';
    v_LOCAL_ADMIN_ID := 'FDFC627C-D875-11E0-90F0-83DF133B58CC';
+   v_NETWORK_USER_ID := 'DEF0000A-0000-0000-0000-DEF000000010';
+   v_EXTERNAL_EVENT_CREATOR_ID := 'DEF0000C-0000-0000-0000-DEF000000000';
    v_CREATE_VM := 1;
    v_DELETE_VM := 2;
    v_EDIT_VM_PROPERTIES := 3;
@@ -134,6 +161,7 @@ BEGIN
    v_EDIT_CLUSTER_CONFIGURATION := 401;
    v_DELETE_CLUSTER := 402;
    v_CONFIGURE_CLUSTER_NETWORK := 403;
+   v_ASSIGN_CLUSTER_NETWORK := 404;
    v_MANIPULATE_USERS := 500;
    v_MANIPULATE_ROLES := 501;
    v_MANIPULATE_PERMISSIONS := 502;
@@ -145,12 +173,16 @@ BEGIN
    v_DELETE_STORAGE_POOL := 701;
    v_EDIT_STORAGE_POOL_CONFIGURATION := 702;
    v_CONFIGURE_STORAGE_POOL_NETWORK := 703;
+   v_CREATE_STORAGE_POOL_NETWORK := 704;
+   v_DELETE_STORAGE_POOL_NETWORK := 705;
    v_CONFIGURE_ENGINE := 800;
    v_MANIPULATE_QUOTA := 900;
    v_CONSUME_QUOTA := 901;
    v_CREATE_GLUSTER_VOLUME := 1000;
    v_MANIPULATE_GLUSTER_VOLUME := 1001;
    v_DELETE_GLUSTER_VOLUME := 1002;
+   v_LIVE_MIGRATE_DISK := 1010;
+   v_LIVE_MIGRATE_DISKS := 1011;
    v_CREATE_DISK := 1100;
    v_ATTACH_DISK := 1101;
    v_EDIT_DISK_PROPERTIES := 1102;
@@ -158,6 +190,22 @@ BEGIN
    v_DELETE_DISK := 1104;
    v_CONFIGURE_STORAGE_POOL_VM_INTERFACE := 1200;
    v_LOGIN := 1300;
+   v_EXTERNAL_EVENT_INJECTION := 1500;
+   -- Action Types
+   v_CREATE_GLUSTER_VOLUME_BRICKS := 1400;
+   v_SET_GLUSTER_VOLUME := 1401;
+   v_START_GLUSTER_VOLUME := 1402;
+   v_STOP_GLUSTER_VOLUME := 1403;
+   v_RESET_GLUSTER_VOLUME := 1404;
+   v_DELETE_GLUSTER_VOLUME_BRICKS := 1405;
+   v_REMOVE_GLUTER_VOLUME_BRICKS := 1406;
+   v_REBALANCE_GLUSTER_VOLUME := 1407;
+   v_REPLACE_GLUSTER_VOLUME_BRICKS := 1408;
+   v_ADD_GLUSTER_VOLUME_BRICKS := 1409;
+   v_START_GLUSTER_VOLUME_PROFILE := 1410;
+   v_STOP_LUSTER_VOLUME_PROFILE := 1411;
+   v_REMOVE_GLUSTER_SERVER := 1412;
+
 
 
 INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT  v_SUPER_USER_ID,'SuperUser','Roles management administrator',true,1,true;
@@ -204,6 +252,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREAT
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_STORAGE_POOL);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_EDIT_STORAGE_POOL_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_STORAGE_POOL_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CREATE_STORAGE_POOL_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_DELETE_STORAGE_POOL_NETWORK);
 INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_USER_ID,'UserRole','Standard User Role',true,2,true;
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID,v_CONFIGURE_ENGINE);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_USER_ID,v_VM_BASIC_OPERATIONS);
@@ -301,6 +351,8 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_STORAGE_POOL);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_EDIT_STORAGE_POOL_CONFIGURATION);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CONFIGURE_STORAGE_POOL_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_CREATE_STORAGE_POOL_NETWORK);
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID,v_DELETE_STORAGE_POOL_NETWORK);
 
 -------------
 --STORAGE_ADMIN role
@@ -338,7 +390,6 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_HOST_ADMIN_ID,v_MANIP
 
 INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children) SELECT v_NETWORK_ADMIN_ID,'NetworkAdmin','Administrator Role, permission for all operations on a specific Logical Network',true,1,true;
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_HOST_NETWORK);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_MANIPULATE_HOST);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_NETWORK_ADMIN_ID,v_CONFIGURE_CLUSTER_NETWORK);
 
 -------------
@@ -360,11 +411,9 @@ INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_DELETE_
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_EDIT_VM_PROPERTIES);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_VM_BASIC_OPERATIONS);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CHANGE_VM_CD);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MIGRATE_VM);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONNECT_TO_VM);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONFIGURE_VM_NETWORK);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_CONFIGURE_VM_STORAGE);
-INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MOVE_VM);
 INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_VM_ADMIN_ID,v_MANIPULATE_VM_SNAPSHOTS);
 
 -------------
@@ -563,6 +612,136 @@ INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_HOST_ADMIN_ID, v_L
 INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_VM_POOL_ADMIN_ID, v_LOGIN);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_NETWORK_ADMIN_ID, v_LOGIN);
 INSERT INTO roles_groups (role_id, action_group_id) VALUES (v_GLUSTER_ADMIN_ROLE_ID, v_LOGIN);
+
+-- Networking
+-- Add ASSIGN_CLUSTER_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_SUPER_USER_ID, v_ASSIGN_CLUSTER_NETWORK);
+
+-- Add ASSIGN_CLUSTER_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_DATA_CENTER_ADMIN_ID, v_ASSIGN_CLUSTER_NETWORK);
+
+-- Add ASSIGN_CLUSTER_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID, v_ASSIGN_CLUSTER_NETWORK);
+
+-- Add PORT_MIRRORING
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID, v_CONFIGURE_STORAGE_POOL_VM_INTERFACE);
+
+-- Add CONFIGURE_STORAGE_POOL_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID ,v_CONFIGURE_STORAGE_POOL_NETWORK);
+
+-- Add CREATE_STORAGE_POOL_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID ,v_CREATE_STORAGE_POOL_NETWORK);
+
+-- Add DELETE_STORAGE_POOL_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID ,v_DELETE_STORAGE_POOL_NETWORK);
+
+-- Add CONFIGURE_VM_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID ,v_CONFIGURE_VM_NETWORK);
+
+-- Add CONFIGURE_TEMPLATE_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_ADMIN_ID ,v_CONFIGURE_TEMPLATE_NETWORK);
+
+-- ADD NetworkUser Role
+INSERT INTO roles(id,name,description,is_readonly,role_type) values(v_NETWORK_USER_ID, 'NetworkUser', 'Network User', true, 2);
+
+-- Add CONFIGURE_VM_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_USER_ID, v_CONFIGURE_VM_NETWORK);
+
+-- Add CONFIGURE_TEMPLATE_NETWORK
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_USER_ID, v_CONFIGURE_TEMPLATE_NETWORK);
+
+
+-------------------------------------------------------
+-- Grant NetworkUser role to 'everyone' on all networks
+-------------------------------------------------------
+
+INSERT INTO permissions (id,role_id, ad_element_id, object_id, object_type_id)
+    (SELECT uuid_generate_v1(), v_NETWORK_USER_ID, getGlobalIds('everyone'), id, 20 FROM network);
+
+-- grant admin poweruser role on system
+v_ADMIN_USER_ID := user_id from users where username = 'admin@internal';
+insert into permissions(id,role_id,ad_element_id,object_id,object_type_id)
+    values (uuid_generate_v1(), v_POWER_USER_ID, v_ADMIN_USER_ID, getGlobalIds('system'), 1);
+
+-- Add External Event Injection priviledge to super user
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_SUPER_USER_ID, v_EXTERNAL_EVENT_INJECTION);
+
+-----------------------------------
+-- EXTERNAL_EVENT_CREATOR_USER role
+-----------------------------------
+
+INSERT INTO roles(id,name,description,is_readonly,role_type,allows_viewing_children)
+    values(v_EXTERNAL_EVENT_CREATOR_ID, 'ExternalEventsCreator', 'External Events Creator', true, 2, false);
+
+INSERT INTO roles_groups(role_id,action_group_id) VALUES(v_EXTERNAL_EVENT_CREATOR_ID, v_EXTERNAL_EVENT_INJECTION);
+
+-----------------------------------
+-- GLUSTER VOLUME
+-----------------------------------
+
+-- Create gluster volume
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_CREATE_GLUSTER_VOLUME_BRICKS, '3.1', '*');
+
+-- Set gluster volume option
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_SET_GLUSTER_VOLUME, '3.1', '*');
+
+-- Start gluster volume
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_START_GLUSTER_VOLUME, '3.1', '*');
+
+-- Stop gluster volume
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_STOP_GLUSTER_VOLUME, '3.1', '*');
+
+-- Reset gluster volume options
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_RESET_GLUSTER_VOLUME, '3.1', '*');
+
+-- Delete gluster volume
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_DELETE_GLUSTER_VOLUME_BRICKS, '3.1', '*');
+
+-- Gluster volume remove bricks
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_REMOVE_GLUTER_VOLUME_BRICKS, '3.1', '*');
+
+-- Start gluster volume rebalance
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_REBALANCE_GLUSTER_VOLUME, '3.1', '*');
+
+-- Replace gluster volume bricks
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_REPLACE_GLUSTER_VOLUME_BRICKS, '3.1', '*');
+
+-- Add bricks to Gluster volume
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_ADD_GLUSTER_VOLUME_BRICKS, '3.1', '*');
+
+-- Start Gluster volume profile
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_START_GLUSTER_VOLUME_PROFILE, '3.2', '*');
+
+-- Stop gluster volume profile
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_STOP_LUSTER_VOLUME_PROFILE, '3.2', '*');
+
+-- Remove gluster server
+insert into action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
+    values(v_REMOVE_GLUSTER_SERVER, '3.2', '*');
+
+-- QUOTA
+INSERT INTO roles_groups(role_id,action_group_id)
+    values(v_QUOTA_CONSUMER_USER_ID, v_CONSUME_QUOTA);
+
+-- Add Login Permission
+INSERT INTO roles_groups(role_id, action_group_id) VALUES(v_NETWORK_USER_ID, v_LOGIN);
+
+-- lsm_version_support
+insert into action_version_map values (v_LIVE_MIGRATE_DISK, '3.2', '3.2');
+insert into action_version_map values (v_LIVE_MIGRATE_DISKS, '3.2', '3.2');
+
 
  RETURN;
 END; $procedure$
