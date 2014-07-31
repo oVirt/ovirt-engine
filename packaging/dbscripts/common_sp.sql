@@ -507,7 +507,12 @@ LANGUAGE plpgsql;
 
 DROP TYPE IF EXISTS async_tasks_info_rs CASCADE;
 CREATE TYPE async_tasks_info_rs AS (
-    dc_id UUID, dc_name CHARACTER VARYING, spm_host_id UUID, spm_host_name CHARACTER VARYING, task_count integer);
+        dc_id uuid,
+        dc_name character varying,
+        spm_host_id uuid,
+        spm_host_name character varying,
+        task_count integer
+);
 
 
 create or replace FUNCTION fn_db_get_async_tasks()

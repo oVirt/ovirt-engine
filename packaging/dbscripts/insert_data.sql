@@ -17,7 +17,7 @@ BEGIN
 
 -- INSERT DATA to schema_version
 INSERT INTO schema_version(version,script,checksum,installed_by,ended_at,state,current)
-  values ('03020000','upgrade/03_02_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
+  values ('03030000','upgrade/03_03_0000_set_version.sql','0','engine',now(),'INSTALLED',true);
 
 -- INSERT everyone TO ad_groups
 INSERT into ad_groups (id,name,status,domain,distinguishedname)
@@ -90,8 +90,8 @@ INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_REP
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_REPLACE_BRICK_START_FAILED', 'GLUSTER_VOLUME_REPLACE_BRICK_START');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_ADD_BRICK', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_ADD_BRICK_FAILED', 'GLUSTER_VOLUME_ADD_BRICK');
-INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_HOST_REMOVE_FAILED', 'UNASSIGNED');
-INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_HOST_ADD_FAILED', 'UNASSIGNED');
+INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_SERVER_REMOVE_FAILED', 'UNASSIGNED');
+INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_SERVER_ADD_FAILED', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_CREATED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_DELETED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_OPTION_SET_FROM_CLI', 'UNASSIGNED');
@@ -100,7 +100,21 @@ INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_PRO
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_BRICK_ADDED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_BRICK_REMOVED_FROM_CLI', 'UNASSIGNED');
 INSERT INTO event_map(event_up_name, event_down_name) values('GLUSTER_SERVER_REMOVED_FROM_CLI', 'UNASSIGNED');
-
+insert into event_map(event_up_name, event_down_name) values('HA_VM_RESTART_FAILED', '');
+insert into event_map(event_up_name, event_down_name) values('HA_VM_FAILED', '');
+insert into event_map(event_up_name, event_down_name) values('SYSTEM_DEACTIVATED_STORAGE_DOMAIN', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_SET_NONOPERATIONAL', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_SET_NONOPERATIONAL_IFACE_DOWN', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_SET_NONOPERATIONAL_DOMAIN', '');
+insert into event_map(event_up_name, event_down_name) values('SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM', '');
+insert into event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_STARTED_FROM_CLI', 'UNASSIGNED');
+insert into event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_STOPPED_FROM_CLI', 'UNASSIGNED');
+insert into event_map(event_up_name, event_down_name) values('VDS_HIGH_MEM_USE', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_HIGH_NETWORK_USE', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_HIGH_CPU_USE', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_HIGH_SWAP_USE', '');
+insert into event_map(event_up_name, event_down_name) values('VDS_LOW_SWAP', '');
+insert into event_map(event_up_name, event_down_name) values('GLUSTER_VOLUME_OPTION_CHANGED_FROM_CLI', 'UNASSIGNED');
 
 INSERT INTO action_version_map (action_type, cluster_minimal_version, storage_pool_minimal_version)
     SELECT 41, '3.1', '3.1';
@@ -117,6 +131,14 @@ INSERT INTO vm_device (device_id, vm_id, type, device, address, boot_order, spec
 
 -- Inserting data to history timekeeping
 Insert into dwh_history_timekeeping  VALUES('lastSync',NULL,to_timestamp('01/01/2000', 'DD/MM/YYYY'));
+
+--OVF
+INSERT INTO vm_ovf_generations
+      (SELECT vm.vm_guid, sp.id, 1
+       FROM vm_static vm ,storage_pool sp, vds_groups vg
+       WHERE vg.storage_pool_id = sp.id AND vm.vds_group_id = vg.vds_group_id);
+
+
 RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
