@@ -185,8 +185,9 @@ class Plugin(plugin.PluginBase):
     def _misc_VDC(self):
         self.dialog.note(
             text=_(
-                "Please execute this command on the engine host: \n"
-                "engine-config -s WebSocketProxy={fqdn}:{port}\n\n"
+                "\nPlease execute this command on the engine host: \n"
+                "   engine-config -s WebSocketProxy={fqdn}:{port}\n"
+                "and than restart the engine service to make it effective\n\n"
             ).format(
                 fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
                 port=self.environment[

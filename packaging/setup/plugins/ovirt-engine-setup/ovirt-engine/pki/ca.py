@@ -380,6 +380,10 @@ class Plugin(plugin.PluginBase):
         for f in (
             oenginecons.FileLocations.OVIRT_ENGINE_PKI_ENGINE_STORE,
             oenginecons.FileLocations.OVIRT_ENGINE_PKI_JBOSS_STORE,
+            oenginecons.FileLocations.
+            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_KEY,
+            oenginecons.FileLocations.
+            OVIRT_ENGINE_PKI_LOCAL_WEBSOCKET_PROXY_STORE,
         ):
             os.chown(
                 f,
