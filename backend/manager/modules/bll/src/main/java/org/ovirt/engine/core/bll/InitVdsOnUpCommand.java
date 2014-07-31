@@ -556,7 +556,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         // host is UP, remove kdump status
         getDbFacade().getVdsKdumpStatusDao().remove(getVdsId());
 
-        if (getVds().isPmKdumpDetection() &&
+        if (getVds().getpm_enabled() &&
+                getVds().isPmKdumpDetection() &&
                 getVds().getKdumpStatus() != KdumpStatus.ENABLED) {
             AuditLogableBase base = new AuditLogableBase();
             base.setVds(getVds());
