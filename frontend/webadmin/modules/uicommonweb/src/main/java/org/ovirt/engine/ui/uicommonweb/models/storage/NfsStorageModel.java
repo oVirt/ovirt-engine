@@ -186,6 +186,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
         getRetransmissions().setIsChangable(isChangeable);
         getTimeout().setIsChangable(isChangeable);
         getMountOptions().setIsChangable(isChangeable);
+        getMountOptions().setTitle(isChangeable ? ConstantsManager.getInstance().getConstants().mountOptionsHint() : null);
     }
 
     @Override
