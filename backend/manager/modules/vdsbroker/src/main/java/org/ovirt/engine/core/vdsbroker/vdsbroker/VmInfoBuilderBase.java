@@ -76,15 +76,23 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.mem_size_mb, vm.getVmMemSizeMb());
         createInfo.put(VdsProperties.mem_guaranteed_size_mb, vm.getMinAllocatedMem());
         createInfo.put(VdsProperties.smartcardEnabled, Boolean.toString(vm.isSmartcardEnabled()));
-        createInfo.put(VdsProperties.num_of_cpus,
-                String.valueOf(vm.getNumOfCpus()));
+        createInfo.put(VdsProperties.num_of_cpus, String.valueOf(vm.getNumOfCpus()));
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
-            createInfo.put(VdsProperties.cores_per_socket,
-                    (Integer.toString(vm.getCpuPerSocket())));
-            if (FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported,
-                    vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
-                createInfo.put(VdsProperties.max_number_of_cpus,
-                        String.valueOf(Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, vm.getVdsGroupCompatibilityVersion().getValue())));
+            createInfo.put(VdsProperties.cores_per_socket, (Integer.toString(vm.getCpuPerSocket())));
+            createInfo.put(
+                    VdsProperties.max_number_of_sockets,
+                    Config.<Integer> getValue(
+                            ConfigValues.MaxNumOfVmSockets,
+                            vm.getVdsGroupCompatibilityVersion().getValue()).toString());
+            if (FeatureSupported.supportedInConfig(
+                    ConfigValues.HotPlugCpuSupported,
+                    vm.getVdsGroupCompatibilityVersion(),
+                    vm.getClusterArch())) {
+                createInfo.put(
+                        VdsProperties.max_number_of_cpus,
+                        Config.<Integer> getValue(
+                                ConfigValues.MaxNumOfVmCpus,
+                                vm.getVdsGroupCompatibilityVersion().getValue()).toString());
             }
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
