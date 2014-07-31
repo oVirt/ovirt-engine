@@ -205,7 +205,7 @@ class Plugin(plugin.PluginBase):
                 {
                     'name': 'WebSocketProxy',
                     'value': '%s:%s' % (
-                        'localhost',
+                        self.environment[osetupcons.ConfigEnv.FQDN],
                         osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
                     ),
                 },

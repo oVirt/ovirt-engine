@@ -22,6 +22,7 @@
 import contextlib
 import os
 import urllib2
+import tempfile
 
 
 import gettext
@@ -68,6 +69,7 @@ class Plugin(plugin.PluginBase):
         self._need_key = False
         self._need_cert = False
         self._on_separate_h = False
+        self._csr_file = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -129,6 +131,20 @@ class Plugin(plugin.PluginBase):
                 note=_(
                     '\n\nPlease issue WebSocket Proxy certificate based '
                     'on this certificate request\n\n'
+                ),
+            )
+            self._csr_file = tempfile.NamedTemporaryFile(
+                mode='w',
+                delete=False,
+            )
+            self._csr_file.write(req)
+            self._csr_file.close()
+            self.dialog.note(
+                text=_(
+                    "\nThe certificate request is also available at:\n"
+                    "{fname}\n\n"
+                ).format(
+                    fname=self._csr_file.name,
                 ),
             )
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
@@ -253,6 +269,14 @@ class Plugin(plugin.PluginBase):
                     ],
                 )
             )
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CLEANUP,
+    )
+    def _cleanup(self):
+        if self._csr_file is not None:
+            if os.path.exists(self._csr_file.name):
+                os.unlink(self._csr_file.name)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
