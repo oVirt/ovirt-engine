@@ -52,7 +52,12 @@
         .customScriptInfoIconStyle {
             display: inline;
             float: left;
-      }
+        }
+        .checkboxWithLongLabel {
+            width: 400px;
+            float: left;
+            clear: both;
+        }
 
     </ui:style>
 
@@ -128,7 +133,7 @@
                     <ge:StringEntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
                     <ge:StringEntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
                     <ge:StringEntityModelTextBoxEditor ui:field="networkGatewayEditor" />
-                    <ge:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" />
+                    <ge:EntityModelCheckBoxEditor ui:field="networkStartOnBootEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                 </g:FlowPanel>
             </g:FlowPanel>
 
