@@ -68,23 +68,31 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
     public Response move(Action action) {
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
-        Guid imageId = asGuid(get().getImageId());
+        Disk disk = get();
+        Guid imageId = asGuid(disk.getImageId());
+        Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
         MoveDisksParameters params =
                 new MoveDisksParameters(Collections.singletonList(new MoveDiskParameters(
                         imageId,
-                        Guid.Empty,
+                        sourceStorageDomainId,
                         storageDomainId)));
         return doAction(VdcActionType.MoveDisks, params, action);
+    }
+
+    protected Guid getSourceStorageDomainId(Disk disk) {
+        return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
     }
 
     @Override
     public Response copy(Action action) {
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
-        Guid imageId = asGuid(get().getImageId());
+        Disk disk = get();
+        Guid imageId = asGuid(disk.getImageId());
+        Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
         MoveOrCopyImageGroupParameters params =
                 new MoveOrCopyImageGroupParameters(imageId,
-                        Guid.Empty,
+                        sourceStorageDomainId,
                         storageDomainId,
                         ImageOperation.Copy);
         return doAction(VdcActionType.MoveOrCopyDisk, params, action);

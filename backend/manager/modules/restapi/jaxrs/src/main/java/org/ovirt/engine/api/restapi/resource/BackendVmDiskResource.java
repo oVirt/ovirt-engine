@@ -90,17 +90,23 @@ public class BackendVmDiskResource extends BackendDeviceResource<Disk, Disks, or
     public Response move(Action action) {
         validateParameters(action, "storageDomain.id|name");
         Guid storageDomainId = getStorageDomainId(action);
-        Guid imageId = asGuid(getDisk().getImageId());
+        Disk disk = getDisk();
+        Guid sourceStorageDomainId = getSourceStorageDomainId(disk);
+        Guid imageId = asGuid(disk.getImageId());
         MoveDisksParameters params =
                 new MoveDisksParameters(Collections.singletonList(new MoveDiskParameters(
                         imageId,
-                        Guid.Empty,
+                        sourceStorageDomainId,
                         storageDomainId)));
         return doAction(VdcActionType.MoveDisks, params, action);
     }
 
     protected Disk getDisk() {
         return performGet(VdcQueryType.GetDiskByDiskId, new IdQueryParameters(guid));
+    }
+
+    protected Guid getSourceStorageDomainId(Disk disk) {
+        return asGuid(disk.getStorageDomains().getStorageDomains().get(0).getId());
     }
 
     @Override
