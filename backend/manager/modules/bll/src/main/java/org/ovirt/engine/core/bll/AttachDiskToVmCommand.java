@@ -50,7 +50,6 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
     public AttachDiskToVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         disk = loadDisk((Guid) getParameters().getEntityInfo().getId());
-        disk.setReadOnly(getParameters().isReadOnly());
     }
 
     @Override
@@ -64,6 +63,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IMAGE_DOES_NOT_EXIST);
         }
 
+        disk.setReadOnly(getParameters().isReadOnly());
         DiskValidator diskValidator = getDiskValidator(disk);
 
         if (!checkDiskUsedAsOvfStore(diskValidator)) {
