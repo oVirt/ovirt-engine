@@ -27,8 +27,8 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         // Add necessary property change handlers
         getModel().getPropertyChangedEvent().addListener(new IEventListener() {

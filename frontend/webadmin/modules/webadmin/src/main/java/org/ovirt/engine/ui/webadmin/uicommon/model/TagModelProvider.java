@@ -65,8 +65,8 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         // Add model reset handler
         getModel().getResetRequestedEvent().addListener(new IEventListener() {

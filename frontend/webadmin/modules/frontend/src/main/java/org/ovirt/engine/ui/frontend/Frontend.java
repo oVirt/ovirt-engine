@@ -838,7 +838,6 @@ public class Frontend implements HasHandlers {
                     logger.log(Level.SEVERE, "Failed to login: " + caught, caught); //$NON-NLS-1$
                     getEventsHandler().runQueryFailed(null);
                     failureEventHandler(caught);
-                    clearLoggedInUser();
                     if (callback.isHandleFailure()) {
                         setLoggedInUser(null);
                         callback.getDel().onSuccess(callback.getModel(), null);
@@ -896,13 +895,6 @@ public class Frontend implements HasHandlers {
     public void initLoggedInUser(DbUser loggedUser, String loginPassword) {
         this.currentUser = loggedUser;
         this.currentPassword = loginPassword;
-    }
-
-    /**
-     * Un-set the current logged in user.
-     */
-    public void clearLoggedInUser() {
-        initLoggedInUser(null, null);
     }
 
     /**

@@ -5,8 +5,6 @@ import java.util.logging.Logger;
 
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.common.widget.table.HasActionTable;
 import org.ovirt.engine.ui.common.widget.table.OrderedMultiSelectionModel;
@@ -92,13 +90,6 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
                 }
             }));
         }
-        registerHandler(addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-            @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                //Re-initialize handlers when UiCommonInit is called (new models need to re-attach handlers).
-                initializeHandlers();
-            }
-        }));
         initializeHandlers();
     }
 

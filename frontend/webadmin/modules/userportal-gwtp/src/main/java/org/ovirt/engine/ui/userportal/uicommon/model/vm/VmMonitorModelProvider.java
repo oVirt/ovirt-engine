@@ -25,8 +25,8 @@ public class VmMonitorModelProvider extends UserPortalDetailModelProvider<UserPo
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         getModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override

@@ -1,12 +1,12 @@
 package org.ovirt.engine.ui.common.auth;
 
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Inject;
-import org.ovirt.engine.ui.frontend.utils.FormatUtils;
 
 /**
  * Holds data relevant for the current user.
@@ -93,8 +93,6 @@ public class CurrentUser implements HasHandlers {
 
     /**
      * Initiates the sign out operation.
-     *
-     * @see #onUserLogout()
      */
     public void logout() {
         if (isLoggedIn() && logoutHandler != null) {
@@ -108,15 +106,6 @@ public class CurrentUser implements HasHandlers {
     public void onUserLogin(DbUser loggedUser) {
         setLoggedUser(loggedUser);
         setLoggedIn(true);
-        fireLoginChangeEvent();
-    }
-
-    /**
-     * User logout callback, called after the user has successfully signed out.
-     */
-    public void onUserLogout() {
-        setLoggedUser(null);
-        setLoggedIn(false);
         fireLoginChangeEvent();
     }
 

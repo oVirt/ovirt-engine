@@ -303,11 +303,4 @@ public class UserPortalLoginModel extends LoginModel
 
         loginModel.getIsENGINEUser().setEntity(isENGINEUser);
     }
-
-    @Override
-    public void resetAfterLogout() {
-        super.resetAfterLogout();
-        getIsAutoConnect().setIsChangable(true);
-    }
-
 }

@@ -10,8 +10,6 @@ import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.idhandler.ProvidesElementId;
 import org.ovirt.engine.ui.common.system.HeaderOffsetChangeEvent;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.common.widget.MenuBar;
@@ -492,14 +490,6 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         };
 
         addSelectionChangeListener(itemSelectionChangeHandler);
-
-        // Add handler to be notified when UiCommon models are (re)initialized
-        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-            @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                addSelectionChangeListener(itemSelectionChangeHandler);
-            }
-        });
     }
 
     void addSelectionChangeListener(IEventListener itemSelectionChangeHandler) {

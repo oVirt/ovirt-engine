@@ -1,11 +1,5 @@
 package org.ovirt.engine.ui.webadmin.system;
 
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.user.client.Window;
-import com.google.inject.Inject;
-import com.google.inject.Provider;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
@@ -14,6 +8,7 @@ import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
+import org.ovirt.engine.ui.common.uicommon.model.ModelInitializedEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
@@ -29,6 +24,12 @@ import org.ovirt.engine.ui.webadmin.plugin.restapi.EngineSessionTimeoutData;
 import org.ovirt.engine.ui.webadmin.plugin.restapi.RestApiSessionManager;
 import org.ovirt.engine.ui.webadmin.uimode.UiModeData;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
+import com.google.inject.Inject;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 
 public class ApplicationInit extends BaseApplicationInit<LoginModel> {
@@ -80,20 +81,14 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
     }
 
     @Override
-    protected void beforeUiCommonInitEvent(LoginModel loginModel) {
+    protected void beforeLogin(LoginModel loginModel) {
         CommonModelManager.init(eventBus);
+        ModelInitializedEvent.fire(eventBus);
     }
 
     @Override
     protected boolean filterFrontendQueries() {
         return false;
-    }
-
-    @Override
-    public void onLogout() {
-        // Logout operation happens within the CommonModel SignOut event handler
-        CommonModelManager.instance().signOut();
-        performLogout();
     }
 
     @Override

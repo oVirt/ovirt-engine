@@ -12,9 +12,7 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -521,40 +519,6 @@ public class CommonModel extends ListModel
         getSearchCommand().execute();
     }
 
-    public void signOut()
-    {
-        // Stop search on all list models.
-        for (SearchableListModel listModel : getItems())
-        {
-            listModel.stopRefresh();
-        }
-
-        getEventList().stopRefresh();
-        getAlertList().stopRefresh();
-        getTaskList().stopRefresh();
-        getBookmarkList().stopRefresh();
-        getRoleListModel().stopRefresh();
-        getSystemPermissionListModel().stopRefresh();
-        getClusterPolicyListModel().stopRefresh();
-        getInstanceTypeListModel().stopRefresh();
-
-        if (Frontend.getInstance().getIsUserLoggedIn())
-        {
-            AsyncQuery _asyncQuery = new AsyncQuery();
-            _asyncQuery.setHandleFailure(true);
-            _asyncQuery.setModel(this);
-            _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object model, Object ReturnValue) {
-                }
-            };
-            setLoggedInUser(null);
-            getSignedOutEvent().raise(this, EventArgs.EMPTY);
-
-            Frontend.getInstance().logoffAsync(Frontend.getInstance().getLoggedInUser(), _asyncQuery);
-        }
-    }
-
     public void configure()
     {
         if (getWindow() != null)
@@ -715,10 +679,6 @@ public class CommonModel extends ListModel
         if (command == getSearchCommand())
         {
             search();
-        }
-        else if (command == getSignOutCommand())
-        {
-            signOut();
         }
         else if (command == getConfigureCommand())
         {

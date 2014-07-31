@@ -38,10 +38,6 @@ public class ConnectAutomaticallyManager {
         this.errorPopupManager = errorPopupManager;
     }
 
-    public void resetAlreadyOpened() {
-        this.alreadyOpened = false;
-    }
-
     public void unregisterModels() {
         if (listeners == null) {
             return;

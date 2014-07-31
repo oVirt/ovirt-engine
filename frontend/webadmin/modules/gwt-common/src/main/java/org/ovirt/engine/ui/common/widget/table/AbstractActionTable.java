@@ -9,8 +9,6 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
@@ -23,10 +21,10 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Position;
 import com.google.gwt.dom.client.Style.Unit;
-import com.google.gwt.dom.client.BrowserEvents;
 import com.google.gwt.dom.client.TableCellElement;
 import com.google.gwt.dom.client.TableRowElement;
 import com.google.gwt.event.dom.client.ClickEvent;
@@ -238,14 +236,6 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             tableHeader.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
             table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
         }
-
-        // When UiCommon models are (re)initialized, register search string change listener
-        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-            @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                addModelSearchStringChangeListener(dataProvider.getModel());
-            }
-        });
         addModelSearchStringChangeListener(dataProvider.getModel());
     }
 
