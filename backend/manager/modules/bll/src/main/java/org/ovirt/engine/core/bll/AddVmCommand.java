@@ -1332,7 +1332,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     protected boolean isTemplateInValidDc() {
-        return getVmTemplate().getStoragePoolId().equals(getStoragePoolId());
+        return VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVmTemplateId())
+                || getVmTemplate().getStoragePoolId().equals(getStoragePoolId());
     }
 
     protected void updateProfileOnNic(VmNic iface) {
