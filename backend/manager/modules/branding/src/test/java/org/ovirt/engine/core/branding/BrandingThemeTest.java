@@ -30,7 +30,7 @@ public class BrandingThemeTest {
             getResource("./org/ovirt/engine/core/branding").toURI().getPath()); //$NON-NLS-1$
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         testTheme = new BrandingTheme(testThemePath.getAbsolutePath(),
-                testThemeRootPath, 1);
+                testThemeRootPath, 2);
         assertTrue("The theme should load", testTheme.load()); //$NON-NLS-1$
     }
 
@@ -84,7 +84,7 @@ public class BrandingThemeTest {
         // theme 4 is purposely missing a resources.properties file
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "04-test4.brand"); //$NON-NLS-1$
         BrandingTheme theme4 = new BrandingTheme(testThemePath.getAbsolutePath(),
-                testThemeRootPath, 1); //$NON-NLS-1$
+                testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue("Theme 4 should load", theme4.load()); //$NON-NLS-1$
 
         assertNull("getCascadingResource not handling missing resources.properties gracefully", //$NON-NLS-1$
@@ -99,7 +99,7 @@ public class BrandingThemeTest {
         // theme 5 is purposely missing a resources key in branding.properties
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "05-test5.brand"); //$NON-NLS-1$
         BrandingTheme theme5 = new BrandingTheme(testThemePath.getAbsolutePath(),
-                testThemeRootPath, 1); //$NON-NLS-1$
+                testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue("Theme 5 should load", theme5.load()); //$NON-NLS-1$
 
         assertNull("getCascadingResource not handling missing resources key gracefully", //$NON-NLS-1$
@@ -126,7 +126,7 @@ public class BrandingThemeTest {
                 .toURI().getPath());
         File testThemePath = new File(testThemeRootPath.getAbsoluteFile(), "01-test.brand"); //$NON-NLS-1$
         BrandingTheme theme1 = new BrandingTheme(testThemePath.getAbsolutePath(),
-                testThemeRootPath, 1); //$NON-NLS-1$
+                testThemeRootPath, 2); //$NON-NLS-1$
         assertTrue("Theme 1 should load", theme1.load()); //$NON-NLS-1$
         assertFalse("should replace template should be false", //$NON-NLS-1$
                 theme1.shouldReplaceWelcomePageSectionTemplate());
