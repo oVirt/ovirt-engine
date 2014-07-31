@@ -2,8 +2,6 @@ package org.ovirt.engine.ui.common.widget.action;
 
 import java.util.List;
 
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -37,14 +35,6 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
             String toolTip) {
         super(eventBus, title, commandLocation, subTitledAction, toolTip);
         update();
-
-        // Add handler to be notified when UiCommon models are (re)initialized
-        registerHandler(eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-            @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                update();
-            }
-        }));
     }
 
     public UiCommandButtonDefinition(EventBus eventBus, String title) {

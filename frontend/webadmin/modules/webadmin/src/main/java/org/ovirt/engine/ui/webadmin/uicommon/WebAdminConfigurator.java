@@ -5,8 +5,6 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.DocumentationPathTranslator;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
@@ -18,7 +16,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class WebAdminConfigurator extends Configurator implements IEventListener, UiCommonInitHandler {
+public class WebAdminConfigurator extends Configurator implements IEventListener {
 
     public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html"; //$NON-NLS-1$
 
@@ -36,8 +34,8 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     public WebAdminConfigurator(EventBus eventBus, ClientAgentType clientAgentType) {
         super();
         this.clientAgentType = clientAgentType;
-        eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
+        fetchDocumentationFile();
         // This means that this is WebAdmin application.
         setIsAdmin(true);
         setSpiceAdminConsole(true);
@@ -71,11 +69,6 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     @Override
     protected Event getSpiceVersionFileFetchedEvent() {
         return spiceVersionFileFetchedEvent;
-    }
-
-    @Override
-    public void onUiCommonInit(UiCommonInitEvent event) {
-        fetchDocumentationFile();
     }
 
     @Override

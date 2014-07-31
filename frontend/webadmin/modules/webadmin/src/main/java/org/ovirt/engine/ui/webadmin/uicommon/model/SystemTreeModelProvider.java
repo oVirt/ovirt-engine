@@ -68,8 +68,8 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         // Add model reset handler
         getModel().getResetRequestedEvent().addListener(new IEventListener() {

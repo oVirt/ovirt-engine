@@ -8,8 +8,6 @@ import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent;
 import org.ovirt.engine.ui.common.system.ApplicationFocusChangeEvent.ApplicationFocusChangeHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimer;
 import org.ovirt.engine.ui.uicommonweb.models.GridTimerStateChangeEvent;
@@ -74,15 +72,6 @@ public abstract class AbstractRefreshManager<T extends BaseRefreshPanel> impleme
         this.eventBus = eventBus;
         this.refreshPanel = createRefreshPanel();
         listenOnManualRefresh();
-
-        // Add handler to be notified when UiCommon models are (re)initialized
-        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
-            @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                updateController();
-            }
-        });
-
         updateController();
 
         // Add handler to be notified when the application window gains or looses its focus

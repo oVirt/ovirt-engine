@@ -1,8 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter;
 
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -21,7 +19,7 @@ import com.google.inject.Inject;
 import com.gwtplatform.mvp.client.PresenterWidget;
 import com.gwtplatform.mvp.client.View;
 
-public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> implements UiCommonInitHandler {
+public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPresenterWidget.ViewDef> {
 
     public interface ViewDef extends View {
 
@@ -56,14 +54,7 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
     @Inject
     public SearchPanelPresenterWidget(EventBus eventBus, ViewDef view) {
         super(eventBus, view);
-        eventBus.addHandler(UiCommonInitEvent.getType(), this);
 
-        updateCommonModel();
-        addCommonModelListeners();
-    }
-
-    @Override
-    public void onUiCommonInit(UiCommonInitEvent event) {
         updateCommonModel();
         addCommonModelListeners();
     }

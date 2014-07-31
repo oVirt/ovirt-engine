@@ -64,8 +64,8 @@ public class TaskModelProvider extends SearchableTabModelProvider<Job, TaskListM
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
         if (taskHandler != null) {
             taskHandler.updateTree();
         }

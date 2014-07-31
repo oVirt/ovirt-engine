@@ -49,8 +49,8 @@ public abstract class DataBoundTabModelProvider<T, M extends SearchableListModel
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         // Add model items change handler
         getModel().getItemsChangedEvent().addListener(new IEventListener() {

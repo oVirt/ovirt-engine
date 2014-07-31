@@ -1,11 +1,8 @@
 package org.ovirt.engine.ui.common.uicommon.model;
 
-import com.google.gwt.event.shared.GwtEvent;
-import com.google.gwt.event.shared.HasHandlers;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.ModelBoundPresenterWidget;
 import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresenterWidget;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent.UiCommonInitHandler;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
@@ -17,6 +14,8 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.GwtEvent;
+import com.google.gwt.event.shared.HasHandlers;
 import com.google.inject.Provider;
 
 /**
@@ -39,22 +38,11 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         this.popupHandler = new ModelBoundPopupHandler<M>(this, eventBus);
         this.popupHandler.setDefaultConfirmPopupProvider(defaultConfirmPopupProvider);
 
-        // Add handler to be notified when UiCommon models are (re)initialized
-        eventBus.addHandler(UiCommonInitEvent.getType(), new UiCommonInitHandler() {
+        // Handle UiCommon model initialization to attach appropriate listeners
+        eventBus.addHandler(ModelInitializedEvent.getType(), new ModelInitializedEvent.ModelInitializedHandler() {
             @Override
-            public void onUiCommonInit(UiCommonInitEvent event) {
-                TabModelProvider.this.onCommonModelChange();
-            }
-        });
-
-        // Add handler to clean up model
-        eventBus.addHandler(CleanupModelEvent.getType(), new CleanupModelEvent.CleanupModelHandler() {
-            @Override
-            public void onCleanupModel(CleanupModelEvent event) {
-                if (hasModel() && !reusesModel()) {
-                    // Calling unsetEventbus will also unregister the handlers
-                    getModel().unsetEventBus();
-                }
+            public void onModelInitialized(ModelInitializedEvent event) {
+                initializeModelHandlers();
             }
         });
     }
@@ -76,7 +64,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
      * <p>
      * Override this method to register custom listeners on the corresponding model.
      */
-    protected void onCommonModelChange() {
+    protected void initializeModelHandlers() {
         // Register dialog model property change listener
         popupHandler.addDialogModelListener(getModel());
 

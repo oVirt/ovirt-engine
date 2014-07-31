@@ -64,8 +64,8 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
     }
 
     @Override
-    protected void onCommonModelChange() {
-        super.onCommonModelChange();
+    protected void initializeModelHandlers() {
+        super.initializeModelHandlers();
 
         // Clear selection when a system tree node is selected
         treeModelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {

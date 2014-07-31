@@ -6,9 +6,8 @@ import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.ClientAgentType;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
-import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.common.uicommon.model.ModelInitializedEvent;
 import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalLoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -66,8 +65,9 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     }
 
     @Override
-    protected void beforeUiCommonInitEvent(UserPortalLoginModel loginModel) {
+    protected void beforeLogin(UserPortalLoginModel loginModel) {
         UserPortalModelInitEvent.fire(eventBus);
+        ModelInitializedEvent.fire(eventBus);
     }
 
     @Override
@@ -102,28 +102,6 @@ public class ApplicationInit extends BaseApplicationInit<UserPortalLoginModel> {
     protected void onLogin(UserPortalLoginModel loginModel) {
         // Instead of performing login now, request update for "IsENGINEUser" property
         loginModel.updateIsENGINEUser(loginModel.getLoggedUser());
-    }
-
-    @Override
-    public void onLogout() {
-        AsyncQuery query = new AsyncQuery();
-        query.setHandleFailure(true);
-        query.setModel(this);
-        query.asyncCallback = new INewAsyncCallback() {
-            @Override
-            public void onSuccess(Object model, Object ReturnValue) {
-                // IE optimization: reload entire application on user logout
-                if (clientAgentType.isIE8OrBelow()) {
-                    Window.Location.reload();
-                }
-
-                frontend.clearLoggedInUser();
-                performLogout();
-                connectAutomaticallyManager.resetAlreadyOpened();
-            }
-        };
-
-        frontend.logoffAsync(frontend.getLoggedInUser(), query);
     }
 
 }

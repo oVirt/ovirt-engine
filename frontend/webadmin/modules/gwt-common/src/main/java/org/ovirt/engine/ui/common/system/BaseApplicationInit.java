@@ -1,29 +1,29 @@
 package org.ovirt.engine.ui.common.system;
 
-import com.google.gwt.core.client.Scheduler.ScheduledCommand;
-import com.google.gwt.core.client.Scheduler;
-import com.google.gwt.event.shared.EventBus;
-import com.google.inject.Provider;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
-import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
+import org.ovirt.engine.ui.common.auth.CurrentUser.LogoutHandler;
 import org.ovirt.engine.ui.common.auth.SSOTokenData;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
-import org.ovirt.engine.ui.common.uicommon.model.CleanupModelEvent;
-import org.ovirt.engine.ui.common.uicommon.model.UiCommonInitEvent;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
-import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
+import com.google.gwt.core.client.Scheduler;
+import com.google.gwt.core.client.Scheduler.ScheduledCommand;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.Window;
+import com.google.inject.Provider;
 import com.gwtplatform.mvp.client.Bootstrapper;
 
 /**
@@ -41,7 +41,7 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     protected final CurrentUser user;
     protected final EventBus eventBus;
     protected final Frontend frontend;
-    private CurrentUserRole currentUserRole;
+    private final CurrentUserRole currentUserRole;
 
     // Using Provider because any UiCommon model will fail before TypeResolver is initialized
     private final Provider<T> loginModelProvider;
@@ -114,23 +114,27 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     protected abstract void onLogin(T loginModel);
 
     @Override
-    public abstract void onLogout();
+    public void onLogout() {
+        AsyncQuery query = new AsyncQuery();
+        query.setHandleFailure(true);
+        query.asyncCallback = new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object model, Object ReturnValue) {
+                // Reload entire application after the user has logged out successfully on backend.
+                Window.Location.reload();
+            }
+        };
 
-    protected void performLogout() {
-        getLoginModel().resetAfterLogout();
-        user.onUserLogout();
-        AsyncDataProvider.clearCache();
-        CleanupModelEvent.fire(eventBus);
+        frontend.logoffAsync(frontend.getLoggedInUser(), query);
     }
 
     protected void performLogin(T loginModel) {
         DbUser loggedUser = loginModel.getLoggedUser();
         String loginPassword = loginModel.getPassword().getEntity();
 
+        beforeLogin(loginModel);
         // UiCommon login preparation
         frontend.initLoggedInUser(loggedUser, loginPassword);
-        beforeUiCommonInitEvent(loginModel);
-        UiCommonInitEvent.fire(eventBus);
 
         // UI login actions
         user.onUserLogin(loggedUser);
@@ -140,11 +144,10 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
     }
 
     /**
-     * Called right before {@link UiCommonInitEvent} gets fired.
      * <p>
-     * Any remaining UiCommon initialization logic should be performed here.
+     * Invoked right after the user has logged in successfully on backend, before proceeding with UI login sequence.
      */
-    protected abstract void beforeUiCommonInitEvent(T loginModel);
+    protected abstract void beforeLogin(T loginModel);
 
     protected void initUiCommon() {
         // Set up UiCommon type resolver
