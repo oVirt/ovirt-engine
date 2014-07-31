@@ -62,7 +62,7 @@ public class BrandingManager {
      * branding theme to exist on the file system without interfering with each other. There is no backwards
      * compatibility, only ONE version will be valid at a time.
      */
-    private static final int CURRENT_BRANDING_VERSION = 1;
+    private static final int CURRENT_BRANDING_VERSION = 2;
 
     /**
      * A list of available {@code BrandingTheme}s.
