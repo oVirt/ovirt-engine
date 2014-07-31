@@ -24,6 +24,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
+import java.util.ArrayList;
+
 public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk, org.ovirt.engine.core.common.businessentities.Disk, BackendDiskResource>{
 
     protected static final Guid DISK_ID = GUIDS[1];
@@ -133,8 +135,14 @@ public class BackendDiskResourceTest extends AbstractBackendSubResourceTest<Disk
         entity.setBoot(false);
         entity.setShareable(false);
         entity.setPropagateErrors(PropagateErrors.On);
+
+        ArrayList<Guid> sdIds = new ArrayList<>();
+        sdIds.add(Guid.Empty);
+        entity.setStorageIds(sdIds);
+
         return setUpStatisticalEntityExpectations(entity);
     }
+
     static org.ovirt.engine.core.common.businessentities.Disk setUpStatisticalEntityExpectations(DiskImage entity) {
         entity.setReadRate(1);
         entity.setWriteRate(2);

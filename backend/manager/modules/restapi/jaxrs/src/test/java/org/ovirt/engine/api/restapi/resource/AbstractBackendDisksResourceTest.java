@@ -107,6 +107,9 @@ public class AbstractBackendDisksResourceTest<T extends AbstractBackendReadOnlyD
         expect(entity.getDiskStorageType()).andReturn(DiskStorageType.IMAGE).anyTimes();
         expect(entity.getImageId()).andReturn(GUIDS[1]).anyTimes();
         expect(entity.getReadOnly()).andReturn(true).anyTimes();
+        ArrayList<Guid> sdIds = new ArrayList<>();
+        sdIds.add(Guid.Empty);
+        expect(entity.getStorageIds()).andReturn(sdIds).anyTimes();
         return setUpStatisticalEntityExpectations(entity);
     }
 
