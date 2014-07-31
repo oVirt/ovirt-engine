@@ -304,6 +304,7 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         }
 
         UnitVmModel model = new UnitVmModel(behavior);
+        model.setIsAdvancedModeLocalStorageKey("instance_type_dialog"); //$NON-NLS-1$
         setWindow(model);
 
         model.setTitle(title);
