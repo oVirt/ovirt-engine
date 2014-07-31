@@ -82,6 +82,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
         NetworkValidator validator = new NetworkValidator(getNetworkDAO().get(getNetwork().getId()));
         return validate(validator.networkIsSet())
                 && validate(validator.notManagementNetwork())
+                && validate(validator.notIscsiBondNetwork())
                 && validate(validator.networkNotUsedByVms())
                 && validate(validator.networkNotUsedByTemplates());
     }

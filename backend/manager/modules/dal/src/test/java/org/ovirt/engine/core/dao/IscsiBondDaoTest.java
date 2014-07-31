@@ -110,6 +110,25 @@ public class IscsiBondDaoTest extends BaseDAOTestCase {
     }
 
     @Test
+    public void testGetIscsiBondIdByNetworkId() {
+        List<IscsiBond> fetchedIscsiBonds = dao.getIscsiBondsByNetworkId(FixturesTool.NETWORK_ENGINE);
+        assertEquals(1, fetchedIscsiBonds.size());
+        assertEquals(FixturesTool.ISCSI_BOND_ID, fetchedIscsiBonds.get(0).getId());
+    }
+
+    @Test
+    public void testGetEmptyIscsiBondIdByNetworkId() {
+        List<IscsiBond> fetchedIscsiBonds = dao.getIscsiBondsByNetworkId(networkId);
+        assertEquals(0, fetchedIscsiBonds.size());
+    }
+
+    @Test
+    public void testGetEmptyIscsiBondIdByNotExistingNetworkId() {
+        List<IscsiBond> fetchedIscsiBonds = dao.getIscsiBondsByNetworkId(Guid.Empty);
+        assertEquals(0, fetchedIscsiBonds.size());
+    }
+
+    @Test
     public void testRemoveNetworkFromIscsiBond() {
         List<Guid> networks = dao.getNetworkIdsByIscsiBondId(iscsiBondId);
         networkId = networks.get(0);

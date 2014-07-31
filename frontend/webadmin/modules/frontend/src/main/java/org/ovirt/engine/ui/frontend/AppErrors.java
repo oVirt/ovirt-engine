@@ -1684,6 +1684,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("The Management Network ('${NetworkName}') is mandatory and cannot be removed.")
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
 
+    @DefaultStringValue("The Network ('${NetworkName}') could not be removed since several iSCSI bonds (${IscsiBonds_COUNTER}) are using this network:\n ${IscsiBonds}.\nPlease remove the network first from those iSCSI bonds, and try again.")
+    String NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK();
+
     @DefaultStringValue("Previous network name is required.")
     String NETWORK_OLD_NETWORK_NOT_SPECIFIED();
 
