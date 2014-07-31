@@ -14,6 +14,7 @@ public class NFSMountPointConstraintTest {
         Assert.assertTrue(new NfsMountPointConstraint().isValid("s:/tmp/kakukk", null));
         Assert.assertTrue(new NfsMountPointConstraint().isValid("s.foobar:/tmp/kakukk", null));
         Assert.assertTrue(new NfsMountPointConstraint().isValid("0s:/tmp/kakukk", null));
+        Assert.assertTrue(new NfsMountPointConstraint().isValid("f0o.example.f4:/tmp/kakukk", null));
 
         Assert.assertFalse(new NfsMountPointConstraint().isValid("", null));
         Assert.assertFalse(new NfsMountPointConstraint().isValid("/tmp/kakukk", null));

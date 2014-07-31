@@ -16,7 +16,7 @@ public class NfsMountPointConstraint implements ConstraintValidator<ValidNFSMoun
     private static final String IP =
             "((?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)|";
 
-    private static final String FQDN = "(([A-Za-z0-9]([A-Za-z0-9\\-\\.]{0,61}[A-Za-z0-9])?)*[A-Za-z]))";
+    private static final String FQDN = "(?=^.{1,254}$)(^(((?!-)[a-zA-Z0-9-]{1,63}(?<!-))|((?!-)[a-zA-Z0-9-]{1,63}(?<!-)\\.)+[a-zA-Z0-9]{2,63})))";
 
     private static final String PATH = "\\:/(.*?/|.*?\\\\)?([^\\./|^\\.\\\\]+)(?:\\.([^\\\\]*)|)";
 
