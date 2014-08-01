@@ -42,6 +42,7 @@ from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -61,7 +62,7 @@ class Plugin(plugin.PluginBase):
         req = X509.Request()
         req.set_pubkey(evp)
         req.sign(evp, 'sha1')
-        return rsapem, req.as_pem()
+        return rsapem, req.as_pem(), req.get_pubkey().as_pem(cipher=None)
 
     def __init__(self, context):
         super(Plugin, self).__init__(context=context)
@@ -122,31 +123,50 @@ class Plugin(plugin.PluginBase):
             OVIRT_ENGINE_PKI_ENGINE_CERT
         )
 
+        inline = True
+        my_pubk = None
         if self._need_key:
-            wspkey, req = self._genReq()
+            wspkey, req, my_pubk = self._genReq()
 
-            self.dialog.displayMultiString(
-                name=owspcons.Displays.CERTIFICATE_REQUEST,
-                value=req.splitlines(),
+            inline = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_CSR_INLINE',
                 note=_(
-                    '\n\nPlease issue WebSocket Proxy certificate based '
-                    'on this certificate request\n\n'
+                    '\nDo you prefer to manage certificate signing request '
+                    'and response\n'
+                    'inline or thought support files? '
+                    '(@VALUES@) [@DEFAULT@]: '
                 ),
+                prompt=True,
+                true=_('Inline'),
+                false=_('Files'),
+                default=True,
             )
-            self._csr_file = tempfile.NamedTemporaryFile(
-                mode='w',
-                delete=False,
-            )
-            self._csr_file.write(req)
-            self._csr_file.close()
-            self.dialog.note(
-                text=_(
-                    "\nThe certificate request is also available at:\n"
-                    "{fname}\n\n"
-                ).format(
-                    fname=self._csr_file.name,
-                ),
-            )
+
+            if inline:
+                self.dialog.displayMultiString(
+                    name=owspcons.Displays.CERTIFICATE_REQUEST,
+                    value=req.splitlines(),
+                    note=_(
+                        '\nPlease issue WebSocket Proxy certificate based '
+                        'on this certificate request\n\n'
+                    ),
+                )
+            else:
+                self._csr_file = tempfile.NamedTemporaryFile(
+                    mode='w',
+                    delete=False,
+                )
+                self._csr_file.write(req)
+                self._csr_file.close()
+                self.dialog.note(
+                    text=_(
+                        "\nThe certificate signing request is available at:\n"
+                        "{fname}\n\n"
+                    ).format(
+                        fname=self._csr_file.name,
+                    ),
+                )
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=owspcons.FileLocations.
@@ -164,13 +184,14 @@ class Plugin(plugin.PluginBase):
         if self._need_cert:
             self.dialog.note(
                 text=_(
-                    "Enroll SSL certificate for the websocket proxy service.\n"
+                    "\nEnroll SSL certificate for the websocket proxy "
+                    "service.\n"
                     "It can be done using engine internal CA, if no 3rd "
-                    "party CA is available, with this sequence:\n"
-
+                    "party CA is available,\n"
+                    "with this sequence:\n\n"
                     "1. Copy and save certificate request at\n"
                     "    /etc/pki/ovirt-engine/requests/{name}-{fqdn}.req\n"
-                    "on the engine server\n\n"
+                    "on the engine host\n\n"
                     "2. execute, on the engine host, this command "
                     "to enroll the cert:\n"
                     " /usr/share/ovirt-engine/bin/pki-enroll-request.sh \\\n"
@@ -181,30 +202,103 @@ class Plugin(plugin.PluginBase):
                     "environment\n"
                     "(i.e. the values must match values in the "
                     "certificate authority of your engine)\n\n"
-
-                    "3. Certificate will be available at\n"
-                    "    /etc/pki/ovirt-engine/certs/{name}-{fqdn}.cer\n"
-                    "on the engine host, please copy that content here "
-                    "when required\n"
                 ).format(
                     fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
                     name=owspcons.Const.WEBSOCKET_PROXY_CERT_NAME,
                 ),
             )
 
-            if self.environment[
-                owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN
-            ] is None:
-                self.environment[
-                    owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN
-                ] = self.dialog.queryMultiString(
-                    name=owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN,
-                    note=_(
-                        '\n\nPlease input WSP certificate chain that '
-                        'matches certificate request, (issuer is not '
-                        'mandatory, from intermediate and upper)\n\n'
+            if inline:
+                self.dialog.note(
+                    text=_(
+                        "3. Certificate will be available at\n"
+                        "    /etc/pki/ovirt-engine/certs/{name}-{fqdn}.cer\n"
+                        "on the engine host, please paste that content here "
+                        "when required\n"
+                    ).format(
+                        fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
+                        name=owspcons.Const.WEBSOCKET_PROXY_CERT_NAME,
                     ),
                 )
+            else:
+                self.dialog.note(
+                    text=_(
+                        "3. Certificate will be available at\n"
+                        "    /etc/pki/ovirt-engine/certs/{name}-{fqdn}.cer\n"
+                        "on the engine host, please copy that file here "
+                        "and provide its location when required\n"
+                    ).format(
+                        fqdn=self.environment[osetupcons.ConfigEnv.FQDN],
+                        name=owspcons.Const.WEBSOCKET_PROXY_CERT_NAME,
+                    ),
+                )
+
+            goodcert = False
+            while not goodcert:
+                if inline:
+                    self.environment[
+                        owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN
+                    ] = '\n'.join(
+                        self.dialog.queryMultiString(
+                            name=owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN,
+                            note=_(
+                                '\nPlease input WSP certificate chain that '
+                                'matches certificate request,\n'
+                                '(issuer is not mandatory, from intermediate'
+                                ' and upper)\n\n'
+                            ),
+                        )
+                    )
+                else:
+                    goodfile = False
+                    while not goodfile:
+                        filename = self.dialog.queryString(
+                            name='WSP_T_CERT_FILENAME',
+                            note=_(
+                                '\nPlease input the location of the file '
+                                'where you copied\n'
+                                'back the signed cert on this host: '
+                            ),
+                            prompt=True,
+                        )
+                        try:
+                            with open(filename) as f:
+                                self.environment[
+                                    owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN
+                                ] = f.read()
+                                goodfile = True
+                        except EnvironmentError:
+                            self.logger.error(
+                                _(
+                                    'Error reading {fname}, '
+                                    'please try again'
+                                ).format(
+                                    fname=filename,
+                                )
+                            )
+                try:
+                    if my_pubk == X509.load_cert_string(
+                        self.environment[
+                            owspcons.ConfigEnv.WSP_CERTIFICATE_CHAIN
+                        ]
+                    ).get_pubkey().as_pem(cipher=None):
+                        goodcert = True
+                    else:
+                        self.logger.error(
+                            _(
+                                'The cert you provided doesn\'t '
+                                'match the required CSR.\n'
+                                'Please try again'
+                            )
+                        )
+                except X509.X509Error:
+                    self.logger.error(
+                        _(
+                            'The cert you provided is invalid.\n'
+                            'Please try again'
+                        )
+                    )
+
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(
                     name=owspcons.FileLocations.
