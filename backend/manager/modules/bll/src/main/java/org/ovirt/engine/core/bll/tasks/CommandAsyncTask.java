@@ -31,7 +31,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds =
             new HashMap<Guid, CommandMultiAsyncTasks>();
 
-    public CommandMultiAsyncTasks GetCommandMultiAsyncTasks() {
+    public CommandMultiAsyncTasks getCommandMultiAsyncTasks() {
         CommandMultiAsyncTasks entityInfo = null;
         synchronized (_lockObject) {
             entityInfo = _multiTasksByCommandIds.get(getCommandId());
@@ -50,7 +50,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 isNewCommandAdded = true;
             }
 
-            CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
+            CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
             entityInfo.AttachTask(this);
         }
 
@@ -70,21 +70,21 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
     @Override
     public void concreteStartPollingTask() {
-        CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
+        CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
         entityInfo.StartPollingTask(getVdsmTaskId());
     }
 
     @Override
-    protected void OnTaskEndSuccess() {
-        LogEndTaskSuccess();
-        EndActionIfNecessary();
+    protected void onTaskEndSuccess() {
+        logEndTaskSuccess();
+        endActionIfNecessary();
     }
 
-    private void EndActionIfNecessary() {
-        CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
+    private void endActionIfNecessary() {
+        CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
         if (entityInfo == null) {
             log.warnFormat(
-                    "CommandAsyncTask::EndActionIfNecessary: No info is available for entity '{0}', current task ('{1}') was probably created while other tasks were in progress, clearing task.",
+                    "CommandAsyncTask::endActionIfNecessary: No info is available for entity '{0}', current task ('{1}') was probably created while other tasks were in progress, clearing task.",
                     getCommandId(),
                     getVdsmTaskId());
 
@@ -93,7 +93,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         else if (entityInfo.ShouldEndAction()) {
             log.infoFormat(
-                    "CommandAsyncTask::EndActionIfNecessary: All tasks of command '{0}' has ended -> executing 'endAction'",
+                    "CommandAsyncTask::endActionIfNecessary: All tasks of command '{0}' has ended -> executing 'endAction'",
                     getCommandId());
 
             log.infoFormat(
@@ -106,14 +106,14 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 @SuppressWarnings("synthetic-access")
                 @Override
                 public void run() {
-                    EndCommandAction();
+                    endCommandAction();
                 }
             });
         }
     }
 
-    private void EndCommandAction() {
-        CommandMultiAsyncTasks entityInfo = GetCommandMultiAsyncTasks();
+    private void endCommandAction() {
+        CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
         VdcReturnValueBase vdcReturnValue = null;
         ExecutionContext context = null;
         boolean endActionRuntimeException = false;
@@ -134,7 +134,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         dbAsyncTask.getActionParameters().setImagesParameters(imagesParameters);
 
         try {
-            log.infoFormat("CommandAsyncTask::EndCommandAction [within thread] context: Attempting to endAction '{0}', executionIndex: '{1}'",
+            log.infoFormat("CommandAsyncTask::endCommandAction [within thread] context: Attempting to endAction '{0}', executionIndex: '{1}'",
                     dbAsyncTask.getActionParameters().getCommandType(),
                     dbAsyncTask.getActionParameters().getExecutionIndex());
 
@@ -159,7 +159,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         catch (RuntimeException Ex2) {
             log.error(
-                    "CommandAsyncTask::EndCommandAction [within thread]: An exception has been thrown (not related to 'endAction' itself)",
+                    "CommandAsyncTask::endCommandAction [within thread]: An exception has been thrown (not related to 'endAction' itself)",
                     Ex2);
             endActionRuntimeException = true;
         }
@@ -195,7 +195,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     "CommandAsyncTask::HandleEndActionResult: endAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
                     actionType);
             commandInfo.clearTaskByVdsmTaskId(dbAsyncTask.getVdsmTaskId());
-            RemoveTaskFromDB();
+            removeTaskFromDB();
             if (commandInfo.getAllCleared()) {
                 log.infoFormat(
                         "CommandAsyncTask::HandleEndActionRuntimeException: Removing CommandMultiAsyncTasks object for entity '{0}'",
@@ -261,15 +261,15 @@ public class CommandAsyncTask extends SPMAsyncTask {
     }
 
     @Override
-    protected void OnTaskEndFailure() {
-        LogEndTaskFailure();
-        EndActionIfNecessary();
+    protected void onTaskEndFailure() {
+        logEndTaskFailure();
+        endActionIfNecessary();
     }
 
     @Override
-    protected void OnTaskDoesNotExist() {
-        LogTaskDoesntExist();
-        EndActionIfNecessary();
+    protected void onTaskDoesNotExist() {
+        logTaskDoesntExist();
+        endActionIfNecessary();
     }
 
 
