@@ -311,12 +311,14 @@ public class VmInitModel extends Model {
         removeNetworkCommand = value;
     }
 
-    private EntityModel<Boolean> privateNetworkDhcp;
-    public EntityModel<Boolean> getNetworkDhcp() {
-        return privateNetworkDhcp;
+    private ListModel<NetworkBootProtocol> networkBootProtocolList;
+
+    public ListModel<NetworkBootProtocol> getNetworkBootProtocolList() {
+        return networkBootProtocolList;
     }
-    private void setNetworkDhcp(EntityModel<Boolean> value) {
-        privateNetworkDhcp = value;
+
+    private void setNetworkBootProtocolList(ListModel<NetworkBootProtocol> value) {
+        networkBootProtocolList = value;
     }
 
     private EntityModel<String> privateNetworkIpAddress;
@@ -480,7 +482,7 @@ public class VmInitModel extends Model {
         setNetworkEnabled(new EntityModel<Boolean>());
         setNetworkSelectedName(new EntityModel<String>());
         setNetworkList(new ListModel<String>());
-        setNetworkDhcp(new EntityModel<Boolean>());
+        setNetworkBootProtocolList(new ListModel<NetworkBootProtocol>());
         setNetworkIpAddress(new EntityModel<String>());
         setNetworkNetmask(new EntityModel<String>());
         setNetworkGateway(new EntityModel<String>());
@@ -565,6 +567,9 @@ public class VmInitModel extends Model {
                 }));
 
         isWindowsOS = vm != null ? AsyncDataProvider.isWindowsOsType(vm.getOsId()) : true;
+
+        getNetworkBootProtocolList().setItems(Arrays.asList(NetworkBootProtocol.values()));
+        getNetworkBootProtocolList().setSelectedItem(NetworkBootProtocol.NONE);
 
         VmInit vmInit = (vm != null) ? vm.getVmInit() : null;
         if (vmInit != null) {
@@ -754,7 +759,7 @@ public class VmInitModel extends Model {
                 String name = entry.getKey();
                 VmInitNetwork params = entry.getValue();
 
-                if (params.getBootProtocol() != NetworkBootProtocol.DHCP) {
+                if (params.getBootProtocol() == NetworkBootProtocol.STATIC_IP) {
                     if (!validateHidden(getNetworkList(), name, null,
                                     new IValidation[] { new AsciiNameValidation() })
                             || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
@@ -896,7 +901,7 @@ public class VmInitModel extends Model {
             if (!networkMap.isEmpty()) {
                 for (Map.Entry<String, VmInitNetwork> entry : networkMap.entrySet()) {
                     VmInitNetwork params = entry.getValue();
-                    if (params.getBootProtocol() == NetworkBootProtocol.DHCP) {
+                    if (params.getBootProtocol() != NetworkBootProtocol.STATIC_IP) {
                         params.setIp(null);
                         params.setNetmask(null);
                         params.setGateway(null);
@@ -1020,8 +1025,7 @@ public class VmInitModel extends Model {
         if (lastSelectedNetworkName != null) {
             VmInitNetwork obj = networkMap.get(lastSelectedNetworkName);
             if (obj != null) {
-                obj.setBootProtocol((getNetworkDhcp().getEntity() != null && getNetworkDhcp().getEntity())
-                                    ? NetworkBootProtocol.DHCP : NetworkBootProtocol.STATIC_IP);
+                obj.setBootProtocol(getNetworkBootProtocolList().getSelectedItem());
                 obj.setIp(getNetworkIpAddress().getEntity());
                 obj.setNetmask(getNetworkNetmask().getEntity());
                 obj.setGateway(getNetworkGateway().getEntity());
@@ -1042,7 +1046,13 @@ public class VmInitModel extends Model {
             networkName = getNetworkList().getSelectedItem();
             obj = networkMap.get(networkName);
         }
-        getNetworkDhcp().setEntity(obj == null ? null : obj.getBootProtocol() == NetworkBootProtocol.DHCP);
+
+        if (obj == null || obj.getBootProtocol() == null) {
+            getNetworkBootProtocolList().setSelectedItem(NetworkBootProtocol.NONE);
+        } else {
+            getNetworkBootProtocolList().setSelectedItem(obj.getBootProtocol());
+        }
+
         getNetworkIpAddress().setEntity(obj == null ? null : obj.getIp());
         getNetworkNetmask().setEntity(obj == null ? null : obj.getNetmask());
         getNetworkGateway().setEntity(obj == null ? null : obj.getGateway());

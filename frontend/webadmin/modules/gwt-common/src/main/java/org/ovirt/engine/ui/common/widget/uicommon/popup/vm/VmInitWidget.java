@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEdito
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInitModel;
@@ -316,10 +318,10 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
     @Ignore
     FlowPanel networkOptions;
 
-    @UiField
-    @Path(value = "networkDhcp.entity")
+    @UiField(provided = true)
+    @Path(value = "networkBootProtocolList.selectedItem")
     @WithElementId
-    EntityModelCheckBoxEditor networkDhcpEditor;
+    ListModelListBoxEditor<NetworkBootProtocol> networkBootProtocolEditor;
 
     @UiField
     @Path(value = "networkIpAddress.entity")
@@ -384,8 +386,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
     void initCheckBoxEditors() {
         networkEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkDhcpEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkStartOnBootEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
+        networkStartOnBootEditor = new EntityModelCheckBoxEditor(Align.LEFT);
     }
 
     void initListBoxEditors() {
@@ -403,6 +404,8 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
+        networkBootProtocolEditor =
+                new ListModelListBoxEditor<NetworkBootProtocol>(new EnumRenderer<NetworkBootProtocol>());
     }
 
     void initComboBoxEditors() {
@@ -449,7 +452,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         networkLabelSepAddRemove.setText(sep);
         networkRemoveLabel.setText(constants.cloudInitObjectRemoveLabel());
 
-        networkDhcpEditor.setLabel(constants.cloudInitNetworkDhcpLabel());
+        networkBootProtocolEditor.setLabel(constants.cloudInitNetworkBootProtocolLabel());
         networkIpAddressEditor.setLabel(constants.cloudInitNetworkIpAddressLabel());
         networkNetmaskEditor.setLabel(constants.cloudInitNetworkNetmaskLabel());
         networkGatewayEditor.setLabel(constants.cloudInitNetworkGatewayLabel());
@@ -472,7 +475,7 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         networkListEditor.setTitle(constants.cloudInitNetworkToolTip());
         networkNameEditor.setTitle(constants.cloudInitNetworkToolTip());
-        networkDhcpEditor.setTitle(constants.cloudInitNetworkDhcpToolTip());
+        networkBootProtocolEditor.setTitle(constants.cloudInitNetworkBootProtocolToolTip());
         networkIpAddressEditor.setTitle(constants.cloudInitNetworkIpAddressToolTip());
         networkNetmaskEditor.setTitle(constants.cloudInitNetworkNetmaskToolTip());
         networkGatewayEditor.setTitle(constants.cloudInitNetworkGatewayToolTip());
@@ -506,8 +509,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
 
         windowsSyspreptimeZoneEnabledEditor.addStyleName(customizableStyle.primaryOption());
         sysprepDomainEditor.addStyleName(customizableStyle.primaryOption());
+        networkBootProtocolEditor.addStyleName(customizableStyle.primaryOption());
+        networkIpAddressEditor.addStyleName(customizableStyle.primaryOption());
+        networkNetmaskEditor.addStyleName(customizableStyle.primaryOption());
+        networkGatewayEditor.addStyleName(customizableStyle.primaryOption());
         networkStartOnBootEditor.addStyleName(customizableStyle.primaryOption());
-        networkDhcpEditor.addStyleName(customizableStyle.primaryOption());
 
         windowsSysprepTimeZoneEditor.addStyleName(customizableStyle.primaryOption());
         inputLocaleEditor.addStyleName(customizableStyle.primaryOption());
@@ -595,11 +601,11 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        model.getNetworkDhcp().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getNetworkBootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                setNetworkStaticDetailsStyle(model.getNetworkDhcp().getEntity() == null
-                        || !model.getNetworkDhcp().getEntity());
+                setNetworkStaticDetailsStyle(model.getNetworkBootProtocolList().getSelectedItem() != null
+                        && model.getNetworkBootProtocolList().getSelectedItem() == NetworkBootProtocol.STATIC_IP);
             }
         });
 

@@ -229,8 +229,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Select network above")
     String cloudInitNetworkSelectLabel();
 
-    @DefaultStringValue("Use DHCP")
-    String cloudInitNetworkDhcpLabel();
+    @DefaultStringValue("Boot Protocol")
+    String cloudInitNetworkBootProtocolLabel();
 
     @DefaultStringValue("IP Address")
     String cloudInitNetworkIpAddressLabel();
@@ -310,8 +310,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Enter the name of a network interface, e.g. \"eth0\"")
     String cloudInitNetworkToolTip();
 
-    @DefaultStringValue("Enable to use DHCP on the selected network interface")
-    String cloudInitNetworkDhcpToolTip();
+    @DefaultStringValue("Choose boot protocol for the selected network interface")
+    String cloudInitNetworkBootProtocolToolTip();
 
     @DefaultStringValue("Enter the IP address for the selected network interface")
     String cloudInitNetworkIpAddressToolTip();

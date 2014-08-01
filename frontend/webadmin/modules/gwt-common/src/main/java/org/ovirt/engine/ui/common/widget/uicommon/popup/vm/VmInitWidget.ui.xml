@@ -124,7 +124,7 @@
                     <g:Label ui:field="networkRemoveLabel" />
                 </g:FlowPanel>
                 <g:FlowPanel ui:field="networkOptions" addStyleNames="{style.nestedOption}">
-                    <ge:EntityModelCheckBoxEditor ui:field="networkDhcpEditor" />
+                    <e:ListModelListBoxEditor ui:field="networkBootProtocolEditor" />
                     <ge:StringEntityModelTextBoxEditor ui:field="networkIpAddressEditor" />
                     <ge:StringEntityModelTextBoxEditor ui:field="networkNetmaskEditor" />
                     <ge:StringEntityModelTextBoxEditor ui:field="networkGatewayEditor" />
