@@ -171,19 +171,19 @@ public class SPMAsyncTask implements SPMTask {
             switch (getState()) {
             case Polling:
                 // Get the returned task
-                returnTaskStatus = CheckTaskExist(returnTaskStatus);
+                returnTaskStatus = checkTaskExist(returnTaskStatus);
                 if (returnTaskStatus.getStatus() != getLastTaskStatus().getStatus()) {
-                    AddLogStatusTask(returnTaskStatus);
+                    addLogStatusTask(returnTaskStatus);
                 }
                 setLastTaskStatus(returnTaskStatus);
 
                 if (!getLastTaskStatus().getTaskIsRunning()) {
-                    HandleEndedTask();
+                    handleEndedTask();
                 }
                 break;
 
             case Ended:
-                HandleEndedTask();
+                handleEndedTask();
                 break;
 
             // Try to clear task which failed to be cleared before SPM and DB
@@ -211,7 +211,7 @@ public class SPMAsyncTask implements SPMTask {
      * Handle ended task operation. Change task state to Ended ,Cleared or
      * Cleared Failed , and log appropriate message.
      */
-    private void HandleEndedTask() {
+    private void handleEndedTask() {
         // If task state is different from Ended change it to Ended and set the
         // last access time to now.
         if (getState() != AsyncTaskState.Ended) {
@@ -224,73 +224,73 @@ public class SPMAsyncTask implements SPMTask {
         if (isPartiallyCompletedCommandTask()) {
             getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
-            OnTaskEndFailure();
+            onTaskEndFailure();
         }
 
-        if (HasTaskEndedSuccessfully()) {
+        if (hasTaskEndedSuccessfully()) {
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FINISHED);
-            OnTaskEndSuccess();
+            onTaskEndSuccess();
         }
 
-        else if (HasTaskEndedInFailure()) {
+        else if (hasTaskEndedInFailure()) {
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
-            OnTaskEndFailure();
+            onTaskEndFailure();
         }
 
-        else if (!DoesTaskExist()) {
+        else if (!doesTaskExist()) {
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.UNKNOWN);
-            OnTaskDoesNotExist();
+            onTaskDoesNotExist();
         }
     }
 
-    protected void RemoveTaskFromDB() {
+    protected void removeTaskFromDB() {
         try {
             if (coco.removeByVdsmTaskId(getVdsmTaskId()) != 0) {
-                log.infoFormat("BaseAsyncTask::RemoveTaskFromDB: Removed task {0} from DataBase", getVdsmTaskId());
+                log.infoFormat("BaseAsyncTask::removeTaskFromDB: Removed task {0} from DataBase", getVdsmTaskId());
             }
         }
 
         catch (RuntimeException e) {
             log.error(String.format(
-                    "BaseAsyncTask::RemoveTaskFromDB: Removing task %1$s from DataBase threw an exception.",
+                    "BaseAsyncTask::removeTaskFromDB: Removing task %1$s from DataBase threw an exception.",
                     getVdsmTaskId()), e);
         }
     }
 
-    private boolean HasTaskEndedSuccessfully() {
+    private boolean hasTaskEndedSuccessfully() {
         return getLastTaskStatus().getTaskEndedSuccessfully();
     }
 
-    private boolean HasTaskEndedInFailure() {
+    private boolean hasTaskEndedInFailure() {
         return !getLastTaskStatus().getTaskIsRunning() && !getLastTaskStatus().getTaskEndedSuccessfully();
     }
 
-    private boolean DoesTaskExist() {
+    private boolean doesTaskExist() {
         return getLastTaskStatus().getStatus() != AsyncTaskStatusEnum.unknown;
     }
 
-    protected void OnTaskEndSuccess() {
-        LogEndTaskSuccess();
+    protected void onTaskEndSuccess() {
+        logEndTaskSuccess();
         clearAsyncTask();
     }
 
-    protected void LogEndTaskSuccess() {
+    protected void logEndTaskSuccess() {
         log.infoFormat(
-                "BaseAsyncTask::OnTaskEndSuccess: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended successfully.",
+                "BaseAsyncTask::onTaskEndSuccess: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended successfully.",
                 getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
                         .getClass().getName());
     }
 
-    protected void OnTaskEndFailure() {
-        LogEndTaskFailure();
+    protected void onTaskEndFailure() {
+        logEndTaskFailure();
         clearAsyncTask();
     }
 
-    protected void LogEndTaskFailure() {
+    protected void logEndTaskFailure() {
         log.errorFormat(
-                "BaseAsyncTask::LogEndTaskFailure: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended with failure:"
+                "BaseAsyncTask::logEndTaskFailure: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended with failure:"
                         + "\r\n" + "-- Result: '{3}'" + "\r\n" + "-- Message: '{4}'," + "\r\n" + "-- Exception: '{5}'",
                 getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
@@ -302,14 +302,14 @@ public class SPMAsyncTask implements SPMTask {
                         .getException() == null ? "[null]" : getLastTaskStatus().getException().getMessage()));
     }
 
-    protected void OnTaskDoesNotExist() {
-        LogTaskDoesntExist();
+    protected void onTaskDoesNotExist() {
+        logTaskDoesntExist();
         clearAsyncTask();
     }
 
-    protected void LogTaskDoesntExist() {
+    protected void logTaskDoesntExist() {
         log.errorFormat(
-                "BaseAsyncTask::LogTaskDoesntExist: Task '{0}' (Parent Command {1}, Parameters Type {2}) does not exist.",
+                "BaseAsyncTask::logTaskDoesntExist: Task '{0}' (Parent Command {1}, Parameters Type {2}) does not exist.",
                 getVdsmTaskId(),
                 (getParameters().getDbAsyncTask().getaction_type()),
                 getParameters()
@@ -323,7 +323,7 @@ public class SPMAsyncTask implements SPMTask {
      * @param cachedStatusTask The status from the SPM, or <code>null</code> is the task wasn't found in the SPM.
      * @return - Updated status task
      */
-    protected AsyncTaskStatus CheckTaskExist(AsyncTaskStatus cachedStatusTask) {
+    protected AsyncTaskStatus checkTaskExist(AsyncTaskStatus cachedStatusTask) {
         AsyncTaskStatus returnedStatusTask = null;
 
         // If the cachedStatusTask is null ,that means the task has not been found in the SPM.
@@ -347,7 +347,7 @@ public class SPMAsyncTask implements SPMTask {
      * @param cachedStatusTask
      *            - Status got from VDSM
      */
-    protected void AddLogStatusTask(AsyncTaskStatus cachedStatusTask) {
+    protected void addLogStatusTask(AsyncTaskStatus cachedStatusTask) {
 
         String formatString = "SPMAsyncTask::PollTask: Polling task '{0}' (Parent Command {1}, Parameters Type {2}) "
                 + "returned status '{3}'{4}.";
@@ -417,7 +417,7 @@ public class SPMAsyncTask implements SPMTask {
         // to vdsm there is no need to clear the task. The task is just deleted
         // from the database
         if (Guid.Empty.equals(getVdsmTaskId())) {
-            RemoveTaskFromDB();
+            removeTaskFromDB();
             return;
         }
         clearAsyncTask(false);
@@ -440,7 +440,7 @@ public class SPMAsyncTask implements SPMTask {
         if (!isTaskStateError(vdsReturnValue)) {
             if (vdsReturnValue == null || !vdsReturnValue.getSucceeded()) {
                 setState(AsyncTaskState.ClearFailed);
-                OnTaskCleanFailure();
+                onTaskCleanFailure();
             } else {
                 setState(AsyncTaskState.Cleared);
                 shouldGracefullyDeleteTask =  true;
@@ -448,7 +448,7 @@ public class SPMAsyncTask implements SPMTask {
         }
         //A task should be removed from DB if forceDelete is set to true, or if it was cleared successfully.
         if (shouldGracefullyDeleteTask || forceDelete) {
-            RemoveTaskFromDB();
+            removeTaskFromDB();
         }
     }
 
@@ -472,11 +472,11 @@ public class SPMAsyncTask implements SPMTask {
         return false;
     }
 
-    protected void OnTaskCleanFailure() {
-        LogTaskCleanFailure();
+    protected void onTaskCleanFailure() {
+        logTaskCleanFailure();
     }
 
-    protected void LogTaskCleanFailure() {
+    protected void logTaskCleanFailure() {
         log.errorFormat("SPMAsyncTask::ClearAsyncTask: Clearing task '{0}' failed.", getVdsmTaskId());
     }
 
