@@ -256,6 +256,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
+        DirectoryUtils.flatGroups(principalRecord);
         DbUser dbUser =
                 getDbUserDAO().getByExternalId(
                         AuthzUtils.getName(profile.getAuthz()),
@@ -264,7 +265,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
             dbUser.setId(Guid.newGuid());
         }
-        DirectoryUtils.flatGroups(principalRecord);
         dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromPrincipal(AuthzUtils.getName(profile.getAuthz()), principalRecord));
         if (!dbUser.isActive()) {
             dbUser.setActive(true);
