@@ -121,10 +121,9 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
                                 connection.getstorage_type(),
-                                new ArrayList<StorageServerConnections>
-                                        (Arrays.asList(new StorageServerConnections[]{connection}))))
+                                new ArrayList<>(Arrays.asList(new StorageServerConnections[]{connection}))))
                 .getReturnValue();
-        return new Pair<Boolean, Integer>(StorageHelperDirector.getInstance()
+        return new Pair<>(StorageHelperDirector.getInstance()
                 .getItem(connection.getstorage_type())
                 .isConnectSucceeded(result, Arrays.asList(connection)),
                  Integer.parseInt(result.values().iterator().next()));
