@@ -176,11 +176,8 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
         Set<StorageFormatType> supportedStorageFormats =
                 getSupportedStorageFormatSet(targetStoragePool.getcompatibility_version());
-        if (!supportedStorageFormats.contains(storageFormat)) {
-            return false;
-        }
+        return supportedStorageFormats.contains(storageFormat);
 
-        return true;
     }
 
     private boolean isStorageFormatCompatibleWithDomain() {
