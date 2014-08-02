@@ -185,17 +185,14 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageType storageType = getStorageDomain().getStorageType();
         StorageDomainType storageDomainFunction = getStorageDomain().getStorageDomainType();
 
-        boolean isBlockStorage = storageType.isBlockDomain();
-        boolean isDataStorageDomain = storageDomainFunction == StorageDomainType.Data;
-
         // V2 is applicable only for block data storage domains
-        if (storageFormat == StorageFormatType.V2 && (!isBlockStorage || !isDataStorageDomain)) {
-            return false;
+        if (storageFormat == StorageFormatType.V2) {
+            return storageDomainFunction.isDataDomain() && storageType.isBlockDomain();
         }
 
         // V3 is applicable only for data storage domains
-        if (storageFormat == StorageFormatType.V3 && !isDataStorageDomain) {
-            return false;
+        if (storageFormat == StorageFormatType.V3) {
+            return storageDomainFunction.isDataDomain();
         }
 
         return true;
