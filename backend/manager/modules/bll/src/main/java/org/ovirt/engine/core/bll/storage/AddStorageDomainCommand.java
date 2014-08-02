@@ -39,12 +39,6 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         super(parameters);
     }
 
-    /**
-     * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
-     */
-
     protected AddStorageDomainCommand(Guid commandId) {
         super(commandId);
     }
