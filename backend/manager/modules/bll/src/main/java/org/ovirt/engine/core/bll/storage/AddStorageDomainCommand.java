@@ -4,8 +4,8 @@ import static org.ovirt.engine.core.bll.MultiLevelAdministrationHandler.SYSTEM_O
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -110,7 +110,7 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
     protected Pair<Boolean, Integer> connectStorage() {
         String connectionId = getStorageDomain().getStorage();
         StorageServerConnections connection = getStorageServerConnectionDAO().get(connectionId);
-        HashMap<String, String> result = (HashMap<String, String>) runVdsCommand(
+        Map<String, String> result = (Map<String, String>) runVdsCommand(
                         VDSCommandType.ConnectStorageServer,
                         new StorageServerConnectionManagementVDSParameters(getParameters().getVdsId(), Guid.Empty,
                                 connection.getstorage_type(),
