@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.storage;
 
+import static org.junit.Assert.assertEquals;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -59,6 +60,7 @@ public class AddStorageDomainCommonTest {
     private StorageServerConnectionDAO sscDao;
 
     private StorageDomainStatic sd;
+    private VDS vds;
     private Guid spId;
     private StoragePool sp;
     private Guid connId;
@@ -77,7 +79,7 @@ public class AddStorageDomainCommonTest {
         sd.setStorageFormat(StorageFormatType.V3);
         sd.setStorage(connId.toString());
 
-        VDS vds = new VDS();
+        vds = new VDS();
         vds.setId(vdsId);
         vds.setStatus(VDSStatus.Up);
         vds.setStoragePoolId(spId);
@@ -111,6 +113,37 @@ public class AddStorageDomainCommonTest {
     }
 
     @Test
+    public void canDoActionSucceedsInitFormatDataDomain() {
+        sd.setStorageFormat(null);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        assertEquals("Format not initialized correctly", StorageFormatType.V3, sd.getStorageFormat());
+    }
+
+    @Test
+    public void canDoActionSucceedsInitFormatDataDomain30() {
+        sd.setStorageFormat(null);
+        sp.setcompatibility_version(Version.v3_0);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
+    }
+
+    @Test
+    public void canDoActionSucceedsInitFormatIsoDomain() {
+        sd.setStorageFormat(null);
+        sd.setStorageDomainType(StorageDomainType.ISO);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
+    }
+
+    @Test
+    public void canDoActionSucceedsInitFormatExportDomain() {
+        sd.setStorageFormat(null);
+        sd.setStorageDomainType(StorageDomainType.ImportExport);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
+        assertEquals("Format not initialized correctly", StorageFormatType.V1, sd.getStorageFormat());
+    }
+
+    @Test
     public void canDoActionFailsNameExists() {
         when(sdsDao.getByName(sd.getName())).thenReturn(new StorageDomainStatic());
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
@@ -122,6 +155,14 @@ public class AddStorageDomainCommonTest {
         sd.setStorageName(RandomUtils.instance().nextString(11));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 (cmd, VdcBllMessages.ACTION_TYPE_FAILED_NAME_LENGTH_IS_TOO_LONG);
+    }
+
+    @Test
+    public void canDoActionFailsNoPool() {
+        sd.setStorageFormat(null);
+        vds.setStoragePoolId(null);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test

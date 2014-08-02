@@ -9,6 +9,7 @@ import java.util.List;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.StorageDomainDynamic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
@@ -32,6 +33,7 @@ public class StorageDomainDynamicDAOTest extends BaseDAOTestCase {
 
         newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
+        newStaticDomain.setStorageFormat(StorageFormatType.V1);
         newDynamicDomain = new StorageDomainDynamic();
         newDynamicDomain.setAvailableDiskSize(USED_DISK_SIZE);
     }
