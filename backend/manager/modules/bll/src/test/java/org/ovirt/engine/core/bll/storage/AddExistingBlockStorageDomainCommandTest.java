@@ -42,13 +42,13 @@ public class AddExistingBlockStorageDomainCommandTest {
         assertTrue(command.getReturnValue().getSucceeded());
     }
 
-    private StorageDomainStatic getStorageDomain() {
+    private static StorageDomainStatic getStorageDomain() {
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setStorage(Guid.newGuid().toString());
         return storageDomain;
     }
 
-    private List<LUNs> getLUNs() {
+    private static List<LUNs> getLUNs() {
         List<LUNs> luns = new ArrayList<>();
         LUNs lun = new LUNs();
         lun.setId(Guid.newGuid().toString());
