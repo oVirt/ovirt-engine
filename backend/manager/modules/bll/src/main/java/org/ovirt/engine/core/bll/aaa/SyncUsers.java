@@ -64,6 +64,7 @@ public class SyncUsers {
                     if (activeUser != null) {
                         if (!activeUser.equals(dbUser)) {
                             activeUser.setId(dbUser.getId());
+                            activeUser.setAdmin(dbUser.isAdmin());
                             log.infoFormat("Principal {0}::{1} synchronized",
                                     activeUser.getLoginName(),
                                     activeUser.getDomain());
