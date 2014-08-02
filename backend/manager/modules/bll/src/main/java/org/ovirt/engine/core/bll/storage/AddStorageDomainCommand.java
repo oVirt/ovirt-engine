@@ -137,35 +137,30 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     @Override
     protected boolean canDoAction() {
-        boolean returnValue = super.canDoAction() && initializeVds() && checkStorageDomainNameLengthValid();
-        if (returnValue && isStorageWithSameNameExists()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
-            returnValue = false;
+        if (!super.canDoAction() || !initializeVds() || !checkStorageDomainNameLengthValid()) {
+            return false;
         }
-        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
+        if (isStorageWithSameNameExists()) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NAME_ALREADY_EXIST);
+        }
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO
                 && !getStorageDomain().getStorageType().isFileDomain()) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
-        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.ImportExport
                 && getStorageDomain().getStorageType() == StorageType.LOCALFS) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            returnValue = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
-        if (returnValue && getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-            returnValue = false;
+        if (getStorageDomain().getStorageDomainType() == StorageDomainType.Master) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
-
-        boolean isSupportedStorageFormat =
-                isStorageFormatSupportedByStoragePool() && isStorageFormatCompatibleWithDomain();
-        if (returnValue && !isSupportedStorageFormat) {
+        if (!isStorageFormatSupportedByStoragePool() || !isStorageFormatCompatibleWithDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
             getReturnValue().getCanDoActionMessages().add(
                     String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat().toString()));
-            returnValue = false;
+            return false;
         }
-        return returnValue && canAddDomain();
+        return canAddDomain();
     }
 
     private boolean isStorageFormatSupportedByStoragePool() {
