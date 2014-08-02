@@ -158,19 +158,25 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
 
     private boolean isStorageFormatSupportedByStoragePool() {
         StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
-        StoragePool targetStoragePool = getStoragePool();
+        StoragePool targetStoragePool = getTargetStoragePool();
 
         if (targetStoragePool == null) {
-            targetStoragePool = getStoragePoolDAO().get(getVds().getStoragePoolId());
-            if (targetStoragePool == null) {
-                return false;
-            }
+            return false;
         }
 
         Set<StorageFormatType> supportedStorageFormats =
                 getSupportedStorageFormatSet(targetStoragePool.getcompatibility_version());
         return supportedStorageFormats.contains(storageFormat);
 
+    }
+
+    private StoragePool getTargetStoragePool() {
+        StoragePool targetStoragePool = getStoragePool();
+
+        if (targetStoragePool == null) {
+            targetStoragePool = getStoragePoolDAO().get(getVds().getStoragePoolId());
+        }
+        return targetStoragePool;
     }
 
     private boolean isStorageFormatCompatibleWithDomain() {
