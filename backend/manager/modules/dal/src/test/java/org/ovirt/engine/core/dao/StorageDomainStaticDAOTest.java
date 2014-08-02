@@ -14,6 +14,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.compat.Guid;
 
 public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
@@ -39,6 +40,7 @@ public class StorageDomainStaticDAOTest extends BaseDAOTestCase {
         newStaticDomain = new StorageDomainStatic();
         newStaticDomain.setStorageName("NewStorageDomain");
         newStaticDomain.setStorage("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePl");
+        newStaticDomain.setStorageFormat(StorageFormatType.V1);
     }
 
     /**

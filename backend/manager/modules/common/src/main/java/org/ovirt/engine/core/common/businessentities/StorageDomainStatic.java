@@ -53,7 +53,6 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
         id = Guid.Empty;
         storageType = StorageDomainType.Master;
         storagePoolType = StorageType.UNKNOWN;
-        storageFormat = StorageFormatType.V1;
         autoRecoverable = true;
         name = "";
     }

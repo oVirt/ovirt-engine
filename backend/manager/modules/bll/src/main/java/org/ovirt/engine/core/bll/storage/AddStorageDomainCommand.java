@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.VersionStorageFormatUtil;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.vdscommands.CreateStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
@@ -158,15 +159,32 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             returnValue = false;
         }
 
+        ensureStorageFormatInitialized();
         boolean isSupportedStorageFormat =
                 isStorageFormatSupportedByStoragePool() && isStorageFormatCompatibleWithDomain();
         if (returnValue && !isSupportedStorageFormat) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
             getReturnValue().getCanDoActionMessages().add(
-                    String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat().toString()));
+                    String.format("$storageFormat %1$s", getStorageDomain().getStorageFormat()));
             returnValue = false;
         }
         return returnValue && canAddDomain();
+    }
+
+    private void ensureStorageFormatInitialized() {
+        StorageDomain sd = getStorageDomain();
+        if (sd.getStorageFormat() == null) {
+            if (sd.getStorageDomainType().isDataDomain()) {
+                StoragePool sp = getTargetStoragePool();
+                if (sp != null) {
+                    sd.setStorageFormat(VersionStorageFormatUtil.getPreferredForVersion(
+                            sp.getcompatibility_version(), sd.getStorageType())
+                    );
+                }
+            } else {
+                sd.setStorageFormat(StorageFormatType.V1);
+            }
+        }
     }
 
     private boolean isStorageFormatSupportedByStoragePool() {
