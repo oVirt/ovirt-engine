@@ -45,7 +45,7 @@ public class AddExistingFileStorageDomainCommandTest {
     private AddExistingFileStorageDomainCommand<StorageDomainManagementParameter> command;
     private StorageDomainManagementParameter parameters;
 
-    private static int SD_MAX_NAME_LENGTH = 50;
+    private static final int SD_MAX_NAME_LENGTH = 50;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -137,7 +137,7 @@ public class AddExistingFileStorageDomainCommandTest {
                 VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
     }
 
-    private StorageDomainStatic getStorageDomain() {
+    private static StorageDomainStatic getStorageDomain() {
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setStorage(Guid.newGuid().toString());
         storageDomain.setStorageDomainType(StorageDomainType.Data);
@@ -145,14 +145,14 @@ public class AddExistingFileStorageDomainCommandTest {
         return storageDomain;
     }
 
-    private StoragePool getStoragePool() {
+    private static StoragePool getStoragePool() {
         StoragePool storagePool = new StoragePool();
         storagePool.setId(Guid.newGuid());
         storagePool.setcompatibility_version(Version.v3_5);
         return storagePool;
     }
 
-    private List<VDS> getHosts() {
+    private static List<VDS> getHosts() {
         List<VDS> hosts = new ArrayList<>();
         VDS host = new VDS();
         host.setId(Guid.newGuid());
