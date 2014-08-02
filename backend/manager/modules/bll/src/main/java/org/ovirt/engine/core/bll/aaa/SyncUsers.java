@@ -29,7 +29,6 @@ public class SyncUsers {
     public static List<DbUser> sync(List<DbUser> dbUsers) {
         List<DbUser> usersToUpdate = new ArrayList<>();
         Map<String, Map<String, Set<String>>> authzToNamespaceToUserIds = new HashMap<>();
-        Map<DirectoryEntryKey, DbUser> originalDbUsersMap = new HashMap<>();
         Map<String, List<DbUser>> dbUsersPerAuthz = new HashMap<>();
 
         //Initialize the entries based on authz in the map
@@ -39,7 +38,6 @@ public class SyncUsers {
                 authzToNamespaceToUserIds.put(dbUser.getDomain(), new HashMap<String, Set<String>>());
             }
             MultiValueMapUtils.addToMapOfSets(dbUser.getNamespace(), dbUser.getExternalId(), authzToNamespaceToUserIds.get(dbUser.getDomain()));
-            originalDbUsersMap.put(new DirectoryEntryKey(dbUser), dbUser);
         }
 
         for (Entry<String, Map<String, Set<String>>> entry : authzToNamespaceToUserIds.entrySet()) {
