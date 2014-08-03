@@ -23,7 +23,7 @@ public class XmlUtils {
      * @throws IOException
      */
     public static Document loadXmlDoc(String xmlString) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory docBuilderFactory = SecureDocumentBuilderFactory.newDocumentBuilderFactory();
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new StringReader(xmlString));
         Document doc = docBuilder.parse(is);

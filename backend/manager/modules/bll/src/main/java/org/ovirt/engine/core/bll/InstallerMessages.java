@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import java.io.StringReader;
-import javax.xml.parsers.DocumentBuilderFactory;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -10,6 +9,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.SecureDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -91,7 +91,7 @@ public class InstallerMessages {
         boolean error = false;
         Document doc = null;
         try {
-            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(message)));
+            doc = SecureDocumentBuilderFactory.newDocumentBuilderFactory().newDocumentBuilder().parse(new InputSource(new StringReader(message)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
