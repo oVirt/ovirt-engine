@@ -9,12 +9,12 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
-import org.ovirt.engine.core.compat.backendcompat.XmlNode;
-import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 
 public class OvfParser {
 
