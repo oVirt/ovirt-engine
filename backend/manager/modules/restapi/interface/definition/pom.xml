@@ -40,6 +40,12 @@
 
     <dependency>
       <groupId>org.ovirt.engine.core</groupId>
+      <artifactId>uutils</artifactId>
+      <version>${engine.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.core</groupId>
       <artifactId>common</artifactId>
       <version>${engine.version}</version>
     </dependency>

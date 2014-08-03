@@ -9,6 +9,7 @@ import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
+import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -30,7 +31,7 @@ public class XmlDocument {
 
     private void LoadXml(String ovfstring) throws Exception {
         // load doc
-        DocumentBuilderFactory fact = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory fact = SecureDocumentBuilderFactory.newDocumentBuilderFactory();
         fact.setNamespaceAware(true);
         DocumentBuilder builder = fact.newDocumentBuilder();
         doc = builder.parse(new InputSource(new StringReader(ovfstring)));

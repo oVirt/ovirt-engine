@@ -34,6 +34,7 @@ limitations under the License.
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.codehaus.jackson.jackson-xc"/>
     <module name="org.ovirt.engine.core.common"/>
+    <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.slf4j"/>
     <module name="org.yaml.snakeyaml"/>
   </dependencies>
