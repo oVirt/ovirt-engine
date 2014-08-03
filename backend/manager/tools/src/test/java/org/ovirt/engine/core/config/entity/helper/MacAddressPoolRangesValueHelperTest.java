@@ -31,6 +31,7 @@ public class MacAddressPoolRangesValueHelperTest {
     public static Collection<Object[]> ipAddressParams() {
         return Arrays.asList(new Object[][] {
                 { "00:00:00:00:00:00-00:00:00:00:00:FF", true },
+                { "00:1A:4A:16:88:FD-00:1A:4A:16:88:FD", true },
                 { "AA:AA:AA:AA:AA:AA-AA:AA:AA:AA:AA:AB", true },
                 { "AA:AA:AA:AA:AA:AA-aa:aa:aa:aa:aa:ab", true },
                 { "aa:aa:aa:aa:aa:aa-AA:AA:AA:AA:AA:AB", true },
