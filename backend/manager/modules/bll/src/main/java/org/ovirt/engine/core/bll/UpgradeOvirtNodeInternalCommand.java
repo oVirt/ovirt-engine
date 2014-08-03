@@ -1,11 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
-import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -89,8 +90,8 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
         return ret;
     }
 
-    public UpgradeOvirtNodeInternalCommand(T parameters) {
-        super(parameters);
+    public UpgradeOvirtNodeInternalCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override

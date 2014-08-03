@@ -47,7 +47,7 @@ public class UpgradeOvirtNodeInternalCommandTest {
     private VdsDAO vdsDAO;
 
     private UpgradeOvirtNodeInternalCommand<InstallVdsParameters> createCommand(InstallVdsParameters params) {
-        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = spy(new UpgradeOvirtNodeInternalCommand<InstallVdsParameters>(params));
+        UpgradeOvirtNodeInternalCommand<InstallVdsParameters> command = spy(new UpgradeOvirtNodeInternalCommand<InstallVdsParameters>(params, null));
         doReturn(vdsDAO).when(command).getVdsDAO();
         return command;
     }
