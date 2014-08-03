@@ -9,6 +9,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
     public static final String LOCAL = "LOCAL";
     public static final String STATUS = "STATUS";
     public static final String COMMENT = "COMMENT";
+    public static final String COMPATIBILITY_VERSION = "COMPATIBILITY_VERSION";
 
     public StoragePoolFieldAutoCompleter() {
         // Building the basic vervs Dict
@@ -17,6 +18,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         mVerbs.add(LOCAL);
         mVerbs.add(STATUS);
         mVerbs.add(COMMENT);
+        mVerbs.add(COMPATIBILITY_VERSION);
 
         // Building the autoCompletion Dict
         buildCompletions();
@@ -26,6 +28,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         getTypeDictionary().put(COMMENT, String.class);
         getTypeDictionary().put(LOCAL, Boolean.class);
         getTypeDictionary().put(STATUS, StoragePoolStatus.class);
+        getTypeDictionary().put(COMPATIBILITY_VERSION, String.class);
 
         // building the ColumnName Dict
         columnNameDict.put(NAME, "name");
@@ -33,6 +36,7 @@ public class StoragePoolFieldAutoCompleter extends BaseConditionFieldAutoComplet
         columnNameDict.put(COMMENT, "free_text_comment");
         columnNameDict.put(LOCAL, "is_local");
         columnNameDict.put(STATUS, "status");
+        columnNameDict.put(COMPATIBILITY_VERSION, "compatibility_version");
 
         // Building the validation dict
         buildBasicValidationTable();
