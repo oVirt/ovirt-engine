@@ -17,6 +17,10 @@
 			width: 240px;
 		}
 
+        .activateDomainEditor {
+            width: 370px;
+        }
+
         @external obrand_storageTypePanel;
 		.obrand_storageTypePanel {
 		}

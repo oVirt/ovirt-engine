@@ -190,6 +190,7 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         storageTypeListEditor.addContentWidgetStyleName(style.storageContentWidget());
         formatListEditor.setLabelStyleName(style.label());
         formatListEditor.addContentWidgetStyleName(style.formatContentWidget());
+        activateDomainEditor.addContentWidgetStyleName(style.activateDomainEditor());
     }
 
     void localize(ApplicationConstants constants) {
@@ -298,6 +299,8 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         String formatContentWidget();
 
         String storageContentWidget();
+
+        String activateDomainEditor();
 
         String label();
 
