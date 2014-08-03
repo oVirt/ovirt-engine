@@ -11,6 +11,8 @@ public interface IscsiBondDao extends GenericDao<IscsiBond, Guid> {
 
     public List<Guid> getNetworkIdsByIscsiBondId(Guid iscsiBondId);
 
+    public List<IscsiBond> getIscsiBondsByNetworkId(Guid netowrkId);
+
     public void addNetworkToIscsiBond(Guid iscsiBondId, Guid networkId);
 
     public void removeNetworkFromIscsiBond(Guid iscsiBondId, Guid networkId);

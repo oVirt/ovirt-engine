@@ -21,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.IscsiBondDao;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -261,11 +263,37 @@ public class NetworkValidatorTest {
         assertThat(validator.networkNameNotUsed(), matcher);
     }
 
+    private void notIscsiBondNetworkTest(Matcher<ValidationResult> matcher, List<IscsiBond> iscsiBonds) {
+        IscsiBondDao iscsiBondDao = mock(IscsiBondDao.class);
+        when(iscsiBondDao.getIscsiBondsByNetworkId(any(Guid.class))).thenReturn(iscsiBonds);
+        when(dbFacade.getIscsiBondDao()).thenReturn(iscsiBondDao);
+        assertThat(validator.notIscsiBondNetwork(), matcher);
+    }
+
     private List<Network> getSingletonNamedNetworkList(String networkName, Guid networkId) {
         Network network = mock(Network.class);
         when(network.getName()).thenReturn(networkName);
         when(network.getId()).thenReturn(networkId);
         return Collections.singletonList(network);
+    }
+
+    private List<IscsiBond> getIscsiBondList() {
+        List<IscsiBond> iscsiBondList = new ArrayList<>();
+        IscsiBond iscsiBond = new IscsiBond();
+        iscsiBond.setId(Guid.newGuid());
+        iscsiBond.setName("IscsiBond name");
+        iscsiBondList.add(iscsiBond);
+        return iscsiBondList;
+    }
+
+    @Test
+    public void noIscsiBondsForNetowrkTest() throws Exception {
+        notIscsiBondNetworkTest(isValid(), Collections.<IscsiBond> emptyList());
+    }
+
+    @Test
+    public void existingIscsiBondsForNetowrkTest() throws Exception {
+        notIscsiBondNetworkTest(failsWith(VdcBllMessages.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK), getIscsiBondList());
     }
 
     @Test

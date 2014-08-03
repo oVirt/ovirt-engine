@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -144,6 +145,21 @@ public class NetworkValidator {
                 ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
                         String.format("$NetworkName %s", network.getName()))
                 : ValidationResult.VALID;
+    }
+
+    public ValidationResult notIscsiBondNetwork() {
+        List<IscsiBond> iscsiBonds = getDbFacade().getIscsiBondDao().getIscsiBondsByNetworkId(network.getId());
+        if (!iscsiBonds.isEmpty()) {
+            Collection<String> replaceNameables = ReplacementUtils.replaceWithNameable("IscsiBonds", iscsiBonds);
+            replaceNameables.add(getNetworkNameReplacement());
+            return new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK,
+                    replaceNameables);
+        }
+        return ValidationResult.VALID;
+    }
+
+    private String getNetworkNameReplacement() {
+        return String.format("$NetworkName %s", network.getName());
     }
 
     protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacement) {
