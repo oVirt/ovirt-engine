@@ -1,14 +1,18 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.StringReader;
+import javax.xml.parsers.DocumentBuilderFactory;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.xml.sax.InputSource;
 
 public class InstallerMessages {
     private VDS _vds;
@@ -85,44 +89,42 @@ public class InstallerMessages {
 
     private boolean _internalPostOldXmlFormat(String message) {
         boolean error = false;
-        XmlDocument doc = null;
+        Document doc = null;
         try {
-            doc = new XmlDocument(message);
+            doc = DocumentBuilderFactory.newInstance().newDocumentBuilder().parse(new InputSource(new StringReader(message)));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        XmlNode node = doc.childNodes[0];
+        Element node = doc.getDocumentElement();
         if (node != null) {
             StringBuilder sb = new StringBuilder();
             // check status
             Severity severity;
-            if (node.attributes.get("status") == null) {
+            if (StringUtils.isEmpty(node.getAttribute("status"))) {
                 severity = Severity.WARNING;
-            } else if (node.attributes.get("status").getValue().equals("OK")) {
+            } else if (node.getAttribute("status").equals("OK")) {
                 severity = Severity.INFO;
-            } else if (node.attributes.get("status").getValue().equals("WARN")) {
+            } else if (node.getAttribute("status").equals("WARN")) {
                 severity = Severity.WARNING;
             } else {
                 error = true;
                 severity = Severity.ERROR;
             }
 
-            if ((node.attributes.get("component") != null)
-                    && (StringUtils.isNotEmpty(node.attributes.get("component").getValue()))) {
-                sb.append("Step: " + node.attributes.get("component").getValue());
+            if (StringUtils.isNotEmpty(node.getAttribute("component"))) {
+                sb.append("Step: " + node.getAttribute("component"));
             }
 
-            if ((node.attributes.get("message") != null)
-                    && (StringUtils.isNotEmpty(node.attributes.get("message").getValue()))) {
+            if (StringUtils.isNotEmpty(node.getAttribute("message"))) {
                 sb.append("; ");
-                sb.append("Details: " + node.attributes.get("message").getValue());
+                sb.append("Details: " + node.getAttribute("message"));
                 sb.append(" ");
             }
 
-            if ((node.attributes.get("result") != null)
-                    && (StringUtils.isNotEmpty(node.attributes.get("result").getValue()))) {
-                sb.append(" (" + node.attributes.get("result").getValue() + ")");
+            if (StringUtils.isNotEmpty(node.getAttribute("result"))) {
+                sb.append(" (" + node.getAttribute("result") + ")");
             }
+
             post(severity, sb.toString());
         }
 
