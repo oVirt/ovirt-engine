@@ -86,6 +86,7 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
                 return object.getcompatibility_version().getValue();
             }
         };
+        versionColumn.makeSortable(StoragePoolFieldAutoCompleter.COMPATIBILITY_VERSION);
         getTable().addColumn(versionColumn, constants.comptVersDc(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StoragePool> descColumn = new TextColumnWithTooltip<StoragePool>() {
