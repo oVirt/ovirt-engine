@@ -33,14 +33,14 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlNamespaceManager;
-import org.ovirt.engine.core.compat.backendcompat.XmlNode;
-import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 

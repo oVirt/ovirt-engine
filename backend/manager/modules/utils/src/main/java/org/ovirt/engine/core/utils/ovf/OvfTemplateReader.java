@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlNode;
-import org.ovirt.engine.core.compat.backendcompat.XmlNodeList;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
