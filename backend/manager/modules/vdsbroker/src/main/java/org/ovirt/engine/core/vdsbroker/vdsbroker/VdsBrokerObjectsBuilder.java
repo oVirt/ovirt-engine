@@ -701,17 +701,12 @@ public class VdsBrokerObjectsBuilder {
                     iface.setSpeed(AssignIntValue(dict, VdsProperties.INTERFACE_SPEED));
                     iface.getStatistics().setStatus(AssignInterfaceStatusValue(dict, VdsProperties.iface_status));
 
-                    int hold =
-                            (iface.getStatistics().getTransmitRate().compareTo(iface.getStatistics().getReceiveRate()) > 0 ? iface.getStatistics()
-                                    .getTransmitRate()
-                                    : iface
-                                            .getStatistics().getReceiveRate()).intValue();
-                    if (hold > networkUsage) {
-                        networkUsage = hold;
+                    if (!NetworkUtils.isVlan(iface) && !iface.isBondSlave()) {
+                        networkUsage = (int) Math.max(networkUsage, computeInterfaceUsage(iface));
                     }
                 }
             }
-            vds.setUsageNetworkPercent((networkUsage > 100) ? 100 : networkUsage);
+            vds.setUsageNetworkPercent(networkUsage);
         }
 
         // ----------- vds cpu statistics info ---------------------
@@ -790,6 +785,15 @@ public class VdsBrokerObjectsBuilder {
 
         updateNumaStatisticsData(vds, xmlRpcStruct);
 
+    }
+
+    private static double computeInterfaceUsage(VdsNetworkInterface iface) {
+        return Math.max(truncatePercentage(iface.getStatistics().getReceiveRate()),
+                truncatePercentage(iface.getStatistics().getTransmitRate()));
+    }
+
+    private static double truncatePercentage(double value) {
+        return Math.min(100, value);
     }
 
     public static void updateNumaStatisticsData(VDS vds, Map<String, Object> xmlRpcStruct) {

@@ -283,6 +283,15 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     }
 
     /**
+     * Checks whether an interface is part of a bond.
+     *
+     * @return whether the interface is part of a bond.
+     */
+    public boolean isBondSlave() {
+        return getBondName() != null;
+    }
+
+    /**
      * Sets the bond type.
      *
      * @param bondType
