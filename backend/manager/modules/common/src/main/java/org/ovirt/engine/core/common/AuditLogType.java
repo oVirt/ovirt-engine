@@ -253,6 +253,7 @@ public enum AuditLogType {
     USER_EXPORT_IMAGE_FINISHED_FAILURE(2032, AuditLogSeverity.ERROR),
     HOT_SET_NUMBER_OF_CPUS(2033),
     FAILED_HOT_SET_NUMBER_OF_CPUS(2034, AuditLogSeverity.ERROR),
+    USER_ISCSI_BOND_HOST_RESTART_WARNING(2035, AuditLogSeverity.WARNING),
 
     // Used only from SQL script, therefor should not have severity & message
     USER_RUN_UNLOCK_ENTITY_SCRIPT(2024),
