@@ -133,11 +133,11 @@ public class MacAddressRangeUtils {
         Collection<LongRange> ranges = parseRangeString(start + "-" + end);
 
         for (LongRange range : ranges) {
-            if (range.getMaximumLong() - range.getMinimumLong() > 0) {
-                return true;
+            if (range.getMaximumLong() - range.getMinimumLong() < 0) {
+                return false;
             }
         }
 
-        return false;
+        return true;
     }
 }
