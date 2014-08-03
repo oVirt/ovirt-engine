@@ -24,4 +24,31 @@
        <Class name="org.ovirt.engine.core.utils.log.Log" />
        <Bug code="Nm"/>
      </Match>
+
+     <!--
+      findbugs complains that we don't use innerText in XmlNode
+      We do use that code for reading/writing xml from legacy code
+
+      findbugs reason:
+      UrF: Unread public/protected field (URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.utils.ovf.xml.XmlNode" />
+       <Field name="innerText"/>
+       <Bug code="UrF"/>
+     </Match>
+
+     <!--
+      findbugs complains that we don't use attributes in XmlNode
+      We do use that code for reading/writing xml from legacy code
+
+      findbugs reason:
+      UrF: Unread public/protected field (URF_UNREAD_PUBLIC_OR_PROTECTED_FIELD)
+     -->
+     <Match>
+       <Class name="org.ovirt.engine.core.utils.ovf.xml.XmlNode" />
+       <Field name="attributes"/>
+       <Bug code="UrF"/>
+     </Match>
+
 </FindBugsFilter>

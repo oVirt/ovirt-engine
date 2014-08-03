@@ -22,10 +22,10 @@ import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlTextWriter;
 import org.ovirt.engine.core.utils.VmInitUtils;
 import org.ovirt.engine.core.utils.customprop.DevicePropertiesUtils;
+import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlTextWriter;
 
 public abstract class OvfWriter implements IOvfBuilder {
     protected int _instanceId;

@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.compat.backendcompat;
+package org.ovirt.engine.core.utils.ovf.xml;
 
 import java.util.HashMap;
 import java.util.Iterator;

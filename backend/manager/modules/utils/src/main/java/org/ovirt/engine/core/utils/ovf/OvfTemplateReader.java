@@ -13,10 +13,10 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.compat.backendcompat.XmlDocument;
-import org.ovirt.engine.core.compat.backendcompat.XmlNode;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 
 public class OvfTemplateReader extends OvfReader {
     protected VmTemplate _vmTemplate;
