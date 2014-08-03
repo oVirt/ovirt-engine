@@ -7,6 +7,7 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
@@ -23,7 +24,7 @@ public class XmlUtils {
      * @throws IOException
      */
     public static Document loadXmlDoc(String xmlString) throws ParserConfigurationException, SAXException, IOException {
-        DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+        DocumentBuilderFactory docBuilderFactory = SecureDocumentBuilderFactory.newDocumentBuilderFactory();
         DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
         InputSource is = new InputSource(new StringReader(xmlString));
         Document doc = docBuilder.parse(is);

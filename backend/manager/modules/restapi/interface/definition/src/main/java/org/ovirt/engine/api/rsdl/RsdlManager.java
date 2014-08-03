@@ -9,7 +9,6 @@ import java.util.List;
 import javax.xml.bind.JAXB;
 import javax.xml.bind.JAXBElement;
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathConstants;
@@ -20,6 +19,7 @@ import org.ovirt.engine.api.model.ObjectFactory;
 import org.ovirt.engine.api.model.RSDL;
 import org.ovirt.engine.api.utils.ApiRootLinksCreator;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -94,7 +94,7 @@ public class RsdlManager {
         // as parameter:
         Document document;
         try {
-            DocumentBuilder parser = DocumentBuilderFactory.newInstance().newDocumentBuilder();
+            DocumentBuilder parser = SecureDocumentBuilderFactory.newDocumentBuilderFactory().newDocumentBuilder();
             try (InputStream in = RsdlIOManager.loadAsStream(fileName)) {
                 document = parser.parse(in);
             }
