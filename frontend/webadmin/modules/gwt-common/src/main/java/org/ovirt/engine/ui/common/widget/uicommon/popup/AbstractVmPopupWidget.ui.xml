@@ -212,19 +212,40 @@
             margin-bottom: 10px;
         }
 
-        .poolEditVms, .name {
+        .poolEditVms {
             line-height: 30px;
             padding: 0 5px;
             padding-bottom: 35px;
         }
 
-        .prestartedVmsEditorContent, .nameEditorContent, .maxAssignedVmsPerUserEditorContent {
+        .name {
+            line-height: 30px;
+        }
+
+        .nameLabel {
+            font-size: 13px;
+            padding: 0 5px;
+            font-family: Arial, sans-serif;
+            line-height: 30px;
+        }
+
+        .prestartedVmsEditorContent, .maxAssignedVmsPerUserEditorContent {
             width: 230px;
         }
 
-        .prestartedVmsEditor, .nameEditor, .maxAssignedVmsPerUserEditor {
+        .prestartedVmsEditor, .maxAssignedVmsPerUserEditor {
             float: right;
             width: 230px;
+        }
+
+        .nameEditorContent {
+            float: right !important;
+            width: 238px;
+            padding-left: 5px;
+            padding-right: 5px;
+        }
+
+        .nameEditor {
         }
 
         .editPrestartedVmsEditor, .editMaxAssignedVmsPerUserEditor {
@@ -403,7 +424,7 @@
                 <t:content>
                     <g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                            <g:FlowPanel addStyleNames="{style.name} avmpw_name_pfly_fix">
+                            <g:FlowPanel addStyleNames="{style.name}">
                                 <g:FlowPanel addStyleNames="{style.prestartedLabelWithHelp}">
                                     <g:Label ui:field="nameLabel" addStyleNames="{style.nameLabel}" />
                                     <d:InfoIcon ui:field="poolNameIcon" addStyleNames="{style.poolNameIcon} avmpw_infoIcon_pfly_fix" />
