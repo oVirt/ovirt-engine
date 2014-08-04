@@ -3861,4 +3861,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("NUMA Support")
     String numaSupport();
+
+    @DefaultStringValue("It is suggested to optimise a Volume for virt store if the volume is of replica-3 type")
+    String newVolumeOptimiseForVirtStoreWarning();
 }

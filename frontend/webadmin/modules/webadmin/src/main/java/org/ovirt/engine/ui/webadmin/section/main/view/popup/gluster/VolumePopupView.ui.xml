@@ -100,7 +100,8 @@
 
 				<ge:EntityModelCheckBoxEditor ui:field="optimizeForVirtStoreEditor"/>
 
-				<g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+                <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
+                <g:Label ui:field="virtStoreOptimiseWarningLabel" addStyleNames="{style.messageLabel}" />
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
