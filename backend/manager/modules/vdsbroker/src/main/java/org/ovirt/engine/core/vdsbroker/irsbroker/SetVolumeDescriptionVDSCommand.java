@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 
 public class SetVolumeDescriptionVDSCommand<P extends SetVolumeDescriptionVDSCommandParameters> extends IrsBrokerCommand<P> {
     private final static Log log = LogFactory.getLog(SetVolumeDescriptionVDSCommand.class);
@@ -34,5 +35,10 @@ public class SetVolumeDescriptionVDSCommand<P extends SetVolumeDescriptionVDSCom
                 getParameters().getDescription());
 
         proceedProxyReturnValue();
+    }
+
+    @Override
+    protected VDSExceptionBase createDefaultConcreteException(String errorMessage) {
+        return new IrsOperationFailedNoFailoverException(errorMessage);
     }
 }
