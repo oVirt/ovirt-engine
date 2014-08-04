@@ -23,6 +23,8 @@ public class SPMAsyncTask implements SPMTask {
 
     protected final CommandCoordinator coco;
 
+    private boolean zombieTask;
+
     public SPMAsyncTask(CommandCoordinator coco, AsyncTaskParameters parameters) {
         this.coco = coco;
         setParameters(parameters);
@@ -219,9 +221,8 @@ public class SPMAsyncTask implements SPMTask {
             setLastStatusAccessTime();
         }
 
-        // A task that belongs to a partially submitted command needs to be
-        // failed no matter what the status of the task is.
-        if (isPartiallyCompletedCommandTask()) {
+        // Fail zombie task and task that belongs to a partially submitted command
+        if (isZombieTask() || isPartiallyCompletedCommandTask()) {
             getParameters().getDbAsyncTask().getTaskParameters().setTaskGroupSuccess(false);
             ExecutionHandler.endTaskStep(privateParameters.getDbAsyncTask().getStepId(), JobExecutionStatus.FAILED);
             onTaskEndFailure();
@@ -492,4 +493,11 @@ public class SPMAsyncTask implements SPMTask {
         this.partiallyCompletedCommandTask = val;
     }
 
+    public boolean isZombieTask() {
+        return zombieTask;
+    }
+
+    public void setZombieTask(boolean zombieTask) {
+        this.zombieTask = zombieTask;
+    }
 }

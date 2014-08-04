@@ -64,4 +64,7 @@ public interface SPMTask {
 
     void setEntitiesMap(Map<Guid, VdcObjectType> entitiesMap);
 
+    void setZombieTask(boolean val);
+
+    boolean isZombieTask();
 }
