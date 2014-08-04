@@ -11,9 +11,11 @@ import org.ovirt.engine.core.bll.validator.IscsiBondValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.EditIscsiBondParameters;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -24,6 +26,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
     private List<String> addedConnections = new ArrayList<>();
     private List<Guid> addedNetworks = new ArrayList<>();
+    private Set<Guid> removedNetworks = new HashSet<>();
 
     public EditIscsiBondCommand(T parameters) {
         super(parameters);
@@ -60,7 +63,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
                     getDbFacade().getIscsiBondDao().update(getIscsiBond());
                 }
 
-                updateNetworksIds();
+                removedNetworks = updateNetworksIds();
                 updateConnectionsIds();
 
                 return null;
@@ -71,10 +74,24 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
             connectAllHostsToStorage(getIscsiBond().getStorageConnectionIds());
         }
 
+        if (!removedNetworks.isEmpty()) {
+            addAuditLogForRemovedNetowrks(removedNetworks);
+        }
         setSucceeded(true);
     }
 
-    private void updateNetworksIds() {
+    private void addAuditLogForRemovedNetowrks(Set<Guid> removedNetworks) {
+        List<String> networkNames = new ArrayList<>();
+        for (Guid networkId : removedNetworks) {
+            Network network = getDbFacade().getNetworkDao().get(networkId);
+            networkNames.add(network.getName());
+        }
+        addCustomValue("NetworkNames", StringUtils.join(networkNames, ","));
+        addCustomValue("IscsiBondName", getIscsiBond().getName());
+        AuditLogDirector.log(this, AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING);
+    }
+
+    private Set<Guid> updateNetworksIds() {
         Set<Guid> beforeChangeNetworkIds = new HashSet<>(getExistingIscsiBond().getNetworkIds());
 
         for (Guid networkId : getIscsiBond().getNetworkIds()) {
@@ -87,6 +104,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
         for (Guid networkId : beforeChangeNetworkIds) {
             getDbFacade().getIscsiBondDao().removeNetworkFromIscsiBond(getExistingIscsiBond().getId(), networkId);
         }
+        return beforeChangeNetworkIds;
     }
 
     private void updateConnectionsIds() {
