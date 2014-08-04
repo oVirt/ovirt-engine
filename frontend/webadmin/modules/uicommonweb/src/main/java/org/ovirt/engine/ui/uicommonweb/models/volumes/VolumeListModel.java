@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.uicommonweb.models.volumes;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -31,6 +32,9 @@ import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.ListUtils;
+import org.ovirt.engine.core.common.utils.ListUtils.Predicate;
+import org.ovirt.engine.core.common.utils.ListUtils.PredicateFilter;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.searchbackend.SearchObjects;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
@@ -591,6 +595,14 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             showVolumeProfiling();
         }else if(command.getName().equalsIgnoreCase("closeProfileStats")) {//$NON-NLS-1$
             setWindow(null);
+        } else if(command.getName().equalsIgnoreCase("CancelOptimizeForVirtStore")) {//$NON-NLS-1$
+            setConfirmWindow(null);
+        } else if (command.getName().equalsIgnoreCase("ConfirmOptimiseForVirtStore")) {//$NON-NLS-1$
+            List<GlusterVolumeEntity> selectedVolumes = new ArrayList<GlusterVolumeEntity>();
+            for(Object selectedVolume : getSelectedItems()) {
+                selectedVolumes.add((GlusterVolumeEntity) selectedVolume);
+            }
+            optimizeVolumesForVirtStore(selectedVolumes);
         }
     }
 
@@ -791,17 +803,48 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
     }
 
     private void optimizeForVirtStore() {
+        UIConstants constants = ConstantsManager.getInstance().getConstants();
         if (getSelectedItems() == null || getSelectedItems().size() == 0) {
             return;
         }
-        ArrayList<Guid> volumeIds = new ArrayList<Guid>();
+        ArrayList<GlusterVolumeEntity> volumesForOptimiseForVirtStore = new ArrayList<GlusterVolumeEntity>();
+        Boolean isDiscouragedVolumePresent = false;
+        StringBuilder discouragedConfigVolumeNamesBuilder = new StringBuilder();
+        discouragedConfigVolumeNamesBuilder.append(constants.optimiseForVirtStoreWarning());
         for (Object item : getSelectedItems()) {
-            volumeIds.add(((GlusterVolumeEntity) item).getId());
+            GlusterVolumeEntity volume = (GlusterVolumeEntity) item;
+            volumesForOptimiseForVirtStore.add(volume);
+            if(volume.getReplicaCount() != 3) {
+                discouragedConfigVolumeNamesBuilder.append(volume.getName() + "\n");//$NON-NLS-1$
+                isDiscouragedVolumePresent = true;
+            }
         }
-        optimizeVolumesForVirtStore(volumeIds);
+        discouragedConfigVolumeNamesBuilder.append(constants.optimiseForVirtStoreContinueMessage());
+
+        if(isDiscouragedVolumePresent) {
+            ConfirmationModel cModel = new ConfirmationModel();
+
+            cModel.setMessage(discouragedConfigVolumeNamesBuilder.toString());
+
+            UICommand cancelOptimiseVirtStoreCommand = new UICommand("CancelOptimizeForVirtStore", this);//$NON-NLS-1$
+            cancelOptimiseVirtStoreCommand.setTitle(constants.doNotOptimiseForVirtStore());
+            cancelOptimiseVirtStoreCommand.setIsCancel(true);
+            cModel.getCommands().add(cancelOptimiseVirtStoreCommand);
+
+            UICommand confirmOptimiseForVirtStoreCommand = new UICommand("ConfirmOptimiseForVirtStore", this);//$NON-NLS-1$
+            confirmOptimiseForVirtStoreCommand.setTitle(constants.continueOptimiseForVirtStore());
+            confirmOptimiseForVirtStoreCommand.setIsDefault(true);
+            cModel.getCommands().add(confirmOptimiseForVirtStoreCommand);
+            setConfirmWindow(cModel);
+        } else {
+            optimizeVolumesForVirtStore(volumesForOptimiseForVirtStore);
+        }
     }
 
-    private void optimizeVolumesForVirtStore(final List<Guid> volumeList) {
+    private void optimizeVolumesForVirtStore(final List<GlusterVolumeEntity> volumeList) {
+        if(getConfirmWindow() != null) {
+            setConfirmWindow(null);
+        }
         AsyncQuery aQuery = new AsyncQuery();
         aQuery.setModel(this);
         aQuery.asyncCallback = new INewAsyncCallback() {
@@ -826,25 +869,26 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                                 String optionOwnerGroupVirt = (String) resultInner1;
 
                                 ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
-                                for (Guid volumeId : volumeList)
+                                for (GlusterVolumeEntity volume : volumeList)
                                 {
-                                    GlusterVolumeOptionEntity optionGroup = new GlusterVolumeOptionEntity();
-                                    optionGroup.setVolumeId(volumeId);
-                                    optionGroup.setKey("group"); //$NON-NLS-1$
-                                    optionGroup.setValue(optionGroupVirt);
-                                    list.add(new GlusterVolumeOptionParameters(optionGroup));
+                                    Guid volumeId = volume.getId();
 
-                                    GlusterVolumeOptionEntity optionOwnerUser = new GlusterVolumeOptionEntity();
-                                    optionOwnerUser.setVolumeId(volumeId);
-                                    optionOwnerUser.setKey("storage.owner-uid"); //$NON-NLS-1$
-                                    optionOwnerUser.setValue(optionOwnerUserVirt);
-                                    list.add(new GlusterVolumeOptionParameters(optionOwnerUser));
+                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "group", optionGroupVirt)));//$NON-NLS-1$
 
-                                    GlusterVolumeOptionEntity optionOwnerGroup = new GlusterVolumeOptionEntity();
-                                    optionOwnerGroup.setVolumeId(volumeId);
-                                    optionOwnerGroup.setKey("storage.owner-gid"); //$NON-NLS-1$
-                                    optionOwnerGroup.setValue(optionOwnerGroupVirt);
-                                    list.add(new GlusterVolumeOptionParameters(optionOwnerGroup));
+                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-uid", optionOwnerUserVirt)));//$NON-NLS-1$
+
+                                    list.add(new GlusterVolumeOptionParameters(getOption(volumeId, "storage.owner-gid", optionOwnerGroupVirt)));//$NON-NLS-1$
+
+                                    final GlusterVolumeOptionEntity checkOption = getOption(volumeId, "network.ping-timeout", "10");//$NON-NLS-1$//$NON-NLS-2$
+                                    List<PredicateFilter<GlusterVolumeOptionEntity>> predicaetFilters = Collections.singletonList(new PredicateFilter<GlusterVolumeOptionEntity>(new Predicate<GlusterVolumeOptionEntity>() {
+                                        @Override
+                                        public boolean evaluate(GlusterVolumeOptionEntity obj) {
+                                            return obj.getKey().equalsIgnoreCase(checkOption.getKey());
+                                        }
+                                    }));
+                                    if(!isOptionEnabledOnVolume(volume, predicaetFilters)) {
+                                        list.add(new GlusterVolumeOptionParameters(checkOption));//$NON-NLS-1$
+                                    }
                                 }
                                 Frontend.getInstance().runMultipleAction(VdcActionType.SetGlusterVolumeOption, list);
                             }
@@ -863,6 +907,22 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         AsyncDataProvider.getInstance().getConfigFromCache(new GetConfigurationValueParameters(ConfigurationValues.GlusterVolumeOptionGroupVirtValue,
                                                                                  AsyncDataProvider.getInstance().getDefaultConfigurationVersion()),
                 aQuery);
+    }
+
+    private boolean isOptionEnabledOnVolume(GlusterVolumeEntity volume, List<PredicateFilter<GlusterVolumeOptionEntity>> predicates) {
+        List<GlusterVolumeOptionEntity> volumeOptionsEnabled = new ArrayList<GlusterVolumeOptionEntity>(volume.getOptions());
+        List<GlusterVolumeOptionEntity> filteredOptions = volumeOptionsEnabled;
+        for(PredicateFilter<GlusterVolumeOptionEntity> predicate  : predicates) {
+             filteredOptions = ListUtils.filter(filteredOptions, predicate);
+        }
+        if(filteredOptions.size() > 0) {
+            return true;
+        }
+        return false;
+    }
+
+    private GlusterVolumeOptionEntity getOption(Guid volumeId, String key, String value) {
+        return new GlusterVolumeOptionEntity(volumeId, key, value);
     }
 
     private void stop() {
@@ -962,7 +1022,7 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
 
         Guid clusterId = ((VDSGroup) volumeModel.getCluster().getSelectedItem()).getId();
-        GlusterVolumeEntity volume = new GlusterVolumeEntity();
+        final GlusterVolumeEntity volume = new GlusterVolumeEntity();
         volume.setClusterId(clusterId);
         volume.setName((String) volumeModel.getName().getEntity());
         GlusterVolumeType type = (GlusterVolumeType) volumeModel.getTypeList().getSelectedItem();
@@ -1018,12 +1078,12 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
             @Override
             public void executed(FrontendActionAsyncResult result) {
                 VolumeListModel localModel = (VolumeListModel) result.getState();
-                localModel.postOnCreateVolume(result.getReturnValue());
+                localModel.postOnCreateVolume(result.getReturnValue(), volume);
             }
         }, this);
     }
 
-    public void postOnCreateVolume(VdcReturnValueBase returnValue)
+    public void postOnCreateVolume(VdcReturnValueBase returnValue, GlusterVolumeEntity volume)
     {
         VolumeModel model = (VolumeModel) getWindow();
 
@@ -1032,9 +1092,8 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         if (returnValue != null && returnValue.getSucceeded())
         {
             cancel();
-            Guid volumeId = (Guid) returnValue.getActionReturnValue();
             if ((Boolean) model.getOptimizeForVirtStore().getEntity()) {
-                optimizeVolumesForVirtStore(Arrays.asList(volumeId));
+                optimizeVolumesForVirtStore(Arrays.asList(volume));
             }
         }
     }

@@ -138,6 +138,10 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
     Label messageLabel;
 
     @UiField
+    @Ignore
+    Label virtStoreOptimiseWarningLabel;
+
+    @UiField
     @Path(value = "optimizeForVirtStore.entity")
     @WithElementId
     EntityModelCheckBoxEditor optimizeForVirtStoreEditor;
@@ -152,9 +156,14 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+        setVisibilities();
         initAddBricksButton();
         initBricksCountLabele();
         driver.initialize(this);
+    }
+
+    private void setVisibilities() {
+        virtStoreOptimiseWarningLabel.setVisible(false);
     }
 
     private void initCheckboxEditors() {
@@ -213,6 +222,7 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         allowAccessEditor.setLabel(constants.allowAccessFromVolume());
         allowAccessLabel.setText(constants.allowAccessFromLabelVolume());
         optimizeForVirtStoreEditor.setLabel(constants.optimizeForVirtStoreVolume());
+        virtStoreOptimiseWarningLabel.setText(constants.newVolumeOptimiseForVirtStoreWarning());
     }
 
     @Override
@@ -237,6 +247,18 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
                                     .getSelectedItems()
                                     .size()));
                 }
+            }
+        });
+        object.getOptimizeForVirtStore().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+                virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
+            }
+        });
+        object.getReplicaCount().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+                virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
             }
         });
     }

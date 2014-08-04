@@ -3807,4 +3807,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("This will skip fencing if the percentage of Cluster Hosts with connectivity issues is greater than or equal to the defined threshold")
     String skipFencingWhenConnectivityBrokenInfo();
+
+    @DefaultStringValue("It is suggested to optimise a Volume for virt store if the volume is of replica-3 type")
+    String newVolumeOptimiseForVirtStoreWarning();
 }
