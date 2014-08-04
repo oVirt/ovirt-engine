@@ -205,17 +205,6 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
-CREATE OR REPLACE FUNCTION GetVmDeviceByVmIdAndAddress(v_vm_id UUID, v_address varchar(255))
-RETURNS SETOF vm_device_view STABLE
-AS $procedure$
-BEGIN
-    RETURN QUERY
-    select vm_device_view.* from vm_device_view
-    where vm_id = v_vm_id and
-          address = v_address;
-END; $procedure$
-LANGUAGE plpgsql;
-
 create or replace FUNCTION GetVmUnmanagedDevicesByVmId(v_vm_id UUID)
 RETURNS SETOF vm_device_view STABLE
 AS $procedure$
