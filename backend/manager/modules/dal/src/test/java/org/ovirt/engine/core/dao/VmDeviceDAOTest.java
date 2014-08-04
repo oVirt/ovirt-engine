@@ -102,12 +102,6 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
     }
 
     @Test
-    public void testGetVmDeviceByVmIdAndAddress() {
-        List<VmDevice> devices = dao.getVmDeviceByVmIdAndAddress(EXISTING_VM_ID, "sample");
-        assertTrue("The list should not be empty", !devices.isEmpty());
-    }
-
-    @Test
     public void testGetVmDeviceByVmIdTypeAndDeviceFilteringWithoutPermissions() {
         List<VmDevice> devices =
                 dao.getVmDeviceByVmIdTypeAndDevice(EXISTING_VM_ID,

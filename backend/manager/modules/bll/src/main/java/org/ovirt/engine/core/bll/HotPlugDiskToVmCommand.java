@@ -2,7 +2,6 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -30,7 +29,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends AbstractDiskVmCommand<T> {
 
     private Disk disk;
-    private VmDevice oldVmDevice;
+    protected VmDevice oldVmDevice;
 
     public HotPlugDiskToVmCommand(T parameters) {
         super(parameters);
@@ -132,16 +131,14 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
 
     @Override
     protected void executeVmCommand() {
-        clearAddressAlreadyInUse();
-
         if (getVm().getStatus().isUpOrPaused()) {
             updateDisksFromDb();
             performPlugCommand(getPlugAction(), getDisk(), oldVmDevice);
         }
 
         // At this point disk is already plugged to or unplugged from VM (depends on the command),
-        // so device's 'isPlugged' property should be updated accordingly in DB
-        updateDeviceIsPluggedProperty();
+        // so we can update the needed device properties
+        updateDeviceProperties();
 
         // Now after updating 'isPlugged' property of the plugged/unplugged device, its time to
         // update the boot order for all VM devices. Failure to do that doesn't change the fact that
@@ -154,27 +151,9 @@ public class HotPlugDiskToVmCommand<T extends HotPlugDiskToVmParameters> extends
         setSucceeded(true);
     }
 
-    /**
-     * Clear the device address if a device is being hot plugged and its stored address is already in use by another
-     * plugged device
-     **/
-    private void clearAddressAlreadyInUse() {
-        if (oldVmDevice.getIsPlugged() || oldVmDevice.getAddress().isEmpty()) {
-            return;
-        }
-        List<VmDevice> devices = getVmDeviceDao().getVmDeviceByVmIdAndAddress(getVmId(), oldVmDevice.getAddress());
-        for (VmDevice device : devices) {
-            if (!device.getId().equals(oldVmDevice.getId()) && device.getIsPlugged()) {
-                oldVmDevice.setAddress("");
-                getVmDeviceDao().clearDeviceAddress(oldVmDevice.getDeviceId());
-                break;
-            }
-        }
-    }
-
-    private void updateDeviceIsPluggedProperty() {
+    protected void updateDeviceProperties() {
         VmDevice device = getVmDeviceDao().get(oldVmDevice.getId());
-        device.setIsPlugged(!oldVmDevice.getIsPlugged());
+        device.setIsPlugged(true);
         getVmDeviceDao().updateHotPlugDisk(device);
     }
 

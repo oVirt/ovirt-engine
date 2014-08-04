@@ -16,6 +16,13 @@ public class HotUnPlugDiskFromVmCommand<T extends HotPlugDiskToVmParameters> ext
     }
 
     @Override
+    protected void updateDeviceProperties() {
+        oldVmDevice.setIsPlugged(false);
+        oldVmDevice.setAddress("");
+        getVmDeviceDao().update(oldVmDevice);
+    }
+
+    @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
         return lockProperties.withScope(Scope.Execution);
     }

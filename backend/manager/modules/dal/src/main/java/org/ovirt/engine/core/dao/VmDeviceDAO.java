@@ -31,8 +31,6 @@ public interface VmDeviceDAO extends GenericDao<VmDevice, VmDeviceId>, MassOpera
             Guid userID,
             boolean isFiltered);
 
-    List<VmDevice> getVmDeviceByVmIdAndAddress(Guid vmID, String address);
-
     List<VmDevice> getUnmanagedDevicesByVmId(Guid vmId);
 
     boolean isMemBalloonEnabled(Guid vmId);
