@@ -209,10 +209,6 @@ class Plugin(plugin.PluginBase):
                         osetupcons.Defaults.DEFAULT_WEBSOCKET_PROXY_PORT,
                     ),
                 },
-                {
-                    'name': 'RedirectServletReportsPage',
-                    'value': '/ovirt-engine-reports',
-                },
             ),
         )
 
