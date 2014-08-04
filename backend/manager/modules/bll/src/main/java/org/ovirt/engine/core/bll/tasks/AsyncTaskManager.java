@@ -394,6 +394,8 @@ public final class AsyncTaskManager {
                 // status
                 if (task.getLastTaskStatus().getStatus() != AsyncTaskStatusEnum.finished
                         && task.getLastTaskStatus().getStatus() != AsyncTaskStatusEnum.unknown) {
+                    // mark it as a zombie task, Will result in failure of the command
+                    task.setZombieTask(true);
                     AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
                     log.infoFormat("Cleaning zombie tasks: Stopping async task {0} that started at {1}",
