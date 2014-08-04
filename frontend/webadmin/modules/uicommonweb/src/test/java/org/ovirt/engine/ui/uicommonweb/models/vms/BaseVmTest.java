@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.junit.BeforeClass;
+import org.junit.ClassRule;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -11,10 +12,10 @@ import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
+import org.ovirt.engine.ui.uicommonweb.junit.UiCommonSetup;
 
 import java.util.Collections;
 
-import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class BaseVmTest {
@@ -58,12 +59,15 @@ public class BaseVmTest {
     protected static final SerialNumberPolicy SERIAL_NUMBER_POLICY = SerialNumberPolicy.CUSTOM;
     protected static final String CUSTOM_SERIAL_NUMBER = "my custom number"; //$NON-NLS-1$
 
+    @ClassRule
+    public static UiCommonSetup setup = new UiCommonSetup();
+
     @BeforeClass
     public static void mockAsyncDataProvider() {
-        final AsyncDataProvider adp = mock(AsyncDataProvider.class);
+        AsyncDataProvider adp = setup.getMocks().asyncDataProvider();
         when(adp.getConfigValuePreConverted(ConfigurationValues.VncKeyboardLayoutValidValues)).thenReturn(Collections.emptyList());
         when(adp.osNameExists(OS_TYPE)).thenReturn(true);
         when(adp.getMaxVmNameLengthWin()).thenReturn(15);
-        AsyncDataProvider.setInstance(adp);
     }
+
 }

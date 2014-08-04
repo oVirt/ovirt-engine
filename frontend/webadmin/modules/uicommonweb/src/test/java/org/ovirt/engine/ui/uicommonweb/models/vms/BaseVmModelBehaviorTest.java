@@ -2,53 +2,17 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
-import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 import org.junit.Before;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.ui.frontend.Frontend;
-import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.Enums;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.UIConstants;
-import org.ovirt.engine.ui.uicompat.UIMessages;
 
 public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
-
-    @BeforeClass
-    public static void mockFrontend() {
-        final Frontend frontend = mock(Frontend.class, RETURNS_DEEP_STUBS);
-        TypeResolver.setInstance(mock(TypeResolver.class));
-        Frontend.setInstance(frontend);
-        when(frontend.getQueryCompleteEvent()).thenReturn(mock(Event.class));
-
-        ConstantsManager.setInstance(new ConstantsManager() {
-            @Override
-            public UIConstants getConstants() {
-                return mock(UIConstants.class);
-            }
-
-            @Override
-            public UIMessages getMessages() {
-                return mock(UIMessages.class);
-            }
-
-            @Override
-            public Enums getEnums() {
-                return mock(Enums.class);
-            }
-        });
-    }
 
     protected void setUpVm(VmBase vm) {
         vm.setName(VM_NAME);
