@@ -26,7 +26,7 @@ public final class AuditLogDirector {
     private static final Log log = LogFactory.getLog(AuditLogDirector.class);
     private static final Map<AuditLogType, String> messages = new EnumMap<AuditLogType, String>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
-    static final String UNKNOWN_VARIABLE_VALUE = "Non interactive user";
+    static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
     static final String UNKNOWN_REASON_VALUE = "Not Specified";
     static final String REASON_TOKEN = "reason";
     private static final String APP_ERRORS_MESSAGES_FILE_NAME = "bundles/AuditLogMessages";
