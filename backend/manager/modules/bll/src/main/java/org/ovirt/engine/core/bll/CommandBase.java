@@ -355,6 +355,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return getReturnValue();
     }
 
+    private void clearChildAsyncTasksWithOutVdsmId() {
+        for (Entry<Guid, CommandBase<?>> entry : childCommandsMap.entrySet()) {
+            entry.getValue().clearAsyncTasksWithOutVdsmId();
+            entry.getValue().clearChildAsyncTasksWithOutVdsmId();
+        }
+    }
+
     private void clearAsyncTasksWithOutVdsmId() {
         if (!getReturnValue().getTaskPlaceHolderIdList().isEmpty()) {
             TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -1178,6 +1185,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         } finally {
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
             if (exceptionOccurred || !getSucceeded()) {
+                clearChildAsyncTasksWithOutVdsmId();
                 setCommandStatus(CommandStatus.FAILED);
                 setSucceeded(false);
                 compensate();
@@ -1360,6 +1368,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                                     BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
                                             entry.getValue().getSecond(),
                                             context);
+                            log.infoFormat("Command {0} persisting async task placeholder for child command {1}",
+                                    getCommandId(),
+                                    command.getCommandId());
                             command.insertAsyncTaskPlaceHolders();
                             childCommandsMap.put(entry.getKey(), command);
                         }
