@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -780,9 +781,16 @@ public class VmHandler {
                 log.warn("VmHandler:: isUpdateValidForVmDevices: Reflection error");
             }
 
+            // if device type is set to unknown, search by general type only
+            // because some devices has more than one type, like sound can be ac97/ich6
+            String device = null;
+            if (annotation.type() != VmDeviceType.UNKNOWN) {
+                device = annotation.type().getName();
+            }
+
             if (isEnabled == null ||
                     !VmDeviceUtils.vmDeviceChanged(vmId, annotation.generalType(),
-                            annotation.type().getName(), isEnabled)) {
+                            device, isEnabled)) {
                 continue;
             }
 

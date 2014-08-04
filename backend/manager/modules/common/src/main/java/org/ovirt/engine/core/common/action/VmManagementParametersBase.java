@@ -51,7 +51,7 @@ public class VmManagementParametersBase extends VmOperationParameterBase {
      * for add vm legacy logic will be used: create device for desktop type
      * for update the current configuration will remain
      */
-    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.SOUND, type = VmDeviceType.SOUND, isReadOnly = true)
+    @EditableDeviceOnVmStatusField(generalType = VmDeviceGeneralType.SOUND, type = VmDeviceType.UNKNOWN, isReadOnly = true)
     private Boolean soundDeviceEnabled;
     /*
      * This parameter is used to decide if to create console device or not if it is null then: for add vm don't add

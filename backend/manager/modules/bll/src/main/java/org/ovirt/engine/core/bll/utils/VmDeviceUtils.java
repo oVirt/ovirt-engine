@@ -1140,16 +1140,19 @@ public class VmDeviceUtils {
                 vmManagedDeviceMap.put(device.getDeviceId(), device);
             }
             else {
-                vmManagedDeviceMap.remove(getVmDeviceIdByName(vmManagedDeviceMap, field.type().getName()));
+                vmManagedDeviceMap.remove(getVmDeviceIdByName(vmManagedDeviceMap, field.generalType(), field.type().getName()));
             }
         }
 
         return vmManagedDeviceMap;
     }
 
-    private static Guid getVmDeviceIdByName(Map<Guid, VmDevice> vmManagedDeviceMap, String name) {
+    private static Guid getVmDeviceIdByName(Map<Guid, VmDevice> vmManagedDeviceMap, VmDeviceGeneralType generalType, String name) {
         for (Map.Entry<Guid, VmDevice> entry : vmManagedDeviceMap.entrySet()) {
-            if (entry.getValue().getDevice().equals(name)) {
+            // first check by specific name
+            // if no match, and specific name is unknown, look by general type
+            if (entry.getValue().getDevice().equals(name)
+                    || (VmDeviceType.UNKNOWN.getName().equals(name) && entry.getValue().getType() == generalType)) {
                 return entry.getKey();
             }
         }
