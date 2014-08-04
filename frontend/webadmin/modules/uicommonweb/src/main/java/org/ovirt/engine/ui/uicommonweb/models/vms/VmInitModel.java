@@ -8,7 +8,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.SortedMap;
 import java.util.TreeMap;
-
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
@@ -440,7 +439,7 @@ public class VmInitModel extends Model {
     static {
         rootPasswordMatchMessage = ConstantsManager.getInstance().getConstants().cloudInitRootPasswordMatchMessage();
         dnsServerListMessage = ConstantsManager.getInstance().getConstants().cloudInitDnsServerListMessage();
-        newNetworkText = ConstantsManager.getInstance().getConstants().cloudInitNewNetworkItem();
+        newNetworkText = ""; //$NON-NLS-1$
         newAttachmentText = ConstantsManager.getInstance().getConstants().cloudInitNewAttachmentItem();
         base64Message = ConstantsManager.getInstance().getConstants().cloudInitBase64Message();
         base64Regex = "^[a-zA-Z0-9+/_\\r\\n-](=){0,2}$"; //$NON-NLS-1$
@@ -756,7 +755,7 @@ public class VmInitModel extends Model {
 
                 if (params.getBootProtocol() != NetworkBootProtocol.DHCP) {
                     if (!validateHidden(getNetworkList(), name, null,
-                                    new IValidation[] { new AsciiNameValidation() })
+                                    new IValidation[] { new AsciiNameValidation(), new NotEmptyValidation()})
                             || !validateHidden(getNetworkIpAddress(), params.getIp(), null,
                                     new IValidation[] { new IpAddressValidation() })
                             || !validateHidden(getNetworkNetmask(), params.getNetmask(), null,

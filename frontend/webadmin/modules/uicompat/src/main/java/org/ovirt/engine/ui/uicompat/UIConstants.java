@@ -1,9 +1,8 @@
 package org.ovirt.engine.ui.uicompat;
 
 
-import org.ovirt.engine.core.common.businessentities.VmPool;
-
 import com.google.gwt.i18n.client.Constants;
+import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -2153,9 +2152,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("List can contain zero or more IP addresses separated by spaces, each in the form xxx.xxx.xxx.xxx")
     String cloudInitDnsServerListMessage();
-
-    @DefaultStringValue("ethX [Click to Change]")
-    String cloudInitNewNetworkItem();
 
     @DefaultStringValue("/path [Click to Change]")
     String cloudInitNewAttachmentItem();
