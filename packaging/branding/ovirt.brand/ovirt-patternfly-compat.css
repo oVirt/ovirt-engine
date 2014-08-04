@@ -113,7 +113,7 @@ label {
 }
 #VmPopupWidget_name, #PoolNewPopupWidget_name, #PoolNewPopupWidget_prestartedVms, #PoolNewPopupWidget_maxAssignedVmsPerUser,
     #PoolEditPopupWidget_name, #PoolEditPopupWidget_editPrestartedVms, #PoolEditPopupWidget_incraseNumOfVms,
-    #PoolEditPopupWidget_editMaxAssignedVmsPerUser, #TemplateNewPopupWidget_name {
+    #PoolEditPopupWidget_editMaxAssignedVmsPerUser, #TemplateNewPopupWidget_name, #VmClonePopupWidget_name {
     line-height: 16px !important;
 }
 .cbe_checkbox_pfly_fix {
@@ -131,13 +131,6 @@ label {
 .ape_expander_pfly_fix div span span:first-child {
     top: 4px;
     padding-right: 2px;
-}
-.avmpw_nameEditor_pfly_fix {
-    padding-left: 5px;
-}
-.avmpw_nameEditor_pfly_fix div:nth-child(2) {
-    padding-left: 5px;
-    padding-right: 5px;
 }
 #InstanceTypesPopupWidget .avmpw_nameEditor_pfly_fix input {
     line-height: 16px !important;
@@ -165,9 +158,6 @@ span.label {
 div.avw_contentWidget_pfly_fix {
     position: relative;
     top: 6px;
-}
-.avmpw_name_pfly_fix {
-    padding-bottom: 30px !important;
 }
 .vmiw_networkAddButton_pfly_fix {
     width: 18px !important;
