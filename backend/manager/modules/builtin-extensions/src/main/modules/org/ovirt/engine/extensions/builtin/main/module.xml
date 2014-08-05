@@ -15,7 +15,6 @@
     <module name="org.ovirt.engine.api.ovirt-engine-extensions-api"/>
     <module name="org.ovirt.engine.core.aaa"/>
     <module name="org.ovirt.engine.core.common"/>
-    <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.ovirt.engine.core.uutils"/>
