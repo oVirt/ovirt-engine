@@ -13,7 +13,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ErrorCollector;
 import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
@@ -36,9 +35,6 @@ import org.ovirt.engine.core.dao.network.VmNicDao;
 public class MacPoolPerDcTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
-
-    @Rule
-    public ErrorCollector errorCollector = new ErrorCollector();
 
     @Mock
     private DbFacade dbFacade;
@@ -270,24 +266,24 @@ public class MacPoolPerDcTest {
     @Test
     public void testPoolForDataCenterMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().poolForDataCenter(null);
+        new MacPoolPerDc().poolForDataCenter(Guid.newGuid());
     }
 
     @Test
     public void testCreatePoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().createPool(null);
+        new MacPoolPerDc().createPool(new MacPool());
     }
 
     @Test
     public void testModifyPoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().modifyPool(null);
+        new MacPoolPerDc().modifyPool(new MacPool());
     }
 
     @Test
     public void testRemovePoolMethod() throws Exception {
         expectNotInitializedException();
-        new MacPoolPerDc().removePool(null);
+        new MacPoolPerDc().removePool(Guid.newGuid());
     }
 }
