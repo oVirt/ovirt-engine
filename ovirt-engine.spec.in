@@ -725,6 +725,7 @@ org/apache/xmlrpc/main/xmlrpc-common.jar
 org/postgresql/main/postgresql.jar postgresql-jdbc.jar
 org/quartz/main/quartz.jar
 org/snmp4j/main/snmp4j.jar
+org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 org/springframework/main/spring-aop.jar springframework/spring-aop.jar
 org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
 org/springframework/main/spring-beans.jar springframework/spring-beans.jar
@@ -733,7 +734,6 @@ org/springframework/main/spring-core.jar springframework/spring-core.jar
 org/springframework/main/spring-expression.jar springframework/spring-expression.jar
 org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
 org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
-org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 org/springframework/main/spring-tx.jar springframework/spring-tx.jar
 org/tukaani/xz/main/xz.jar
 %endif
