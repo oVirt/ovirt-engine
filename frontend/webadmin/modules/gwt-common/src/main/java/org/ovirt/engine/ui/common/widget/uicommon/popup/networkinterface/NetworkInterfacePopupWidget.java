@@ -47,13 +47,9 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     }
 
     protected interface Style extends CssResource {
-        String cardStatusEditorContent();
+        String statusEditorContent();
 
-        String cardStatusRadioContent();
-
-        String linkStateEditorContent();
-
-        String linkStateRadioContent();
+        String statusRadioContent();
 
         String checkBox();
     }
@@ -210,13 +206,13 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
     }
 
     private void applyStyles() {
-        cardStatusEditor.addContentWidgetStyleName(style.cardStatusEditorContent());
-        pluggedEditor.addContentWidgetStyleName(style.cardStatusRadioContent());
-        unpluggedEditor.addContentWidgetStyleName(style.cardStatusRadioContent());
+        cardStatusEditor.addContentWidgetStyleName(style.statusEditorContent());
+        pluggedEditor.addContentWidgetStyleName(style.statusRadioContent());
+        unpluggedEditor.addContentWidgetStyleName(style.statusRadioContent());
 
-        linkStateEditor.addContentWidgetStyleName(style.linkStateEditorContent());
-        linkedEditor.addContentWidgetStyleName(style.linkStateRadioContent());
-        unlinkedEditor.addContentWidgetStyleName(style.linkStateRadioContent());
+        linkStateEditor.addContentWidgetStyleName(style.statusEditorContent());
+        linkedEditor.addContentWidgetStyleName(style.statusRadioContent());
+        unlinkedEditor.addContentWidgetStyleName(style.statusRadioContent());
 
         enableManualMacCheckbox.addContentWidgetStyleName(style.checkBox());
     }
