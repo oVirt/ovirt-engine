@@ -151,7 +151,13 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.ISCSI_BOND_EDIT_SUCCESS : AuditLogType.ISCSI_BOND_EDIT_FAILED;
+        if (getSucceeded()) {
+            if (encounterConnectionProblems) {
+                return AuditLogType.ISCSI_BOND_EDIT_SUCCESS_WITH_WARNING;
+            }
+            return AuditLogType.ISCSI_BOND_EDIT_SUCCESS;
+        }
+        return AuditLogType.ISCSI_BOND_EDIT_FAILED;
     }
 
     @Override
