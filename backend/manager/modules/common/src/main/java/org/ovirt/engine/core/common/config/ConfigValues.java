@@ -1875,5 +1875,13 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     SkipFencingIfSDActiveSupported,
 
+    /**
+     * Interval in seconds after which is safe to check host storage lease status when host stopped responding
+     * to monitoring
+     */
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("90")
+    HostStorageLeaseAliveCheckingInterval,
+
     Invalid
 }

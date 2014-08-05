@@ -710,7 +710,7 @@ public class VdsManager {
             if (!sshSoftFencingExecuted.getAndSet(true)) {
                 executeSshSoftFencing = true;
             }
-            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds, executeSshSoftFencing);
+            ResourceManager.getInstance().getEventListener().vdsNotResponding(vds, executeSshSoftFencing, lastUpdate);
         }
         return true;
     }

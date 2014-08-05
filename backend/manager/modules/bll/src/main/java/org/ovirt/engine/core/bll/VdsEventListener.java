@@ -206,7 +206,7 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void vdsNotResponding(final VDS vds, final boolean executeSshSoftFencing) {
+    public void vdsNotResponding(final VDS vds, final boolean executeSshSoftFencing, final long lastUpdate) {
         ExecutionHandler.updateSpecificActionJobCompleted(vds.getId(), VdcActionType.MaintenanceVds, false);
         ThreadPoolUtil.execute(new Runnable() {
             @Override
@@ -229,8 +229,12 @@ public class VdsEventListener implements IVdsEventListener {
 
                 if (MonitoringStrategyFactory.getMonitoringStrategyForVds(vds).isPowerManagementSupported()
                         && shouldExecRealFencing) {
+                    FenceVdsActionParameters params = new FenceVdsActionParameters(
+                            vds.getId(),
+                            FenceActionType.Restart);
+                    params.setLastUpdate(lastUpdate);
                     Backend.getInstance().runInternalAction(VdcActionType.VdsNotRespondingTreatment,
-                            new FenceVdsActionParameters(vds.getId(), FenceActionType.Restart),
+                            params,
                             ExecutionHandler.createInternalJobContext());
                 }
                 moveBricksToUnknown(vds);
