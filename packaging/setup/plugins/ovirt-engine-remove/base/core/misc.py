@@ -98,12 +98,12 @@ class Plugin(plugin.PluginBase):
 
         rpm_v = distutils.version.LooseVersion(
             osetupcons.Const.RPM_VERSION
-        ).version
+        ).version[:3]
         inst_v = distutils.version.LooseVersion(
             self.environment[
                 osetupcons.CoreEnv.ORIGINAL_GENERATED_BY_VERSION
             ]
-        ).version
+        ).version[:3]
 
         if (rpm_v[:2] != inst_v[:2]) or (rpm_v < inst_v):
             self.logger.error(
