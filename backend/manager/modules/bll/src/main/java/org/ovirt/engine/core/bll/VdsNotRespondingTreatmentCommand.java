@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -17,6 +18,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.utils.ThreadUtils;
 
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
@@ -87,6 +91,19 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                     getVds().getVdsGroupId()
             ).getFencingPolicy();
             getParameters().setFencingPolicy(fencingPolicy);
+
+            if (fencingPolicy.isSkipFencingIfSDActive()) {
+                // host storage lease should be renewed each ConfigValues.HostStorageLeaseAliveInterval
+                // so we need to be sure not to execute fencing before host is non responsive for longer time
+                long interval = TimeUnit.SECONDS.toMillis(
+                        Config.<Integer>getValue(ConfigValues.HostStorageLeaseAliveCheckingInterval));
+                long difference = System.currentTimeMillis() - getParameters().getLastUpdate();
+                if (difference < interval) {
+                    int sleepMs = (int)(interval - difference);
+                    log.info(String.format("Sleeping %s ms before proceeding with fence execution", sleepMs));
+                    ThreadUtils.sleep(sleepMs);
+                }
+            }
 
             // Make sure that the StopVdsCommand that runs by the RestartVds
             // don't write over our job, and disrupt marking the job status correctly

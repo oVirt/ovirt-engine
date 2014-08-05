@@ -796,6 +796,8 @@ select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.2');
 select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.3');
 select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.4');
 
+select fn_db_add_config_value('HostStorageLeaseAliveCheckingInterval', '90', 'general');
+
 ------------------------------------------------------------------------------------
 --                  Update with override section
 ------------------------------------------------------------------------------------
