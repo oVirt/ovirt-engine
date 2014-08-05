@@ -128,13 +128,6 @@
        <artifactId>jackson-mapper-asl</artifactId>
     </dependency>
 
-    <dependency>
-      <groupId>org.springframework.ldap</groupId>
-      <artifactId>spring-ldap-core</artifactId>
-      <version>${spring.ldap.version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- This is not used directly by the source, but the
          compiler some how requires it indirectly: -->
     <dependency>
