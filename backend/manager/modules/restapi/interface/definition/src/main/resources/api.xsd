@@ -1977,6 +1977,13 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <xs:complexType name="JobOwner">
+    <xs:complexContent>
+      <xs:extension base="User">
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
   <xs:complexType name="Users">
     <xs:complexContent>
       <xs:extension base="BaseResources">
@@ -4515,7 +4522,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
-          <xs:element name="owner" type="User" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="owner" type="JobOwner" minOccurs="0" maxOccurs="1"/>
           <xs:element name="start_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
           <xs:element name="end_time" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
           <xs:element name="last_updated" type="xs:dateTime" minOccurs="0" maxOccurs="1"/>
