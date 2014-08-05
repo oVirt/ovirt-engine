@@ -938,6 +938,8 @@ public final class AuditLogDirector {
         severities.put(AuditLogType.ISCSI_BOND_REMOVE_SUCCESS, AuditLogSeverity.NORMAL);
         severities.put(AuditLogType.ISCSI_BOND_REMOVE_FAILED, AuditLogSeverity.ERROR);
         severities.put(AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.ISCSI_BOND_ADD_SUCCESS_WITH_WARNING, AuditLogSeverity.WARNING);
+        severities.put(AuditLogType.ISCSI_BOND_EDIT_SUCCESS_WITH_WARNING, AuditLogSeverity.WARNING);
     }
 
     private static void initMessages() {
