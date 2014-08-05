@@ -95,7 +95,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         freeLock();
 
         log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
-        connectAllHostsToPool();
+        connectHostsInUpToDomainStorageServer();
         runVdsCommand(VDSCommandType.ActivateStorageDomain,
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
         log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());

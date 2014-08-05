@@ -88,7 +88,7 @@ public class AttachStorageDomainToPoolCommandTest {
 
         doReturn(dbFacade).when(cmd).getDbFacade();
         doNothing().when(cmd).attemptToActivateDomain();
-        doReturn(Collections.emptyList()).when(cmd).connectAllHostsToPool();
+        doReturn(Collections.emptyList()).when(cmd).connectHostsInUpToDomainStorageServer();
         when(dbFacade.getStoragePoolIsoMapDao()).thenReturn(isoMapDAO);
         when(dbFacade.getStoragePoolDao()).thenReturn(storagePoolDAO);
         when(dbFacade.getVdsDao()).thenReturn(vdsDAO);

@@ -104,7 +104,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             return null;
                         }
                     });
-                    connectAllHostsToPool();
+                    connectHostsInUpToDomainStorageServer();
 
                     // Forcibly detach only data storage domains.
                     if (getStorageDomain().getStorageDomainType() == StorageDomainType.Data) {

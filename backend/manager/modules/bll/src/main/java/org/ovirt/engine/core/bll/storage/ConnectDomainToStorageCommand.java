@@ -23,7 +23,7 @@ public class ConnectDomainToStorageCommand<T extends StorageDomainPoolParameters
     @Override
     protected void executeCommand() {
         log.infoFormat("ConnectDomainToStorage. Before Connect all hosts to pool. Time:{0}", new Date());
-        connectAllHostsToPool();
+        connectHostsInUpToDomainStorageServer();
         log.infoFormat("ConnectDomainToStorage. After Connect all hosts to pool. Time:{0}", new Date());
     }
 }
