@@ -329,7 +329,7 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         }
     }
 
-    protected List<Pair<Guid, Boolean>> connectAllHostsToPool() {
+    protected List<Pair<Guid, Boolean>> connectHostsInUpToDomainStorageServer() {
         List<VDS> hostsInStatusUp = getAllRunningVdssInPool();
         List<Callable<Pair<Guid, Boolean>>> callables = new LinkedList<>();
         for (final VDS vds : hostsInStatusUp) {

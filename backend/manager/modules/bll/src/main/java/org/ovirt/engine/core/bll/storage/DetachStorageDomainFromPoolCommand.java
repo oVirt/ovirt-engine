@@ -47,7 +47,7 @@ public class DetachStorageDomainFromPoolCommand<T extends DetachStorageDomainFro
         changeStorageDomainStatusInTransaction(getStorageDomain().getStoragePoolIsoMapData(),
                 StorageDomainStatus.Detaching);
         log.info(" Detach storage domain: before connect");
-        connectAllHostsToPool();
+        connectHostsInUpToDomainStorageServer();
 
         log.info(" Detach storage domain: after connect");
 
