@@ -208,10 +208,10 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Time Zone")
     String cloudInitTimeZoneLabel();
 
-    @DefaultStringValue("Root Password")
+    @DefaultStringValue("Password")
     String cloudInitRootPasswordLabel();
 
-    @DefaultStringValue("Verify Root Password")
+    @DefaultStringValue("Verify Password")
     String cloudInitRootPasswordVerificationLabel();
 
     @DefaultStringValue("Admin Password")
