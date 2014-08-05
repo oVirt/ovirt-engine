@@ -415,7 +415,7 @@
               <module>
                 <groupId>org.springframework.ldap</groupId>
                 <artifactId>spring-ldap-core</artifactId>
-                <moduleName>org.springframework</moduleName>
+                <moduleName>org.springframework.ldap</moduleName>
               </module>
 
               <module>

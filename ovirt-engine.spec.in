@@ -733,7 +733,7 @@ org/springframework/main/spring-core.jar springframework/spring-core.jar
 org/springframework/main/spring-expression.jar springframework/spring-expression.jar
 org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
 org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
-org/springframework/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
+org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
 org/springframework/main/spring-tx.jar springframework/spring-tx.jar
 org/tukaani/xz/main/xz.jar
 %endif

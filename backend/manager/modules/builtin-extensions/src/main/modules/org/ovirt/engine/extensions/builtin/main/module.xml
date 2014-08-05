@@ -19,7 +19,7 @@
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.ovirt.engine.core.uutils"/>
-    <module name="org.springframework"/>
+    <module name="org.springframework.ldap"/>
     <module name="sun.jdk"/>
 
   </dependencies>

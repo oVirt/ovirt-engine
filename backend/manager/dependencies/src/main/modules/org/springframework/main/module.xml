@@ -11,7 +11,6 @@
     <resource-root path="spring-expression.jar"/>
     <resource-root path="spring-instrument.jar"/>
     <resource-root path="spring-jdbc.jar"/>
-    <resource-root path="spring-ldap-core.jar"/>
     <resource-root path="spring-tx.jar"/>
   </resources>
 
