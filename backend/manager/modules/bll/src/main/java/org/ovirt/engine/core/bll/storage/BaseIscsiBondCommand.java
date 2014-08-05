@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.Callable;
 
 import org.ovirt.engine.core.bll.CommandBase;
@@ -17,10 +18,15 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> extends CommandBase<T> {
+
+    protected boolean encounterConnectionProblems;
 
     public BaseIscsiBondCommand(T parameters) {
         super(parameters);
@@ -47,14 +53,29 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
                 public Void call() throws Exception {
                     try {
                         final List<StorageServerConnections> conns = ISCSIStorageHelper.updateIfaces(connections, host.getId());
-                        runVdsCommand(VDSCommandType.ConnectStorageServer,
+                        VDSReturnValue returnValue = runVdsCommand(VDSCommandType.ConnectStorageServer,
                                 new StorageServerConnectionManagementVDSParameters(host.getId(), Guid.Empty, StorageType.ISCSI, conns)
                         );
+                        final Map<String, String> iscsiMap = (Map<String, String>) returnValue.getReturnValue();
+                        List<String> failedConnectionsList = LinqUtils.filter(iscsiMap.keySet(), new Predicate<String>() {
+                            @Override
+                            public boolean eval(String a) {
+                                return !"0".equals(iscsiMap.get(a));
+                            }
+                        });
+                        if (!failedConnectionsList.isEmpty()) {
+                            log.errorFormat("Host {0} - {1} encounter problems to connect to the iSCSI Storage Server. The following connections were problematic (connectionid=vdsm result): {2}",
+                                    host.getName(),
+                                    host.getId(),
+                                    iscsiMap.toString());
+                            encounterConnectionProblems = true;
+                        }
                     } catch (VdcBLLException e) {
                         log.errorFormat("Could not connect Host {0} - {1} to Iscsi Storage Server. The exception is: {2}",
                                 host.getName(),
                                 host.getId(),
                                 e);
+                        encounterConnectionProblems = true;
                     }
                     return null;
                 }

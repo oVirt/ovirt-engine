@@ -73,7 +73,13 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.ISCSI_BOND_ADD_SUCCESS : AuditLogType.ISCSI_BOND_ADD_FAILED;
+        if (getSucceeded()) {
+            if (encounterConnectionProblems) {
+                return AuditLogType.ISCSI_BOND_ADD_SUCCESS_WITH_WARNING;
+            }
+            return AuditLogType.ISCSI_BOND_ADD_SUCCESS;
+        }
+        return AuditLogType.ISCSI_BOND_ADD_FAILED;
     }
 
     @Override
