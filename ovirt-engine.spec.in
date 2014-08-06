@@ -356,6 +356,8 @@ Requires:	logrotate
 Requires:	otopi >= 1.2.2
 Conflicts:	%{name}-dwh < 3.5.0
 Conflicts:	%{name}-reports < 3.5.0
+Conflicts:	%{name}-dwh-setup < 3.5.0
+Conflicts:	%{name}-reports-setup < 3.5.0
 
 %description setup-base
 %{ovirt_product_name_short} suite base setup components.
