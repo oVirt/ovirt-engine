@@ -231,7 +231,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("custom_serial_number", group.getCustomSerialNumber())
                 .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive())
                 .addValue("skip_fencing_if_connectivity_broken", group.getFencingPolicy().isSkipFencingIfConnectivityBroken())
-                .addValue("hosts_with_broken_connectivity_threshold", group.getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
+                .addValue("hosts_with_broken_connectivity_threshold", group.getFencingPolicy().getHostsWithBrokenConnectivityThreshold())
+                .addValue("fencing_enabled", group.getFencingPolicy().isFencingEnabled());
 
         return parameterSource;
     }
@@ -295,6 +296,7 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
             entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
             entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
+            entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
 
             return entity;
         }
