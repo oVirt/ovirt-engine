@@ -104,6 +104,7 @@ public enum ConfigurationValues {
     MemorySnapshotSupported(ConfigAuthType.User),
     HostNetworkQosSupported,
     StorageQosSupported,
+    CpuQosSupported,
     MaxAverageNetworkQoSValue,
     MaxPeakNetworkQoSValue,
     MaxBurstNetworkQoSValue,

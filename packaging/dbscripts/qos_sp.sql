@@ -2,7 +2,7 @@
 -- [qos] Table
 ----------------------------------------------------------------
 
-Create or replace FUNCTION InsertQos(v_id uuid,
+Create or replace FUNCTION InsertStorageQos(v_id uuid,
   v_qos_type SMALLINT,
   v_name VARCHAR(50),
   v_description TEXT,
@@ -21,7 +21,21 @@ INSERT INTO qos(id, qos_type, name, description, storage_pool_id, max_throughput
 END; $procedure$
 LANGUAGE plpgsql;
 
-Create or replace FUNCTION UpdateQos(v_id uuid,
+Create or replace FUNCTION InsertCpuQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_cpu_limit INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO qos(id, qos_type, name, description, storage_pool_id, cpu_limit)
+  VALUES(v_id, v_qos_type, v_name, v_description, v_storage_pool_id, v_cpu_limit);
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateStorageQos(v_id uuid,
   v_qos_type SMALLINT,
   v_name VARCHAR(50),
   v_description TEXT,
@@ -38,6 +52,22 @@ BEGIN
       UPDATE qos
       SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id, max_throughput = v_max_throughput, max_read_throughput = v_max_read_throughput,
       max_write_throughput = v_max_write_throughput, max_iops = v_max_iops, max_read_iops = v_max_read_iops, max_write_iops = v_max_write_iops,
+      _update_date = LOCALTIMESTAMP
+      WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateCpuQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_cpu_limit INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE qos
+      SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id, cpu_limit = v_cpu_limit,
       _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$

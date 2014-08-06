@@ -1159,6 +1159,7 @@
         <column>max_iops</column>
         <column>max_read_iops</column>
         <column>max_write_iops</column>
+        <column>cpu_limit</column>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
             <value>1</value>
@@ -1171,6 +1172,7 @@
             <value>1000</value>
             <value>2000</value>
             <value>500</value>
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253315</value>
@@ -1184,6 +1186,7 @@
             <value>1200</value>
             <value>2400</value>
             <value>500</value>
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
@@ -1197,6 +1200,49 @@
             <value>700</value>
             <value>1400</value>
             <value>500</value>
+            <null />
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+            <value>2</value>
+            <value>qos_d</value>
+            <value>desc1</value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>50</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253318</value>
+            <value>2</value>
+            <value>qos_e</value>
+            <value></value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>60</value>
+        </row>
+        <row>
+            <value>ae956031-6be2-43d6-bb90-5191c9253319</value>
+            <value>2</value>
+            <value>qos_f</value>
+            <value></value>
+            <value>72b9e200-f48b-4687-83f2-62828f249a47</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>88</value>
         </row>
     </table>
 
