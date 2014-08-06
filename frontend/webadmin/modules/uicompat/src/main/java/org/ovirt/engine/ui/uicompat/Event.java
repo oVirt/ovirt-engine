@@ -1,15 +1,20 @@
 package org.ovirt.engine.ui.uicompat;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 
 public class Event {
-    private java.util.List<IEventListener> listeners;
-    private java.util.Map<IEventListener, Object> contexts;
-    private java.lang.Class privateOwnerType;
-    public java.lang.Class getOwnerType()
+    private List<IEventListener> listeners;
+    private Map<IEventListener, Object> contexts;
+    private Class<?> privateOwnerType;
+    public Class<?> getOwnerType()
     {
         return privateOwnerType;
     }
-    private void setOwnerType(java.lang.Class value)
+    private void setOwnerType(Class<?> value)
     {
         privateOwnerType = value;
     }
@@ -38,13 +43,13 @@ public class Event {
     }
 
 
-    public Event(String name, java.lang.Class ownerType)
+    public Event(String name, Class<?> ownerType)
     {
         setName(name);
         setOwnerType(ownerType);
 
-        listeners = new java.util.ArrayList<IEventListener>();
-        contexts = new java.util.HashMap<IEventListener, Object>();
+        listeners = new ArrayList<IEventListener>();
+        contexts = new HashMap<IEventListener, Object>();
     }
 
     public Event()
@@ -85,7 +90,7 @@ public class Event {
         //Iterate on a new instance of listeners list,
         //to enable listener unsubscribe from event
         //as a result on event fairing.
-        java.util.ArrayList<IEventListener> list = new java.util.ArrayList<IEventListener>();
+        ArrayList<IEventListener> list = new ArrayList<IEventListener>();
         for (IEventListener listener : listeners)
         {
             list.add(listener);
@@ -138,11 +143,11 @@ public class Event {
         && getOwnerType() == other.getOwnerType();
     }
 
-    public java.util.List<IEventListener> getListeners() {
+    public List<IEventListener> getListeners() {
         return listeners;
     }
 
-    public void setListeners(java.util.List<IEventListener> listeners) {
+    public void setListeners(List<IEventListener> listeners) {
         this.listeners = listeners;
     }
 }
