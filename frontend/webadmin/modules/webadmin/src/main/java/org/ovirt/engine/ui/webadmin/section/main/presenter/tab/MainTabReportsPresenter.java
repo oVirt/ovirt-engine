@@ -119,7 +119,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     }
 
     private boolean hasReportsModelRefreshEvent() {
-        for (IEventListener listnr : getModel().getReportModelRefreshEvent().getListeners()) {
+        for (IEventListener<EventArgs> listnr : getModel().getReportModelRefreshEvent().getListeners()) {
             if (listnr instanceof ReportsModelRefreshEvent) {
                return true;
             }
@@ -127,9 +127,9 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
         return false;
     }
 
-    class ReportsModelRefreshEvent implements IEventListener {
+    class ReportsModelRefreshEvent implements IEventListener<EventArgs> {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
             if (reportsWebappDeployed) {
                 getView().updateReportsPanel(getModel().getUrl(), getModel().getParams());
             } else {

@@ -6,9 +6,9 @@ import java.util.List;
 import java.util.Map;
 
 
-public class Event {
-    private List<IEventListener> listeners;
-    private Map<IEventListener, Object> contexts;
+public class Event<T extends EventArgs> {
+    private List<IEventListener<T>> listeners;
+    private Map<IEventListener<T>, Object> contexts;
     private Class<?> privateOwnerType;
     public Class<?> getOwnerType()
     {
@@ -48,8 +48,8 @@ public class Event {
         setName(name);
         setOwnerType(ownerType);
 
-        listeners = new ArrayList<IEventListener>();
-        contexts = new HashMap<IEventListener, Object>();
+        listeners = new ArrayList<IEventListener<T>>();
+        contexts = new HashMap<IEventListener<T>, Object>();
     }
 
     public Event()
@@ -64,18 +64,18 @@ public class Event {
     /**
      Add listener with no context specified.
     */
-    public void addListener(IEventListener listener)
+    public void addListener(IEventListener<T> listener)
     {
         listeners.add(listener);
     }
 
-    public void addListener(IEventListener listener, Object context)
+    public void addListener(IEventListener<T> listener, Object context)
     {
         listeners.add(listener);
         contexts.put(listener, context);
     }
 
-    public void removeListener(IEventListener listener)
+    public void removeListener(IEventListener<T> listener)
     {
         listeners.remove(listener);
 
@@ -85,18 +85,18 @@ public class Event {
         }
     }
 
-    public void raise(Object sender, EventArgs e)
+    public void raise(Object sender, T e)
     {
         //Iterate on a new instance of listeners list,
         //to enable listener unsubscribe from event
         //as a result on event fairing.
-        ArrayList<IEventListener> list = new ArrayList<IEventListener>();
-        for (IEventListener listener : listeners)
+        ArrayList<IEventListener<T>> list = new ArrayList<IEventListener<T>>();
+        for (IEventListener<T> listener : listeners)
         {
             list.add(listener);
         }
 
-        for (IEventListener listener : list)
+        for (IEventListener<T> listener : list)
         {
             //Update current context.
             setContext(contexts.containsKey(listener) ? contexts.get(listener) : null);
@@ -122,7 +122,7 @@ public class Event {
             return false;
         if (getClass() != obj.getClass())
             return false;
-        Event other = (Event) obj;
+        Event<?> other = (Event<?>) obj;
         if (privateName == null) {
             if (other.privateName != null)
                 return false;
@@ -135,6 +135,7 @@ public class Event {
             return false;
         return true;
     }
+
     public boolean matchesDefinition(EventDefinition other) {
         if(other == null){
             return false;
@@ -143,11 +144,11 @@ public class Event {
         && getOwnerType() == other.getOwnerType();
     }
 
-    public List<IEventListener> getListeners() {
+    public List<IEventListener<T>> getListeners() {
         return listeners;
     }
 
-    public void setListeners(List<IEventListener> listeners) {
+    public void setListeners(List<IEventListener<T>> listeners) {
         this.listeners = listeners;
     }
 }

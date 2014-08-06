@@ -28,10 +28,10 @@ public class ReportsListModel extends SearchableListModel {
     HtmlParameters htmlParams = new HtmlParameters();
     private String lastResourceId = ""; //$NON-NLS-1$
     private final String reportUrl;
-    private final Event reportModelRefreshEvent = new Event(new EventDefinition("ReportModelRefreshed", //$NON-NLS-1$
-            ReportsListModel.class));
+    private final Event<EventArgs> reportModelRefreshEvent =
+            new Event<EventArgs>(new EventDefinition("ReportModelRefreshed", ReportsListModel.class)); //$NON-NLS-1$
 
-    public Event getReportModelRefreshEvent() {
+    public Event<EventArgs> getReportModelRefreshEvent() {
         return reportModelRefreshEvent;
     }
 

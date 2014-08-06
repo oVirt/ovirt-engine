@@ -1,6 +1,6 @@
 package org.ovirt.engine.ui.uicompat;
 
-public interface IEventListener
+public interface IEventListener<T extends EventArgs>
 {
-    void eventRaised(Event ev, Object sender, EventArgs args);
+    void eventRaised(Event<T> ev, Object sender, T args);
 }
