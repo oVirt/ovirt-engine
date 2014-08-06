@@ -24,15 +24,15 @@ public class Model implements IEventListener, ICommandTarget, IProvidePropertyCh
 
     public static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
 
-    private Event privatePropertyChangedEvent;
+    private Event<PropertyChangedEventArgs> privatePropertyChangedEvent;
 
     @Override
-    public Event getPropertyChangedEvent()
+    public Event<PropertyChangedEventArgs> getPropertyChangedEvent()
     {
         return privatePropertyChangedEvent;
     }
 
-    private void setPropertyChangedEvent(Event value)
+    private void setPropertyChangedEvent(Event<PropertyChangedEventArgs> value)
     {
         privatePropertyChangedEvent = value;
     }
@@ -418,7 +418,7 @@ public class Model implements IEventListener, ICommandTarget, IProvidePropertyCh
 
     public Model()
     {
-        setPropertyChangedEvent(new Event(ProvidePropertyChangedEvent.definition));
+        setPropertyChangedEvent(new Event<PropertyChangedEventArgs>(ProvidePropertyChangedEvent.definition));
 
         // Resolve commonly used types.
         setConfigurator(lookupConfigurator());
