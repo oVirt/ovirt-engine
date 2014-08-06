@@ -1,23 +1,23 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
-	<ui:style>
-		.messageHTML,.descriptionPanel {
-			margin: 5px;
-		}
-	</ui:style>
+    <ui:style>
+        .messageHTML,.descriptionPanel {
+            margin: 5px;
+        }
+    </ui:style>
 
-	<d:SimpleDialogPanel width="500px" height="400px">
-		<d:content>
-			<g:FlowPanel>
-				<g:HTML ui:field="messageHTML" addStyleNames="{style.messageHTML}" />
-				<g:ScrollPanel>
-					<g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}" />
-				</g:ScrollPanel>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="500px" height="400px">
+        <d:content>
+            <g:FlowPanel>
+                <g:HTML ui:field="messageHTML" addStyleNames="{style.messageHTML}" />
+                <g:ScrollPanel>
+                    <g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}" />
+                </g:ScrollPanel>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>

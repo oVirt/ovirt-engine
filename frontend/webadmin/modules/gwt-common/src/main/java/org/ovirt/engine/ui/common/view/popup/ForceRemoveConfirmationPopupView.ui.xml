@@ -1,32 +1,32 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-	<ui:style>
-		.content {
-		}
+    <ui:style>
+        .content {
+        }
 
-		.warningLabel {
-			color: red;
-			font-weight: bold;
-			text-align: center;
-		}
+        .warningLabel {
+            color: red;
+            font-weight: bold;
+            text-align: center;
+        }
 
-		.messageLabel {
-			padding-top: 20px;
-			padding-bottom: 20px;
-		}
-	</ui:style>
+        .messageLabel {
+            padding-top: 20px;
+            padding-bottom: 20px;
+        }
+    </ui:style>
 
-	<d:SimpleDialogPanel width="450px" height="270px">
-		<d:content>
-			<g:FlowPanel addStyleNames="{style.content}">
-				<g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
-				<g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
-				<ge:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
-			</g:FlowPanel>
-		</d:content>
-	</d:SimpleDialogPanel>
+    <d:SimpleDialogPanel width="450px" height="270px">
+        <d:content>
+            <g:FlowPanel addStyleNames="{style.content}">
+                <g:Label ui:field="warningLabel" addStyleNames="{style.warningLabel}"/>
+                <g:HTML ui:field="messageLabel" addStyleNames="{style.messageLabel}"/>
+                <ge:EntityModelCheckBoxEditor ui:field="latch" visible="false"/>
+            </g:FlowPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
 
 </ui:UiBinder>
