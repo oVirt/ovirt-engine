@@ -952,9 +952,15 @@ fi
 %files setup-base
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-setup
+%dir %{engine_data}/firewalld
+%dir %{engine_data}/setup
 %dir %{engine_data}/setup/bin/
-%dir %{engine_log}/setup
 %dir %{engine_data}/setup/ovirt_engine_setup
+%dir %{engine_data}/setup/plugins
+%dir %{engine_data}/setup/plugins/ovirt-engine-common
+%dir %{engine_data}/setup/plugins/ovirt-engine-remove
+%dir %{engine_data}/setup/plugins/ovirt-engine-setup
+%dir %{engine_log}/setup
 %{_bindir}/engine-cleanup
 %{_bindir}/engine-setup
 %{_mandir}/man8/engine-cleanup.*
