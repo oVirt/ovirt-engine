@@ -229,7 +229,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("spice_proxy", group.getSpiceProxy())
                 .addValue("serial_number_policy", group.getSerialNumberPolicy() == null ? null : group.getSerialNumberPolicy().getValue())
                 .addValue("custom_serial_number", group.getCustomSerialNumber())
-                .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive());
+                .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive())
+                .addValue("skip_fencing_if_connectivity_broken", group.getFencingPolicy().isSkipFencingIfConnectivityBroken())
+                .addValue("hosts_with_broken_connectivity_threshold", group.getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
 
         return parameterSource;
     }
@@ -291,6 +293,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.setSerialNumberPolicy(SerialNumberPolicy.forValue((Integer) rs.getObject("serial_number_policy")));
             entity.setCustomSerialNumber(rs.getString("custom_serial_number"));
             entity.getFencingPolicy().setSkipFencingIfSDActive(rs.getBoolean("skip_fencing_if_sd_active"));
+            entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
+            entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
 
             return entity;
         }

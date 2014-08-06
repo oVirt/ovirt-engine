@@ -732,6 +732,8 @@
         <column>custom_serial_number</column>
         <column>required_rng_sources</column>
         <column>skip_fencing_if_sd_active</column>
+        <column>skip_fencing_if_connectivity_broken</column>
+        <column>hosts_with_broken_connectivity_threshold</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -758,6 +760,8 @@
             <null />
             <value>RANDOM</value>
             <value>false</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
@@ -785,6 +789,8 @@
             <null />
             <value></value>
             <value>true</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -812,6 +818,8 @@
             <null />
             <value>HWRNG</value>
             <value>false</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
@@ -839,6 +847,8 @@
             <value>my custom serial number</value>
             <value>HWRNG,RANDOM</value>
             <value>true</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -866,6 +876,8 @@
             <null />
             <value>HWRNG,RANDOM</value>
             <value>false</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -893,6 +905,8 @@
             <null />
             <value>HWRNG,RANDOM</value>
             <value>false</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7e</value>
@@ -920,6 +934,8 @@
             <null />
             <value>RANDOM</value>
             <value>true</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -947,6 +963,8 @@
             <null />
             <value>RANDOM</value>
             <value>false</value>
+            <value>false</value>
+            <value>50</value>
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -974,6 +992,8 @@
             <null />
             <value>RANDOM</value>
             <value>true</value>
+            <value>true</value>
+            <value>50</value>
         </row>
     </table>
 

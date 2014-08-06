@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -17,10 +18,18 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.FencingPolicy;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 /**
  * @see RestartVdsCommand on why this command is requiring a lock
@@ -70,7 +79,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getReturnValue().setSucceeded(false);
             return;
         }
-
+        if (isConnectivityBrokenThresholdReached(getVds())) {
+            return;
+        }
         VdsValidator validator = new VdsValidator(getVds());
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
@@ -159,5 +170,36 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                     (getVdsName() == null) ? "" : getVdsName());
         }
         return jobProperties;
+    }
+
+    private boolean isConnectivityBrokenThresholdReached(VDS vds) {
+        VDSGroup cluster = DbFacade.getInstance().getVdsGroupDao().get(vds.getVdsGroupId());
+        double percents = 0.0;
+        boolean result = false;
+        if (cluster.getFencingPolicy().isSkipFencingIfConnectivityBroken()) {
+            List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAllForVdsGroup(cluster.getId());
+            double hostsNumber = hosts.size();
+            List<VDS> hostsWithBrokenConnectivity = LinqUtils.filter(hosts,
+                    new Predicate<VDS>() {
+                        @Override
+                        public boolean eval(VDS a) {
+                            return (a.getStatus() == VDSStatus.Connecting || a.getStatus() == VDSStatus.NonResponsive);
+                        }
+                    });
+            double hostsWithBrokenConnectivityNumber = hostsWithBrokenConnectivity.size();
+            percents = (hostsWithBrokenConnectivityNumber/hostsNumber)*100.0;
+            result = (percents >= cluster.getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
+        }
+        if (result) {
+            logAlert(vds, percents);
+        }
+        return result;
+    }
+
+    private void logAlert(VDS host, Double percents) {
+        AuditLogableBase auditLogable = new AuditLogableBase();
+        auditLogable.addCustomValue("Percents", percents.toString());
+        auditLogable.setVdsId(host.getId());
+        AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
     }
 }

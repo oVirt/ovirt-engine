@@ -11,16 +11,23 @@ public class FencingPolicy implements Serializable {
      * Skip fencing of host of it's connected to at least one storage domain.
      */
     private boolean skipFencingIfSDActive;
+    private boolean skipFencingIfConnectivityBroken;
+    private int hostsWithBrokenConnectivityThreshold;
 
     public FencingPolicy() {
         skipFencingIfSDActive = false;
+        skipFencingIfConnectivityBroken = false;
+        hostsWithBrokenConnectivityThreshold = 50;
     }
 
     public FencingPolicy(FencingPolicy fencingPolicy) {
         if (fencingPolicy == null) {
             skipFencingIfSDActive = false;
+            skipFencingIfConnectivityBroken = false;
         } else {
             skipFencingIfSDActive = fencingPolicy.skipFencingIfSDActive;
+            skipFencingIfConnectivityBroken = fencingPolicy.skipFencingIfConnectivityBroken;
+            hostsWithBrokenConnectivityThreshold = fencingPolicy.hostsWithBrokenConnectivityThreshold;
         }
     }
 
@@ -32,6 +39,21 @@ public class FencingPolicy implements Serializable {
         this.skipFencingIfSDActive = skipFencingIfSDActive;
     }
 
+    public boolean isSkipFencingIfConnectivityBroken() {
+        return skipFencingIfConnectivityBroken;
+    }
+
+    public void setSkipFencingIfConnectivityBroken(boolean skipFencingIfConnectivityBroken) {
+        this.skipFencingIfConnectivityBroken = skipFencingIfConnectivityBroken;
+    }
+
+    public int getHostsWithBrokenConnectivityThreshold() {
+        return hostsWithBrokenConnectivityThreshold;
+    }
+
+    public void setHostsWithBrokenConnectivityThreshold(int hostsWithBrokenConnectivityThreshold) {
+        this.hostsWithBrokenConnectivityThreshold = hostsWithBrokenConnectivityThreshold;
+    }
     @Override
     public boolean equals(Object obj) {
         if (this == obj) {
@@ -42,7 +64,9 @@ public class FencingPolicy implements Serializable {
         }
         FencingPolicy other = (FencingPolicy) obj;
 
-        return skipFencingIfSDActive == other.skipFencingIfSDActive;
+        return skipFencingIfSDActive == other.skipFencingIfSDActive &&
+                skipFencingIfConnectivityBroken == other.skipFencingIfConnectivityBroken &&
+                hostsWithBrokenConnectivityThreshold == other.hostsWithBrokenConnectivityThreshold;
     }
 
     @Override
@@ -50,6 +74,8 @@ public class FencingPolicy implements Serializable {
         final int prime = 31;
         int result = 1;
         result = prime * result + (skipFencingIfSDActive ? 1231 : 1237);
+        result = prime * result + (skipFencingIfConnectivityBroken ? 1231 : 1237);
+        result = prime * result + hostsWithBrokenConnectivityThreshold;
         return result;
     }
 
@@ -57,6 +83,10 @@ public class FencingPolicy implements Serializable {
     public String toString() {
         StringBuilder sb = new StringBuilder("{ skipFencingIfSDActive=");
         sb.append(skipFencingIfSDActive);
+        sb.append(", skipFencingIfConnectivityBroken=");
+        sb.append(skipFencingIfConnectivityBroken);
+        sb.append(", hostsWithBrokenConnectivityThreshold=");
+        sb.append(hostsWithBrokenConnectivityThreshold);
         sb.append(" }");
         return sb.toString();
     }
