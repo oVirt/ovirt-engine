@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.action.AbstractActionPanel;
 import org.ovirt.engine.ui.common.widget.label.NoItemsLabel;
 import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -186,11 +185,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         this.table.addDomHandler(new DoubleClickHandler() {
             @Override
             public void onDoubleClick(DoubleClickEvent event) {
-                Model model = dataProvider.getModel();
-                UICommand defaultCommand = model.getDefaultCommand();
-                if (defaultCommand != null && defaultCommand.getIsExecutionAllowed()) {
+                SearchableListModel model = dataProvider.getModel();
+                UICommand command = model.getDoubleClickCommand();
+                if (command != null && command.getIsExecutionAllowed()) {
                     DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);
-                    invoker.invokeDefaultCommand();
+                    invoker.invokeCommand(command);
                 }
             }
         }, DoubleClickEvent.getType());

@@ -26,6 +26,10 @@ public class DeferredModelCommandInvoker {
         this.model = model;
     }
 
+    public void invokeCommand(UICommand command) {
+        scheduleCommandExecution(command);
+    }
+
     public void invokeDefaultCommand() {
         scheduleCommandExecution(model.getDefaultCommand());
     }

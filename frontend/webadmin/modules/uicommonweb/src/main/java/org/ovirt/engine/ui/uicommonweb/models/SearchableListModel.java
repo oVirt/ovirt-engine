@@ -1040,7 +1040,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     }
 
     /**
-     * Get the default command, in most cases this will be 'edit'. If sub
+     * Get the double click command, in most cases this will be 'edit'. If sub
      * classes want a different default command they can override this method
      * and return the command they want.
      *
@@ -1048,8 +1048,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
      * invoked.
      * @return The default {@code UICommand}
      */
-    @Override
-    public UICommand getDefaultCommand() {
+    public UICommand getDoubleClickCommand() {
         return getEditCommand();
     }
 

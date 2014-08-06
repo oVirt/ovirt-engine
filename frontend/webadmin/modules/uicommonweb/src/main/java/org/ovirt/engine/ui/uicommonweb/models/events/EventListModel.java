@@ -218,7 +218,7 @@ public class EventListModel extends ListWithDetailsModel
     }
 
     @Override
-    public UICommand getDefaultCommand() {
+    public UICommand getDoubleClickCommand() {
         return getDetailsCommand();
     }
 
