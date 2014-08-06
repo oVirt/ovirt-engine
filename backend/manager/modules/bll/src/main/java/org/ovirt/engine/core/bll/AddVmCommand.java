@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageType;
-import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
@@ -101,8 +100,6 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
     private String cachedDiskSharedLockMessage;
-    protected Guid instanceTypeId;
-    protected InstanceType instanceType;
     protected Guid imageTypeId;
     protected ImageType imageType;
     private Guid vmInterfacesSourceId;
@@ -158,9 +155,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 parameters.setConsoleEnabled(false);
             }
 
-            instanceTypeId = parameters.getVmStaticData().getInstanceTypeId();
-            vmDevicesSourceId = (instanceTypeId != null) ?
-                    instanceTypeId : parameters.getVmStaticData().getVmtGuid();
+            vmDevicesSourceId = (getInstanceTypeId() != null) ?
+                    getInstanceTypeId() : parameters.getVmStaticData().getVmtGuid();
             imageTypeId = parameters.getVmStaticData().getImageTypeId();
             vmInterfacesSourceId = parameters.getVmStaticData().getVmtGuid();
             vmDisksSource = getVmTemplate();
@@ -212,12 +208,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         return cachedDiskSharedLockMessage;
     }
-    protected InstanceType getInstanceType() {
-        if (instanceType == null && instanceTypeId != null) {
-            instanceType = getVmTemplateDAO().getInstanceType(instanceTypeId);
-        }
-        return instanceType;
-    }
+
 
     protected ImageType getImageType() {
         if (imageType == null && imageTypeId != null) {
@@ -552,7 +543,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
-        if (instanceTypeId != null && getInstanceType() == null) {
+        if (getInstanceTypeId() != null && getInstanceType() == null) {
             // invalid instance type
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST);
         }
@@ -855,7 +846,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 isBalloonEnabled(),
                 false);
 
-        if (instanceTypeId != null) {
+        if (getInstanceTypeId() != null) {
             copyDiskDevicesFromTemplate();
         }
     }
@@ -1082,7 +1073,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     @Override
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
 
-        if (instanceTypeId != null && !checkInstanceTypeImagePermissions(instanceTypeId)) {
+        if (getInstanceTypeId() != null && !checkInstanceTypeImagePermissions(getInstanceTypeId())) {
             return false;
         }
 
@@ -1092,7 +1083,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
 
         for (PermissionSubject permSubject : permSubjects) {
             // if user is using instance type, then create_instance on the cluster is enough
-            if (permSubject.getObjectType() == VdcObjectType.VdsGroups && instanceTypeId != null) {
+            if (permSubject.getObjectType() == VdcObjectType.VdsGroups && getInstanceTypeId() != null) {
                 permSubject.setActionGroup(ActionGroup.CREATE_INSTANCE);
                 if (checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
                     continue;
@@ -1298,26 +1289,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
      * in case instance type is selected for this vm
      */
     private void updateVmObject() {
-        InstanceType instanceType = getInstanceType();
-        VmStatic vmStatic = getParameters().getVmStaticData();
-        if (instanceType != null) {
-            vmStatic.setMemSizeMb(instanceType.getMemSizeMb());
-            vmStatic.setNumOfSockets(instanceType.getNumOfSockets());
-            vmStatic.setCpuPerSocket(instanceType.getCpuPerSocket());
-            vmStatic.setDefaultBootSequence(instanceType.getDefaultBootSequence());
-            vmStatic.setDefaultDisplayType(instanceType.getDefaultDisplayType());
-            vmStatic.setPriority(instanceType.getPriority());
-            vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
-            vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
+        updateParametersVmFromInstanceType();
 
-            // use sound card only if instance type has it
-            getParameters().setSoundDeviceEnabled(!getVmDeviceDao()
-                    .getVmDeviceByVmIdAndType(instanceType.getId(), VmDeviceGeneralType.SOUND).isEmpty());
-
-            // set vm interface source id to be the instance type, vm interface are taken from it
-            vmInterfacesSourceId = instanceType.getId();
+        // set vm interface source id to be the instance type, vm interface are taken from it
+        if (getInstanceType() != null) {
+            vmInterfacesSourceId = getInstanceTypeId();
         }
 
+        VmStatic vmStatic = getParameters().getVmStaticData();
         ImageType imageType = getImageType();
         if (imageType != null) {
             vmStatic.setOsId(imageType.getOsId());
