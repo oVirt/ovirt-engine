@@ -194,16 +194,19 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         getTable().ensureColumnPresent(clusterColumn, constants.clusterHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(dcColumn, constants.dcHost(), true, "200px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicStatusColumn, constants.statusNetworkHost(), attached, "140px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached, "200px"); //$NON-NLS-1$
-        getTable().ensureColumnPresent(speedColumn, constants.speedNetworkHost(), attached, "200px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(nicColumn, constants.nicNetworkHost(), attached, "100px"); //$NON-NLS-1$
+        getTable().ensureColumnPresent(speedColumn,
+                templates.sub(constants.speedNetworkHost(), constants.mbps()).asString(),
+                attached,
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicRxColumn,
                 templates.sub(constants.rxNetworkHost(), constants.mbps()).asString(),
                 attached,
-                "200px"); //$NON-NLS-1$
+                "100px"); //$NON-NLS-1$
         getTable().ensureColumnPresent(nicTxColumn,
                 templates.sub(constants.txNetworkHost(), constants.mbps()).asString(),
                 attached,
-                "200px"); //$NON-NLS-1$
+                "100px"); //$NON-NLS-1$
     }
 
     void initTable() {
