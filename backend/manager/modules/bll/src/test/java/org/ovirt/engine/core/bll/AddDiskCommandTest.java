@@ -61,7 +61,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddDiskToVmCommandTest {
+public class AddDiskCommandTest {
     private static int MAX_BLOCK_SIZE = 8192;
     private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
     private static int MAX_PCI_SLOTS = 26;
@@ -904,7 +904,7 @@ public class AddDiskToVmCommandTest {
         .clear();
     }
 
-    private static final Log log = LogFactory.getLog(AddDiskToVmCommandTest.class);
+    private static final Log log = LogFactory.getLog(AddDiskCommandTest.class);
 
     private void mockEntities(Guid storageId) {
         mockStorageDomain(storageId);
