@@ -146,7 +146,7 @@ public class MainTabNetworkView extends AbstractMainTabWithDetailsTableView<Netw
             }
         };
         vlanColumn.makeSortable(NetworkConditionFieldAutoCompleter.VLAN_ID);
-        getTable().addColumn(vlanColumn, constants.vlanNetwork(), "200px"); //$NON-NLS-1$
+        getTable().addColumn(vlanColumn, constants.vlanNetwork(), "60px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<NetworkView> labelColumn = new TextColumnWithTooltip<NetworkView>() {
             @Override
