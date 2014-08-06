@@ -19,11 +19,15 @@
             font-size: 12px;
         }
 
+        .panelPadding {
+            padding: 10px;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="500px" height="400px">
         <d:content>
-            <g:FlowPanel>
+            <g:FlowPanel addStyleNames="{style.panelPadding}">
                 <g:HTML ui:field="messageHTML" />
                 <g:FlowPanel ui:field="itemPanel" addStyleNames="{style.items}" />
                 <ge:EntityModelCheckBoxEditor ui:field="latch" visible="false" />

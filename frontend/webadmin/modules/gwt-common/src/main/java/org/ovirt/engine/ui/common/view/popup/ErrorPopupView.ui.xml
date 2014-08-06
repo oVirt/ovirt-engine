@@ -14,6 +14,10 @@
         @external obrand_dialogLogoErrorImage;
         .obrand_dialogLogoErrorImage {
         }
+
+        .content {
+            margin: 10px;
+        }
     </ui:style>
 
     <d:SimpleDialogPanel width="500px" height="400px">
