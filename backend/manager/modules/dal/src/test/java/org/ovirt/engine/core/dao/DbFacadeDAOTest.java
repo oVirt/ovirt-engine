@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
@@ -34,6 +35,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.compat.Guid;
@@ -325,5 +327,13 @@ public class DbFacadeDAOTest extends BaseDAOTestCase {
         assertNotNull(diskProfile);
         String name = diskProfile.getName();
         assertTrue(name.equals(dbFacade.getEntityNameByIdAndType(FixturesTool.DISK_PROFILE_1, VdcObjectType.DiskProfile)));
+    }
+
+    @Test
+    public void testGetEntityNameByIdAndTypeForCpuProfile() {
+        CpuProfile cpuProfile = dbFacade.getCpuProfileDao().get(FixturesTool.CPU_PROFILE_1);
+        assertNotNull(cpuProfile);
+        String name = cpuProfile.getName();
+        assertEquals(name, dbFacade.getEntityNameByIdAndType(FixturesTool.CPU_PROFILE_1, VdcObjectType.CpuProfile));
     }
 }

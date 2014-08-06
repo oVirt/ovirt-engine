@@ -150,6 +150,7 @@ $function$
         VNICProfile = 27,
         MacPool = 28
         DiskProfile = 29
+        CpuProfile = 30
 */
 DECLARE
 	v_entity_type int4 := v_object_type;
@@ -162,6 +163,7 @@ DECLARE
     v_storage_pool_id uuid;
     v_profile_network_id uuid;
     v_disk_profile_storage_id uuid;
+    v_cpu_profile_cluster_id uuid;
 
 BEGIN
 
@@ -346,6 +348,26 @@ BEGIN
             SELECT v_storage_pool_id AS id
             UNION
             SELECT v_disk_profile_storage_id AS id
+            UNION
+            SELECT v_entity_id AS id;
+
+        WHEN v_entity_type = 30 THEN -- CpuProfile
+
+        SELECT INTO v_cpu_profile_cluster_id
+                    cpu_profiles.cluster_id
+        FROM cpu_profiles
+        WHERE cpu_profiles.id = v_entity_id;
+        SELECT INTO v_storage_pool_id
+                    vds_groups.storage_pool_id
+        FROM vds_groups
+        WHERE vds_groups.vds_group_id = v_cpu_profile_cluster_id;
+
+        RETURN QUERY
+            SELECT system_root_id AS id
+            UNION
+            SELECT v_storage_pool_id AS id
+            UNION
+            SELECT v_cpu_profile_cluster_id AS id
             UNION
             SELECT v_entity_id AS id;
 
@@ -575,6 +597,7 @@ $function$
         VNICProfile = 27,
         MacPool = 28,
         DiskProfile = 29
+        CpuProfile = 30
 */
 DECLARE
     v_entity_type int4 := v_object_type;
@@ -623,6 +646,8 @@ BEGIN
         result := ( SELECT name FROM mac_pools where id = v_entity_id );
     WHEN v_entity_type = 29 THEN
         result := ( SELECT name FROM disk_profiles where id = v_entity_id );
+    WHEN v_entity_type = 30 THEN
+        result := ( SELECT name FROM cpu_profiles where id = v_entity_id );
     ELSE
         result := 'Unknown type ' ||  v_entity_type;
     END CASE;

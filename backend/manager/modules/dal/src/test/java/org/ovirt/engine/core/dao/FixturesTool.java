@@ -86,7 +86,7 @@ public class FixturesTool {
     /**
      * Predefined vds group.
      */
-    protected static final Guid VDS_GROUP_RHEL6_ISCSI = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+    public static final Guid VDS_GROUP_RHEL6_ISCSI = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
 
     /**
      * Predefined vds group.
@@ -636,4 +636,7 @@ public class FixturesTool {
 
     public static final Guid DISK_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
     public static final Guid DISK_PROFILE_2 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87053");
+
+    public static final Guid CPU_PROFILE_1 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87052");
+    public static final Guid CPU_PROFILE_2 = new Guid("fd81f1e1-785b-4579-ab75-1419ebb87053");
 }

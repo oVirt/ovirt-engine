@@ -5195,6 +5195,46 @@
         </row>
     </table>
 
+    <table name="cpu_profiles">
+        <column>id</column>
+        <column>name</column>
+        <column>cluster_id</column>
+        <column>qos_id</column>
+        <column>description</column>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>engine_profile</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+            <value>cpu profile description</value>
+        </row>
+        <row>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>engine_profile_pm</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253318</value>
+            <null />
+        </row>
+        <row>
+            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
+            <value>engine2_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <null />
+        </row>
+        <row>
+            <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
+            <value>engine3_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <null />
+        </row>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
+            <value>engine4_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+        </row>
+    </table>
+
     <table name="image_storage_domain_map">
         <column>image_id</column>
         <column>storage_domain_id</column>

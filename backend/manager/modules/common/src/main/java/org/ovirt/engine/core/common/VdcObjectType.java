@@ -36,7 +36,8 @@ public enum VdcObjectType {
     ExternalTask(26, "ExternalTask"),
     VnicProfile(27, "Vnic Profile"),
     MacPool(28, "MAC Pool"),
-    DiskProfile(29, "Disk Profile");
+    DiskProfile(29, "Disk Profile"),
+    CpuProfile(30, "Cpu Profile");
 
 
     private int value;
