@@ -5,7 +5,7 @@ import javax.validation.Valid;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ProfileParametersBase<T extends ProfileBase> extends VdcActionParametersBase {
+public abstract class ProfileParametersBase<T extends ProfileBase> extends VdcActionParametersBase {
 
     private static final long serialVersionUID = 1303387921254823324L;
 

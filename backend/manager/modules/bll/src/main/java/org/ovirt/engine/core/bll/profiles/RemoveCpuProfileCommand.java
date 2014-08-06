@@ -6,31 +6,31 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.action.CpuProfileParameters;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
-public class RemoveDiskProfileCommand extends RemoveProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
+public class RemoveCpuProfileCommand extends RemoveProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
 
-    public RemoveDiskProfileCommand(DiskProfileParameters parameters) {
+    public RemoveCpuProfileCommand(CpuProfileParameters parameters) {
         super(parameters);
     }
 
     @Override
-    protected DiskProfileValidator getProfileValidator() {
-        return new DiskProfileValidator(getProfile());
+    protected CpuProfileValidator getProfileValidator() {
+        return new CpuProfileValidator(getProfile());
     }
 
     @Override
-    protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
+    protected ProfilesDao<CpuProfile> getProfileDao() {
+        return getCpuProfileDao();
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getParameters().getProfileId(),
-                VdcObjectType.DiskProfile, getActionType().getActionGroup()));
+                VdcObjectType.CpuProfile, getActionType().getActionGroup()));
     }
 
     @Override
@@ -41,8 +41,8 @@ public class RemoveDiskProfileCommand extends RemoveProfileCommandBase<DiskProfi
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_REMOVED_DISK_PROFILE
-                : AuditLogType.USER_FAILED_TO_REMOVE_DISK_PROFILE;
+        return getSucceeded() ? AuditLogType.USER_REMOVED_CPU_PROFILE
+                : AuditLogType.USER_FAILED_TO_REMOVE_CPU_PROFILE;
     }
 
 }

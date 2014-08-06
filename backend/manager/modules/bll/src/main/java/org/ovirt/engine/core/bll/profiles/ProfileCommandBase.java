@@ -1,20 +1,20 @@
 package org.ovirt.engine.core.bll.profiles;
 
 import org.ovirt.engine.core.bll.CommandBase;
-import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.action.ProfileParametersBase;
+import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
-public abstract class DiskProfileCommandBase extends CommandBase<DiskProfileParameters> {
-    private DiskProfile profile;
+public abstract class ProfileCommandBase<T extends ProfileParametersBase<P>, P extends ProfileBase> extends CommandBase<T> {
+    private P profile;
     private Guid profileId;
 
-    public DiskProfileCommandBase(DiskProfileParameters parameters) {
+    public ProfileCommandBase(T parameters) {
         super(parameters);
     }
 
-    public DiskProfile getProfile() {
+    public P getProfile() {
         if (profile == null) {
             if (getParameters().getProfile() != null) {
                 profile = getParameters().getProfile();
@@ -36,7 +36,5 @@ public abstract class DiskProfileCommandBase extends CommandBase<DiskProfilePara
         return profileId;
     }
 
-    protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
-    }
+    protected abstract ProfilesDao<P> getProfileDao();
 }

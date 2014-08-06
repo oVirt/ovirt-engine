@@ -6,33 +6,34 @@ import java.util.List;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.DiskProfileParameters;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.action.CpuProfileParameters;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 
-public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfileParameters, DiskProfile, DiskProfileValidator> {
+public class AddCpuProfileCommand extends AddProfileCommandBase<CpuProfileParameters, CpuProfile, CpuProfileValidator> {
 
-    public AddDiskProfileCommand(DiskProfileParameters parameters) {
+    public AddCpuProfileCommand(CpuProfileParameters parameters) {
         super(parameters);
     }
 
     @Override
-    protected DiskProfileValidator getProfileValidator() {
-        return new DiskProfileValidator(getProfile());
+    protected CpuProfileValidator getProfileValidator() {
+        return new CpuProfileValidator(getProfile());
     }
 
     @Override
-    protected ProfilesDao<DiskProfile> getProfileDao() {
-        return getDiskProfileDao();
+    protected ProfilesDao<CpuProfile> getProfileDao() {
+        return getCpuProfileDao();
     }
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         return Collections.singletonList(new PermissionSubject(getParameters().getProfile() != null ? getParameters().getProfile()
-                .getStorageDomainId()
+                .getClusterId()
                 : null,
-                VdcObjectType.Storage, getActionType().getActionGroup()));
+                VdcObjectType.VdsGroups,
+                getActionType().getActionGroup()));
     }
 
     @Override
@@ -43,6 +44,6 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
-        return getSucceeded() ? AuditLogType.USER_ADDED_DISK_PROFILE : AuditLogType.USER_FAILED_TO_ADD_DISK_PROFILE;
+        return getSucceeded() ? AuditLogType.USER_ADDED_CPU_PROFILE : AuditLogType.USER_FAILED_TO_ADD_CPU_PROFILE;
     }
 }
