@@ -17,8 +17,11 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
@@ -202,7 +205,23 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             updateWatchdog(getParameters().getVmTemplateData().getId());
             updateRngDevice(getParameters().getVmTemplateData().getId());
             checkTrustedService();
+            updateVmsOfInstanceType();
             setSucceeded(true);
+        }
+    }
+
+    /**
+     * only in case of InstanceType update, update all vms that are bound to it
+     */
+    private void updateVmsOfInstanceType() {
+        if (getVmTemplate().getTemplateType() != VmEntityType.INSTANCE_TYPE) {
+            return;
+        }
+
+        // get vms from db
+        List<VM> vmsToUpdate = getVmDAO().getVmsListByInstanceType(getVmTemplateId());
+        for (VM vm : vmsToUpdate) {
+            runInternalAction(VdcActionType.UpdateVm, new VmManagementParametersBase(vm));
         }
     }
 
