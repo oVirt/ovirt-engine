@@ -1422,13 +1422,13 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Network Device")
     String nicNetworkHost();
 
-    @DefaultStringValue("Network Device Speed")
+    @DefaultStringValue("Speed")
     String speedNetworkHost();
 
-    @DefaultStringValue("Network Device Rx")
+    @DefaultStringValue("Rx")
     String rxNetworkHost();
 
-    @DefaultStringValue("Network Device Tx")
+    @DefaultStringValue("Tx")
     String txNetworkHost();
 
     // Network VM
