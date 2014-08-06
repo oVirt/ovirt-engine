@@ -316,6 +316,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue(" Power Management operation ${operation} is still running, please retry in ${seconds} Sec.")
     String VDS_FENCE_DISABLED_AT_QUIET_TIME();
 
+    @DefaultStringValue("Host ${VdsName} became Non Responsive and was not restarted due to disabled fencing in the Cluster Fencing Policy.")
+    String VDS_FENCE_DISABLED_BY_CLUSTER_POLICY();
+
     @DefaultStringValue("Cannot ${action} ${type}. Template's image doesn't exist.")
     String TEMPLATE_IMAGE_NOT_EXIST();
 

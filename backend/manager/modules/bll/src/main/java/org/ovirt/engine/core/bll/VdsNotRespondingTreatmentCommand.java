@@ -66,6 +66,25 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         return new FenceExecutor(getVds(), getParameters().getAction());
     }
 
+    private boolean shouldFencingBeSkipped(VDS vds) {
+        // check if fencing in cluster is enabled
+        VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vds.getVdsGroupId());
+        if (vdsGroup != null && !vdsGroup.getFencingPolicy().isFencingEnabled()) {
+            AuditLogDirector.log(
+                    new AuditLogableBase(vds.getId()),
+                    AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
+            return true;
+        }
+
+        // check if connectivity is not broken
+        if (isConnectivityBrokenThresholdReached(getVds())) {
+            return true;
+        }
+
+        // fencing will be executed
+        return false;
+    }
+
     /**
      * Only fence the host if the VDS is down, otherwise it might have gone back up until this command was executed. If
      * the VDS is not fenced then don't send an audit log event.
@@ -79,9 +98,13 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             getReturnValue().setSucceeded(false);
             return;
         }
-        if (isConnectivityBrokenThresholdReached(getVds())) {
+
+        if (shouldFencingBeSkipped(getVds())) {
+            setSucceeded(false);
+            setCommandShouldBeLogged(false);
             return;
         }
+
         VdsValidator validator = new VdsValidator(getVds());
         boolean shouldBeFenced = validator.shouldVdsBeFenced();
         if (shouldBeFenced) {
