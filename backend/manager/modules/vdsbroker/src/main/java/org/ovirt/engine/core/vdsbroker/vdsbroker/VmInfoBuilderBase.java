@@ -69,12 +69,21 @@ public abstract class VmInfoBuilderBase {
         createInfo.put(VdsProperties.num_of_cpus,
                 String.valueOf(vm.getNumOfCpus()));
         if (Config.<Boolean> getValue(ConfigValues.SendSMPOnRunVm)) {
-            createInfo.put(VdsProperties.cores_per_socket,
-                    (Integer.toString(vm.getCpuPerSocket())));
-            if (FeatureSupported.supportedInConfig(ConfigValues.HotPlugCpuSupported,
-                    vm.getVdsGroupCompatibilityVersion(), vm.getClusterArch())) {
-                createInfo.put(VdsProperties.max_number_of_cpus,
-                        String.valueOf(Config.<Integer> getValue(ConfigValues.MaxNumOfVmCpus, vm.getVdsGroupCompatibilityVersion().getValue())));
+            createInfo.put(VdsProperties.cores_per_socket, (Integer.toString(vm.getCpuPerSocket())));
+            if (FeatureSupported.supportedInConfig(
+                    ConfigValues.HotPlugCpuSupported,
+                    vm.getVdsGroupCompatibilityVersion(),
+                    vm.getClusterArch())) {
+                Integer maxSockets = Config.<Integer>getValue(
+                        ConfigValues.MaxNumOfVmSockets,
+                        vm.getVdsGroupCompatibilityVersion().getValue());
+                Integer maxVCpus = Config.<Integer>getValue(
+                        ConfigValues.MaxNumOfVmCpus,
+                        vm.getVdsGroupCompatibilityVersion().getValue());
+                maxVCpus = Math.min(maxVCpus, (vm.getCpuPerSocket() * maxSockets));
+                createInfo.put(
+                        VdsProperties.max_number_of_cpus,
+                        maxVCpus.toString());
             }
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
