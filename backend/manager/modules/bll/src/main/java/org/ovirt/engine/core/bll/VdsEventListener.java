@@ -305,7 +305,7 @@ public class VdsEventListener implements IVdsEventListener {
         final AuditLogableBase event = new AuditLogableBase();
         event.setVmId(vmId);
         String username = vmDynamic.getConsoleCurrentUserName();
-        if(username.contains("@")){
+        if(username!= null && username.contains("@")){
             username = username.substring(0, username.indexOf("@"));
         }
         event.setUserName(username);
