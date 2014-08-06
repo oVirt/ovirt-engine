@@ -10,7 +10,7 @@ public class FixturesTool {
     /**
      * Predefined NFS storage pool.
      */
-    protected static final Guid STORAGE_POOL_NFS = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
+    public static final Guid STORAGE_POOL_NFS = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
 
     /**
      * Predefined mixed types storage pool.
@@ -619,6 +619,11 @@ public class FixturesTool {
 
     public static final Guid QOS_ID_3 = new Guid("ae956031-6be2-43d6-bb90-5191c9253316");
 
+    public static final Guid QOS_ID_4 = new Guid("ae956031-6be2-43d6-bb90-5191c9253317");
+
+    public static final Guid QOS_ID_5 = new Guid("ae956031-6be2-43d6-bb90-5191c9253318");
+
+    public static final Guid QOS_ID_6 = new Guid("ae956031-6be2-43d6-bb90-5191c9253319");
     /**
      * Number of VMs on clusters
      */

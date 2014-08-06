@@ -47,6 +47,8 @@ public class AllQosBaseDaoFacadeImpl extends QosBaseDaoFacadeImpl<QosBase> imple
             switch (qosType) {
             case STORAGE:
                 return StorageQosDaoDbFacadeImpl.StorageDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+            case CPU:
+                return CpuQosDaoDbFacadeImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
                 default:
                     log.debugFormat("not handled/missing qos_type", qosType);
                     break;

@@ -1606,6 +1606,10 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
+    CpuQosSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
     HostNetworkQosSupported,
 
     @TypeConverterAttribute(Boolean.class)

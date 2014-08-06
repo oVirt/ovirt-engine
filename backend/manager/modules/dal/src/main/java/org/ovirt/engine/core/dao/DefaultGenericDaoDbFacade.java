@@ -18,9 +18,9 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 public abstract class DefaultGenericDaoDbFacade<T extends BusinessEntity<ID>, ID extends Serializable>
         extends DefaultReadDaoDbFacade<T, ID> implements GenericDao<T, ID> {
 
-    private static final String DEFAULT_SAVE_PROCEDURE_FORMAT = "Insert{0}";
+    protected static final String DEFAULT_SAVE_PROCEDURE_FORMAT = "Insert{0}";
 
-    private static final String DEFAULT_UPDATE_PROCEDURE_FORMAT = "Update{0}";
+    protected static final String DEFAULT_UPDATE_PROCEDURE_FORMAT = "Update{0}";
 
     private static final String DEFAULT_REMOVE_PROCEDURE_FORMAT = "Delete{0}";
 
