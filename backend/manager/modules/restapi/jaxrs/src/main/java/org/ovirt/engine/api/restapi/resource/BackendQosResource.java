@@ -42,6 +42,9 @@ public class BackendQosResource extends AbstractBackendSubResource<QoS, QosBase>
         case STORAGE:
             updateActionType = VdcActionType.UpdateStorageQos;
             break;
+        case CPU:
+            updateActionType = VdcActionType.UpdateCpuQos;
+            break;
 
         default:
             break;

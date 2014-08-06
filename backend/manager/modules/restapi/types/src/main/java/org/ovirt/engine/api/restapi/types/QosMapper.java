@@ -4,6 +4,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 
@@ -35,6 +36,19 @@ public class QosMapper {
             model.setMaxIops(storageQos.getMaxIops());
             model.setMaxReadIops(storageQos.getMaxReadIops());
             model.setMaxWriteIops(storageQos.getMaxWriteIops());
+            break;
+        case CPU:
+            CpuQos cpuQos = null;
+            // avoid findbugs error.
+            if (entity instanceof CpuQos) {
+                cpuQos = (CpuQos) entity;
+            }
+            // avoid findbugs error.
+            if (cpuQos == null) {
+                return model;
+            }
+            model.setCpuLimit(cpuQos.getCpuLimit());
+            break;
         default:
             break;
         }
@@ -80,6 +94,15 @@ public class QosMapper {
             if (model.isSetMaxWriteIops()) {
                 ((StorageQos) entity)
                         .setMaxWriteIops(IntegerMapper.mapMinusOneToNull(model.getMaxWriteIops()));
+            }
+            break;
+        case CPU:
+            if (entity == null) {
+                entity = new CpuQos();
+            }
+            if (model.isSetCpuLimit()) {
+                ((CpuQos) entity)
+                        .setCpuLimit(IntegerMapper.mapMinusOneToNull(model.getCpuLimit()));
             }
             break;
         default:

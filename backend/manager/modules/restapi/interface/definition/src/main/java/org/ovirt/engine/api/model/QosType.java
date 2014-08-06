@@ -1,7 +1,8 @@
 package org.ovirt.engine.api.model;
 
 public enum QosType {
-    STORAGE;
+    STORAGE,
+    CPU;
 
     public String value() {
         return name().toLowerCase();
