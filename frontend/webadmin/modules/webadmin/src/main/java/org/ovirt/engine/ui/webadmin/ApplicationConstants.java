@@ -142,7 +142,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Enable HA Reservation")
     String clusterPolicyEnableHaReservationLabel();
 
-    @DefaultStringValue("Enable Optional Reason")
+    @DefaultStringValue("Enable to set VM maintenance reason")
     String clusterPolicyEnableReasonLabel();
 
     @DefaultStringValue("KSM control")
