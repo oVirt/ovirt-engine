@@ -1918,5 +1918,9 @@ public enum ConfigValues {
     @DefaultValueAttribute("1000000")
     MaxWriteIopsUpperBoundQosValue,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    MaxCpuLimitQosValue,
+
     Invalid;
 }

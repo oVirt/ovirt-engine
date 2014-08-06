@@ -214,6 +214,7 @@
 		<include name="common/businessentities/qos/QosBase.java"/>
 		<include name="common/businessentities/qos/QosType.java"/>
 		<include name="common/businessentities/qos/StorageQos.java"/>
+		<include name="common/businessentities/qos/CpuQos.java"/>
 
 		<!-- Misc -->
 		<include name="common/AuditLogType.java" />
