@@ -4,13 +4,13 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DeferredModelCommandInvoker;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
-import org.ovirt.engine.ui.uicommonweb.models.Model;
 
 import com.google.gwt.event.dom.client.DoubleClickEvent;
 import com.google.gwt.event.dom.client.DoubleClickHandler;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Widget;
+import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> extends Composite {
 
@@ -49,11 +49,11 @@ public abstract class AbstractActionStackPanelItem<M, T, W extends Widget> exten
             widget.addDomHandler(new DoubleClickHandler() {
                 @Override
                 public void onDoubleClick(DoubleClickEvent event) {
-                    Model model = ((SearchableTableModelProvider<?, ?>) modelProvider).getModel();
-                    UICommand defaultCommand = model.getDefaultCommand();
-                    if (defaultCommand != null && defaultCommand.getIsExecutionAllowed()) {
+                    SearchableListModel model = ((SearchableTableModelProvider<?, ?>) modelProvider).getModel();
+                    UICommand command = model.getDoubleClickCommand();
+                    if (command != null && command.getIsExecutionAllowed()) {
                         DeferredModelCommandInvoker invoker = new DeferredModelCommandInvoker(model);
-                        invoker.invokeDefaultCommand();
+                        invoker.invokeCommand(command);
                     }
                 }
             }, DoubleClickEvent.getType());
