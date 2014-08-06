@@ -16,11 +16,10 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IProvidePropertyChangedEvent;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
-import org.ovirt.engine.ui.uicompat.PropertyChangeNotifier;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.ProvidePropertyChangedEvent;
 
-public class Model extends PropertyChangeNotifier implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
+public class Model implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent
 {
 
     public static final String CANCEL_COMMAND = "Cancel"; //$NON-NLS-1$
@@ -458,10 +457,8 @@ public class Model extends PropertyChangeNotifier implements IEventListener, ICo
     {
     }
 
-    @Override
     protected void onPropertyChanged(PropertyChangedEventArgs e)
     {
-        super.onPropertyChanged(e);
         getPropertyChangedEvent().raise(this, e);
     }
 
