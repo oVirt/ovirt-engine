@@ -477,7 +477,11 @@ AS $procedure$
 BEGIN
     DELETE FROM job
     WHERE (status = 'STARTED'
-    AND    action_type IN ('MigrateVm', 'MigrateVmToServer', 'InternalMigrateVm', 'RunVm', 'RunVmOnce'));
+    AND    action_type IN ('MigrateVm', 'MigrateVmToServer', 'RunVm', 'RunVmOnce'));
+
+    DELETE FROM job
+    WHERE job_id IN
+          (SELECT job_id from step WHERE (status = 'STARTED' AND step_type='MIGRATE_VM'));
 END; $procedure$
 LANGUAGE plpgsql;
 
