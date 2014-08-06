@@ -756,6 +756,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
             cluster.setSpiceProxy(model.getSpiceProxy().getEntity());
         }
 
+        cluster.getFencingPolicy().setFencingEnabled(model.getFencingEnabledModel().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
         cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());
         cluster.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(model.getHostsWithBrokenConnectivityThreshold().getSelectedItem().intValue());

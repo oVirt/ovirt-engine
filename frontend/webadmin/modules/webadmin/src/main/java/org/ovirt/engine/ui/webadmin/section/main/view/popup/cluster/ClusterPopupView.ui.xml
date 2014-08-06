@@ -273,6 +273,10 @@
                         <t:content>
                             <g:FlowPanel addStyleNames="cvp_fencingPolicyContent_pfly_fix">
                                 <g:HorizontalPanel>
+                                    <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" />
+                                    <d:InfoIcon ui:field="fencingEnabledInfo" addStyleNames="cpv_fencingEnabledInfo_pfly_fix" />
+                                </g:HorizontalPanel>
+                                <g:HorizontalPanel>
                                     <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" />
                                     <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" addStyleNames="cpv_skipFencingIfSDActiveInfo_pfly_fix" />
                                 </g:HorizontalPanel>
