@@ -378,6 +378,8 @@ Group:		%{ovirt_product_group}
 Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 Requires:	%{name} >= 3.4.0
 Conflicts:	%{name} < 3.4.0
+Conflicts:	%{name}-dwh < 3.4.0
+Conflicts:	%{name}-reports < 3.4.0
 
 %description setup-plugin-ovirt-engine
 Setup and upgrade specific plugins for %{ovirt_product_name_short}
