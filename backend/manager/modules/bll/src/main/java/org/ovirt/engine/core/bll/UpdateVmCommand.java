@@ -93,6 +93,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(clusterVersion, getVm().getStaticData());
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
+
+        updateParametersVmFromInstanceType();
     }
 
 

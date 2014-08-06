@@ -11,11 +11,17 @@ import java.util.regex.Pattern;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
+import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -29,6 +35,8 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
      * the virsh man page.
      */
     public static final int MAXIMUM_CPU_SHARES = 262144;
+
+    private InstanceType instanceType;
 
     public VmManagementCommandBase(T parameters) {
         super(parameters, null);
@@ -44,6 +52,20 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             setVmId(parameters.getVmStaticData().getId());
             setVdsGroupId(parameters.getVmStaticData().getVdsGroupId());
         }
+    }
+
+    protected Guid getInstanceTypeId() {
+        if (getParameters().getVmStaticData() != null) {
+            return getParameters().getVmStaticData().getInstanceTypeId();
+        }
+        return null;
+    }
+
+    protected InstanceType getInstanceType() {
+        if (instanceType == null && getInstanceTypeId() != null) {
+            instanceType = getVmTemplateDAO().getInstanceType(getInstanceTypeId());
+        }
+        return instanceType;
     }
 
     /**
@@ -223,5 +245,39 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
     protected boolean setAndValidateCpuProfile() {
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVm().getStaticData(),
                 getVdsGroup().getcompatibility_version()));
+    }
+
+    protected void updateParametersVmFromInstanceType() {
+        InstanceType instanceType = getInstanceType();
+        VmStatic vmStatic = getParameters().getVmStaticData();
+        if (instanceType != null) {
+            vmStatic.setMemSizeMb(instanceType.getMemSizeMb());
+            vmStatic.setNumOfSockets(instanceType.getNumOfSockets());
+            vmStatic.setCpuPerSocket(instanceType.getCpuPerSocket());
+            vmStatic.setDefaultBootSequence(instanceType.getDefaultBootSequence());
+            vmStatic.setDefaultDisplayType(instanceType.getDefaultDisplayType());
+            vmStatic.setPriority(instanceType.getPriority());
+            vmStatic.setMinAllocatedMem(instanceType.getMinAllocatedMem());
+            vmStatic.setTunnelMigration(instanceType.getTunnelMigration());
+
+            // use sound card only if instance type has it
+            getParameters().setSoundDeviceEnabled(!VmDeviceUtils.getSoundDevices(instanceType.getId()).isEmpty());
+
+            getParameters().setVirtioScsiEnabled(!VmDeviceUtils.getVirtioScsiControllers(instanceType.getId()).isEmpty());
+
+            getParameters().setUpdateWatchdog(true);
+            List<VmDevice> vmDevices = VmDeviceUtils.getWatchdogs(instanceType.getId());
+            if (!vmDevices.isEmpty()) {
+                vmDevices.get(0).setVmId(getVmId());
+                getParameters().setWatchdog(new VmWatchdog(vmDevices.get(0)));
+            }
+
+            getParameters().setUpdateRngDevice(true);
+            vmDevices = getVmDeviceDao().getVmDeviceByVmIdAndType(instanceType.getId(), VmDeviceGeneralType.RNG);
+            if (!vmDevices.isEmpty()) {
+                vmDevices.get(0).setVmId(getVmId());
+                getParameters().setRngDevice(new VmRngDevice(vmDevices.get(0)));
+            }
+        }
     }
 }
