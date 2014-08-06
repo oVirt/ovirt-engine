@@ -1406,7 +1406,8 @@ actions:
                            qos.max_write_throughput: 'xs:int',
                            qos.max_iops: 'xs:int',
                            qos.max_read_iops: 'xs:int',
-                           qos.max_write_iops: 'xs:int'}
+                           qos.max_write_iops: 'xs:int',
+                           qos.cpu_limit: 'xs:int'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1424,7 +1425,8 @@ actions:
                            qos.max_write_throughput: 'xs:int',
                            qos.max_iops: 'xs:int',
                            qos.max_read_iops: 'xs:int',
-                           qos.max_write_iops: 'xs:int'}
+                           qos.max_write_iops: 'xs:int',
+                           qos.cpu_limit: 'xs:int'}
         description: add a new QoS to the datacenter
     urlparams: {}
     headers:

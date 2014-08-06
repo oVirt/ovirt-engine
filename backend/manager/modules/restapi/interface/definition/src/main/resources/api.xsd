@@ -4572,6 +4572,8 @@
             minOccurs="0" maxOccurs="1" />
           <xs:element name="max_write_iops" type="xs:int"
             minOccurs="0" maxOccurs="1" />
+          <xs:element name="cpu_limit" type="xs:int"
+            minOccurs="0" maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
       </xs:extension>
