@@ -51,7 +51,7 @@ public class DiskProfileHelper {
                 }
             } else {
                 ValidationResult result =
-                        new DiskProfileValidator(getDiskProfileDao().get(diskImage.getDiskProfileId())).isStorageDomainValid(storageDomainId);
+                        new DiskProfileValidator(getDiskProfileDao().get(diskImage.getDiskProfileId())).isParentEntityValid(storageDomainId);
                 if (result != ValidationResult.VALID) {
                     return result;
                 }

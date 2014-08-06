@@ -336,6 +336,10 @@ public enum VdcActionType {
     AddDiskProfile(1760, ActionGroup.CREATE_STORAGE_DISK_PROFILE, false, QuotaDependency.NONE),
     UpdateDiskProfile(1761, ActionGroup.CONFIGURE_STORAGE_DISK_PROFILE, false, QuotaDependency.NONE),
     RemoveDiskProfile(1762, ActionGroup.DELETE_STORAGE_DISK_PROFILE, false, QuotaDependency.NONE),
+    // cpu profiles
+    AddCpuProfile(1763, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    UpdateCpuProfile(1764, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveCpuProfile(1765, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
 
     // External Tasks
     AddExternalJob(1800, ActionGroup.INJECT_EXTERNAL_TASKS, false, QuotaDependency.NONE),

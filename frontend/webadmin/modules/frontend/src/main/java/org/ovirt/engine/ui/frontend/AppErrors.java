@@ -3102,6 +3102,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. QoS element not found.")
     String ACTION_TYPE_FAILED_QOS_NOT_FOUND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Profile isn't provided.")
+    String ACTION_TYPE_FAILED_PROFILE_MISSING();
+
     @DefaultStringValue("Cannot ${action} ${type}. Profile not exists.")
     String ACTION_TYPE_FAILED_PROFILE_NOT_EXISTS();
 
