@@ -116,7 +116,7 @@ public enum VMStatus implements Identifiable {
      */
     public boolean isRunning() {
         return this == Up || this == PoweringDown
-                || this == PoweringUp || this == MigratingFrom || this == WaitForLaunch || this == RebootInProgress;
+                || this == PoweringUp || this == MigratingFrom || this == MigratingTo || this == WaitForLaunch || this == RebootInProgress;
     }
 
     /**
