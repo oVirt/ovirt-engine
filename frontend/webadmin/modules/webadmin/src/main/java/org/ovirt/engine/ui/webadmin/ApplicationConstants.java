@@ -803,6 +803,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Define SPICE proxy for Cluster")
     String clusterSpiceProxyEnable();
 
+    @DefaultStringValue("Enable fencing")
+    String fencingEnabled();
+
     @DefaultStringValue("Skip fencing if host has live lease on storage")
     String skipFencingIfSDActive();
 
@@ -3801,6 +3804,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Save As Pdf")
     String exportToPdf();
+
+    @DefaultStringValue("Enables fencing operations in this cluster. Note that if fencing is disabled, HA VMs running on a non-responsive host will not be restarted elsewhere.")
+    String fencingEnabledInfo();
 
     @DefaultStringValue("This will skip fencing for a Host that has live lease on Storage Domains")
     String skipFencingIfSDActiveInfo();

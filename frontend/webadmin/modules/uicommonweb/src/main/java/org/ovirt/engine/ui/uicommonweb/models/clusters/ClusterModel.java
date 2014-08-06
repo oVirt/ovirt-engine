@@ -772,6 +772,16 @@ public class ClusterModel extends EntityModel<VDSGroup>
         }
     }
 
+    private EntityModel<Boolean> fencingEnabledModel;
+
+    public EntityModel<Boolean> getFencingEnabledModel() {
+        return fencingEnabledModel;
+    }
+
+    public void setFencingEnabledModel(EntityModel<Boolean> fencingEnabledModel) {
+        this.fencingEnabledModel = fencingEnabledModel;
+    }
+
     private EntityModel<Boolean> skipFencingIfSDActiveEnabled;
 
     public EntityModel<Boolean> getSkipFencingIfSDActiveEnabled() {
@@ -832,6 +842,15 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         setSpiceProxy(new EntityModel<String>());
         getSpiceProxy().setIsChangable(false);
+
+        setFencingEnabledModel(new EntityModel<Boolean>());
+        getFencingEnabledModel().setEntity(true);
+        getFencingEnabledModel().getEntityChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                 updateFencingPolicyContent(getVersion() == null ? null : getVersion().getSelectedItem());
+            }
+        });
 
         setSkipFencingIfSDActiveEnabled(new EntityModel<Boolean>());
         getSkipFencingIfSDActiveEnabled().setEntity(true);
@@ -1255,6 +1274,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
         getComment().setEntity(getEntity().getComment());
 
         initSpiceProxy();
+        getFencingEnabledModel().setEntity(getEntity().getFencingPolicy().isFencingEnabled());
         getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
         getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
@@ -1507,24 +1527,32 @@ public class ClusterModel extends EntityModel<VDSGroup>
     }
 
     private void updateFencingPolicyContent(Version ver) {
-        boolean supported = AsyncDataProvider.getInstance().isSkipFencingIfSDActiveSupported(ver.getValue());
-        getSkipFencingIfSDActiveEnabled().setIsChangable(supported);
-        if (supported) {
-            if (getEntity() == null) {
-                // this can happen when creating new cluster and cluster dialog is shown
-                getSkipFencingIfSDActiveEnabled().setEntity(true);
-            } else {
-                getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
+        // skipFencingIfConnectivityBroken option is enabled when fencing is enabled for all cluster versions
+        getSkipFencingIfConnectivityBrokenEnabled().setIsChangable(getFencingEnabledModel().getEntity());
+        getHostsWithBrokenConnectivityThreshold().setIsChangable(getFencingEnabledModel().getEntity());
+
+        if (ver == null) {
+            if (!getFencingEnabledModel().getEntity()) {
+                // fencing is disabled and cluster version not selected yet, so disable skipFencingIfSDActive
+                getSkipFencingIfSDActiveEnabled().setIsChangable(false);
             }
         } else {
-            getSkipFencingIfSDActiveEnabled().setEntity(false);
+            // skipFencingIfSDActive is enabled for supported cluster level if fencing is not disabled
+            boolean supported = AsyncDataProvider.getInstance().isSkipFencingIfSDActiveSupported(ver.getValue());
+            getSkipFencingIfSDActiveEnabled().setIsChangable(
+                    supported && getFencingEnabledModel().getEntity());
+            if (supported) {
+                if (getEntity() == null) {
+                    // this can happen when creating new cluster and cluster dialog is shown
+                    getSkipFencingIfSDActiveEnabled().setEntity(true);
+                } else {
+                    getSkipFencingIfSDActiveEnabled().setEntity(
+                            getEntity().getFencingPolicy().isSkipFencingIfSDActive());
+                }
+            } else {
+                getSkipFencingIfSDActiveEnabled().setEntity(false);
+            }
         }
-
-        // skipFencingIfConnectivityBroken is enabled for all cluster versions
-        getSkipFencingIfConnectivityBrokenEnabled().setIsChangable(true);
-        getHostsWithBrokenConnectivityThreshold().setIsChangable(true);
-        getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity() == null ? false : getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
-        getHostsWithBrokenConnectivityThreshold().setEntity(getEntity() == null ? 50 : getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
     }
 
     private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture)
@@ -1594,6 +1622,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
             values.add(i);
         }
         getHostsWithBrokenConnectivityThreshold().setItems(values);
+        getHostsWithBrokenConnectivityThreshold().setSelectedItem(50);
     }
 
     private void storagePool_SelectedItemChanged(EventArgs e)
