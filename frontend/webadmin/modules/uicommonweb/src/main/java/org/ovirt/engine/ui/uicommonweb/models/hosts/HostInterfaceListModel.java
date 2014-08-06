@@ -2262,12 +2262,7 @@ public class HostInterfaceListModel extends SearchableListModel
     }
 
     @Override
-    public void executeCommand(UICommand command) {
-        executeCommand(command, new Object[0]);
-    }
-
-    @Override
-    public void executeCommand(UICommand command, Object... parameters)
+    public void executeCommand(UICommand command)
     {
         super.executeCommand(command);
 
