@@ -6,7 +6,8 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum ProfileType implements Identifiable {
-    DISK(1);
+    DISK(1),
+    CPU(2);
 
     private final int value;
     private static final Map<Integer, ProfileType> valueToStatus = new HashMap<Integer, ProfileType>();
