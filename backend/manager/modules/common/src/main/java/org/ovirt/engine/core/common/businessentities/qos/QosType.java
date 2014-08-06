@@ -7,7 +7,8 @@ import org.ovirt.engine.core.common.businessentities.Identifiable;
 
 public enum QosType implements Identifiable {
     ALL(0),
-    STORAGE(1);
+    STORAGE(1),
+    CPU(2);
 
     private int value;
     private static final Map<Integer, QosType> valueToStatus = new HashMap<Integer, QosType>();

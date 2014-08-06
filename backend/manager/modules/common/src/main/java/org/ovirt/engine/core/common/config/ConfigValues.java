@@ -1925,6 +1925,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("40")
     UsageHistoryLimit,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    MaxCpuLimitQosValue,
+
     Invalid;
 
 }
