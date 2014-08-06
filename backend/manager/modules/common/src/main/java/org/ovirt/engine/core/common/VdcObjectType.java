@@ -35,7 +35,8 @@ public enum VdcObjectType {
     GlusterService(25, "GlusterService"),
     ExternalTask(26, "ExternalTask"),
     VnicProfile(27, "Vnic Profile"),
-    DiskProfile(29, "Disk Profile");
+    DiskProfile(29, "Disk Profile"),
+    CpuProfile(30, "Cpu Profile");
 
 
     private int value;
