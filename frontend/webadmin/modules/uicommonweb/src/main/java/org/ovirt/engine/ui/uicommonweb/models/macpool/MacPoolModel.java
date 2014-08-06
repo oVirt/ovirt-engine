@@ -35,11 +35,11 @@ public class MacPoolModel extends EntityModel<MacPool> {
                 init();
             }
         });
-        getPropertyChangedEvent().addListener(new IEventListener() {
+        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsChangable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
                     boolean value = getIsChangable();
                     allowDuplicates.setIsChangable(value);
                     macRanges.setIsChangable(value);
