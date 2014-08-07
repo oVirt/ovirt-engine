@@ -135,7 +135,16 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
-        getReturnValue().setSucceeded(shouldBeFenced);
+        if (skippedDueToFencingPolicy) {
+            // fencing was skipped, fire an alert and suppress standard command logging
+            AuditLogDirector.log(
+                    new AuditLogableBase(getVds().getId()),
+                    AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
+            setSucceeded(false);
+            setCommandShouldBeLogged(false);
+        } else {
+            getReturnValue().setSucceeded(shouldBeFenced);
+        }
     }
 
     @Override

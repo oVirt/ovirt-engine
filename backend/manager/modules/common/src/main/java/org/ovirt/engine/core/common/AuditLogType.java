@@ -103,7 +103,6 @@ public enum AuditLogType {
     SYSTEM_VDS_RESTART(121, AuditLogTimeInterval.MINUTE.getValue()),
     SYSTEM_FAILED_VDS_RESTART(122, AuditLogSeverity.ERROR,
             AuditLogTimeInterval.MINUTE.getValue()),
-    VDS_NOT_RESTARTED_DUE_TO_POLICY(618),
 
     // Host time drift Alert
     VDS_TIME_DRIFT_ALERT(604, AuditLogSeverity.WARNING,
@@ -903,6 +902,7 @@ public enum AuditLogType {
     VDS_ALERT_PM_HEALTH_CHECK_FAILED_FOR_CON_PRIMARY_AGENT(9011, AuditLogSeverity.ALERT),
     VDS_ALERT_PM_HEALTH_CHECK_FAILED_FOR_CON_SECONDARY_AGENT(9012, AuditLogSeverity.ALERT),
     VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY(9013, AuditLogSeverity.ALERT),
+    VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY(9014, AuditLogSeverity.ALERT),
 
     TASK_STOPPING_ASYNC_TASK(9500, AuditLogTimeInterval.MINUTE.getValue()),
     TASK_CLEARING_ASYNC_TASK(9501, AuditLogTimeInterval.MINUTE.getValue()),

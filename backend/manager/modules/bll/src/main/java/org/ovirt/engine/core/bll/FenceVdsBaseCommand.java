@@ -54,6 +54,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private FenceInvocationResult primaryResult;
     private FenceInvocationResult secondaryResult;
 
+    protected boolean skippedDueToFencingPolicy;
+
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -61,6 +63,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
      */
     protected FenceVdsBaseCommand(Guid commandId) {
         super(commandId);
+        skippedDueToFencingPolicy = false;
     }
 
     public FenceVdsBaseCommand(T parameters) {
@@ -70,6 +73,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     public FenceVdsBaseCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
         mVmList = getVmDAO().getAllRunningForVds(getVdsId());
+        skippedDueToFencingPolicy = false;
     }
 
     /**
@@ -182,7 +186,10 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         } finally {
             if (!getSucceeded()) {
                 setStatus(lastStatus);
-                AlertIfPowerManagementOperationFailed();
+                if (!skippedDueToFencingPolicy) {
+                    // show alert only if command was not skipped due to fencing policy
+                    AlertIfPowerManagementOperationFailed();
+                }
             }
 
             // Successful fencing with reboot or shutdown op. Clear the power management policy flag
@@ -667,9 +674,13 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         return fenceResult != null && fenceResult.getIsSkipped();
     }
 
-    private void handleFencingSkippedDueToPolicy(VDSReturnValue vdsReturnValue) {
-        setFenceSucceeded(true);
-        vdsReturnValue.setSucceeded(true);
-        vdsReturnValue.setReturnValue(FenceStatusReturnValue.SKIPPED);
+    protected void handleFencingSkippedDueToPolicy(VDSReturnValue vdsReturnValue) {
+        skippedDueToFencingPolicy = true;
+        setFenceSucceeded(false);
+        vdsReturnValue.setSucceeded(false);
+        setActionReturnValue(vdsReturnValue.getReturnValue());
+        // when fencing is skipped we want to suppress command result logging, because
+        // we fire an alert in VdsNotRespondingTreatment
+        setCommandShouldBeLogged(false);
     }
 }
