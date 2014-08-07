@@ -295,11 +295,11 @@ public class HostSetupNetworksModel extends EntityModel {
         mockDst.setEntity(new VdsNetworkInterface());
         mockDst.setItems(new ArrayList<LogicalNetworkModel>(potentialNetworks));
 
-        boolean res = candidateOperation(mockSrc, mockDst, false);
-        if (!res) {
+        boolean valid = !NetworkOperationFactory.operationFor(mockSrc, mockDst).isNullOperation();
+        if (!valid) {
             candidateOperation(mockSrc, mockDst, true); // trick to get a red-highlighted error status
         }
-        return res;
+        return valid;
     }
 
     private void commitLabelChanges(NicLabelModel labelModel,
