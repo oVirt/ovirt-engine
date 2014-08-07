@@ -208,11 +208,10 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         });
 
         // Notify view when the detail model indicates progress
-        modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) {
+            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
                     if (modelProvider.getModel().getProgress() != null) {
                         Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                             @Override
