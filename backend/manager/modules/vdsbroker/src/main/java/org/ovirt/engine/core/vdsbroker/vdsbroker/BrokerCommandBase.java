@@ -178,6 +178,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
                         getCommandName(), getReturnStatus().mMessage));
             }
             break;
+        case VDS_NETWORK_ERROR:
         case ERR_BAD_ADDR:
             outEx = new VDSNetworkException(getReturnStatus().mMessage);
             break;
