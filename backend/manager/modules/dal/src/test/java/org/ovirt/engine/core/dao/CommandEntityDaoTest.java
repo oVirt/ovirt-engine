@@ -25,7 +25,7 @@ public class CommandEntityDaoTest extends BaseGenericDaoTestCase<Guid, CommandEn
         commandEntity.setId(Guid.newGuid());
         commandEntity.setCommandStatus(CommandStatus.ACTIVE);
         VdcActionParametersBase params = new VdcActionParametersBase();
-        commandEntity.setActionParameters(params);
+        commandEntity.setCommandParameters(params);
         return commandEntity;
     }
 

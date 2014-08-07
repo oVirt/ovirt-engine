@@ -106,7 +106,7 @@
         <column>command_type</column>
         <column>root_command_id</column>
         <column>created_at</column>
-        <column>action_parameters</column>
+        <column>command_parameters</column>
         <column>status</column>
         <row>
             <value>340fd52b-3400-4cdd-8d3f-c9d03704b0a1</value>

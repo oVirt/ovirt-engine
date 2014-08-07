@@ -68,7 +68,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
             entity.setTaskId(getGuidDefaultEmpty(rs, "task_id"));
             entity.setVdsmTaskId(getGuid(rs, "vdsm_task_id"));
-            entity.setTaskParameters(deserializeParameters(rs.getString("task_parameters"), rs.getString("task_params_class")));
+            entity.setActionParameters(deserializeParameters(rs.getString("action_parameters"), rs.getString("action_params_class")));
             entity.setStepId(getGuid(rs, "step_id"));
             entity.setCommandId(getGuidDefaultEmpty(rs, "command_id"));
             entity.setStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("started_at")));
@@ -97,8 +97,8 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("status", task.getstatus());
             addValue("vdsm_task_id", task.getVdsmTaskId());
             addValue("task_id", task.getTaskId());
-            addValue("task_parameters", serializeParameters(task.getTaskParameters()));
-            addValue("task_params_class", task.getTaskParameters().getClass().getName());
+            addValue("action_parameters", serializeParameters(task.getActionParameters()));
+            addValue("action_params_class", task.getActionParameters().getClass().getName());
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
         }

@@ -63,8 +63,8 @@ public class AsyncTasks implements Serializable {
         cmdEntity.setId(commandId);
         cmdEntity.setRootCommandId(rootCommandId);
         cmdEntity.setCommandStatus(cmdStatus);
-        cmdEntity.setActionParameters(taskParameters);
-        cmdEntity.setCommandType(getEndActionType());
+        cmdEntity.setCommandParameters(taskParameters);
+        cmdEntity.setCommandType(taskParameters.getCommandType());
     }
 
     public VdcActionType getaction_type() {
@@ -126,11 +126,11 @@ public class AsyncTasks implements Serializable {
     }
 
     public VdcActionParametersBase getTaskParameters() {
-        return cmdEntity.getActionParameters();
+        return cmdEntity.getCommandParameters();
     }
 
     public void setTaskParameters(VdcActionParametersBase value) {
-        cmdEntity.setActionParameters(value);
+        cmdEntity.setCommandParameters(value);
     }
 
     public Guid getStepId() {
@@ -142,7 +142,7 @@ public class AsyncTasks implements Serializable {
     }
 
     private VdcActionType getEndActionType() {
-        VdcActionType commandType = getActionParameters().getCommandType();
+        VdcActionType commandType = getTaskParameters().getCommandType();
         if (!VdcActionType.Unknown.equals(commandType)) {
             return commandType;
         }

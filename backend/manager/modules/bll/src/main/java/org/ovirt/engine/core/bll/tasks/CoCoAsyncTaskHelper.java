@@ -155,7 +155,7 @@ public class CoCoAsyncTaskHelper {
 
     private void map(CommandEntity cmdEntity, AsyncTasks asyncTask) {
         if (cmdEntity != null) {
-            asyncTask.setActionParameters(cmdEntity.getActionParameters());
+            asyncTask.setTaskParameters(cmdEntity.getCommandParameters());
             asyncTask.setRootCommandId(cmdEntity.getRootCommandId());
             asyncTask.setCommandStatus(cmdEntity.getCommandStatus());
             asyncTask.setCommandType(cmdEntity.getCommandType());
@@ -168,7 +168,7 @@ public class CoCoAsyncTaskHelper {
         CommandStatus status = entity == null ? asyncTask.getCommandStatus() : entity.getCommandStatus();
         CommandEntity cmdEntity = entity == null ? new CommandEntity() : entity;
         cmdEntity.setId(asyncTask.getCommandId());
-        cmdEntity.setActionParameters(asyncTask.getActionParameters());
+        cmdEntity.setCommandParameters(asyncTask.getTaskParameters());
         cmdEntity.setRootCommandId(asyncTask.getRootCommandId());
         cmdEntity.setCommandStatus(status);
         cmdEntity.setCommandType(asyncTask.getCommandType());
@@ -270,6 +270,9 @@ public class CoCoAsyncTaskHelper {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
         if (asyncTask != null) {
+            if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
+                command.getParameters().setCommandType(command.getActionType());
+            }
             VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
             asyncTask.setaction_type(parentCommand);
             asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
@@ -281,7 +284,7 @@ public class CoCoAsyncTaskHelper {
             asyncTask.setStoragePoolId(asyncTaskCreationInfo.getStoragePoolID());
             asyncTask.setTaskType(asyncTaskCreationInfo.getTaskType());
             asyncTask.setCommandStatus(command.getCommandStatus());
-            asyncTask.setCommandType(getEndActionType(asyncTask));
+            asyncTask.setCommandType(command.getParameters().getCommandType());
         } else {
             asyncTask = createAsyncTask(command, asyncTaskCreationInfo, parentCommand);
         }
@@ -293,6 +296,9 @@ public class CoCoAsyncTaskHelper {
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
+        if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
+            command.getParameters().setCommandType(command.getActionType());
+        }
         AsyncTasks asyncTask = new AsyncTasks(parentCommand,
                 AsyncTaskResultEnum.success,
                 AsyncTaskStatusEnum.running,

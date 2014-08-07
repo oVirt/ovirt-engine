@@ -17,7 +17,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
     private Guid jobId;
     private Guid stepId;
     private VdcActionType commandType;
-    private VdcActionParametersBase actionParameters;
+    private VdcActionParametersBase commandParameters;
     private VdcReturnValueBase returnValue;
     private Date createdAt;
     private CommandStatus commandStatus = CommandStatus.UNKNOWN;
@@ -61,12 +61,12 @@ public class CommandEntity implements BusinessEntity<Guid> {
         this.createdAt = createdAt;
     }
 
-    public VdcActionParametersBase getActionParameters() {
-        return this.actionParameters;
+    public VdcActionParametersBase getCommandParameters() {
+        return this.commandParameters;
     }
 
-    public void setActionParameters(VdcActionParametersBase value) {
-        this.actionParameters = value;
+    public void setCommandParameters(VdcActionParametersBase value) {
+        this.commandParameters = value;
     }
 
     public Guid getId() {
@@ -132,7 +132,7 @@ public class CommandEntity implements BusinessEntity<Guid> {
         entity.setJobId(jobId);
         entity.setStepId(stepId);
         entity.setCommandType(actionType);
-        entity.setActionParameters(params);
+        entity.setCommandParameters(params);
         entity.setCommandStatus(status);
         entity.setCallBackEnabled(callBackEnabled);
         entity.setReturnValue(returnValue);
@@ -170,4 +170,5 @@ public class CommandEntity implements BusinessEntity<Guid> {
     public void setExecuted(boolean executed) {
         this.executed = executed;
     }
+
 }
