@@ -992,6 +992,7 @@ fi
 %{_bindir}/engine-setup
 %{_mandir}/man8/engine-cleanup.*
 %{_mandir}/man8/engine-setup.*
+%{_mandir}/man8/engine-upgrade-check.*
 %{engine_data}/bin/ovirt-engine-log-setup-event.sh
 %{engine_data}/conf/iptables.default.in
 %{engine_data}/setup/bin/ovirt-engine-remove
