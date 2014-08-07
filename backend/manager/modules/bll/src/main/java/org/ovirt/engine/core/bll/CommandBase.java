@@ -1415,7 +1415,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         _returnValue = returnValue;
     }
 
-    protected VdcActionType getActionType() {
+    public VdcActionType getActionType() {
         try {
             if (actionType == null) {
                 String name = getClass().getName();

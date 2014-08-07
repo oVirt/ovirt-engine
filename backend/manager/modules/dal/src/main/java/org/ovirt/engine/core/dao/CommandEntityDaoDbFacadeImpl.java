@@ -31,7 +31,7 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
             result.setCreatedAt(DbFacadeUtils.fromDate(resultSet.getTimestamp("created_at")));
             result.setCommandType(VdcActionType.forValue(resultSet.getInt("command_type")));
             result.setRootCommandId(Guid.createGuidFromString(resultSet.getString("root_command_id")));
-            result.setActionParameters(deserializeParameters(resultSet.getString("action_parameters"), resultSet.getString("action_parameters_class")));
+            result.setCommandParameters(deserializeParameters(resultSet.getString("command_parameters"), resultSet.getString("command_params_class")));
             result.setReturnValue(deserializeReturnValue(resultSet.getString("return_value"), resultSet.getString("return_value_class")));
             result.setCommandStatus(getCommandStatus(resultSet.getString("status")));
             result.setExecuted(resultSet.getBoolean("executed"));
@@ -61,8 +61,8 @@ public class CommandEntityDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Comm
                 .addValue("root_command_id", Guid.isNullOrEmpty(entity.getRootCommandId()) ? Guid.Empty : entity.getRootCommandId())
                 .addValue("job_id", Guid.isNullOrEmpty(entity.getJobId()) ? Guid.Empty : entity.getJobId())
                 .addValue("step_id", Guid.isNullOrEmpty(entity.getStepId()) ? Guid.Empty : entity.getStepId())
-                .addValue("action_parameters", serializeParameters(entity.getActionParameters()))
-                .addValue("action_parameters_class", entity.getActionParameters() == null ? null : entity.getActionParameters().getClass().getName())
+                .addValue("command_parameters", serializeParameters(entity.getCommandParameters()))
+                .addValue("command_params_class", entity.getCommandParameters() == null ? null : entity.getCommandParameters().getClass().getName())
                 .addValue("status", entity.getCommandStatus().toString())
                 .addValue("executed", entity.isExecuted())
                 .addValue("callback_enabled", entity.isCallBackEnabled())
