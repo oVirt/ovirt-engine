@@ -673,7 +673,11 @@ public class VmHandler {
      *           The free size we need to have in the domain, in gigabytes
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
+     *
+     * This method is deprecated. Instead use findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList),
+     * and prepare the relevant dikslisk (probably dummies to reflect size).
      */
+    @Deprecated
     public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested) {
         return findStorageDomainForMemory(storagePoolId, sizeRequested, Collections.<StorageDomain, Integer>emptyMap());
     }
@@ -690,7 +694,11 @@ public class VmHandler {
      *           Maps storage domain to size we already reserved on it
      * @return storage domain in the given pool with at least the required amount of free space,
      *         or null if no such storage domain exists in the pool
+     *
+     * This method is deprecated. Instead use findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList),
+     * and prepare the relevant dikslisk (probably dummies to reflect size).
      */
+    @Deprecated
     public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested,
             Map<StorageDomain, Integer> domain2reservedSpaceInDomain) {
         List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
@@ -707,6 +715,10 @@ public class VmHandler {
         return null;
     }
 
+    /**
+     * This method is deprecated. Instead use doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, List<DiskImage> disksList).
+     */
+    @Deprecated
     private static boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
         // not calling validate in order not to add the messages per domain
         return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
