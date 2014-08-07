@@ -54,7 +54,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
 
         // if there aren't any overutilized hosts, then there is nothing to balance...
         if (overUtilizedHosts == null || overUtilizedHosts.size() == 0) {
-            log.infoFormat("There is no over-utilized host in cluster '{0}'", cluster.getName());
+            log.debugFormat("There is no over-utilized host in cluster '{0}'", cluster.getName());
             return null;
         }
 
