@@ -84,19 +84,6 @@ public class EditDiskModel extends AbstractDiskModel
     }
 
     @Override
-    protected void updateWipeAfterDelete(StorageType storageType) {
-        if (storageType.isFileDomain()) {
-            getIsWipeAfterDelete().setChangeProhibitionReason(CONSTANTS.wipeAfterDeleteNotSupportedForFileDomains());
-            getIsWipeAfterDelete().setIsChangable(false);
-        }
-        else {
-            getIsWipeAfterDelete().setIsChangable(true);
-        }
-
-        getIsWipeAfterDelete().setEntity(getDisk().isWipeAfterDelete());
-    }
-
-    @Override
     public void setDefaultInterface() {
         getDiskInterface().setSelectedItem(getDisk().getDiskInterface());
     }
