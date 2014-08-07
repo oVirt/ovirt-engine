@@ -8,7 +8,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
 import org.ovirt.engine.core.common.action.MergeParameters;
@@ -66,7 +66,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getParameters().setChildCommands(new HashMap<RemoveSnapshotSingleDiskLiveStep, Guid>());
         }
 
-        List<Guid> childCommandIds = TaskManagerUtil.getChildCommandIds(getCommandId());
+        List<Guid> childCommandIds = CommandCoordinatorUtil.getChildCommandIds(getCommandId());
         if (childCommandIds.size() != getParameters().getChildCommands().size()) {
             // Upon recovery or after invoking a new child command, our map may be missing an entry
             for (Guid id : childCommandIds) {
@@ -81,7 +81,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         VdcReturnValueBase vdcReturnValue = null;
         if (currentChildId != null) {
-            switch (TaskManagerUtil.getCommandStatus(currentChildId)) {
+            switch (CommandCoordinatorUtil.getCommandStatus(currentChildId)) {
             case ACTIVE:
             case NOT_STARTED:
                 log.infoFormat("Waiting on Live Merge command step {0} to complete",
@@ -89,7 +89,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 return;
 
             case SUCCEEDED:
-                vdcReturnValue = TaskManagerUtil.getCommandReturnValue(currentChildId);
+                vdcReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
                 if (vdcReturnValue != null && vdcReturnValue.getSucceeded()) {
                     getParameters().setCommandStep(getParameters().getNextCommandStep());
                     break;
@@ -150,7 +150,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
         persistCommand(getParameters().getParentCommand(), true);
         if (nextCommand != null) {
-            TaskManagerUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
+            CommandCoordinatorUtil.executeAsyncCommand(nextCommand.getFirst(), nextCommand.getSecond(), cloneContextAndDetachFromParent());
         }
     }
 

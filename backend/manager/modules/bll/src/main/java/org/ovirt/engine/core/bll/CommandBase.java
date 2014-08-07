@@ -35,7 +35,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
@@ -366,9 +366,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 @Override
                 public Void runInTransaction() {
                     for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-                        AsyncTasks task = TaskManagerUtil.getAsyncTaskFromDb(asyncTaskId);
+                        AsyncTasks task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
                         if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                            TaskManagerUtil.removeTaskFromDbByTaskId(task.getTaskId());
+                            CommandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
                         }
 
                     }
@@ -1493,7 +1493,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void saveTaskAndPutInMap(String taskKey, AsyncTasks task) {
-        TaskManagerUtil.saveAsyncTaskToDb(task);
+        CommandCoordinatorUtil.saveAsyncTaskToDb(task);
         taskKeyToTaskIdMap.put(taskKey, task.getTaskId());
     }
 
@@ -1510,7 +1510,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void deleteAsyncTaskPlaceHolder(String taskKey) {
         Guid taskId = taskKeyToTaskIdMap.remove(taskKey);
         if (!Guid.isNullOrEmpty(taskId)) {
-            TaskManagerUtil.removeTaskFromDbByTaskId(taskId);
+            CommandCoordinatorUtil.removeTaskFromDbByTaskId(taskId);
         }
     }
 
@@ -1525,11 +1525,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return taskKeyToTaskIdMap.get(taskKey);
     }
     /**
-     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
+     * Use this method in order to create task in the CommandCoordinatorUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to TaskManagerUtil when creating the task.
+     *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
@@ -1565,11 +1565,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
+     * Use this method in order to create task in the CommandCoordinatorUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to TaskManagerUtil when creating the task.
+     *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param entityType
@@ -1609,11 +1609,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
-     * Use this method in order to create task in the TaskManagerUtil in a safe way. If you use this method within a
+     * Use this method in order to create task in the CommandCoordinatorUtil in a safe way. If you use this method within a
      * certain command, make sure that the command implemented the ConcreteCreateTask method.
      *
      * @param asyncTaskCreationInfo
-     *            info to send to TaskManagerUtil when creating the task.
+     *            info to send to CommandCoordinatorUtil when creating the task.
      * @param parentCommand
      *            VdcActionType of the command that its endAction we want to invoke when tasks are finished.
      * @param description
@@ -1659,7 +1659,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             VdcActionType parentCommand,
             String description,
             Map<Guid, VdcObjectType> entitiesMap) {
-        return TaskManagerUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
+        return CommandCoordinatorUtil.createTask(taskId, this, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
     }
 
     /**
@@ -1673,7 +1673,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             Guid taskId,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        return TaskManagerUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
+        return CommandCoordinatorUtil.concreteCreateTask(taskId, this, asyncTaskCreationInfo, parentCommand);
     }
 
     public VdcActionParametersBase getParentParameters(VdcActionType parentCommand) {
@@ -1687,7 +1687,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private AsyncTasks createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        return TaskManagerUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
+        return CommandCoordinatorUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);
     }
 
     /** @return The type of task that should be created for this command.
@@ -1706,7 +1706,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void startPollingAsyncTasks(Collection<Guid> taskIds) {
         for (Guid taskID : taskIds) {
-            TaskManagerUtil.startPollingTask(taskID);
+            CommandCoordinatorUtil.startPollingTask(taskID);
         }
     }
 
@@ -1733,11 +1733,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void cancelTasks() {
-        TaskManagerUtil.cancelTasks(this);
+        CommandCoordinatorUtil.cancelTasks(this);
     }
 
     protected void revertTasks() {
-        TaskManagerUtil.revertTasks(this);
+        CommandCoordinatorUtil.revertTasks(this);
     }
 
     protected EngineLock getLock() {
@@ -2163,7 +2163,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallBack) {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            TaskManagerUtil.persistCommand(
+            CommandCoordinatorUtil.persistCommand(
                     buildCommandEntity(getParentParameters(parentCommand).getCommandId(),
                             enableCallBack),
                     cmdContext);
@@ -2189,7 +2189,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected void removeCommand() {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            TaskManagerUtil.removeCommand(getCommandId());
+            CommandCoordinatorUtil.removeCommand(getCommandId());
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
@@ -2206,7 +2206,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (updateDB) {
             Transaction transaction = TransactionSupport.suspend();
             try {
-                TaskManagerUtil.updateCommandStatus(getCommandId(), commandStatus);
+                CommandCoordinatorUtil.updateCommandStatus(getCommandId(), commandStatus);
             } finally {
                 if (transaction != null) {
                     TransactionSupport.resume(transaction);
@@ -2218,10 +2218,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void setCommandExecuted() {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            CommandEntity cmdEntity = TaskManagerUtil.getCommandEntity(getCommandId());
+            CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(getCommandId());
             if (cmdEntity != null) {
-                TaskManagerUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(), cmdEntity.isCallBackEnabled()), getContext());
-                TaskManagerUtil.updateCommandExecuted(getCommandId());
+                CommandCoordinatorUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(), cmdEntity.isCallBackEnabled()), getContext());
+                CommandCoordinatorUtil.updateCommandExecuted(getCommandId());
             }
         } finally {
             if (transaction != null) {

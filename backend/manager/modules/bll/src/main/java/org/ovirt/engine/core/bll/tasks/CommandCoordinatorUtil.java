@@ -22,7 +22,7 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 
-public class TaskManagerUtil {
+public class CommandCoordinatorUtil {
 
     public static final CommandCoordinator coco = new CommandCoordinatorImpl();
 

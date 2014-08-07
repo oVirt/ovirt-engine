@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
@@ -221,7 +221,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
 
             // If it is force, we cannot remove if there are task
-            if (TaskManagerUtil.hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
+            if (CommandCoordinatorUtil.hasTasksByStoragePoolId(getVm().getStoragePoolId())) {
                 return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_HAS_RUNNING_TASKS);
             }
         }

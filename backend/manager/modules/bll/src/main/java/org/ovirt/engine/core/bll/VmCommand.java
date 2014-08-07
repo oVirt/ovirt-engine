@@ -7,7 +7,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -359,7 +359,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {
-                    TaskManagerUtil.startPollingTask(guid1);
+                    CommandCoordinatorUtil.startPollingTask(guid1);
                 }
                 return false;
             }
@@ -368,8 +368,8 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             getTaskIdList().add(guid2);
 
             if (startPollingTasks) {
-                TaskManagerUtil.startPollingTask(guid1);
-                TaskManagerUtil.startPollingTask(guid2);
+                CommandCoordinatorUtil.startPollingTask(guid1);
+                CommandCoordinatorUtil.startPollingTask(guid2);
             }
         }
 

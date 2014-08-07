@@ -20,7 +20,7 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
@@ -396,7 +396,7 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void storagePoolUpEvent(StoragePool storagePool) {
-        TaskManagerUtil.addStoragePoolExistingTasks(storagePool);
+        CommandCoordinatorUtil.addStoragePoolExistingTasks(storagePool);
     }
 
     @Override

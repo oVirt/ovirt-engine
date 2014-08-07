@@ -13,7 +13,7 @@ import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
@@ -160,7 +160,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     private void removeMemory(final Snapshot snapshot, boolean useTaskManager) {
         RemoveMemoryVolumesParameters parameters = new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId());
         if (useTaskManager) {
-            TaskManagerUtil.executeAsyncCommand(VdcActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
+            CommandCoordinatorUtil.executeAsyncCommand(VdcActionType.RemoveMemoryVolumes, parameters, cloneContextAndDetachFromParent());
         } else {
             VdcReturnValueBase ret = runInternalAction(VdcActionType.RemoveMemoryVolumes, parameters);
             if (!ret.getSucceeded()) {
@@ -189,7 +189,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
                 }
             } else {
-                TaskManagerUtil.executeAsyncCommand(
+                CommandCoordinatorUtil.executeAsyncCommand(
                         getSnapshotActionType(),
                         buildRemoveSnapshotSingleDiskParameters(source, dest),
                         cloneContextAndDetachFromParent());
