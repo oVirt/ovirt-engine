@@ -18,7 +18,7 @@ import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -62,7 +62,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             // Create authentication profiles for all the domains that exist in the database:
             // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
             DbUserCacheManager.getInstance().init();
-            TaskManagerUtil.initAsyncTaskManager();
+            CommandCoordinatorUtil.initAsyncTaskManager();
             ResourceManager.getInstance().init();
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {

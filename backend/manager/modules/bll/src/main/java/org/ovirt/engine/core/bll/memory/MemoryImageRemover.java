@@ -7,7 +7,7 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.errors.VDSError;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
@@ -96,11 +96,11 @@ public abstract class MemoryImageRemover {
 
         if (startPollingTasks) {
             if (!Guid.Empty.equals(memoryImageRemovalTaskId)) {
-                TaskManagerUtil.startPollingTask(memoryImageRemovalTaskId);
+                CommandCoordinatorUtil.startPollingTask(memoryImageRemovalTaskId);
             }
 
             if (confImageRemovalTaskId != null && !Guid.Empty.equals(confImageRemovalTaskId)) {
-                TaskManagerUtil.startPollingTask(confImageRemovalTaskId);
+                CommandCoordinatorUtil.startPollingTask(confImageRemovalTaskId);
             }
         }
 

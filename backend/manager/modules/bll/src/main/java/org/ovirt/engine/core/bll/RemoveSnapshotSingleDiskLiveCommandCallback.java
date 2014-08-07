@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -29,6 +29,6 @@ public class RemoveSnapshotSingleDiskLiveCommandCallback extends CommandCallBack
     }
 
     private RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters> getCommand(Guid cmdId) {
-        return (RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters>) TaskManagerUtil.retrieveCommand(cmdId);
+        return (RemoveSnapshotSingleDiskLiveCommand<RemoveSnapshotSingleDiskParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

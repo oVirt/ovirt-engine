@@ -68,7 +68,7 @@ public class AsyncTaskUtils {
     }
 
     private static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
-        TaskManagerUtil.addOrUpdateTaskInDB(asyncTask);
+        CommandCoordinatorUtil.addOrUpdateTaskInDB(asyncTask);
     }
 
     private static AsyncTaskDAO getAsyncTaskDao() {

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.bll.scheduling.RunVmDelayer;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StorageHelperDirector;
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -212,7 +212,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 removeVmHibernationVolumesParameters);
 
         for (Guid taskId : vdcRetValue.getInternalVdsmTaskIdList()) {
-            TaskManagerUtil.startPollingTask(taskId);
+            CommandCoordinatorUtil.startPollingTask(taskId);
         }
     }
 

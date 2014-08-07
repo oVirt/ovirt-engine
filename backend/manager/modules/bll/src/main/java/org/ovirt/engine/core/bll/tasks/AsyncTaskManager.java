@@ -364,7 +364,7 @@ public final class AsyncTaskManager {
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
         try {
-            if (TaskManagerUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
+            if (CommandCoordinatorUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
                 log.infoFormat("Removed task {0} from DataBase", taskId);
             }
         } catch (RuntimeException e) {

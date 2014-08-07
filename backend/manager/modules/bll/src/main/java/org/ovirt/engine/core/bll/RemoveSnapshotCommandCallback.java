@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -18,7 +18,7 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
 
         boolean anyFailed = false;
         for (Guid childCmdId : childCmdIds) {
-            switch (TaskManagerUtil.getCommandStatus(childCmdId)) {
+            switch (CommandCoordinatorUtil.getCommandStatus(childCmdId)) {
             case ACTIVE:
                 log.info("Waiting on Live Merge child commands to complete");
                 return;
@@ -42,16 +42,16 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
     @Override
     public void onSucceeded(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).endAction();
-        TaskManagerUtil.removeAllCommandsInHierarchy(cmdId);
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     @Override
     public void onFailed(Guid cmdId, List<Guid> childCmdIds) {
         getCommand(cmdId).endAction();
-        TaskManagerUtil.removeAllCommandsInHierarchy(cmdId);
+        CommandCoordinatorUtil.removeAllCommandsInHierarchy(cmdId);
     }
 
     private RemoveSnapshotCommand<RemoveSnapshotParameters> getCommand(Guid cmdId) {
-        return (RemoveSnapshotCommand<RemoveSnapshotParameters>) TaskManagerUtil.retrieveCommand(cmdId);
+        return (RemoveSnapshotCommand<RemoveSnapshotParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

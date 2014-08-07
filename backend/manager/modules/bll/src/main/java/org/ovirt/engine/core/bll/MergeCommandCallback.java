@@ -2,7 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.List;
 
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.businessentities.VmJob;
@@ -43,6 +43,6 @@ public class MergeCommandCallback extends CommandCallBack {
     }
 
     private MergeCommand<MergeParameters> getCommand(Guid cmdId) {
-        return (MergeCommand<MergeParameters>) TaskManagerUtil.retrieveCommand(cmdId);
+        return (MergeCommand<MergeParameters>) CommandCoordinatorUtil.retrieveCommand(cmdId);
     }
 }

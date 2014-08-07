@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.DateTime;
@@ -44,7 +44,7 @@ public class CommandEntityCleanupManager {
             DateTime latestTimeToKeep = DateTime.getNow().addDays(
                     Config.<Integer>getValue(ConfigValues.CommandEntityAgingThreshold)
                             * -1);
-            TaskManagerUtil.removeAllCommandsBeforeDate(latestTimeToKeep);
+            CommandCoordinatorUtil.removeAllCommandsBeforeDate(latestTimeToKeep);
             log.info("Finished deleteAgedOutCommandEntities");
         } catch (RuntimeException e) {
             log.error("deleteAgedOutCommandEntities failed with exception", e);
