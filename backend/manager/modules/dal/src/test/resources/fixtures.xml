@@ -3763,6 +3763,11 @@
         <column>current_cd</column>
         <column>exit_reason</column>
         <column>guest_cpu_count</column>
+        <column>spice_port</column>
+        <column>spice_tls_port</column>
+        <column>spice_ip</column>
+        <column>vnc_port</column>
+        <column>vnc_ip</column>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
             <value>5</value>
@@ -3803,6 +3808,11 @@
             <null/>
             <value>-1</value>
             <value>1</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -3885,6 +3895,11 @@
             <value>current_cd.iso</value>
             <value>-1</value>
             <value>1</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
@@ -3926,6 +3941,11 @@
             <null/>
             <value>-1</value>
             <value>-1</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -3967,6 +3987,11 @@
             <null/>
             <value>-1</value>
             <value>8</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -4008,6 +4033,11 @@
             <null/>
             <value>-1</value>
             <value>8</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -4049,6 +4079,11 @@
             <null />
             <value>-1</value>
             <value>64</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -4090,6 +4125,11 @@
             <null />
             <value>-1</value>
             <value>64</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
     </table>
 

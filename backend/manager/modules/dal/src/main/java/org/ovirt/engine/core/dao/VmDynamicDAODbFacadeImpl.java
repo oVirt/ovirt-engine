@@ -4,10 +4,11 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Map;
-
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
+import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -80,6 +81,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
 
     @Override
     protected MapSqlParameterSource createFullParametersMapper(VmDynamic vm) {
+        GraphicsInfo spice = vm.getGraphicsInfos().get(GraphicsType.SPICE);
+        GraphicsInfo vnc = vm.getGraphicsInfos().get(GraphicsType.VNC);
         return createIdParameterMapper(vm.getId())
                 .addValue("app_list", vm.getAppList())
                 .addValue("guest_cur_user_name", vm.getGuestCurrentUserName())
@@ -127,7 +130,12 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("reason", vm.getStopReason())
                 .addValue("exit_reason", vm.getExitReason().getValue())
                 .addValue("guest_cpu_count", vm.getGuestCpuCount())
-                .addValue("emulated_machine", vm.getEmulatedMachine());
+                .addValue("emulated_machine", vm.getEmulatedMachine())
+                .addValue("spice_port", spice != null ? spice.getPort() : null)
+                .addValue("spice_tls_port", spice != null ? spice.getTlsPort() : null)
+                .addValue("spice_ip", spice != null ? spice.getIp() : null)
+                .addValue("vnc_port", vnc != null ? vnc.getPort() : null)
+                .addValue("vnc_ip", vnc != null ? vnc.getIp() : null);
     }
 
     @Override
@@ -187,7 +195,27 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setExitReason(exitReason);
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
             entity.setEmulatedMachine(rs.getString("emulated_machine"));
+            setGraphicsToEntity(rs, entity);
             return entity;
+        }
+    }
+
+    private static void setGraphicsToEntity(ResultSet rs, VmDynamic entity) throws SQLException {
+        GraphicsInfo graphicsInfo = new GraphicsInfo();
+        graphicsInfo.setIp(rs.getString("spice_ip"));
+        graphicsInfo.setPort((Integer) rs.getObject("spice_port"));
+        graphicsInfo.setTlsPort((Integer) rs.getObject("spice_tls_port"));
+
+        if (graphicsInfo.getPort() != null || graphicsInfo.getTlsPort() != null) {
+            entity.getGraphicsInfos().put(GraphicsType.SPICE, graphicsInfo);
+        }
+
+        graphicsInfo = new GraphicsInfo();
+        graphicsInfo.setIp(rs.getString("vnc_ip"));
+        graphicsInfo.setPort((Integer) rs.getObject("vnc_port"));
+
+        if (graphicsInfo.getPort() != null) {
+            entity.getGraphicsInfos().put(GraphicsType.VNC, graphicsInfo);
         }
     }
 

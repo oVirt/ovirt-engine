@@ -694,7 +694,12 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       vm_static.cpu_profile_id as cpu_profile_id,
                       vm_static.is_auto_converge as is_auto_converge, vm_static.is_migrate_compressed as is_migrate_compressed,
                       vm_static.custom_emulated_machine as custom_emulated_machine,
-                      vm_static.custom_cpu_name as custom_cpu_name
+                      vm_static.custom_cpu_name as custom_cpu_name,
+                      vm_dynamic.spice_port as spice_port,
+                      vm_dynamic.spice_tls_port as spice_tls_port,
+                      vm_dynamic.spice_ip as spice_ip,
+                      vm_dynamic.vnc_port as vnc_port,
+                      vm_dynamic.vnc_ip as vnc_ip
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -744,7 +749,12 @@ SELECT      vms.vm_name, vms.mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vm
             vms.numatune_mode,
             vms.is_spice_file_transfer_enabled, vms.is_spice_copy_paste_enabled,
             vms.cpu_profile_id,
-            vms.is_auto_converge, vms.is_migrate_compressed
+            vms.is_auto_converge, vms.is_migrate_compressed,
+            vms.spice_port,
+            vms.spice_tls_port,
+            vms.spice_ip,
+            vms.vnc_port,
+            vms.vnc_ip
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
