@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 
@@ -64,7 +65,10 @@ class MacsStorage {
         final List<Long> result = new ArrayList<>(numberOfMacs);
         int remainingMacs = numberOfMacs;
         while (remainingMacs > 0) {
-            final List<Long> allocatedMacs = getRangeWithAvailableMac().allocateMacs(remainingMacs);
+            final Range rangeWithAvailableMac = getRangeWithAvailableMac();
+            Validate.notNull(rangeWithAvailableMac);
+
+            final List<Long> allocatedMacs = rangeWithAvailableMac.allocateMacs(remainingMacs);
 
             remainingMacs -= allocatedMacs.size();
             result.addAll(allocatedMacs);
@@ -79,6 +83,7 @@ class MacsStorage {
                 return range;
             }
         }
+
         return null;
     }
 
