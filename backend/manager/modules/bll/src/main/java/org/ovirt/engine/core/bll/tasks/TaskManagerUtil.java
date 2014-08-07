@@ -139,6 +139,10 @@ public class TaskManagerUtil {
         return coco.getChildCommandIds(commandId);
     }
 
+    public static CommandEntity getCommandEntity(Guid commandId) {
+        return coco.getCommandEntity(commandId);
+    }
+
     public static CommandBase<?> retrieveCommand(Guid commandId) {
         return coco.retrieveCommand(commandId);
     }

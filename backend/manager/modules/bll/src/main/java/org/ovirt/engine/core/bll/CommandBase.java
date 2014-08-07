@@ -37,8 +37,8 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParametersWrapper;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
-import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskManagerUtil;
+import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.interfaces.Command;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
@@ -2143,30 +2143,38 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         getReturnValue().setCanDoAction(internalReturnValue.getCanDoAction());
     }
 
+    public void persistCommand(VdcActionType parentCommand) {
+        persistCommand(parentCommand, getContext(), false);
+    }
+
     public void persistCommand(VdcActionType parentCommand, boolean enableCallBack) {
         persistCommand(parentCommand, getContext(), enableCallBack);
     }
 
     public void persistCommand(VdcActionType parentCommand, CommandContext cmdContext, boolean enableCallBack) {
-        VdcActionParametersBase parentParameters = getParentParameters(parentCommand);
         Transaction transaction = TransactionSupport.suspend();
         try {
             TaskManagerUtil.persistCommand(
-                CommandEntity.buildCommandEntity(getCommandId(),
-                        parentParameters.getCommandId(),
-                        getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
-                        getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
-                        getActionType(),
-                        getParameters(),
-                        commandStatus,
-                        enableCallBack,
-                        getReturnValue()),
+                    buildCommandEntity(getParentParameters(parentCommand).getCommandId(),
+                            enableCallBack),
                     cmdContext);
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
             }
         }
+    }
+
+    private CommandEntity buildCommandEntity(Guid parentCommandId, boolean callBackEnabled) {
+        return CommandEntity.buildCommandEntity(getCommandId(),
+                parentCommandId,
+                getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
+                getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
+                getActionType(),
+                getParameters(),
+                commandStatus,
+                callBackEnabled,
+                getReturnValue());
     }
 
     protected void removeCommand() {
@@ -2201,7 +2209,11 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void setCommandExecuted() {
         Transaction transaction = TransactionSupport.suspend();
         try {
-            TaskManagerUtil.updateCommandExecuted(getCommandId());
+            CommandEntity cmdEntity = TaskManagerUtil.getCommandEntity(getCommandId());
+            if (cmdEntity != null) {
+                TaskManagerUtil.persistCommand(buildCommandEntity(cmdEntity.getRootCommandId(), cmdEntity.isCallBackEnabled()), getContext());
+                TaskManagerUtil.updateCommandExecuted(getCommandId());
+            }
         } finally {
             if (transaction != null) {
                 TransactionSupport.resume(transaction);
