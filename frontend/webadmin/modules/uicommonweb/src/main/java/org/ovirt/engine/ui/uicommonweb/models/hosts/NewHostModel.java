@@ -224,7 +224,7 @@ public class NewHostModel extends HostModel {
     }
 
     @Override
-    protected boolean showTransportProperties() {
+    protected boolean showTransportProperties(VDS vds) {
         return true;
     }
 }
