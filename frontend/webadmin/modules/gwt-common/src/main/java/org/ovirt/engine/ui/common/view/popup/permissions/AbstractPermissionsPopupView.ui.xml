@@ -35,12 +35,12 @@
         }
 
         .profileSelection {
-            width: 320px;
+            width: 310px;
             height: 30px;
         }
 
         .namespaceSelection {
-            width: 320px;
+            width: 330px;
             height: 30px;
         }
 
