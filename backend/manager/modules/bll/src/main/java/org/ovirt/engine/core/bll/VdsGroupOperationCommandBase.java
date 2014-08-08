@@ -9,6 +9,7 @@ import java.util.Map.Entry;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -18,6 +19,8 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationParameters> extends
@@ -132,4 +135,11 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         return (vdsGroups == null || vdsGroups.isEmpty());
     }
 
+    protected void alertIfFencingDisabled() {
+        if (!getVdsGroup().getFencingPolicy().isFencingEnabled()) {
+            AuditLogableBase alb = new AuditLogableBase();
+            alb.setVdsGroupId(getVdsGroup().getId());
+            AuditLogDirector.log(alb, AuditLogType.FENCING_DISABLED_IN_CLUSTER_POLICY);
+        }
+    }
 }
