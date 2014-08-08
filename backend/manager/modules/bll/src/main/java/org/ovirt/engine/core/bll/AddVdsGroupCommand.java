@@ -14,6 +14,8 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.gluster.GlusterFeatureSupported;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -22,8 +24,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 
 public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T> {
@@ -40,6 +40,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         checkMaxMemoryOverCommitValue();
         getVdsGroup().setDetectEmulatedMachine(true);
         DbFacade.getInstance().getVdsGroupDao().save(getVdsGroup());
+
+        alertIfFencingDisabled();
 
         // add default network
         if (getParameters().getVdsGroup().getStoragePoolId() != null) {

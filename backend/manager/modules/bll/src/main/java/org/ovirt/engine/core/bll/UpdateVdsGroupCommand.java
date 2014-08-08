@@ -115,6 +115,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     true));
         }
 
+        alertIfFencingDisabled();
+
         setSucceeded(true);
     }
 
