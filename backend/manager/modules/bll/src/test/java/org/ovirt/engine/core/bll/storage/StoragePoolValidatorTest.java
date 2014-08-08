@@ -19,16 +19,15 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 
 public class StoragePoolValidatorTest {
 
+    private static final Version UNSUPPORTED_VERSION = Version.v3_0;
+    private static final Version SUPPORTED_VERSION = Version.v3_3;
+
     @ClassRule
     public static MockConfigRule mce = new MockConfigRule
-            (mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_1.toString(), true),
-                    mockConfig(ConfigValues.PosixStorageEnabled, Version.v3_0.toString(), false),
-                    mockConfig(ConfigValues.PosixStorageEnabled, Version.v2_2.toString(), false),
-                    mockConfig(ConfigValues.PosixStorageEnabled, "general", false),
-                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_1.toString(), false),
-                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_2.toString(), false),
-                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0.toString(), false),
-                    mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_3.toString(), true));
+            (mockConfig(ConfigValues.PosixStorageEnabled, UNSUPPORTED_VERSION.toString(), false),
+                    mockConfig(ConfigValues.PosixStorageEnabled, SUPPORTED_VERSION.toString(), true),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, UNSUPPORTED_VERSION.toString(), false),
+                    mockConfig(ConfigValues.GlusterFsStorageEnabled, SUPPORTED_VERSION.toString(), true));
 
     private StoragePoolValidator validator;
     private StoragePool storagePool;
@@ -42,14 +41,14 @@ public class StoragePoolValidatorTest {
 
     @Test
     public void testPosixDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v3_1);
+        storagePool.setcompatibility_version(SUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isPosixSupportedInDC(), isValid());
     }
 
     @Test
     public void testPosixDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v3_0);
+        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isPosixSupportedInDC(),
                 failsWith(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
@@ -57,14 +56,14 @@ public class StoragePoolValidatorTest {
 
     @Test
     public void testGlusterDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v3_3);
+        storagePool.setcompatibility_version(SUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isGlusterSupportedInDC(), isValid());
     }
 
     @Test
     public void testGlusterDcAndNotMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v3_1);
+        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(false);
         assertThat(validator.isGlusterSupportedInDC(),
                 failsWith(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
@@ -72,7 +71,7 @@ public class StoragePoolValidatorTest {
 
     @Test
     public void testLocalDcAndMatchingCompatiblityVersion() {
-        storagePool.setcompatibility_version(Version.v3_0);
+        storagePool.setcompatibility_version(UNSUPPORTED_VERSION);
         storagePool.setIsLocal(true);
         assertThat(validator.isPosixSupportedInDC(), isValid());
     }
