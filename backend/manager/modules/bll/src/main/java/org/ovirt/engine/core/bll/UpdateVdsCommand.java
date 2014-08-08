@@ -33,6 +33,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsCommand<T>  implements RenamedEntityInfoProvider{
@@ -119,6 +120,9 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     returnValue =
                             validateNetworkProviderProperties(getParameters().getNetworkProviderId(),
                                     getParameters().getNetworkMappings());
+                } else if (getParameters().getVdsStaticData().getProtocol() != _oldVds.getProtocol()
+                        && _oldVds.getStatus() != VDSStatus.Maintenance) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_STATUS_NOT_VALID_FOR_UPDATE);
                 } else {
                     returnValue = true;
                 }
@@ -193,6 +197,10 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                     return;
                 }
             }
+        }
+
+        if (_oldVds.getProtocol() != getParameters().getVdsStaticData().getProtocol()) {
+            ResourceManager.getInstance().reestablishConnection(_oldVds.getId());
         }
 
         // set clusters network to be operational (if needed)

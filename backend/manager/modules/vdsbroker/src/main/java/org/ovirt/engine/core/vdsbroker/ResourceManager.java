@@ -179,6 +179,12 @@ public class ResourceManager {
         return EjbUtils.findBean(BeanType.VDS_EVENT_LISTENER, BeanProxyType.LOCAL);
     }
 
+    public void reestablishConnection(Guid vdsId) {
+        VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+        RemoveVds(vds.getId());
+        AddVds(vds, false);
+    }
+
     public void AddVds(VDS vds, boolean isInternal) {
         VdsManager vdsManager = VdsManager.buildVdsManager(vds);
         if (isInternal) {

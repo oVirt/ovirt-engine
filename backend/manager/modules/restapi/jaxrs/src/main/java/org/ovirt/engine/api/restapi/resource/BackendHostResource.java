@@ -382,7 +382,7 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
             if (incoming.isSetOverrideIptables()) {
                 updateParams.setOverrideFirewall(incoming.isOverrideIptables());
             }
-            // Update of Transport protocol not supported
+
             updateParams = (UpdateVdsActionParameters) getMapper
                     (Host.class, VdsOperationActionParameters.class).map(incoming, (VdsOperationActionParameters) updateParams);
             return updateParams;

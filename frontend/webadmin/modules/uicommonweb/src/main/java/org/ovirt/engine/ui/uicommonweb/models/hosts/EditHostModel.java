@@ -82,7 +82,10 @@ public class EditHostModel extends HostModel {
     }
 
     @Override
-    protected boolean showTransportProperties() {
+    protected boolean showTransportProperties(VDS vds) {
+        if (VDSStatus.Maintenance.equals(vds.getStatus())) {
+            return true;
+        }
         return false;
     }
 

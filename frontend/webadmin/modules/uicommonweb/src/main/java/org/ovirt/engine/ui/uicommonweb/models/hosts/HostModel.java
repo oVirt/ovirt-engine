@@ -1757,6 +1757,7 @@ public abstract class HostModel extends Model
         setHostId(vds.getId());
         getOverrideIpTables().setIsAvailable(showInstallationProperties());
         getProtocol().setEntity(VdsProtocol.STOMP == vds.getProtocol());
+        getProtocol().setIsAvailable(showTransportProperties(vds));
         setSpmPriorityValue(vds.getVdsSpmPriority());
         setOriginalName(vds.getName());
         getName().setEntity(vds.getName());
@@ -1882,7 +1883,7 @@ public abstract class HostModel extends Model
 
     protected abstract boolean showInstallationProperties();
 
-    protected abstract boolean showTransportProperties();
+    protected abstract boolean showTransportProperties(VDS vds);
 
     public abstract boolean showExternalProviderPanel();
 
