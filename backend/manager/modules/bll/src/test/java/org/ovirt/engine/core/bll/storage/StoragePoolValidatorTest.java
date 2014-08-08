@@ -31,8 +31,8 @@ public class StoragePoolValidatorTest {
                     mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_0.toString(), false),
                     mockConfig(ConfigValues.GlusterFsStorageEnabled, Version.v3_3.toString(), true));
 
-    private StoragePoolValidator validator = null;
-    private StoragePool storagePool = null;
+    private StoragePoolValidator validator;
+    private StoragePool storagePool;
 
     @Before
     public void setup() {
