@@ -1,16 +1,15 @@
 package org.ovirt.engine.core.bll.storage;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
+import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -45,70 +44,62 @@ public class StoragePoolValidatorTest {
     public void testPosixDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_1);
         storagePool.setIsLocal(false);
-        assertTrue(validator.isPosixSupportedInDC().isValid());
+        assertThat(validator.isPosixSupportedInDC(), isValid());
     }
 
     @Test
     public void testPosixDcAndNotMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_0);
         storagePool.setIsLocal(false);
-        ValidationResult result = validator.isPosixSupportedInDC();
-        assertFalse(result.isValid());
-        assertMessage(result, VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        assertThat(validator.isPosixSupportedInDC(),
+                failsWith(VdcBllMessages.DATA_CENTER_POSIX_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
     public void testGlusterDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_3);
         storagePool.setIsLocal(false);
-        assertTrue(validator.isGlusterSupportedInDC().isValid());
+        assertThat(validator.isGlusterSupportedInDC(), isValid());
     }
 
     @Test
     public void testGlusterDcAndNotMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_1);
         storagePool.setIsLocal(false);
-        ValidationResult result = validator.isGlusterSupportedInDC();
-        assertFalse(result.isValid());
-        assertMessage(result, VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION);
+        assertThat(validator.isGlusterSupportedInDC(),
+                failsWith(VdcBllMessages.DATA_CENTER_GLUSTER_STORAGE_NOT_SUPPORTED_IN_CURRENT_VERSION));
     }
 
     @Test
     public void testLocalDcAndMatchingCompatiblityVersion() {
         storagePool.setcompatibility_version(Version.v3_0);
         storagePool.setIsLocal(true);
-        assertTrue(validator.isPosixSupportedInDC().isValid());
+        assertThat(validator.isPosixSupportedInDC(), isValid());
     }
 
     @Test
     public void testIsNotLocalFsWithDefaultCluster() {
         storagePool.setIsLocal(true);
         doReturn(false).when(validator).containsDefaultCluster();
-        assertTrue(validator.isNotLocalfsWithDefaultCluster().isValid());
+        assertThat(validator.isNotLocalfsWithDefaultCluster(), isValid());
     }
 
     @Test
     public void testIsNotLocalFsWithDefaultClusterWhenClusterIsDefault() {
         storagePool.setIsLocal(true);
         doReturn(true).when(validator).containsDefaultCluster();
-        ValidationResult result = validator.isNotLocalfsWithDefaultCluster();
-        assertFalse(result.isValid());
-        assertMessage(result, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS);
+        assertThat(validator.isNotLocalfsWithDefaultCluster(),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_WITH_DEFAULT_VDS_GROUP_CANNOT_BE_LOCALFS));
     }
 
     @Test
     public void testIsUpdValid() {
-        assertTrue("Storage pool should be up", validator.isUp().isValid());
+        assertThat("Storage pool should be up", validator.isUp(), isValid());
     }
 
     @Test
     public void testIsUpdInvalid() {
         storagePool.setStatus(StoragePoolStatus.NonResponsive);
-        assertMessage(validator.isUp(), VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND);
+        assertThat(validator.isUp(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_IMAGE_REPOSITORY_NOT_FOUND));
     }
-
-    private static void assertMessage(ValidationResult result, VdcBllMessages bllMsg) {
-        assertEquals("Wrong canDoAction message is returned", bllMsg, result.getMessage());
-    }
-
 }
