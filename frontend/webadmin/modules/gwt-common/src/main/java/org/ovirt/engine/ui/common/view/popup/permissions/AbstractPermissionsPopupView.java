@@ -44,6 +44,11 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    /**
+     * This is the max width of a column in this dialogs
+     */
+    private static final String MAX_COL_WIDTH = "284px"; //$NON-NLS-1$
+
     @UiField
     @WithElementId
     public UiCommandButton searchButton;
@@ -107,6 +112,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
         super(eventBus, resources);
         initListBoxEditors();
         searchItems = new EntityModelCellTable<ListModel>(true);
+        searchItems.enableColumnResizing();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         generateIds();
         searchStringEditor.setStyleName("");
@@ -145,26 +151,26 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
 
     private void initTable(CommonApplicationConstants constants) {
         // Table Entity Columns
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getFirstName();
             }
-        }, constants.firsNamePermissionsPopup());
+        }, constants.firsNamePermissionsPopup(), MAX_COL_WIDTH);
 
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getLastName();
             }
-        }, constants.lastNamePermissionsPopup());
+        }, constants.lastNamePermissionsPopup(), MAX_COL_WIDTH);
 
-        searchItems.addEntityModelColumn(new EntityModelTextColumn<DbUser>() {
+        searchItems.addColumn(new EntityModelTextColumn<DbUser>() {
             @Override
             public String getText(DbUser user) {
                 return user.getLoginName();
             }
-        }, constants.userNamePermissionsPopup());
+        }, constants.userNamePermissionsPopup(), MAX_COL_WIDTH);
     }
 
     void localize(CommonApplicationConstants constants) {
