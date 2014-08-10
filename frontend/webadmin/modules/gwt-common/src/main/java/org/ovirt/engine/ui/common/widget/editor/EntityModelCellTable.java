@@ -13,12 +13,16 @@ import org.ovirt.engine.ui.common.widget.table.column.RadioboxCell;
 import org.ovirt.engine.ui.common.widget.table.header.SelectAllCheckBoxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.CheckboxCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.Style.Unit;
+import com.google.gwt.resources.client.ClientBundle;
+import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.cellview.client.Column;
@@ -41,17 +45,28 @@ import com.google.gwt.view.client.SingleSelectionModel;
  */
 public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTable<EntityModel> implements IsEditorDriver<M> {
 
+    public interface CellTableValidation extends CssResource {
+        String invalidRow();
+    }
+
+    public interface CellTableResources extends ClientBundle {
+        @Source("org/ovirt/engine/ui/common/css/CellTableValidation.css")
+        CellTableValidation cellTableValidation();
+    }
+
     public static enum SelectionMode {
         NONE,
         SINGLE,
         MULTIPLE
     }
 
+    private static final CellTableResources cellTableResources = GWT.create(CellTableResources.class);
     private static final int DEFAULT_PAGESIZE = 1000;
     private static final int CHECK_COLUMN_WIDTH = 27;
 
     private static CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
 
+    private final CellTableValidation style;
     private final HasDataListModelEditorAdapter<M, EntityModel> editorAdapter;
 
     /**
@@ -170,6 +185,10 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             boolean hideCheckbox,
             boolean showSelectAllCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
+
+        style = cellTableResources.cellTableValidation();
+        style.ensureInjected();
+
         this.editorAdapter = new HasDataListModelEditorAdapter<M, EntityModel>(this);
 
         // Configure table selection model
@@ -304,6 +323,20 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
 
     M getListModel() {
         return asEditor().flush();
+    }
+
+    public void validate(List<String> errors) {
+        for (int i=0; i < getRowCount(); ++i) {
+            String error = errors.get(i);
+            Element element = getRowElement(i);
+            boolean valid = StringUtils.isEmpty(error);
+            element.setTitle(valid ? null : error);
+            if (!valid) {
+                element.addClassName(style.invalidRow());
+            } else {
+                element.removeClassName(style.invalidRow());
+            }
+        }
     }
 
     @Override
