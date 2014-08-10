@@ -1854,17 +1854,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("The following LUNs are already part of Storage Domains:")
     String lunsAlreadyPartOfSD();
 
-    @DefaultStringValue("Invalid operation with unmanaged network: unmanaged network can only be removed")
+    @DefaultStringValue("Invalid operation, an unmanaged network can only be detached.")
     String nullOperationUnmanagedNetwork();
 
-    @DefaultStringValue("Cannot perform bond operation with an unmanaged network.")
-    String nullOperationBondUnmanaged();
-
-    @DefaultStringValue("Invalid operation with unsync network: unsync network can only be detached")
+    @DefaultStringValue("Invalid operation, an out-of-sync network can only be detached.")
     String nullOperationOutOfSyncNetwork();
-
-    @DefaultStringValue("Cannot perform bond operation with an out-of-sync network.")
-    String nullOperationBondOutOfSync();
 
     @DefaultStringValue("Cannot have more than one non-VLAN network on one interface.")
     String nullOperationTooManyNonVlans();

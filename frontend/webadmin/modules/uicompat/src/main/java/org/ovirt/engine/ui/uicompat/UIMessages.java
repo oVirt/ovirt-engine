@@ -201,7 +201,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Remove {0} from Bond")
     String removeFromBond(String name);
 
-    @DefaultMessage("You could detach {0} first.")
+    @DefaultMessage("This might work without network {0}.")
     String suggestDetachNetwork(String networkName);
 
     @DefaultMessage("Label {0} cannot be assigned to this interface, it is already assigned to interface {1}.")
