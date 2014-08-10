@@ -49,7 +49,7 @@ class InterfaceElementPanel extends TogglePanel {
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
         row.getColumnFormatter().setWidth(0, "30px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
 
         // Check box and interface status icon
         row.setWidget(0, 0, new HorizontalPanel() {

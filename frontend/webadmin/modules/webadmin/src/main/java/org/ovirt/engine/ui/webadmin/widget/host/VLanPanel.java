@@ -19,9 +19,9 @@ import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VLanPanel extends VerticalPanel {
 
-    public static final String CHECK_BOX_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
-    public static final String NETWORK_NAME_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
-    public static final String ADDRESS_COLUMN_WIDTH = "210px"; //$NON-NLS-1$
+    public static final String CHECK_BOX_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
+    public static final String NETWORK_NAME_COLUMN_WIDTH = "200px"; //$NON-NLS-1$
+    public static final String ADDRESS_COLUMN_WIDTH = "120px"; //$NON-NLS-1$
 
     private final boolean isSelectionAvailable;
 
