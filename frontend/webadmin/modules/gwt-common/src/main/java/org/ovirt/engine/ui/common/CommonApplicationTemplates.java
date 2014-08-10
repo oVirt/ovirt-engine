@@ -92,4 +92,7 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
 
     @Template("<span title='{1}'>{0}</span>")
     SafeHtml textAndTitle(String text, String title);
+
+    @Template("<div style='border-right: 1px solid #D7D7E1; height: 32px;'>{0}</div>")
+    SafeHtml nonResizeableColumnHeader(SafeHtml text);
 }
