@@ -55,9 +55,9 @@ public class ImportNetworksModel extends Model {
 
     private final StoragePool treeSelectedDc;
 
-    private final ListModel providers = new ListModel();
-    private final ListModel providerNetworks = new ListModel();
-    private final ListModel importedNetworks = new ListModel();
+    private final ListModel<Provider<?>> providers = new ListModel<Provider<?>>();
+    private final ListModel<ExternalNetwork> providerNetworks = new ListModel<ExternalNetwork>();
+    private final ListModel<ExternalNetwork> importedNetworks = new ListModel<ExternalNetwork>();
     private final ListModel<String> errors = new ListModel<String>();
 
     private UICommand addImportCommand = new UICommand(null, this);
@@ -65,15 +65,15 @@ public class ImportNetworksModel extends Model {
 
     private Map<Guid, Collection<VDSGroup>> dcClusters;
 
-    public ListModel getProviderNetworks() {
+    public ListModel<ExternalNetwork> getProviderNetworks() {
         return providerNetworks;
     }
 
-    public ListModel getImportedNetworks() {
+    public ListModel<ExternalNetwork> getImportedNetworks() {
         return importedNetworks;
     }
 
-    public ListModel getProviders() {
+    public ListModel<Provider<?>> getProviders() {
         return providers;
     }
 
@@ -111,10 +111,10 @@ public class ImportNetworksModel extends Model {
                         (SystemTreeItemModel) CommonModel.getInstance().getSystemTree().getSelectedItem());
         treeSelectedDc = (treeSelectedDcItem == null) ? null : (StoragePool) treeSelectedDcItem.getEntity();
 
-        providers.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        providers.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
                 onProviderChosen();
             }
         });
@@ -129,7 +129,7 @@ public class ImportNetworksModel extends Model {
             @Override
             public void onSuccess(Object model, Object returnValue) {
                 stopProgress();
-                List<Provider> providers = (List<Provider>) returnValue;
+                List<Provider<?>> providers = (List<Provider<?>>) returnValue;
                 providers.add(0, null);
                 getProviders().setItems(providers);
             }
@@ -137,7 +137,7 @@ public class ImportNetworksModel extends Model {
     }
 
     private void onProviderChosen() {
-        final Provider provider = (Provider) providers.getSelectedItem();
+        final Provider<?> provider = providers.getSelectedItem();
         if (provider == null) {
             return;
         }
@@ -238,7 +238,7 @@ public class ImportNetworksModel extends Model {
         List<IFrontendActionAsyncCallback> callbacks = new LinkedList<IFrontendActionAsyncCallback>();
         dcClusters = new HashMap<Guid, Collection<VDSGroup>>();
 
-        for (final ExternalNetwork externalNetwork : (Iterable<ExternalNetwork>) importedNetworks.getItems()) {
+        for (final ExternalNetwork externalNetwork : importedNetworks.getItems()) {
             final Network network = externalNetwork.getNetwork();
             final Guid dcId = ((StoragePool) externalNetwork.getDataCenters().getSelectedItem()).getId();
             network.setName(externalNetwork.getDisplayName());
@@ -330,8 +330,8 @@ public class ImportNetworksModel extends Model {
     }
 
     private void cancelImport() {
-        List<ExternalNetwork> selectedNetworks = (List<ExternalNetwork>) getImportedNetworks().getSelectedItems();
-        Collection<ExternalNetwork> importedNetworks = (Collection<ExternalNetwork>) getImportedNetworks().getItems();
+        Collection<ExternalNetwork> selectedNetworks = getImportedNetworks().getSelectedItems();
+        Collection<ExternalNetwork> importedNetworks = getImportedNetworks().getItems();
         getDefaultCommand().setIsExecutionAllowed(selectedNetworks.size() < importedNetworks.size());
 
         for (ExternalNetwork externalNetwork : selectedNetworks) {

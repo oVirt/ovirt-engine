@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.table.column.EditTextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.ListModelListBoxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
@@ -60,35 +59,35 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
     @UiField(provided = true)
     @Path(value = "providers.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<Object> providersEditor;
+    ListModelListBoxEditor<Provider<?>> providersEditor;
 
     @UiField(provided = true)
-    HorizontalSplitTable splitTable;
+    HorizontalSplitTable<ExternalNetwork> splitTable;
 
     @Ignore
-    EntityModelCellTable<ListModel> providerNetworks;
+    EntityModelCellTable<ListModel<ExternalNetwork>> providerNetworks;
 
     @Ignore
-    EntityModelCellTable<ListModel> importedNetworks;
+    EntityModelCellTable<ListModel<ExternalNetwork>> importedNetworks;
 
-    private ListModelListBoxColumn<EntityModel, StoragePool> dcColumn;
+    private ListModelListBoxColumn<ExternalNetwork, StoragePool> dcColumn;
 
     @Inject
     public ImportNetworksPopupView(EventBus eventBus, ApplicationResources resources,
             ApplicationConstants constants, ApplicationTemplates templates) {
         super(eventBus, resources);
         // Initialize Editors
-        providersEditor = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        providersEditor = new ListModelListBoxEditor<Provider<?>>(new NullSafeRenderer<Provider<?>>() {
 
             @Override
-            protected String renderNullSafe(Object object) {
-                return ((Provider) object).getName();
+            protected String renderNullSafe(Provider<?> provider) {
+                return provider.getName();
             }
         });
-        providerNetworks = new EntityModelCellTable<ListModel>(true, false, true);
-        importedNetworks = new EntityModelCellTable<ListModel>(true, false, true);
+        providerNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
+        importedNetworks = new EntityModelCellTable<ListModel<ExternalNetwork>>(true, false, true);
         splitTable =
-                new HorizontalSplitTable(providerNetworks,
+                new HorizontalSplitTable<ExternalNetwork>(providerNetworks,
                         importedNetworks,
                         constants.providerNetworks(),
                         constants.importedNetworks());
@@ -99,9 +98,8 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         driver.initialize(this);
     }
 
-    @SuppressWarnings("unchecked")
     Iterable<ExternalNetwork> getAllImportedNetworks() {
-        ListModel tableModel = importedNetworks.asEditor().flush();
+        ListModel<ExternalNetwork> tableModel = importedNetworks.asEditor().flush();
         return tableModel != null && tableModel.getItems() != null ? tableModel.getItems()
                 : new ArrayList<ExternalNetwork>();
     }
@@ -114,35 +112,35 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
             final ApplicationTemplates templates,
             final ApplicationResources resources) {
 
-        providerNetworks.addColumn(new TextColumnWithTooltip<EntityModel>() {
+        providerNetworks.addColumn(new TextColumnWithTooltip<ExternalNetwork>() {
             @Override
-            public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getDisplayName();
+            public String getValue(ExternalNetwork model) {
+                return model.getDisplayName();
             }
         }, constants.nameNetworkHeader());
 
-        importedNetworks.addColumn(new EditTextColumnWithTooltip<EntityModel>(new FieldUpdater<EntityModel, String>() {
+        importedNetworks.addColumn(new EditTextColumnWithTooltip<ExternalNetwork>(new FieldUpdater<ExternalNetwork, String>() {
             @Override
-            public void update(int index, EntityModel model, String value) {
-                ((ExternalNetwork) model).setDisplayName(value);
+            public void update(int index, ExternalNetwork model, String value) {
+                model.setDisplayName(value);
             }
         }) {
             @Override
-            public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getDisplayName();
+            public String getValue(ExternalNetwork model) {
+                return model.getDisplayName();
             }
         }, constants.nameNetworkHeader());
 
-        Column<EntityModel, String> idColumn = new TextColumnWithTooltip<EntityModel>() {
+        Column<ExternalNetwork, String> idColumn = new TextColumnWithTooltip<ExternalNetwork>() {
             @Override
-            public String getValue(EntityModel model) {
-                return ((ExternalNetwork) model).getNetwork().getProvidedBy().getExternalId();
+            public String getValue(ExternalNetwork model) {
+                return model.getNetwork().getProvidedBy().getExternalId();
             }
         };
         providerNetworks.addColumn(idColumn, constants.idNetworkHeader());
         importedNetworks.addColumn(idColumn, constants.idNetworkHeader());
 
-        dcColumn = new ListModelListBoxColumn<EntityModel, StoragePool>(new NullSafeRenderer<StoragePool>() {
+        dcColumn = new ListModelListBoxColumn<ExternalNetwork, StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
             public String renderNullSafe(StoragePool dc) {
                 return dc.getName();
@@ -150,8 +148,8 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
         })
         {
             @Override
-            public ListModel getValue(EntityModel network) {
-                return ((ExternalNetwork) network).getDataCenters();
+            public ListModel<StoragePool> getValue(ExternalNetwork network) {
+                return network.getDataCenters();
             }
         };
         importedNetworks.addColumn(dcColumn, constants.dcNetworkHeader());
@@ -190,26 +188,25 @@ public class ImportNetworksPopupView extends AbstractModelBoundPopupView<ImportN
                     }
                 };
 
-        importedNetworks.addColumn(new CheckboxColumn<EntityModel>(new FieldUpdater<EntityModel, Boolean>() {
+        importedNetworks.addColumn(new CheckboxColumn<ExternalNetwork>(new FieldUpdater<ExternalNetwork, Boolean>() {
             @Override
-            public void update(int index, EntityModel model, Boolean value) {
-                ExternalNetwork externalNetwork = (ExternalNetwork) model;
-                externalNetwork.setPublicUse(value);
+            public void update(int index, ExternalNetwork model, Boolean value) {
+                model.setPublicUse(value);
                 refreshImportedNetworks();
             }
         }) {
             @Override
-            public Boolean getValue(EntityModel model) {
-                return ((ExternalNetwork) model).isPublicUse();
+            public Boolean getValue(ExternalNetwork model) {
+                return model.isPublicUse();
             }
 
             @Override
-            protected boolean canEdit(EntityModel model) {
+            protected boolean canEdit(ExternalNetwork model) {
                 return true;
             }
 
             @Override
-            public void render(Context context, EntityModel object, SafeHtmlBuilder sb) {
+            public void render(Context context, ExternalNetwork object, SafeHtmlBuilder sb) {
                 super.render(context, object, sb);
                 sb.append(templates.textForCheckBox("")); //$NON-NLS-1$
             }

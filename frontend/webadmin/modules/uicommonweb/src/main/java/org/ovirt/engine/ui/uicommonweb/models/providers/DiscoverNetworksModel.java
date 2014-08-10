@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
-import java.util.Collections;
+import java.util.ArrayList;
+import java.util.Collection;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -9,9 +10,9 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.ImportNetworksModel;
 
 public class DiscoverNetworksModel extends ImportNetworksModel {
 
-    private final Provider provider;
+    private final Provider<?> provider;
 
-    public DiscoverNetworksModel(SearchableListModel sourceListModel, Provider provider) {
+    public DiscoverNetworksModel(SearchableListModel sourceListModel, Provider<?> provider) {
         super(sourceListModel);
         this.provider = provider;
         setHelpTag(HelpTag.discover_networks);
@@ -20,7 +21,9 @@ public class DiscoverNetworksModel extends ImportNetworksModel {
     }
 
     public void discoverNetworks() {
-        getProviders().setItems(Collections.singletonList(provider));
+        Collection<Provider<?>> items = new ArrayList<Provider<?>>();
+        items.add(provider);
+        getProviders().setItems(items);
         getProviders().setSelectedItem(provider);
     }
 

@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -8,11 +9,11 @@ public class ExternalNetwork extends EntityModel {
 
     private Network network;
     private String displayName;
-    private ListModel dcList;
+    private ListModel<StoragePool> dcList;
     private boolean publicUse;
 
     public ExternalNetwork() {
-        dcList = new ListModel();
+        dcList = new ListModel<StoragePool>();
     }
 
     public Network getNetwork() {
@@ -31,7 +32,7 @@ public class ExternalNetwork extends EntityModel {
         displayName = value;
     }
 
-    public ListModel getDataCenters() {
+    public ListModel<StoragePool> getDataCenters() {
         return dcList;
     }
 
