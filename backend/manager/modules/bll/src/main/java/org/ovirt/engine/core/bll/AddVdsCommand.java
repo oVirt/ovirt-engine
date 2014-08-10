@@ -107,6 +107,14 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         if (getParameters().getAddProvisioned()) {
+            if (getParameters().getComputeResource() == null) {
+                log.errorFormat("Failed to provision: Compute resource cannot be empty");
+                throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
+            }
+            if (getParameters().getHostGroup() == null) {
+                log.errorFormat("Failed to provision: Host group cannot be empty");
+                throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_HOSTGROUP);
+            }
             HostProviderProxy proxy =
                     ((HostProviderProxy) ProviderProxyFactory.getInstance().create(getHostProvider()));
             getParameters().getvds().getStaticData().setHostProviderId(getParameters().getProviderId());
