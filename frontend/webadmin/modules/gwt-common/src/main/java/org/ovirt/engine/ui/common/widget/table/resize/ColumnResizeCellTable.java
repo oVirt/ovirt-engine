@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.widget.table.column.EmptyColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlCellWithTooltip;
@@ -11,6 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.header.CheckboxHeader;
 import org.ovirt.engine.ui.common.widget.table.header.ResizeableCheckboxHeader;
 import org.ovirt.engine.ui.uicommonweb.models.GridController;
 
+import com.google.gwt.core.shared.GWT;
 import com.google.gwt.dom.client.Element;
 import com.google.gwt.dom.client.NodeList;
 import com.google.gwt.dom.client.TableCellElement;
@@ -58,6 +60,8 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     // used to prevent default column widths from overriding persisted column widths
     private final List<Column<T, ?>> initializedColumns = new ArrayList<Column<T, ?>>();
+
+    private final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
 
     public ColumnResizeCellTable() {
         super();
@@ -188,7 +192,10 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         return new Header<SafeHtml>(new SafeHtmlCellWithTooltip()) {
             @Override
             public SafeHtml getValue() {
-                return text;
+                if (text != null) {
+                    return templates.nonResizeableColumnHeader(text);
+                }
+                return null;
             }
         };
     }
