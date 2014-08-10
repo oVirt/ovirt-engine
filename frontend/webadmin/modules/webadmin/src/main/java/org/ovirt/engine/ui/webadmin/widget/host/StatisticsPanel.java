@@ -42,15 +42,15 @@ class StatisticsElementPanel extends TogglePanel {
         gridStyle.setBorderWidth(1, Unit.PX);
         gridStyle.setBorderStyle(BorderStyle.SOLID);
 
-        row.getColumnFormatter().setWidth(0, "210px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(1, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(2, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(3, "105px"); //$NON-NLS-1$
-        row.getColumnFormatter().setWidth(4, "105px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(0, "120px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(1, "100px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(2, "100px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(3, "100px"); //$NON-NLS-1$
+        row.getColumnFormatter().setWidth(4, "100px"); //$NON-NLS-1$
 
         // MAC
         LabelWithTextOverflow macLabel = new LabelWithTextOverflow(hostInterface.getMAC());
-        macLabel.setWidth("210px"); //$NON-NLS-1$
+        macLabel.setWidth("120px"); //$NON-NLS-1$
         row.setWidget(0, 0, macLabel);
 
         // Speed

@@ -26,10 +26,10 @@ public class HostInterfaceForm extends Composite {
     public HostInterfaceForm(final HostInterfaceListModel listModel) {
         isSelectionAvailable = listModel.getIsSelectionAvailable();
         grid = new Grid(1, 4);
-        grid.getColumnFormatter().setWidth(0, "240px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(1, "210px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(2, "630px"); //$NON-NLS-1$
-        grid.getColumnFormatter().setWidth(3, "630px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(0, "230px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(1, "200px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(2, "520px"); //$NON-NLS-1$
+        grid.getColumnFormatter().setWidth(3, "520px"); //$NON-NLS-1$
         grid.setWidth("100%"); //$NON-NLS-1$
         grid.setHeight("100%"); //$NON-NLS-1$
         initWidget(grid);
