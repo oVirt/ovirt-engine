@@ -420,7 +420,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationBondUnmanaged();
+            return ConstantsManager.getInstance().getConstants().nullOperationUnmanagedNetwork();
         }
 
         @Override
@@ -456,7 +456,7 @@ public enum NetworkOperation {
 
         @Override
         public String getVerb(NetworkItemModel<?> op1) {
-            return ConstantsManager.getInstance().getConstants().nullOperationBondOutOfSync();
+            return ConstantsManager.getInstance().getConstants().nullOperationOutOfSyncNetwork();
         }
 
         @Override
