@@ -201,6 +201,12 @@ select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.3');
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.4');
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.5');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.0');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.1');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.2');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.3');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.4');
+select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.5');
 -- migration support per architecture
 select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- snapshot support per architecture
