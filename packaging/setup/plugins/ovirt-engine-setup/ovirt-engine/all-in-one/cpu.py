@@ -36,11 +36,16 @@ class Plugin(plugin.PluginBase):
     """
     AIO cpu check plugin.
     """
+    # CPU list from: git grep ServerCPUList | grep 3.5
     CPU_FAMILIES = (
+        {'model': 'model_Haswell', 'name': 'Intel Haswell Family'},
+        {'model': 'model_SandyBridge', 'name': 'Intel SandyBridge Family'},
         {'model': 'model_Westmere', 'name': 'Intel Westmere Family'},
         {'model': 'model_Nehalem', 'name': 'Intel Nehalem Family'},
         {'model': 'model_Penryn', 'name': 'Intel Penryn Family'},
         {'model': 'model_Conroe', 'name': 'Intel Conroe Family'},
+        {'model': 'model_Opteron_G5', 'name': 'AMD Opteron G5'},
+        {'model': 'model_Opteron_G4', 'name': 'AMD Opteron G4'},
         {'model': 'model_Opteron_G3', 'name': 'AMD Opteron G3'},
         {'model': 'model_Opteron_G2', 'name': 'AMD Opteron G2'},
         {'model': 'model_Opteron_G1', 'name': 'AMD Opteron G1'},
