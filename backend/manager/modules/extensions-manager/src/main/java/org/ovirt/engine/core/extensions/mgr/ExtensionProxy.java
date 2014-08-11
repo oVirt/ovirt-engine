@@ -13,10 +13,10 @@ public class ExtensionProxy implements Extension {
 
     private void dumpMap(String prefix, ExtMap map) {
         Logger logger = context.<Logger> get(ExtensionsManager.TRACE_LOG_CONTEXT_KEY);
-        if (logger.isDebugEnabled()) {
-            logger.debug(prefix + " BEGIN");
-            logger.debug(map.toString());
-            logger.debug(prefix + " END");
+        if (logger.isTraceEnabled()) {
+            logger.trace(prefix + " BEGIN");
+            logger.trace(map.toString());
+            logger.trace(prefix + " END");
         }
     }
 
