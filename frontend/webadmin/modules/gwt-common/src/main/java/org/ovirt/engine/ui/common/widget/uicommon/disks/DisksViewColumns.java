@@ -340,10 +340,9 @@ public class DisksViewColumns {
             protected boolean canEdit(EntityModel object) {
                 DiskModel diskModel = (DiskModel) object.getEntity();
                 Disk disk = diskModel.getDisk();
-                boolean lunIscsiLimitation =
-                        (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI && disk.getDiskStorageType() == DiskStorageType.LUN);
+                boolean isScsiPassthrough = disk.isScsiPassthrough();
                 boolean ideLimitation = (disk.getDiskInterface() == DiskInterface.IDE);
-                return !lunIscsiLimitation && !ideLimitation;
+                return !isScsiPassthrough && !ideLimitation;
             }
 
             @Override
