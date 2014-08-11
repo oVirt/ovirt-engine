@@ -211,6 +211,9 @@
     </profile>
     <profile>
       <id>gwtdraft</id>
+      <properties>
+        <gwt.cssResourceStyle>pretty</gwt.cssResourceStyle>
+      </properties>
       <build>
         <pluginManagement>
           <plugins>

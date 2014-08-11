@@ -137,7 +137,12 @@ BUILD_UT [0]
     Perform unit tests during build.
 
 DEV_BUILD_GWT_DRAFT [0]
-    Build draft gwt application without optimizations.
+    Build draft gwt application without optimizations, this is
+    useful when profiling compiled application in web browser.
+
+    Following changes are applied for draft builds:
+    - prevent code and CSS obfuscation
+    - reduce the level of code optimizations
 
 DEV_EXTRA_BUILD_FLAGS
     Any maven build flags requires for building.
