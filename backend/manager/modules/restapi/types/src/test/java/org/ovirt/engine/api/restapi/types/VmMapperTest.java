@@ -240,6 +240,34 @@ public class VmMapperTest extends
         assertNull(model.getDisplay().getSecurePort());
     }
 
+    private static final String GLOBAL_SPICE_PROXY = "http://host:12345";
+    private static final String CLUSTER_SPICE_PROXY = "http://host2:54321";
+    private static final String POOL_SPICE_PROXY = "http://host3:9999";
+
+    @Test
+    public void testGlobalSpiceProxy() {
+        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        mcr.mockConfigValue(ConfigValues.SpiceProxyDefault, GLOBAL_SPICE_PROXY);
+        VM model = VmMapper.map(entity, (VM) null);
+        assertEquals(GLOBAL_SPICE_PROXY, model.getDisplay().getProxy());
+    }
+
+    @Test
+    public void testClusterSpiceProxy() {
+        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        entity.setVdsGroupSpiceProxy(CLUSTER_SPICE_PROXY);
+        VM model = VmMapper.map(entity, (VM) null);
+        assertEquals(CLUSTER_SPICE_PROXY, model.getDisplay().getProxy());
+    }
+
+    @Test
+    public void testPoolSpiceProxy() {
+        org.ovirt.engine.core.common.businessentities.VM entity = new org.ovirt.engine.core.common.businessentities.VM();
+        entity.setVmPoolSpiceProxy(POOL_SPICE_PROXY);
+        VM model = VmMapper.map(entity, (VM) null);
+        assertEquals(POOL_SPICE_PROXY, model.getDisplay().getProxy());
+    }
+
     @Test
     public void testMapOriginTypeRhev() {
         String s = VmMapper.map(OriginType.RHEV, null);

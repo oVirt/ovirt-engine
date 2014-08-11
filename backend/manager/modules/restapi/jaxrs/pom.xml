@@ -45,6 +45,14 @@
     </dependency>
 
     <dependency>
+      <groupId>${engine.groupId}</groupId>
+      <artifactId>utils</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
       <groupId>org.ovirt.engine.core</groupId>
       <artifactId>branding</artifactId>
       <version>${engine.version}</version>

@@ -26,6 +26,7 @@ import org.jboss.resteasy.specimpl.MultivaluedMapImpl;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
@@ -54,6 +55,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.utils.MockConfigRule;
 
 public abstract class AbstractBackendBaseTest extends Assert {
     protected static final Guid[] GUIDS = { new Guid("00000000-0000-0000-0000-000000000000"),
@@ -121,6 +123,9 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected IMocksControl control;
 
     protected DbUser currentUser;
+
+    @Rule
+    public final MockConfigRule mcr = new MockConfigRule();
 
     @Before
     public void setUp() {
