@@ -328,7 +328,9 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
      */
     public void rescheduleAJob(String oldTriggerName, String oldTriggerGroup, Trigger newTrigger) {
         try {
-            sched.rescheduleJob(triggerKey(oldTriggerName, oldTriggerGroup), newTrigger);
+            if (!sched.isShutdown()) {
+                sched.rescheduleJob(triggerKey(oldTriggerName, oldTriggerGroup), newTrigger);
+            }
         } catch (SchedulerException se) {
             log.error("failed to reschedule the job", se);
         }
