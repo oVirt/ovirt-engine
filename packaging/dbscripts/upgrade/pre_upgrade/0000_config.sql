@@ -182,7 +182,15 @@ select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.2');
 select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.3');
 select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
 select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'general');
-
+-- Gluster Geo-replication --
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.0');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.1');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.2');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.3');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.4');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepStatus', '300', 'general');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscovery', '3600', 'general');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

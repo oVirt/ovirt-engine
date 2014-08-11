@@ -84,7 +84,8 @@ BEGIN
     files_pending = v_files_pending,
     bytes_pending = v_bytes_pending,
     deletes_pending = v_deletes_pending,
-    files_skipped = v_files_skipped
+    files_skipped = v_files_skipped,
+    _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id AND master_brick_id = v_master_brick_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -96,7 +97,8 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE gluster_georep_config
-    SET config_value = v_config_value
+    SET config_value = v_config_value,
+    _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id AND config_key = v_config_key;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -127,6 +129,18 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION GetGlusterGeoRepSessionsByClusterId(v_cluster_id UUID)
+RETURNS SETOF gluster_georep_session STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT session_id, master_volume_id, session_key, slave_host_uuid,
+    slave_host_name, slave_volume_id, slave_volume_name, georep.status,
+    georep._create_date, georep._update_date
+    FROM  gluster_georep_session georep JOIN gluster_volumes ON master_volume_id = id
+    WHERE cluster_id = v_cluster_id order by slave_volume_name asc;
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION GetGlusterGeoRepSessionByKey(v_session_key VARCHAR(150))
 RETURNS SETOF gluster_georep_session STABLE
 AS $procedure$
@@ -145,7 +159,8 @@ RETURNS VOID
 AS $procedure$
 BEGIN
     UPDATE gluster_georep_session
-    SET status = v_status
+    SET status = v_status,
+    _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -161,6 +176,20 @@ BEGIN
     WHERE session_id = v_session_id order by slave_host_name asc;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetGlusterGeoRepSessionDetailsForBrick(v_session_id UUID,
+                                                                  v_master_brick_id UUID)
+RETURNS SETOF gluster_georep_session_details STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT session_id, master_brick_id, slave_host_uuid,
+    slave_host_name, status, checkpoint_status, crawl_status, files_synced, files_pending,
+    bytes_pending, deletes_pending, files_skipped, _update_date
+    FROM  gluster_georep_session_details
+    WHERE session_id = v_session_id AND master_brick_id = v_master_brick_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION GetGlusterGeoRepSessionConfig(v_session_id UUID)
 RETURNS SETOF gluster_georep_config STABLE

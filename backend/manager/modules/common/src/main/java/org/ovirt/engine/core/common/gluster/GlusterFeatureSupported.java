@@ -80,4 +80,15 @@ public class GlusterFeatureSupported {
             return false;
         }
     }
+
+    /**
+    *
+    * @param version
+    *            Compatibility version to check for.
+    * @return <code>true</code> if gluster geo-replication management feature is enabled,
+    *         <code>false</code> if it's not.
+    */
+   public static boolean glusterGeoReplication(Version version) {
+       return supportedInConfig(ConfigValues.GlusterGeoReplicationEnabled, version);
+   }
 }

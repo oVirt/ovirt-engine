@@ -26,6 +26,7 @@ import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VdsStatisticsDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterOptionDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
@@ -127,6 +128,10 @@ public abstract class GlusterJob {
 
     protected StepDao getStepDao() {
         return DbFacade.getInstance().getStepDao();
+    }
+
+    protected GlusterGeoRepDao getGeoRepDao() {
+        return DbFacade.getInstance().getGlusterGeoRepDao();
     }
 
     /**

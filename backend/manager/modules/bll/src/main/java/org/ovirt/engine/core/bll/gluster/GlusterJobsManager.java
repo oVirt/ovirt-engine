@@ -64,6 +64,14 @@ public class GlusterJobsManager {
                 getRefreshRate(ConfigValues.GlusterRefreshRateTasks),
                 TimeUnit.SECONDS);
 
+        scheduler.scheduleAFixedDelayJob(GlusterGeoRepSyncJob.getInstance(),
+                "gluster_georep_poll_event",
+                new Class[0] ,
+                new Class [0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscovery),
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscovery),
+                TimeUnit.SECONDS);
+
     }
 
     private static boolean glusterModeSupported() {

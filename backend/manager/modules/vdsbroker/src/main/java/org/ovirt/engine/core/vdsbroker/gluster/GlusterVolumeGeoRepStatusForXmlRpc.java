@@ -36,7 +36,6 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap, GlusterGeoRepSession session) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();
-        details.setSessionId(session.getId());
         Guid masterNodeGlusterId;
         if (innerMap.containsKey(MASTER_NODE_UUID)) {
             masterNodeGlusterId = new Guid(innerMap.get(MASTER_NODE_UUID).toString());
@@ -72,14 +71,12 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     protected GlusterGeoRepSession getSession(String masterVolumeName, Map<String, Object> innerMap) {
         GlusterGeoRepSession geoRepSession = new GlusterGeoRepSession();
-        // sessionslave in the form -
+        // sessionslave in the form - the uuid is the gluster server uuid on master
         // <session_slave>11ae7a03-e793-4270-8fc4-b42def8b3051:ssh://192.168.122.14::slave2</session_slave>
         String sessionKey = (String) innerMap.get(SESSION_SLAVE);
         String sessSplit[] = sessionKey.split("([://]+)");
-        String sessionId = sessSplit[0];
         String slaveNode = sessSplit[sessSplit.length - 2];
         String slaveVolume = sessSplit[sessSplit.length - 1];
-        geoRepSession.setId(Guid.createGuidFromString(sessionId));
         geoRepSession.setSlaveHostName(slaveNode);
         geoRepSession.setSlaveVolumeName(slaveVolume);
         geoRepSession.setSessionKey(sessionKey);
