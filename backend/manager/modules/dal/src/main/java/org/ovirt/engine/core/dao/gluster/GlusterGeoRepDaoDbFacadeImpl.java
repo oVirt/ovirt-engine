@@ -2,6 +2,7 @@ package org.ovirt.engine.core.dao.gluster;
 
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepCrawlStatus;
@@ -119,9 +120,21 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     }
 
     @Override
+    public List<GlusterGeoRepSession> getGeoRepSessionsInCluster(Guid clusterId) {
+        return getCallsHandler().executeReadList("GetGlusterGeoRepSessionsByClusterId", georepSessionRowMapper,
+                getCustomMapSqlParameterSource().addValue("cluster_id", clusterId));
+    }
+
+    @Override
     public List<GlusterGeoRepSessionDetails> getGeoRepSessionDetails(Guid sessionId) {
         return getCallsHandler().executeReadList("GetGlusterGeoRepSessionDetails", georepSessionDetailsRowMapper,
                 createIdParameterMapper(sessionId));
+    }
+
+    @Override
+    public GlusterGeoRepSessionDetails getGeoRepSessionDetails(Guid sessionId, Guid masterBrickId) {
+        return getCallsHandler().executeRead("GetGlusterGeoRepSessionDetailsForBrick", georepSessionDetailsRowMapper,
+                createIdParameterMapper(sessionId).addValue("master_brick_id", masterBrickId));
     }
 
     @Override
@@ -178,7 +191,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
     public void updateSession(GlusterGeoRepSession geoRepSession) {
         getCallsHandler().executeModification("UpdateGlusterGeoRepSessionStatus",
                 createIdParameterMapper(geoRepSession.getId())
-                .addValue("status", geoRepSession.getStatus()));
+                .addValue("status", EnumUtils.nameOrNull(geoRepSession.getStatus())));
     }
 
     @Override
@@ -193,6 +206,42 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         getCallsHandler().executeModification("UpdateGlusterGeoRepSessionConfig",
                 createFullParametersMapper(geoRepSessionConfig));
 
+    }
+
+    @Override
+    public void saveOrUpdateDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsObjs) {
+        List<GlusterGeoRepSessionDetails> insertList = new ArrayList<>();
+        List<GlusterGeoRepSessionDetails> updateList = new ArrayList<>();
+        for (GlusterGeoRepSessionDetails details : geoRepSessionDetailsObjs) {
+            if (getGeoRepSessionDetails(details.getSessionId(), details.getMasterBrickId()) == null) {
+                insertList.add(details);
+            } else {
+                updateList.add(details);
+            }
+        }
+        saveDetailsInBatch(insertList);
+        updateDetailsInBatch(updateList);
+    }
+
+    @Override
+    public void saveDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsList) {
+        getCallsHandler().executeStoredProcAsBatch("InsertGlusterGeoRepSessionDetail",
+                geoRepSessionDetailsList, getDetailsBatchMapper());
+    }
+
+    @Override
+    public void updateDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsObjs) {
+        getCallsHandler().executeStoredProcAsBatch("UpdateGlusterGeoRepSessionDetail",
+                geoRepSessionDetailsObjs, getDetailsBatchMapper());
+    }
+
+    public MapSqlParameterMapper<GlusterGeoRepSessionDetails> getDetailsBatchMapper() {
+        return new MapSqlParameterMapper<GlusterGeoRepSessionDetails>() {
+            @Override
+            public MapSqlParameterSource map(GlusterGeoRepSessionDetails entity) {
+                return createFullParametersMapper(entity);
+            }
+        };
     }
 
     @Override

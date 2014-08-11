@@ -17,6 +17,8 @@ public interface GlusterGeoRepDao extends DAO {
 
     public void saveDetails(GlusterGeoRepSessionDetails geoRepSessionDetails);
 
+    public void saveDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsList);
+
     public void saveConfig(GlusterGeoRepSessionConfiguration geoRepSessionConfig);
 
     /**
@@ -30,15 +32,23 @@ public interface GlusterGeoRepDao extends DAO {
 
     public List<GlusterGeoRepSession> getGeoRepSessions(Guid masterVolumeId);
 
+    public List<GlusterGeoRepSession> getGeoRepSessionsInCluster(Guid clusterId);
+
     public void remove(Guid id);
 
     public void updateSession(GlusterGeoRepSession geoRepSession);
 
     public void updateDetails(GlusterGeoRepSessionDetails geoRepSessionDetails);
 
+    public void updateDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsObjs);
+
+    public void saveOrUpdateDetailsInBatch(List<GlusterGeoRepSessionDetails> geoRepSessionDetailsObjs);
+
     public void updateConfig(GlusterGeoRepSessionConfiguration geoRepSessionConfig);
 
     public List<GlusterGeoRepSessionDetails> getGeoRepSessionDetails(Guid sessionId);
+
+    public GlusterGeoRepSessionDetails getGeoRepSessionDetails(Guid sessionId, Guid masterBrickId);
 
     public List<GlusterGeoRepSessionConfiguration> getGeoRepSessionConfig(Guid sessionId);
 

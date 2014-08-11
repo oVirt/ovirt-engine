@@ -191,6 +191,15 @@ select fn_db_add_config_value('GlusterVolumeSnapshotSupported', 'false', '3.3');
 select fn_db_add_config_value('GlusterVolumeSnapshotSupported', 'false', '3.4');
 select fn_db_add_config_value('GlusterVolumeSnapshotSupported', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateSnapshotDiscovery', '300', 'general');
+-- Gluster Geo-replication --
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.0');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.1');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.2');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.3');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.4');
+select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepStatus', '300', 'general');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscovery', '3600', 'general');
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');

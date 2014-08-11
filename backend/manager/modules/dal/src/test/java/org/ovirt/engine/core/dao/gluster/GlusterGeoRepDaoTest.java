@@ -136,4 +136,9 @@ public class GlusterGeoRepDaoTest extends BaseDAOTestCase {
         assertEquals("NEW_VAL", fetchedSessionConfig.get(0).getValue());
     }
 
+    public void testGetAllInCluster() {
+        List<GlusterGeoRepSession> fetchedSessions = dao.getGeoRepSessionsInCluster(FixturesTool.GLUSTER_CLUSTER_ID);
+        assertEquals(1, fetchedSessions.size());
+    }
+
 }
