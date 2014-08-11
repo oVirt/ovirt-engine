@@ -76,6 +76,8 @@ import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
@@ -518,6 +520,7 @@ public class VmMapper {
             model.getDisplay().setKeyboardLayout(entity.getDefaultVncKeyboardLayout());
             model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
             model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+            model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
         }
         model.setType(map(entity.getVmType(), null));
         model.setStateless(entity.isStateless());
@@ -582,6 +585,23 @@ public class VmMapper {
         model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
         model.setStartPaused(entity.isRunAndPause());
         return model;
+    }
+
+    private static String getEffectiveSpiceProxy(org.ovirt.engine.core.common.businessentities.VM entity) {
+        if (StringUtils.isNotBlank(entity.getVmPoolSpiceProxy())) {
+            return entity.getVmPoolSpiceProxy();
+        }
+
+        if (StringUtils.isNotBlank(entity.getVdsGroupSpiceProxy())) {
+            return entity.getVdsGroupSpiceProxy();
+        }
+
+        String globalSpiceProxy = Config.getValue(ConfigValues.SpiceProxyDefault);
+        if (StringUtils.isNotBlank(globalSpiceProxy)) {
+            return globalSpiceProxy;
+        }
+
+        return null;
     }
 
     @Mapping(from = VM.class, to = RunVmOnceParams.class)
