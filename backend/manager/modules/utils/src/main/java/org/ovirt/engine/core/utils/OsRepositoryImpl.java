@@ -91,7 +91,12 @@ public enum OsRepositoryImpl implements OsRepository {
             for (String uniqueName : uniqueNames) {
                 Preferences idNode = getKeyNode(uniqueName, "id", null);
                 if (idNode != null) {
-                    idToUnameLookup.put(idNode.getInt("value", 0), uniqueName);
+                    int osId = idNode.getInt("value", 0);
+                    if (idNode != emptyNode && idToUnameLookup.containsKey(osId)) {
+                        throw new RuntimeException(String.format("colliding os id %s at node %s", osId, idNode.absolutePath()));
+                    } else {
+                        idToUnameLookup.put(osId, uniqueName);
+                    }
                 }
             }
         } catch (BackingStoreException e) {
