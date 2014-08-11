@@ -7,13 +7,14 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
-import org.ovirt.engine.core.bll.scheduling.SlaValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
 import org.ovirt.engine.core.common.action.PlugAction;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -52,8 +53,17 @@ public class HotSetNumberOfCpusCommand<T extends HotSetNumerOfCpusParameters> ex
             canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
                     LocalizedVmStatus.from(getVm().getStatus()));
         }
-        if (getParameters().getVm().getNumOfCpus() > SlaValidator.getEffectiveCpuCores(getVds())) {
-            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS);
+        if (getParameters().getVm().getCpuPerSocket() >
+                Config.<Integer>getValue(
+                        ConfigValues.MaxNumOfCpuPerSocket,
+                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MAX_CPU_PER_SOCKET);
+        }
+        if (getParameters().getVm().getNumOfSockets() >
+                Config.<Integer>getValue(
+                        ConfigValues.MaxNumOfVmSockets,
+                        getVm().getVdsGroupCompatibilityVersion().getValue())) {
+            canDo = failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MAX_NUM_SOCKETS);
         }
         if (getParameters().getPlugAction() == PlugAction.PLUG) {
             if (!FeatureSupported.hotPlugCpu(getVm().getVdsGroupCompatibilityVersion(), getVm().getClusterArch())) {
