@@ -9,6 +9,8 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.prefs.BackingStoreException;
+import java.util.prefs.Preferences;
 
 import org.junit.Assert;
 
@@ -18,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
+
 
 public class OsRepositoryImplTest {
 
@@ -267,4 +270,16 @@ public class OsRepositoryImplTest {
                         .get(new Pair<>(20, Version.getLast())).contains("Conroe".toLowerCase()));
     }
 
+    @Test
+    public void testUniqueOsIdValidation() throws BackingStoreException {
+        Preferences invalidNode = preferences.node("/os/ubuntu/id");
+        invalidNode.put("value", "777");
+        try {
+            OsRepositoryImpl.INSTANCE.init(preferences);
+        } catch (RuntimeException e) {
+            // expected
+        }
+        invalidNode.removeNode();
+        OsRepositoryImpl.INSTANCE.init(preferences); // must pass with no exceptions
+    }
 }
