@@ -224,15 +224,26 @@ public class ProviderModel extends Model {
     private boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getType().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getNeutronAgentModel().validate();
+        boolean connectionSettingsValid = validateConnectionSettings();
+
+        return connectionSettingsValid &&
+                getName().getIsValid() &&
+                getType().getIsValid() &&
+                getNeutronAgentModel().getIsValid();
+    }
+
+    private boolean validateConnectionSettings() {
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
-        getNeutronAgentModel().validate();
 
-        return getName().getIsValid() && getType().getIsValid() && getUrl().getIsValid() && getUsername().getIsValid()
-                && getPassword().getIsValid() && getTenantName().getIsValid() && getNeutronAgentModel().getIsValid();
+        return getUrl().getIsValid() &&
+                getUsername().getIsValid() &&
+                getPassword().getIsValid() &&
+                getTenantName().getIsValid();
     }
 
     private void cancel() {
@@ -303,6 +314,10 @@ public class ProviderModel extends Model {
     }
 
     private void onTest() {
+        if (!validateConnectionSettings()) {
+            return;
+        }
+
         flush();
         startProgress(null);
         Frontend.getInstance().runAction(VdcActionType.TestProviderConnectivity,
