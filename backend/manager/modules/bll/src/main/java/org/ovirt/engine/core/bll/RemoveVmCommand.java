@@ -192,12 +192,18 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
     }
 
     private boolean canRemoveVm() {
-        if (isVmRunning(getVmId()) || (getVm().getStatus() == VMStatus.NotResponding)) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
+        switch (getVm().getStatus()) {
+            case Unassigned:
+            case Down:
+            case ImageIllegal:
+            case ImageLocked:
+                break;
+            case Suspended:
+                return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
+            default:
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_RUNNING);
         }
-        if (getVm().getStatus() == VMStatus.Suspended) {
-            return failCanDoAction(VdcBllMessages.VM_CANNOT_REMOVE_VM_WHEN_STATUS_IS_NOT_DOWN);
-        }
+
         if (isVmInPool(getVmId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ATTACHED_TO_POOL);
         }
