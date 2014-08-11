@@ -195,8 +195,6 @@ public class UnitVmModel extends Model {
             // ==General Tab==
             getDataCenterWithClustersList().setIsChangable(!value);
             getQuota().setIsChangable(false);
-            getDescription().setIsChangable(false);
-            getComment().setIsChangable(false);
 
             getNumOfDesktops().setIsChangable(false);
             getPrestartedVms().setIsChangable(false);
