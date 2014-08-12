@@ -56,6 +56,11 @@ public class Authz {
          */
         public static final ExtKey PRINCIPAL_RECORD = new ExtKey("AAA_AUTHZ_PRINCIPAL_RECORD", ExtMap.class, "ebc0d5ca-f1ea-402c-86ae-a8ecbdadd6b5");
         /**
+         * Principal value.
+         * @see PrincipalRecord
+         */
+        public static final ExtKey PRINCIPAL = new ExtKey("AAA_AUTHZ_PRINCIPAL_RECORD", String.class, "a3c1d5ca-f1ea-131c-86ae-a1ecbcadd6b7");
+        /**
          * AuthResult of operation.
          * @see Status
          */
@@ -108,9 +113,10 @@ public class Authz {
          * Used for user login.
          *
          * <p>
-         * Input:
+         * Input: Either one of the following:
          * <ul>
-         * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[M] - authentication record.</li>
+         * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[O] - authentication record.</li>
+         * <li>{@link Authz.InvokeKeys#PRINCIPAL}[O] - principal.</li>
          * </ul>
          * </p>
          *
@@ -221,6 +227,15 @@ public class Authz {
          * @see GroupRecord
          */
         public static final ExtKey GROUPS = new ExtKey("AAA_AUTHZ_PRINCIPAL_GROUPS", Collection/*<GroupRecord>*/.class, "738ec045-aade-478f-90f9-13f4aa229a54");
+        /**
+         * Principal name.
+         * Note: this value is output only,
+         * and cannot be used for search.
+         */
+        public static final ExtKey PRINCIPAL = new ExtKey("AAA_AUTHZ_PRINCIPAL_PRINCIPAL",
+                String.class,
+                "37c1c4ff-5367-480d-950a-1c3092521188");
+
     }
 
     /**
