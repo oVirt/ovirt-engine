@@ -65,6 +65,7 @@ class Plugin(plugin.PluginBase):
         after=(
             osetupcons.Stages.REMOVE_CUSTOMIZATION_COMMON,
         ),
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )
     def _customization(self):
         if self.environment[osetupcons.RemoveEnv.REMOVE_ALL]:
