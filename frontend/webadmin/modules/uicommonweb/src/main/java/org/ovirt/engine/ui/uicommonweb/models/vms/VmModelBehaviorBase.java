@@ -762,9 +762,6 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 model.getTemplate().setItems(Collections.singletonList(template));
                                 model.getTemplate().setSelectedItem(template);
                                 model.getTemplate().setIsChangable(false);
-                                if (!template.getId().equals(Guid.Empty)) {
-                                    getModel().getVmInitModel().init(template);
-                                }
                             }
                         },
                         getModel().getHash()
