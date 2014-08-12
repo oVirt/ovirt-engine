@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
-import com.google.gwt.user.client.ui.HTML;
-
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 
 import com.google.gwt.core.client.GWT;
@@ -12,6 +10,7 @@ import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.DOM;
+import com.google.gwt.user.client.ui.HTML;
 
 /**
  * A Cell used to render text, providing tooltip in case the content doesn't fit the parent element.
@@ -22,7 +21,7 @@ public class TextCellWithTooltip extends AbstractCellWithTooltip<String> impleme
 
     interface CellTemplate extends SafeHtmlTemplates {
 
-        @Template("<div class=\"{0}\" id=\"{1}\">{2}</div>")
+        @Template("<div class=\"{0}\" style='overflow: hidden; text-overflow: ellipsis; white-space: nowrap;' id=\"{1}\">{2}</div>")
         SafeHtml textContainer(String style, String id, SafeHtml text);
     }
 
