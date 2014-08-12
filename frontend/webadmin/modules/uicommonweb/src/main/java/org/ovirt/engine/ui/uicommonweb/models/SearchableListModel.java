@@ -702,7 +702,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
     protected boolean getNextSearchPageAllowed()
     {
         if (!getSearchNextPageCommand().getIsAvailable() || getItems() == null
-                || getItems().iterator().hasNext())
+                || !getItems().iterator().hasNext())
         {
             return false;
         }
