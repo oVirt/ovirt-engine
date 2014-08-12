@@ -21,8 +21,8 @@
 		}
 
 		.containerStyle {
-			width: 300px;
-			margin-right: 20px;
+			width: 310px;
+			margin-right: 10px;
 		}
 	</ui:style>
 
