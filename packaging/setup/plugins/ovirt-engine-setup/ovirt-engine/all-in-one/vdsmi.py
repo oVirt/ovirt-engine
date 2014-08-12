@@ -28,7 +28,7 @@ import distutils.version
 
 from otopi import util
 from otopi import plugin
-from vdsm import vdscli
+
 
 from ovirt_engine_setup import constants as osetupcons
 from ovirt_engine_setup.engine import constants as oenginecons
@@ -208,7 +208,7 @@ class Plugin(plugin.PluginBase):
                 pv=osetupconfig.PACKAGE_VERSION,
             )
         )
-
+        from vdsm import vdscli
         result = vdscli.connect().getVdsCapabilities()
         code, message = result['status']['code'], result['status']['message']
         if code != 0 or 'info' not in result:
