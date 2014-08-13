@@ -1,15 +1,9 @@
 package org.ovirt.engine.core.bll.memory;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
-
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.HibernateVmCommand;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -140,20 +134,5 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
 
     public boolean isCreateTasks() {
         return true;
-    }
-
-    public List<DiskImage> getDisksToBeCreated() {
-        DiskImage imageForMemory = new DiskImage();
-        imageForMemory.setStorageIds(new ArrayList<Guid>(Collections.singletonList(storageDomainId)));
-        imageForMemory.setStoragePoolId(storagePool.getId());
-        imageForMemory.setSize(vm.getTotalMemorySizeInBytes());
-        imageForMemory.setVolumeType(getVolumeTypeForDomain());
-        imageForMemory.setvolumeFormat(VolumeFormat.RAW);
-
-        DiskImage imageForMetadata = DiskImage.copyOf(imageForMemory);
-        imageForMetadata.setSize(MemoryUtils.META_DATA_SIZE_IN_BYTES);
-        imageForMetadata.setVolumeType(VolumeType.Sparse);
-        imageForMetadata.setvolumeFormat(VolumeFormat.COW);
-        return Arrays.asList(imageForMemory, imageForMetadata);
     }
 }

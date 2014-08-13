@@ -79,6 +79,7 @@ public class CreateAllSnapshotsFromVmCommandTest {
         doReturn(multipleStorageDomainsValidator).when(cmd).createMultipleStorageDomainsValidator(any(List.class));
         doReturn(vmValidator).when(cmd).createVmValidator();
         doReturn(memoryImageBuilder).when(cmd).getMemoryImageBuilder();
+        doReturn(Guid.newGuid()).when(cmd).getStorageDomainIdForVmMemory(anyList());
     }
 
     @Test

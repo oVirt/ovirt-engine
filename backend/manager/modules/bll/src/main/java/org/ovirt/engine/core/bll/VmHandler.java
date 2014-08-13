@@ -670,21 +670,6 @@ public class VmHandler {
      *           The storage pool where the search for a domain will be made
      * @param sizeRequested
      *           The free size we need to have in the domain, in gigabytes
-     * @return storage domain in the given pool with at least the required amount of free space,
-     *         or null if no such storage domain exists in the pool
-     */
-    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested) {
-        return findStorageDomainForMemory(storagePoolId, sizeRequested, Collections.<StorageDomain, Integer>emptyMap());
-    }
-
-    /**
-     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
-     * at least as much as requested free space and can be used to store memory images
-     *
-     * @param storagePoolId
-     *           The storage pool where the search for a domain will be made
-     * @param sizeRequested
-     *           The free size we need to have in the domain, in gigabytes
      * @param domain2reservedSpaceInDomain
      *           Maps storage domain to size we already reserved on it
      * @return storage domain in the given pool with at least the required amount of free space,
@@ -729,8 +714,8 @@ public class VmHandler {
 
     protected static StorageDomain findStorageDomainForMemory(List<StorageDomain> domainsInPool, List<DiskImage> disksList) {
         for (StorageDomain currDomain : domainsInPool) {
-            //There should be two disks in the disksList, first of which is memory disk. Only its volume type should be modified.
-            updateDisksStorageType(currDomain.getStorageType(), disksList.get(0));
+
+            updateDisksStorage(currDomain, disksList);
             if (currDomain.getStorageDomainType().isDataDomain()
                     && currDomain.getStatus() == StorageDomainStatus.Active
                     && validateSpaceRequirements(currDomain, disksList)) {
@@ -740,7 +725,15 @@ public class VmHandler {
         return null;
     }
 
-    private static void updateDisksStorageType(StorageType storageType, DiskImage disk) {
+    private static void updateDisksStorage(StorageDomain storageDomain, List<DiskImage> disksList) {
+        for (DiskImage disk : disksList) {
+            disk.setStorageIds(new ArrayList<Guid>(Collections.singletonList(storageDomain.getId())));
+        }
+        //There should be two disks in the disksList, first of which is memory disk. Only its volume type should be modified.
+        updateDiskVolumeType(storageDomain.getStorageType(), disksList.get(0));
+    }
+
+    private static void updateDiskVolumeType(StorageType storageType, DiskImage disk) {
         VolumeType volumeType = storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
         disk.setVolumeType(volumeType);
     }
