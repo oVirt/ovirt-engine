@@ -74,16 +74,9 @@ public abstract class VmInfoBuilderBase {
                     ConfigValues.HotPlugCpuSupported,
                     vm.getVdsGroupCompatibilityVersion(),
                     vm.getClusterArch())) {
-                Integer maxSockets = Config.<Integer>getValue(
-                        ConfigValues.MaxNumOfVmSockets,
-                        vm.getVdsGroupCompatibilityVersion().getValue());
-                Integer maxVCpus = Config.<Integer>getValue(
-                        ConfigValues.MaxNumOfVmCpus,
-                        vm.getVdsGroupCompatibilityVersion().getValue());
-                maxVCpus = Math.min(maxVCpus, (vm.getCpuPerSocket() * maxSockets));
                 createInfo.put(
                         VdsProperties.max_number_of_cpus,
-                        maxVCpus.toString());
+                        calcMaxVCpu().toString());
             }
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
@@ -148,6 +141,17 @@ public abstract class VmInfoBuilderBase {
         }
         createInfo.put(VdsProperties.transparent_huge_pages,
                 vm.isTransparentHugePages() ? "true" : "false");
+    }
+
+    private Integer calcMaxVCpu() {
+        Integer maxSockets = Config.<Integer>getValue(
+                ConfigValues.MaxNumOfVmSockets,
+                vm.getVdsGroupCompatibilityVersion().getValue());
+        Integer maxVCpus = Config.<Integer>getValue(
+                ConfigValues.MaxNumOfVmCpus,
+                vm.getVdsGroupCompatibilityVersion().getValue());
+        maxVCpus = vm.getCpuPerSocket() * (Math.min(maxSockets, maxVCpus / vm.getCpuPerSocket()));
+        return maxVCpus;
     }
 
     private void addCpuPinning(final String compatibilityVersion) {
