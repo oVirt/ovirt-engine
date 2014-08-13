@@ -31,6 +31,16 @@ public interface DiskImageDAO extends ReadDao<DiskImage, Guid> {
     List<DiskImage> getAllSnapshotsForParent(Guid id);
 
     /**
+     * Retrieves all snapshots by a given image id
+     * (ordered by the images chain).
+     *
+     * @param id
+     *            the parent id
+     * @return the list of snapshots
+     */
+    List<DiskImage> getAllSnapshotsForLeaf(Guid id);
+
+    /**
      * Retrieves all snapshots associated with the given storage domain.
      *
      * @param id

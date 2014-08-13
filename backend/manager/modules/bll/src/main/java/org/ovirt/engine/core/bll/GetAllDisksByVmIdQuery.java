@@ -46,7 +46,7 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
     }
 
     protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
     }
 
     private Map<Guid, VmDevice> getDisksVmDeviceMap() {

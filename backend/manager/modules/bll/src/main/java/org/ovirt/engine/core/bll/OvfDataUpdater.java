@@ -490,9 +490,8 @@ public class OvfDataUpdater {
         }
     }
 
-    protected ArrayList<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                diskImage.getImageTemplateId());
+    protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
     }
 
     protected String generateVmMetadata(VM vm, ArrayList<DiskImage> AllVmImages) {

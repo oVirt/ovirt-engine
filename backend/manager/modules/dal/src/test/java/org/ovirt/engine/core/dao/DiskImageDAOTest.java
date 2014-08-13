@@ -11,9 +11,12 @@ import static org.ovirt.engine.core.dao.FixturesTool.TEMPLATE_IMAGE_ID;
 
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -147,5 +150,24 @@ public class DiskImageDAOTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertNotNull(result);
         assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllSnapshotsForLeaf() {
+        List<DiskImage> images = dao.getAllSnapshotsForLeaf(FixturesTool.IMAGE_ID);
+
+        assertFalse(images.isEmpty());
+        assertFalse(CollectionUtils.exists(images, new Predicate() {
+            public boolean evaluate(Object disk) {
+                return ((DiskImage) disk).getVmEntityType() == VmEntityType.TEMPLATE;
+            }
+        }));
+    }
+
+    @Test
+    public void testGetAllSnapshotsForLeafInvalidGuid() {
+        List<DiskImage> images = dao.getAllSnapshotsForLeaf(Guid.newGuid());
+
+        assertTrue(images.isEmpty());
     }
 }

@@ -88,6 +88,28 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetSnapshotByLeafGuid(v_image_guid UUID)
+RETURNS SETOF images_storage_domain_view STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY WITH RECURSIVE image_list AS (
+          SELECT *
+          FROM   images_storage_domain_view
+          WHERE  image_guid = v_image_guid
+          UNION ALL
+          SELECT images_storage_domain_view.*
+          FROM   images_storage_domain_view
+          JOIN   image_list ON
+                 image_list.parentid = images_storage_domain_view.image_guid AND
+                 image_list.image_group_id = images_storage_domain_view.image_group_id
+      )
+      SELECT *
+      FROM image_list;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
 
 Create or replace FUNCTION GetVmImageByImageGuid(v_image_guid UUID)
 RETURNS SETOF vm_images_view STABLE

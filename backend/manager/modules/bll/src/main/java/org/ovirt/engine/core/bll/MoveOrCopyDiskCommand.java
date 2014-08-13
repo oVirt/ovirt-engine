@@ -168,8 +168,8 @@ public class MoveOrCopyDiskCommand<T extends MoveOrCopyImageGroupParameters> ext
         return false;
     }
 
-    private List<DiskImage> getAllImageSnapshots() {
-        return ImagesHandler.getAllImageSnapshots(getImage().getImageId(), getImage().getImageTemplateId());
+    protected List<DiskImage> getAllImageSnapshots() {
+        return ImagesHandler.getAllImageSnapshots(getImage().getImageId());
     }
 
     protected boolean checkIfNeedToBeOverride() {
