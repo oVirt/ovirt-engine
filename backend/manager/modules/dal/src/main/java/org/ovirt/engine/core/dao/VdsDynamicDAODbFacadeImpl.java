@@ -105,7 +105,8 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
             entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
-
+            entity.setSupportedEmulatedMachines(rs.getString("supported_emulated_machines"));
+            entity.getSupportedRngSources().addAll(VmRngDevice.csvToSourcesSet(rs.getString("supported_rng_sources")));
             return entity;
         }
     }

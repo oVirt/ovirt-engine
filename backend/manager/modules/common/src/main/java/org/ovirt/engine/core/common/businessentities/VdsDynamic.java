@@ -6,8 +6,8 @@ import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
-
 import java.util.Set;
+
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -746,7 +746,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         }
         VdsDynamic other = (VdsDynamic) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.objectsEqual(_supportedClusterVersionsSet, other._supportedClusterVersionsSet)
+                && ObjectUtils.objectsEqual(getSupportedClusterVersionsSet(), other.getSupportedClusterVersionsSet())
                 && ObjectUtils.objectsEqual(_supportedENGINESVersionsSet, other._supportedENGINESVersionsSet)
                 && ObjectUtils.objectsEqual(buildName, other.buildName)
                 && ObjectUtils.objectsEqual(cpu_cores, other.cpu_cores)
@@ -793,7 +793,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(hwUUID, other.hwUUID)
                 && ObjectUtils.objectsEqual(hwFamily, other.hwFamily)
                 && ObjectUtils.objectsEqual(HBAs, other.HBAs)
-                && ObjectUtils.objectsEqual(supportedEmulatedMachines, other.supportedEmulatedMachines)
                 && powerManagementControlledByPolicy == other.powerManagementControlledByPolicy
                 && kdumpStatus == other.kdumpStatus
                 && ObjectUtils.objectsEqual(selinuxEnforceMode, other.selinuxEnforceMode)
@@ -806,5 +805,4 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && liveSnapshotSupport == other.liveSnapshotSupport
                 && liveMergeSupport == other.liveMergeSupport;
     }
-
 }
