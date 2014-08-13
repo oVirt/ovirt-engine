@@ -240,7 +240,7 @@ class Plugin(plugin.PluginBase):
                         interactive and
                         group not in already_asked
                     ):
-                        if group in self.environment[
+                        if group not in self.environment[
                             osetupcons.RemoveEnv.REMOVE_SPEC_OPTION_GROUP_LIST
                         ]:
                             already_asked.append(group)
