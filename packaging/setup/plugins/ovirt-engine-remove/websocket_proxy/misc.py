@@ -68,7 +68,7 @@ class Plugin(plugin.PluginBase):
                 prompt=True,
                 true=_('Yes'),
                 false=_('No'),
-                default=True,
+                default=False,
             )
             if self.environment[owspcons.RemoveEnv.REMOVE_WSP]:
                 self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS].append(

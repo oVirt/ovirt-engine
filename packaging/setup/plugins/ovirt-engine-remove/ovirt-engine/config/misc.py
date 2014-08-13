@@ -76,7 +76,7 @@ class Plugin(plugin.PluginBase):
                 prompt=True,
                 true=_('Yes'),
                 false=_('No'),
-                default=True,
+                default=False,
             )
             if self.environment[oenginecons.RemoveEnv.REMOVE_ENGINE]:
                 self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS].append(
