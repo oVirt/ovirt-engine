@@ -442,6 +442,7 @@ Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	java
 Requires:	logrotate
 Requires:	python-psycopg2
+Requires:	bzip2
 
 %if %{ovirt_install_systemd}
 Requires(post):		systemd
