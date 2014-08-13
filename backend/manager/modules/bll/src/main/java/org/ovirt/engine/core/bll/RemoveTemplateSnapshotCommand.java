@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -24,11 +25,11 @@ public class RemoveTemplateSnapshotCommand<T extends ImagesContainterParametersB
     protected void executeCommand() {
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.RemoveVmTemplate);
 
-        VDSReturnValue vdsReturnValue = runVdsCommand(
-                        VDSCommandType.DeleteImageGroup,
-                        new DeleteImageGroupVDSCommandParameters(getParameters().getStoragePoolId(), getParameters()
-                                .getStorageDomainId(), getParameters().getImageGroupID(), getParameters()
-                                .getWipeAfterDelete(), false));
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+                PostZeroHandler.fixParametersWithPostZero(
+                        new DeleteImageGroupVDSCommandParameters(getParameters().getStoragePoolId(),
+                                getParameters().getStorageDomainId(), getParameters().getImageGroupID(),
+                                getParameters().getWipeAfterDelete(), false)));
 
         if (vdsReturnValue.getSucceeded()) {
             getReturnValue().getInternalVdsmTaskIdList().add(

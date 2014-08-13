@@ -7,6 +7,7 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -296,9 +297,10 @@ public class RemoveImageCommand<T extends RemoveImageParameters> extends BaseIma
                     getCompensationContext());
         }
         return runVdsCommand(VDSCommandType.DeleteImageGroup,
-                new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
-                        getStorageDomainId(), getDiskImage().getId(),
-                        getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete()));
+                PostZeroHandler.fixParametersWithPostZero(
+                        new DeleteImageGroupVDSCommandParameters(getDiskImage().getStoragePoolId(),
+                                getStorageDomainId(), getDiskImage().getId(),
+                                getDiskImage().isWipeAfterDelete(), getParameters().getForceDelete())));
     }
 
     protected VmDeviceDAO getVmDeviceDAO() {

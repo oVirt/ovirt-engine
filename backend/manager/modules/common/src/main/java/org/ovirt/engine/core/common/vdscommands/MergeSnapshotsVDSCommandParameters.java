@@ -2,7 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
+public class MergeSnapshotsVDSCommandParameters
+        extends AllStorageAndImageIdVDSCommandParametersBase implements PostZero {
     private Guid _imageId2;
 
     public MergeSnapshotsVDSCommandParameters(Guid storagePoolId, Guid storageDomainId,
@@ -29,12 +30,14 @@ public class MergeSnapshotsVDSCommandParameters extends AllStorageAndImageIdVDSC
 
     private boolean privatePostZero;
 
+    @Override
     public boolean getPostZero() {
         return privatePostZero;
     }
 
-    public void setPostZero(boolean value) {
-        privatePostZero = value;
+    @Override
+    public void setPostZero(boolean postZero) {
+        privatePostZero = postZero;
     }
 
     public MergeSnapshotsVDSCommandParameters() {

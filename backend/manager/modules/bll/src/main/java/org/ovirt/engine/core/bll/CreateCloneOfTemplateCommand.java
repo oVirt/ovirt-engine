@@ -5,6 +5,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -56,12 +57,13 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
         Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.AddVmFromTemplate);
         try {
             vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
-                    new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
-                            getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
-                            newDiskImage.getId(), getDestinationImageId(),
-                            "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
-                            newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
-                            getDiskImage().isWipeAfterDelete(), false));
+                    PostZeroHandler.fixParametersWithPostZero(
+                            new CopyImageVDSCommandParameters(storagePoolID, getParameters().getStorageDomainId(),
+                                    getVmTemplateId(), getDiskImage().getId(), getImage().getImageId(),
+                                    newDiskImage.getId(), getDestinationImageId(),
+                                    "", getDestinationStorageDomainId(), CopyVolumeType.LeafVol,
+                                    newDiskImage.getVolumeFormat(), newDiskImage.getVolumeType(),
+                                    getDiskImage().isWipeAfterDelete(), false)));
 
         } catch (VdcBLLException e) {
             log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());

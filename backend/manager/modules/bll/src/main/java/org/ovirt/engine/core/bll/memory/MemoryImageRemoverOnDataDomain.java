@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.memory;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.action.RemoveMemoryVolumesParameters;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
@@ -29,14 +30,16 @@ public class MemoryImageRemoverOnDataDomain extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(2), isPostZero(), false);
+        return PostZeroHandler.fixParametersWithPostZero(
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
+                        isPostZero(), false));
     }
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(4), isPostZero(), false);
+        return PostZeroHandler.fixParametersWithPostZero(
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
+                        isPostZero(), false));
     }
 
     protected boolean isPostZero() {

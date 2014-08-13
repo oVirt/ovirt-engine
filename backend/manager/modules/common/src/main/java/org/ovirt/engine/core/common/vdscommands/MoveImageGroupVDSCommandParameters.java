@@ -3,7 +3,8 @@ package org.ovirt.engine.core.common.vdscommands;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.compat.Guid;
 
-public class MoveImageGroupVDSCommandParameters extends TargetDomainImageGroupVDSCommandParameters {
+public class MoveImageGroupVDSCommandParameters
+        extends TargetDomainImageGroupVDSCommandParameters implements PostZero {
     private Guid privateVmId;
 
     public Guid getVmId() {
@@ -35,12 +36,14 @@ public class MoveImageGroupVDSCommandParameters extends TargetDomainImageGroupVD
 
     private boolean privatePostZero;
 
+    @Override
     public boolean getPostZero() {
         return privatePostZero;
     }
 
-    public void setPostZero(boolean value) {
-        privatePostZero = value;
+    @Override
+    public void setPostZero(boolean postZero) {
+        privatePostZero = postZero;
     }
 
     private boolean privateForce;

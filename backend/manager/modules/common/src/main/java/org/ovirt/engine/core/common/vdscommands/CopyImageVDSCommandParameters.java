@@ -5,7 +5,8 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
+public class CopyImageVDSCommandParameters
+        extends AllStorageAndImageIdVDSCommandParametersBase implements PostZero {
     public CopyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid vmId, Guid imageGroupId,
             Guid srcImageId, Guid dstImageGroupId, Guid dstVolUUID, String description, Guid dstStorageDomainId,
             CopyVolumeType copyVolumeType, VolumeFormat volumeFormat, VolumeType preallocate, boolean postZero,
@@ -105,12 +106,14 @@ public class CopyImageVDSCommandParameters extends AllStorageAndImageIdVDSComman
 
     private boolean privatePostZero;
 
+    @Override
     public boolean getPostZero() {
         return privatePostZero;
     }
 
-    public void setPostZero(boolean value) {
-        privatePostZero = value;
+    @Override
+    public void setPostZero(boolean postZero) {
+        privatePostZero = postZero;
     }
 
     private boolean privateForce;

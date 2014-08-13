@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
@@ -46,7 +47,8 @@ public class RemoveSnapshotSingleDiskCommand<T extends ImagesContainterParameter
         MergeSnapshotsVDSCommandParameters params = new MergeSnapshotsVDSCommandParameters(storagePoolId,
                 storageDomainId, getVmId(), getDiskImage().getId(), getDiskImage().getImageId(),
                 getDestinationDiskImage().getImageId(), getDiskImage().isWipeAfterDelete());
-        return runVdsCommand(VDSCommandType.MergeSnapshots, params);
+        return runVdsCommand(VDSCommandType.MergeSnapshots,
+                PostZeroHandler.fixParametersWithPostZero(params));
     }
 
     protected Guid createTask(Guid taskId, VDSReturnValue vdsReturnValue, Guid storageDomainId) {

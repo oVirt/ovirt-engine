@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -60,11 +61,12 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
                 getParameters().getDestinationStorageDomainId());
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
-                new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
+                PostZeroHandler.fixParametersWithPostZero(
+                        new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
-                                getDestinationImageId(), StringUtils.defaultString(newImage.getDescription()), getParameters()
-                                        .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, targetFormat,
-                                        newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(), false));
+                                getDestinationImageId(), StringUtils.defaultString(newImage.getDescription()),
+                                getParameters().getDestinationStorageDomainId(), CopyVolumeType.SharedVol,
+                                targetFormat, newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(), false)));
 
         getReturnValue().getInternalVdsmTaskIdList().add(
                 createTask(taskId,

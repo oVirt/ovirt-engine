@@ -2,25 +2,28 @@ package org.ovirt.engine.core.common.vdscommands;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters {
-    private boolean postZeros;
+public class DeleteImageGroupVDSCommandParameters
+        extends StoragePoolDomainAndGroupIdBaseVDSCommandParameters implements PostZero {
+    private boolean postZero;
     private boolean forceDelete;
 
     public DeleteImageGroupVDSCommandParameters(Guid storagePoolId,
-            Guid storageDomainId, Guid imageGroupId, boolean postZeros, boolean force) {
+            Guid storageDomainId, Guid imageGroupId, boolean postZero, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId);
-        setPostZeros(postZeros);
+        setPostZero(postZero);
         setForceDelete(force);
     }
 
     public DeleteImageGroupVDSCommandParameters() { }
 
-    public boolean getPostZeros() {
-        return postZeros;
+    @Override
+    public boolean getPostZero() {
+        return postZero;
     }
 
-    protected void setPostZeros(boolean value) {
-        postZeros = value;
+    @Override
+    public void setPostZero(boolean postZero) {
+        this.postZero = postZero;
     }
 
     public boolean getForceDelete() {
@@ -35,7 +38,7 @@ public class DeleteImageGroupVDSCommandParameters extends StoragePoolDomainAndGr
     public String toString() {
         return String.format("%s, postZeros = %s, forceDelete = %s",
                 super.toString(),
-                getPostZeros(),
+                getPostZero(),
                 getForceDelete());
     }
 }
