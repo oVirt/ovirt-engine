@@ -477,7 +477,8 @@ AS $procedure$
 BEGIN
     DELETE FROM job
     WHERE (status = 'STARTED'
-    AND    action_type IN ('MigrateVm', 'MigrateVmToServer', 'RunVm', 'RunVmOnce'));
+    AND    action_type IN ('MigrateVm', 'MigrateVmToServer', 'RunVm', 'RunVmOnce'))
+    AND    job_id not in (select job_id from step where step_id in (select step_id from async_tasks));
 
     DELETE FROM job
     WHERE job_id IN
