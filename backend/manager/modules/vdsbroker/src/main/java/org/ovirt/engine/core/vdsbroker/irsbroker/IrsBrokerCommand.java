@@ -46,14 +46,15 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
     static final VDSStatus reportingVdsStatus = VDSStatus.Up;
 
     /**
-     * process received domain monitoring information from a given vds if necessary (according to it's status).
+     * process received domain monitoring information from a given vds if necessary (according to it's status
+     * and if it's a virtualization node).
      * @param vds
      * @param storagePoolId
      * @param vdsDomainData
      */
     public static void updateVdsDomainsData(VDS vds, Guid storagePoolId,
             ArrayList<VDSDomainsData> vdsDomainData) {
-        if (vds.getStatus() == reportingVdsStatus) {
+        if (vds.getStatus() == reportingVdsStatus && vds.getVdsGroupSupportsVirtService()) {
             IrsProxyData proxy = _irsProxyData.get(storagePoolId);
             if (proxy != null) {
                 proxy.updateVdsDomainsData(vds.getId(), vds.getName(), vdsDomainData);
