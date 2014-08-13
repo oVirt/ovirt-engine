@@ -14,8 +14,11 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
+import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
+import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 public class SharedMacPoolListModel extends ListWithDetailsModel {
 
@@ -30,6 +33,7 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         return newCommand;
     }
 
+    @Override
     public UICommand getEditCommand() {
         return editCommand;
     }
@@ -148,4 +152,11 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         }
     }
 
+    @Override
+    protected void initDetailModels() {
+        ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
+        list.add(new PermissionListModel());
+
+        setDetailModels(list);
+    }
 }

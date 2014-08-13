@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeGeneralModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.InstanceTypeModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.MacPoolPermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RoleModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.RolePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.SharedMacPoolModelProvider;
@@ -113,6 +114,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // SharedMacPoolListModel
         bind(SharedMacPoolModelProvider.class).asEagerSingleton();
+
+        // MacPoolPermissionModelProvider
+        bind(MacPoolPermissionModelProvider.class).asEagerSingleton();
 
         // disk profiles permissions
         bind(DiskProfilePermissionModelProvider.class).asEagerSingleton();

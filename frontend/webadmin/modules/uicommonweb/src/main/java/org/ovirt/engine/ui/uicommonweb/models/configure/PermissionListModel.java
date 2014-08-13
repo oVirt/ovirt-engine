@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.action.PermissionsOperationsParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.MacPool;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -391,6 +392,9 @@ public class PermissionListModel extends SearchableListModel
         }
         if (getEntity() instanceof CpuProfile) {
             return VdcObjectType.CpuProfile;
+        }
+        if (getEntity() instanceof MacPool) {
+            return VdcObjectType.MacPool;
         }
         return VdcObjectType.Unknown;
     }
