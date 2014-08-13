@@ -1183,6 +1183,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
             log.error(String.format("Command %1$s throw exception", getClass().getName()), e);
         } finally {
+            if (!exceptionOccurred) {
+                setCommandExecuted();
+            }
             // If we failed to execute due to exception or some other reason, we compensate for the failure.
             if (exceptionOccurred || !getSucceeded()) {
                 clearChildAsyncTasksWithOutVdsmId();
@@ -1322,7 +1325,6 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             // Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
-            setCommandExecuted();
             try {
                 if (getCommandShouldBeLogged()) {
                     logRenamedEntity();
