@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
@@ -36,6 +37,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -68,6 +70,7 @@ public class AuditLogableBase extends TimeoutBase {
     private Guid mVmTemplateId;
     private String mVmTemplateName;
     private VDS mVds;
+    private VdsStatic cachedVdsStatic;
     private VM mVm;
     private VmTemplate mVmTemplate;
     private Guid _storageDomainId;
@@ -251,8 +254,16 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public String getVdsName() {
-        if (mVdsName == null && getVds() != null) {
-            mVdsName = getVds().getName();
+        if (mVdsName == null) {
+            if (getVdsNoLoad() == null) {
+                if (getVdsStatic() != null) {
+                    mVdsName = getVdsStatic().getName();
+                }
+            } else {
+                if (getVds() != null) {
+                    mVdsName = getVds().getName();
+                }
+            }
         }
         return mVdsName;
     }
@@ -347,6 +358,10 @@ public class AuditLogableBase extends TimeoutBase {
         return AuditLogType.UNASSIGNED;
     }
 
+    private VDS getVdsNoLoad() {
+        return mVds;
+    }
+
     protected VDS getVds() {
         if (mVds == null
                 && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
@@ -360,6 +375,21 @@ public class AuditLogableBase extends TimeoutBase {
             }
         }
         return mVds;
+    }
+
+    protected VdsStatic getVdsStatic() {
+        if (cachedVdsStatic == null
+                && ((mVdsId != null && !Guid.Empty.equals(mVdsId)) || (getVm() != null && getVm().getRunOnVds() != null))) {
+            if (mVdsId == null || Guid.Empty.equals(mVdsId)) {
+                mVdsId = getVm().getRunOnVds();
+            }
+            try {
+                cachedVdsStatic = getVdsStaticDAO().get(getVdsId());
+            } catch (final RuntimeException e) {
+                log.infoFormat("Failed to get vds {0}\n{1}", mVdsId, e.getMessage());
+            }
+        }
+        return cachedVdsStatic;
     }
 
     public void setVds(final VDS value) {
@@ -578,6 +608,10 @@ public class AuditLogableBase extends TimeoutBase {
 
     public VdsDAO getVdsDAO() {
         return getDbFacade().getVdsDao();
+    }
+
+    public VdsStaticDAO getVdsStaticDAO() {
+        return getDbFacade().getVdsStaticDao();
     }
 
     public VdsDynamicDAO getVdsDynamicDao() {

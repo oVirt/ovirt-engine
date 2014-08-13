@@ -38,7 +38,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
@@ -438,10 +437,6 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(UpdateEntity.class);
         return super.getValidationGroups();
-    }
-
-    protected VdsStaticDAO getVdsStaticDAO() {
-        return getDbFacade().getVdsStaticDao();
     }
 
     @Override
