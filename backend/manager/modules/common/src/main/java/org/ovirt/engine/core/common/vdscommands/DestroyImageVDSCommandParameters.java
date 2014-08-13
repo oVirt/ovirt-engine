@@ -4,7 +4,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Guid;
 
-public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCommandParametersBase {
+public class DestroyImageVDSCommandParameters
+        extends AllStorageAndImageIdVDSCommandParametersBase implements PostZero {
     public DestroyImageVDSCommandParameters(Guid storagePoolId, Guid storageDomainId, Guid imageGroupId,
             List<Guid> imageList, boolean postZero, boolean force) {
         super(storagePoolId, storageDomainId, imageGroupId, Guid.Empty);
@@ -25,12 +26,14 @@ public class DestroyImageVDSCommandParameters extends AllStorageAndImageIdVDSCom
 
     private boolean privatePostZero;
 
+    @Override
     public boolean getPostZero() {
         return privatePostZero;
     }
 
-    protected void setPostZero(boolean value) {
-        privatePostZero = value;
+    @Override
+    public void setPostZero(boolean postZero) {
+        privatePostZero = postZero;
     }
 
     private boolean privateForce;

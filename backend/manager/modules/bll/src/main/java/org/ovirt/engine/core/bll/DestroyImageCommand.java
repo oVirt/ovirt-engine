@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
@@ -57,13 +58,14 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
     }
 
     private VDSParametersBase createVDSParameters() {
-        return new DestroyImageVDSCommandParameters(
-                getParameters().getStoragePoolId(),
-                getParameters().getStorageDomainId(),
-                getParameters().getImageGroupId(),
-                getParameters().getImageList(),
-                getParameters().isPostZero(),
-                getParameters().isForce());
+        return PostZeroHandler.fixParametersWithPostZero(
+                new DestroyImageVDSCommandParameters(
+                        getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(),
+                        getParameters().getImageGroupId(),
+                        getParameters().getImageList(),
+                        getParameters().isPostZero(),
+                        getParameters().isForce()));
     }
 
     @Override

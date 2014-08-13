@@ -16,7 +16,7 @@ public class DeleteImageGroupVDSCommand<P extends DeleteImageGroupVDSCommandPara
                 getIrsProxy().deleteImage(getParameters().getStorageDomainId().toString(),
                                                getParameters().getStoragePoolId().toString(),
                                                getParameters().getImageGroupId().toString(),
-                                               String.valueOf(getParameters().getPostZeros()),
+                                               String.valueOf(getParameters().getPostZero()),
                                                String.valueOf(getParameters().getForceDelete()).toLowerCase());
 
         proceedProxyReturnValue();

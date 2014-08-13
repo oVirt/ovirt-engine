@@ -4,6 +4,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
@@ -69,34 +70,36 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         if (getParameters().getUseCopyCollapse()) {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.CopyImage,
-                    new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
-                            sourceDomainId,
-                            getParameters().getContainerId(),
-                            getParameters().getImageGroupID(),
-                            getParameters().getImageId(),
-                            getParameters().getDestImageGroupId(),
-                            getParameters().getDestinationImageId(),
-                            "",
-                            getParameters().getStorageDomainId(),
-                            getParameters().getCopyVolumeType(),
-                            getVolumeFormatForDomain(),
-                            getParameters().getVolumeType(),
-                            isWipeAfterDelete(),
-                            getParameters().getForceOverride()));
+                    PostZeroHandler.fixParametersWithPostZero(
+                            new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
+                                    sourceDomainId,
+                                    getParameters().getContainerId(),
+                                    getParameters().getImageGroupID(),
+                                    getParameters().getImageId(),
+                                    getParameters().getDestImageGroupId(),
+                                    getParameters().getDestinationImageId(),
+                                    "",
+                                    getParameters().getStorageDomainId(),
+                                    getParameters().getCopyVolumeType(),
+                                    getVolumeFormatForDomain(),
+                                    getParameters().getVolumeType(),
+                                    isWipeAfterDelete(),
+                                    getParameters().getForceOverride())));
         } else {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.MoveImageGroup,
-                    new MoveImageGroupVDSCommandParameters(
-                            getDiskImage() != null ? getDiskImage().getStoragePoolId()
-                                    : getStorageDomain().getStoragePoolId(),
-                            sourceDomainId,
-                            getDiskImage() != null ?
-                                    getDiskImage().getId() : getParameters().getImageGroupID(),
-                            getParameters().getStorageDomainId(),
-                            getParameters().getContainerId(),
-                            ImageOperation.Copy,
-                            isWipeAfterDelete(),
-                            getParameters().getForceOverride()));
+                    PostZeroHandler.fixParametersWithPostZero(
+                            new MoveImageGroupVDSCommandParameters(
+                                    getDiskImage() != null ? getDiskImage().getStoragePoolId()
+                                            : getStorageDomain().getStoragePoolId(),
+                                    sourceDomainId,
+                                    getDiskImage() != null ?
+                                            getDiskImage().getId() : getParameters().getImageGroupID(),
+                                    getParameters().getStorageDomainId(),
+                                    getParameters().getContainerId(),
+                                    ImageOperation.Copy,
+                                    isWipeAfterDelete(),
+                                    getParameters().getForceOverride())));
         }
 
         if (vdsReturnValue.getSucceeded()) {

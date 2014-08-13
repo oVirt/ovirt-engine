@@ -6,6 +6,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
@@ -334,10 +335,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
             // delete first image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
-            VDSReturnValue vdsRetValue = runVdsCommand(
-                    VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids.get(1),
-                            guids.get(0), guids.get(2), postZero, false));
+            VDSReturnValue vdsRetValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+                    PostZeroHandler.fixParametersWithPostZero(
+                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
+                                    postZero, false)));
 
             if (!vdsRetValue.getSucceeded()) {
                 return false;
@@ -350,10 +351,10 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
             Guid taskId2 = persistAsyncTaskPlaceHolder(parentCommand, DELETE_SECONDARY_IMAGES_TASK_KEY);
             // delete second image
             // the next 'DeleteImageGroup' command should also take care of the image removal:
-            vdsRetValue = runVdsCommand(
-                    VDSCommandType.DeleteImageGroup,
-                    new DeleteImageGroupVDSCommandParameters(guids.get(1),
-                            guids.get(0), guids.get(4), postZero, false));
+            vdsRetValue = runVdsCommand(VDSCommandType.DeleteImageGroup,
+                    PostZeroHandler.fixParametersWithPostZero(
+                            new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
+                                    postZero, false)));
 
             if (!vdsRetValue.getSucceeded()) {
                 if (startPollingTasks) {

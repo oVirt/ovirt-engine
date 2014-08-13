@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.memory;
 
 import java.util.List;
 
+import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -31,14 +32,16 @@ public class HibernationVolumesRemover extends MemoryImageRemover {
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryImageParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(2), isPostZero(), false);
+        return PostZeroHandler.fixParametersWithPostZero(
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(2),
+                        isPostZero(), false));
     }
 
     @Override
     protected DeleteImageGroupVDSCommandParameters buildDeleteMemoryConfParams(List<Guid> guids) {
-        return new DeleteImageGroupVDSCommandParameters(
-                guids.get(1), guids.get(0), guids.get(4), isPostZero(), false);
+        return PostZeroHandler.fixParametersWithPostZero(
+                new DeleteImageGroupVDSCommandParameters(guids.get(1), guids.get(0), guids.get(4),
+                        isPostZero(), false));
     }
 
     @Override
