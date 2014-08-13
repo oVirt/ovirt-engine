@@ -22,24 +22,49 @@ import com.google.inject.Inject;
 
 public class SharedMacPoolView extends Composite {
 
-    private SplitLayoutPanel rootPanel;
-    private SimpleActionTable<MacPool> macPoolTable;
+    private final SimpleActionTable<MacPool> macPoolTable;
+    private final SharedMacPoolModelProvider sharedMacPoolModelProvider;
+    private final EventBus eventBus;
+    private final ClientStorage clientStorage;
+    private final MainTableHeaderlessResources headerlessResources;
+    private final MainTableResources tableResources;
+    private final ApplicationConstants constants;
+    private final ApplicationResources resources;
 
     @Inject
     public SharedMacPoolView(final SharedMacPoolModelProvider sharedMacPoolModelProvider,
-            EventBus eventBus,
-            ClientStorage clientStorage,
-            MainTableHeaderlessResources headerlessResources,
-            MainTableResources tableResources,
+            final EventBus eventBus,
+            final ClientStorage clientStorage,
+            final MainTableHeaderlessResources headerlessResources,
+            final MainTableResources tableResources,
             final ApplicationConstants constants,
             final ApplicationResources resources) {
 
-        rootPanel = new SplitLayoutPanel();
+        this.sharedMacPoolModelProvider = sharedMacPoolModelProvider;
+        this.eventBus = eventBus;
+        this.clientStorage = clientStorage;
+        this.headerlessResources = headerlessResources;
+        this.tableResources = tableResources;
+        this.constants = constants;
+        this.resources = resources;
+
+        SplitLayoutPanel rootPanel = createRootPanel();
+        macPoolTable = createMacPoolTable();
+
+        rootPanel.add(macPoolTable);
+        initWidget(rootPanel);
+    }
+
+    private SplitLayoutPanel createRootPanel() {
+        SplitLayoutPanel rootPanel = new SplitLayoutPanel();
         rootPanel.setHeight("495px"); //$NON-NLS-1$
         rootPanel.setWidth("100%"); //$NON-NLS-1$
-        initWidget(rootPanel);
+        return rootPanel;
+    }
 
-        macPoolTable =
+    private SimpleActionTable<MacPool> createMacPoolTable() {
+
+        final SimpleActionTable<MacPool> macPoolTable =
                 new SimpleActionTable<MacPool>(sharedMacPoolModelProvider,
                         headerlessResources,
                         tableResources,
@@ -73,6 +98,7 @@ public class SharedMacPoolView extends Composite {
                 return sharedMacPoolModelProvider.getModel().getNewCommand();
             }
         });
+
         macPoolTable.addActionButton(new WebAdminButtonDefinition<MacPool>(constants.configureMacPoolEditButton()) {
 
             @Override
@@ -94,7 +120,8 @@ public class SharedMacPoolView extends Composite {
                 sharedMacPoolModelProvider.setSelectedItems(macPoolTable.getSelectedItems());
             }
         });
-        rootPanel.add(macPoolTable);
+
+        return macPoolTable;
     }
 
 }
