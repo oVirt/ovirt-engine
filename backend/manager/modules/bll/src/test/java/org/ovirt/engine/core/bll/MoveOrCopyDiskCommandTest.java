@@ -135,6 +135,7 @@ public class MoveOrCopyDiskCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain();
         doReturn(vmDeviceDao).when(command).getVmDeviceDAO();
+        doReturn(new ArrayList<DiskImage>()).when(command).getAllImageSnapshots();
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
@@ -183,6 +184,7 @@ public class MoveOrCopyDiskCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain();
         doReturn(mockStorageDomainValidatorWithoutSpace()).when(command).createStorageDomainValidator();
+        doReturn(new ArrayList<DiskImage>()).when(command).getAllImageSnapshots();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
@@ -194,6 +196,7 @@ public class MoveOrCopyDiskCommandTest {
         initSrcStorageDomain();
         initDestStorageDomain();
         doReturn(mockStorageDomainValidatorWithSpace()).when(command).createStorageDomainValidator();
+        doReturn(new ArrayList<DiskImage>()).when(command).getAllImageSnapshots();
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
 

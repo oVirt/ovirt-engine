@@ -409,9 +409,8 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
             }
 
             for (DiskImage diskImage : disksList) {
-                Guid templateId = diskImage.getImageTemplateId();
                 List<DiskImage> allImageSnapshots =
-                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), templateId);
+                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
 
                 diskImage.getSnapshots().addAll(allImageSnapshots);
             }

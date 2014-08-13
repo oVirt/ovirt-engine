@@ -364,18 +364,10 @@ public final class ImagesHandler {
      * be trybackfrom image
      *
      * @param imageId
-     * @param imageTemplateId
      * @return
      */
-    public static ArrayList<DiskImage> getAllImageSnapshots(Guid imageId, Guid imageTemplateId) {
-        ArrayList<DiskImage> snapshots = new ArrayList<DiskImage>();
-        Guid curImage = imageId;
-        while (!imageTemplateId.equals(curImage) && !curImage.equals(Guid.Empty)) {
-            DiskImage curDiskImage = DbFacade.getInstance().getDiskImageDao().getSnapshotById(curImage);
-            snapshots.add(curDiskImage);
-            curImage = curDiskImage.getParentId();
-        }
-        return snapshots;
+    public static List<DiskImage> getAllImageSnapshots(Guid imageId) {
+        return DbFacade.getInstance().getDiskImageDao().getAllSnapshotsForLeaf(imageId);
     }
 
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
@@ -520,8 +512,7 @@ public final class ImagesHandler {
             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                 DiskImage diskImage = (DiskImage) disk;
                 diskImage.getSnapshots().addAll(
-                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                                diskImage.getImageTemplateId()));
+                        ImagesHandler.getAllImageSnapshots(diskImage.getImageId()));
             }
         }
     }

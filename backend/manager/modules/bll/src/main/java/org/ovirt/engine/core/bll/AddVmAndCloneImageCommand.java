@@ -303,7 +303,7 @@ public abstract class AddVmAndCloneImageCommand<T extends VmManagementParameters
     }
 
     protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
     }
 
     /**

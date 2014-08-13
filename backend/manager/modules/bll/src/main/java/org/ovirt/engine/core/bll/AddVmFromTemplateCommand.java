@@ -162,7 +162,7 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     }
 
     protected List<DiskImage> getAllImageSnapshots(DiskImage diskImage) {
-        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId(), diskImage.getImageTemplateId());
+        return ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
     }
 
     @Override

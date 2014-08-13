@@ -101,8 +101,7 @@ public class OvfHelper {
         List<DiskImage> filteredDisks = ImagesHandler.filterImageDisks(vm.getDiskList(), false, true, true);
 
         for (DiskImage diskImage : filteredDisks) {
-            List<DiskImage> images = ImagesHandler.getAllImageSnapshots(diskImage.getImageId(),
-                    diskImage.getImageTemplateId());
+            List<DiskImage> images = ImagesHandler.getAllImageSnapshots(diskImage.getImageId());
             AllVmImages.addAll(images);
         }
 

@@ -51,6 +51,15 @@ public class DiskImageDAODbFacadeImpl extends BaseDAODbFacade implements DiskIma
     }
 
     @Override
+    public List<DiskImage> getAllSnapshotsForLeaf(Guid id) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("image_guid", id);
+        return getCallsHandler().executeReadList("GetSnapshotByLeafGuid",
+                DiskImageRowMapper.instance,
+                parameterSource);
+    }
+
+    @Override
     public List<DiskImage> getAllSnapshotsForStorageDomain(Guid id) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_domain_id", id);
