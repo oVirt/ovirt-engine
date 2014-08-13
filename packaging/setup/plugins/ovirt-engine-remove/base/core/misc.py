@@ -162,14 +162,25 @@ class Plugin(plugin.PluginBase):
                     'All the installed ovirt components are about to be '
                     'removed, data will be lost (@VALUES@) [@DEFAULT@]: '
                 )
-            elif self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS]:
+            elif (
+                self.environment[osetupcons.RemoveEnv.REMOVE_OPTIONS] or
+                self.environment[osetupcons.RemoveEnv.REMOVE_GROUPS]
+            ):
                 cnote = _(
-                    '{clist} is/are about to be removed, data will be lost '
+                    'The following components are about to be removed, data '
+                    'will be lost:\n'
+                    '{clist}'
                     '(@VALUES@) [@DEFAULT@]: '
                 ).format(
                     clist=', '.join(
                         self.environment[
                             osetupcons.RemoveEnv.REMOVE_OPTIONS
+                        ] + [
+                            x.strip()
+                            for x in self.environment[
+                                osetupcons.RemoveEnv.REMOVE_GROUPS
+                            ].split(',')
+                            if x
                         ]
                     )
                 )
