@@ -5,7 +5,7 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 /**
  * Arguments for an OperationCadidateEvent, triggered when a new Network Operation Candidate is created
  */
-public class OperationCadidateEventArgs extends EventArgs {
+public class OperationCandidateEventArgs extends EventArgs {
 
     private final NetworkOperation candidate;
 
@@ -13,7 +13,7 @@ public class OperationCadidateEventArgs extends EventArgs {
 
     private final NetworkItemModel<?> op2;
 
-    public OperationCadidateEventArgs(NetworkOperation candidate,
+    public OperationCandidateEventArgs(NetworkOperation candidate,
             NetworkItemModel<?> op1,
             NetworkItemModel<?> op2) {
 

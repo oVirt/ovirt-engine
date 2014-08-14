@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCandidateEventArgs;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -129,9 +129,9 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
     @Override
     public void edit(HostSetupNetworksModel uicommonModel) {
         driver.edit(uicommonModel);
-        uicommonModel.getNicsChangedEvent().addListener(new IEventListener() {
+        uicommonModel.getNicsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
                 // this is called after both networks and nics were retrieved
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
                 List<LogicalNetworkModel> networks = model.getNetworks();
@@ -147,13 +147,15 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
             }
         });
 
-        uicommonModel.getOperationCandidateEvent().addListener(new IEventListener() {
+        uicommonModel.getOperationCandidateEvent().addListener(new IEventListener<OperationCandidateEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                OperationCadidateEventArgs evtArgs = (OperationCadidateEventArgs) args;
-                NetworkOperation candidate = evtArgs.getCandidate();
-                NetworkItemModel<?> op1 = evtArgs.getOp1();
-                NetworkItemModel<?> op2 = evtArgs.getOp2();
+            public void eventRaised(Event<OperationCandidateEventArgs> ev,
+                    Object sender,
+                    OperationCandidateEventArgs args) {
+
+                NetworkOperation candidate = args.getCandidate();
+                NetworkItemModel<?> op1 = args.getOp1();
+                NetworkItemModel<?> op2 = args.getOp2();
 
                 if (candidate == null) {
                     setErrorStatus(constants.noValidActionSetupNetwork());

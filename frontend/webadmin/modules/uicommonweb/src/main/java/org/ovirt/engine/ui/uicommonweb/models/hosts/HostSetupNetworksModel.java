@@ -45,7 +45,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkLabelModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
-import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCadidateEventArgs;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.network.OperationCandidateEventArgs;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -107,17 +107,13 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private static final EventDefinition NICS_CHANGED_EVENT_DEFINITION = new EventDefinition("NicsChanged", //$NON-NLS-1$
             HostSetupNetworksModel.class);
-    private static final EventDefinition NETWORKS_CHANGED_EVENT_DEFINITION = new EventDefinition("NetworksChanged", //$NON-NLS-1$
-            HostSetupNetworksModel.class);
 
     private static final EventDefinition OPERATION_CANDIDATE_EVENT_DEFINITION =
             new EventDefinition("OperationCandidate", NetworkOperationFactory.class); //$NON-NLS-1$
 
-    private Event operationCandidateEvent;
+    private Event<OperationCandidateEventArgs> operationCandidateEvent;
 
-    private Event nicsChangedEvent;
-
-    private Event networksChangedEvent;
+    private Event<EventArgs> nicsChangedEvent;
 
     private List<VdsNetworkInterface> allNics;
 
@@ -162,9 +158,8 @@ public class HostSetupNetworksModel extends EntityModel {
         networkToLastDetachParams = new HashMap<String, NetworkParameters>();
         netTodcParams = new HashMap<String, DcNetworkParams>();
         netToBeforeSyncParams = new HashMap<String, NetworkParameters>();
-        setNicsChangedEvent(new Event(NICS_CHANGED_EVENT_DEFINITION));
-        setNetworksChangedEvent(new Event(NETWORKS_CHANGED_EVENT_DEFINITION));
-        setOperationCandidateEvent(new Event(OPERATION_CANDIDATE_EVENT_DEFINITION));
+        setNicsChangedEvent(new Event<EventArgs>(NICS_CHANGED_EVENT_DEFINITION));
+        setOperationCandidateEvent(new Event<OperationCandidateEventArgs>(OPERATION_CANDIDATE_EVENT_DEFINITION));
         setCheckConnectivity(new EntityModel<Boolean>());
         getCheckConnectivity().setEntity(true);
         setConnectivityTimeout(new EntityModel<Integer>());
@@ -226,7 +221,7 @@ public class HostSetupNetworksModel extends EntityModel {
             currentCandidate = candidate;
             currentOp1 = op1;
             currentOp2 = op2;
-            getOperationCandidateEvent().raise(this, new OperationCadidateEventArgs(candidate, op1, op2));
+            getOperationCandidateEvent().raise(this, new OperationCandidateEventArgs(candidate, op1, op2));
         }
         return !candidate.isNullOperation();
     }
@@ -243,19 +238,15 @@ public class HostSetupNetworksModel extends EntityModel {
         return new ArrayList<LogicalNetworkModel>(networkMap.values());
     }
 
-    public Event getNetworksChangedEvent() {
-        return networksChangedEvent;
-    }
-
     public List<NetworkInterfaceModel> getNics() {
         return new ArrayList<NetworkInterfaceModel>(nicMap.values());
     }
 
-    public Event getNicsChangedEvent() {
+    public Event<EventArgs> getNicsChangedEvent() {
         return nicsChangedEvent;
     }
 
-    public Event getOperationCandidateEvent() {
+    public Event<OperationCandidateEventArgs> getOperationCandidateEvent() {
         return operationCandidateEvent;
     }
 
@@ -582,7 +573,6 @@ public class HostSetupNetworksModel extends EntityModel {
     protected void onNicsChanged() {
         operationFactory = new NetworkOperationFactory(getNetworks(), getNics());
         validate();
-        getNetworksChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
     private LogicalNetworkModel createUnmanagedNetworkModel(String networkName, VdsNetworkInterface nic) {
@@ -921,11 +911,6 @@ public class HostSetupNetworksModel extends EntityModel {
 
     private void setNetworks(Map<String, LogicalNetworkModel> networks) {
         networkMap = networks;
-        getNetworksChangedEvent().raise(this, EventArgs.EMPTY);
-    }
-
-    private void setNetworksChangedEvent(Event value) {
-        networksChangedEvent = value;
     }
 
     private void setNics(Map<String, NetworkInterfaceModel> nics) {
@@ -934,11 +919,11 @@ public class HostSetupNetworksModel extends EntityModel {
         getNicsChangedEvent().raise(this, EventArgs.EMPTY);
     }
 
-    private void setNicsChangedEvent(Event value) {
+    private void setNicsChangedEvent(Event<EventArgs> value) {
         nicsChangedEvent = value;
     }
 
-    private void setOperationCandidateEvent(Event event) {
+    private void setOperationCandidateEvent(Event<OperationCandidateEventArgs> event) {
         operationCandidateEvent = event;
     }
 
