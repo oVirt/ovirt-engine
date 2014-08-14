@@ -101,7 +101,6 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
         getCallsHandler().executeModification(storedProcName, getCustomMapSqlParameterSource()
                 .addValue("id", group.getId())
                 .addValue("name", group.getName())
-                .addValue("active", group.isActive())
                 .addValue("domain", group.getDomain())
                 .addValue("distinguishedname", group.getDistinguishedName())
                 .addValue("external_id", group.getExternalId())
@@ -124,7 +123,6 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
             DbGroup entity = new DbGroup();
             entity.setId(getGuidDefaultEmpty(rs, "id"));
             entity.setName(rs.getString("name"));
-            entity.setActive(rs.getBoolean("active"));
             entity.setDomain(rs.getString("domain"));
             entity.setDistinguishedName(rs.getString("distinguishedname"));
             entity.setExternalId(rs.getString("external_id"));

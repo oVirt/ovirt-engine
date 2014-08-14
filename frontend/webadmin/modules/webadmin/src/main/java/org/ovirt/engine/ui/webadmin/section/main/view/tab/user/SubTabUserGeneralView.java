@@ -58,16 +58,26 @@ public class SubTabUserGeneralView extends AbstractSubTabFormView<DbUser, UserLi
         formBuilder = new FormBuilder(formPanel, 1, 3);
 
         formBuilder.addFormItem(new FormItem(constants.domainUserGeneral(), domain, 0, 0));
-        formBuilder.addFormItem(new FormItem(constants.activeUserGeneral(), active, 1, 0));
+        formBuilder.addFormItem(new FormItem(constants.activeUserGeneral(), active, 1, 0) {
+            @Override
+            public boolean getIsAvailable() {
+                return isUserElement(getDetailModel());
+            }
+        });
         formBuilder.addFormItem(new FormItem(constants.emailUserGeneral(), email, 2, 0) {
             @Override
             public boolean getIsAvailable() {
-                if (getDetailModel().getEntity() == null) {
-                    return false;
-                }
-                return !((DbUser) getDetailModel().getEntity()).isGroup();
+                return isUserElement(getDetailModel());
             }
         });
+    }
+
+    private boolean isUserElement(UserGeneralModel userGeneralModel) {
+        if (getDetailModel().getEntity() == null) {
+            return false;
+        }
+        return !((DbUser) getDetailModel().getEntity()).isGroup();
+
     }
 
     @Override

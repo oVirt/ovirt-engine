@@ -846,7 +846,7 @@ SELECT     'user' as user_group, users_1.name as name, users_1.user_id as user_i
 FROM         users AS users_1
 UNION
 SELECT     'group' as user_group, ad_groups.name as name, ad_groups.id as id, '' as surname, ad_groups.domain as domain, '' as username, '' as groups, '' as department, '' as role,
-                      '' as email, '' as note, ad_groups.active as active, 1 as vm_admin, null as last_admin_check_status, '' as group_ids,
+                      '' as email, '' as note, true as active, 1 as vm_admin, null as last_admin_check_status, '' as group_ids,
                       ad_groups.external_id as external_id, ad_groups.namespace as namespace
 FROM         ad_groups;
 
