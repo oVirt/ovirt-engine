@@ -26,12 +26,6 @@ public class DbGroup extends IVdcQueryable {
     private String distinguishedName;
     private Set<String> memberOf;
 
-    /**
-     * This flag indicates if the user was available in the directory the last time that it was checked, so {@code true}
-     * means it was available and {@code false} means it wasn't.
-     */
-    private boolean active;
-
     public DbGroup() {
         memberOf = new HashSet<String>();
     }
@@ -84,14 +78,6 @@ public class DbGroup extends IVdcQueryable {
         name = value;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean value) {
-        active = value;
-    }
-
     public void setDistinguishedName(String distinguishedName) {
         this.distinguishedName = distinguishedName;
     }
@@ -124,7 +110,6 @@ public class DbGroup extends IVdcQueryable {
         result = prime * result + ((name == null) ? 0 : name.hashCode());
         result = prime * result + ((distinguishedName == null) ? 0 : distinguishedName.hashCode());
         result = prime * result + ((memberOf == null) ? 0 : memberOf.hashCode());
-        result = prime * result + (active ? 1231 : 1237);
         return result;
     }
 
@@ -145,7 +130,6 @@ public class DbGroup extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(name, other.name)
                 && ObjectUtils.objectsEqual(distinguishedName, other.distinguishedName)
-                && ObjectUtils.objectsEqual(memberOf, other.memberOf)
-                && active == other.active);
+                && ObjectUtils.objectsEqual(memberOf, other.memberOf));
     }
 }

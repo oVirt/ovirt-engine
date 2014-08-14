@@ -469,7 +469,6 @@ public class UserListModel extends ListWithDetailsModel
                 grp.setNamespace(item.getNamespace());
                 grp.setId(item.getId());
                 grp.setDomain(item.getDomain());
-                grp.setActive(item.isActive());
                 parameters = new AddGroupParameters(grp);
             }
             else

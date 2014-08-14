@@ -33,7 +33,6 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
         newGroup.setExternalId("0");
         newGroup.setDomain("domain");
         newGroup.setName("name");
-        newGroup.setActive(true);
         newGroup.setNamespace("*");
         existingGroup = dao.get(new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1"));
     }
@@ -139,8 +138,6 @@ public class DbGroupDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         existingGroup.setName(existingGroup.getName().toUpperCase());
         existingGroup.setDomain(existingGroup.getDomain().toUpperCase());
-        existingGroup.setActive(false);
-
         dao.update(existingGroup);
 
         DbGroup result = dao.get(existingGroup.getId());

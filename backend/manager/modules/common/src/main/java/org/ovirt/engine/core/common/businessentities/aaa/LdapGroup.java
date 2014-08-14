@@ -13,8 +13,6 @@ public class LdapGroup extends IVdcQueryable {
 
     private String name;
 
-    private boolean active;
-
     private String domain;
 
     private List<String> memberOf;
@@ -22,7 +20,6 @@ public class LdapGroup extends IVdcQueryable {
     private String distinguishedName;
 
     public LdapGroup() {
-        active = true;
         name = "";
         distinguishedName = "";
     }
@@ -31,7 +28,6 @@ public class LdapGroup extends IVdcQueryable {
         id = dbGroup.getExternalId();
         name = dbGroup.getName();
         domain = dbGroup.getDomain();
-        active = dbGroup.isActive();
         distinguishedName = dbGroup.getDistinguishedName();
         memberOf = dbGroup.getMemberOf() != null ? new ArrayList<String>(dbGroup.getMemberOf()) : null;
     }
@@ -52,14 +48,6 @@ public class LdapGroup extends IVdcQueryable {
         this.name = value;
     }
 
-    public boolean isActive() {
-        return active;
-    }
-
-    public void setActive(boolean value) {
-        active = value;
-    }
-
     public LdapGroup(String id, String name, String domain) {
         this (id);
         this.name = name;
@@ -72,14 +60,8 @@ public class LdapGroup extends IVdcQueryable {
         this.setMemberOf(memberOf);
     }
 
-    /**
-     * This constructor used only for Inactive groups
-     *
-     * @param id
-     */
     public LdapGroup(String id) {
         this.id = id;
-        active = false;
     }
 
     public String getdomain() {
@@ -120,7 +102,6 @@ public class LdapGroup extends IVdcQueryable {
         result = prime * result + ((domain == null) ? 0 : domain.hashCode());
         result = prime * result + ((memberOf == null) ? 0 : memberOf.hashCode());
         result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + (active ? 1231 : 1237);
         return result;
     }
 
@@ -140,7 +121,6 @@ public class LdapGroup extends IVdcQueryable {
                 && ObjectUtils.objectsEqual(distinguishedName, other.distinguishedName)
                 && ObjectUtils.objectsEqual(domain, other.domain)
                 && ObjectUtils.objectsEqual(memberOf, other.memberOf)
-                && ObjectUtils.objectsEqual(name, other.name)
-                && active == other.active);
+                && ObjectUtils.objectsEqual(name, other.name));
     }
 }
