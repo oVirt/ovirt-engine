@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStorageDomainMapId;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.image_storage_domain_map;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
@@ -70,22 +71,18 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
                     VDSCommandType.CopyImage,
                     new CopyImageVDSCommandParameters(getStorageDomain().getStoragePoolId(),
                             sourceDomainId,
-                            getParameters()
-                                    .getContainerId(),
+                            getParameters().getContainerId(),
                             getParameters().getImageGroupID(),
-                            getParameters()
-                                    .getImageId(),
+                            getParameters().getImageId(),
                             getParameters().getDestImageGroupId(),
                             getParameters().getDestinationImageId(),
                             "",
                             getParameters().getStorageDomainId(),
-                            getParameters()
-                                    .getCopyVolumeType(),
-                            getParameters().getVolumeFormat(),
-                            getVolumeTypeForDomain(getParameters().getStorageDomainId()),
+                            getParameters().getCopyVolumeType(),
+                            getVolumeFormatForDomain(),
+                            getParameters().getVolumeType(),
                             isWipeAfterDelete(),
-                            getParameters()
-                                    .getForceOverride()));
+                            getParameters().getForceOverride()));
         } else {
             vdsReturnValue = runVdsCommand(
                     VDSCommandType.MoveImageGroup,
@@ -130,16 +127,22 @@ public class CopyImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
 
     /**
      * Since we are supporting copy/move operations between different storage families (file/block) we have to
-     * predetermine the volume type according to the destination storage type, for block domains we cannot use sparse
-     * for file domains we will use the same type of the original image
-     * @param storageDomainId
-     * @return
+     * predetermine the volume format according to the destination storage type, for block domains we cannot use sparse
+     * combined with raw so we will change the raw to cow in that case, file domains will have the original format
+     * retained
      */
-    private VolumeType getVolumeTypeForDomain(Guid storageDomainId) {
-        StorageDomainStatic destDomain = getStorageDomainStaticDAO().get(storageDomainId);
-        VolumeType volumeType = destDomain.getStorageType().isBlockDomain() ? VolumeType.Preallocated :
-                getParameters().getVolumeType();
-        return volumeType;
+    private VolumeFormat getVolumeFormatForDomain() {
+        if (getParameters().getVolumeFormat() == VolumeFormat.COW) {
+            return VolumeFormat.COW;
+        }
+
+        StorageDomainStatic destDomain = getStorageDomainStaticDAO().get(getParameters().getStorageDomainId());
+        if (destDomain.getStorageType().isBlockDomain() && getParameters().getVolumeType() == VolumeType.Sparse) {
+            return VolumeFormat.COW;
+        }
+        else {
+            return VolumeFormat.RAW;
+        }
     }
 
     /**
