@@ -16,13 +16,16 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.AddUserParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -42,13 +45,6 @@ public class BackendUsersResource
 
     private static final String USERS_SEARCH_PATTERN = "usrname != \"\"";
     private static final String AND_SEARCH_PATTERN = " and ";
-
-    /**
-     * This search pattern is used when searching for the directory user that
-     * will be added to the database when the {@code add} operation is
-     * performed.
-     */
-    private static final String DIRECTORY_USER_SEARCH_TEMPLATE = "ADUSER@{0}: ";
 
     private BackendDomainResource parent;
 
@@ -95,8 +91,8 @@ public class BackendUsersResource
             }
             throw new WebFaultException(null, "Domain: '" + user.getDomain().getId().toString() + "' does not exist.", Response.Status.BAD_REQUEST);
         }
-        else if (user.isSetUserName() && user.getUserName().contains("@")) {
-            return user.getUserName().substring(user.getUserName().indexOf("@")+1);
+        else if (isNameContainsDomain(user)) {
+            return user.getUserName().substring(user.getUserName().lastIndexOf("@") + 1);
         }
         return null;
     }
@@ -111,15 +107,16 @@ public class BackendUsersResource
      * @param domain the name of the directory where the search will be
      *     performed
      */
-    private String getDirectoryUserSearchPattern(String username, String domain) {
+    private String getDirectoryUserSearchPattern(String username, String namespace, String domain) {
         String constraint = QueryHelper.getConstraint(getUriInfo(), DbUser.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
-        sb.append(MessageFormat.format(DIRECTORY_USER_SEARCH_TEMPLATE,
+        sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE,
                   parent!=null?
                         parent.getDirectory().getName()
                         :
-                        domain));
+                        domain,
+                  namespace != null ? namespace : ""));
 
         sb.append(StringUtils.isEmpty(constraint) ?
                         "allnames=" + username
@@ -179,11 +176,7 @@ public class BackendUsersResource
             validateParameters(user, "domain.id|name");
         }
         String domain = getDomain(user);
-        DirectoryUser directoryUser = getEntity(
-            DirectoryUser.class,
-            SearchType.DirectoryUser,
-            getDirectoryUserSearchPattern(user.getUserName(), domain)
-        );
+        DirectoryUser directoryUser = findDirectoryUser(domain, user);
         if (directoryUser == null) {
             return Response.status(Status.BAD_REQUEST)
                     .entity("No such user: " + user.getUserName() + " in domain " + domain)
@@ -195,6 +188,51 @@ public class BackendUsersResource
     }
 
     private boolean isNameContainsDomain(User user) {
-        return ((user.getUserName().contains("@")) && (user.getUserName().indexOf('@') != user.getUserName().length() - 1));
+        return ((user.getUserName().contains("@")) && (user.getUserName().lastIndexOf('@') != user.getUserName()
+                .length() - 1));
+    }
+
+    /**
+     * Find the directory user that corresponds to the given model.
+     *
+     * @param directoryName
+     *            the name of the directory where to perform the search
+     * @param groupModel
+     *            the group model
+     * @return the requested directory group or {@code null} if no such group exists
+     */
+    private DirectoryUser findDirectoryUser(String directoryName, User user) {
+        DirectoryUser result = null;
+        String namespace = user.getNamespace();
+        if (user.isSetDomainEntryId()) {
+            result = getUserById(directoryName, namespace, user.getDomainEntryId());
+        } else if (user.isSetId()) {
+            result = getUserById(directoryName, namespace, user.getId());
+        } else {
+            if (user.isSetUserName()) {
+                result = getEntity(
+                        DirectoryUser.class,
+                        SearchType.DirectoryUser,
+                        getDirectoryUserSearchPattern(
+                                isNameContainsDomain(user) ? user.getUserName().substring(0, user.getUserName().lastIndexOf("@")) : user.getUserName(),
+                                user.getNamespace(),
+                                directoryName)
+                        );
+            }
+
+        }
+        return result;
+    }
+
+    private DirectoryUser getUserById(String directoryName, String namespace, String userId) {
+        DirectoryUser result;
+        userId = DirectoryEntryIdUtils.decode(userId);
+        result = getEntity(
+                DirectoryUser.class,
+                VdcQueryType.GetDirectoryUserById,
+                new DirectoryIdQueryParameters(directoryName, namespace, userId),
+                userId,
+                true);
+        return result;
     }
 }

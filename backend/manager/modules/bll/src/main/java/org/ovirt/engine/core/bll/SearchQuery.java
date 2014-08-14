@@ -7,6 +7,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -33,7 +34,6 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SearchEngineIllegalCharacterException;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
-import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -180,24 +180,17 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         if (data == null) {
             return Collections.emptyList();
         }
-
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getDomain());
-        DirectorySearchParameters directorySearchParams = (DirectorySearchParameters) getParameters();
-        List<String> namespaces = Arrays.asList(directorySearchParams.getNamespace());
-        if (directorySearchParams.getNamespace() == null) {
-            HashMap<String, List<String>> namespacesMap =
-                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
-            namespaces = namespacesMap.get(data.getDomain());
-        }
+        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getAuthz());
 
         List<DirectoryUser> results = new ArrayList<>();
-        for (String namespace : namespaces) {
+        for (String namespace : getNamespaces(data)) {
             results.addAll(DirectoryUtils.findDirectoryUsersByQuery(authz,
                     namespace,
                     data.getQuery()));
         }
         return results;
     }
+
 
     private List<DirectoryGroup> searchDirectoryGroups() {
         // Parse the query:
@@ -206,22 +199,27 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return Collections.emptyList();
         }
 
-        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getDomain());
-        DirectorySearchParameters directorySearchParams = (DirectorySearchParameters) getParameters();
-        List<String> namespaces = Arrays.asList(directorySearchParams.getNamespace());
-        if (directorySearchParams.getNamespace() == null) {
-            HashMap<String, List<String>> namespacesMap =
-                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
-            namespaces = namespacesMap.get(data.getDomain());
-        }
+        ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(data.getAuthz());
 
         List<DirectoryGroup> results = new ArrayList<>();
-        for (String namespace : namespaces) {
+        for (String namespace : getNamespaces(data)) {
             results.addAll(DirectoryUtils.findDirectoryGroupsByQuery(authz,
                     namespace,
                     data.getQuery()));
         }
         return results;
+    }
+
+    private List<String> getNamespaces(QueryData data) {
+        List<String> namespaces = null;
+        if (StringUtils.isNotEmpty(data.getNamespace())) {
+            namespaces = Arrays.asList(data.getNamespace());
+        } else {
+            HashMap<String, List<String>> namespacesMap =
+                    runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
+            namespaces = namespacesMap.get(data.getAuthz());
+        }
+        return namespaces;
     }
 
     private List<DbUser> searchDbUsers() {
@@ -338,7 +336,8 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // search text.
             if (!isExistsValue || IsFromYesterday) {
                 log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
-                String queryDomain = null;
+                String queryAuthz = null;
+                String queryNamespace = null;
                 ISyntaxChecker curSyntaxChecker;
                 String[] splitted = searchText.split("[:@ ]");
                 final String objectName = splitted[0].toUpperCase();
@@ -347,11 +346,13 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                         || (SearchObjects.AD_GROUP_OBJ_NAME.equals(objectName))
                         || (SearchObjects.AD_GROUP_PLU_OBJ_NAME.equals(objectName))) {
                     if (searchText.indexOf('@') > 0 && splitted.length > 1) {
-                        queryDomain = splitted[1];
+                        queryAuthz = splitted[1];
+                        queryNamespace = splitted[2];
                         searchText = searchText.substring(0, searchText.indexOf('@'))
-                                + searchText.substring(searchText.indexOf(':'));
+                                + searchText.substring(searchText.indexOf(':', searchText.indexOf(':') + 1));
                     } else {
-                        queryDomain = getDefaultDomain();
+                        queryAuthz = getDefaultAuthz();
+                        queryNamespace = null;
                     }
                     curSyntaxChecker = SyntaxCheckerFactory.createADSyntaxChecker(Config
                             .<String>getValue(ConfigValues.AuthenticationMethod));
@@ -397,7 +398,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 data =
                         new QueryData(curSyntaxChecker.generateQueryFromSyntaxContainer(searchObj, isSafe),
                                 DateTime.getNow().getTime(),
-                                queryDomain);
+                                queryAuthz, queryNamespace);
                 // when looking for tags , the query contains all parent children tag id's
                 // statically, therefore , in order to reflect changes in the parent tree
                 // we should not rely on the cached query in such case and have to build the
@@ -418,7 +419,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
         return data;
     }
 
-    protected String getDefaultDomain() {
+    protected String getDefaultAuthz() {
         return AuthenticationProfileRepository.getInstance().getProfiles().get(0).getName();
     }
 

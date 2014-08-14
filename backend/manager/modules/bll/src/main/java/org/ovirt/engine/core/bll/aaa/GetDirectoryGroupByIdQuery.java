@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.aaa;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.aaa.Authz;
@@ -23,7 +24,7 @@ public class GetDirectoryGroupByIdQuery<P extends DirectoryIdQueryParameters> ex
         if (authz == null) {
             getQueryReturnValue().setSucceeded(false);
         } else {
-            for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
+            for (String namespace : getParameters().constainsNamespace() ? Arrays.asList(getParameters().getNamespace()) : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
                 final DirectoryGroup group = DirectoryUtils.findDirectoryGroupById(authz, namespace, id, false, false);
                 if (group != null) {
                     getQueryReturnValue().setReturnValue(group);

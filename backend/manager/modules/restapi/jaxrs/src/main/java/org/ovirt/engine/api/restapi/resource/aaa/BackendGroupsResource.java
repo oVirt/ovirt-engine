@@ -14,7 +14,9 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
+import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -40,12 +42,6 @@ public class BackendGroupsResource
 
     private static final String GROUPS_SEARCH_PATTERN = "grpname != \"\"";
     private static final String AND_SEARCH_PATTERN = " and ";
-
-    /**
-     * This search pattern is used when searching for the directory group that will be added to the database when the
-     * {@code add} operation is performed.
-     */
-    private static final String DIRECTORY_GROUP_SEARCH_TEMPLATE = "ADGROUP@{0}: ";
 
     public BackendGroupsResource() {
         super(Group.class, DbGroup.class, SUB_COLLECTIONS);
@@ -110,7 +106,7 @@ public class BackendGroupsResource
         String constraint = QueryHelper.getConstraint(getUriInfo(), DbGroup.class, false);
         final StringBuilder sb = new StringBuilder(128);
 
-        sb.append(MessageFormat.format(DIRECTORY_GROUP_SEARCH_TEMPLATE, domain));
+        sb.append(MessageFormat.format(ResourceConstants.AAA_GROUPS_SEARCH_TEMPLATE, domain, ""));
 
         sb.append(StringUtils.isEmpty(constraint) ?
                         "allnames=" + groupname
@@ -180,19 +176,12 @@ public class BackendGroupsResource
      */
     private DirectoryGroup findDirectoryGroup(String directoryName, Group groupModel) {
         // Try to find a group that matches the identifier contained in the model:
+        String namespace = groupModel.getNamespace();
         if (groupModel.isSetId()) {
-            String groupId = groupModel.getId();
-            return getEntity(
-                DirectoryGroup.class,
-                VdcQueryType.GetDirectoryGroupById,
-                new DirectoryIdQueryParameters(directoryName, groupId),
-                groupId,
-                true
-            );
-        }
-
-        // Try to find a group that matches the name contained in the model:
-        if (groupModel.isSetName()) {
+            return getGroupById(directoryName, namespace, groupModel.getId());
+        } else if (groupModel.isSetDomainEntryId()) {
+            return getGroupById(directoryName, namespace, groupModel.getDomainEntryId());
+        } else if (groupModel.isSetName()) {
             String groupName = groupModel.getName();
             if (groupName.startsWith(directoryName + "/")) {
                 int lastSlash = groupName.lastIndexOf("/");
@@ -206,6 +195,16 @@ public class BackendGroupsResource
         }
 
         return null;
+    }
+
+    private DirectoryGroup getGroupById(String directoryName, String namespace, String groupId) {
+        groupId = DirectoryEntryIdUtils.decode(groupId);
+        return getEntity(
+                DirectoryGroup.class,
+                VdcQueryType.GetDirectoryGroupById,
+                new DirectoryIdQueryParameters(directoryName, namespace, groupId),
+                groupId,
+                true);
     }
 
     @Override

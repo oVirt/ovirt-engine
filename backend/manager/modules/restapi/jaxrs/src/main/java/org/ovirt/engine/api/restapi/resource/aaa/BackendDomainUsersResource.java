@@ -11,11 +11,10 @@ import org.ovirt.engine.api.model.Users;
 import org.ovirt.engine.api.resource.aaa.DomainUserResource;
 import org.ovirt.engine.api.resource.aaa.DomainUsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 
 /**
  * This resource corresponds to the users that exist in a directory accessible
@@ -26,8 +25,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 public class BackendDomainUsersResource
        extends AbstractBackendSubResource<User, DirectoryUser>
        implements DomainUsersResource {
-
-    private static final String SEARCH_TEMPLATE = "ADUSER@{0}: ";
 
     private BackendDomainResource parent;
 
@@ -49,11 +46,6 @@ public class BackendDomainUsersResource
     }
 
     @Override
-    protected SearchParameters createSearchParameters(SearchType searchType, String constraint) {
-        return new DirectorySearchParameters(constraint, searchType);
-    }
-
-    @Override
     @SingleEntityResource
     public DomainUserResource getDomainUserSubResource(String id) {
         return inject(new BackendDomainUserResource(id, this));
@@ -62,7 +54,7 @@ public class BackendDomainUsersResource
     private String getSearchPattern() {
         String constraint = QueryHelper.getConstraint(getUriInfo(), DirectoryUser.class, false);
         StringBuilder sb = new StringBuilder(128);
-        sb.append(MessageFormat.format(SEARCH_TEMPLATE, parent.getDirectory().getName()));
+        sb.append(MessageFormat.format(ResourceConstants.AAA_PRINCIPALS_SEARCH_TEMPLATE, parent.getDirectory().getName(), ""));
         sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);
         return sb.toString();
     }

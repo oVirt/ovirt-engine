@@ -2,16 +2,14 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.easymock.EasyMock.expect;
 
-import java.nio.charset.Charset;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.UriInfo;
-import javax.xml.bind.DatatypeConverter;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResourceTest;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -70,8 +68,8 @@ public class BackendDomainGroupResourceTest
         setUpGetEntityExpectations(
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
-            new String[] { "Domain", "Id" },
-                new Object[] { DOMAIN, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8"))
+                new String[] { "Domain", "Namespace", "Id" },
+                new Object[] { DOMAIN, "", DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index])
                          },
             notFound? null: getEntity(index)
         );
@@ -79,7 +77,7 @@ public class BackendDomainGroupResourceTest
 
     @Override
     protected DirectoryGroup getEntity(int index) {
-        return new DirectoryGroup(DOMAIN, NAMESPACE, new String(DatatypeConverter.parseHexBinary(EXTERNAL_IDS[index]), Charset.forName("UTF-8")), NAMES[index]);
+        return new DirectoryGroup(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index]);
     }
 }
 
