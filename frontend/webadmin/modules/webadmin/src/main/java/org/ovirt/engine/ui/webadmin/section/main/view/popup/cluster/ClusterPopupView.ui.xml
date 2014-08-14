@@ -146,7 +146,7 @@
 
     </ui:style>
 
-    <d:SimpleDialogPanel width="670px" height="560px">
+    <d:SimpleDialogPanel width="800px" height="560px">
         <d:content>
             <t:DialogTabPanel ui:field="tabsPanel" height="100%">
                 <t:tab>
@@ -275,6 +275,13 @@
                                 <g:HorizontalPanel>
                                     <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" />
                                     <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" addStyleNames="cpv_skipFencingIfSDActiveInfo_pfly_fix" />
+                                </g:HorizontalPanel>
+                                <g:HorizontalPanel>
+                                    <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" />
+                                    <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" />
+                                </g:HorizontalPanel>
+                                <g:HorizontalPanel>
+                                    <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" addStyleNames="cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix" />
                                 </g:HorizontalPanel>
                             </g:FlowPanel>
                         </t:content>

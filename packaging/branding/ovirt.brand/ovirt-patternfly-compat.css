@@ -425,6 +425,17 @@ a.dropdown-toggle {
     top: 5px;
     left: 5px;
 }
+.cpv_skipFencingIfConnectivityBrokenInfo_pfly_fix {
+    position: relative;
+    top: 5px;
+    left: 5px;
+    width: 30%;
+}
+.cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix {
+    position: relative;
+    top: 5px;
+    left: 5px;
+}
 .appv_searchButton_pfly_fix {
     position: relative !important;
     top: 2px !important;

@@ -782,6 +782,26 @@ public class ClusterModel extends EntityModel<VDSGroup>
         this.skipFencingIfSDActiveEnabled = skipFencingIfSDActiveEnabled;
     }
 
+    private EntityModel<Boolean> skipFencingIfConnectivityBrokenEnabled;
+
+    public EntityModel<Boolean> getSkipFencingIfConnectivityBrokenEnabled() {
+        return skipFencingIfConnectivityBrokenEnabled;
+    }
+
+    public void setSkipFencingIfConnectivityBrokenEnabled(EntityModel<Boolean> skipFencingIfConnectivityBrokenEnabled) {
+        this.skipFencingIfConnectivityBrokenEnabled = skipFencingIfConnectivityBrokenEnabled;
+    }
+
+    private ListModel<Integer> hostsWithBrokenConnectivityThreshold;
+
+    public ListModel<Integer> getHostsWithBrokenConnectivityThreshold() {
+        return hostsWithBrokenConnectivityThreshold;
+    }
+
+    public void setHostsWithBrokenConnectivityThreshold(ListModel<Integer> value) {
+        hostsWithBrokenConnectivityThreshold = value;
+    }
+
     public ClusterModel()
     {
         super();
@@ -815,6 +835,9 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         setSkipFencingIfSDActiveEnabled(new EntityModel<Boolean>());
         getSkipFencingIfSDActiveEnabled().setEntity(true);
+
+        setSkipFencingIfConnectivityBrokenEnabled(new EntityModel<Boolean>());
+        getSkipFencingIfConnectivityBrokenEnabled().setEntity(true);
 
         setEnableOvirtService(new EntityModel());
         setEnableGlusterService(new EntityModel());
@@ -903,8 +926,8 @@ public class ClusterModel extends EntityModel<VDSGroup>
                         getEnableTrustedService().setIsChangable(false);
                     }
                 }
-            }
 
+            }
        });
 
         getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener() {
@@ -1012,6 +1035,11 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 }
             });
         }
+
+        setHostsWithBrokenConnectivityThreshold(new ListModel<Integer>());
+        getHostsWithBrokenConnectivityThreshold().setIsAvailable(true);
+        getHostsWithBrokenConnectivityThreshold().getSelectedItemChangedEvent().addListener(this);
+        initHostsWithBrokenConnectivityThreshold();
 
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
@@ -1228,6 +1256,8 @@ public class ClusterModel extends EntityModel<VDSGroup>
 
         initSpiceProxy();
         getSkipFencingIfSDActiveEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfSDActive());
+        getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
+        getHostsWithBrokenConnectivityThreshold().setSelectedItem(getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
 
         setMemoryOverCommit(getEntity().getmax_vds_memory_over_commit());
 
@@ -1489,6 +1519,12 @@ public class ClusterModel extends EntityModel<VDSGroup>
         } else {
             getSkipFencingIfSDActiveEnabled().setEntity(false);
         }
+
+        // skipFencingIfConnectivityBroken is enabled for all cluster versions
+        getSkipFencingIfConnectivityBrokenEnabled().setIsChangable(true);
+        getHostsWithBrokenConnectivityThreshold().setIsChangable(true);
+        getSkipFencingIfConnectivityBrokenEnabled().setEntity(getEntity() == null ? false : getEntity().getFencingPolicy().isSkipFencingIfConnectivityBroken());
+        getHostsWithBrokenConnectivityThreshold().setEntity(getEntity() == null ? 50 : getEntity().getFencingPolicy().getHostsWithBrokenConnectivityThreshold());
     }
 
     private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture)
@@ -1549,6 +1585,15 @@ public class ClusterModel extends EntityModel<VDSGroup>
                 }
             }
         }
+    }
+
+    private void initHostsWithBrokenConnectivityThreshold() {
+        ArrayList values = new ArrayList<Integer>();
+        // populating threshold values with {25, 50, 75, 100}
+        for (int i = 25; i <= 100; i += 25) {
+            values.add(i);
+        }
+        getHostsWithBrokenConnectivityThreshold().setItems(values);
     }
 
     private void storagePool_SelectedItemChanged(EventArgs e)
