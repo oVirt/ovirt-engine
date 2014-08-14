@@ -120,7 +120,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     }
 
     public RunVmCommand(T runVmParams) {
-        super(runVmParams, null);
+        this(runVmParams, null);
     }
 
     public RunVmCommand(T runVmParams, CommandContext commandContext) {
