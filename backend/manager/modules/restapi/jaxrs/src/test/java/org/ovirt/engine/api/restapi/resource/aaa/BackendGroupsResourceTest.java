@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Group;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResourceTest;
+import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -203,7 +204,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
-            "ADGROUP@" + DOMAIN + ": allnames=" + NAMES[0],
+            "ADGROUP@" + DOMAIN + ":: allnames=" + NAMES[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
@@ -242,7 +243,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
-            "ADGROUP@" + DOMAIN + ": allnames=" + NAMES[0],
+            "ADGROUP@" + DOMAIN + ":: allnames=" + NAMES[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
@@ -301,7 +302,7 @@ public class BackendGroupsResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, EXTERNAL_IDS[0] },
+            new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(EXTERNAL_IDS[0]) },
             getDirectoryGroup(0)
         );
         setUpCreationExpectations(
@@ -340,7 +341,7 @@ public class BackendGroupsResourceTest
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
             new String[] { "Domain", "Id" },
-            new Object[] { DOMAIN, NON_EXISTANT_EXTERNAL_ID },
+                new Object[] { DOMAIN, DirectoryEntryIdUtils.decode(NON_EXISTANT_EXTERNAL_ID) },
             null
         );
         control.replay();

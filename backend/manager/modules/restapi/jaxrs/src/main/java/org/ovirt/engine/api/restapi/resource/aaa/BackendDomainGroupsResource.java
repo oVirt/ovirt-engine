@@ -11,11 +11,10 @@ import org.ovirt.engine.api.model.Groups;
 import org.ovirt.engine.api.resource.aaa.DomainGroupResource;
 import org.ovirt.engine.api.resource.aaa.DomainGroupsResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendSubResource;
+import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
-import org.ovirt.engine.core.common.queries.SearchParameters;
 
 /**
  * This resource corresponds to the groups that exist in a directory accessible to the engine. Those groups may or may
@@ -25,7 +24,6 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 public class BackendDomainGroupsResource
         extends AbstractBackendSubResource<Group, DirectoryGroup>
         implements DomainGroupsResource {
-    private static final String SEARCH_TEMPLATE = "ADGROUP@{0}: ";
 
     private BackendDomainResource parent;
 
@@ -40,11 +38,6 @@ public class BackendDomainGroupsResource
 
     public BackendDomainResource getParent() {
         return parent;
-    }
-
-    @Override
-    protected SearchParameters createSearchParameters(SearchType searchType, String constraint) {
-        return new DirectorySearchParameters(constraint, searchType);
     }
 
     public Domain getDirectory() {
@@ -64,7 +57,7 @@ public class BackendDomainGroupsResource
             false
         );
         StringBuilder sb = new StringBuilder(128);
-        sb.append(MessageFormat.format(SEARCH_TEMPLATE, parent.getDirectory().getName()));
+        sb.append(MessageFormat.format(ResourceConstants.AAA_GROUPS_SEARCH_TEMPLATE, parent.getDirectory().getName(), ""));
         sb.append(StringUtils.isEmpty(constraint)? "allnames=*": constraint);
         return sb.toString();
     }

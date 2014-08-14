@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Role;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
-import org.ovirt.engine.core.common.queries.DirectorySearchParameters;
+import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -379,13 +379,13 @@ public class AdElementListModel extends SearchableListModel
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new DirectorySearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryGroup, getNamespace().getSelectedItem()), query); //$NON-NLS-1$ //$NON-NLS-2$
+                        new SearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new DirectorySearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ": " + searchString, SearchType.DirectoryUser, getNamespace().getSelectedItem()), query); //$NON-NLS-1$ //$NON-NLS-2$
+                        new SearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
