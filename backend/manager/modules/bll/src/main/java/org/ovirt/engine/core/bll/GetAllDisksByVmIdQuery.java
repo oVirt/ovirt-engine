@@ -32,14 +32,17 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
                 getDbFacade().getDiskDao().getAllForVm
                         (getParameters().getId(), getUserID(), getParameters().isFiltered());
         Map<Guid, VmDevice> disksVmDevices = getDisksVmDeviceMap();
-        List<Disk> disks = new ArrayList<Disk>(allDisks);
+        List<Disk> disks = new ArrayList<Disk>();
         for (Disk disk : allDisks) {
             VmDevice diskDevice = disksVmDevices.get(disk.getId());
-            disk.setPlugged(diskDevice.getIsPlugged());
-            disk.setReadOnly(diskDevice.getIsReadOnly());
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
-                DiskImage diskImage = (DiskImage) disk;
-                diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
+            if (diskDevice != null) {
+                disk.setPlugged(diskDevice.getIsPlugged());
+                disk.setReadOnly(diskDevice.getIsReadOnly());
+                if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                    DiskImage diskImage = (DiskImage) disk;
+                    diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
+                }
+                disks.add(disk);
             }
         }
         getQueryReturnValue().setReturnValue(disks);
