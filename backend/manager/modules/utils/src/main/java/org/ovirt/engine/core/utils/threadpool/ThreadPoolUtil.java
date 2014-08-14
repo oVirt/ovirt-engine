@@ -52,7 +52,7 @@ public class ThreadPoolUtil {
                 log.debug("About to run task " + r.getClass().getName() + " from ", new Exception());
             }
 
-            if (getQueue().size() > 0) {
+            if (getQueue().size() > 5) {
                 log.warn("Executing a command: " + r.getClass().getName() + " , but note that there are "
                         + getQueue().size() + " tasks in the queue.");
             }
