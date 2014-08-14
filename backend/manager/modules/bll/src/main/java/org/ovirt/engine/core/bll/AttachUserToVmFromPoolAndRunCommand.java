@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
-
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -144,6 +143,7 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
 
     @Override
     public void setVmId(Guid value) {
+        super.setVmId(value);
         getParameters().setVmId(value);
     }
 
