@@ -306,11 +306,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                             break;
                         }
                     }
-                } else {
-                    // If no copy collapse sent, validate each image configuration (snapshot or active image).
-                    if (!isImagesAlreadyOnTarget() && !validateImageConfig(canDoActionMessages, domainsMap, image)) {
-                        return false;
-                    }
                 }
 
                 image.setStoragePoolId(getParameters().getStoragePoolId());
