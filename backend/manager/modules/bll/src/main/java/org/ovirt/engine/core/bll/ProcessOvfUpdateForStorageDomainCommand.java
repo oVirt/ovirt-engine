@@ -317,7 +317,9 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
 
     protected void buildFilesForOvfs(List<Pair<Guid, String>> ovfs, InMemoryTar inMemoryTar) throws Exception {
         for (Pair<Guid, String> pair : ovfs) {
-            inMemoryTar.addTarEntry(pair.getSecond().getBytes(), pair.getFirst() + ".ovf");
+            if (pair.getSecond() != null) {
+                inMemoryTar.addTarEntry(pair.getSecond().getBytes(), pair.getFirst() + ".ovf");
+            }
         }
     }
 
