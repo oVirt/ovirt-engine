@@ -36,14 +36,6 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
         userColumn.makeSortable();
         getTable().addColumn(userColumn, constants.userPermission(), "300px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<Permissions> namespaceColumn = new TextColumnWithTooltip<Permissions>() {
-            @Override
-            public String getValue(Permissions object) {
-                return object.getNamespace();
-            }
-        };
-        namespaceColumn.makeSortable();
-        getTable().addColumn(namespaceColumn, constants.namespace(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Permissions> authzColumn = new TextColumnWithTooltip<Permissions>() {
             @Override
@@ -54,7 +46,14 @@ public class PermissionListModelTable<P extends PermissionListModel> extends Abs
         authzColumn.makeSortable();
         getTable().addColumn(authzColumn, constants.authz(), "300px"); //$NON-NLS-1$
 
-
+        TextColumnWithTooltip<Permissions> namespaceColumn = new TextColumnWithTooltip<Permissions>() {
+            @Override
+            public String getValue(Permissions object) {
+                return object.getNamespace();
+            }
+        };
+        namespaceColumn.makeSortable();
+        getTable().addColumn(namespaceColumn, constants.namespace(), "300px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<Permissions> roleColumn = new TextColumnWithTooltip<Permissions>() {
             @Override

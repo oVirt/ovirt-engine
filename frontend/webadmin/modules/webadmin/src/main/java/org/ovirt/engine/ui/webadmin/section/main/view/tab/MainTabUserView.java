@@ -63,15 +63,6 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         userNameColumn.makeSortable(VdcUserConditionFieldAutoCompleter.USER_NAME);
         getTable().addColumn(userNameColumn, constants.userNameUser(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DbUser> namespaceColumn = new TextColumnWithTooltip<DbUser>() {
-            @Override
-            public String getValue(DbUser object) {
-                return object.getNamespace();
-            }
-        };
-        namespaceColumn.makeSortable();
-        getTable().addColumn(namespaceColumn, constants.namespace(), "150px"); //$NON-NLS-1$
-
         TextColumnWithTooltip<DbUser> authzColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
@@ -80,6 +71,15 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         };
         authzColumn.makeSortable();
         getTable().addColumn(authzColumn, constants.authz(), "150px"); //$NON-NLS-1$
+
+        TextColumnWithTooltip<DbUser> namespaceColumn = new TextColumnWithTooltip<DbUser>() {
+            @Override
+            public String getValue(DbUser object) {
+                return object.getNamespace();
+            }
+        };
+        namespaceColumn.makeSortable();
+        getTable().addColumn(namespaceColumn, constants.namespace(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<DbUser> groupColumn = new TextColumnWithTooltip<DbUser>() {
             @Override
