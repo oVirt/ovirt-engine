@@ -104,7 +104,7 @@ public enum ConfigurationValues {
     MemorySnapshotSupported(ConfigAuthType.User),
     HostNetworkQosSupported,
     StorageQosSupported(ConfigAuthType.User),
-    CpuQosSupported,
+    CpuQosSupported(ConfigAuthType.User),
     MaxAverageNetworkQoSValue,
     MaxPeakNetworkQoSValue,
     MaxBurstNetworkQoSValue,
@@ -146,7 +146,8 @@ public enum ConfigurationValues {
     MaxWriteThroughputUpperBoundQosValue,
     MaxIopsUpperBoundQosValue,
     MaxReadIopsUpperBoundQosValue,
-    MaxWriteIopsUpperBoundQosValue;
+    MaxWriteIopsUpperBoundQosValue,
+    MaxCpuLimitQosValue;
 
     public static enum ConfigAuthType {
         Admin,

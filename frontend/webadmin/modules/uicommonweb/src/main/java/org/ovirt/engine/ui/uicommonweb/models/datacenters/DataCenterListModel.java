@@ -48,6 +48,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -237,6 +238,7 @@ public class DataCenterListModel extends ListWithDetailsModel implements ISuppor
         list.add(quotaListModel);
         list.add(new DataCenterNetworkQoSListModel());
         list.add(new DataCenterStorageQosListModel());
+        list.add(new DataCenterCpuQosListModel());
         list.add(new PermissionListModel());
         list.add(new DataCenterEventListModel());
         setDetailModels(list);

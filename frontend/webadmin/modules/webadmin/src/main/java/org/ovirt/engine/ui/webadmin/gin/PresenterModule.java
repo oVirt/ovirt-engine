@@ -13,6 +13,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.MainTabPanelPresenter
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
@@ -140,6 +141,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterQosSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCenterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterCpuQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterIscsiBondPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
@@ -304,6 +306,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfileP
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSubnetPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.CpuQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
@@ -375,6 +378,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterV
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterQosSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterClusterView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterCpuQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterIscsiBondView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkQoSView;
@@ -628,6 +632,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterStorageQosPresenter.ViewDef.class,
                 SubTabDataCenterStorageQosView.class,
                 SubTabDataCenterStorageQosPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterCpuQosPresenter.class,
+                SubTabDataCenterCpuQosPresenter.ViewDef.class,
+                SubTabDataCenterCpuQosView.class,
+                SubTabDataCenterCpuQosPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterClusterPresenter.class,
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,
@@ -1364,6 +1372,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(StorageQosPopupPresenterWidget.class,
                 StorageQosPopupPresenterWidget.ViewDef.class,
                 StorageQosPopupView.class);
+
+        // Cpu QoS
+        bindPresenterWidget(CpuQosPopupPresenterWidget.class,
+                CpuQosPopupPresenterWidget.ViewDef.class,
+                CpuQosPopupView.class);
 
         bindPresenterWidget(EditQuotaClusterPopupPresenterWidget.class,
                 EditQuotaClusterPopupPresenterWidget.ViewDef.class,
