@@ -1718,6 +1718,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Unlimited")
     String UnlimitedStorageQos();
 
+    @DefaultStringValue("Unlimited")
+    String UnlimitedCpuQos();
+
     @DefaultStringValue("Password")
     String hostPasswordLabel();
 
@@ -1898,6 +1901,9 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("QoS Name")
     String storageQosName();
+
+    @DefaultStringValue("QoS Name")
+    String cpuQosName();
 
     @DefaultStringValue("New")
     String newDiskProfile();

@@ -184,6 +184,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Storage")
     String dataCenterStorageQosSubTabLabel();
 
+    @DefaultStringValue("CPU")
+    String dataCenterCpuQosSubTabLabel();
+
     @DefaultStringValue("QoS")
     String dataCenterQosSubTabLabel();
 
@@ -2818,6 +2821,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("ID")
     String idDisk();
 
+    @Override
     @DefaultStringValue("Quota")
     String quotaDisk();
 
@@ -3843,8 +3847,17 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Remove")
     String removeStorageQos();
 
+    @DefaultStringValue("New")
+    String newCpuQos();
+
+    @DefaultStringValue("Edit")
+    String editCpuQos();
+
+    @DefaultStringValue("Remove")
+    String removeCpuQos();
+
     @DefaultStringValue("Data Center")
-    String dataCenterStorageQosPopup();
+    String dataCenterQosPopup();
 
     @DefaultStringValue("Description")
     String storageQosDescription();
@@ -3878,4 +3891,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Storage Domain")
     String diskProfileStorageDomainLabel();
+
+    @DefaultStringValue("Limit")
+    String cpuQosCpuLimit();
+
+    @DefaultStringValue("Description")
+    String cpuQosDescription();
 }

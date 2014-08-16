@@ -148,6 +148,8 @@ public enum HelpTag {
 
     edit_storage_qos("edit_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'Edit Storage QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    edit_cpu_qos("edit_cpu_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Cpu QoS' sub-tab -> 'Edit Cpu QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     edit_pool("edit_pool", HelpTagType.COMMON, "Pools Tab > Edit Pool"), //$NON-NLS-1$ //$NON-NLS-2$
 
     edit_provider("edit_provider", HelpTagType.WEBADMIN, "[Neutron integration] 'Providers' main tab -> 'Edit Provider' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -296,6 +298,8 @@ public enum HelpTag {
 
     new_storage_qos("new_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'New Storage QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    new_cpu_qos("new_cpu_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Cpu QoS' sub-tab -> 'New Cpu QoS' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_pool("new_pool", HelpTagType.WEBADMIN, "Pools Tab > New Pool"), //$NON-NLS-1$ //$NON-NLS-2$
 
     new_quota("new_quota", HelpTagType.WEBADMIN, "Quota Tab > New Quota"), //$NON-NLS-1$ //$NON-NLS-2$
@@ -363,6 +367,8 @@ public enum HelpTag {
     remove_network_qos("remove_network_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Network QoS' sub-tab -> 'Remove Network QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_storage_qos("remove_storage_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Storage QoS' sub-tab -> 'Remove Storage QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_cpu_qos("remove_cpu_qos", HelpTagType.WEBADMIN, "'Data Centers' main tab -> 'Cpu QoS' sub-tab -> 'Remove Cpu QoS' confirmation dialog."), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_permission("remove_permission", HelpTagType.COMMON, "Each Main Tab > Permissions Sub-Tab > Remove Permission"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -493,6 +499,8 @@ public enum HelpTag {
     remove_disk_snapshot("remove_disk_snapshot", HelpTagType.WEBADMIN, "Storage Tab > Snapshots Sub-Tab > Remove Disk Snapshot(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
     storage_qos("storage_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    cpu_qos("storage_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     disk_profiles("disk profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
