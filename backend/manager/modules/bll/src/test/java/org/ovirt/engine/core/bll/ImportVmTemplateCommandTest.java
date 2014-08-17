@@ -161,6 +161,7 @@ public class ImportVmTemplateCommandTest {
         mockStoragePool(command);
         mockStorageDomains(command);
         doReturn(true).when(command).setAndValidateDiskProfiles();
+        doReturn(true).when(command).setAndValidateCpuProfile();
 
         return command;
     }

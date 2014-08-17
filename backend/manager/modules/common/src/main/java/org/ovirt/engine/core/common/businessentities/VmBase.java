@@ -325,6 +325,11 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private boolean spiceCopyPasteEnabled;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private Guid cpuProfileId;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -372,7 +377,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getCustomSerialNumber(),
                 vmBase.isBootMenuEnabled(),
                 vmBase.isSpiceFileTransferEnabled(),
-                vmBase.isSpiceCopyPasteEnabled());
+                vmBase.isSpiceCopyPasteEnabled(),
+                vmBase.getCpuProfileId());
     }
 
     public VmBase(
@@ -422,7 +428,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             String customSerialNumber,
             boolean bootMenuEnabled,
             boolean spiceFileTransferEnabled,
-            boolean spiceCopyPasteEnabled) {
+            boolean spiceCopyPasteEnabled,
+            Guid cpuProfileId) {
         this();
         this.name = name;
         this.id = id;
@@ -471,6 +478,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.bootMenuEnabled = bootMenuEnabled;
         this.spiceFileTransferEnabled = spiceFileTransferEnabled;
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
+        this.cpuProfileId = cpuProfileId;
     }
 
     public long getDbGeneration() {
@@ -811,6 +819,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + (bootMenuEnabled ? 1231 : 1237);
         result = prime * result + (spiceFileTransferEnabled ? 1231 : 1237);
         result = prime * result + (spiceCopyPasteEnabled ? 1231 : 1237);
+        result = prime * result + ((cpuProfileId == null) ? 0 : cpuProfileId.hashCode());
         return result;
     }
 
@@ -865,7 +874,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(customSerialNumber, other.customSerialNumber)
                 && bootMenuEnabled == other.bootMenuEnabled
                 && spiceFileTransferEnabled == other.spiceFileTransferEnabled
-                && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled;
+                && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
+                && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId);
     }
 
     public Guid getQuotaId() {
@@ -1036,4 +1046,12 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public boolean isSpiceCopyPasteEnabled() { return spiceCopyPasteEnabled; }
 
     public void setSpiceCopyPasteEnabled(boolean spiceCopyPasteEnabled) { this.spiceCopyPasteEnabled = spiceCopyPasteEnabled; }
+
+    public Guid getCpuProfileId() {
+        return cpuProfileId;
+    }
+
+    public void setCpuProfileId(Guid cpuProfileId) {
+        this.cpuProfileId = cpuProfileId;
+    }
 }

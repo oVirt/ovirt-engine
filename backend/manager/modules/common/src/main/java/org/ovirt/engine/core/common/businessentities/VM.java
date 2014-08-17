@@ -1842,4 +1842,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public void setSpiceCopyPasteEnabled(boolean enabled) {
         vmStatic.setSpiceCopyPasteEnabled(enabled);
     }
+
+    public Guid getCpuProfileId() {
+        return vmStatic.getCpuProfileId();
+    }
+
+    public void setCpuProfileId(Guid cpuProfileId) {
+        vmStatic.setCpuProfileId(cpuProfileId);
+    }
 }

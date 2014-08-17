@@ -28,6 +28,7 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
      */
     private boolean updateRngDevice;
 
+    private Guid cpuProfileId;
 
     public boolean getCheckDisksExists() {
         return privateCheckDisksExists;
@@ -122,5 +123,13 @@ public class VmTemplateParametersBase extends VdcActionParametersBase implements
 
     public void setRngDevice(VmRngDevice rngDevice) {
         this.rngDevice = rngDevice;
+    }
+
+    public Guid getCpuProfileId() {
+        return cpuProfileId;
+    }
+
+    public void setCpuProfileId(Guid cpuProfileId) {
+        this.cpuProfileId = cpuProfileId;
     }
 }

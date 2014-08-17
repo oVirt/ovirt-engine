@@ -77,7 +77,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             boolean allowConsoleReconnect, String isoPath, Integer migrationDowntime,
             Guid baseTemplateId, String templateVersionName,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
-            boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled) {
+            boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled,
+            Guid cpuProfileId) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -124,7 +125,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 customSerialNumber,
                 bootMenuEnabled,
                 spiceFIleTransferEnabled,
-                spiceCopyPasteEnabled);
+                spiceCopyPasteEnabled,
+                cpuProfileId);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

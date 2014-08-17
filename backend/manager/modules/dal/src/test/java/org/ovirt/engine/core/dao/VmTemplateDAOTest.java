@@ -56,6 +56,7 @@ public class VmTemplateDAOTest extends BaseDAOTestCase {
         newVmTemplate.setName("NewVmTemplate");
         newVmTemplate.setVdsGroupId(VDS_GROUP_ID);
         newVmTemplate.setClusterArch(ArchitectureType.x86_64);
+        newVmTemplate.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
     }
 
     /**

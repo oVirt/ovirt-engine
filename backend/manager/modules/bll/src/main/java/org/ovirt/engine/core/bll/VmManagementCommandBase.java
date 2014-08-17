@@ -10,6 +10,7 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -217,5 +218,10 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
     protected boolean isCpuSharesValid(VM vmData) {
         return (vmData.getCpuShares() >= 0 && vmData.getCpuShares() <= MAXIMUM_CPU_SHARES);
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVm().getStaticData(),
+                getVdsGroup().getcompatibility_version()));
     }
 }

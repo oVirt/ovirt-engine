@@ -131,6 +131,7 @@ public abstract class CommonVmPoolWithVmsCommandTestAbstract {
         doReturn(true).when(command).areTemplateImagesInStorageReady(any(Guid.class));
         doReturn(true).when(command).verifyAddVM();
         doReturn(true).when(command).setAndValidateDiskProfiles();
+        doReturn(true).when(command).setAndValidateCpuProfile();
     }
 
     private void mockVds() {

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -64,6 +65,13 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                                 NetworkStatus.OPERATIONAL, true, true, true));
             }
         }
+
+        // create default CPU profile for supported clusters.
+        if (FeatureSupported.cpuQoS(getParameters().getVdsGroup().getcompatibility_version())) {
+            getCpuProfileDao().save(CpuProfileHelper.createCpuProfile(getParameters().getVdsGroup().getId(),
+                    getParameters().getVdsGroup().getName()));
+        }
+
         setActionReturnValue(getVdsGroup().getId());
         setSucceeded(true);
     }

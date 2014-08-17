@@ -6,6 +6,7 @@ import java.util.Objects;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -26,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -80,6 +82,17 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 getParameters().getVdsGroup().setDetectEmulatedMachine(true);
             } else {
                 getParameters().getVdsGroup().setEmulatedMachine(emulatedMachine);
+            }
+            // create default CPU profile for cluster that is being upgraded.
+            // and set all attached vms and templates with cpu profile
+            Guid clusterId = getParameters().getVdsGroupId();
+            if (!FeatureSupported.cpuQoS(oldGroup.getcompatibility_version()) &&
+                    FeatureSupported.cpuQoS(getParameters().getVdsGroup().getcompatibility_version()) &&
+                    getCpuProfileDao().getAllForCluster(clusterId).isEmpty()) {
+                CpuProfile cpuProfile = CpuProfileHelper.createCpuProfile(clusterId,
+                        getParameters().getVdsGroup().getName());
+                getCpuProfileDao().save(cpuProfile);
+                getVmStaticDAO().updateVmCpuProfileIdForClusterId(clusterId, cpuProfile.getId());
             }
         }
         else if (oldGroup.getArchitecture() != getVdsGroup().getArchitecture()) {

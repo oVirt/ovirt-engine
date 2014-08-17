@@ -8,6 +8,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -301,6 +302,9 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!setAndValidateDiskProfiles()) {
             return false;
         }
+        if (!setAndValidateCpuProfile()) {
+            return false;
+        }
         return checkFreeSpaceAndTypeOnDestDomains();
     }
 
@@ -409,6 +413,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                     getStoragePool().getcompatibility_version()));
         }
         return true;
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getVmStaticData(),
+                getVdsGroup().getcompatibility_version()));
     }
 
     @Override

@@ -552,6 +552,10 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
+        if (!setAndValidateCpuProfile()) {
+            return false;
+        }
+
         return true;
     }
 

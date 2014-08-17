@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -54,6 +55,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         newVmStatic.setVmtGuid(vmtemplate.getId());
         newVmStatic.setOrigin(OriginType.OVIRT);
         newVmStatic.setQuotaId(QUOTA_ID);
+        newVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_1);
     }
 
     /**
@@ -166,6 +168,7 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
     @Test
     public void testUpdate() {
         existingVmStatic.setDescription("updated");
+        existingVmStatic.setCpuProfileId(FixturesTool.CPU_PROFILE_2);
         dao.update(existingVmStatic);
         VmStatic result = dao.get(EXISTING_VM_ID);
         assertNotNull(result);
@@ -415,5 +418,32 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
         }
 
         return returnValue;
+    }
+
+    @Test
+    public void testUpdateVmCpuProfileIdForClusterId() {
+        updateCpuProfile(FixturesTool.VDS_GROUP_RHEL6_ISCSI, FixturesTool.CPU_PROFILE_2);
+    }
+
+    @Test
+    public void testUpdateNullVmCpuProfileIdForClusterId() {
+        updateCpuProfile(FixturesTool.VDS_GROUP_RHEL6_ISCSI, null);
+    }
+
+    private void updateCpuProfile(Guid clusterId, Guid cpuProfileId) {
+        testAllCpuProfileValuesEqualTo(clusterId, cpuProfileId, false);
+        dao.updateVmCpuProfileIdForClusterId(clusterId, cpuProfileId);
+        testAllCpuProfileValuesEqualTo(clusterId, cpuProfileId, true);
+    }
+
+    private void testAllCpuProfileValuesEqualTo(Guid clusterId, Guid cpuProfileId, boolean isAllNull) {
+        List<VmStatic> allByVdsGroup = dao.getAllByVdsGroup(clusterId);
+        assertNotNull(allByVdsGroup);
+        assertFalse(allByVdsGroup.isEmpty());
+        boolean allValues = true;
+        for (VmStatic vmStatic : allByVdsGroup) {
+            allValues &= ObjectUtils.objectsEqual(vmStatic.getCpuProfileId(), cpuProfileId);
+        }
+        assertEquals(isAllNull, allValues);
     }
 }

@@ -319,6 +319,7 @@ public class UpdateVmCommandTest {
         mockSameNameQuery(false);
         mockValidateCustomProperties();
         mockValidatePciAndIdeLimit();
+        doReturn(true).when(command).setAndValidateCpuProfile();
     }
 
     private void assertCanDoActionMessage(VdcBllMessages msg) {
