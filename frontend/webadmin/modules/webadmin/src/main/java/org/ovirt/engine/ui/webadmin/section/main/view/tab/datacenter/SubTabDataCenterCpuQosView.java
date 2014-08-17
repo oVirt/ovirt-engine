@@ -59,7 +59,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
         TextColumnWithTooltip<CpuQos> cpuLimitColumn = new TextColumnWithTooltip<CpuQos>() {
             @Override
             public String getValue(CpuQos object) {
-                return object.getCpuLimit() == null ? constants.UnlimitedCpuQos()
+                return object.getCpuLimit() == null ? constants.unlimitedQos()
                         : object.getCpuLimit().toString();
             }
         };

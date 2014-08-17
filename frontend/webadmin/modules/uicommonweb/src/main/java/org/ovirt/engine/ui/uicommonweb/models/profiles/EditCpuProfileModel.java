@@ -1,24 +1,24 @@
 package org.ovirt.engine.ui.uicommonweb.models.profiles;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class EditDiskProfileModel extends DiskProfileBaseModel {
+public class EditCpuProfileModel extends CpuProfileBaseModel {
 
-    public EditDiskProfileModel(EntityModel sourceModel,
-            DiskProfile profile,
+    public EditCpuProfileModel(EntityModel sourceModel,
+            CpuProfile profile,
             Guid dataCenterId) {
         super(sourceModel,
                 dataCenterId,
                 profile.getQosId(),
-                VdcActionType.UpdateDiskProfile);
-        setTitle(ConstantsManager.getInstance().getConstants().diskProfileTitle());
-        setHelpTag(HelpTag.edit_disk_profile);
-        setHashName("edit_disk_profile"); //$NON-NLS-1$
+                VdcActionType.UpdateCpuProfile);
+        setTitle(ConstantsManager.getInstance().getConstants().cpuProfileTitle());
+        setHelpTag(HelpTag.edit_cpu_profile);
+        setHashName("edit_cpu_profile"); //$NON-NLS-1$
 
         setProfile(profile);
 
@@ -26,7 +26,7 @@ public class EditDiskProfileModel extends DiskProfileBaseModel {
         getDescription().setEntity(profile.getDescription());
     }
 
-    public EditDiskProfileModel(DiskProfile profile) {
+    public EditCpuProfileModel(CpuProfile profile) {
         this(null, profile, null);
     }
 

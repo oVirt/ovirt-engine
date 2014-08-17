@@ -18,6 +18,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -46,6 +47,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.gluster.GlusterFeaturesUtil;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostDetailModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MultipleHostsModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -191,6 +193,16 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         this.affinityGroupListModel = affinityGroupListModel;
     }
 
+    private CpuProfileListModel cpuProfileListModel;
+
+    public CpuProfileListModel getCpuProfileListModel() {
+        return cpuProfileListModel;
+    }
+
+    public void setCpuProfileListModel(CpuProfileListModel cpuProfileListModel) {
+        this.cpuProfileListModel = cpuProfileListModel;
+    }
+
     public ClusterListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().clustersTitle());
@@ -252,6 +264,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         setClusterServiceModel(new ClusterServiceModel());
         setClusterGlusterHookListModel(new ClusterGlusterHookListModel());
         setAffinityGroupListModel(new ClusterAffinityGroupListModel());
+        setCpuProfileListModel(new CpuProfileListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
         list.add(new ClusterGeneralModel());
@@ -260,6 +273,7 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         list.add(getClusterVmListModel());
         list.add(getClusterServiceModel());
         list.add(getClusterGlusterHookListModel());
+        list.add(getCpuProfileListModel());
         list.add(new PermissionListModel());
         list.add(getAffinityGroupListModel());
         setDetailModels(list);
@@ -275,6 +289,9 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         getClusterGlusterHookListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsGlusterService()
                 && GlusterFeaturesUtil.isGlusterHookSupported(vdsGroup.getcompatibility_version()));
         getAffinityGroupListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService());
+        getCpuProfileListModel().setIsAvailable(vdsGroup != null && vdsGroup.supportsVirtService()
+                && Boolean.TRUE.equals(AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
+                        vdsGroup.getcompatibility_version().getValue())));
     }
 
     @Override

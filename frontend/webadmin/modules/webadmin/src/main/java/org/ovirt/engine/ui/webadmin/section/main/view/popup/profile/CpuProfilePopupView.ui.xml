@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+  xmlns:g="urn:import:com.google.gwt.user.client.ui"
+  xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+  xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" >
+
+	<d:SimpleDialogPanel width="470px" height="220px">
+		<d:content>
+			<g:FlowPanel>
+				<e:ListModelListBoxEditor ui:field="clusterEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
+				<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
+				<e:ListModelListBoxEditor ui:field="qosEditor"/>
+			</g:FlowPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+
+</ui:UiBinder>
+

@@ -2374,5 +2374,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Remove Disk Profile(s)")
     String removeDiskProfileTitle();
+
+    @DefaultStringValue("Remove CPU Profile(s)")
+    String removeCpuProfileTitle();
+
+    @DefaultStringValue("CPU Profile")
+    String cpuProfileTitle();
 }
 

@@ -1,7 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.profile;
 
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -9,10 +9,10 @@ import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
-import org.ovirt.engine.ui.uicommonweb.models.profiles.DiskProfileBaseModel;
+import org.ovirt.engine.ui.uicommonweb.models.profiles.CpuProfileBaseModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -21,16 +21,16 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.inject.Inject;
 
-public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfileBaseModel> implements DiskProfilePopupPresenterWidget.ViewDef {
+public class CpuProfilePopupView extends AbstractModelBoundPopupView<CpuProfileBaseModel> implements CpuProfilePopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<DiskProfileBaseModel, DiskProfilePopupView> {
+    interface Driver extends SimpleBeanEditorDriver<CpuProfileBaseModel, CpuProfilePopupView> {
     }
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, DiskProfilePopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, CpuProfilePopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface ViewIdHandler extends ElementIdHandler<DiskProfilePopupView> {
+    interface ViewIdHandler extends ElementIdHandler<CpuProfilePopupView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
@@ -47,27 +47,27 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
     @WithElementId("qos")
-    public ListModelListBoxEditor<StorageQos> qosEditor;
+    public ListModelListBoxEditor<CpuQos> qosEditor;
 
     @UiField(provided = true)
     @Path("parentListModel.selectedItem")
-    ListModelListBoxEditor<StorageDomain> storageDomainEditor;
+    ListModelListBoxEditor<VDSGroup> clusterEditor;
 
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
-    public DiskProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+    public CpuProfilePopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
         super(eventBus, resources);
-        storageDomainEditor = new ListModelListBoxEditor<StorageDomain>(new NullSafeRenderer<StorageDomain>() {
+        clusterEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
             @Override
-            public String renderNullSafe(StorageDomain storageDomain) {
-                return storageDomain.getName();
+            public String renderNullSafe(VDSGroup cluster) {
+                return cluster.getName();
             }
         });
-        qosEditor = new ListModelListBoxEditor<StorageQos>(new NullSafeRenderer<StorageQos>() {
+        qosEditor = new ListModelListBoxEditor<CpuQos>(new NullSafeRenderer<CpuQos>() {
             @Override
-            public String renderNullSafe(StorageQos storageQos) {
-                return storageQos.getName();
+            public String renderNullSafe(CpuQos cpuQos) {
+                return cpuQos.getName();
             }
         });
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -79,8 +79,8 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
     private void localize(ApplicationConstants constants) {
         nameEditor.setLabel(constants.profileNameLabel());
         descriptionEditor.setLabel(constants.profileDescriptionLabel());
-        storageDomainEditor.setLabel(constants.diskProfileStorageDomainLabel());
-        qosEditor.setLabel(constants.diskProfileQosLabel());
+        clusterEditor.setLabel(constants.cpuProfileClusterLabel());
+        qosEditor.setLabel(constants.cpuProfileQosLabel());
     }
 
     @Override
@@ -89,18 +89,18 @@ public class DiskProfilePopupView extends AbstractModelBoundPopupView<DiskProfil
     }
 
     @Override
-    public void edit(DiskProfileBaseModel object) {
+    public void edit(CpuProfileBaseModel object) {
         driver.edit(object);
     }
 
     @Override
-    public DiskProfileBaseModel flush() {
+    public CpuProfileBaseModel flush() {
         return driver.flush();
     }
 
     @Override
     public int setTabIndexes(int nextTabIndex) {
-        storageDomainEditor.setTabIndex(nextTabIndex++);
+        clusterEditor.setTabIndex(nextTabIndex++);
         nameEditor.setTabIndex(nextTabIndex++);
         descriptionEditor.setTabIndex(nextTabIndex++);
         qosEditor.setTabIndex(nextTabIndex++);

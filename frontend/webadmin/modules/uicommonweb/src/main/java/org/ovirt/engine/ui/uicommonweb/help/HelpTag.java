@@ -502,7 +502,15 @@ public enum HelpTag {
 
     edit_disk_profile("edit_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> Edit Disk Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_disk_profile("remove_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> Remove Disk Profile dialog"); //$NON-NLS-1$ //$NON-NLS-2$
+    remove_disk_profile("remove_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> Remove Disk Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    cpu_profiles("cpu profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
+    new_cpu_profile("new_cpu_profile", HelpTagType.WEBADMIN, "Clusters Tab > Cpu Profiles sub-tab -> New Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    edit_cpu_profile("edit_cpu_profile", HelpTagType.WEBADMIN, "Cluster Tab > Cpu Profiles sub-tab -> Edit Cpu Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    remove_cpu_profile("remove_cpu_profile", HelpTagType.WEBADMIN, "Clsuter Tab > Cpu Profiles sub-tab -> Remove Cpu Profile dialog"); //$NON-NLS-1$ //$NON-NLS-2$
 
     public final String name;
 

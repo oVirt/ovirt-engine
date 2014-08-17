@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui"
+	xmlns:e="urn:import:com.google.gwt.editor.ui.client">
+
+	<ui:style>
+		.container {
+			position: absolute !important;
+			top: 0px;
+			bottom: 0px;
+			left: 0px;
+			right: 0px;
+		}
+
+		@external .gwt-TabLayoutPanel;
+		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
+		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab;
+		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected;
+		@external .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent;
+
+		.gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+			background: #CCC;
+		}
+
+		.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+			background-image:
+			url("images/main_tab_middle.png");
+			background-repeat: repeat-x;
+		}
+
+		.gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+			background-image: url("images/tab_middle_selected.png");
+			background-repeat: repeat-x;
+		}
+
+		.gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+			border-width: 0px;
+			padding: 0px;
+		}
+	</ui:style>
+
+	<g:SplitLayoutPanel ui:field="splitLayoutPanel" addStyleNames="{style.container}">
+		<g:center>
+			<g:SimplePanel ui:field="tableContainer"/>
+		</g:center>
+	</g:SplitLayoutPanel>
+
+</ui:UiBinder>
