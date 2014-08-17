@@ -22,8 +22,10 @@ public class BackendStorageDomainVmsResource
     extends AbstractBackendStorageDomainContentsResource<VMs, VM, org.ovirt.engine.core.common.businessentities.VM>
     implements RemovableStorageDomainContentsResource<VMs, VM> {
 
+    static final String[] SUB_COLLECTIONS = { "disks" };
+
     public BackendStorageDomainVmsResource(Guid storageDomainId) {
-        super(storageDomainId, VM.class, org.ovirt.engine.core.common.businessentities.VM.class);
+        super(storageDomainId, VM.class, org.ovirt.engine.core.common.businessentities.VM.class, SUB_COLLECTIONS);
     }
 
     @Override
