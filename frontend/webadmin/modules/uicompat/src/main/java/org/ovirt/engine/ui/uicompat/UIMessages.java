@@ -60,7 +60,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This suffix will cause a name collision with another cloned Template: {0}.")
     String suffixCauseToClonedTemplateNameCollision(String templateName);
 
-    @DefaultMessage("Create operation failed. Domain {0} already exists in the system.")
+    @DefaultMessage("Create operation failed. Storage connection is already used by the following storage domain: {0}.")
     String createFailedDomainAlreadyExistStorageMsg(String storageName);
 
     @DefaultMessage("Import operation failed. Domain {0} already exists in the system.")
