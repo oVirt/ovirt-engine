@@ -151,6 +151,14 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                 .toString()));
     }
 
+    @Override
+    public void updateVmCpuProfileIdForClusterId(Guid clusterId, Guid cpuProfileId) {
+        getCallsHandler().executeModification("UpdateVmCpuProfileIdForClusterId",
+                getCustomMapSqlParameterSource()
+                        .addValue("cluster_id", clusterId)
+                        .addValue("cpu_profile_id", cpuProfileId));
+    }
+
     /**
      * JDBC row mapper for VM static
      */

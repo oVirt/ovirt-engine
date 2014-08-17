@@ -13,6 +13,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
@@ -402,6 +403,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if(!setAndValidateCpuProfile()) {
+            return false;
+        }
+
         if (isInstanceType) {
             return true;
         } else {
@@ -571,7 +576,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCustomSerialNumber(),
                         getParameters().getMasterVm().isBootMenuEnabled(),
                         getParameters().getMasterVm().isSpiceFileTransferEnabled(),
-                        getParameters().getMasterVm().isSpiceCopyPasteEnabled()));
+                        getParameters().getMasterVm().isSpiceCopyPasteEnabled(),
+                        getParameters().getMasterVm().getCpuProfileId()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());
@@ -854,5 +860,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
 
         return super.isQuotaDependant();
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getParameters().getMasterVm(),
+                getVdsGroup().getcompatibility_version()));
     }
 }

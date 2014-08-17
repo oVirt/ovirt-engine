@@ -111,6 +111,7 @@ public class ImportVmCommandTest {
         doReturn(true).when(cmd).checkTemplateInStorageDomain();
         doReturn(true).when(cmd).checkImagesGUIDsLegal();
         doReturn(true).when(cmd).setAndValidateDiskProfiles();
+        doReturn(true).when(cmd).setAndValidateCpuProfile();
         doReturn(true).when(cmd).validateNoDuplicateDiskImages(any(Iterable.class));
         doReturn(createSourceDomain()).when(cmd).getSourceDomain();
         doReturn(createStorageDomain()).when(cmd).getStorageDomain(any(Guid.class));

@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.MacPoolManager;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -446,6 +447,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
 
         if (!setAndValidateDiskProfiles()) {
+            return false;
+        }
+
+        if (!setAndValidateCpuProfile()) {
             return false;
         }
 
@@ -1297,6 +1302,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     getStoragePool().getcompatibility_version()));
         }
         return true;
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
+                getVdsGroup().getcompatibility_version()));
     }
 
     @Override

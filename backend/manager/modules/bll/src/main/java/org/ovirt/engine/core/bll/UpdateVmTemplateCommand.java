@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
@@ -83,6 +84,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             if (!returnValue) {
                 addCanDoActionMessage(VdcBllMessages.VMT_CANNOT_UPDATE_ILLEGAL_FIELD);
             }
+        }
+
+        if(!setAndValidateCpuProfile()) {
+            return false;
         }
 
         if (!isInstanceType && returnValue) {
@@ -316,6 +321,11 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
 
         return super.isQuotaDependant();
+    }
+
+    protected boolean setAndValidateCpuProfile() {
+        return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
+                getVdsGroup().getcompatibility_version()));
     }
 
 }

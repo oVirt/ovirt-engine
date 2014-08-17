@@ -592,6 +592,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (!setAndValidateCpuProfile()) {
+            return false;
+        }
+
         return true;
     }
 

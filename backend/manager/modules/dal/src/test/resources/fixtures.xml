@@ -1310,6 +1310,46 @@
         </row>
     </table>
 
+    <table name="cpu_profiles">
+        <column>id</column>
+        <column>name</column>
+        <column>cluster_id</column>
+        <column>qos_id</column>
+        <column>description</column>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>engine_profile</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+            <value>cpu profile description</value>
+        </row>
+        <row>
+            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
+            <value>engine_profile_pm</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253318</value>
+            <null />
+        </row>
+        <row>
+            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
+            <value>engine2_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <null />
+        </row>
+        <row>
+            <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
+            <value>engine3_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <null />
+        </row>
+        <row>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
+            <value>engine4_profile</value>
+            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
+            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
+        </row>
+    </table>
+
     <table name="network_cluster">
         <column>network_id</column>
         <column>cluster_id</column>
@@ -1780,7 +1820,7 @@
         <column>numatune_mode</column>
         <column>is_spice_file_transfer_enabled</column>
         <column>is_spice_copy_paste_enabled</column>
-
+        <column>cpu_profile_id</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -1840,6 +1880,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -1899,6 +1940,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -1958,6 +2000,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -2017,6 +2060,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -2076,6 +2120,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -2135,6 +2180,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -2194,6 +2240,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -2253,6 +2300,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
 
         <!-- VMS -->
@@ -2314,6 +2362,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2373,6 +2422,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2432,6 +2482,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4357</value>
@@ -2491,6 +2542,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2550,6 +2602,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2609,6 +2662,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2668,6 +2722,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2727,6 +2782,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -2786,6 +2842,7 @@
             <value>preferred</value>
             <value>true</value>
             <value>true</value>
+            <null />
         </row>
     </table>
 
@@ -5105,46 +5162,6 @@
             <value>engine4_profile</value>
             <value>c2211b56-8869-41cd-84e1-78d7cb96f31d</value>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
-        </row>
-    </table>
-
-    <table name="cpu_profiles">
-        <column>id</column>
-        <column>name</column>
-        <column>cluster_id</column>
-        <column>qos_id</column>
-        <column>description</column>
-        <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
-            <value>engine_profile</value>
-            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
-            <value>cpu profile description</value>
-        </row>
-        <row>
-            <value>a667da39-27b0-47ec-a5fa-d4293a62b222</value>
-            <value>engine_profile_pm</value>
-            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
-            <value>ae956031-6be2-43d6-bb90-5191c9253318</value>
-            <null />
-        </row>
-        <row>
-            <value>d0f2ca62-f564-447c-aa55-ce2aa12ea798</value>
-            <value>engine2_profile</value>
-            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
-            <null />
-        </row>
-        <row>
-            <value>471b199e-9454-47a1-85dd-4461f665abc5</value>
-            <value>engine3_profile</value>
-            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
-            <null />
-        </row>
-        <row>
-            <value>fd81f1e1-785b-4579-ab75-1419ebb87053</value>
-            <value>engine4_profile</value>
-            <value>0e57070e-2469-4b38-84a2-f111aaabd49d</value>
-            <value>ae956031-6be2-43d6-bb90-5191c9253317</value>
         </row>
     </table>
 

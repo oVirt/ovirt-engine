@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.dao;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -13,9 +16,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
-
-import java.sql.ResultSet;
-import java.sql.SQLException;
 
 public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGenericDaoDbFacade<T, Guid> {
     public VmBaseDaoDbFacade(String entityStoredProcedureName) {
@@ -67,7 +67,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("custom_serial_number", entity.getCustomSerialNumber())
                 .addValue("is_boot_menu_enabled", entity.isBootMenuEnabled())
                 .addValue("is_spice_file_transfer_enabled", entity.isSpiceFileTransferEnabled())
-                .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled());
+                .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled())
+                .addValue("cpu_profile_id", entity.getCpuProfileId());
     }
 
     /**
@@ -120,6 +121,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setDedicatedVmForVds(getGuid(rs, "dedicated_vm_for_vds"));
             entity.setMinAllocatedMem(rs.getInt("min_allocated_mem"));
             entity.setQuotaId(getGuid(rs, "quota_id"));
+            entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
         }
     }
 }

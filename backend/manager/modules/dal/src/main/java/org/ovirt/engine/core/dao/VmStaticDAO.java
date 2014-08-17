@@ -92,4 +92,12 @@ public interface VmStaticDAO extends GenericDao<VmStatic, Guid> {
      * @param removePermissions flag to indicate if to remove the permissions or keep them
      */
     public void remove(Guid id, boolean removePermissions);
+
+    /**
+     * update vm_static.cpu_profile_id for cluster
+     *
+     * @param clusterId
+     * @param cpuProfileId
+     */
+    void updateVmCpuProfileIdForClusterId(Guid clusterId, Guid cpuProfileId);
 }
