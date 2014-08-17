@@ -1716,10 +1716,7 @@ public interface CommonApplicationConstants extends Constants {
     String UnlimitedNetworkQoS();
 
     @DefaultStringValue("Unlimited")
-    String UnlimitedStorageQos();
-
-    @DefaultStringValue("Unlimited")
-    String UnlimitedCpuQos();
+    String unlimitedQos();
 
     @DefaultStringValue("Password")
     String hostPasswordLabel();
@@ -1894,10 +1891,10 @@ public interface CommonApplicationConstants extends Constants {
     String authz();
 
     @DefaultStringValue("Name")
-    String diskProfileNameLabel();
+    String profileNameLabel();
 
     @DefaultStringValue("Description")
-    String diskProfileDescriptionLabel();
+    String profileDescriptionLabel();
 
     @DefaultStringValue("QoS Name")
     String storageQosName();
@@ -1906,12 +1903,12 @@ public interface CommonApplicationConstants extends Constants {
     String cpuQosName();
 
     @DefaultStringValue("New")
-    String newDiskProfile();
+    String newProfile();
 
     @DefaultStringValue("Edit")
-    String editDiskProfile();
+    String editProfile();
 
     @DefaultStringValue("Remove")
-    String removeDiskProfile();
+    String removeProfile();
 
 }

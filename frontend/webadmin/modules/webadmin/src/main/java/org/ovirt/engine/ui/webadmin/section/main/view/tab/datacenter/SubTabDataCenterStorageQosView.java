@@ -59,7 +59,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> throughputColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxThroughput() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxThroughput() == null ? constants.unlimitedQos()
                         : object.getMaxThroughput().toString();
             }
         };
@@ -69,7 +69,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> readThroughputColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxReadThroughput() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxReadThroughput() == null ? constants.unlimitedQos()
                         : object.getMaxReadThroughput().toString();
             }
         };
@@ -79,7 +79,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> writeThroughputColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxWriteThroughput() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxWriteThroughput() == null ? constants.unlimitedQos()
                         : object.getMaxWriteThroughput().toString();
             }
         };
@@ -89,7 +89,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> iopsColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxIops() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxIops() == null ? constants.unlimitedQos()
                         : object.getMaxIops().toString();
             }
         };
@@ -99,7 +99,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> readIopsColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxReadIops() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxReadIops() == null ? constants.unlimitedQos()
                         : object.getMaxReadIops().toString();
             }
         };
@@ -109,7 +109,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         TextColumnWithTooltip<StorageQos> writeIopsColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
             public String getValue(StorageQos object) {
-                return object.getMaxWriteIops() == null ? constants.UnlimitedStorageQos()
+                return object.getMaxWriteIops() == null ? constants.unlimitedQos()
                         : object.getMaxWriteIops().toString();
             }
         };

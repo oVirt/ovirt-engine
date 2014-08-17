@@ -154,6 +154,9 @@ public class ApplicationPlaces {
     public static final String clusterAffinityGroupsSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "affinity_groups"; //$NON-NLS-1$
 
+    public static final String clusterCpuProfileSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
+            + "cpu_profiles"; //$NON-NLS-1$
+
     public static final String clusterPermissionSubTabPlace = clusterMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

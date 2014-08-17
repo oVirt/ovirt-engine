@@ -24,6 +24,7 @@ import org.ovirt.engine.ui.webadmin.uicommon.model.AlertModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.BookmarkModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyClusterModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.ClusterPolicyModelProvider;
+import org.ovirt.engine.ui.webadmin.uicommon.model.CpuProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.DiskProfilePermissionModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventFirstRowModelProvider;
 import org.ovirt.engine.ui.webadmin.uicommon.model.EventModelProvider;
@@ -115,6 +116,9 @@ public class UiCommonModule extends BaseUiCommonModule {
 
         // disk profiles permissions
         bind(DiskProfilePermissionModelProvider.class).asEagerSingleton();
+
+        // cpu profiles permissions
+        bind(CpuProfilePermissionModelProvider.class).asEagerSingleton();
     }
 
     void bindIntegration() {

@@ -87,7 +87,7 @@ public class CommonModel extends ListModel
 
     // NOTE: when adding a new ListModel here, be sure to add it to the list in initItems()
     private SearchableListModel dataCenterList;
-    private SearchableListModel clusterList;
+    private ClusterListModel clusterList;
     private SearchableListModel hostList;
     private StorageListModel storageList;
     private SearchableListModel vmList;
@@ -1117,6 +1117,14 @@ public class CommonModel extends ListModel
 
     public void setStorageList(StorageListModel storageList) {
         this.storageList = storageList;
+    }
+
+    public ClusterListModel getClusterList() {
+        return clusterList;
+    }
+
+    public void setClusterList(ClusterListModel clusterList) {
+        this.clusterList = clusterList;
     }
 
     public BookmarkListModel getBookmarkList()

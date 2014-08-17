@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.instancetypes.I
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.macpool.SharedMacPoolPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolEditPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.pool.PoolNewPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.DiskProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.VnicProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.provider.ExternalSubnetPopupPresenterWidget;
@@ -132,6 +133,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVnicProfil
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.MainTabVolumePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.ClusterSubTabPanelPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterAffinityGroupPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterCpuProfilePresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGeneralPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterGlusterHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.cluster.SubTabClusterHostPresenter;
@@ -303,6 +305,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.macpool.SharedMacPoo
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQoSPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolEditPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.pool.PoolNewPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.CpuProfilePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.DiskProfilePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.profile.VnicProfilePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSubnetPopupView;
@@ -370,6 +373,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVnicProfileView
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.MainTabVolumeView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.ClusterSubTabPanelView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterAffinityGroupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterCpuProfileView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGeneralView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterGlusterHookView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster.SubTabClusterHostView;
@@ -760,6 +764,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabClusterPermissionPresenter.ViewDef.class,
                 SubTabClusterPermissionView.class,
                 SubTabClusterPermissionPresenter.ProxyDef.class);
+        bindPresenter(SubTabClusterCpuProfilePresenter.class,
+                SubTabClusterCpuProfilePresenter.ViewDef.class,
+                SubTabClusterCpuProfileView.class,
+                SubTabClusterCpuProfilePresenter.ProxyDef.class);
 
         // Host
         bindPresenter(HostSubTabPanelPresenter.class,
@@ -1470,6 +1478,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(DiskProfilePopupPresenterWidget.class,
                 DiskProfilePopupPresenterWidget.ViewDef.class,
                 DiskProfilePopupView.class);
+        bindPresenterWidget(CpuProfilePopupPresenterWidget.class,
+                CpuProfilePopupPresenterWidget.ViewDef.class,
+                CpuProfilePopupView.class);
 
         // External Subnet
         bindPresenterWidget(ExternalSubnetPopupPresenterWidget.class,

@@ -3897,4 +3897,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Description")
     String cpuQosDescription();
+
+    @DefaultStringValue("CPU Profiles")
+    String cpuProfilesSubTabLabel();
+
+    @DefaultStringValue("Cluster")
+    String cpuProfileClusterLabel();
+
+    @DefaultStringValue("QoS")
+    String cpuProfileQosLabel();
 }

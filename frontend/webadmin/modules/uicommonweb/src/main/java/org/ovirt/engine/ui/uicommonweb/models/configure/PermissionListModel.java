@@ -22,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -387,6 +388,9 @@ public class PermissionListModel extends SearchableListModel
         }
         if (getEntity() instanceof DiskProfile) {
             return VdcObjectType.DiskProfile;
+        }
+        if (getEntity() instanceof CpuProfile) {
+            return VdcObjectType.CpuProfile;
         }
         return VdcObjectType.Unknown;
     }
