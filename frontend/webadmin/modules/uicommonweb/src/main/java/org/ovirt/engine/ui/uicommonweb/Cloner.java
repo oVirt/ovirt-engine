@@ -196,6 +196,8 @@ public final class Cloner
         vm.setVmCreationDate(instance.getVmCreationDate());
         vm.setVmDescription(instance.getVmDescription());
         vm.setComment(instance.getComment());
+        vm.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
+        vm.setCustomCpuName(instance.getCustomCpuName());
         vm.setId(instance.getId());
         vm.setVmHost(instance.getVmHost());
         vm.setVmIp(instance.getVmIp());
@@ -426,6 +428,8 @@ public final class Cloner
         obj.setCreationDate(instance.getCreationDate());
         obj.setDefaultBootSequence(instance.getDefaultBootSequence());
         obj.setComment(instance.getComment());
+        obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
+        obj.setCustomCpuName(instance.getCustomCpuName());
         obj.setFailBack(instance.isFailBack());
         obj.setStateless(instance.isStateless());
         obj.setMemSizeMb(instance.getMemSizeMb());
@@ -480,6 +484,8 @@ public final class Cloner
         obj.setDedicatedVmForVds(instance.getDedicatedVmForVds());
         obj.setDescription(instance.getDescription());
         obj.setComment(instance.getComment());
+        obj.setCustomEmulatedMachine(instance.getCustomEmulatedMachine());
+        obj.setCustomCpuName(instance.getCustomCpuName());
         obj.setInitialized(instance.isInitialized());
         obj.setStateless(instance.isStateless());
         obj.setRunAndPause(instance.isRunAndPause());

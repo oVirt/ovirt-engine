@@ -225,6 +225,13 @@
 			</g:FlowPanel>
 		</g:DisclosurePanel>
 
+        <g:DisclosurePanel ui:field="systemPanel" label="{constants.systemVmPopup}" addStyleNames="{style.panelStyle}">
+            <g:FlowPanel>
+                <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" />
+                <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" />
+            </g:FlowPanel>
+        </g:DisclosurePanel>
+
         <g:DisclosurePanel ui:field="hostPanel" label="{constants.hostVmPopup}" addStyleNames="{style.panelStyle}">
             <g:FlowPanel>
                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />

@@ -765,6 +765,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + VmPool.MASK_CHARACTER + "' to specify mask for the VM indexes")
     String poolNameValidationMsg();
 
+    @DefaultStringValue("Name can contain only alphanumeric, '.', '_', '+' or '-' characters.")
+    String I18NExtraNameOrNoneValidation();
+
     @DefaultStringValue("UTF characters are not allowed.")
     String nonUtfValidationMsg();
 

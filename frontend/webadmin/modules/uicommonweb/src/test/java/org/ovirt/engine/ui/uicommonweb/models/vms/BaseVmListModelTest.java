@@ -33,6 +33,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getNumOfMonitors().getSelectedItem()).thenReturn(NUM_OF_MONITORS);
         when(model.getDescription().getEntity()).thenReturn(DESCRIPTION);
         when(model.getComment().getEntity()).thenReturn(COMMENT);
+        when(model.getEmulatedMachine().getSelectedItem()).thenReturn(EMULATED_MACHINE);
+        when(model.getCustomCpu().getSelectedItem()).thenReturn(CUSTOM_CPU_NAME);
         when(model.getMemSize().getEntity()).thenReturn(MEM_SIZE);
         when(model.getMinAllocatedMemory().getEntity()).thenReturn(MIN_MEM);
         when(model.getSelectedCluster().getId()).thenReturn(CLUSTER_ID);
@@ -118,6 +120,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertTrue(vm.isSpiceCopyPasteEnabled());
         assertTrue(vm.getAutoConverge());
         assertTrue(vm.getMigrateCompressed());
+        assertEquals(EMULATED_MACHINE, vm.getCustomEmulatedMachine());
+        assertEquals(CUSTOM_CPU_NAME, vm.getCustomCpuName());
     }
 
     /**

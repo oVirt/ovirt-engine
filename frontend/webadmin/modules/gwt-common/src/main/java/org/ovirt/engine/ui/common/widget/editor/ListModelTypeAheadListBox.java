@@ -154,7 +154,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     }
 
-    private void switchSuggestions() {
+    protected void switchSuggestions() {
         if (!isEnabled()) {
             return;
         }
@@ -163,23 +163,27 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             hideSuggestions();
             adjustSelectedValue();
         } else {
-            // show all the suggestions even if there is already something filled
-            // otherwise it is not obvious that there are more options
-            suggestBox.setText(null);
-            suggestBox.showSuggestionList();
-
-            selectInMenu(getValue());
-
-            Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
-                @Override
-                public void execute () {
-                    setFocus(true);
-                }
-            });
+            showAllSuggestions();
         }
     }
 
-    private void selectInMenu(T toSelect) {
+    protected void showAllSuggestions() {
+        // show all the suggestions even if there is already something filled
+        // otherwise it is not obvious that there are more options
+        suggestBox.setText(null);
+        suggestBox.showSuggestionList();
+
+        selectInMenu(getValue());
+
+        Scheduler.get().scheduleDeferred(new Scheduler.ScheduledCommand() {
+            @Override
+            public void execute () {
+                setFocus(true);
+            }
+        });
+    }
+
+    protected void selectInMenu(T toSelect) {
         if (!(getSuggestionMenu() instanceof MenuBar)) {
             // can not select if the it is not a menu bar
             return;
@@ -234,7 +238,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
         return menuBar.@com.google.gwt.user.client.ui.MenuBar::getSelectedItem()();
     }-*/;
 
-    private void adjustSelectedValue() {
+    protected void adjustSelectedValue() {
         if (acceptableValues.size() == 0) {
             return;
         }
@@ -289,7 +293,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     @Override
     public T getValue() {
-        if (acceptableValues.contains(super.getValue())) {
+        if (super.getValue() != null && acceptableValues.contains(super.getValue())) {
             return super.getValue();
         }
 
@@ -297,7 +301,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     }
 
     private void addToValidValuesIfNeeded(T value) {
-        if (!acceptableValues.contains(value) && autoAddToValidValues) {
+        if (value != null && !acceptableValues.contains(value) && autoAddToValidValues) {
             acceptableValues.add(value);
         }
 

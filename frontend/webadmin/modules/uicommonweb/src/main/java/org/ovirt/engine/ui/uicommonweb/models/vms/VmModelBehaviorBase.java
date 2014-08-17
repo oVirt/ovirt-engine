@@ -6,8 +6,10 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
@@ -19,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -1075,6 +1078,60 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             postOsItemChanged();
         }
 
+    }
+
+    /*
+     * Updates the emulated machine combobox after a cluster change occurs
+     */
+    protected void updateEmulatedMachines() {
+        VDSGroup cluster = getModel().getSelectedCluster();
+
+        if (cluster == null) {
+            return;
+        }
+
+        AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        if(returnValue != null) {
+                            Set<String> emulatedSet = new TreeSet<String>((HashSet<String>) returnValue);
+                            emulatedSet.add(""); //$NON-NLS-1$
+                            String oldVal = getModel().getEmulatedMachine().getSelectedItem();
+                            getModel().getEmulatedMachine().setItems(emulatedSet);
+                            getModel().getEmulatedMachine().setSelectedItem(oldVal);
+                        }
+                    }
+                }), cluster.getId());
+    }
+
+    /*
+     * Updates the cpu model combobox after a cluster change occurs
+     */
+
+    protected void updateCustomCpu() {
+        VDSGroup cluster = getModel().getSelectedCluster();
+
+        if (cluster == null || cluster.getcpu_name() == null) {
+            return;
+        }
+
+        AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        if (returnValue != null) {
+                            List<String> cpuList = new ArrayList<String>();
+                            cpuList.add(""); //$NON-NLS-1$
+                            for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
+                                cpuList.add(cpu.getVdsVerbData());
+                            }
+                            String oldVal = getModel().getCustomCpu().getSelectedItem();
+                            getModel().getCustomCpu().setItems(cpuList);
+                            getModel().getCustomCpu().setSelectedItem(oldVal);
+                        }
+                    }
+                }), cluster.getcpu_name());
     }
 
     protected void updateSelectedCdImage(VmBase vmBase) {

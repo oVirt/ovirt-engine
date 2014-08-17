@@ -286,6 +286,9 @@ public abstract class InstanceTypeManager {
         maybeSetSelectedItem(model.getNumOfSockets(), vmBase.getNumOfSockets());
         maybeSetSelectedItem(model.getCoresPerSocket(), vmBase.getCpuPerSocket());
 
+        maybeSetSelectedItem(model.getEmulatedMachine(), vmBase.getCustomEmulatedMachine());
+        maybeSetSelectedItem(model.getCustomCpu(), vmBase.getCustomCpuName());
+
         model.setSelectedMigrationDowntime(vmBase.getMigrationDowntime());
         priorityUtil.initPriority(vmBase.getPriority());
 

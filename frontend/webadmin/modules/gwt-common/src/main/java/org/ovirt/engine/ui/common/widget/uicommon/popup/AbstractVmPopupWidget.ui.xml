@@ -518,6 +518,8 @@
                             <g:FlowPanel ui:field="vcpusAdvancedParameterExpanderContent" addStyleNames="{style.generalExpanderContent}">
                                 <ge:EntityModelDetachableWidgetWithLabel ui:field="corePerSocketEditorWithDetachable" />
                                 <ge:EntityModelDetachableWidgetWithLabel ui:field="numOfSocketsEditorWithDetachable" />
+                                <e:ListModelTypeAheadChangeableListBoxEditor ui:field="emulatedMachine" />
+                                <e:ListModelTypeAheadChangeableListBoxEditor ui:field="customCpu" />
                             </g:FlowPanel>
                         </g:FlowPanel>
                             <g:Label ui:field="generalLabel" addStyleNames="{style.sectionLabel}" text="{constants.initialRunGeneral}" />

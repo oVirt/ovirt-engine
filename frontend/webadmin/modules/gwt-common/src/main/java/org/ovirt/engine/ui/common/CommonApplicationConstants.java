@@ -553,6 +553,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Comment")
     String commentLabel();
 
+    @DefaultStringValue("Emulated Machine override")
+    String emulatedMachineLabel();
+
+    @DefaultStringValue("CPU Model override")
+    String cpuModelLabel();
+
+    @DefaultStringValue("Use cluster default")
+    String clusterDefaultOption();
+
     @DefaultStringValue("Reason")
     String reasonLabel();
 

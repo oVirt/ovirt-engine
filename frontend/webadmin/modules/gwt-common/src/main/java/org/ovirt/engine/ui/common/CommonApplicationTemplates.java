@@ -77,6 +77,11 @@ public interface CommonApplicationTemplates extends SafeHtmlTemplates {
     SafeHtml typeAheadNameDescription(String name, String description);
 
     @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
+            "<td>{0}</td>" +
+            "</tr></table>")
+    SafeHtml typeAheadName(String name);
+
+    @Template("<table style='min-width: 200px; width: 100%; border-bottom: 1px solid #acacac;'><tr>" +
             "<td>&nbsp</td>" +
             "</tr></table>")
     SafeHtml typeAheadEmptyContent();

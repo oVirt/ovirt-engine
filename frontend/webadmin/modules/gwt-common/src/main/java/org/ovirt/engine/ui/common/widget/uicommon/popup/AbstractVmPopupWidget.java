@@ -67,6 +67,7 @@ import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTabPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxOnlyEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.VncKeyMapRenderer;
 import org.ovirt.engine.ui.common.widget.editor.generic.DetachableLabel;
@@ -283,6 +284,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     public EntityModelDetachableWidgetWithLabel corePerSocketEditorWithDetachable;
+
+    @UiField(provided = true)
+    @Path(value = "emulatedMachine.selectedItem")
+    @WithElementId("emulatedMachine")
+    public ListModelTypeAheadChangeableListBoxEditor emulatedMachine;
+
+    @UiField(provided = true)
+    @Path(value = "customCpu.selectedItem")
+    @WithElementId("customCpu")
+    public ListModelTypeAheadChangeableListBoxEditor customCpu;
 
     @UiField
     @Ignore
@@ -1194,6 +1205,37 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 new ModeSwitchingVisibilityRenderer()
         );
 
+
+        emulatedMachine = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        if (data == null || data.trim().isEmpty()) {
+                            data = constants.clusterDefaultOption();
+                        }
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false,
+                new ModeSwitchingVisibilityRenderer(),
+                constants.clusterDefaultOption());
+
+        customCpu = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        if (data == null || data.trim().isEmpty()) {
+                            data = constants.clusterDefaultOption();
+                        }
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false,
+                new ModeSwitchingVisibilityRenderer(),
+                constants.clusterDefaultOption());
+
         numOfSocketsEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
         numOfSocketsEditorWithDetachable = new EntityModelDetachableWidgetWithLabel(numOfSocketsEditor);
         corePerSocketEditor = new ListModelListBoxEditor<Integer>(new ModeSwitchingVisibilityRenderer());
@@ -1315,6 +1357,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 .asString();
     }
 
+    private String typeAheadNameTemplateNullSafe(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            return applicationTemplates.typeAheadName(name).asString();
+        } else {
+            return applicationTemplates.typeAheadEmptyContent().asString();
+        }
+    }
+
     protected void localize(CommonApplicationConstants constants) {
         // Tabs
         highAvailabilityTab.setLabel(constants.highAvailVmPopup());
@@ -1424,6 +1474,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         totalvCPUsEditor.setLabel(constants.numOfVCPUs());
         corePerSocketEditorWithDetachable.setLabel(constants.coresPerSocket());
         numOfSocketsEditorWithDetachable.setLabel(constants.numOfSockets());
+        emulatedMachine.setLabel(constants.emulatedMachineLabel());
+        customCpu.setLabel(constants.cpuModelLabel());
     }
 
     protected void applyStyles() {
@@ -1839,6 +1891,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         nextTabIndex = vcpusAdvancedParameterExpander.setTabIndexes(nextTabIndex);
         corePerSocketEditor.setTabIndex(nextTabIndex++);
         numOfSocketsEditor.setTabIndex(nextTabIndex++);
+        emulatedMachine.setTabIndex(nextTabIndex++);
+        customCpu.setTabIndex(nextTabIndex++);
         nextTabIndex = serialNumberPolicyEditor.setTabIndexes(nextTabIndex);
 
         // == Pools ==
@@ -2053,6 +2107,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         baseTemplateEditor.setEnabled(false);
         vmTypeEditor.setEnabled(false);
         instanceTypesEditor.setEnabled(false);
+        emulatedMachine.setEnabled(false);
+        customCpu.setEnabled(false);
     }
 
     private List<DialogTab> allDialogTabs() {

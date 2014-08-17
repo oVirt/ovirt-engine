@@ -11,6 +11,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -61,6 +62,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
@@ -216,6 +218,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getInstanceTypes().setIsChangable(false);
             getMemSize().setIsChangable(false);
             getTotalCPUCores().setIsChangable(false);
+
+            getCustomCpu().setIsChangable(false);
+            getEmulatedMachine().setIsChangable(false);
 
             getCoresPerSocket().setIsChangable(false);
             getNumOfSockets().setIsChangable(false);
@@ -436,6 +441,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void setName(EntityModel<String> value)
     {
         privateName = value;
+    }
+
+    private NotChangableForVmInPoolListModel<String> emulatedMachine;
+
+    public ListModel<String> getEmulatedMachine() {
+        return emulatedMachine;
+    }
+
+    private void setEmulatedMachine(NotChangableForVmInPoolListModel<String> emulatedMachine) {
+        this.emulatedMachine = emulatedMachine;
+    }
+
+    private NotChangableForVmInPoolListModel<String> customCpu;
+
+    public ListModel<String> getCustomCpu() {
+        return customCpu;
+    }
+
+    private void setCustomCpu(NotChangableForVmInPoolListModel<String> customCpu) {
+        this.customCpu = customCpu;
     }
 
     private NotChangableForVmInPoolListModel<Integer> privateOSType;
@@ -1379,7 +1404,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 VdcQueryType.GetVmTemplate, VdcQueryType.GetVmConfigurationBySnapshot, VdcQueryType.GetAllVdsGroups,
                 VdcQueryType.GetPermittedStorageDomainsByStoragePoolId, VdcQueryType.GetHostsByClusterId,
                 VdcQueryType.OsRepository,
-                VdcQueryType.Search });
+                VdcQueryType.Search,
+                VdcQueryType.GetSupportedCpuList});
 
         this.behavior = behavior;
         this.behavior.setModel(this);
@@ -1479,6 +1505,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setDataCenterWithClustersList(new NotChangableForVmInPoolListModel<DataCenterWithCluster>());
         getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(this);
+
+        setEmulatedMachine(new NotChangableForVmInPoolListModel<String>());
+
+        setCustomCpu(new NotChangableForVmInPoolListModel<String>());
 
         setTimeZone(new NotChangableForVmInPoolListModel<TimeZoneModel>());
         getTimeZone().getSelectedItemChangedEvent().addListener(this);
@@ -1706,6 +1736,8 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 updateDisplayProtocol();
                 updateMemoryBalloonDevice();
                 initUsbPolicy();
+                behavior.updateEmulatedMachines();
+                behavior.updateCustomCpu();
             }
             else if (sender == getTemplate())
             {
@@ -1814,6 +1846,14 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             }
             else if (sender == getIsSubTemplate()) {
                 behavior.isSubTemplateEntityChanged();
+            }
+            else if (sender == getHostCpu()) {
+                if(getHostCpu().getEntity() != null && getHostCpu().getEntity()) {
+                    getCustomCpu().setIsChangable(false);
+                    getCustomCpu().setSelectedItem(""); //$NON-NLS-1$
+                } else {
+                    getCustomCpu().setIsChangable(true);
+                }
             }
 
         }
@@ -2616,7 +2656,6 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
 
-
         getTemplate().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
         getDisksAllocationModel().validateEntity(new IValidation[] {});
 
@@ -2705,6 +2744,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getSerialNumberPolicy().getCustomSerialNumber().setIsValid(true);
         }
 
+        getEmulatedMachine().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(
+                BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)});
+        getCustomCpu().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation() , new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)});
+
         boolean behaviorValid = behavior.validate();
         setValidTab(TabName.GENERAL_TAB, getName().getIsValid() && getDescription().getIsValid()
                 && getComment().getIsValid());
@@ -2729,7 +2772,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
                 getTotalCPUCores().getIsValid() &&
-                getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
+                getSerialNumberPolicy().getCustomSerialNumber().getIsValid() &&
+                getEmulatedMachine().getIsValid() &&
+                getCustomCpu().getIsValid());
 
 
         boolean isValid = behaviorValid && allTabsValid();

@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
+import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -16,6 +17,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadChangeableListBoxEditor;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.BootSequenceModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RunOnceModel;
@@ -101,6 +103,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @Ignore
     @WithElementId("vmInit")
     RunOnceVmInitWidget vmInitWidget;
+
+    @UiField
+    @WithElementId
+    DisclosurePanel systemPanel;
 
     @UiField
     @WithElementId
@@ -257,6 +263,17 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     @WithElementId("defaultHost")
     public ListModelListBoxEditor<VDS> defaultHostEditor;
 
+    @UiField(provided = true)
+    @Path(value = "emulatedMachine.selectedItem")
+    @WithElementId("emulatedMachine")
+    public ListModelTypeAheadChangeableListBoxEditor emulatedMachine;
+
+
+    @UiField(provided = true)
+    @Path(value = "customCpu.selectedItem")
+    @WithElementId("customCpu")
+    public ListModelTypeAheadChangeableListBoxEditor customCpu;
+
     @UiField
     @Ignore
     ButtonBase refreshButton;
@@ -270,16 +287,18 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     private final CommonApplicationResources resources;
     private final CommonApplicationConstants constants;
     private final CommonApplicationMessages messages;
+    private final CommonApplicationTemplates templates;
 
     @UiFactory
     protected DisclosurePanel createPanel(String label) {
         return new DisclosurePanel(resources.decreaseIcon(), resources.increaseIcon(), label);
     }
 
-    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages) {
+    public VmRunOncePopupWidget(CommonApplicationConstants constants, CommonApplicationResources resources, CommonApplicationMessages messages, CommonApplicationTemplates templates) {
         this.constants = constants;
         this.resources = resources;
         this.messages = messages;
+        this.templates = templates;
         initCheckBoxEditors();
         initRadioButtonEditors();
         initListBoxEditors();
@@ -323,6 +342,10 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         displayConsoleSpiceEditor.setLabel(constants.runOncePopupDisplayConsoleSpiceLabel());
         spiceFileTransferEnabledEditor.setLabel(constants.spiceFileTransferEnabled());
         spiceCopyPasteEnabledEditor.setLabel(constants.spiceCopyPasteEnabled());
+
+        // System Tab
+        emulatedMachine.setLabel(constants.emulatedMachineLabel());
+        customCpu.setLabel(constants.cpuModelLabel());
 
         // Host Tab
         isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
@@ -378,6 +401,25 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
                 return vds.getName();
             }
         });
+
+        emulatedMachine = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false);
+        customCpu = new ListModelTypeAheadChangeableListBoxEditor(
+                new ListModelTypeAheadChangeableListBoxEditor.NullSafeSuggestBoxRenderer() {
+
+                    @Override
+                    public String getDisplayStringNullSafe(String data) {
+                        return typeAheadNameTemplateNullSafe(data);
+                    }
+                },
+                false);
     }
 
     void initBootSequenceBox() {
@@ -396,6 +438,7 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     void addStyles() {
         linuxBootOptionsPanel.setVisible(false);
         initialRunPanel.setVisible(false);
+        systemPanel.setVisible(true);
         hostPanel.setVisible(true);
         attachFloppyEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
         attachIsoEditor.addContentWidgetStyleName(style.attachImageCheckBoxLabel());
@@ -648,6 +691,14 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
     public RunOnceModel flush() {
         vmInitWidget.flush();
         return driver.flush();
+    }
+
+    private String typeAheadNameTemplateNullSafe(String name) {
+        if (name != null && !name.trim().isEmpty()) {
+            return templates.typeAheadName(name).asString();
+        } else {
+            return templates.typeAheadEmptyContent().asString();
+        }
     }
 
 }

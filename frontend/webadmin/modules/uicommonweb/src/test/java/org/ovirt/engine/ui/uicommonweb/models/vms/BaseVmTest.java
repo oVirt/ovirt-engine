@@ -27,6 +27,8 @@ public class BaseVmTest {
     protected static final int NUM_OF_MONITORS = 2;
     protected static final String DESCRIPTION = "enterprise VM"; //$NON-NLS-1$
     protected static final String COMMENT = "important!"; //$NON-NLS-1$
+    protected static final String EMULATED_MACHINE = "rhel_version"; //$NON-NLS-1$
+    protected static final String CUSTOM_CPU_NAME = "proc"; //$NON-NLS-1$
     protected static final int MEM_SIZE = 1024;
     protected static final int MIN_MEM = 100;
     protected static final Guid CLUSTER_ID = Guid.newGuid();

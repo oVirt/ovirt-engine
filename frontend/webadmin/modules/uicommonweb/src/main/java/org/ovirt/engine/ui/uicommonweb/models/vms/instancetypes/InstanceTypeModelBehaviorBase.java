@@ -26,6 +26,10 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
         getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(true);
 
         getModel().updateWatchdogItems(new HashSet<VmWatchdogType>(Arrays.asList(VmWatchdogType.values())));
+
+        // no cluster data - init list to 'use cluster default' option
+        getModel().getEmulatedMachine().setItems(Arrays.asList("")); //$NON-NLS-1$
+        getModel().getCustomCpu().setItems(Arrays.asList("")); //$NON-NLS-1$
     }
 
     protected void initDisplayTypes(DisplayType selected) {

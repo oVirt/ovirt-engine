@@ -3,13 +3,19 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.ovirt.engine.core.common.action.RunVmOnceParams;
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InitializationType;
+import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -17,6 +23,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -30,7 +37,9 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
+import org.ovirt.engine.ui.uicommonweb.validation.I18NExtraNameOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
+import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoTrimmingWhitespacesValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -41,6 +50,7 @@ import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public abstract class RunOnceModel extends Model
 {
+
     // Boot Options tab
 
     public static final String RUN_ONCE_COMMAND = "OnRunOnce"; //$NON-NLS-1$
@@ -488,6 +498,28 @@ public abstract class RunOnceModel extends Model
         }
     }
 
+    // System tab
+
+    private ListModel<String> emulatedMachine;
+
+    public ListModel<String> getEmulatedMachine() {
+        return emulatedMachine;
+    }
+
+    private void setEmulatedMachine(ListModel<String> emulatedMachine) {
+        this.emulatedMachine = emulatedMachine;
+    }
+
+    private ListModel<String> customCpu;
+
+    public ListModel<String> getCustomCpu() {
+        return customCpu;
+    }
+
+    private void setCustomCpu(ListModel<String> customCpu) {
+        this.customCpu = customCpu;
+    }
+
     // Host tab
 
     private ListModel<VDS> defaultHost;
@@ -631,6 +663,12 @@ public abstract class RunOnceModel extends Model
         getSpiceCopyPasteEnabled().setIsChangable(spiceCopyPasteToggle);
         getSpiceCopyPasteEnabled().setIsAvailable(spiceCopyPasteToggle);
 
+        // System tab
+        setEmulatedMachine(new ListModel<String>());
+        getEmulatedMachine().setSelectedItem(vm.getCustomEmulatedMachine());
+        setCustomCpu(new ListModel<String>());
+        getCustomCpu().setSelectedItem(vm.getCustomCpuName());
+
         // Host tab
         setDefaultHost(new ListModel<VDS>());
         getDefaultHost().getSelectedItemChangedEvent().addListener(this);
@@ -684,6 +722,7 @@ public abstract class RunOnceModel extends Model
         getVmInit().init(vm.getStaticData());
 
         updateDomainList();
+        updateSystemTabLists();
         updateIsoList();
         updateDisplayProtocols();
         updateFloppyImages();
@@ -786,6 +825,16 @@ public abstract class RunOnceModel extends Model
         String selectedDomain = getSysPrepSelectedDomainName().getEntity();
         if (!StringHelper.isNullOrEmpty(selectedDomain)) {
              params.setSysPrepDomainName(selectedDomain);
+        }
+
+        String selectedEmulatedMachine = getEmulatedMachine().getSelectedItem();
+        if (!StringHelper.isNullOrEmpty(selectedEmulatedMachine)) {
+            params.setCustomEmulatedMachine(selectedEmulatedMachine);
+        }
+
+        String selectedCustomCpu = getCustomCpu().getSelectedItem();
+        if (!StringHelper.isNullOrEmpty(selectedCustomCpu)) {
+            params.setCustomCpuName(selectedCustomCpu);
         }
 
         params.setSpiceFileTransferEnabled(getSpiceFileTransferEnabled().getEntity());
@@ -943,6 +992,88 @@ public abstract class RunOnceModel extends Model
                                                                                   }
                                                                               }
                                                                           }));
+    }
+
+    private void updateSystemTabLists() {
+        Guid clusterId = vm.getVdsGroupId();
+
+        if (clusterId != null) {
+
+            // update emulated machine list
+            AsyncDataProvider.getInstance().getEmulatedMachinesByClusterID(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            if (returnValue != null) {
+                                Set<String> emulatedSet = new TreeSet<String>((HashSet<String>) returnValue);
+                                String oldVal = getEmulatedMachine().getSelectedItem();
+                                getEmulatedMachine().setItems(emulatedSet);
+                                getEmulatedMachine().setSelectedItem(oldVal);// even if converted - needed as fallback
+                                convertEmulatedMachineField();
+                            }
+                        }
+                    }), clusterId);
+
+            AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
+                    new INewAsyncCallback() {
+                        @Override
+                        public void onSuccess(Object model, Object returnValue) {
+                            if (returnValue != null) {
+                                VDSGroup cluster = (VDSGroup) returnValue;
+
+                                // update cpu names list
+                                if (cluster.getcpu_name() != null) {
+                                    AsyncDataProvider.getInstance().getSupportedCpuList(new AsyncQuery(this,
+                                            new INewAsyncCallback() {
+                                                @Override
+                                                public void onSuccess(Object model, Object returnValue) {
+                                                    if (returnValue != null) {
+                                                        List<String> cpuList = new ArrayList<String>();
+                                                        for (ServerCpu cpu : (List<ServerCpu>) returnValue) {
+                                                            cpuList.add(cpu.getVdsVerbData());
+                                                        }
+                                                        String oldVal = getCustomCpu().getSelectedItem();
+                                                        getCustomCpu().setItems(cpuList);
+
+                                                        // replace 'cluster cpu' with the explicit run-time value
+                                                        if (StringHelper.isNullOrEmpty(oldVal)
+                                                                && !cpuList.isEmpty()) {
+                                                            getCustomCpu().setSelectedItem(cpuList.get(
+                                                                    cpuList.size() - 1));
+                                                        } else {
+                                                            getCustomCpu().setSelectedItem(oldVal);
+                                                        }
+                                                    }
+                                                }
+                                            }), cluster.getcpu_name());
+                                }
+                            }
+                        }
+                    }), clusterId);
+        }
+    }
+
+    // replace 'cluster emulated machine' with the explicit run-time value
+    private void convertEmulatedMachineField() {
+        if (StringHelper.isNullOrEmpty(getEmulatedMachine().getSelectedItem())) {
+            Guid clusterId = vm.getVdsGroupId();
+            if (clusterId != null) {
+                AsyncDataProvider.getInstance().getClusterById(new AsyncQuery(this,
+                        new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model, Object returnValue) {
+                                if (returnValue != null) {
+                                    VDSGroup cluster = (VDSGroup) returnValue;
+
+                                    if (cluster.getEmulatedMachine() != null) {
+                                        getEmulatedMachine().setSelectedItem(cluster.getEmulatedMachine());
+                                    }
+
+                                }
+                            }
+                        }), clusterId);
+            }
+        }
     }
 
     public void sysPrepListBoxChanged() {
@@ -1109,6 +1240,9 @@ public abstract class RunOnceModel extends Model
 
         boolean cloudInitIsValid = getVmInit().validate();
 
+        getEmulatedMachine().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE) });
+        getCustomCpu().validateSelectedItem(new IValidation[] { new I18NExtraNameOrNoneValidation(), new LengthValidation(BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE) });
+
         return getIsoImage().getIsValid()
                 && getFloppyImage().getIsValid()
                 && getKernel_path().getIsValid()
@@ -1116,7 +1250,9 @@ public abstract class RunOnceModel extends Model
                 && getKernel_parameters().getIsValid()
                 && getDefaultHost().getIsValid()
                 && customPropertyValidation
-                && cloudInitIsValid;
+                && cloudInitIsValid
+                && getEmulatedMachine().getIsValid()
+                && getCustomCpu().getIsValid();
     }
 
     @Override

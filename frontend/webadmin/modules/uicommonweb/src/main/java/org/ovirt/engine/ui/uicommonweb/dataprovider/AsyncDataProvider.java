@@ -107,6 +107,7 @@ import org.ovirt.engine.core.common.queries.GetLunsByVgIdParameters;
 import org.ovirt.engine.core.common.queries.GetPermittedStorageDomainsByStoragePoolIdParameters;
 import org.ovirt.engine.core.common.queries.GetStorageDomainsByConnectionParameters;
 import org.ovirt.engine.core.common.queries.GetStoragePoolsByClusterServiceParameters;
+import org.ovirt.engine.core.common.queries.GetSupportedCpuListParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
@@ -3858,5 +3859,48 @@ public class AsyncDataProvider {
                 NumaTuneMode.PREFERRED,
                 NumaTuneMode.INTERLEAVE
         }));
+    }
+
+    public void getEmulatedMachinesByClusterID(AsyncQuery aQuery, Guid clusterId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    ArrayList<VDS> vdsList = Linq.<VDS> cast((ArrayList<IVdcQueryable>) source);
+                    Set<String> emulatedMachineList = new HashSet<String>();
+                    for (VDS host : vdsList) {
+                        String hostSupportedMachines = host.getSupportedEmulatedMachines();
+                        if(!StringHelper.isNullOrEmpty(hostSupportedMachines)) {
+                            emulatedMachineList.addAll(Arrays.asList(hostSupportedMachines.split(","))); //$NON-NLS-1$
+                        }
+                    }
+                    return emulatedMachineList;
+                }
+
+                return null;
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetHostsByClusterId, new IdQueryParameters(clusterId), aQuery);
+    }
+
+    public void getSupportedCpuList(AsyncQuery aQuery, String cpuName) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                if (source != null)
+                {
+                    ArrayList<ServerCpu> cpuList = Linq.<ServerCpu> cast((ArrayList<ServerCpu>) source);
+                    return cpuList;
+                }
+
+                return null;
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetSupportedCpuList, new GetSupportedCpuListParameters(cpuName), aQuery);
     }
 }
