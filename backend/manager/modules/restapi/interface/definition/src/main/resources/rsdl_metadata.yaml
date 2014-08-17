@@ -98,6 +98,8 @@ actions:
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
           vm.soundcard_enabled: xs:boolean
+          vm.custom_emulated_machine: xs:string
+          vm.custom_cpu_model: xs:string
           vm.use_latest_template_version: xs:boolean
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
@@ -190,6 +192,8 @@ actions:
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
           vm.soundcard_enabled: xs:boolean
+          vm.custom_emulated_machine: xs:string
+          vm.custom_cpu_model: xs:string
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.initialization.configuration.type: 'xs:string'
           vm.initialization.configuration.data: 'xs:string'
@@ -253,6 +257,8 @@ actions:
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
           vm.soundcard_enabled: xs:boolean
+          vm.custom_emulated_machine: xs:string
+          vm.custom_cpu_model: xs:string
           vm.payloads.payload--COLLECTION: {payload.type: 'xs:string', payload.volume_id: 'xs:string', payload.files.file--COLLECTION: {file.name: 'xs:string', file.content: 'xs:string'}}
           vm.cpu.cpu_tune.vcpu_pin--COLLECTION: {vcpu_pin.vcpu: 'xs:int', vcpu_pin.cpu_set: 'xs:string'}
           vm.serial_number.policy: xs:string
@@ -381,6 +387,8 @@ actions:
           action.vm.domain.user.username: 'xs:string', action.pause: 'xs:boolean',
           action.vm.os.boot--COLLECTION: {boot.dev: 'xs:string'},action.vm.domain.user.password: 'xs:string',
           action.vm.initialization.cloud_init.host.address: 'xs:string',
+          action.vm.custom_emulated_machine: 'xs:string',
+          action.vm.custom_cpu_model: 'xs:string',
           action.vm.initialization.cloud_init.network_configuration.nics.nic--COLLECTION: {nic.name: 'xs:string',
           nic.boot_protocol: 'xs:string',
           nic.network.address.ip: 'xs:string',
@@ -3856,6 +3864,8 @@ actions:
           template.migration_downtime: xs:int
           template.virtio_scsi.enabled: xs:boolean
           template.soundcard_enabled: xs:boolean
+          template.custom_emulated_machine: xs:string
+          template.custom_cpu_model: xs:string
           template.version.version_name: xs:string
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
@@ -3918,6 +3928,8 @@ actions:
           template.migration_downtime: xs:int
           template.virtio_scsi.enabled: xs:boolean
           template.soundcard_enabled: xs:boolean
+          template.custom_emulated_machine: xs:string
+          template.custom_cpu_model: xs:string
           template.vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           template.permissions.clone: xs:boolean
           template.version.version_name: xs:string
@@ -5350,6 +5362,8 @@ actions:
           instance_type.migration_downtime: xs:int
           instance_type.virtio_scsi.enabled: xs:boolean
           instance_type.soundcard_enabled: xs:boolean
+          instance_type.custom_emulated_machine: xs:string
+          instance_type.custom_cpu_model: xs:string
         description: add a new instance type to the system
     urlparams: {}
     headers:

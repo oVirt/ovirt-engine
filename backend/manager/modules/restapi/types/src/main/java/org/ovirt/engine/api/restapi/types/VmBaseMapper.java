@@ -165,6 +165,12 @@ public class VmBaseMapper {
         if (model.isSetCustomProperties()) {
             entity.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()));
         }
+        if (model.isSetCustomEmulatedMachine()) {
+            entity.setCustomEmulatedMachine(model.getCustomEmulatedMachine());
+        }
+        if (model.isSetCustomCpuModel()) {
+            entity.setCustomCpuName(model.getCustomCpuModel());
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -247,6 +253,14 @@ public class VmBaseMapper {
             CustomProperties hooks = new CustomProperties();
             hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
             model.setCustomProperties(hooks);
+        }
+
+        if (entity.getCustomEmulatedMachine() != null) {
+            model.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
+        }
+
+        if (entity.getCustomCpuName() != null) {
+            model.setCustomCpuModel(entity.getCustomCpuName());
         }
     }
 

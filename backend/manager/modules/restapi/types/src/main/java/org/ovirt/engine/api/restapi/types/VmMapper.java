@@ -115,6 +115,8 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setAutoConverge(entity.getAutoConverge());
         staticVm.setMigrateCompressed(entity.getMigrateCompressed());
         staticVm.setCustomProperties(entity.getCustomProperties());
+        staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
+        staticVm.setCustomCpuName(entity.getCustomCpuName());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm);
     }
 
@@ -514,6 +516,14 @@ public class VmMapper extends VmBaseMapper {
         }
         if (vm.isSetCpuShares()) {
             params.setCpuShares(vm.getCpuShares());
+        }
+
+        if (vm.isSetCustomCpuModel()) {
+            params.setCustomCpuName(vm.getCustomCpuModel());
+        }
+
+        if (vm.isSetCustomEmulatedMachine()) {
+            params.setCustomEmulatedMachine(vm.getCustomEmulatedMachine());
         }
 
         return params;

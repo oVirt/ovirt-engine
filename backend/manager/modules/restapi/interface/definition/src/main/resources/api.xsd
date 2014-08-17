@@ -3198,6 +3198,8 @@
           <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="custom_emulated_machine" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="custom_cpu_model" type="xs:string" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
