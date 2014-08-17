@@ -10,6 +10,7 @@ import javax.ws.rs.core.Response;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
@@ -132,7 +133,9 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 new Object[] { connection, GUIDS[1] },
                 true,
                 true));
-        verifyRemove(collection.remove(GUIDS[0].toString(), host));
+        Action action = new Action();
+        action.setHost(host);
+        verifyRemove(collection.remove(GUIDS[0].toString(), action));
     }
 
     @Test
@@ -142,7 +145,9 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
         host.setId(GUIDS[1].toString());
         control.replay();
         try {
-            collection.remove(GUIDS[0].toString(), host);
+            Action action = new Action();
+            action.setHost(host);
+            collection.remove(GUIDS[0].toString(), action);
             fail("expected WebApplicationException");
         } catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
@@ -165,7 +170,9 @@ public class BackendStorageServerConnectionsResourceTest extends AbstractBackend
                 false,
                 false));
         try {
-            collection.remove(GUIDS[0].toString(), host);
+            Action action = new Action();
+            action.setHost(host);
+            collection.remove(GUIDS[0].toString(), action);
         } catch (WebApplicationException wae) {
             assertNotNull(wae.getResponse());
             assertEquals(400, wae.getResponse().getStatus());

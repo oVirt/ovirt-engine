@@ -10,7 +10,7 @@ import javax.ws.rs.Produces;
 import javax.ws.rs.core.Response;
 
 import org.jboss.resteasy.annotations.providers.jaxb.Formatted;
-import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 
@@ -34,13 +34,13 @@ public interface StorageServerConnectionsResource {
     /**
      * Deletes the connection from the system, and disconnects the specified host from it
      * @param id
-     * @param host
+     * @param action
      * @return
      */
     @DELETE
     @Consumes({ ApiMediaType.APPLICATION_XML, ApiMediaType.APPLICATION_JSON, ApiMediaType.APPLICATION_X_YAML })
     @Path("{id}")
-    public Response remove(@PathParam("id") String id, Host host);
+    public Response remove(@PathParam("id") String id, Action action);
 
     /**
      * Deletes the connection from the system

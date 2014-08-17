@@ -4,7 +4,7 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -43,7 +43,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
     }
 
     @Override
-    public Response remove(String id, Host host) {
+    public Response remove(String id, Action action) {
         // TODO should return BadRequest error
         return null;
     }
