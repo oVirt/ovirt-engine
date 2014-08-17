@@ -252,9 +252,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 if (!stopSpmReturnValue.getSucceeded()) {
                     // no need to continue because DisconnectStoragePool will
                     // fail if host is SPM
-                    log.error("Aborting execution due to failure stopping SPM." +
-                            " Stop SPM failed due to "
-                            + stopSpmReturnValue.getExceptionString());
+                    log.error("Aborting execution due to failure to stop SPM");
                     setSucceeded(false);
                     return;
                 }
