@@ -5020,7 +5020,7 @@ actions:
       parameterType: Host
       signatures:
       - mandatoryArguments: {}
-        optionalArguments:  {host.id|name: 'xs:string'}
+        optionalArguments:  {action.host.id|name: 'xs:string'}
     urlparams:
       async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers:
