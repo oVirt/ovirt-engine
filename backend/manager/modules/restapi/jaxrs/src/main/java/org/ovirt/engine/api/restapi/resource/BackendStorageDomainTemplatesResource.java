@@ -26,8 +26,10 @@ public class BackendStorageDomainTemplatesResource
     extends AbstractBackendStorageDomainContentsResource<Templates, Template, VmTemplate>
     implements RemovableStorageDomainContentsResource<Templates, Template> {
 
+    static final String[] SUB_COLLECTIONS = { "disks" };
+
     public BackendStorageDomainTemplatesResource(Guid storageDomainId) {
-        super(storageDomainId, Template.class, VmTemplate.class);
+        super(storageDomainId, Template.class, VmTemplate.class, SUB_COLLECTIONS);
     }
 
     @Override

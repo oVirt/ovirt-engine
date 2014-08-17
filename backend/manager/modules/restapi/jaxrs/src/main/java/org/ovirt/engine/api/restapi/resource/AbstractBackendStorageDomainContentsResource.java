@@ -32,6 +32,14 @@ public abstract class AbstractBackendStorageDomainContentsResource<C extends Bas
         this.storageDomainId = storageDomainId;
     }
 
+    public AbstractBackendStorageDomainContentsResource(Guid storageDomainId,
+                                                        Class<R> modelType,
+                                                        Class<Q> entityType,
+                                                        String... subCollections) {
+        super(modelType, entityType, subCollections);
+        this.storageDomainId = storageDomainId;
+    }
+
     protected Guid getDataCenterId(Action action) {
         return getStoragePoolId(action);
     }
