@@ -16,6 +16,9 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -53,13 +56,15 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
 
         Guid taskId = getAsyncTaskId();
 
+        VolumeFormat targetFormat = getTargetVolumeFormat(newImage.getVolumeFormat(), newImage.getVolumeType(),
+                getParameters().getDestinationStorageDomainId());
+
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.CopyImage,
                 new CopyImageVDSCommandParameters(storagePoolId, getParameters().getStorageDomainId(),
                                 getParameters().getVmId(), imageGroupId, snapshotId, destinationImageGroupID,
                                 getDestinationImageId(), StringUtils.defaultString(newImage.getDescription()), getParameters()
-                                        .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, newImage
-                                        .getVolumeFormat(), newImage.getVolumeType(), getDiskImage()
-                                        .isWipeAfterDelete(), false));
+                                        .getDestinationStorageDomainId(), CopyVolumeType.SharedVol, targetFormat,
+                                        newImage.getVolumeType(), getDiskImage().isWipeAfterDelete(), false));
 
         getReturnValue().getInternalVdsmTaskIdList().add(
                 createTask(taskId,
@@ -91,6 +96,25 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
         // set source image as locked:
         lockImage();
         setSucceeded(true);
+    }
+
+    /**
+     * Since we are supporting copy/move operations between different storage families (file/block) we have to
+     * predetermine the volume format according to the destination storage type, for block domains we cannot use sparse
+     * combined with raw so we will change the raw to cow in that case, file domains will have the original format
+     * retained
+     *
+     * TODO: Extract method and unite with getVolumeFormatForDomain() in CopyImageGroupCommand
+     */
+    private VolumeFormat getTargetVolumeFormat(VolumeFormat volumeFormat, VolumeType volumeType, Guid storageDomainId) {
+        if (volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse) {
+            StorageDomainStatic destDomain = getStorageDomainStaticDAO().get(storageDomainId);
+            if (destDomain.getStorageType().isBlockDomain()) {
+                return VolumeFormat.COW;
+            }
+        }
+
+        return volumeFormat;
     }
 
     /**
