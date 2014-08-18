@@ -62,7 +62,9 @@ public class FenceExecutor {
         _vds = vds;
         _action = actionType;
         this.fencingPolicy = fencingPolicy;
-        minVersionSupportingFencingPol = FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
+        if (fencingPolicy != null) {
+            minVersionSupportingFencingPol = FencingPolicyHelper.getMinimalSupportedVersion(fencingPolicy);
+        }
     }
 
     public boolean findProxyHost() {
@@ -424,7 +426,9 @@ public class FenceExecutor {
                 }
 
                 // check if host supports minimal cluster level needed by fencing policy
-                ret = ret && _vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
+                if (fencingPolicy != null) {
+                    ret = ret && _vds.getSupportedClusterVersionsSet().contains(minVersionSupportingFencingPol);
+                }
 
                 return ret;
             }
