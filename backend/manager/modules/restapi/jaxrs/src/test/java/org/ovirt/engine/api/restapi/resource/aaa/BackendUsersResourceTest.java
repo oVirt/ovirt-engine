@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import java.nio.charset.Charset;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.LinkedList;
@@ -159,7 +160,7 @@ public class BackendUsersResourceTest
         User model = new User();
         model.setUserName(NAMES[0]);
         Domain domain = new Domain();
-        domain.setId(new Guid(DOMAIN.getBytes(), true).toString());
+        domain.setId(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString());
         model.setDomain(domain);
         Response response = collection.add(model);
         verifyAddUser(response);
@@ -227,7 +228,7 @@ public class BackendUsersResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(NAMES[index] + "@" + DOMAIN, model.getUserName());
         assertNotNull(model.getDomain());
-        assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
+        assertEquals(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString(), model.getDomain().getId());
         assertTrue(model.isSetGroups());
         assertEquals(PARSED_GROUPS.length, model.getGroups().getGroups().size());
         HashSet<String> groupNames = new HashSet<>();
