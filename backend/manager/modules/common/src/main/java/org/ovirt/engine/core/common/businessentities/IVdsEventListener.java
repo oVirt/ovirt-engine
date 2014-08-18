@@ -59,7 +59,7 @@ public interface IVdsEventListener {
 
     void addExternallyManagedVms(List<VmStatic> externalVmList);
 
-    void handleVdsMaintenanceTimeout(VDS vds);
+    void handleVdsMaintenanceTimeout(Guid vdsId);
 
     /**
      * update host's scheduling related properties

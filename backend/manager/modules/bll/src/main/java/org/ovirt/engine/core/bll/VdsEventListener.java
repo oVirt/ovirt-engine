@@ -449,10 +449,10 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void handleVdsMaintenanceTimeout(final VDS vds) {
+    public void handleVdsMaintenanceTimeout(Guid vdsId) {
         // try to put the host to Maintenance again.
         Backend.getInstance().runInternalAction(VdcActionType.MaintenanceNumberOfVdss,
-                new MaintenanceNumberOfVdssParameters(Arrays.asList(vds.getId()), true));
+                new MaintenanceNumberOfVdssParameters(Arrays.asList(vdsId), true));
     }
 
     @Override

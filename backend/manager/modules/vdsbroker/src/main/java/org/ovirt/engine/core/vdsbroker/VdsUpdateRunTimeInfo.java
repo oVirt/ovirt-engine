@@ -601,7 +601,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void handleVdsMaintenanceTimeout() {
-        getVdsEventListener().handleVdsMaintenanceTimeout(_vds);
+        getVdsEventListener().handleVdsMaintenanceTimeout(_vds.getId());
         _vdsManager.calculateNextMaintenanceAttemptTime();
     }
 
