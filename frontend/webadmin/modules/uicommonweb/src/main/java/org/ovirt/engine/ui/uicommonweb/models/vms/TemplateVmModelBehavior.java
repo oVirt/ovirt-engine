@@ -138,6 +138,10 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
         updateVirtioScsiAvailability();
         updateMigrationForLocalSD();
         updateOSValues();
+        if (getModel().getSelectedCluster() != null) {
+            updateCpuProfile(getModel().getSelectedCluster().getId(),
+                    getClusterCompatibilityVersion(), template.getCpuProfileId());
+        }
     }
 
     @Override

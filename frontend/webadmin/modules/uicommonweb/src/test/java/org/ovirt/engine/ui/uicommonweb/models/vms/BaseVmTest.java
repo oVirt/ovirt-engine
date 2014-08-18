@@ -46,6 +46,7 @@ public class BaseVmTest {
     protected static final String CUSTOM_PROPERTIES = "custom_properties"; //$NON-NLS-1$
     protected static final Guid INSTANCE_TYPE_ID = Guid.newGuid();
     protected static final Guid QUOTA_ID = Guid.newGuid();
+    protected static final Guid CPU_PROFILE_ID = Guid.newGuid();
     protected static final String VNC_KEYBOARD_LAYOUT = "en-us"; //$NON-NLS-1$
     protected static final String VNC_KEYBOARD_LAYOUT_2 = "cz-cs"; //$NON-NLS-1$
     protected static final DisplayType DISPLAY_TYPE = DisplayType.qxl;

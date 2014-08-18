@@ -82,6 +82,7 @@
                             <g:VerticalPanel>
                                 <e:ListModelListBoxEditor ui:field="destStorageEditor" addStyleNames="{style.listBoxEditor}"/>
                                 <e:ListModelListBoxEditor ui:field="destClusterEditor" addStyleNames="{style.listBoxEditor}"/>
+                                <e:ListModelListBoxEditor ui:field="cpuProfileEditor" addStyleNames="{style.listBoxEditor}"/>
                             </g:VerticalPanel>
                             <g:VerticalPanel>
                                 <e:ListModelListBoxEditor ui:field="destStorageQuotaEditor" addStyleNames="{style.destStorageQuotaEditor}"/>

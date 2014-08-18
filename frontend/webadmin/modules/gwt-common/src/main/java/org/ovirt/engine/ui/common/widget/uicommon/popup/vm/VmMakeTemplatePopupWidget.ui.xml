@@ -39,6 +39,7 @@
 		<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 		<ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
 		<e:ListModelTypeAheadListBoxEditor ui:field="clusterEditor" />
+		<e:ListModelListBoxEditor ui:field="cpuProfilesEditor" />
 		<e:ListModelListBoxEditor ui:field="quotaEditor" />
 		<ge:EntityModelCheckBoxEditor ui:field="isSubTemplateEditor"/>
 		<g:FlowPanel ui:field="subTemplateExpanderContent" addStyleNames="{style.generalExpanderContent}">

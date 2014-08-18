@@ -15,7 +15,8 @@ public class CommonUnitToVmBaseBuilder<T extends VmBase> extends CompositeBuilde
     public CommonUnitToVmBaseBuilder() {
         super(
                 new CoreUnitToVmBaseBuilder(),
-                new QuotaUnitToVmBaseBuilder<T>()
+                new QuotaUnitToVmBaseBuilder<T>(),
+                new CpuProfileUnitToVmBaseBuilder<T>()
         );
     }
 

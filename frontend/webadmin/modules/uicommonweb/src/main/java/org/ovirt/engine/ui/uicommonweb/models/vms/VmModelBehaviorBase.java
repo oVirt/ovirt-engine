@@ -8,6 +8,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.TimeZoneType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -1178,4 +1180,39 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         return selectedInstanceType == null || selectedInstanceType instanceof CustomInstanceType;
     }
 
+    protected void updateCpuProfile(Guid clusterId, Version vdsGroupCompatibilityVersion, Guid cpuProfileId) {
+        if (Boolean.TRUE.equals(AsyncDataProvider.getInstance()
+                .getConfigValuePreConverted(ConfigurationValues.CpuQosSupported,
+                        vdsGroupCompatibilityVersion.getValue()))) {
+            getModel().getCpuProfiles().setIsAvailable(true);
+            fetchCpuProfiles(clusterId, cpuProfileId);
+        } else {
+            getModel().getCpuProfiles().setIsAvailable(false);
+        }
+    }
+
+    private void fetchCpuProfiles(Guid clusterId, final Guid cpuProfileId) {
+        if (clusterId == null) {
+            return;
+        }
+        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
+                new IdQueryParameters(clusterId),
+                new AsyncQuery(new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<CpuProfile> cpuProfiles =
+                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        getModel().getCpuProfiles().setItems(cpuProfiles);
+                        if (cpuProfiles != null) {
+                            for (CpuProfile cpuProfile : cpuProfiles) {
+                                if (cpuProfile.getId().equals(cpuProfileId)) {
+                                    getModel().getCpuProfiles().setSelectedItem(cpuProfile);
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }));
+    }
 }

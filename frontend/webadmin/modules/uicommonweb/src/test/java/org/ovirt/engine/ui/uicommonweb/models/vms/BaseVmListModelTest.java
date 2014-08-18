@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 
@@ -72,6 +73,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getBootMenuEnabled().getEntity()).thenReturn(true);
         when(model.getSpiceFileTransferEnabled().getEntity()).thenReturn(true);
         when(model.getSpiceCopyPasteEnabled().getEntity()).thenReturn(true);
+        ListModel<CpuProfile> cpuProfiles = mockCpuProfiles();
+        when(model.getCpuProfiles()).thenReturn(cpuProfiles);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -120,6 +123,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertTrue(vm.isRunAndPause());
         assertTrue(vm.isAutoStartup());
         assertEquals(QUOTA_ID, vm.getQuotaId());
+        assertEquals(CPU_PROFILE_ID, vm.getCpuProfileId());
         assertEquals(PRIORITY, vm.getPriority());
         assertEquals(DESCRIPTION, vm.getDescription());
         assertEquals(COMMENT, vm.getComment());
@@ -233,6 +237,15 @@ public class BaseVmListModelTest extends BaseVmTest {
         final EntityModel<String> customSerialNumber = mockEntityModel(CUSTOM_SERIAL_NUMBER);
         when(model.getSelectedSerialNumberPolicy()).thenReturn(SERIAL_NUMBER_POLICY);
         when(model.getCustomSerialNumber()).thenReturn(customSerialNumber);
+
+        return model;
+    }
+
+    protected ListModel<CpuProfile> mockCpuProfiles() {
+        CpuProfile cpuProfile = new CpuProfile();
+        cpuProfile.setId(CPU_PROFILE_ID);
+        final ListModel<CpuProfile> model = mockListModel(cpuProfile);
+        when(model.getIsAvailable()).thenReturn(true);
 
         return model;
     }

@@ -1911,4 +1911,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Remove")
     String removeProfile();
 
+    @DefaultStringValue("CPU Profile")
+    String cpuProfileLabel();
+
 }

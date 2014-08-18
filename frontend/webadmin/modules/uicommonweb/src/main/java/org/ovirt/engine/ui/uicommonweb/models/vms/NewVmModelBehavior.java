@@ -142,6 +142,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);
+
+            if (getModel().getSelectedCluster() != null) {
+                updateCpuProfile(getModel().getSelectedCluster().getId(),
+                        getClusterCompatibilityVersion(), template.getCpuProfileId());
+            }
         }
     }
 
