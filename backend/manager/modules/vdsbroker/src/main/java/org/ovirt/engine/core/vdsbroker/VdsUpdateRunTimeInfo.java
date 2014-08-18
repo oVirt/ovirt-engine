@@ -493,9 +493,7 @@ public class VdsUpdateRunTimeInfo {
                     if (log.isDebugEnabled()) {
                         log.debugFormat("vds {0}-{1} firing up event.", _vds.getId(), _vds.getName());
                     }
-                    _vdsManager.setIsSetNonOperationalExecuted(!ResourceManager.getInstance()
-                            .getEventListener()
-                            .vdsUpEvent(_vds));
+                    _vdsManager.setIsSetNonOperationalExecuted(!getVdsEventListener().vdsUpEvent(_vds));
                 }
                 // save all data to db
                 saveDataToDb();
@@ -549,10 +547,7 @@ public class VdsUpdateRunTimeInfo {
             } else if (_vds.getStatus() == VDSStatus.NonOperational && _firstStatus != VDSStatus.NonOperational) {
 
                 if (!_vdsManager.isSetNonOperationalExecuted()) {
-                    ResourceManager
-                            .getInstance()
-                            .getEventListener()
-                            .vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, Guid.Empty);
+                    getVdsEventListener().vdsNonOperational(_vds.getId(), _vds.getNonOperationalReason(), true, Guid.Empty);
                 } else {
 
                     log.infoFormat("Host {0} : {1} is already in NonOperational status for reason {2}. SetNonOperationalVds command is skipped.",
@@ -584,11 +579,8 @@ public class VdsUpdateRunTimeInfo {
 
             // process all vms that powering up.
             for (VmDynamic runningVm : _poweringUpVms) {
-                ResourceManager
-                        .getInstance()
-                        .getEventListener()
-                        .processOnVmPoweringUp(_vds.getId(), runningVm.getId(), runningVm.getDisplayIp(),
-                                runningVm.getDisplay());
+                getVdsEventListener().processOnVmPoweringUp(_vds.getId(), runningVm.getId(),
+                        runningVm.getDisplayIp(), runningVm.getDisplay());
             }
 
             // process all vms that went down
@@ -598,12 +590,12 @@ public class VdsUpdateRunTimeInfo {
                 ResourceManager.getInstance().RemoveAsyncRunningVm(vm_guid);
             }
         } catch (IRSErrorException ex) {
-            logFailureMessage("ResourceManager::RerunFailedCommand:", ex);
+            logFailureMessage("Could not finish afterRefreshTreatment", ex);
             if (log.isDebugEnabled()) {
                 log.error(ExceptionUtils.getMessage(ex), ex);
             }
         } catch (RuntimeException ex) {
-            logFailureMessage("ResourceManager::RerunFailedCommand:", ex);
+            logFailureMessage("Could not finish afterRefreshTreatment", ex);
             log.error(ExceptionUtils.getMessage(ex), ex);
         }
     }
@@ -677,7 +669,7 @@ public class VdsUpdateRunTimeInfo {
         GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(_vds));
         vdsBrokerCommand.execute();
-        ResourceManager.getInstance().getEventListener().updateSchedulingStats(_vds);
+        getVdsEventListener().updateSchedulingStats(_vds);
         if (!vdsBrokerCommand.getVDSReturnValue().getSucceeded()
                 && vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
             VDSNetworkException ex =
@@ -1916,7 +1908,7 @@ public class VdsUpdateRunTimeInfo {
                     runningVm.getId(),
                     _vds.getName());
             returnValue = true;
-        } else if ((vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom)) {
+        } else if (vmToUpdate == null && runningVm.getStatus() != VMStatus.MigratingFrom) {
             // check if the vm exists on another vds
             VmDynamic vmDynamic = getDbFacade().getVmDynamicDao().get(runningVm.getId());
             if (vmDynamic != null && vmDynamic.getRunOnVds() != null
