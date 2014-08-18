@@ -297,14 +297,4 @@ public class DbUser extends IVdcQueryable {
 
     }
 
-    private void populateGroupNames(StringBuilder namesBuffer, DirectoryGroup directoryGroup) {
-        if (namesBuffer.length() != 0) {
-            namesBuffer.append(",");
-        }
-        namesBuffer.append(directoryGroup.getName());
-        for (DirectoryGroup memberOf : directoryGroup.getGroups()) {
-            populateGroupNames(namesBuffer, memberOf);
-        }
-    }
-
 }
