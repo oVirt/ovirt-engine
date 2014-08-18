@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
@@ -227,7 +228,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
                 @Override
                 public void run() {
                     for (Guid vdsId : getRunVdssList()) {
-                        if (!getCurrentVdsId().equals(vdsId)) {
+                        if (!vdsId.equals(getCurrentVdsId())) {
                             Backend.getInstance().getResourceManager()
                                     .RunVdsCommand(VDSCommandType.FailedToRunVm, new FailedToRunVmVDSCommandParameters(vdsId));
                         }
@@ -272,7 +273,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
     }
 
     protected Guid getCurrentVdsId() {
-        return getVds().getId();
+        VDS vds = getVds();
+        return vds != null ? vds.getId() : null;
     }
 
     @Override
