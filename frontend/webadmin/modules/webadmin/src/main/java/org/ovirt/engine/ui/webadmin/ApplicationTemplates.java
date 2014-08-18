@@ -95,10 +95,10 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<button type='button' tabindex='-1' style='background: url({0}) no-repeat; white-space: nowrap; height: 20px; width: 20px; line-height: 20px; float: right;'></button>")
     SafeHtml actionButtonImage(String image);
 
-    @Template("<span style=\"top: -3px; position: relative;\">{0}</span>")
+    @Template("<span style=\"top: -3px; left: 3px; position: relative;\">{0}</span>")
     SafeHtml textForCheckBoxHeader(String text);
 
-    @Template("<span style=\"top: -2px; position: relative;\">{0}</span>")
+    @Template("<span style=\"top: -2px; left: 3px; position: relative;\">{0}</span>")
     SafeHtml textForCheckBox(String text);
 
     @Template("{0} <span style='font-weight:bold; color: red;'>{1}</span>")
