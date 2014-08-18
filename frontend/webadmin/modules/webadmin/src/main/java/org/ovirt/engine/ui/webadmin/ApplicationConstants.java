@@ -803,6 +803,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Skip fencing if host has live lease on storage")
     String skipFencingIfSDActive();
 
+    @DefaultStringValue("Skip fencing on cluster connectivity issues")
+    String skipFencingWhenConnectivityBroken();
+
+    @DefaultStringValue("Threshold")
+    String hostsWithBrokenConnectivityThresholdLabel();
+
     @DefaultStringValue("Name")
     String bookmarkPopupNameLabel();
 
@@ -3752,4 +3758,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("This will skip fencing for a Host that has live lease on Storage Domains")
     String skipFencingIfSDActiveInfo();
+
+    @DefaultStringValue("This will skip fencing if the percentage of Cluster Hosts with connectivity issues is greater than or equal to the defined threshold")
+    String skipFencingWhenConnectivityBrokenInfo();
 }

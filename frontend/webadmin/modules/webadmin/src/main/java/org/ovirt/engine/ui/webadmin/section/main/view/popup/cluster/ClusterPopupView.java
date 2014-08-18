@@ -359,6 +359,19 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     @WithElementId
     EntityModelCheckBoxEditor skipFencingIfSDActiveCheckBox;
 
+    @UiField(provided = true)
+    InfoIcon skipFencingIfConnectivityBrokenInfo;
+
+    @UiField(provided = true)
+    @Path(value = "skipFencingIfConnectivityBrokenEnabled.entity")
+    @WithElementId
+    EntityModelCheckBoxEditor skipFencingIfConnectivityBrokenCheckBox;
+
+    @UiField(provided = true)
+    @Path(value = "hostsWithBrokenConnectivityThreshold.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<Integer> hostsWithBrokenConnectivityThresholdEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     private final ApplicationMessages messages;
@@ -466,6 +479,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         fencingPolicyTab.setLabel(constants.fencingPolicyTabLabel());
 
         skipFencingIfSDActiveCheckBox.setLabel(constants.skipFencingIfSDActive());
+        skipFencingIfConnectivityBrokenCheckBox.setLabel(constants.skipFencingWhenConnectivityBroken());
+        hostsWithBrokenConnectivityThresholdEditor.setLabel(constants.hostsWithBrokenConnectivityThresholdLabel());
     }
 
     private void initRadioButtonEditors() {
@@ -525,7 +540,12 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 return object.getName();
             }
         });
-
+        hostsWithBrokenConnectivityThresholdEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
+            @Override
+            public String renderNullSafe(Integer object) {
+                return object.toString();
+            }
+        });
     }
 
     private void initCheckBoxEditors() {
@@ -550,6 +570,9 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
+
+        skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
+        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
@@ -568,6 +591,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
         skipFencingIfSDActiveInfo = new InfoIcon(
                 templates.italicFixedWidth("400px", constants.skipFencingIfSDActiveInfo()), //$NON-NLS-1$
+                resources);
+
+        skipFencingIfConnectivityBrokenInfo = new InfoIcon(
+                templates.italicFixedWidth("400px", constants.skipFencingWhenConnectivityBrokenInfo()), //$NON-NLS-1$
                 resources);
     }
 
@@ -688,6 +715,21 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 updateFencingPolicyTabVisibility(object);
             }
         });
+
+        object.getSkipFencingIfConnectivityBrokenEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateFencingPolicyTabVisibility(object);
+            }
+        });
+
+        object.getHostsWithBrokenConnectivityThreshold().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                updateFencingPolicyTabVisibility(object);
+            }
+        });
+
     }
 
     private void optimizationForServerFormatter(ClusterModel object) {
@@ -720,7 +762,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
 
     private void updateFencingPolicyTabVisibility(ClusterModel object) {
         fencingPolicyTab.setVisible(
-                object.getSkipFencingIfSDActiveEnabled().getIsChangable()
+                object.getSkipFencingIfSDActiveEnabled().getIsChangable() ||
+                object.getSkipFencingIfConnectivityBrokenEnabled().getIsChangable()
         );
     }
 

@@ -757,6 +757,8 @@ public class ClusterListModel extends ListWithDetailsModel implements ISupportSy
         }
 
         cluster.getFencingPolicy().setSkipFencingIfSDActive(model.getSkipFencingIfSDActiveEnabled().getEntity());
+        cluster.getFencingPolicy().setSkipFencingIfConnectivityBroken(model.getSkipFencingIfConnectivityBrokenEnabled().getEntity());
+        cluster.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(model.getHostsWithBrokenConnectivityThreshold().getSelectedItem().intValue());
 
         cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
