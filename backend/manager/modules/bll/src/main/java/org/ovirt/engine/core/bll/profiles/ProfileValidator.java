@@ -92,6 +92,8 @@ public abstract class ProfileValidator<T extends ProfileBase> {
 
     public abstract ValidationResult isParentEntityValid(Guid parentEntityId);
 
+    public abstract ValidationResult isLastProfileInParentEntity();
+
     protected abstract List<T> getProfilesByParentEntity();
 
     protected abstract ProfilesDao<T> getProfileDao();

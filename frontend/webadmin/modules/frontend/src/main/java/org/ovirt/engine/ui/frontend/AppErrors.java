@@ -3126,6 +3126,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk Profile doesn't match provided Storage Domain.")
     String ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. remove last CPU profile in Cluster.")
+    String ACTION_TYPE_CANNOT_REMOVE_LAST_CPU_PROFILE_IN_CLUSTER();
+
+    @DefaultStringValue("Cannot ${action} ${type}. remove last Disk profile in Storage Domain.")
+    String ACTION_TYPE_CANNOT_REMOVE_LAST_DISK_PROFILE_IN_STORAGE_DOMAIN();
+
     @DefaultStringValue("Cannot ${action}. New disk size cannot be smaller than the current.")
     String ACTION_TYPE_FAILED_REQUESTED_DISK_SIZE_IS_TOO_SMALL();
 
