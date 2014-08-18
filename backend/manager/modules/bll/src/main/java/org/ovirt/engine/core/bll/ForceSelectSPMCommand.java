@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @NonTransactiveCommandAttribute
@@ -66,7 +67,13 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
         SpmStopOnIrsVDSCommandParameters params =
                 new SpmStopOnIrsVDSCommandParameters(getStoragePoolForVds().getId(),
                         getParameters().getPreferredSPMId());
-        runVdsCommand(VDSCommandType.SpmStopOnIrs, params);
+
+        if (runVdsCommand(VDSCommandType.SpmStopOnIrs, params).getSucceeded()) {
+            AuditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM);
+        } else {
+            AuditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM_STOP_FAILED);
+        }
+
         setSucceeded(true);
     }
 
@@ -87,16 +94,6 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             storagePoolForVds = getStoragePoolDAO().getForVds(getVds().getId());
         }
         return storagePoolForVds;
-    }
-
-    @Override
-    public AuditLogType getAuditLogTypeValue() {
-        switch (getActionState()) {
-        case EXECUTE:
-            return AuditLogType.USER_FORCE_SELECTED_SPM;
-        default:
-            return AuditLogType.UNASSIGNED;
-        }
     }
 
     @Override
