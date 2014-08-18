@@ -91,6 +91,8 @@ public enum VdcBllErrors {
     VOLUME_WAS_NOT_PREPARED_BEFORE_TEARDOWN(230),
     IncorrectType(231),
     VolumeResizeValueError(232),
+    VolumeNotSparse(233),
+    CannotSparsifyVolume(234),
     ImagesActionError(250),
     TemplateCreationError(251),
     MergeSnapshotsError(252),
