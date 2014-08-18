@@ -425,16 +425,26 @@ a.dropdown-toggle {
     top: 5px;
     left: 5px;
 }
+.cpv_skipFencingIfSDActiveInfo_line_pfly_fix {
+    position: relative;
+    left: 20px;
+    top: 5px;
+}
+.cpv_hostsWithBrokenConnectivityThresholdEditor_line_pfly_fix {
+    position: relative;
+    left: 20px;
+    top: 8px;
+    line-height: 40px;
+}
 .cpv_skipFencingIfConnectivityBrokenInfo_pfly_fix {
     position: relative;
     top: 5px;
     left: 5px;
-    width: 30%;
 }
 .cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix {
     position: relative;
     top: 5px;
-    left: 5px;
+    left: 20px;
 }
 .appv_searchButton_pfly_fix {
     position: relative !important;

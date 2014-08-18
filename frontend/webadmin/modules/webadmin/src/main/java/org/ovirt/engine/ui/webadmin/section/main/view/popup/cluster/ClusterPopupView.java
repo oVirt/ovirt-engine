@@ -555,6 +555,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
                 return object.toString();
             }
         });
+        hostsWithBrokenConnectivityThresholdEditor.getContentWidgetContainer().setWidth("75px"); //$NON-NLS-1$
     }
 
     private void initCheckBoxEditors() {
@@ -578,13 +579,13 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         rngHwrngSourceRequired = new EntityModelCheckBoxEditor(Align.RIGHT);
 
         fencingEnabledCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        fencingEnabledCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
+        fencingEnabledCheckBox.getContentWidgetContainer().setWidth("150px"); //$NON-NLS-1$
 
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
         skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("300px"); //$NON-NLS-1$
+        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("305px"); //$NON-NLS-1$
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {

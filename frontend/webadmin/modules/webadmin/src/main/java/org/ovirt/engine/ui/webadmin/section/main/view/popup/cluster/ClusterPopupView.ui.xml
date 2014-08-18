@@ -276,15 +276,13 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="fencingEnabledCheckBox" />
                                     <d:InfoIcon ui:field="fencingEnabledInfo" addStyleNames="cpv_fencingEnabledInfo_pfly_fix" />
                                 </g:HorizontalPanel>
-                                <g:HorizontalPanel>
+                                <g:HorizontalPanel addStyleNames="cpv_skipFencingIfSDActiveInfo_line_pfly_fix">
                                     <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfSDActiveCheckBox" />
                                     <d:InfoIcon ui:field="skipFencingIfSDActiveInfo" addStyleNames="cpv_skipFencingIfSDActiveInfo_pfly_fix" />
                                 </g:HorizontalPanel>
-                                <g:HorizontalPanel>
+                                <g:HorizontalPanel addStyleNames="cpv_hostsWithBrokenConnectivityThresholdEditor_line_pfly_fix">
                                     <ge:EntityModelCheckBoxEditor ui:field="skipFencingIfConnectivityBrokenCheckBox" />
                                     <d:InfoIcon ui:field="skipFencingIfConnectivityBrokenInfo" />
-                                </g:HorizontalPanel>
-                                <g:HorizontalPanel>
                                     <e:ListModelListBoxEditor ui:field="hostsWithBrokenConnectivityThresholdEditor" addStyleNames="cpv_hostsWithBrokenConnectivityThresholdEditor_pfly_fix" />
                                 </g:HorizontalPanel>
                             </g:FlowPanel>
