@@ -120,3 +120,17 @@ RETURN QUERY SELECT qos.*
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+Create or replace FUNCTION GetQosByVmId(v_vm_id UUID) RETURNS SETOF qos STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT qos.*
+   FROM qos
+   JOIN cpu_profiles ON qos.id = cpu_profiles.qos_id
+   JOIN vds_groups ON vds_groups.vds_group_id = cpu_profiles.cluster_id
+   JOIN vm_static ON vm_static.vm_guid = v_vm_id
+   WHERE vm_static.vds_group_id = vds_groups.vds_group_id
+         AND vm_static.cpu_profile_id = cpu_profiles.id;
+END; $procedure$
+LANGUAGE plpgsql;
+
