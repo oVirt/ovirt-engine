@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
+import java.nio.charset.Charset;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -384,7 +385,7 @@ public class BackendGroupsResourceTest
         assertEquals(GUIDS[index].toString(), model.getId());
         assertEquals(GROUP_NAMES[index], model.getName());
         assertNotNull(model.getDomain());
-        assertEquals(new Guid(DOMAIN.getBytes(), true).toString(), model.getDomain().getId());
+        assertEquals(new Guid(DOMAIN.getBytes(Charset.forName("UTF-8")), true).toString(), model.getDomain().getId());
         verifyLinks(model);
     }
 }

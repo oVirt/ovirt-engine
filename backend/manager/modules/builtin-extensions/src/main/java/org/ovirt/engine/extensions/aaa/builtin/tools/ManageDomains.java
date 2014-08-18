@@ -53,8 +53,8 @@ import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa.ReturnStatus;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa.SimpleAuthenticationCheck;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KDCLocator;
@@ -261,7 +261,8 @@ public class ManageDomains {
                 System.console()
                         .readLine("Please enter message or URL to appear when user tries to login with an expired password"
                                 + emptyValueDescription + ":");
-        if (changePasswordMsgStr.indexOf("http") == 0 || changePasswordMsgStr.indexOf("https") == 0) {
+        if (changePasswordMsgStr != null
+                && (changePasswordMsgStr.indexOf("http") == 0 || changePasswordMsgStr.indexOf("https") == 0)) {
             try {
                 URL url = new URL(changePasswordMsgStr);
                 log.debug("Validated that " + url + " is in correct format");
@@ -487,39 +488,43 @@ public class ManageDomains {
 
 
         LdapProviderType ldapProviderType = args.getLdapProvider();
-        adUserNameEntry.setValueForDomain(domainName, userName);
-        adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
-        authModeEntry.setValueForDomain(domainName, authMode);
-        ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
-        if (args.contains(ARG_LDAP_SERVERS)) {
-            setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
+        if (ldapProviderType == null) {
+            System.err.println("Provider typ was not provided. Use --providerType=<ldap_provider_type");
+        } else {
+            adUserNameEntry.setValueForDomain(domainName, userName);
+            adUserPasswordEntry.setValueForDomain(domainName, getPasswordInput());
+            authModeEntry.setValueForDomain(domainName, authMode);
+            ldapProviderTypesEntry.setValueForDomain(domainName, ldapProviderType.name());
+            if (args.contains(ARG_LDAP_SERVERS)) {
+                setLdapServersPerDomain(domainName, ldapServersEntry, StringUtils.join(ldapServers, ","));
+            }
+            handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
+            testConfiguration(domainName,
+                    domainNameEntry,
+                    adUserNameEntry,
+                    adUserPasswordEntry,
+                    authModeEntry,
+                    adUserIdEntry,
+                    ldapProviderTypesEntry,
+                    ldapServersEntry,
+                    ldapServerPort,
+                    true,
+                    false,
+                    ldapServers);
+
+            handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
+
+            // Update the configuration
+            setConfigurationEntries(domainNameEntry,
+                    adUserNameEntry,
+                    adUserPasswordEntry,
+                    authModeEntry,
+                    ldapServersEntry,
+                    adUserIdEntry,
+                    ldapProviderTypesEntry, changePasswordUrlEntry);
+
+            printSuccessMessage(domainName, "added");
         }
-        handleChangePasswordMsg(domainName, changePasswordUrlEntry, false);
-        testConfiguration(domainName,
-                domainNameEntry,
-                adUserNameEntry,
-                adUserPasswordEntry,
-                authModeEntry,
-                adUserIdEntry,
-                ldapProviderTypesEntry,
-                ldapServersEntry,
-                ldapServerPort,
-                true,
-                false,
-                ldapServers);
-
-        handleAddPermissions(domainName, userName, adUserIdEntry.getValueForDomain(domainName));
-
-        // Update the configuration
-        setConfigurationEntries(domainNameEntry,
-                adUserNameEntry,
-                adUserPasswordEntry,
-                authModeEntry,
-                ldapServersEntry,
-                adUserIdEntry,
-                ldapProviderTypesEntry, changePasswordUrlEntry);
-
-        printSuccessMessage(domainName, "added");
     }
 
     private void setLdapServersPerDomain(String domainName,
@@ -794,13 +799,21 @@ public class ManageDomains {
         SimpleAuthenticationCheck simpleAuthenticationCheck = new SimpleAuthenticationCheck();
         Pair<ReturnStatus, String> simpleCheckResult =
                 simpleAuthenticationCheck.printUserGuid(domain, userName, password, userGuid, ldapProviderType, ldapServers);
-        if (!simpleCheckResult.getFirst().equals(ReturnStatus.OK)) {
+        ManageDomainsResult result = null;
+        if (simpleCheckResult == null) {
+            result =
+                    new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN, new String[] {
+                            domain, "Unexepcted error has occured during testing." });
+        }
+        else if (!simpleCheckResult.getFirst().equals(ReturnStatus.OK)) {
             System.err.println(simpleCheckResult.getSecond());
-            return new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
+            result = new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
                     new String[] { domain, simpleCheckResult.getFirst().getDetailedMessage() });
+        } else {
+            result = OK_RESULT;
         }
         log.info("Successfully tested domain " + domain);
-        return OK_RESULT;
+        return result;
     }
 
     private void checkSimpleDomains(String domainName,

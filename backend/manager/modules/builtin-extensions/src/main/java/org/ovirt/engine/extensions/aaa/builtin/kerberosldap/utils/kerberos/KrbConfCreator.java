@@ -118,7 +118,7 @@ public class KrbConfCreator {
 
     public void toFile(String krb5ConfPath, StringBuffer sb) throws FileNotFoundException, IOException {
         try (FileOutputStream fos = new FileOutputStream(krb5ConfPath)) {
-            fos.write(sb.toString().getBytes());
+            fos.write(sb.toString().getBytes(Charset.forName("UTF-8")));
         }
     }
 
