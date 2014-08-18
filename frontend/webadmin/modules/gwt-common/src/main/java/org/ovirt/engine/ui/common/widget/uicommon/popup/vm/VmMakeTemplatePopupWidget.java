@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
@@ -24,6 +25,7 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -102,6 +104,11 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     @Path(value = "copyPermissions.entity")
     @WithElementId("copyVmPermissions")
     EntityModelCheckBoxEditor copyVmPermissions;
+
+    @UiField(provided = true)
+    @Path(value = "cpuProfiles.selectedItem")
+    @WithElementId("cpuProfiles")
+    public ListModelListBoxEditor<CpuProfile> cpuProfilesEditor;
 
     @UiField
     @Ignore
@@ -189,6 +196,13 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
                         );
                     }
                 });
+
+        cpuProfilesEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
+            @Override
+            protected String renderNullSafe(CpuProfile object) {
+                return object.getName();
+            }
+        });
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -216,6 +230,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         isSubTemplateEditor.setLabel(constants.createAsSubTemplate());
         baseTemplateEditor.setLabel(constants.rootTemplate());
         templateVersionNameEditor.setLabel(constants.templateVersionName());
+        cpuProfilesEditor.setLabel(constants.cpuProfileLabel());
     }
 
     @Override
@@ -269,6 +284,7 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         descriptionEditor.setTabIndex(nextTabIndex++);
         commentEditor.setTabIndex(nextTabIndex++);
         clusterEditor.setTabIndex(nextTabIndex++);
+        cpuProfilesEditor.setTabIndex(nextTabIndex++);
         quotaEditor.setTabIndex(nextTabIndex++);
         isSubTemplateEditor.setTabIndex(nextTabIndex++);
         baseTemplateEditor.setTabIndex(nextTabIndex++);

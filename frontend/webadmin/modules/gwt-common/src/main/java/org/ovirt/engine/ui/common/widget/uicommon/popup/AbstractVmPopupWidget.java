@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 
 import com.google.gwt.event.shared.EventBus;
+
 import static com.google.gwt.dom.client.Style.Unit;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
@@ -604,6 +607,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField
     @Ignore
     public FlowPanel startRunningOnPanel;
+
+    @UiField(provided = true)
+    @Path(value = "cpuProfiles.selectedItem")
+    @WithElementId("cpuProfiles")
+    public ListModelListBoxEditor<CpuProfile> cpuProfilesEditor;
 
     @UiField(provided = true)
     InfoIcon cpuPinningInfo;
@@ -1232,6 +1240,13 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
+        cpuProfilesEditor = new ListModelListBoxEditor(new NullSafeRenderer<CpuProfile>() {
+            @Override
+            protected String renderNullSafe(CpuProfile object) {
+                return object.getName();
+            }
+        });
+
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
     }
@@ -1329,6 +1344,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         watchdogModelEditor.setLabel(constants.watchdogModel());
 
         // Resource Allocation Tab
+        cpuProfilesEditor.setLabel(constants.cpuProfileLabel());
         provisioningEditor.setLabel(constants.templateProvisVmPopup());
         provisioningThinEditor.setLabel(constants.thinVmPopup());
         provisioningCloneEditor.setLabel(constants.cloneVmPopup());
@@ -1857,6 +1873,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         // ==Resource Allocation Tab==
         nextTabIndex = resourceAllocationTab.setTabIndexes(nextTabIndex);
+        cpuProfilesEditor.setTabIndex(nextTabIndex++);
         minAllocatedMemoryEditor.setTabIndex(nextTabIndex++);
         provisioningEditor.setTabIndex(nextTabIndex++);
         provisioningThinEditor.setTabIndex(nextTabIndex++);

@@ -9,6 +9,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -28,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -197,6 +199,7 @@ public class UnitVmModel extends Model {
             getQuota().setIsChangable(false);
             getDescription().setIsChangable(false);
             getComment().setIsChangable(false);
+            getCpuProfiles().setIsChangable(false);
 
             getNumOfDesktops().setIsChangable(false);
             getPrestartedVms().setIsChangable(false);
@@ -1412,6 +1415,16 @@ public class UnitVmModel extends Model {
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
     }
 
+    private NotChangableForVmInPoolListModel<CpuProfile> cpuProfiles;
+
+    public ListModel<CpuProfile> getCpuProfiles() {
+        return cpuProfiles;
+    }
+
+    public void setCpuProfiles(NotChangableForVmInPoolListModel<CpuProfile> cpuProfiles) {
+        this.cpuProfiles = cpuProfiles;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1665,6 +1678,8 @@ public class UnitVmModel extends Model {
         setEditingEnabled(new EntityModel<Boolean>());
         getEditingEnabled().setEntity(true);
 
+        setCpuProfiles(new NotChangableForVmInPoolListModel<CpuProfile>());
+        getCpuProfiles().setIsAvailable(false);
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)

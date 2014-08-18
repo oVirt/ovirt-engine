@@ -157,6 +157,11 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             BuilderExecutor.build(template, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
             getModel().getBootMenuEnabled().setEntity(template.isBootMenuEnabled());
+
+            if (getModel().getSelectedCluster() != null) {
+                updateCpuProfile(getModel().getSelectedCluster().getId(),
+                        getClusterCompatibilityVersion(), template.getCpuProfileId());
+            }
         }
     }
 

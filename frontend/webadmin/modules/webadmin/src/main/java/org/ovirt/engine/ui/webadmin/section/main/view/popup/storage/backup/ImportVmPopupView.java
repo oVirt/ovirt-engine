@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -85,6 +86,10 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @UiField(provided = true)
     @Path(value = "cluster.selectedItem")
     ListModelListBoxEditor<Object> destClusterEditor;
+
+    @UiField(provided = true)
+    @Path(value = "cpuProfiles.selectedItem")
+    ListModelListBoxEditor<CpuProfile> cpuProfileEditor;
 
     @UiField(provided = true)
     @Path(value = "clusterQuota.selectedItem")
@@ -622,12 +627,21 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
             }
         });
         destStorageEditor = new ListModelListBoxEditor<Object>(new StorageDomainFreeSpaceRenderer());
+
+        cpuProfileEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
+
+            @Override
+            protected String renderNullSafe(CpuProfile object) {
+                return object.getName();
+            }
+        });
     }
 
     private void localize(ApplicationConstants constants) {
         destClusterEditor.setLabel(constants.importVm_destCluster());
         destClusterQuotaEditor.setLabel(constants.importVm_destClusterQuota());
         destStorageEditor.setLabel(constants.defaultStorage());
+        cpuProfileEditor.setLabel(constants.cpuProfileLabel());
     }
 
     @SuppressWarnings("unchecked")

@@ -172,6 +172,11 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
             BuilderExecutor.build(vmBase, getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
             getModel().getBootMenuEnabled().setEntity(vmBase.isBootMenuEnabled());
+
+            if (getModel().getSelectedCluster() != null) {
+                updateCpuProfile(getModel().getSelectedCluster().getId(),
+                        getClusterCompatibilityVersion(), vmBase.getCpuProfileId());
+            }
         }
     }
 

@@ -278,6 +278,10 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
         updateOSValues();
         updateTemplate();
         updateNumOfSockets();
+        if(getModel().getSelectedCluster() != null) {
+            updateCpuProfile(getModel().getSelectedCluster().getId(), getModel().getSelectedCluster()
+                    .getcompatibility_version(), vm.getCpuProfileId());
+        }
     }
 
     @Override

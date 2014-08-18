@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -17,11 +22,6 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingVmInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 public class ExistingVmModelBehavior extends VmModelBehaviorBase
 {
@@ -192,6 +192,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         BuilderExecutor.build(vm.getStaticData(), getModel(), new SerialNumberPolicyVmBaseToUnitBuilder());
 
         getModel().getBootMenuEnabled().setEntity(vm.isBootMenuEnabled());
+
+        updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
     }
 
     private int calculateHostCpus() {

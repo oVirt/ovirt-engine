@@ -21,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -99,6 +100,16 @@ public class ImportVmModel extends ListWithDetailsModel {
         cluster = value;
     }
 
+    private ListModel<CpuProfile> cpuProfiles;
+
+    public ListModel<CpuProfile> getCpuProfiles() {
+        return cpuProfiles;
+    }
+
+    private void setCpuProfiles(ListModel<CpuProfile> value) {
+        cpuProfiles = value;
+    }
+
     private ListModel clusterQuota;
 
     public ListModel getClusterQuota() {
@@ -167,6 +178,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         setCluster(new ListModel());
         setClusterQuota(new ListModel());
         getClusterQuota().setIsAvailable(false);
+        setCpuProfiles(new ListModel<CpuProfile>());
     }
 
     public void init(List items, final Guid storageDomainId) {
@@ -213,7 +225,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                getCluster().setItems(clusters);
                                getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                            }
-
+                           VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
                            // get storage domains
                            AsyncDataProvider.getStorageDomainList(new AsyncQuery(ImportVmModel.this,
                                    new INewAsyncCallback() {
@@ -241,7 +253,24 @@ public class ImportVmModel extends ListWithDetailsModel {
 
                                    }),
                                    getStoragePool().getId());
+
+                           fetchCpuProfiles(cluster.getId());
                        }
+
+                    private void fetchCpuProfiles(Guid clusterId) {
+                        Frontend.getInstance().runQuery(VdcQueryType.GetCpuProfilesByClusterId,
+                                new IdQueryParameters(clusterId),
+                                new AsyncQuery(new INewAsyncCallback() {
+
+                                    @Override
+                                    public void onSuccess(Object model, Object returnValue) {
+                                        List<CpuProfile> cpuProfiles =
+                                                (List<CpuProfile>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                        getCpuProfiles().setItems(cpuProfiles);
+                                    }
+                                }));
+                    }
+
                    }),
                            dataCenter.getId(), true, false);
                }

@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.Cloner;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.CpuProfileUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.VmSpecificUnitToVmBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CoreUnitToVmBaseBuilder;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.DedicatedVmForVdsUnitToVmBaseBuilder;
@@ -516,7 +517,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                               new KernelParamsUnitToVmBaseBuilder(),
                               new MigrationOptionsUnitToVmBaseBuilder(),
                               new DedicatedVmForVdsUnitToVmBaseBuilder(),
-                              new UsbPolicyUnitToVmBaseBuilder());
+                              new UsbPolicyUnitToVmBaseBuilder(),
+                              new CpuProfileUnitToVmBaseBuilder());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
         return vm;
     }

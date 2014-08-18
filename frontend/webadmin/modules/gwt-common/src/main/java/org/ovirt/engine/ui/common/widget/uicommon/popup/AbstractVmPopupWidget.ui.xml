@@ -646,6 +646,7 @@
                         <g:FlowPanel addStyleNames="{style.sectionPanelTight}" ui:field="cpuAllocationPanel" >
                             <g:Label text="{constants.cpuAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
                             <g:FlowPanel addStyleNames="{style.labelToCouple}">
+                                <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" />
                                 <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
                                     <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetStyleName="{style.cpuSahresValueListBox}" />
