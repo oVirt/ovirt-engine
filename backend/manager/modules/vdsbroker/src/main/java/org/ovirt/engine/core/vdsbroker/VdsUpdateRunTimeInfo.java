@@ -118,6 +118,7 @@ public class VdsUpdateRunTimeInfo {
     private boolean processHardwareCapsNeeded;
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
+    private boolean vdsMaintenanceTimeoutOccurred;
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
@@ -391,6 +392,10 @@ public class VdsUpdateRunTimeInfo {
                 markIsSetNonOperationalExecuted();
             }
 
+            if (vdsMaintenanceTimeoutOccurred) {
+                handleVdsMaintenanceTimeout();
+            }
+
             if (_vds.getStatus() == VDSStatus.Maintenance) {
                 try {
                     getVdsEventListener().vdsMovedToMaintenance(_vds);
@@ -459,6 +464,11 @@ public class VdsUpdateRunTimeInfo {
             logFailureMessage("ResourceManager::RerunFailedCommand:", ex);
             log.error(ExceptionUtils.getMessage(ex), ex);
         }
+    }
+
+    private void handleVdsMaintenanceTimeout() {
+        getVdsEventListener().handleVdsMaintenanceTimeout(_vds);
+        _vdsManager.calculateNextMaintenanceAttemptTime();
     }
 
     private void markIsSetNonOperationalExecuted() {
@@ -1910,10 +1920,7 @@ public class VdsUpdateRunTimeInfo {
                         _vds.getId(),
                         _vds.getName());
             } else {
-                if (_vdsManager.isTimeToRetryMaintenance()) {
-                    ResourceManager.getInstance().getEventListener().handleVdsMaintenanceTimeout(_vds);
-                    _vdsManager.calculateNextMaintenanceAttemptTime();
-                }
+                vdsMaintenanceTimeoutOccurred = _vdsManager.isTimeToRetryMaintenance();
             }
         }
     }
