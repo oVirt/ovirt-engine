@@ -186,6 +186,7 @@ public class EntityModelCellTable<M extends ListModel> extends ElementIdCellTabl
             boolean showSelectAllCheckbox) {
         super(DEFAULT_PAGESIZE, resources);
 
+        dontApplyResizableHeaderStyle();
         style = cellTableResources.cellTableValidation();
         style.ensureInjected();
 

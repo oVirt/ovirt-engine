@@ -98,18 +98,19 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
      */
     private final ResizableHeaderCss style;
 
+    private final boolean applyStyle;
+
     /**
      * Constructor.
      * @param text The contents of the header.
      * @param column The column associated with the header.
      * @param table The table containing the header/column.
      */
-    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table) {
-        this(text, column, table, new SafeHtmlCellWithTooltip(
-                BrowserEvents.CLICK,
+    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table, boolean applyStyle) {
+        this(text, column, table, new SafeHtmlCellWithTooltip(BrowserEvents.CLICK,
                 BrowserEvents.MOUSEDOWN,
                 BrowserEvents.MOUSEMOVE,
-                BrowserEvents.MOUSEOVER));
+                BrowserEvents.MOUSEOVER), applyStyle);
     }
 
     /**
@@ -121,17 +122,31 @@ public class ResizableHeader<T> extends Header<SafeHtml> {
      */
     public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table,
             Cell<SafeHtml> cell) {
+        this(text, column, table, cell, true);
+    }
+
+    /**
+     * Constructor.
+     * @param text The contents of the header.
+     * @param column The column associated with the header.
+     * @param table The table containing the header/column.
+     * @param cell The cell that defines the header cell.
+     * @param applyStyle Whether to apply default styling.
+     */
+    public ResizableHeader(SafeHtml text, Column<T, ?> column, HasResizableColumns<T> table,
+            Cell<SafeHtml> cell, boolean applyStyle) {
         super(cell);
         style = RESOURCES.resizableHeaderCss();
         style.ensureInjected();
         this.text = text;
         this.column = column;
         this.table = table;
+        this.applyStyle = applyStyle;
     }
 
     @Override
     public SafeHtml getValue() {
-        return TEMPLATE.templatedContent(style.cellTableHeaderContent(), text);
+        return applyStyle ? TEMPLATE.templatedContent(style.cellTableHeaderContent(), text) : text;
     }
 
     @Override

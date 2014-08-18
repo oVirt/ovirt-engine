@@ -51,6 +51,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     private boolean columnResizingEnabled = false;
     private boolean columnResizePersistenceEnabled = false;
+    private boolean applyResizableHeaderStyle = true;
 
     // used to store column width preferences
     private ClientStorage clientStorage;
@@ -184,7 +185,7 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     }
 
     Header<?> createHeader(Column<T, ?> column, SafeHtml headerHtml) {
-        return columnResizingEnabled ? new ResizableHeader<T>(headerHtml, column, this)
+        return columnResizingEnabled ? new ResizableHeader<T>(headerHtml, column, this, applyResizableHeaderStyle)
                 : createSafeHtmlHeader(headerHtml);
     }
 
@@ -372,6 +373,10 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
             }
         }
         return null;
+    }
+
+    protected void dontApplyResizableHeaderStyle() {
+        applyResizableHeaderStyle = false;
     }
 
 }
