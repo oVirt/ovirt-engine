@@ -476,19 +476,6 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
-        node = content.SelectSingleNode(OvfProperties.TIMEZONE);
-        if (node != null && StringUtils.isNotEmpty(node.innerText)) {
-            vmBase.setTimeZone(node.innerText);
-        } else {
-            if (osRepository.isWindows(vmBase.getOsId())) {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
-            } else {
-                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
-            }
-        }
-
-
-
         node = content.SelectSingleNode(OvfProperties.DEFAULT_BOOT_SEQUENCE);
         if (node != null) {
             if (!StringUtils.isEmpty(node.innerText)) {
@@ -556,6 +543,18 @@ public abstract class OvfReader implements IOvfBuilder {
             node = getNode(list, "xsi:type", "ovf:SnapshotsSection_Type");
             if (node != null) {
                 readSnapshotsSection(node);
+            }
+        }
+
+        // due to depndency on vmBase.getOsId() must be read AFTER readOsSection
+        node = content.SelectSingleNode(OvfProperties.TIMEZONE);
+        if (node != null && StringUtils.isNotEmpty(node.innerText)) {
+            vmBase.setTimeZone(node.innerText);
+        } else {
+            if (osRepository.isWindows(vmBase.getOsId())) {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultWindowsTimeZone));
+            } else {
+                vmBase.setTimeZone(Config.<String> getValue(ConfigValues.DefaultGeneralTimeZone));
             }
         }
 
