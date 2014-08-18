@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.profiles.ProfilesDao;
+import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 
 
 public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
@@ -65,7 +65,15 @@ public class DiskProfileValidator extends ProfileValidator<DiskProfile> {
     }
 
     @Override
-    protected ProfilesDao<DiskProfile> getProfileDao() {
+    public ValidationResult isLastProfileInParentEntity() {
+        if (getProfileDao().getAllForStorageDomain(getProfile().getStorageDomainId()).size() == 1) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_CANNOT_REMOVE_LAST_DISK_PROFILE_IN_STORAGE_DOMAIN);
+        }
+        return ValidationResult.VALID;
+    }
+
+    @Override
+    protected DiskProfileDao getProfileDao() {
         return getDbFacade().getDiskProfileDao();
     }
 

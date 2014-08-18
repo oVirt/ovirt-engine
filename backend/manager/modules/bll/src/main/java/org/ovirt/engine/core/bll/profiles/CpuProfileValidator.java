@@ -8,8 +8,8 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.profiles.ProfilesDao;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 
 
 public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
@@ -68,7 +68,15 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
     }
 
     @Override
-    protected ProfilesDao<CpuProfile> getProfileDao() {
+    public ValidationResult isLastProfileInParentEntity() {
+        if (getProfileDao().getAllForCluster(getProfile().getClusterId()).size() == 1) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_CANNOT_REMOVE_LAST_CPU_PROFILE_IN_CLUSTER);
+        }
+        return ValidationResult.VALID;
+    }
+
+    @Override
+    protected CpuProfileDao getProfileDao() {
         return getDbFacade().getCpuProfileDao();
     }
 
