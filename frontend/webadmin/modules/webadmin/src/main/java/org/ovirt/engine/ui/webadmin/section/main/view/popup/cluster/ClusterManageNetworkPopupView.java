@@ -212,8 +212,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         public Boolean getValue() {
+            boolean allEntriesDisabled = !isEnabled();
             for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
-                if (canEditRequired(clusterNetworkModel)) {
+                if (allEntriesDisabled || canEditRequired(clusterNetworkModel)) {
                     if (!clusterNetworkModel.isRequired()) {
                         return false;
                     }
@@ -225,7 +226,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         public boolean isEnabled() {
             for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
-                if (clusterNetworkModel.getIsChangable()) {
+                if (canEditRequired(clusterNetworkModel)) {
                     return true;
                 }
             }
@@ -280,8 +281,9 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
         @Override
         public Boolean getValue() {
+            boolean allEntriesDisabled = !isEnabled();
             for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
-                if (canEditAssign(clusterNetworkModel)) {
+                if (allEntriesDisabled || canEditAssign(clusterNetworkModel)) {
                     if (!clusterNetworkModel.isAttached()) {
                         return false;
                     }
@@ -293,7 +295,7 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
         @Override
         public boolean isEnabled() {
             for (ClusterNetworkModel clusterNetworkModel : getNetworksTableItems()) {
-                if (clusterNetworkModel.getIsChangable()) {
+                if (canEditAssign(clusterNetworkModel)) {
                     return true;
                 }
             }
