@@ -130,6 +130,20 @@ class Daemon(service.Daemon):
                 mustExist=False,
             )
 
+        if (
+            self._config.getboolean('SSL_ONLY') and
+            (
+                not os.path.exists(self._config.get('SSL_KEY')) or
+                not os.path.exists(self._config.get('SSL_CERTIFICATE'))
+            )
+        ):
+            raise RuntimeError(
+                _(
+                    "SSL_ONLY is set but SSL_CERTIFICATE "
+                    "or SSL_KEY file not found."
+                )
+            )
+
     def daemonSetup(self):
 
         if not os.path.exists(self._defaults):
