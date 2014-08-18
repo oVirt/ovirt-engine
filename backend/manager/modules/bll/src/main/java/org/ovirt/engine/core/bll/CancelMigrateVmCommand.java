@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
+@NonTransactiveCommandAttribute
 public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
     public CancelMigrateVmCommand(T param) {
@@ -33,8 +34,7 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
         }
 
         if (!canRunActionOnNonManagedVm()) {
@@ -42,9 +42,9 @@ public class CancelMigrateVmCommand<T extends VmOperationParameterBase> extends 
         }
 
         if (getVm().getStatus() != VMStatus.MigratingFrom) {
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
-            return false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_CANCEL_MIGRATION_WHEN_VM_IS_NOT_MIGRATING);
         }
+
         return true;
     }
 
