@@ -5,6 +5,7 @@ import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -19,6 +20,15 @@ public class CpuQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<CpuQos> implemen
         map.addValue("cpu_limit", obj.getCpuLimit());
 
         return map;
+    }
+
+    @Override
+    public CpuQos getCpuQosByVmId(Guid vmId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("vm_id", vmId);
+        return getCallsHandler().executeRead("GetQosByVmId",
+                createEntityRowMapper(),
+                parameterSource);
     }
 
     @Override

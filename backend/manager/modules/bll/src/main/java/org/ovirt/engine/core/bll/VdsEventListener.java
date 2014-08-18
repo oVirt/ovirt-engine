@@ -49,6 +49,7 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
+import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.eventqueue.Event;
@@ -60,6 +61,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
@@ -78,6 +80,7 @@ import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 
 @Stateless(name = "VdsEventListener")
@@ -489,6 +492,25 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void updateSchedulingStats(VDS vds) {
         SchedulingManager.getInstance().updateHostSchedulingStats(vds);
+    }
+
+    @Override
+    public void updateSlaPolicies(final List<Guid> vmIds, final Guid vdsId) {
+        if (vmIds.isEmpty()) {
+            return;
+        }
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (Guid vmId : vmIds) {
+                    CpuQos qos = DbFacade.getInstance().getCpuQosDao().getCpuQosByVmId(vmId);
+                    if (qos != null && qos.getCpuLimit() != null) {
+                        ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVmPolicy,
+                                new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));
+                    }
+                }
+            }
+        });
     }
 
     private static final Log log = LogFactory.getLog(VdsEventListener.class);

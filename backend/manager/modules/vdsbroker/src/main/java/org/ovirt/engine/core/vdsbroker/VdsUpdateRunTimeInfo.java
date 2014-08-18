@@ -566,6 +566,7 @@ public class VdsUpdateRunTimeInfo {
             for (Guid vm_guid : _succededToRunVms) {
                 _vdsManager.succededToRunVm(vm_guid);
             }
+            getVdsEventListener().updateSlaPolicies(_succededToRunVms, _vds.getId());
 
             // Refrain from auto-start HA VM during its re-run attempts.
             _autoVmsToRun.removeAll(_vmsToRerun);

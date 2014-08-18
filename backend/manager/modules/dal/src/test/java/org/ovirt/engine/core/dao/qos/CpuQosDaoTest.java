@@ -82,4 +82,16 @@ public class CpuQosDaoTest extends BaseDAOTestCase {
         assertEquals(3, allForCpuPoolId.size());
     }
 
+    @Test
+    public void getQosByVmId() {
+        CpuQos cpuQos = dao.getCpuQosByVmId(FixturesTool.VM_RHEL5_POOL_50);
+        assertNotNull(cpuQos);
+        assertEquals(FixturesTool.QOS_ID_4, cpuQos.getId());
+    }
+
+    @Test
+    public void getNoQosByVmId() {
+        CpuQos cpuQos = dao.getCpuQosByVmId(FixturesTool.VM_RHEL5_POOL_57);
+        assertNull(cpuQos);
+    }
 }
