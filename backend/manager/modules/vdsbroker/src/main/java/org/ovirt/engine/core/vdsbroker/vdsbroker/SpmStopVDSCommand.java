@@ -80,6 +80,9 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                 } else {
                     getVDSReturnValue().setSucceeded(false);
                     if (getVDSReturnValue().getVdsError() == null) {
+                        log.infoFormat("SpmStopVDSCommand::Not stopping SPM on vds {0}, pool id {1} as there are uncleared tasks",
+                                getVds().getName(),
+                                getParameters().getStoragePoolId());
                         VDSError error = new VDSError();
                         error.setCode(VdcBllErrors.TaskInProgress);
                         getVDSReturnValue().setVdsError(error);
