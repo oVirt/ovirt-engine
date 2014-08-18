@@ -30,21 +30,17 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected boolean canDoAction() {
-        boolean retValue = true;
         if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
-            retValue = false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
         }
 
-        if (retValue && !canRunActionOnNonManagedVm()) {
-            retValue = false;
-        } else {
-            cdImagePath = ImagesHandler.cdPathWindowsToLinux(getParameters().getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
+        if (!canRunActionOnNonManagedVm()) {
+            return false;
         }
 
-        if (retValue && !getVm().isRunningOrPaused()) {
-            setSucceeded(false);
-            retValue = false;
+        cdImagePath = getParameters().getCdImagePath();
+
+        if (!getVm().isRunningOrPaused()) {
             addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
 
             // An empty 'cdImagePath' means eject CD
@@ -53,24 +49,26 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             } else {
                 addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
             }
-            failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
-        } else if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
+        }
+
+        if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(cdImagePath)) {
             addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
-            addCanDoActionMessage(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
-            setSucceeded(false);
-            retValue = false;
-        } else if (StringUtils.isNotEmpty(cdImagePath) && !cdImagePath.endsWith(ValidationUtils.ISO_SUFFIX)) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
-            setSucceeded(false);
-            retValue = false;
+            return failCanDoAction(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
-        return retValue;
+
+        if (StringUtils.isNotEmpty(cdImagePath) && !cdImagePath.endsWith(ValidationUtils.ISO_SUFFIX)) {
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
+        }
+
+        return true;
     }
 
     @Override
     protected void perform() {
+        cdImagePath = ImagesHandler.cdPathWindowsToLinux(getParameters().getCdImagePath(), getVm().getStoragePoolId(), getVm().getRunOnVds());
         setActionReturnValue(runVdsCommand(VDSCommandType.ChangeDisk,
                         new ChangeDiskVDSCommandParameters(getVdsId(), getVm().getId(), cdImagePath))
                 .getReturnValue());
