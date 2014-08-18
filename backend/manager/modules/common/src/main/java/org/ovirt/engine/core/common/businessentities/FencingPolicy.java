@@ -20,10 +20,7 @@ public class FencingPolicy implements Serializable {
     private int hostsWithBrokenConnectivityThreshold;
 
     public FencingPolicy() {
-        fencingEnabled = true;
-        skipFencingIfSDActive = false;
-        skipFencingIfConnectivityBroken = false;
-        hostsWithBrokenConnectivityThreshold = 50;
+        this(null);
     }
 
     public FencingPolicy(FencingPolicy fencingPolicy) {
@@ -31,6 +28,7 @@ public class FencingPolicy implements Serializable {
             fencingEnabled = true;
             skipFencingIfSDActive = false;
             skipFencingIfConnectivityBroken = false;
+            hostsWithBrokenConnectivityThreshold = 50;
         } else {
             fencingEnabled = fencingPolicy.fencingEnabled;
             skipFencingIfSDActive = fencingPolicy.skipFencingIfSDActive;
