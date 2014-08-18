@@ -14,18 +14,20 @@ public class FencingPolicyHelper {
      * Returns minimal cluster version, that supports specified fencing policy
      */
     public static Version getMinimalSupportedVersion(FencingPolicy fp) {
+        if (fp == null) {
+            throw new IllegalArgumentException();
+        }
+
         // Version 2.2 is not supported by VDSM, but it's still contained in version list,
         // so we cannot just get first element from version list
         Version ver = Version.v3_0;
-        if (fp != null) {
-            if (fp.isSkipFencingIfSDActive()) {
-                for (Version v : Version.ALL) {
-                    // Version 2.2 is included in version list, but it's not included in db to set up config values
-                    if (v.compareTo(Version.v3_0) >= 0 &&
-                            FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
-                        ver = v;
-                        break;
-                    }
+        if (fp.isSkipFencingIfSDActive()) {
+            for (Version v : Version.ALL) {
+                // Version 2.2 is included in version list, but it's not included in db to set up config values
+                if (v.compareTo(Version.v3_0) >= 0 &&
+                        FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
+                    ver = v;
+                    break;
                 }
             }
         }
