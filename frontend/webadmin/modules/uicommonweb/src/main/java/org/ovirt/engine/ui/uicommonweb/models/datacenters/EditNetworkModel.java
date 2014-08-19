@@ -41,7 +41,13 @@ public class EditNetworkModel extends NetworkModel {
         getExport().setEntity(getNetwork().isExternal());
         getExport().setIsChangable(false);
         getExternalProviders().setIsChangable(false);
-        getNetworkLabel().setSelectedItem(getNetwork().getLabel());
+
+        if (getNetwork().isExternal()) {
+            getNeutronPhysicalNetwork().setEntity(getNetwork().getLabel());
+        } else {
+            getNetworkLabel().setSelectedItem(getNetwork().getLabel());
+        }
+
         toggleProfilesAvailability();
     }
 
@@ -66,13 +72,14 @@ public class EditNetworkModel extends NetworkModel {
 
     @Override
     protected void onExportChanged() {
+        super.onExportChanged();
         if (getExport().getEntity()) {
             getHasVLanTag().setIsChangable(false);
             getVLanTag().setIsChangable(false);
             getIsVmNetwork().setIsChangable(false);
             getNetworkLabel().setIsChangable(false);
+            getNeutronPhysicalNetwork().setIsChangable(false);
         }
-        super.onExportChanged();
     }
 
     @Override

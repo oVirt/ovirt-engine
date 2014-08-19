@@ -205,6 +205,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("External Provider")
     String externalProviderLabel();
 
+    @DefaultStringValue("Physical Network")
+    String neutronPhysicalNetwork();
+
     @DefaultStringValue("Host Provider")
     String hostProviderTabLabel();
 
@@ -228,9 +231,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Network Label")
     String networkLabel();
-
-    @DefaultStringValue("For a Neutron external network, this maps to the name of the physical network.")
-    String networkLabelInfo();
 
     @DefaultStringValue("Label")
     String networkLabelNetworksTab();

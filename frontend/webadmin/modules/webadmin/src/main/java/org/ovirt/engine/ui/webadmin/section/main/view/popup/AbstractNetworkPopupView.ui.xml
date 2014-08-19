@@ -43,6 +43,7 @@
 
         .noPadding {
             padding: 0px !important;
+            top: 0 !important;
         }
 
         .mtuSelector {
@@ -77,13 +78,13 @@
         }
 
         .propertyWidth {
-            width: 340px;
+            width: 338px;
         }
 
         .mtuLabel {
             width: 230px;
             position: relative;
-            top: -25px;
+            top: -25px !important;
         }
 
         .inlineBlock {
@@ -110,9 +111,11 @@
                                     <g:Label ui:field="exportLabel" addStyleNames="{style.mainLabel}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="exportEditor" />
                                     <e:ListModelListBoxEditor ui:field="externalProviderEditor" addStyleNames="{style.dependentField}" />
+                                    <ge:StringEntityModelTextBoxEditor ui:field="neutronPhysicalNetwork" addStyleNames="{style.dependentField}" />
                                 </g:FlowPanel>
                                 <g:FlowPanel addStyleNames="{style.sectionStyle}">
                                     <g:Label ui:field="mainLabel" addStyleNames="{style.mainLabel}" />
+                                    <ge:ListModelSuggestBoxEditor ui:field="networkLabel" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                     <g:HorizontalPanel addStyleNames="{style.dependentField}">
                                         <ge:EntityModelCheckBoxEditor ui:field="vlanTagging"/>
                                         <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="vlanTag" />
@@ -122,7 +125,6 @@
                                         <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
                                     </g:HorizontalPanel>
                                     <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField}" />
-                                    <w:EntityModelWidgetWithInfo ui:field="networkLabelWithInfo" addStyleNames="{style.dependentField} {style.propertyWidth} anpv_networkLabelPanel_pfly_fix" />
                                     <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
                                         <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />

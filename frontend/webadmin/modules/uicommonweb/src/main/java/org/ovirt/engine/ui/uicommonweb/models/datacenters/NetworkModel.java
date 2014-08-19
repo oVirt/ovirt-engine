@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
-import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -58,7 +57,7 @@ public abstract class NetworkModel extends Model
     private EntityModel<Boolean> export;
     private ListModel<Provider> externalProviders;
     private ListModel<String> networkLabel;
-    private Collection<String> dcLabels;
+    private EntityModel<String> neutronPhysicalNetwork;
     private EntityModel<String> privateComment;
     private EntityModel<Integer> privateVLanTag;
     private EntityModel<Boolean> privateIsStpEnabled;
@@ -109,6 +108,7 @@ public abstract class NetworkModel extends Model
                 onExportChanged();
             }
         });
+        setNeutronPhysicalNetwork(new EntityModel<String>());
 
         setNetworkLabel(new ListModel<String>());
         setExternalProviders(new ListModel<Provider>());
@@ -268,6 +268,14 @@ public abstract class NetworkModel extends Model
 
     public void setNetworkLabel(ListModel<String> networkLabel) {
         this.networkLabel = networkLabel;
+    }
+
+    public EntityModel<String> getNeutronPhysicalNetwork() {
+        return neutronPhysicalNetwork;
+    }
+
+    private void setNeutronPhysicalNetwork(EntityModel<String> neutronPhysicalNetwork) {
+        this.neutronPhysicalNetwork = neutronPhysicalNetwork;
     }
 
     public EntityModel<String> getComment() {
@@ -576,7 +584,8 @@ public abstract class NetworkModel extends Model
         network.setComment(getComment().getEntity());
         network.setVmNetwork(getIsVmNetwork().getEntity());
 
-        String label = getNetworkLabel().getSelectedItem();
+        String label = getExport().getEntity() ?
+                getNeutronPhysicalNetwork().getEntity() : getNetworkLabel().getSelectedItem();
         network.setLabel(label == null || !label.isEmpty() ? label : null);
 
         network.setMtu(0);
@@ -734,12 +743,10 @@ public abstract class NetworkModel extends Model
     protected void onExportChanged() {
         boolean externalNetwork = getExport().getEntity();
 
+        getNetworkLabel().setIsChangable(!externalNetwork);
+        getNeutronPhysicalNetwork().setIsChangable(externalNetwork);
         getQos().setIsChangable(!externalNetwork);
         getAddQosCommand().setIsExecutionAllowed(!externalNetwork);
-
-        String label = getNetworkLabel().getSelectedItem();
-        getNetworkLabel().setItems(externalNetwork ? new HashSet<String>() : dcLabels);
-        getNetworkLabel().setSelectedItem(label);
 
         updateMtuSelectorsChangeability();
     }
@@ -751,7 +758,9 @@ public abstract class NetworkModel extends Model
 
                     @Override
                     public void onSuccess(Object model, Object returnValue) {
-                        dcLabels = (Collection<String>) returnValue;
+                        String label = getNetworkLabel().getSelectedItem();
+                        getNetworkLabel().setItems((Collection<String>) returnValue);
+                        getNetworkLabel().setSelectedItem(label);
                         stopProgress();
                         onExportChanged();
                     }
