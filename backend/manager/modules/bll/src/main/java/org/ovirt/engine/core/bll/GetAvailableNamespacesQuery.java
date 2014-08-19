@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
@@ -31,6 +32,9 @@ public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> exten
                 MultiValueMapUtils.addToMap(AuthzUtils.getName(authz), namespace, namespacesMap);
 
             }
+        }
+        for (List<String> entry : namespacesMap.values()) {
+            Collections.sort(entry);
         }
         setReturnValue(namespacesMap);
     }
