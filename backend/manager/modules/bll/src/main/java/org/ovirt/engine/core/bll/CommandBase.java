@@ -1317,6 +1317,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected final void execute() {
         setCommandStatus(CommandStatus.ACTIVE);
+        if (getCallBack() != null) {
+            persistCommand(getParameters().getParentCommand(), true);
+        }
         getReturnValue().setCanDoAction(true);
         getReturnValue().setIsSyncronious(true);
 
