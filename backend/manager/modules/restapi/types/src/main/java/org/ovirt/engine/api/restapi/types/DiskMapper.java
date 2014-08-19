@@ -63,6 +63,10 @@ public class DiskMapper {
             engineDisk.setReadOnly(disk.isReadOnly());
         }
 
+        if (disk.isSetLogicalName()) {
+            engineDisk.setLogicalName(disk.getLogicalName());
+        }
+
         if (disk.isSetDescription()) {
             engineDisk.setDiskDescription(disk.getDescription());
         }
@@ -160,6 +164,7 @@ public class DiskMapper {
         model.setReadOnly(entity.getReadOnly());
         model.setShareable(entity.isShareable());
         model.setDescription(entity.getDiskDescription());
+        model.setLogicalName(entity.getLogicalName());
         if (entity.getDiskStorageType() == DiskStorageType.IMAGE) {
             mapDiskImageToDiskFields((DiskImage) entity, model);
         } else {
