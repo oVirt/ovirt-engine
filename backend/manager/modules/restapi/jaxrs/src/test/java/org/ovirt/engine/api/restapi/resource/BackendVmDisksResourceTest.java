@@ -416,7 +416,7 @@ public class BackendVmDisksResourceTest
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
             // Because of extra frame offset used current method name in test, while in real world used "add" method name
-            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "format", "interface");
+            verifyIncompleteException(wae, "Disk", "testAddIncompleteParameters", "interface");
         }
     }
 
