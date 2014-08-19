@@ -128,7 +128,7 @@ public class ImportVmCommandTest {
         specParams.put(VdsProperties.Model, VdsProperties.Virtio);
         VmDevice balloon = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
                 VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON.toString(), null, 0, specParams,
-                true, true, true, null, null, null);
+                true, true, true, null, null, null, null);
 
         vm.getManagedVmDeviceMap().put(deviceId, balloon);
     }

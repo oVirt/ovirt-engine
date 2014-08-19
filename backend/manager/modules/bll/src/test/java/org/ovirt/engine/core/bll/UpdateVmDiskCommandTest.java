@@ -772,6 +772,7 @@ public class UpdateVmDiskCommandTest {
                 false,
                 "",
                 null,
+                null,
                 null);
     }
 }

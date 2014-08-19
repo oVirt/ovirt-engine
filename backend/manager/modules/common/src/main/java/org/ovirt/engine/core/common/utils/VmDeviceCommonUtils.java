@@ -78,6 +78,7 @@ public class VmDeviceCommonUtils {
                 false,
                 "",
                 null,
+                null,
                 null);
     }
 

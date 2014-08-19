@@ -37,7 +37,7 @@ public class VmPayload extends VmDevice implements Serializable {
         super(dev.getId(), dev.getType(), dev.getDevice(),
                 dev.getAddress(), dev.getBootOrder(), dev.getSpecParams(),
                 dev.getIsManaged(), dev.getIsPlugged(), dev.getIsReadOnly(),
-                dev.getAlias(), dev.getCustomProperties(), dev.getSnapshotId());
+                dev.getAlias(), dev.getCustomProperties(), dev.getSnapshotId(), dev.getLogicalName());
 
         if (dev.getSpecParams() != null) {
             Map<String, Object> payload = (Map<String, Object>)dev.getSpecParams().get(SpecParamsPayload);

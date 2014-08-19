@@ -1330,6 +1330,7 @@ public class VdsUpdateRunTimeInfo {
                     Boolean.getBoolean((String) device.get(VdsProperties.ReadOnly)),
                     alias,
                     null,
+                    null,
                     null);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice);

@@ -203,7 +203,7 @@ public class AttachDiskToVmCommand<T extends AttachDetachVmDiskParameters> exten
                 getParameters().isReadOnly(),
                 "",
                 null,
-                getParameters().getSnapshotId());
+                getParameters().getSnapshotId(), null);
     }
 
     protected boolean isOperationPerformedOnDiskSnapshot() {

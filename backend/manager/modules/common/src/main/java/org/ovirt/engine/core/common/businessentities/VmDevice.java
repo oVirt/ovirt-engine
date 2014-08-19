@@ -77,6 +77,11 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     private String alias;
 
     /**
+     * The device logical name.
+     */
+    private String logicalName;
+
+    /**
      * Map of custom properties
      */
     private Map<String, String> customProperties;
@@ -87,14 +92,15 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
     }
 
     public VmDevice(VmDeviceId id, VmDeviceGeneralType type, String device, String address,
-            int bootOrder,
-            Map<String, Object> specParams,
-            boolean isManaged,
-            Boolean isPlugged,
-            Boolean isReadOnly,
-            String alias,
-            Map<String, String> customProperties,
-            Guid snapshotId) {
+                    int bootOrder,
+                    Map<String, Object> specParams,
+                    boolean isManaged,
+                    Boolean isPlugged,
+                    Boolean isReadOnly,
+                    String alias,
+                    Map<String, String> customProperties,
+                    Guid snapshotId,
+                    String logicalName) {
         this.id = id;
         this.type = type;
         this.device = device;
@@ -107,6 +113,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.alias = alias;
         this.customProperties = customProperties;
         this.snapshotId = snapshotId;
+        this.logicalName = logicalName;
     }
 
     @Override
@@ -220,6 +227,14 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         this.alias = alias;
     }
 
+    public String getLogicalName() {
+        return logicalName;
+    }
+
+    public void setLogicalName(String logicalName) {
+        this.logicalName = logicalName;
+    }
+
     public Map<String, String> getCustomProperties() {
         return customProperties;
     }
@@ -244,6 +259,7 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         result = prime * result + alias.hashCode();
         result = prime * result + (customProperties == null ? 0 : customProperties.hashCode());
         result = prime * result + (snapshotId == null ? 0 : snapshotId.hashCode());
+        result = prime * result + (logicalName == null ? 0 : logicalName.hashCode());
         return result;
     }
 
@@ -270,7 +286,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
                 && getIsReadOnly().equals(other.getIsReadOnly())
                 && alias.equals(other.alias)
                 && ObjectUtils.objectsEqual(customProperties, other.customProperties)
-                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId));
+                && ObjectUtils.objectsEqual(snapshotId, other.snapshotId)
+                && ObjectUtils.objectsEqual(logicalName, other.logicalName));
     }
 
     @Override
@@ -302,6 +319,8 @@ public class VmDevice extends IVdcQueryable implements BusinessEntity<VmDeviceId
         sb.append(getCustomProperties());
         sb.append(", snapshotId=");
         sb.append(getSnapshotId());
+        sb.append(", logicalName=");
+        sb.append(getLogicalName());
         sb.append("}");
         return sb.toString();
     }
