@@ -138,7 +138,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("Error connecting to Virtual Machine using SPICE:\n{0}")
     String errConnectingVmUsingSpiceMsg(Object errCode);
 
-    @DefaultMessage("Error connecting to Virtual Machine using RPD:\n{0}")
+    @DefaultMessage("Error connecting to Virtual Machine using RDP:\n{0}")
     String errConnectingVmUsingRdpMsg(Object errCode);
 
     @DefaultMessage("Are you sure you want to delete snapshot from {0} with description ''{1}''?")
