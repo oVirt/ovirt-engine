@@ -490,23 +490,3 @@ a.dropdown-toggle {
     position: relative !important;
     top: 3px !important;
 }
-.anpv_networkLabelPanel_pfly_fix {
-    margin-top: 6px;
-}
-.anpv_networkLabelPanel_pfly_fix .avw_contentWidget_pfly_fix {
-    position: relative !important;
-    left: -141px !important;
-}
-.anpv_networkLabelPanel_pfly_fix .emwwi_label_pfly_fix {
-    padding-bottom: 5px !important;
-}
-.anpv_networkLabelPanel_pfly_fix .emwwi_infoIcon_pfly_fix {
-    position: relative !important;
-    left: 40px !important;
-}
-.anpv_networkLabelPanel_pfly_fix .emwwi_outerPanel_pfly_fix {
-    width: inherit !important;
-}
-.anpv_networkLabelPanel_pfly_fix .emwwi_outerPanel_pfly_fix {
-    width: inherit !important;
-}

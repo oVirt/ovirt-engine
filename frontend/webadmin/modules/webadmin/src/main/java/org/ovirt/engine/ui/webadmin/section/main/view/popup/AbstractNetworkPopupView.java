@@ -8,7 +8,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
-import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -16,10 +15,9 @@ import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable.SelectionMode;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelSuggestBoxOnlyEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabel;
+import org.ovirt.engine.ui.common.widget.editor.generic.ListModelSuggestBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
@@ -101,6 +99,11 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @WithElementId("externalProviders")
     public ListModelListBoxEditor<Provider> externalProviderEditor;
 
+    @UiField
+    @Path(value = "neutronPhysicalNetwork.entity")
+    @WithElementId("neutronPhysicalNetwork")
+    public StringEntityModelTextBoxEditor neutronPhysicalNetwork;
+
     @UiField(provided = true)
     @Path(value = "isVmNetwork.entity")
     public final EntityModelCheckBoxEditor isVmNetworkEditor;
@@ -120,14 +123,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
     @Path(value = "mtu.entity")
     public IntegerEntityModelTextBoxOnlyEditor mtuEditor;
 
+    @UiField
     @Path(value = "networkLabel.selectedItem")
-    public ListModelSuggestBoxOnlyEditor networkLabel;
-
-    @Ignore
-    public StringEntityModelLabel networkLabelLabel;
-
-    @UiField(provided = true)
-    public EntityModelWidgetWithInfo<String> networkLabelWithInfo;
+    public ListModelSuggestBoxEditor networkLabel;
 
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
@@ -218,10 +216,6 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         vlanTagging = new EntityModelCheckBoxEditor(Align.RIGHT);
         mtuEditor = new IntegerEntityModelTextBoxOnlyEditor();
         createSubnetEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        networkLabelLabel = new StringEntityModelLabel();
-        networkLabel = new ListModelSuggestBoxOnlyEditor();
-        networkLabelWithInfo = new EntityModelWidgetWithInfo<String>(networkLabelLabel, networkLabel);
-        networkLabelWithInfo.setExplanation(templates.italicText(constants.networkLabelInfo()));
         this.clustersTable = new EntityModelCellTable<ListModel<NetworkClusterModel>>(SelectionMode.NONE, true);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTable(constants, templates);
@@ -242,7 +236,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         exportLabel.setText(constants.exportLabel());
         exportEditor.setLabel(constants.exportCheckboxLabel());
         externalProviderEditor.setLabel(constants.externalProviderLabel());
-        networkLabelLabel.setText(constants.networkLabel());
+        neutronPhysicalNetwork.setLabel(constants.neutronPhysicalNetwork());
+        networkLabel.setLabel(constants.networkLabel());
         commentEditor.setLabel(constants.commentLabel());
         isVmNetworkEditor.setLabel(constants.vmNetworkLabel());
         vlanTagging.setLabel(constants.enableVlanTagLabel());
@@ -266,8 +261,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         isVmNetworkEditor.asCheckBox().addStyleName(style.vmNetworkStyle());
         vlanTagging.addContentWidgetStyleName(style.noPadding());
         vlanTagging.asCheckBox().addStyleName(style.noPadding());
-        networkLabelLabel.addStyleName(style.noPadding());
-        networkLabelLabel.addStyleName(style.inlineBlock());
+        networkLabel.addLabelStyleName(style.noPadding());
+        networkLabel.addLabelStyleName(style.inlineBlock());
         qosEditor.addLabelStyleName(style.noPadding());
         qosEditor.addLabelStyleName(style.inlineBlock());
     }
