@@ -48,7 +48,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
     }
 
     protected void validateDiskForCreation(Disk disk) {
-        validateParameters(disk, 2, "format", "interface");
+        validateParameters(disk, 2, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
@@ -62,7 +62,7 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
                                         localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
                                         Response.Status.BAD_REQUEST);
         } else {
-            validateParameters(disk, 2, "provisionedSize|size"); // Non lun disks require size
+            validateParameters(disk, 2, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
         validateEnums(Disk.class, disk);
     }

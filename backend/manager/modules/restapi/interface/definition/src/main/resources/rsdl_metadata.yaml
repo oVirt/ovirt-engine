@@ -696,7 +696,7 @@ actions:
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new disk to the virtual machine allocating space from the storage domain
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
+      - mandatoryArguments: {disk.interface: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
         optionalArguments:
           disk.alias: xs:string
@@ -1193,7 +1193,7 @@ actions:
           disk.storage_domains.storage_domain--COLLECTION: {storage_domain.id|name: 'xs:string'}
         description: add a new disk to the system with specified size, space will be allocated from the storage domain for the disk
         #the signature below is for direct-LUN disk, which doesn't require size, but requires the lun id, the lun type, and the lun connection-details.
-      - mandatoryArguments: {disk.interface: 'xs:string', disk.format: 'xs:string', disk.lun_storage.type: 'xs:string',
+      - mandatoryArguments: {disk.interface: 'xs:string', disk.lun_storage.type: 'xs:string',
           disk.lun_storage.logical_unit--COLLECTION: {logical_unit.id: 'xs:string', logical_unit.address: 'xs:string', logical_unit.port: 'xs:int', logical_unit.target: 'xs:string'}}
         optionalArguments:
           disk.alias: xs:string

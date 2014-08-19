@@ -221,7 +221,7 @@ public class BackendVmDisksResource
     }
 
     protected void validateDiskForCreation(Disk disk) {
-        validateParameters(disk, 3, "format", "interface");
+        validateParameters(disk, 3, "interface");
         if (DiskResourceUtils.isLunDisk(disk)) {
             validateParameters(disk.getLunStorage(), 3, "type"); // when creating a LUN disk, user must specify type.
             StorageType storageType = StorageType.fromValue(disk.getLunStorage().getType());
@@ -235,7 +235,7 @@ public class BackendVmDisksResource
                                         localize(Messages.INCOMPLETE_PARAMS_DETAIL_TEMPLATE, "LogicalUnit", "", "add"),
                                         Response.Status.BAD_REQUEST);
         } else {
-            validateParameters(disk, 3, "provisionedSize|size"); // Non lun disks require size
+            validateParameters(disk, 3, "provisionedSize|size", "format"); // Non lun disks require size and format
         }
         validateEnums(Disk.class, disk);
     }
