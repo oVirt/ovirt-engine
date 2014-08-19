@@ -79,6 +79,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
 
     public AddDiskCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+        setVdsId(parameters.getVdsId());
     }
 
 
@@ -164,6 +165,10 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         }
 
         if (!validate(diskValidator.isDiskInterfaceSupported(getVm()))) {
+            return false;
+        }
+
+        if (getVds() != null && !validate(diskValidator.isLunDiskVisible(lun, getVds()))) {
             return false;
         }
 

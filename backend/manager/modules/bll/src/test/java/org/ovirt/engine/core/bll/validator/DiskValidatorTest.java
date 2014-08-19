@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll.validator;
 import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.hasItem;
 import static org.junit.Assert.assertThat;
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -11,6 +12,7 @@ import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isVal
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -22,8 +24,11 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
+import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.ScsiGenericIO;
+import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -55,6 +60,10 @@ public class DiskValidatorTest {
 
     private static LunDisk createLunDisk() {
         LunDisk disk = new LunDisk();
+        LUNs lun = new LUNs();
+        lun.setLUN_id("lun_id");
+        lun.setLunType(StorageType.ISCSI);
+        disk.setLun(lun);
         return disk;
     }
 
@@ -64,6 +73,13 @@ public class DiskValidatorTest {
         vm.setId(Guid.newGuid());
         vm.setVmOs(1);
         return vm;
+    }
+
+    private VDS createVds() {
+        Guid vdsId = Guid.newGuid();
+        VDS vds = new VDS();
+        vds.setId(vdsId);
+        return vds;
     }
 
     private void initializeOsRepository (int osId, DiskInterface diskInterface) {
@@ -198,5 +214,27 @@ public class DiskValidatorTest {
 
         lunDisk.setDiskInterface(DiskInterface.IDE);
         assertThat(lunValidator.isReadOnlyPropertyCompatibleWithInterface(), isValid());
+    }
+
+    public void lunDiskValid() {
+        VDS vds = createVds();
+        setupForLun();
+
+        List<LUNs> luns = Collections.singletonList(lunDisk.getLun());
+        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+
+        assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds), isValid());
+    }
+
+    @Test
+    public void lunDiskInvalid() {
+        VDS vds = createVds();
+        setupForLun();
+
+        List<LUNs> luns = Collections.emptyList();
+        doReturn(luns).when(lunValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+
+        assertThat(lunValidator.isLunDiskVisible(lunDisk.getLun(), vds),
+                failsWith(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_INVALID));
     }
 }

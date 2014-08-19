@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.junit.ClassRule;
@@ -40,6 +41,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -54,6 +56,7 @@ import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.StoragePoolIsoMapDAO;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
@@ -91,6 +94,9 @@ public class AddDiskToVmCommandTest {
 
     @Mock
     private StoragePoolDAO storagePoolDAO;
+
+    @Mock
+    private VdsDAO vdsDAO;
 
     @Mock
     private OsRepository osRepository;
@@ -448,6 +454,14 @@ public class AddDiskToVmCommandTest {
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 
+    private VDS mockVds() {
+        Guid vdsId = Guid.newGuid();
+        VDS vds = new VDS();
+        vds.setId(vdsId);
+        when(vdsDAO.get(vdsId)).thenReturn(vds);
+        return vds;
+    }
+
     /**
      * Mock a {@link StoragePool}.
      *
@@ -653,6 +667,51 @@ public class AddDiskToVmCommandTest {
         assertFalse("checkIfLunDiskCanBeAdded() succeded for ISCSI lun which LUNs has storage_server_connection with a empty port",
                 command.checkIfLunDiskCanBeAdded(spyDiskValidator(disk)));
         assertTrue("checkIfLunDiskCanBeAdded() failed but correct can do action hasn't been added to the return response", verifyCanDoActionMessagesContainMessage(VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS));
+    }
+
+    @Test
+    public void testLunDiskValid() {
+        VDS vds = mockVds();
+        LunDisk disk = createISCSILunDisk();
+        disk.setDiskInterface(DiskInterface.VirtIO);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        parameters.setVdsId(vds.getId());
+        initializeCommand(Guid.newGuid(), parameters);
+        command.setVds(vds);
+
+        mockVm();
+        mockMaxPciSlots();
+        mockInterfaceList();
+
+        List<LUNs> luns = Collections.singletonList(disk.getLun());
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testLunDiskInvalid() {
+        VDS vds = mockVds();
+        LunDisk disk = createISCSILunDisk();
+        disk.setDiskInterface(DiskInterface.VirtIO);
+
+        AddDiskParameters parameters = createParameters();
+        parameters.setDiskInfo(disk);
+        parameters.setVdsId(vds.getId());
+        initializeCommand(Guid.newGuid(), parameters);
+        command.setVds(vds);
+
+        mockVm();
+        mockMaxPciSlots();
+        mockInterfaceList();
+
+        List<LUNs> luns = Collections.emptyList();
+        DiskValidator diskValidator = spyDiskValidator(disk);
+        doReturn(luns).when(diskValidator).executeGetDeviceList(any(Guid.class), any(StorageType.class));
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_LUN_INVALID);
     }
 
     @Test
