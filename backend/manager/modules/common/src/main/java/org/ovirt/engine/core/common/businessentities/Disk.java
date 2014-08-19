@@ -32,6 +32,7 @@ public abstract class Disk extends BaseDisk {
      */
     private Boolean plugged;
     private Boolean readOnly;
+    private String logicalName;
 
     /**
      * @return Whether taking snapshots of this disk is allowed
@@ -67,6 +68,14 @@ public abstract class Disk extends BaseDisk {
         this.readOnly = readOnly;
     }
 
+    public String getLogicalName() {
+        return logicalName;
+    }
+
+    public void setLogicalName(String logicalName) {
+        this.logicalName = logicalName;
+    }
+
     public abstract long getSize();
 
     @Override
@@ -78,6 +87,7 @@ public abstract class Disk extends BaseDisk {
         result = prime * result + ((vmNames == null) ? 0 : vmNames.hashCode());
         result = prime * result + ((vmEntityType == null) ? 0 : vmEntityType.hashCode());
         result = prime * result + numberOfVms;
+        result = prime * result + ((logicalName == null) ? 0 : logicalName.hashCode());
         return result;
     }
 
@@ -96,6 +106,7 @@ public abstract class Disk extends BaseDisk {
         return (ObjectUtils.objectsEqual(plugged, other.plugged)
                 && ObjectUtils.objectsEqual(readOnly, other.readOnly)
                 && ObjectUtils.objectsEqual(vmNames, other.vmNames)
+                && ObjectUtils.objectsEqual(logicalName, other.logicalName)
                 && vmEntityType == other.vmEntityType
                 && numberOfVms == other.numberOfVms);
     }
