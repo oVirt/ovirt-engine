@@ -50,7 +50,7 @@ public class SubTabUserGroupView extends AbstractSubTabTableView<DbUser, UserGro
             }
         };
         authzColumn.makeSortable(UserGroupComparator.AUTHZ);
-        getTable().addColumn(authzColumn, constants.authzGroup(), "300px"); //$NON-NLS-1$
+        getTable().addColumn(authzColumn, constants.authz(), "300px"); //$NON-NLS-1$
     }
 
 }

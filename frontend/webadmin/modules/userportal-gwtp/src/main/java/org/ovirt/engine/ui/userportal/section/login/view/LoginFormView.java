@@ -116,7 +116,7 @@ public class LoginFormView extends AbstractLoginFormView implements LoginFormPre
             ApplicationDynamicMessages dynamicMessages) {
         userNameEditor.setLabel(constants.loginFormUserNameLabel());
         passwordEditor.setLabel(constants.loginFormPasswordLabel());
-        domainEditor.setLabel(constants.loginFormDomainLabel());
+        profileEditor.setLabel(constants.loginFormProfileLabel());
         connectAutomaticallyEditor.setLabel(constants.loginFormConnectAutomaticallyLabel());
         loginButton.setLabel(constants.loginButtonLabel());
         motdHeaderLabel.setText(constants.motdHeaderLabel());

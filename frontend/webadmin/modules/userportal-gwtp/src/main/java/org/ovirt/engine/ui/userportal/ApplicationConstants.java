@@ -26,8 +26,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Password")
     String loginFormPasswordLabel();
 
-    @DefaultStringValue("Domain")
-    String loginFormDomainLabel();
+    @DefaultStringValue("Profile")
+    String loginFormProfileLabel();
 
     @DefaultStringValue("Login")
     String loginButtonLabel();
