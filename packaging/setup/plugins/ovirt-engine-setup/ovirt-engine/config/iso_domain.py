@@ -102,18 +102,30 @@ class Plugin(plugin.PluginBase):
             if directory_content:
                 if len(directory_content) == 1:
                     entry = directory_content[0]
-                    if(
-                        os.path.isdir(os.path.join(path, entry)) and
-                        uuid.UUID(entry).version == 4
-                    ):
-                        self.logger.debug('Using existing uuid for ISO domain')
-                        sd_uuid = entry
-                    else:
+                    try:
+                        if(
+                            os.path.isdir(os.path.join(path, entry)) and
+                            uuid.UUID(entry).version == 4
+                        ):
+                            self.logger.debug(
+                                'Using existing uuid for ISO domain'
+                            )
+                            sd_uuid = entry
+                        else:
+                            raise RuntimeError(
+                                _(
+                                    'Error: directory {path} is not empty'
+                                ).format(
+                                    path=path,
+                                )
+                            )
+                    except ValueError:
                         raise RuntimeError(
                             _('Error: directory {path} is not empty').format(
                                 path=path,
                             )
                         )
+
                 else:
                     raise RuntimeError(
                         _('Error: directory {path} is not empty').format(
