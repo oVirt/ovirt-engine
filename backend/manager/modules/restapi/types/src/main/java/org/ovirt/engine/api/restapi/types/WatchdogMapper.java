@@ -12,6 +12,9 @@ public class WatchdogMapper {
     @Mapping(from = WatchDog.class, to = VmWatchdog.class)
     public static VmWatchdog map(WatchDog model, VmWatchdog template) {
         VmWatchdog entity = template == null ? new VmWatchdog() : template;
+        if (model.isSetId()) {
+            entity.setId(GuidUtils.asGuid(model.getId()));
+        }
         if (model.isSetAction()) {
             WatchdogAction wdAction = WatchdogAction.fromValue(model.getAction());
             if (wdAction != null) {
@@ -24,8 +27,6 @@ public class WatchdogMapper {
                 entity.setModel(map(wdModel, null));
             }
         }
-        entity.setModel(VmWatchdogType.getByName(model.getModel()));
-        entity.setId(GuidUtils.asGuid(model.getId()));
         return entity;
     }
 
