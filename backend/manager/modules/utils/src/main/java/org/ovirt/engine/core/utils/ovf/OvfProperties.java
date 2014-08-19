@@ -68,4 +68,5 @@ public class OvfProperties {
     final static String IS_BOOT_MENU_ENABLED = "IsBootMenuEnabled";
     final static String IS_SPICE_FILE_TRANSFER_ENABLED = "IsSpiceFileTransferEnabled";
     final static String IS_SPICE_COPY_PASTE_ENABLED = "IsSpiceCopyPasteEnabled";
+    final static String COMMENT = "Comment";
 }
