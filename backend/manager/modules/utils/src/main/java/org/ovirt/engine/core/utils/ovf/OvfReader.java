@@ -331,6 +331,11 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setDescription(node.innerText);
         }
 
+        node = content.SelectSingleNode(OvfProperties.COMMENT);
+        if (node != null) {
+            vmBase.setComment(node.innerText);
+        }
+
         node = content.SelectSingleNode(OvfProperties.DOMAIN);
         if (node != null) {
             vmBase.getVmInit().setDomain(node.innerText);

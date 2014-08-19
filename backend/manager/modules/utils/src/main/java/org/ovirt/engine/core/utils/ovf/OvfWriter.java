@@ -237,6 +237,10 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteRaw(vmBase.getDescription());
         _writer.WriteEndElement();
 
+        _writer.WriteStartElement(OvfProperties.COMMENT);
+        _writer.WriteRaw(vmBase.getComment());
+        _writer.WriteEndElement();
+
         if (!vmInitEnabled() && vmBase.getVmInit() != null && vmBase.getVmInit().getDomain() != null) {
             _writer.WriteStartElement(OvfProperties.DOMAIN);
             _writer.WriteRaw(vmBase.getVmInit().getDomain());
