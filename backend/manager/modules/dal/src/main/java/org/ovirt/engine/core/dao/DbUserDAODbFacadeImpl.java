@@ -29,7 +29,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setDepartment(rs.getString("department"));
             entity.setDomain(rs.getString("domain"));
             entity.setEmail(rs.getString("email"));
-            entity.setGroupNames(new HashSet<String>(Arrays.asList(rs.getString("groups").split(","))));
+            entity.setGroupNames(new HashSet<String>(Arrays.asList(StringUtils.split(rs.getString("groups"), ','))));
             entity.setFirstName(rs.getString("name"));
             entity.setNote(rs.getString("note"));
             entity.setNote(rs.getString("note"));
