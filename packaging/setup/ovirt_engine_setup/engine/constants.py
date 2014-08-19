@@ -633,7 +633,14 @@ class AIOEnv(object):
     def STORAGE_DOMAIN_DIR(self):
         return 'OVESETUP_AIO/storageDomainDir'
 
-    STORAGE_DOMAIN_NAME = 'OVESETUP_AIO/storageDomainName'
+    @osetupattrs(
+        answerfile=True,
+        summary=False,
+        description=_('Local storage domain name'),
+    )
+    def STORAGE_DOMAIN_NAME(self):
+        return 'OVESETUP_AIO/storageDomainName'
+
     SSHD_PORT = 'OVESETUP_AIO/sshdPort'
     DEFAULT_SSH_PORT = 22
 
