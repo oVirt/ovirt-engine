@@ -29,8 +29,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Password")
     String loginFormPasswordLabel();
 
-    @DefaultStringValue("Domain")
-    String loginFormDomainLabel();
+    @DefaultStringValue("Profile")
+    String loginFormProfileLabel();
 
     @DefaultStringValue("Login")
     String loginButtonLabel();
@@ -1872,10 +1872,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Inherited From")
     String inheritedFromUser();
 
-    // User- general
-    @DefaultStringValue("Domain")
-    String domainUserGeneral();
-
     @DefaultStringValue("Active")
     String activeUserGeneral();
 
@@ -2251,9 +2247,6 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Namespace")
     String namespaceGroup();
-
-    @DefaultStringValue("Authorization provider")
-    String authzGroup();
 
     // Event notifier
     @DefaultStringValue("Event Name")

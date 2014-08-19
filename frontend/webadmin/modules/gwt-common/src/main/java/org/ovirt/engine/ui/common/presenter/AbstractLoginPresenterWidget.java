@@ -120,7 +120,7 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
         }));
 
         // Update selected domain after domain items have been set
-        loginModel.getDomain().getPropertyChangedEvent().addListener(new IEventListener() {
+        loginModel.getProfile().getPropertyChangedEvent().addListener(new IEventListener() {
             @SuppressWarnings("unchecked")
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
@@ -134,9 +134,9 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
                     return;
                 }
 
-                for (String item : loginModel.getDomain().getItems()) {
+                for (String item : loginModel.getProfile().getItems()) {
                     if (previouslySelectedItem.equals(item)) {
-                        loginModel.getDomain().setSelectedItem(item);
+                        loginModel.getProfile().setSelectedItem(item);
                         break;
                     }
                 }
@@ -163,7 +163,7 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
     }
 
     void saveSelectedDomain(T loginModel) {
-        String selectedItem = loginModel.getDomain().getSelectedItem();
+        String selectedItem = loginModel.getProfile().getSelectedItem();
         if (selectedItem == null || "".equals(selectedItem)) { //$NON-NLS-1$
             return;
         }

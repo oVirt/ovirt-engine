@@ -188,7 +188,7 @@ public class UserPortalLoginModel extends LoginModel
 
         getUserName().setIsChangable(false);
         getPassword().setIsChangable(false);
-        getDomain().setIsChangable(false);
+        getProfile().setIsChangable(false);
         getLoginCommand().setIsExecutionAllowed(false);
         getIsAutoConnect().setIsChangable(false);
 
@@ -210,7 +210,7 @@ public class UserPortalLoginModel extends LoginModel
                     }
                     loginModel.getUserName().setIsChangable(true);
                     loginModel.getPassword().setIsChangable(true);
-                    loginModel.getDomain().setIsChangable(true);
+                    loginModel.getProfile().setIsChangable(true);
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
                     getIsAutoConnect().setIsChangable(true);
                     loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
@@ -219,7 +219,7 @@ public class UserPortalLoginModel extends LoginModel
             }
         };
         Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
-                                          getDomain().getSelectedItem(), false, asyncQuery);
+                                          getProfile().getSelectedItem(), false, asyncQuery);
     }
 
     private void changePassword()
@@ -228,7 +228,7 @@ public class UserPortalLoginModel extends LoginModel
         Frontend.getInstance().runAction(VdcActionType.ChangeUserPassword,
                         new ChangeUserPasswordParameters(getUserName().getEntity(), getPassword().getEntity(),
                                 getNewPassword().getEntity(),
-                                getDomain().getSelectedItem()));
+                                getProfile().getSelectedItem()));
     }
 
     @Override

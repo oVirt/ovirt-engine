@@ -85,7 +85,7 @@
 
                         <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
 
-                        <e:ListModelListBoxEditor ui:field="domainEditor" usePatternFly="true" />
+                        <e:ListModelListBoxEditor ui:field="profileEditor" usePatternFly="true" />
 
                         <div class="form-group">
                             <div class="col-xs-8 col-sm-offset-2 col-sm-6 col-md-offset-2 col-md-6">

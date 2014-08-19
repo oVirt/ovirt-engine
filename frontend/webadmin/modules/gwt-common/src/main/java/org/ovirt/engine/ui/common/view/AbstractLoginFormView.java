@@ -60,9 +60,9 @@ public abstract class AbstractLoginFormView extends AbstractView {
     public StringEntityModelPasswordBoxEditor passwordEditor;
 
     @UiField
-    @Path("domain.selectedItem")
-    @WithElementId("domain")
-    public ListModelListBoxEditor<String> domainEditor;
+    @Path("profile.selectedItem")
+    @WithElementId("profile")
+    public ListModelListBoxEditor<String> profileEditor;
 
     @UiField
     @WithElementId

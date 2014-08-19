@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -63,16 +64,16 @@ public class LoginModel extends Model
         privateLoginCommand = value;
     }
 
-    private ListModel<String> privateDomain;
+    private ListModel<String> privateProfile;
 
-    public ListModel<String> getDomain()
+    public ListModel<String> getProfile()
     {
-        return privateDomain;
+        return privateProfile;
     }
 
-    private void setDomain(ListModel<String> value)
+    private void setProfile(ListModel<String> value)
     {
-        privateDomain = value;
+        privateProfile = value;
     }
 
     private EntityModel<String> privateUserName;
@@ -157,8 +158,8 @@ public class LoginModel extends Model
         setLoginCommand(tempVar);
         getCommands().add(tempVar);
 
-        setDomain(new ListModel<String>());
-        getDomain().setIsChangable(false);
+        setProfile(new ListModel<String>());
+        getProfile().setIsChangable(false);
         setUserName(new EntityModel<String>());
         getUserName().setIsChangable(false);
         getUserName().getEntityChangedEvent().addListener(this);
@@ -195,11 +196,12 @@ public class LoginModel extends Model
                     loginModel.getLoginCommand().setIsExecutionAllowed(true);
                     loginModel.getUserName().setIsChangable(true);
                     loginModel.getPassword().setIsChangable(true);
-                    loginModel.getDomain().setIsChangable(true);
+                    loginModel.getProfile().setIsChangable(true);
                 }
 
                 List<String> domains = (List<String>) ReturnValue;
-                loginModel.getDomain().setItems(domains);
+                Collections.sort(domains);
+                loginModel.getProfile().setItems(domains);
 
             }
         };
@@ -219,7 +221,7 @@ public class LoginModel extends Model
 
     private void userName_EntityChanged()
     {
-        getDomain().setIsChangable(getDomainAvailability());
+        getProfile().setIsChangable(getDomainAvailability());
     }
 
     private boolean getDomainAvailability()
@@ -280,7 +282,7 @@ public class LoginModel extends Model
                         loginModel.setMessage(Linq.firstOrDefault(returnValue.getCanDoActionMessages()));
                         loginModel.getUserName().setIsChangable(true);
                         loginModel.getPassword().setIsChangable(true);
-                        loginModel.getDomain().setIsChangable(true);
+                        loginModel.getProfile().setIsChangable(true);
                         loginModel.getLoginCommand().setIsExecutionAllowed(true);
                         loginModel.getLoginFailedEvent().raise(this, EventArgs.EMPTY);
                     }
@@ -293,7 +295,7 @@ public class LoginModel extends Model
             }
         };
         Frontend.getInstance().loginAsync(fullUserName, getPassword().getEntity(),
-                StringHelper.isNullOrEmpty(domain) ? getDomain().getSelectedItem() : domain, true,
+                StringHelper.isNullOrEmpty(domain) ? getProfile().getSelectedItem() : domain, true,
                 _asyncQuery);
     }
 
@@ -306,7 +308,7 @@ public class LoginModel extends Model
     {
         loggingInAutomatically = true;
         getUserName().setEntity(user.getLoginName());
-        getDomain().setSelectedItem(user.getDomain());
+        getProfile().setSelectedItem(user.getDomain());
         disableLoginScreen();
         setLoggedUser(user);
         Frontend.getInstance().setLoggedInUser(user);
@@ -316,7 +318,7 @@ public class LoginModel extends Model
     protected void disableLoginScreen() {
         getUserName().setIsChangable(false);
         getPassword().setIsChangable(false);
-        getDomain().setIsChangable(false);
+        getProfile().setIsChangable(false);
         getLoginCommand().setIsExecutionAllowed(false);
     }
 
@@ -324,9 +326,9 @@ public class LoginModel extends Model
     {
         getUserName().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
-        getDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
+        getProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
-        return getUserName().getIsValid() && getPassword().getIsValid() && getDomain().getIsValid();
+        return getUserName().getIsValid() && getPassword().getIsValid() && getProfile().getIsValid();
     }
 
     @Override
