@@ -49,12 +49,13 @@ public class VmDeviceDAOTest extends BaseGenericDaoTestCase<VmDeviceId, VmDevice
                 "type:'drive', controller:'0', bus:'0', unit:'1'",
                 2,
                 new HashMap<String, Object>(),
-                true, false, false, "alias", customProp, null);
+                true, false, false, "alias", customProp, null, null);
     }
 
     @Override
     protected void updateExistingEntity() {
         existingEntity.setAddress("type:'drive', controller:'0', bus:'0', unit:'0'");
+        existingEntity.setLogicalName("testLogicalName");
     }
 
     @Override

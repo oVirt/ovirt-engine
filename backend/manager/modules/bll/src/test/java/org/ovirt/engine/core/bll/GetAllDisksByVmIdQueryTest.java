@@ -127,7 +127,8 @@ public class GetAllDisksByVmIdQueryTest extends AbstractUserQueryTest<IdQueryPar
                 true,
                 "",
                 null,
-                disk.getVmSnapshotId());
+                disk.getVmSnapshotId(),
+                null);
     }
 
     private DiskImage createDiskImage(boolean active) {

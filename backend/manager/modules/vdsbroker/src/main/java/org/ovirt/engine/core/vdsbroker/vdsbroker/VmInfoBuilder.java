@@ -145,6 +145,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             "",
                             null,
+                            null,
                             null);
             struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct, vm);
@@ -163,6 +164,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null,
                             null);
             struct = new HashMap<String, Object>();
@@ -206,6 +208,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             "",
                             null,
+                            null,
                             null);
             Map<String, Object> struct = new HashMap<String, Object>();
             addCdDetails(vmDevice, struct, vm);
@@ -224,6 +227,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null,
                             null);
             Map<String, Object> struct = new HashMap<String, Object>();
@@ -567,6 +571,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         true,
                         "",
                         null,
+                        null,
                         null);
         Map<String, Object> struct = new HashMap<String, Object>();
         addFloppyDetails(vmDevice, struct);
@@ -593,6 +598,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                         true,
                         true,
                         "",
+                        null,
                         null,
                         null);
         Map<String, Object> struct = new HashMap<String, Object>();
@@ -917,6 +923,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             true,
                             true,
                             "",
+                            null,
                             null,
                             null);
             addMemBalloonDevice(vmDevice);

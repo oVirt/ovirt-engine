@@ -575,6 +575,7 @@ public class VmDeviceUtils {
                     isReadOnly,
                     "",
                     customProp,
+                    null,
                     null);
         dao.save(managedDevice);
         // If we add Disk/Interface/CD/Floppy, we have to recalculate boot order
@@ -1134,6 +1135,7 @@ public class VmDeviceUtils {
                                 true,
                                 field.isReadOnly(),
                                 "",
+                                null,
                                 null,
                                 null);
 

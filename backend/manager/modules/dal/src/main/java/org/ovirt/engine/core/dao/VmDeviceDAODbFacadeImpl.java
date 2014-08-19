@@ -48,7 +48,8 @@ public class VmDeviceDAODbFacadeImpl extends
                 .addValue("alias", entity.getAlias())
                 .addValue("custom_properties",
                         SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
-                .addValue("snapshot_id", entity.getSnapshotId());
+                .addValue("snapshot_id", entity.getSnapshotId())
+                .addValue("logical_name", entity.getLogicalName());
     }
 
     @Override
@@ -156,6 +157,7 @@ public class VmDeviceDAODbFacadeImpl extends
             vmDevice.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserializeOrCreateNew(rs.getString("custom_properties"), LinkedHashMap.class));
             vmDevice.setSnapshotId(getGuid(rs, "snapshot_id"));
+            vmDevice.setLogicalName(rs.getString("logical_name"));
             return vmDevice;
         }
     }

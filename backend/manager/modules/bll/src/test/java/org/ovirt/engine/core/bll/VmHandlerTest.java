@@ -154,7 +154,8 @@ public class VmHandlerTest {
                     false,
                     "",
                     null,
-                    disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE ? ((DiskImage)disk).getSnapshotId() : null);
+                    disk.getDiskStorageType() == Disk.DiskStorageType.IMAGE ? ((DiskImage)disk).getSnapshotId() : null,
+                    null);
             vm.getManagedVmDeviceMap().put(disk.getId(), device);
         }
     }

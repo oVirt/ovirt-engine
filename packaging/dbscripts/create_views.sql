@@ -1589,7 +1589,7 @@ CREATE OR REPLACE VIEW user_db_users_permissions_view AS
 CREATE OR REPLACE VIEW vm_device_view
 AS
 SELECT device_id, vm_id, type, device, address, boot_order, spec_params,
-       is_managed, is_plugged, is_readonly, alias, custom_properties, snapshot_id
+       is_managed, is_plugged, is_readonly, alias, custom_properties, snapshot_id, logical_name
   FROM vm_device;
 
 -- Permissions on VNIC Profiles
