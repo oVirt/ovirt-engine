@@ -150,6 +150,9 @@ public class BackendVmDisksResource
         if (disk.isSetActive()) {
             parameters.setPlugDiskToVm(disk.isActive());
         }
+        if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
+            parameters.setVdsId(getHostId(disk.getLunStorage().getHost()));
+        }
         return parameters;
     }
 

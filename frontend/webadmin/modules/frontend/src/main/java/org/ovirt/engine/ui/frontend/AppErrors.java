@@ -598,6 +598,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provided lun is missing at least one connection parameter (address/port/iqn).")
     String ACTION_TYPE_FAILED_DISK_LUN_ISCSI_MISSING_CONNECTION_PARAMS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The provided LUN is not visible by the specified host, please check storage server connectivity.")
+    String ACTION_TYPE_FAILED_DISK_LUN_INVALID();
+
     @DefaultStringValue("Cannot ${action} ${type}. source and destination is the same.")
     String ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST();
 

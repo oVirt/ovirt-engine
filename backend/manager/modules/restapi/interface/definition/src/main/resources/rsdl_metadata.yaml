@@ -711,6 +711,7 @@ actions:
           disk.wipe_after_delete: xs:boolean
           disk.quota.id: xs:string
           disk.sgio: xs:string
+          disk.lun_storage.host: xs:string
         description: add a new direct lun disk to the virtual machine, this operation does not require size but needs lun connection details
       - mandatoryArguments: {disk.id: 'xs:string'}
         optionalArguments:
@@ -1207,6 +1208,7 @@ actions:
           disk.wipe_after_delete: xs:boolean
           disk.quota.id: xs:string
           disk.sgio: xs:string
+          disk.lun_storage.host: xs:string
         description: add a new lun disk to the system, this operation does not require size but requires lun connection details
     urlparams: {}
     headers:

@@ -43,6 +43,9 @@ public class BackendDisksResource extends AbstractBackendCollectionResource<Disk
                 params.setStorageDomainId(storageDomainId);
             }
         }
+        if (disk.isSetLunStorage() && disk.getLunStorage().isSetHost()) {
+            params.setVdsId(getHostId(disk.getLunStorage().getHost()));
+        }
         return performCreate(VdcActionType.AddDisk, params,
                 new QueryIdResolver<Guid>(VdcQueryType.GetDiskByDiskId, IdQueryParameters.class));
     }
