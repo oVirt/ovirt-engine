@@ -12,7 +12,7 @@ public class CPUValidator implements Validator<CPU> {
     public void validateEnums(CPU cpu) {
         if (cpu != null) {
             if (cpu.isSetArchitecture()) {
-                validateEnum(Architecture.class, cpu.getArchitecture(), false);
+                validateEnum(Architecture.class, cpu.getArchitecture(), true);
             }
         }
     }
