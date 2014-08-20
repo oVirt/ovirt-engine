@@ -50,6 +50,17 @@
     <url-pattern>/404.html</url-pattern>
   </servlet-mapping>
 
+  <!-- MethodNotAllowedServlet -->
+  <servlet>
+    <servlet-name>MethodNotAllowedServlet</servlet-name>
+    <jsp-file>/WEB-INF/405.jsp</jsp-file>
+  </servlet>
+
+  <servlet-mapping>
+    <servlet-name>MethodNotAllowedServlet</servlet-name>
+    <url-pattern>/405.html</url-pattern>
+  </servlet-mapping>
+
   <!-- Welcome page -->
   <servlet>
     <servlet-name>WelcomeServlet</servlet-name>
@@ -103,6 +114,12 @@
   <error-page>
     <error-code>404</error-code>
     <location>/404.html</location>
+  </error-page>
+
+  <!-- Go to the index when method is not allowed (preserving the 405 status code): -->
+  <error-page>
+    <error-code>405</error-code>
+    <location>/405.html</location>
   </error-page>
 
   <!-- This is handled by the welcome servlet -->
