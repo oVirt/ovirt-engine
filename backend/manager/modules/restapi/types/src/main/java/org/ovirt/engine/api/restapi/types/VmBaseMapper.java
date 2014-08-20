@@ -5,6 +5,7 @@ import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
@@ -153,6 +154,9 @@ public class VmBaseMapper {
         if (model.isSetStartPaused()) {
             entity.setRunAndPause(model.isStartPaused());
         }
+        if (model.isSetCpuProfile() && model.getCpuProfile().isSetId()) {
+            entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -224,6 +228,11 @@ public class VmBaseMapper {
         }
 
         model.setStartPaused(entity.isRunAndPause());
+        if (entity.getCpuProfileId() != null) {
+            CpuProfile cpuProfile = new CpuProfile();
+            cpuProfile.setId(entity.getCpuProfileId().toString());
+            model.setCpuProfile(cpuProfile);
+        }
     }
 
     @Mapping(from = OriginType.class, to = String.class)

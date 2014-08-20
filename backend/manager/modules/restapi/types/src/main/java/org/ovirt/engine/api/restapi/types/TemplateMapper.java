@@ -121,6 +121,7 @@ public class TemplateMapper extends VmBaseMapper {
             model.setVersion(version);
         }
 
+
         return model;
     }
 

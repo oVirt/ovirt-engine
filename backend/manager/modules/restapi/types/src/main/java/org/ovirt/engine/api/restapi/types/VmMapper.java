@@ -7,6 +7,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -123,6 +124,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setRunAndPause(entity.isRunAndPause());
+        staticVm.setCpuProfileId(entity.getCpuProfileId());
         return staticVm;
     }
 
