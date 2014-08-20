@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -95,6 +96,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final Version BALLOON_DEVICE_MIN_VERSION = Version.v3_2;
+    public static final ArchitectureType BALLOON_DEVICE_BLACKLISTED_ARCH = ArchitectureType.ppc64;
     private UICommand newVMCommand;
 
     private final static String SHUTDOWN = "Shutdown"; //$NON-NLS-1$
