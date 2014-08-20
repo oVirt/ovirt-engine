@@ -108,4 +108,17 @@
             <param-value>/404.html</param-value>
         </init-param>
     </servlet>
+    <!-- MethodNotAllowed Servlet -->
+    <servlet>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+        <init-param>
+            <param-name>targetContext</param-name>
+            <param-value>..</param-value>
+        </init-param>
+        <init-param>
+            <param-name>uri</param-name>
+            <param-value>/405.html</param-value>
+        </init-param>
+    </servlet>
 </web-fragment>

@@ -56,6 +56,25 @@
       <url-pattern>/404.html</url-pattern>
   </servlet-mapping>
 
+  <!-- MethodNotAllowedForward Servlet -->
+  <servlet>
+      <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+      <servlet-class>org.ovirt.engine.core.utils.servlet.ForwardServlet</servlet-class>
+      <init-param>
+          <param-name>targetContext</param-name>
+          <param-value>..</param-value>
+      </init-param>
+      <init-param>
+          <param-name>uri</param-name>
+          <param-value>/405.html</param-value>
+      </init-param>
+  </servlet>
+  <servlet-mapping>
+    <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+    <url-pattern>/405.html</url-pattern>
+  </servlet-mapping>
+
+
   <!-- help tag mapping servlet -->
   <servlet>
     <servlet-name>HelpTagJsonServlet</servlet-name>
@@ -137,6 +156,11 @@
   <error-page>
       <error-code>404</error-code>
       <location>/404.html</location>
+  </error-page>
+
+  <error-page>
+      <error-code>405</error-code>
+      <location>/405.html</location>
   </error-page>
 
   <session-config>

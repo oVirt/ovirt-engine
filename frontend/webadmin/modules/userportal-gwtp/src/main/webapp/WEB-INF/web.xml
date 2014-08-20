@@ -127,6 +127,11 @@
         <url-pattern>/404.html</url-pattern>
     </servlet-mapping>
 
+    <servlet-mapping>
+        <servlet-name>MethodNotAllowedForwardServlet</servlet-name>
+        <url-pattern>/405.html</url-pattern>
+    </servlet-mapping>
+
     <!-- Default page to serve -->
     <welcome-file-list>
         <welcome-file>UserPortal.html</welcome-file>
@@ -136,6 +141,11 @@
     <error-page>
         <error-code>404</error-code>
         <location>/404.html</location>
+    </error-page>
+
+    <error-page>
+        <error-code>405</error-code>
+        <location>/405.html</location>
     </error-page>
 
     <!-- Confidentiality -->
