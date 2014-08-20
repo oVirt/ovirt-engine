@@ -5660,3 +5660,93 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+- name: /datacenters/{datacenter:id}/iscsibonds|rel=get
+  description: get all iSCSI Bonds for the specified datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds|rel=add
+  description: add a new iSCSI Bond to the specified datacenter
+  request:
+    body:
+      parameterType: IscsiBond
+      signatures:
+      - mandatoryArguments: {iscsibond.name: 'xs:string'}
+        optionalArguments: {}
+        description: add a new iSCSI Bond to the datacenter
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=update
+  description: update the specified iSCSI Bond
+  request:
+    body:
+     parameterType: IscsiBond
+     signatures:
+     - mandatoryArguments: {}
+       optionalArguments: {}
+       description: update the specified iSCSI Bond
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}|rel=delete
+  description: remove the specified iSCSI Bond from the datacenter
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=delete
+  description: remove the specified network from the iSCSI Bond
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=get
+  description: gets the specified iSCSI Bond with the networks
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/networks|rel=add
+  description: specify list of networks contained in the iSCSI Bond
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=delete
+  description: remove the specified storagedomain from the iSCSI Bond
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=get
+  description: gets the specified iSCSI Bond with the storagedomains
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /datacenters/{datacenter:id}/iscsibonds/{iscsibond:id}/storagedomains|rel=add
+  description: specify list of the storagedomains contained in the iSCSI Bond
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}

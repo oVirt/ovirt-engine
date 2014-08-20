@@ -55,6 +55,7 @@ import org.ovirt.engine.api.model.Host;
 import org.ovirt.engine.api.model.HostNIC;
 import org.ovirt.engine.api.model.Image;
 import org.ovirt.engine.api.model.InstanceType;
+import org.ovirt.engine.api.model.IscsiBond;
 import org.ovirt.engine.api.model.Job;
 import org.ovirt.engine.api.model.Label;
 import org.ovirt.engine.api.model.Link;
@@ -137,6 +138,8 @@ import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
 import org.ovirt.engine.api.resource.InstanceTypesResource;
+import org.ovirt.engine.api.resource.IscsiBondResource;
+import org.ovirt.engine.api.resource.IscsiBondsResource;
 import org.ovirt.engine.api.resource.JobResource;
 import org.ovirt.engine.api.resource.JobsResource;
 import org.ovirt.engine.api.resource.LabelResource;
@@ -461,6 +464,8 @@ public class LinkHelper {
         map = new ParentToCollectionMap(QosResource.class, QoSsResource.class, DataCenter.class);
         TYPES.put(QoS.class, map);
 
+        map = new ParentToCollectionMap(IscsiBondResource.class, IscsiBondsResource.class, DataCenter.class);
+        TYPES.put(IscsiBond.class, map);
     }
 
     /**
