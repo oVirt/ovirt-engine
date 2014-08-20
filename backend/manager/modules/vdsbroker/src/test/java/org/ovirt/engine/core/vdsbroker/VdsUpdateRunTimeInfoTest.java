@@ -34,6 +34,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -56,6 +57,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
 public class VdsUpdateRunTimeInfoTest {
 
     private static final Guid VM_1 = Guid.createGuidFromString("7eeabc50-325f-49bb-acb6-15e786599423");
+    private static final Version vdsCompVersion = Version.v3_4;
 
     @ClassRule
     public static MockEJBStrategyRule mockEjbRule = new MockEJBStrategyRule();
@@ -68,6 +70,10 @@ public class VdsUpdateRunTimeInfoTest {
             MockConfigRule.mockConfig(
                     ConfigValues.VdsRefreshRate,
                     3),
+            MockConfigRule.mockConfig(
+                    ConfigValues.ReportedDisksLogicalNames,
+                    vdsCompVersion.getValue(),
+                    true),
             MockConfigRule.mockConfig(
                     ConfigValues.TimeToReduceFailedRunOnVdsInMinutes,
                     3)
@@ -158,14 +164,18 @@ public class VdsUpdateRunTimeInfoTest {
         when(vmDeviceDAO.getVmDeviceByVmId(vmGuid)).thenReturn(Collections.<VmDevice> emptyList());
 
         HashMap vm = new HashMap();
+        String testLogicalName = "TestName";
         vm.put(VdsProperties.vm_guid, vmGuid.toString());
 
         Map<String, Object> deviceProperties = new HashMap<String, Object>();
         Guid deviceID = Guid.newGuid();
         deviceProperties.put(VdsProperties.DeviceId, deviceID.toString());
         deviceProperties.put(VdsProperties.Address, Collections.emptyMap());
-        deviceProperties.put(VdsProperties.Device, "aDevice");
+        deviceProperties.put(VdsProperties.Device, VmDeviceType.DISK.getName());
         deviceProperties.put(VdsProperties.Type, VmDeviceGeneralType.DISK.getValue());
+        vm.put(VdsProperties.GuestDiskMapping,
+                Collections.singletonMap(deviceID.toString().substring(0, 20),
+                        Collections.singletonMap(VdsProperties.Name, testLogicalName)));
 
         vm.put(VdsProperties.Devices, new HashMap[] { new HashMap(deviceProperties) });
         vmInfo = new HashMap[] { vm };
@@ -173,6 +183,8 @@ public class VdsUpdateRunTimeInfoTest {
         updater.updateVmDevices(Collections.singletonList(vmGuid.toString()));
 
         assertEquals("wrong number of new devices", 1, updater.getNewVmDevices().size());
+        VmDevice device = updater.getNewVmDevices().get(0);
+        assertEquals(testLogicalName, device.getLogicalName());
         assertEquals("wrong number of removed devices", 0, updater.getRemovedVmDevices().size());
     }
 
@@ -238,7 +250,7 @@ public class VdsUpdateRunTimeInfoTest {
     private void initVds() {
         vds = new VDS();
         vds.setId(new Guid("00000000-0000-0000-0000-000000000012"));
-        vds.setVdsGroupCompatibilityVersion(Version.v3_4);
+        vds.setVdsGroupCompatibilityVersion(vdsCompVersion);
     }
 
     @Test

@@ -417,6 +417,16 @@ public class FeatureSupported {
     /**
      * @param version
      *            Compatibility version to check for.
+     * @return <code>true</code> if reported disk logical names is supported for the given version.
+     */
+    public static boolean reportedDisksLogicalNames(Version version) {
+        return supportedInConfig(ConfigValues.ReportedDisksLogicalNames, version);
+
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
      * @return <code>true</code> if skip fencing when host connected to SD feature is supported for the given version.
      */
     public static boolean isSkipFencingIfSDActiveSupported(Version version) {

@@ -1854,6 +1854,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("true")
     LiveMergeSupported,
 
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    ReportedDisksLogicalNames,
+
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("300")
     AlertOnNumberOfLVs,
