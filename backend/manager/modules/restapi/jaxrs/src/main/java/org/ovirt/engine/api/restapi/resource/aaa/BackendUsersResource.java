@@ -120,7 +120,7 @@ public class BackendUsersResource
                   namespace != null ? namespace : ""));
 
         sb.append(StringUtils.isEmpty(constraint) ?
-                        "allnames=" + username
+                "username=" + username
                         :
                         constraint);
 
