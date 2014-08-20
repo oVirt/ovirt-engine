@@ -333,6 +333,7 @@ public enum VdcQueryType implements Serializable {
     GetGlusterServerServicesByServerId,
     GetGlusterClusterServiceByClusterId,
     GetGlusterVolumeRebalanceStatus,
+    GetGlusterVolumeGeoRepSessions,
     GetGlusterVolumeRemoveBricksStatus,
     GetGlusterVolumeByTaskId,
 
