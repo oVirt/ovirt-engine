@@ -19,6 +19,7 @@ import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
@@ -1256,11 +1257,23 @@ public class VdsUpdateRunTimeInfo {
 
             Guid deviceId = getDeviceId(device, deviceMap);
             VmDevice vmDevice = deviceMap.get(new VmDeviceId(deviceId, vmId));
+            String logicalName = null;
+            if (deviceId != null && FeatureSupported.reportedDisksLogicalNames(_vds.getVdsGroupCompatibilityVersion()) &&
+                    VmDeviceType.DISK.getName().equals(device.get(VdsProperties.Device))) {
+                try {
+                    logicalName = getDeviceLogicalName((Map<?, ?>) vm.get(VdsProperties.GuestDiskMapping), deviceId);
+                } catch (Exception e) {
+                    log.errorFormat("error while getting device name when processing, vm {0}, device info {1} with exception, skipping",
+                            vmId, device, e);
+                }
+            }
+
             if (deviceId == null || vmDevice == null) {
-                deviceId = addNewVmDevice(vmId, device);
+                deviceId = addNewVmDevice(vmId, device, logicalName);
             } else {
                 vmDevice.setAddress(((Map<String, String>) device.get(VdsProperties.Address)).toString());
                 vmDevice.setAlias(StringUtils.defaultString((String) device.get(VdsProperties.Alias)));
+                vmDevice.setLogicalName(logicalName);
                 addVmDeviceToList(vmDevice);
             }
 
@@ -1268,6 +1281,25 @@ public class VdsUpdateRunTimeInfo {
         }
 
         handleRemovedDevices(vmId, processedDevices, devices);
+    }
+
+
+    private String getDeviceLogicalName(Map<?, ?> diskMapping, Guid deviceId) {
+        if (diskMapping == null) {
+            return null;
+        }
+
+        Map<?, ?> deviceMapping = null;
+        String modifiedDeviceId = deviceId.toString().substring(0, 20);
+        for (Entry<?, ?> entry : diskMapping.entrySet()) {
+            String serial = (String) entry.getKey();
+            if (serial != null && serial.contains(modifiedDeviceId)) {
+                deviceMapping = (Map<?, ?>) entry.getValue();
+                break;
+            }
+        }
+
+        return deviceMapping == null ? null : (String) deviceMapping.get(VdsProperties.Name);
     }
 
     /**
@@ -1308,7 +1340,7 @@ public class VdsUpdateRunTimeInfo {
      * @param vmId
      * @param device
      */
-    private Guid addNewVmDevice(Guid vmId, Map device) {
+    private Guid addNewVmDevice(Guid vmId, Map device, String logicalName) {
         Guid newDeviceId = Guid.Empty;
         String typeName = (String) device.get(VdsProperties.Type);
         String deviceName = (String) device.get(VdsProperties.Device);
@@ -1331,7 +1363,7 @@ public class VdsUpdateRunTimeInfo {
                     alias,
                     null,
                     null,
-                    null);
+                    logicalName);
             newVmDevices.add(newDevice);
             log.debugFormat("New device was marked for adding to VM {0} Devices : {1}", vmId, newDevice);
         }
