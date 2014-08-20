@@ -14,6 +14,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
+import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterHooksDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
@@ -54,6 +55,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
 
     protected ClusterUtils getClusterUtils() {
         return ClusterUtils.getInstance();
+    }
+
+    protected GlusterGeoRepDao getGeoRepDao() {
+        return DbFacade.getInstance().getGlusterGeoRepDao();
     }
 
     protected Guid getUpServerId(Guid clusterId) {
