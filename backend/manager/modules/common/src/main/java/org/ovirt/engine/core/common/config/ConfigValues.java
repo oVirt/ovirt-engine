@@ -1873,7 +1873,6 @@ public enum ConfigValues {
     CSRFProtection,
 
     /**
-<<<<<<< HEAD
      * Feature to skip fencing if host is connected to at least one storage domain
      */
     @TypeConverterAttribute(Boolean.class)
