@@ -38,6 +38,7 @@ public class GetAllDisksByVmIdQuery<P extends IdQueryParameters> extends Queries
             if (diskDevice != null) {
                 disk.setPlugged(diskDevice.getIsPlugged());
                 disk.setReadOnly(diskDevice.getIsReadOnly());
+                disk.setLogicalName(diskDevice.getLogicalName());
                 if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                     DiskImage diskImage = (DiskImage) disk;
                     diskImage.getSnapshots().addAll(getAllImageSnapshots(diskImage));
