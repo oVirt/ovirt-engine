@@ -419,16 +419,6 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         parameters.setStoragePoolId(getStorageDomain().getStoragePoolId());
         if (getVm() != null) {
             setVmSnapshotIdForDisk(parameters);
-            getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
-                    .getId(),
-                    getVmId()),
-                    VmDeviceGeneralType.DISK,
-                    VmDeviceType.DISK,
-                    null,
-                    shouldDiskBePlugged(),
-                    Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
-                    null));
-            getCompensationContext().stateChanged();
         }
         VdcReturnValueBase tmpRetValue =
                 runInternalActionWithTasksContext(VdcActionType.AddImageFromScratch,
@@ -438,6 +428,20 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         setLock(null);
         ArrayList<Guid> taskList = isExecutedAsChildCommand() ? getReturnValue().getInternalVdsmTaskIdList() : getReturnValue().getVdsmTaskIdList();
         taskList.addAll(tmpRetValue.getInternalVdsmTaskIdList());
+
+        if (getVm() != null) {
+            getCompensationContext().snapshotNewEntity(VmDeviceUtils.addManagedDevice(new VmDeviceId(getParameters().getDiskInfo()
+                            .getId(),
+                            getVmId()),
+                    VmDeviceGeneralType.DISK,
+                    VmDeviceType.DISK,
+                    null,
+                    shouldDiskBePlugged(),
+                    Boolean.TRUE.equals(getParameters().getDiskInfo().getReadOnly()),
+                    null));
+            getCompensationContext().stateChanged();
+        }
+
         if (tmpRetValue.getActionReturnValue() != null) {
             DiskImage diskImage = (DiskImage) tmpRetValue.getActionReturnValue();
             addDiskPermissions(diskImage);
