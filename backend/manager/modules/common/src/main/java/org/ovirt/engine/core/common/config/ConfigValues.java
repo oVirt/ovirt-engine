@@ -1887,7 +1887,7 @@ public enum ConfigValues {
      * Specifies whether jsonrpc protocol is supported.
      */
     @TypeConverterAttribute(Boolean.class)
-    @DefaultValueAttribute("true")
+    @DefaultValueAttribute("false")
     JsonProtocolSupported,
 
     Invalid
