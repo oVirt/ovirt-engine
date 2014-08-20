@@ -9,6 +9,7 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -23,6 +24,7 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Configuration;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.CpuMode;
+import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -131,6 +133,7 @@ public class VmMapper {
         staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
         staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
+        staticVm.setCpuProfileId(entity.getCpuProfileId());
         return staticVm;
     }
 
@@ -330,6 +333,10 @@ public class VmMapper {
             if (mode != null) {
                 staticVm.setNumaTuneMode(map(mode, null));
             }
+        }
+
+        if (vm.isSetCpuProfile() && vm.getCpuProfile().isSetId()) {
+            staticVm.setCpuProfileId(GuidUtils.asGuid(vm.getCpuProfile().getId()));
         }
 
         return staticVm;
@@ -578,6 +585,12 @@ public class VmMapper {
         }
         model.setNextRunConfigurationExists(entity.isNextRunConfigurationExists());
         model.setNumaTuneMode(map(entity.getNumaTuneMode(), null));
+
+        if (entity.getCpuProfileId() != null) {
+            CpuProfile cpuProfile = new CpuProfile();
+            cpuProfile.setId(entity.getCpuProfileId().toString());
+            model.setCpuProfile(cpuProfile);
+        }
         return model;
     }
 

@@ -8,6 +8,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.Display;
 import org.ovirt.engine.api.model.DisplayType;
@@ -193,6 +194,10 @@ public class TemplateMapper {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), entity);
         }
 
+        if (model.isSetCpuProfile() && model.getCpuProfile().isSetId()) {
+            entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
+        }
+
         return entity;
     }
 
@@ -322,6 +327,11 @@ public class TemplateMapper {
         if (model.isSetSerialNumber()) {
             SerialNumberMapper.copySerialNumber(model.getSerialNumber(), staticVm);
         }
+
+        if (model.isSetCpuProfile() && model.getCpuProfile().isSetId()) {
+            staticVm.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
+        }
+
         return staticVm;
     }
 
@@ -428,6 +438,12 @@ public class TemplateMapper {
 
         if (entity.getSerialNumberPolicy() != null) {
             model.setSerialNumber(SerialNumberMapper.map(entity, null));
+        }
+
+        if (entity.getCpuProfileId() != null) {
+            CpuProfile cpuProfile = new CpuProfile();
+            cpuProfile.setId(entity.getCpuProfileId().toString());
+            model.setCpuProfile(cpuProfile);
         }
 
         return model;

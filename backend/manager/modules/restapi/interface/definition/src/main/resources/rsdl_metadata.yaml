@@ -103,6 +103,7 @@ actions:
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
           vm.numa_tune_mode: xs:string
+          vm.cpu_profile.id: xs:string
         description: update the virtual machine in the system for the given virtual machine id with the values specified in the request
     urlparams: {}
     headers:
@@ -191,6 +192,7 @@ actions:
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
           vm.numa_tune_mode: xs:string
+          vm.cpu_profile.id: xs:string
         description: add a virtual machine to the system from scratch
       # the following signature is for clone VM from a Snapshot - requires the Snapshot ID
       - mandatoryArguments: {vm.name: 'xs:string', vm.template.id|name: 'xs:string', vm.cluster.id|name: 'xs:string',
@@ -245,6 +247,7 @@ actions:
           vm.serial_number.value: xs:string
           vm.bios.boot_menu.enabled: xs:boolean
           vm.numa_tune_mode: xs:string
+          vm.cpu_profile.id: xs:string
         description: add a virtual machine to the system by cloning from a snapshot
       # the following signature is for adding VM from a configuration - requires the configuration type and the configuration data
       - mandatoryArguments: {vm.initialization.configuration.type: 'xs:string', vm.initialization.configuration.data: 'xs:string'}
@@ -302,6 +305,7 @@ actions:
                 vm.serial_number.value: xs:string
                 vm.bios.boot_menu.enabled: xs:boolean
                 vm.numa_tune_mode: xs:string
+                vm.cpu_profile.id: xs:string
         description: add a virtual machine to the system from a configuration - requires the configuration type and the configuration data
     urlparams: {}
     headers:
@@ -3735,6 +3739,7 @@ actions:
           template.serial_number.policy: xs:string
           template.serial_number.value: xs:string
           template.bios.boot_menu.enabled: xs:boolean
+          template.cpu_profile.id: xs:string
         description: update the specified template in the system
     urlparams: {}
     headers:
@@ -3798,6 +3803,7 @@ actions:
           template.bios.boot_menu.enabled: xs:boolean
           template.cluster.id: xs:string
           template.cluster.name: xs:string
+          template.cpu_profile.id: xs:string
         description: add a new template to the system
     urlparams: {}
     headers:

@@ -2646,6 +2646,7 @@
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
           <xs:element name="version" type="TemplateVersion" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3062,6 +3063,7 @@
           <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="vmpool" minOccurs="0" maxOccurs="1">
             <xs:annotation>
               <xs:appinfo>
