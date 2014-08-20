@@ -129,7 +129,7 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser_2() throws Exception {
-        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: allnames=" + NAMES[0]);
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: username=" + NAMES[0]);
         User model = new User();
         Domain domain = new Domain();
         domain.setName(DOMAIN);
@@ -141,7 +141,7 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser_3() throws Exception {
-        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: allnames=" + NAMES[0]);
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: username=" + NAMES[0]);
         User model = new User();
         model.setUserName(NAMES[0] + "@" + DOMAIN);
 
@@ -156,7 +156,7 @@ public class BackendUsersResourceTest
                 new String[] { },
                 new Object[] { },
                 setUpDomains());
-        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: allnames=" + NAMES[0]);
+        setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: username=" + NAMES[0]);
         User model = new User();
         model.setUserName(NAMES[0]);
         Domain domain = new Domain();

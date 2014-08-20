@@ -109,7 +109,7 @@ public class BackendGroupsResource
         sb.append(MessageFormat.format(ResourceConstants.AAA_GROUPS_SEARCH_TEMPLATE, domain, ""));
 
         sb.append(StringUtils.isEmpty(constraint) ?
-                        "allnames=" + groupname
+                "name=" + groupname
                         :
                         constraint);
 

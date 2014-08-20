@@ -205,7 +205,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
-            "ADGROUP@" + DOMAIN + ":: allnames=" + NAMES[0],
+                "ADGROUP@" + DOMAIN + ":: name=" + NAMES[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
@@ -244,7 +244,7 @@ public class BackendGroupsResourceTest
     public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
         setUpGetEntityExpectations(
-            "ADGROUP@" + DOMAIN + ":: allnames=" + NAMES[0],
+                "ADGROUP@" + DOMAIN + ":: name=" + NAMES[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );

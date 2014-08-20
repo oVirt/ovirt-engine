@@ -439,7 +439,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
-        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "uid");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
         ipaSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ID, "ipaUniqueID");
@@ -454,7 +454,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
-        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "uid");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
         dsSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ID, "nsuniqueid");
@@ -482,7 +482,7 @@ public class LdapQueryMetadataFactoryImpl implements LdapQueryMetadataFactory {
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$CN, "cn");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ACCOUNT_NAME, "uid");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$SN, "SN");
-        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "SAMACCOUNTNAME");
+        openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$SAMACCOUNTNAME, "uid");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$DEPARTMENT, "DEPARTMENT");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$TITLE, "TITLE");
         openLdapSearchSyntaxMap.put(SearchLangageLDAPTokens.$USER_ID, "entryUUID");
