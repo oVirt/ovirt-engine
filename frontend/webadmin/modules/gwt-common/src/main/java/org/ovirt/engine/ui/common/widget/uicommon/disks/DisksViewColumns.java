@@ -206,7 +206,7 @@ public class DisksViewColumns {
             }
         };
 
-        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+        return makeSortable(column, sortBy);
     }
 
     public static final DiskSizeColumn<Disk> getActualSizeColumn(String sortBy) {
@@ -219,7 +219,7 @@ public class DisksViewColumns {
             }
         };
 
-        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+        return makeSortable(column, sortBy);
     }
 
     public static final TextColumnWithTooltip<Disk> getAllocationColumn(String sortBy) {
@@ -353,14 +353,14 @@ public class DisksViewColumns {
     };
 
     public static final DiskSizeColumn<Disk> getSnapshotSizeColumn(String sortBy) {
-        TextColumnWithTooltip<Disk> column = new DiskSizeColumn<Disk>() {
+        DiskSizeColumn<Disk> column = new DiskSizeColumn<Disk>() {
             @Override
             protected Long getRawValue(Disk object) {
                 return ((DiskImage) object).getActualSizeInBytes();
             }
         };
 
-        return (DiskSizeColumn<Disk>) makeSortable(column, sortBy);
+        return makeSortable(column, sortBy);
     }
 
     public static final TextColumnWithTooltip<Disk> getSnapshotDescriptionColumn(String sortBy) {
@@ -374,7 +374,7 @@ public class DisksViewColumns {
         return makeSortable(column, sortBy);
     }
 
-    public static <T> TextColumnWithTooltip<T> makeSortable(TextColumnWithTooltip<T> column, String sortBy) {
+    public static <C extends TextColumnWithTooltip<T>, T> C makeSortable(C column, String sortBy) {
         if (sortBy == null ) {
             // Client sorting
             column.makeSortable();
