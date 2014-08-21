@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.List;
-
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.common.action.EventSubscriptionParametesBase;
-import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+
+import java.util.List;
 
 public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBase> extends
         EventSubscriptionCommandBase<T> {
@@ -32,24 +32,19 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
         if (IsAlreadySubscribed(subscriptions, subscriberId, eventName, eventNotificationMethod)) {
             addCanDoActionMessage(VdcBllMessages.EN_ALREADY_SUBSCRIBED);
             retValue = false;
+        } else if (!eventExists(eventName)) {
+            addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);
+            retValue = false;
         } else {
             // get notification method
             if (eventNotificationMethod != null) {
-                // validate event
-                List<EventMap> eventMap = DbFacade.getInstance().getEventDao().getEventMapByName(eventName);
-                if (eventMap.size() > 0) {
-                    // Validate user
-                    DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
-                    if (user == null) {
-                        addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
-                        retValue = false;
-                    } else {
-                        retValue = ValidateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
-                    }
-                } else {
-                    addCanDoActionMessageVariable("eventName", eventName);
-                    addCanDoActionMessage(VdcBllMessages.EN_UNSUPPORTED_NOTIFICATION_EVENT);
+                // Validate user
+                DbUser user = DbFacade.getInstance().getDbUserDao().get(subscriberId);
+                if (user == null) {
+                    addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DB);
                     retValue = false;
+                } else {
+                    retValue = ValidateAdd(eventNotificationMethod, getParameters().getEventSubscriber(), user);
                 }
             } else {
                 addCanDoActionMessage(VdcBllMessages.EN_UNKNOWN_NOTIFICATION_METHOD);
@@ -57,6 +52,16 @@ public class AddEventSubscriptionCommand<T extends EventSubscriptionParametesBas
             }
         }
         return retValue;
+    }
+
+    private boolean eventExists(String eventName) {
+        boolean exists = false;
+        try {
+            AuditLogType.valueOf(eventName);
+            exists = true;
+        } catch (Exception ex) {
+        }
+        return exists;
     }
 
     /**

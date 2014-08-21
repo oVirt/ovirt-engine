@@ -10,7 +10,6 @@ import java.util.List;
 
 import org.junit.Test;
 import org.ovirt.engine.core.common.EventNotificationMethod;
-import org.ovirt.engine.core.common.businessentities.EventMap;
 import org.ovirt.engine.core.common.businessentities.event_notification_hist;
 import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.compat.Guid;
@@ -109,23 +108,5 @@ public class EventDAOTest extends BaseDAOTestCase {
 
         assertNotNull(after);
         assertTrue(after.isEmpty());
-    }
-
-    @Test
-    public void testGetEventMapByNameWithInvalidName() {
-        List<EventMap> result = dao.getEventMapByName("farkle");
-
-        assertNotNull(result);
-        assertTrue(result.isEmpty());
-    }
-
-    @Test
-    public void testGetEventMapByName() {
-        List<EventMap> result = dao.getEventMapByName("TestRun");
-
-        assertNotNull(result);
-        for (EventMap mapping : result) {
-            assertEquals("TestRun", mapping.getEventUpName());
-        }
     }
 }

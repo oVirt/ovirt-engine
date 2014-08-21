@@ -77,12 +77,5 @@ public class EventDAODbFacadeImpl extends BaseDAODbFacade implements EventDAO {
 
         getCallsHandler().executeModification("Deleteevent_subscriber", parameterSource);
     }
-
-    @SuppressWarnings("unchecked")
-    @Override
-    public List<EventMap> getEventMapByName(String event_up_name) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource().addValue("event_name", event_up_name);
-        return getCallsHandler().executeReadList("GetEventMapByName", EventMapRowMapper.instance, parameterSource);
-    }
 }
 

@@ -95,18 +95,6 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetEventMapByName(v_event_name VARCHAR(100))
-RETURNS SETOF event_map STABLE
-   AS $procedure$
-BEGIN
-      RETURN QUERY SELECT *
-      from event_map
-      where event_up_name = v_event_name;
-END; $procedure$
-LANGUAGE plpgsql;
-
-
-
 ----------------------------------------------------------------
 -- [dbo].[event_notification_hist] Table
 ----------------------------------------------------------------
