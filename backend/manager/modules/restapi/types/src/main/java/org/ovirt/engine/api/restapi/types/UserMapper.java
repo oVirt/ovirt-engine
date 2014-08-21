@@ -1,5 +1,7 @@
 package org.ovirt.engine.api.restapi.types;
 
+import java.nio.charset.Charset;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Group;
@@ -35,7 +37,7 @@ public class UserMapper {
         }
         if (!StringUtils.isEmpty(entity.getDomain())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDomain().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDomain().getBytes(Charset.forName("UTF-8")), true).toString());
             model.setDomain(dom);
         }
         return model;
@@ -61,7 +63,7 @@ public class UserMapper {
         }
         if (!StringUtils.isEmpty(entity.getDirectoryName())) {
             Domain dom = new Domain();
-            dom.setId(new Guid(entity.getDirectoryName().getBytes(), true).toString());
+            dom.setId(new Guid(entity.getDirectoryName().getBytes(Charset.forName("UTF-8")), true).toString());
             model.setDomain(dom);
         }
         return model;
