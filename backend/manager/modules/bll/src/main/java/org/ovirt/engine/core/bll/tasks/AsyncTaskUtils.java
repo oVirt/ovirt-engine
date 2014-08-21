@@ -7,8 +7,8 @@ import java.util.Map;
 
 import org.ovirt.engine.core.bll.tasks.interfaces.SPMTask;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -67,7 +67,7 @@ public class AsyncTaskUtils {
         return results;
     }
 
-    private static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
+    private static void addOrUpdateTaskInDB(AsyncTask asyncTask) {
         CommandCoordinatorUtil.addOrUpdateTaskInDB(asyncTask);
     }
 

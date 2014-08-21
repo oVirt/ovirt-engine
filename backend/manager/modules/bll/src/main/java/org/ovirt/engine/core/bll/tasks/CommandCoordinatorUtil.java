@@ -13,8 +13,8 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -88,7 +88,7 @@ public class CommandCoordinatorUtil {
         coco.revertTasks(command);
     }
 
-    public static AsyncTasks getAsyncTask(
+    public static AsyncTask getAsyncTask(
             Guid taskId,
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -96,7 +96,7 @@ public class CommandCoordinatorUtil {
         return coco.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
-    public static AsyncTasks createAsyncTask(
+    public static AsyncTask createAsyncTask(
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
@@ -107,7 +107,7 @@ public class CommandCoordinatorUtil {
         getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(taskId, message);
     }
 
-    public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTasks task, String message) {
+    public static void logAndFailTaskOfCommandWithEmptyVdsmId(AsyncTask task, String message) {
         getAsyncTaskManager().logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
     }
 
@@ -115,11 +115,11 @@ public class CommandCoordinatorUtil {
         AsyncTaskManager.removeTaskFromDbByTaskId(taskId);
     }
 
-    public static AsyncTasks getAsyncTaskFromDb(Guid asyncTaskId) {
+    public static AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
          return coco.getAsyncTaskFromDb(asyncTaskId);
     }
 
-    public static void saveAsyncTaskToDb(AsyncTasks asyncTask) {
+    public static void saveAsyncTaskToDb(AsyncTask asyncTask) {
         coco.saveAsyncTaskToDb(asyncTask);
     }
 
@@ -127,7 +127,7 @@ public class CommandCoordinatorUtil {
         return coco.removeTaskFromDbByTaskId(taskId);
     }
 
-    public static void addOrUpdateTaskInDB(AsyncTasks asyncTask) {
+    public static void addOrUpdateTaskInDB(AsyncTask asyncTask) {
         coco.addOrUpdateTaskInDB(asyncTask);
     }
 

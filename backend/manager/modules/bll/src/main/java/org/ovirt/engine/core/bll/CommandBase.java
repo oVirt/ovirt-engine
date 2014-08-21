@@ -55,7 +55,7 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ActionVersionMap;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitySnapshot.EntityStatusSnapshot;
@@ -367,7 +367,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 @Override
                 public Void runInTransaction() {
                     for (Guid asyncTaskId : getReturnValue().getTaskPlaceHolderIdList()) {
-                        AsyncTasks task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
+                        AsyncTask task = CommandCoordinatorUtil.getAsyncTaskFromDb(asyncTaskId);
                         if (task != null && Guid.isNullOrEmpty(task.getVdsmTaskId())) {
                             CommandCoordinatorUtil.removeTaskFromDbByTaskId(task.getTaskId());
                         }
@@ -1487,7 +1487,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             } else {
                 creationInfo.setTaskType(getCurrentTaskHandler().getTaskType());
             }
-            final AsyncTasks task = createAsyncTask(creationInfo, parentCommand);
+            final AsyncTask task = createAsyncTask(creationInfo, parentCommand);
             taskId = task.getTaskId();
             TransactionScopeOption scopeOption =
                     getTransactive() ? TransactionScopeOption.RequiresNew : TransactionScopeOption.Required;
@@ -1506,7 +1506,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return taskId;
     }
 
-    private void saveTaskAndPutInMap(String taskKey, AsyncTasks task) {
+    private void saveTaskAndPutInMap(String taskKey, AsyncTask task) {
         CommandCoordinatorUtil.saveAsyncTaskToDb(task);
         taskKeyToTaskIdMap.put(taskKey, task.getTaskId());
     }
@@ -1698,7 +1698,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         return parentParameters;
     }
 
-    private AsyncTasks createAsyncTask(
+    private AsyncTask createAsyncTask(
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
         return CommandCoordinatorUtil.createAsyncTask(this, asyncTaskCreationInfo, parentCommand);

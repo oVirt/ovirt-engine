@@ -202,7 +202,7 @@ public class SPMAsyncTask implements SPMTask {
                             getVdsmTaskId(),
                             getState(),
                             (getParameters().getDbAsyncTask()
-                                    .getaction_type()),
+                                    .getActionType()),
                             getParameters()
                                     .getClass().getName()),
                     e);
@@ -279,7 +279,7 @@ public class SPMAsyncTask implements SPMTask {
         log.infoFormat(
                 "BaseAsyncTask::onTaskEndSuccess: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended successfully.",
                 getVdsmTaskId(),
-                (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getActionType()),
                 getParameters()
                         .getClass().getName());
     }
@@ -294,7 +294,7 @@ public class SPMAsyncTask implements SPMTask {
                 "BaseAsyncTask::logEndTaskFailure: Task '{0}' (Parent Command {1}, Parameters Type {2}) ended with failure:"
                         + "\r\n" + "-- Result: '{3}'" + "\r\n" + "-- Message: '{4}'," + "\r\n" + "-- Exception: '{5}'",
                 getVdsmTaskId(),
-                (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getActionType()),
                 getParameters()
                         .getClass().getName(),
                 getLastTaskStatus().getResult(),
@@ -312,7 +312,7 @@ public class SPMAsyncTask implements SPMTask {
         log.errorFormat(
                 "BaseAsyncTask::logTaskDoesntExist: Task '{0}' (Parent Command {1}, Parameters Type {2}) does not exist.",
                 getVdsmTaskId(),
-                (getParameters().getDbAsyncTask().getaction_type()),
+                (getParameters().getDbAsyncTask().getActionType()),
                 getParameters()
                         .getClass().getName());
     }
@@ -334,7 +334,7 @@ public class SPMAsyncTask implements SPMTask {
 
             log.errorFormat("SPMAsyncTask::PollTask: Task '{0}' (Parent Command {1}, Parameters Type {2}) " +
                         "was not found in VDSM, will change its status to unknown.",
-                        getVdsmTaskId(), (getParameters().getDbAsyncTask().getaction_type()),
+                        getVdsmTaskId(), (getParameters().getDbAsyncTask().getActionType()),
                         getParameters().getClass().getName());
         } else {
             returnedStatusTask = cachedStatusTask;
@@ -360,7 +360,7 @@ public class SPMAsyncTask implements SPMTask {
                     formatString,
                     getVdsmTaskId(),
                     (getParameters().getDbAsyncTask()
-                            .getaction_type()),
+                            .getActionType()),
                     getParameters().getClass().getName(),
                     cachedStatusTask.getStatus(),
                     ((cachedStatusTask.getStatus() == AsyncTaskStatusEnum.finished) ? (String
@@ -373,7 +373,7 @@ public class SPMAsyncTask implements SPMTask {
                     formatString,
                     getVdsmTaskId(),
                     (getParameters().getDbAsyncTask()
-                            .getaction_type()),
+                            .getActionType()),
                     getParameters().getClass().getName(),
                     cachedStatusTask.getStatus(),
                     ((cachedStatusTask.getStatus() == AsyncTaskStatusEnum.finished) ? (String
@@ -393,7 +393,7 @@ public class SPMAsyncTask implements SPMTask {
                 log.infoFormat(
                         "SPMAsyncTask::StopTask: Attempting to stop task '{0}' (Parent Command {1}, Parameters Type {2}).",
                         getVdsmTaskId(),
-                        (getParameters().getDbAsyncTask().getaction_type()),
+                        (getParameters().getDbAsyncTask().getActionType()),
                         getParameters().getClass().getName());
 
                 coco.stopTask(getStoragePoolID(), getVdsmTaskId());

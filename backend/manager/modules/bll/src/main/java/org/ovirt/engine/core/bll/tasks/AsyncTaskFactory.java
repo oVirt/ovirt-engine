@@ -6,10 +6,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
-import org.ovirt.engine.core.compat.CommandStatus;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -26,29 +26,31 @@ public final class AsyncTaskFactory {
      * @return
      */
     public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo) {
-        AsyncTasks asyncTask = coco.getByVdsmTaskId(creationInfo.getVdsmTaskId());
+        AsyncTask asyncTask = coco.getByVdsmTaskId(creationInfo.getVdsmTaskId());
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
-            CommandStatus cmdStatus = asyncTask == null ? CommandStatus.UNKNOWN : asyncTask.getCommandStatus();
-            asyncTask =
-                    new AsyncTasks(VdcActionType.Unknown,
-                            AsyncTaskResultEnum.success,
-                            AsyncTaskStatusEnum.running,
-                            creationInfo.getVdsmTaskId(),
-                            new VdcActionParametersBase(),
-                            new VdcActionParametersBase(),
-                            creationInfo.getStepId(),
-                            asyncTask == null ? Guid.newGuid() : asyncTask.getCommandId(),
-                            asyncTask == null ? Guid.newGuid() : asyncTask.getRootCommandId(),
-                            creationInfo.getStoragePoolID(),
-                            creationInfo.getTaskType(),
-                            cmdStatus);
+            asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
+                    AsyncTaskStatusEnum.running,
+                    creationInfo.getVdsmTaskId(),
+                    creationInfo.getStepId(),
+                    creationInfo.getStoragePoolID(),
+                    creationInfo.getTaskType(),
+                    getCommandEntity(coco, asyncTask == null ? Guid.newGuid() : asyncTask.getRootCommandId()),
+                    getCommandEntity(coco, asyncTask == null ? Guid.newGuid() : asyncTask.getCommandId()));
             creationInfo.setTaskType(AsyncTaskType.unknown);
         }
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
         return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
     }
 
-    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
+    private static CommandEntity getCommandEntity(CommandCoordinator coco, Guid cmdId) {
+        CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
+        if (cmdEntity == null) {
+            cmdEntity = coco.createCommandEntity(cmdId, VdcActionType.Unknown, new VdcActionParametersBase());
+        }
+        return cmdEntity;
+    }
+
+    public static SPMAsyncTask construct(CommandCoordinator coco, AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask) {
         AsyncTaskParameters asyncTaskParams = new AsyncTaskParameters(creationInfo, asyncTask);
         return construct(coco, creationInfo.getTaskType(), asyncTaskParams, true);
     }
@@ -70,7 +72,7 @@ public final class AsyncTaskFactory {
         try {
             SPMAsyncTask result = null;
             if (taskType == AsyncTaskType.unknown ||
-                    asyncTaskParams.getDbAsyncTask().getaction_type() == VdcActionType.Unknown) {
+                    asyncTaskParams.getDbAsyncTask().getActionType() == VdcActionType.Unknown) {
                 result = new SPMAsyncTask(coco, asyncTaskParams);
             } else {
                 result = new CommandAsyncTask(coco, asyncTaskParams, duringInit);

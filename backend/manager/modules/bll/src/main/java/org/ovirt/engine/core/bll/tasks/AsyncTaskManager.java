@@ -21,10 +21,10 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -62,12 +62,12 @@ public final class AsyncTaskManager {
     private final int _cacheTimeInMinutes;
 
     /**Map of tasks in DB per storage pool that exist after restart **/
-    private ConcurrentMap<Guid, List<AsyncTasks>> tasksInDbAfterRestart = null;
+    private ConcurrentMap<Guid, List<AsyncTask>> tasksInDbAfterRestart = null;
 
     /**
      * Map of tasks for commands that have been partially submitted to vdsm
      */
-    private Map<Guid, AsyncTasks> partiallyCompletedCommandTasks = new ConcurrentHashMap<>();
+    private Map<Guid, AsyncTask> partiallyCompletedCommandTasks = new ConcurrentHashMap<>();
 
     private CountDownLatch irsBrokerLatch;
 
@@ -107,23 +107,23 @@ public final class AsyncTaskManager {
 
     public void initAsyncTaskManager() {
         tasksInDbAfterRestart = new ConcurrentHashMap();
-        Map<Guid, List<AsyncTasks>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
+        Map<Guid, List<AsyncTask>> rootCommandIdToTasksMap = groupTasksByRootCommandId(coco.getAllAsyncTasksFromDb());
         int numberOfCommandsWithEmptyVdsmId = 0;
-        for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
+        for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
                 log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
                 numberOfCommandsWithEmptyVdsmId++;
             }
         }
         irsBrokerLatch = new CountDownLatch(numberOfCommandsWithEmptyVdsmId);
-        for (Entry<Guid, List<AsyncTasks>> entry : rootCommandIdToTasksMap.entrySet()) {
+        for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
                 log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
                 handleTasksOfCommandWithEmptyVdsmId(rootCommandIdToTasksMap.get(entry.getKey()));
             }
-            for (AsyncTasks task : entry.getValue()) {
+            for (AsyncTask task : entry.getValue()) {
                 if (!hasEmptyVdsmId(task)) {
-                    tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTasks>());
+                    tasksInDbAfterRestart.putIfAbsent(task.getStoragePoolId(), new ArrayList<AsyncTask>());
                     tasksInDbAfterRestart.get(task.getStoragePoolId()).add(task);
                 }
             }
@@ -202,7 +202,7 @@ public final class AsyncTaskManager {
         if (_tasks != null) {
             for (SPMTask task : _tasks.values()) {
                 if (isCurrentTaskLookedFor(id, task)
-                        && type.equals(task.getParameters().getDbAsyncTask().getaction_type())) {
+                        && type.equals(task.getParameters().getDbAsyncTask().getActionType())) {
                     return true;
                 }
             }
@@ -210,7 +210,7 @@ public final class AsyncTaskManager {
         return false;
     }
 
-    public void handleTasksOfCommandWithEmptyVdsmId(final List<AsyncTasks> tasks) {
+    public void handleTasksOfCommandWithEmptyVdsmId(final List<AsyncTask> tasks) {
         ThreadPoolUtil.execute(new Runnable() {
             @SuppressWarnings("synthetic-access")
             @Override
@@ -220,7 +220,7 @@ public final class AsyncTaskManager {
                     public Object runInTransaction() {
                         try {
                             boolean isPartiallySubmittedCommand = isPartiallySubmittedCommand(tasks);
-                            for (AsyncTasks task : tasks) {
+                            for (AsyncTask task : tasks) {
                                 handleTaskOfCommandWithEmptyVdsmId(isPartiallySubmittedCommand, task);
                             }
                             return null;
@@ -240,8 +240,8 @@ public final class AsyncTaskManager {
      * @param tasks
      * @return
      */
-    private boolean isPartiallySubmittedCommand(List<AsyncTasks> tasks) {
-        for (AsyncTasks task : tasks) {
+    private boolean isPartiallySubmittedCommand(List<AsyncTask> tasks) {
+        for (AsyncTask task : tasks) {
             // if one of the tasks has a vdsm id, the command was partially
             // submitted to vdsm
             if (!hasEmptyVdsmId(task)) {
@@ -257,9 +257,9 @@ public final class AsyncTaskManager {
      * @param tasksInDB
      * @return
      */
-    private Map<Guid, List<AsyncTasks>> groupTasksByRootCommandId(List<AsyncTasks> tasksInDB) {
-        Map<Guid, List<AsyncTasks>> rootCommandIdToCommandsMap = new HashMap<>();
-        for (AsyncTasks task : tasksInDB) {
+    private Map<Guid, List<AsyncTask>> groupTasksByRootCommandId(List<AsyncTask> tasksInDB) {
+        Map<Guid, List<AsyncTask>> rootCommandIdToCommandsMap = new HashMap<>();
+        for (AsyncTask task : tasksInDB) {
             MultiValueMapUtils.addToMap(task.getRootCommandId(), task, rootCommandIdToCommandsMap);
         }
         return rootCommandIdToCommandsMap;
@@ -270,8 +270,8 @@ public final class AsyncTaskManager {
      * @param tasks
      * @return
      */
-    private boolean hasTasksWithoutVdsmId(List<AsyncTasks> tasks) {
-        for (AsyncTasks task : tasks) {
+    private boolean hasTasksWithoutVdsmId(List<AsyncTask> tasks) {
+        for (AsyncTask task : tasks) {
             if (hasEmptyVdsmId(task)) {
                 return true;
             }
@@ -279,7 +279,7 @@ public final class AsyncTaskManager {
         return false;
     }
 
-    private static boolean hasEmptyVdsmId(AsyncTasks task) {
+    private static boolean hasEmptyVdsmId(AsyncTask task) {
         return Guid.Empty.equals(task.getVdsmTaskId());
     }
 
@@ -297,7 +297,7 @@ public final class AsyncTaskManager {
      */
     private void handleTaskOfCommandWithEmptyVdsmId(
             final boolean isPartiallySubmittedCommand,
-            final AsyncTasks task) {
+            final AsyncTask task) {
         if (isPartiallySubmittedCommand) {
             if (hasEmptyVdsmId(task)) {
                 removeTaskFromDbByTaskId(task.getTaskId());
@@ -318,31 +318,31 @@ public final class AsyncTaskManager {
     }
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(Guid asyncTaskId, String message) {
-        AsyncTasks task = coco.getAsyncTaskFromDb(asyncTaskId);
+        AsyncTask task = coco.getAsyncTaskFromDb(asyncTaskId);
         if (task != null) {
             logAndFailTaskOfCommandWithEmptyVdsmId(task, message);
         }
     }
 
-    public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTasks task, String message) {
+    public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTask task, String message) {
         log.infoFormat(
                 "Failing task with empty vdsm id AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                 task.getTaskType(),
                 task.getTaskId(),
-                (task.getaction_type()));
+                (task.getActionType()));
         task.getTaskParameters().setTaskGroupSuccess(false);
-        if (task.getaction_type() == VdcActionType.Unknown) {
+        if (task.getActionType() == VdcActionType.Unknown) {
             removeTaskFromDbByTaskId(task.getTaskId());
             log.infoFormat(
                     "Not calling endAction for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
                     task.getTaskType(),
                     task.getTaskId(),
-                    (task.getaction_type()));
+                    (task.getActionType()));
             return;
         }
         log.infoFormat("Calling updateTask for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2} Parameters class {3}", task.getTaskType(),
                     task.getTaskId(),
-                    (task.getaction_type()));
+                    (task.getActionType()));
         AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());
         SPMTask spmTask = coco.construct(creationInfo, task);
         AsyncTaskStatus failureStatus = new AsyncTaskStatus();
@@ -354,12 +354,12 @@ public final class AsyncTaskManager {
         spmTask.updateTask(failureStatus);
     }
 
-    private static VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+    private static VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
         VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
         if (!VdcActionType.Unknown.equals(commandType)) {
             return commandType;
         }
-        return dbAsyncTask.getaction_type();
+        return dbAsyncTask.getActionType();
     }
 
     public static void removeTaskFromDbByTaskId(Guid taskId) {
@@ -387,7 +387,7 @@ public final class AsyncTaskManager {
 
             if (task.getParameters().getDbAsyncTask().getStartTime().getTime() < maxTime) {
                 AuditLogableBase logable = new AuditLogableBase();
-                logable.addCustomValue("CommandName", task.getParameters().getDbAsyncTask().getaction_type().toString());
+                logable.addCustomValue("CommandName", task.getParameters().getDbAsyncTask().getActionType().toString());
                 logable.addCustomValue("Date", task.getParameters().getDbAsyncTask().getStartTime().toString());
 
                 // if task is not finish and not unknown then it's in running
@@ -399,7 +399,7 @@ public final class AsyncTaskManager {
                     AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
                     log.infoFormat("Cleaning zombie tasks: Stopping async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), task
+                            task.getParameters().getDbAsyncTask().getActionType(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
                     task.stopTask(true);
@@ -407,7 +407,7 @@ public final class AsyncTaskManager {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
                     log.infoFormat("Cleaning zombie tasks: Clearing async task {0} that started at {1}",
-                            task.getParameters().getDbAsyncTask().getaction_type(), task
+                            task.getParameters().getDbAsyncTask().getActionType(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
                     task.clearAsyncTask(true);
@@ -577,7 +577,7 @@ public final class AsyncTaskManager {
                 log.infoFormat(
                         "Adding task '{0}' (Parent Command {1}, Parameters Type {2}), {3}.",
                         task.getVdsmTaskId(),
-                        (task.getParameters().getDbAsyncTask().getaction_type()),
+                        (task.getParameters().getDbAsyncTask().getActionType()),
                         task.getParameters().getClass().getName(),
                         (task.getShouldPoll() ? "polling started."
                                 : "polling hasn't started yet."));
@@ -587,12 +587,12 @@ public final class AsyncTaskManager {
                 addTaskToMap(task.getVdsmTaskId(), task);
             } else {
                 SPMTask existingTask = _tasks.get(task.getVdsmTaskId());
-                if (existingTask.getParameters().getDbAsyncTask().getaction_type() == VdcActionType.Unknown
-                        && task.getParameters().getDbAsyncTask().getaction_type() != VdcActionType.Unknown) {
+                if (existingTask.getParameters().getDbAsyncTask().getActionType() == VdcActionType.Unknown
+                        && task.getParameters().getDbAsyncTask().getActionType() != VdcActionType.Unknown) {
                     log.infoFormat(
                             "Task '{0}' already exists with action type 'Unknown', now overriding it with action type '{1}'",
                             task.getVdsmTaskId(),
-                            task.getParameters().getDbAsyncTask().getaction_type());
+                            task.getParameters().getDbAsyncTask().getActionType());
 
                     // Set the indication to true for logging _tasks status on
                     // next quartz execution.
@@ -695,7 +695,7 @@ public final class AsyncTaskManager {
                         try {
                             SPMTask task;
                             if (partiallyCompletedCommandTasks.containsKey(creationInfo.getVdsmTaskId())) {
-                                AsyncTasks asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
+                                AsyncTask asyncTaskInDb = partiallyCompletedCommandTasks.get(creationInfo.getVdsmTaskId());
                                 task = coco.construct(creationInfo, asyncTaskInDb);
                                 if (task.getEntitiesMap() == null) {
                                     task.setEntitiesMap(new HashMap<Guid, VdcObjectType>());
@@ -743,9 +743,9 @@ public final class AsyncTaskManager {
         }
 
 
-        List<AsyncTasks> tasksInDForStoragePool = tasksInDbAfterRestart.get(sp.getId());
+        List<AsyncTask> tasksInDForStoragePool = tasksInDbAfterRestart.get(sp.getId());
         if (tasksInDForStoragePool != null) {
-            for (AsyncTasks task : tasksInDForStoragePool) {
+            for (AsyncTask task : tasksInDForStoragePool) {
                 if (!_tasks.containsKey(task.getVdsmTaskId())) {
                     coco.removeByVdsmTaskId(task.getVdsmTaskId());
                 }

@@ -2,17 +2,17 @@ package org.ovirt.engine.core.common.asynctasks;
 
 import java.io.Serializable;
 
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.compat.Guid;
 
 public class AsyncTaskParameters implements Serializable {
-    private AsyncTasks privateDbAsyncTask;
+    private AsyncTask privateDbAsyncTask;
 
-    public AsyncTasks getDbAsyncTask() {
+    public AsyncTask getDbAsyncTask() {
         return privateDbAsyncTask;
     }
 
-    protected void setDbAsyncTask(AsyncTasks value) {
+    protected void setDbAsyncTask(AsyncTask value) {
         privateDbAsyncTask = value;
     }
 
@@ -26,7 +26,7 @@ public class AsyncTaskParameters implements Serializable {
         privateCreationInfo = value;
     }
 
-    public AsyncTaskParameters(AsyncTaskCreationInfo info, AsyncTasks dbAsyncTask) {
+    public AsyncTaskParameters(AsyncTaskCreationInfo info, AsyncTask dbAsyncTask) {
         setCreationInfo(info);
         setDbAsyncTask(dbAsyncTask);
     }

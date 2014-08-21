@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SPMTaskGuidBaseVDSCommandParameters;
@@ -62,12 +62,18 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public void persistCommand(CommandEntity cmdEntity, CommandContext cmdContext) {
+        if (Guid.isNullOrEmpty(cmdEntity.getId())) {
+            return;
+        }
         persistCommand(cmdEntity);
         saveCommandContext(cmdEntity.getId(), cmdContext);
     }
 
     @Override
     public void persistCommand(CommandEntity cmdEntity) {
+        if (Guid.isNullOrEmpty(cmdEntity.getId())) {
+            return;
+        }
         CommandEntity existingCmdEntity = commandsCache.get(cmdEntity.getId());
         if (existingCmdEntity != null) {
             cmdEntity.setExecuted(existingCmdEntity.isExecuted());
@@ -106,7 +112,16 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
 
     @Override
     public CommandEntity getCommandEntity(Guid commandId) {
-        return commandsCache.get(commandId);
+        return Guid.isNullOrEmpty(commandId) ? null : commandsCache.get(commandId);
+    }
+
+    @Override
+    public CommandEntity createCommandEntity(Guid cmdId, VdcActionType actionType, VdcActionParametersBase params) {
+        CommandEntity cmdEntity = new CommandEntity();
+        cmdEntity.setId(cmdId);
+        cmdEntity.setCommandType(actionType);
+        cmdEntity.setCommandParameters(params);
+        return cmdEntity;
     }
 
     public List<CommandEntity> getCommandsWithCallBackEnabled() {
@@ -191,6 +206,19 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         commandsCache.updateCallBackNotified(commandId);
     }
 
+    public boolean hasCommandEntitiesWithRootCommandId(Guid rootCommandId) {
+        CommandEntity cmdEntity;
+        for (Guid cmdId : commandsCache.keySet()) {
+            cmdEntity = commandsCache.get(cmdId);
+            if (cmdEntity != null && !Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
+                    !cmdEntity.getRootCommandId().equals(cmdId) &&
+                    cmdEntity.getRootCommandId().equals(rootCommandId)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
     public List<Guid> getChildCommandIds(Guid cmdId) {
         initChildHierarchy();
         List<Guid> childIds = Collections.EMPTY_LIST;
@@ -235,15 +263,15 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         }
     }
 
-    public List<AsyncTasks> getAllAsyncTasksFromDb() {
+    public List<AsyncTask> getAllAsyncTasksFromDb() {
         return coCoAsyncTaskHelper.getAllAsyncTasksFromDb(this);
     }
 
-    public void saveAsyncTaskToDb(final AsyncTasks asyncTask) {
+    public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
         coCoAsyncTaskHelper.saveAsyncTaskToDb(asyncTask);
     }
 
-    public AsyncTasks getAsyncTaskFromDb(Guid asyncTaskId) {
+    public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
         return coCoAsyncTaskHelper.getAsyncTaskFromDb(asyncTaskId);
     }
 
@@ -251,7 +279,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.removeTaskFromDbByTaskId(taskId);
     }
 
-    public AsyncTasks getByVdsmTaskId(Guid vdsmTaskId) {
+    public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
         return coCoAsyncTaskHelper.getByVdsmTaskId(vdsmTaskId);
     }
 
@@ -259,7 +287,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.removeByVdsmTaskId(vdsmTaskId);
     }
 
-    public void addOrUpdateTaskInDB(final AsyncTasks asyncTask) {
+    public void addOrUpdateTaskInDB(final AsyncTask asyncTask) {
         coCoAsyncTaskHelper.addOrUpdateTaskInDB(asyncTask);
     }
 
@@ -267,7 +295,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.createTask(taskType, taskParameters);
     }
 
-    public AsyncTasks getAsyncTask(
+    public AsyncTask getAsyncTask(
             Guid taskId,
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
@@ -275,7 +303,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
         return coCoAsyncTaskHelper.getAsyncTask(taskId, command, asyncTaskCreationInfo, parentCommand);
     }
 
-    public AsyncTasks createAsyncTask(
+    public AsyncTask createAsyncTask(
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
@@ -342,7 +370,7 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
     }
 
     @Override
-    public SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask) {
+    public SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask) {
         return AsyncTaskFactory.construct(this, creationInfo.getTaskType(), new AsyncTaskParameters(creationInfo, asyncTask), true);
     }
 

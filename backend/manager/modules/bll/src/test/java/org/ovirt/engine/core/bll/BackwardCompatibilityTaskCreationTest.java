@@ -46,6 +46,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeLocator;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
+import org.ovirt.engine.core.dao.CommandEntityDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 import org.ovirt.engine.core.utils.RandomUtils;
@@ -84,6 +85,9 @@ public class BackwardCompatibilityTaskCreationTest {
         AsyncTaskDAO asyncTaskDao = mock(AsyncTaskDAO.class);
         when(asyncTaskDao.getAll()).thenReturn(Collections.EMPTY_LIST);
         when(dbFacade.getAsyncTaskDao()).thenReturn(asyncTaskDao);
+        CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);
+        when(dbFacade.getCommandEntityDao()).thenReturn(cmdEntityDao);
+        when(cmdEntityDao.getAll()).thenReturn(Collections.EMPTY_LIST);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes"})
