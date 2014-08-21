@@ -76,7 +76,7 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
                 DisksViewColumns.diskAlignmentColumn, constants.diskAlignment(), true, "120px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
-                DisksViewColumns.getSizeColumn(null), constants.statusDisk(), true, "100px"); //$NON-NLS-1$
+                DisksViewColumns.getStatusColumn(null), constants.statusDisk(), true, "100px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(
                 DisksViewColumns.getDescriptionColumn(null), constants.descriptionDisk(), true, "100px"); //$NON-NLS-1$
