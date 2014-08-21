@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource.aaa;
 
 import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
+import java.nio.charset.Charset;
 import java.text.MessageFormat;
 import java.util.List;
 
@@ -84,7 +85,7 @@ public class BackendUsersResource
                VdcQueryType.GetDomainList,
                new VdcQueryParametersBase());
             for (String domain :domains) {
-                Guid domainId = asGuid(domain.getBytes(), true);
+                Guid domainId = asGuid(domain.getBytes(Charset.forName("UTF-8")), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
                 }
