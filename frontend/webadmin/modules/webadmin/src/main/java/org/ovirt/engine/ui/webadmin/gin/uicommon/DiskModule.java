@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.gin.uicommon;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -82,7 +81,7 @@ public class DiskModule extends AbstractGinModule {
             @Override
             public void onMainTabSelected() {
                 super.onMainTabSelected();
-                getModel().getDiskViewType().setEntity(DiskStorageType.IMAGE);
+                getModel().getDiskViewType().setEntity(null);
             }
         };
     }
