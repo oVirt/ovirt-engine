@@ -14,9 +14,8 @@ import org.apache.commons.lang.time.DateUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Acct;
-import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
 import org.ovirt.engine.api.extensions.aaa.Authn;
-import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
+import org.ovirt.engine.api.extensions.aaa.Authn.AuthRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Mapping;
 import org.ovirt.engine.core.aaa.AcctUtils;
@@ -36,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
@@ -256,16 +254,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         }
 
         // Check that the user exists in the database, if it doesn't exist then we need to add it now:
-        DirectoryUtils.flatGroups(principalRecord);
-        DbUser dbUser =
-                getDbUserDAO().getByExternalId(
-                        AuthzUtils.getName(profile.getAuthz()),
-                        principalRecord.<String> get(PrincipalRecord.ID));
-        if (dbUser == null) {
-            dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
-            dbUser.setId(Guid.newGuid());
-        }
-        dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromPrincipal(AuthzUtils.getName(profile.getAuthz()), principalRecord));
+        DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
         if (!dbUser.isActive()) {
             dbUser.setActive(true);
             log.info(

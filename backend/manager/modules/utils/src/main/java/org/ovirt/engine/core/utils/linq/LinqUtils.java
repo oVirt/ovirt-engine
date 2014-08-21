@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.utils.linq;
 
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 public class LinqUtils {
 
@@ -41,12 +43,23 @@ public class LinqUtils {
      *
      * Returns a new list which contains all the objects from original collection with function applied to them.
      */
-    public static <IN, OUT> List<OUT> foreach(Collection<IN> collection, Function<IN, OUT> f) {
+    public static <IN, OUT> List<OUT> transformToList(final Collection<IN> collection, final Function<IN, OUT> f) {
         LinkedList<OUT> list = new LinkedList<OUT>();
         for (IN in : collection) {
             list.add(f.eval(in));
         }
         return list;
+    }
+
+    /**
+     * Returns a new set which contains transformed objects from the original collection
+     */
+    public static <IN, OUT> Set<OUT> transformToSet(final Collection<IN> collection, final Function<IN, OUT> f) {
+        return new HashSet<OUT>() {
+            {
+                addAll(transformToList(collection, f));
+            }
+        };
     }
 
     /**

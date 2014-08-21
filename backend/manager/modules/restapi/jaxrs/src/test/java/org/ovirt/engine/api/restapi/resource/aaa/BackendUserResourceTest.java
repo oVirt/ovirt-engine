@@ -5,6 +5,7 @@ import static org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResourceTest
 
 import java.util.Arrays;
 import java.util.HashSet;
+import java.util.LinkedList;
 
 import javax.ws.rs.WebApplicationException;
 
@@ -92,7 +93,7 @@ public class BackendUserResourceTest
         entity.setId(GUIDS[index]);
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setFirstName(NAMES[index]);
-        entity.setGroupNames(new HashSet<String>(Arrays.asList(GROUPS.split(","))));
+        entity.setGroupNames(new LinkedList<String>(Arrays.asList(GROUPS.split(","))));
         entity.setDomain(DOMAIN);
         return entity;
     }

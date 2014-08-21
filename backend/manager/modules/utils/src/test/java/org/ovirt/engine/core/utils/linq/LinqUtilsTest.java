@@ -40,7 +40,7 @@ public class LinqUtilsTest {
 
     @Test
     public void exampleForeach() {
-        List<String> results = LinqUtils.foreach(list, new Function<String, String>() {
+        List<String> results = LinqUtils.transformToList(list, new Function<String, String>() {
             @Override
             public String eval(String s) {
                 return s.substring(0, 1);

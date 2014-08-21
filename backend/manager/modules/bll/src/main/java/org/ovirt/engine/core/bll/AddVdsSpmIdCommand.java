@@ -64,7 +64,7 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
     private void insertSpmIdToDb(List<vds_spm_id_map> vds_spm_id_mapList) {
         // according to shaharf the first id is 1
         int selectedId = 1;
-        List<Integer> list = LinqUtils.foreach(vds_spm_id_mapList, new Function<vds_spm_id_map, Integer>() {
+        List<Integer> list = LinqUtils.transformToList(vds_spm_id_mapList, new Function<vds_spm_id_map, Integer>() {
             @Override
             public Integer eval(vds_spm_id_map vds_spm_id_map) {
                 return vds_spm_id_map.getvds_spm_id();

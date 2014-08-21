@@ -108,7 +108,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     }
 
     private ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
-        return new ArrayList<>(LinqUtils.foreach(diskMap.values(), new Function<Disk, DiskImage>() {
+        return new ArrayList<>(LinqUtils.transformToList(diskMap.values(), new Function<Disk, DiskImage>() {
             @Override
             public DiskImage eval(Disk disk) {
                 return (DiskImage) disk;

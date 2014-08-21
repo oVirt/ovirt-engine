@@ -4,14 +4,14 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
+import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.GroupRecord;
 import org.ovirt.engine.api.extensions.aaa.Authz.PrincipalRecord;
-import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.core.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.aaa.DirectoryUser;
@@ -25,16 +25,26 @@ import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 public class DirectoryUtils {
 
-    public static HashSet<Guid> getGroupIdsFromPrincipal(String authz, ExtMap principal) {
-        HashSet<Guid> results = new HashSet<Guid>();
+    public static DbUser mapPrincipalRecordToDbUser(String authz, ExtMap principal) {
+        principal = principal.clone();
+        flatGroups(principal);
+        DbUser dbUser = DbFacade.getInstance().getDbUserDao().getByExternalId(authz,  principal.<String>get(PrincipalRecord.ID));
+        Guid userId = dbUser != null ? dbUser.getId() : Guid.newGuid();
+        dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
+        dbUser.setId(userId);
         DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
+        LinkedList<Guid> groupIds = new LinkedList<Guid>();
+        LinkedList<String> groupsNames = new LinkedList<String>();
         for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
             DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
             if (dbGroup != null) {
-                results.add(dbGroup.getId());
+                groupIds.add(dbGroup.getId());
+                groupsNames.add(dbGroup.getName());
             }
         }
-        return results;
+        dbUser.setGroupIds(groupIds);
+        dbUser.setGroupNames(groupsNames);
+        return dbUser;
     }
 
     public static Collection<DirectoryUser> findDirectoryUsersByQuery(
@@ -131,10 +141,6 @@ public class DirectoryUtils {
                         resolveGroups,
                         resolveGroupsRecursive)
                         );
-    }
-
-    public static DbUser mapPrincipalRecordToDbUser(final String authzName, final ExtMap principalRecord) {
-        return new DbUser(mapPrincipalRecordToDirectoryUser(authzName, principalRecord));
     }
 
     public static DirectoryUser mapPrincipalRecordToDirectoryUser(final String authzName, final ExtMap principalRecord) {

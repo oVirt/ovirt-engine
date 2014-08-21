@@ -52,9 +52,7 @@ public class SyncUsers {
                                 authzExtension, userIdsPerNamespace.getKey(),
                                 userIdsPerNamespace.getValue())
                         ) {
-                            DirectoryUtils.flatGroups(principal);
                             DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(authz, principal);
-                            dbUser.setGroupIds(DirectoryUtils.getGroupIdsFromPrincipal(authz, principal));
                             activeUsers.put(dbUser.getExternalId(), dbUser);
                     }
                 }
