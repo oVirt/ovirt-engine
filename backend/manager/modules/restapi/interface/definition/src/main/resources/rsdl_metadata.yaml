@@ -178,6 +178,7 @@ actions:
           vm.origin: xs:string
           vm.os.kernel: xs:string
           vm.disks.clone: xs:boolean
+          vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
           vm.tunnel_migration: xs:boolean
           vm.migration_downtime: xs:int
           vm.virtio_scsi.enabled: xs:boolean
@@ -288,6 +289,7 @@ actions:
                 vm.origin: xs:string
                 vm.os.kernel: xs:string
                 vm.disks.clone: xs:boolean
+                vm.disks.disk--COLLECTION: {disk.id: 'xs:string', storage_domains.storage_domain--COLLECTION: {storage_domain.id: 'xs:string'}}
                 vm.tunnel_migration: xs:boolean
                 vm.migration_downtime: xs:int
                 vm.virtio_scsi.enabled: xs:boolean
