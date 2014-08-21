@@ -26,6 +26,9 @@ public interface IrsServerConnector {
     public Map<String, Object> mergeSnapshots(String sdUUID, String spUUID, String vmGUID, String imgGUID,
             String ancestorUUID, String successorUUID, String postZero);
 
+    public Map<String, Object> reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
+            String leafVolUUID);
+
     public Map<String, Object> deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero);
 

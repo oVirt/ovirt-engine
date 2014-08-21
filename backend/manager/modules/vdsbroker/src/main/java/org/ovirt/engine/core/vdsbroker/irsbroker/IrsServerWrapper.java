@@ -61,6 +61,15 @@ public class IrsServerWrapper implements IIrsServer {
     }
 
     @Override
+    public VolumeListReturnForXmlRpc reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
+            String leafVolUUID) {
+        Map<String, Object> xmlRpcReturnValue = irsServer.reconcileVolumeChain(spUUID, sdUUID, imgGUID,
+                leafVolUUID);
+        VolumeListReturnForXmlRpc wrapper = new VolumeListReturnForXmlRpc(xmlRpcReturnValue);
+        return wrapper;
+    }
+
+    @Override
     public OneUuidReturnForXmlRpc deleteVolume(String sdUUID, String spUUID, String imgGUID, String[] volUUID,
             String postZero, String force) {
         Map<String, Object> xmlRpcReturnValue = irsServer.deleteVolume(sdUUID, spUUID, imgGUID, volUUID, postZero,
