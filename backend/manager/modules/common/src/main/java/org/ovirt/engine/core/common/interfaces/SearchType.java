@@ -19,6 +19,7 @@ public enum SearchType implements Serializable {
     Disk,
     GlusterVolume,
     Network,
+    IscsiBond,
     Provider,
     InstanceType,
     ImageType;

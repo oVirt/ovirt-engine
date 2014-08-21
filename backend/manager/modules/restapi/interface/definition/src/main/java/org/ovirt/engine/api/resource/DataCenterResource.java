@@ -38,4 +38,7 @@ public interface DataCenterResource extends UpdatableResource<DataCenter> {
 
     @Path("quotas")
     public QuotasResource getQuotasResource();
+
+    @Path("iscsibonds")
+    public IscsiBondsResource getIscsiBondsResource();
 }

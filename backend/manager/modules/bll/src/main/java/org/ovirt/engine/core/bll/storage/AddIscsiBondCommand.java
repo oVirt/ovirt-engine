@@ -57,6 +57,7 @@ public class AddIscsiBondCommand<T extends AddIscsiBondParameters> extends BaseI
                     getDbFacade().getIscsiBondDao().addStorageConnectionToIscsiBond(iscsiBond.getId(), connectionId);
                 }
 
+                getReturnValue().setActionReturnValue(iscsiBond.getId());
                 return null;
             }
         });

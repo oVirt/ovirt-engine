@@ -11,6 +11,7 @@ import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.AttachedStorageDomainsResource;
 import org.ovirt.engine.api.resource.ClustersResource;
 import org.ovirt.engine.api.resource.DataCenterResource;
+import org.ovirt.engine.api.resource.IscsiBondsResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.QuotasResource;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -74,6 +75,11 @@ public class BackendDataCenterResource extends AbstractBackendSubResource<DataCe
     @Override
     public QuotasResource getQuotasResource() {
          return inject(new BackendQuotasResource(id));
+    }
+
+    @Override
+    public IscsiBondsResource getIscsiBondsResource() {
+        return inject(new BackendIscsiBondsResource(id));
     }
 
     public BackendDataCentersResource getParent() {

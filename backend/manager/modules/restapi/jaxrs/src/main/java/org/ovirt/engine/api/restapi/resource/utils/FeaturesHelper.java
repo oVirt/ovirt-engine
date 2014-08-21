@@ -78,6 +78,7 @@ public class FeaturesHelper {
             addNetworkLabelsFeature(features);
             addRebootFeature(features);
             addMaintenanceFeature(features);
+            addIscsiBondFeature(features);
         }
         return features;
     }
@@ -422,6 +423,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Maintenance");
         feature.setDescription("Enable or disable VM maintenance mode.");
+        features.getFeature().add(feature);
+    }
+
+    private void addIscsiBondFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Manage iSCSI Bonds");
+        feature.setDescription("Add/modify/remove iSCSI Bonds.");
         features.getFeature().add(feature);
     }
 }
