@@ -7,7 +7,7 @@ import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.junit.Before;
@@ -43,7 +43,7 @@ public class DbUserDAOTest extends BaseDAOTestCase {
         newUser.setLoginName("newuser");
         newUser.setEmail("newuser@redhat.com");
         newUser.setDomain("domain");
-        newUser.setGroupNames(new HashSet<String>(Arrays.asList("groups")));
+        newUser.setGroupNames(new LinkedList<String>(Arrays.asList("groups")));
         newUser.setNamespace("*");
     }
 

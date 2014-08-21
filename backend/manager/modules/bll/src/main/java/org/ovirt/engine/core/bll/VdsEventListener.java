@@ -311,7 +311,7 @@ public class VdsEventListener implements IVdsEventListener {
 
 
     private List<VdcActionParametersBase> createMigrateVmToServerParametersList(List<VmStatic> vmsToMigrate, final VDS vds) {
-        return LinqUtils.foreach(vmsToMigrate,
+        return LinqUtils.transformToList(vmsToMigrate,
                 new Function<VmStatic, VdcActionParametersBase>() {
             @Override
             public VdcActionParametersBase eval(VmStatic vm) {

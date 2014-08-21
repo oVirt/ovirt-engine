@@ -213,7 +213,7 @@ public class BackendUsersResourceTest
         entity.setId(GUIDS[index]);
         entity.setExternalId(EXTERNAL_IDS[index]);
         entity.setLoginName(NAMES[index]);
-        entity.setGroupNames(new HashSet<String>(Arrays.asList(GROUPS.split(","))));
+        entity.setGroupNames(new LinkedList<String>(Arrays.asList(GROUPS.split(","))));
         entity.setNamespace(NAMESPACE);
         entity.setDomain(DOMAIN);
         return entity;

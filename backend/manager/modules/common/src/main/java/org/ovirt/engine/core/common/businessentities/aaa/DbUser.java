@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
 
 import javax.validation.constraints.Size;
 
@@ -66,35 +65,20 @@ public class DbUser extends IVdcQueryable {
      */
     private boolean isAdmin;
 
-    private HashSet<String> groupNames;
+    private LinkedList<String> groupNames;
 
     /**
      * Comma delimited list of group identifiers.
      */
-    private HashSet<Guid> groupIds;
+    private LinkedList<Guid> groupIds;
 
     public DbUser() {
         loginName = "";
         firstName = "";
         lastName = "";
         department = "";
-        groupNames = new HashSet<String>();
-        groupIds = new HashSet<Guid>();
-        role = "";
-        note = "";
-    }
-
-    public DbUser(LdapUser ldapUser) {
-        externalId = ldapUser.getUserId();
-        domain = ldapUser.getDomainControler();
-        namespace = ldapUser.getNamespace();
-        loginName = ldapUser.getUserName();
-        firstName = ldapUser.getName();
-        lastName = ldapUser.getSurName();
-        department = ldapUser.getDepartment();
-        email = ldapUser.getEmail();
-        active = true;
-        groupNames = new HashSet<String>(Arrays.asList(ldapUser.getGroup().trim().split(" *, *")));
+        groupNames = new LinkedList<String>();
+        groupIds = new LinkedList<Guid>();
         role = "";
         note = "";
     }
@@ -111,7 +95,7 @@ public class DbUser extends IVdcQueryable {
         active = true;
         role = "";
         note = "";
-        groupNames = new HashSet<String>();
+        groupNames = new LinkedList<String>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
@@ -189,11 +173,11 @@ public class DbUser extends IVdcQueryable {
         email = value;
     }
 
-    public HashSet<String> getGroupNames() {
+    public LinkedList<String> getGroupNames() {
         return groupNames;
     }
 
-    public void setGroupNames(HashSet<String> value) {
+    public void setGroupNames(LinkedList<String> value) {
         groupNames = value;
     }
 
@@ -238,13 +222,13 @@ public class DbUser extends IVdcQueryable {
         return isAdmin;
     }
 
-    public void setGroupIds(HashSet<Guid> groupIds) {
+    public void setGroupIds(LinkedList<Guid> groupIds) {
         this.groupIds = groupIds;
     }
 
-    public HashSet<Guid> getGroupIds() {
+    public LinkedList<Guid> getGroupIds() {
         if (groupIds == null) {
-            groupIds = new HashSet<Guid>();
+            groupIds = new LinkedList<Guid>();
         }
         return groupIds;
     }

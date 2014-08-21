@@ -607,7 +607,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
                     new IdQueryParameters(getVm().getVmtGuid())).getReturnValue();
-            List<Guid> domainsId = LinqUtils.foreach(domains, new Function<StorageDomain, Guid>() {
+            List<Guid> domainsId = LinqUtils.transformToList(domains, new Function<StorageDomain, Guid>() {
                 @Override
                 public Guid eval(StorageDomain storageDomainStatic) {
                     return storageDomainStatic.getId();

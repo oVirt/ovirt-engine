@@ -103,7 +103,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         // if we have lun id then filter by this lun
         // else get vg's luns from db
         List<String> lunsByVg =
-                lunId.isEmpty() ? LinqUtils.foreach(DbFacade.getInstance().getLunDao().getAllForVolumeGroup(vgId),
+                lunId.isEmpty() ? LinqUtils.transformToList(DbFacade.getInstance().getLunDao().getAllForVolumeGroup(vgId),
                         new Function<LUNs, String>() {
                             @Override
                             public String eval(LUNs a) {
@@ -128,7 +128,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
         for (StorageServerConnections connection : connections) {
             fillConnectionDetailsIfNeeded(connection);
             if (connection.getid() != null) {
-                List<String> list = LinqUtils.foreach(
+                List<String> list = LinqUtils.transformToList(
                         DbFacade.getInstance().getLunDao().getAllForStorageServerConnection(connection.getid()),
                         new Function<LUNs, String>() {
                             @Override
@@ -175,7 +175,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                      * TODO: Vitaly check if luns in the same pool.
                      */
                     List<String> strings =
-                            LinqUtils.foreach(
+                            LinqUtils.transformToList(
                                     DbFacade.getInstance()
                                             .getStorageServerConnectionLunMapDao()
                                             .getAll(lun.getLUN_id()),

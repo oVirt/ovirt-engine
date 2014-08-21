@@ -454,7 +454,7 @@ public class OvfDataUpdater {
         List<DiskImage> allTemplateImages = template.getDiskList();
         String templateMeta = generateVmTemplateMetadata(template, allTemplateImages);
         metaDictionary.put(template.getId(), new KeyValuePairCompat<String, List<Guid>>(
-                templateMeta, LinqUtils.foreach(allTemplateImages, new Function<DiskImage, Guid>() {
+                templateMeta, LinqUtils.transformToList(allTemplateImages, new Function<DiskImage, Guid>() {
                     @Override
                     public Guid eval(DiskImage diskImage) {
                         return diskImage.getId();
@@ -507,7 +507,7 @@ public class OvfDataUpdater {
         String vmMeta = generateVmMetadata(vm, allVmImages);
         metaDictionary.put(
                 vm.getId(),
-                new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.foreach(vm.getDiskMap().values(),
+                new KeyValuePairCompat<String, List<Guid>>(vmMeta, LinqUtils.transformToList(vm.getDiskMap().values(),
                         new Function<Disk, Guid>() {
                             @Override
                             public Guid eval(Disk a) {

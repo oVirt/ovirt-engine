@@ -3,7 +3,7 @@ package org.ovirt.engine.core.dao;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Arrays;
-import java.util.HashSet;
+import java.util.LinkedList;
 import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
@@ -29,7 +29,7 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setDepartment(rs.getString("department"));
             entity.setDomain(rs.getString("domain"));
             entity.setEmail(rs.getString("email"));
-            entity.setGroupNames(new HashSet<String>(Arrays.asList(StringUtils.split(rs.getString("groups"), ','))));
+            entity.setGroupNames(new LinkedList<String>(Arrays.asList(StringUtils.split(rs.getString("groups"), ','))));
             entity.setFirstName(rs.getString("name"));
             entity.setNote(rs.getString("note"));
             entity.setNote(rs.getString("note"));
@@ -39,14 +39,14 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
             entity.setId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setLoginName(rs.getString("username"));
             entity.setAdmin(rs.getBoolean("last_admin_check_status"));
-            entity.setGroupIds(convertToGuidSet(rs.getString("group_ids"), ','));
+            entity.setGroupIds(convertToGuidList(rs.getString("group_ids"), ','));
             entity.setExternalId(rs.getString("external_id"));
             entity.setNamespace(rs.getString("namespace"));
             return entity;
         }
 
-        private HashSet<Guid> convertToGuidSet(String str, char delimiter) {
-            HashSet<Guid> results = new HashSet<>();
+        private LinkedList<Guid> convertToGuidList(String str, char delimiter) {
+            LinkedList<Guid> results = new LinkedList<>();
             if (str != null) {
                 for (String id : str.split(String.format(" *%s *", delimiter))) {
                     results.add(Guid.createGuidFromString(id));
