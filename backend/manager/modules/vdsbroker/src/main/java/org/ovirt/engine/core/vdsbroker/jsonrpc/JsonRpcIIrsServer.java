@@ -16,6 +16,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StorageStatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.UUIDListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StorageDomainListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.irsbroker.VolumeListReturnForXmlRpc;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
@@ -156,6 +157,19 @@ public class JsonRpcIIrsServer implements IIrsServer {
         Map<String, Object> response =
                 new FutureMap(this.client, request).withResponseKey("uuid");
         return new OneUuidReturnForXmlRpc(response);
+    }
+
+    @Override
+    public VolumeListReturnForXmlRpc reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
+            String leafVolUUID) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.reconcileVolumeChain").withParameter("storagepoolID", spUUID)
+                        .withParameter("storagedomainID", sdUUID)
+                        .withParameter("imageID", imgGUID)
+                        .withParameter("leafVolID", leafVolUUID)
+                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new VolumeListReturnForXmlRpc(response);
     }
 
     @Override

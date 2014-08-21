@@ -9,14 +9,20 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MergeParameters;
 import org.ovirt.engine.core.common.action.MergeStatusReturnValue;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.ReconcileVolumeChainVDSCommandParameters;
+import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
+import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -39,16 +45,24 @@ public class MergeStatusCommand<T extends MergeParameters>
 
     @Override
     protected void executeCommand() {
-        // Our contract with vdsm merge states that if the VM is found down, we
-        // have to assume the merge failed.  (It's okay if it really succeeded,
-        // we can retry the operation without any issues.)
-        if (getVmDAO().get(getParameters().getVmId()).isDown()) {
-            log.error("Failed to live merge, VM is not running");
-            setCommandStatus(CommandStatus.FAILED);
-            return;
-        }
+        attemptResolution();
+    }
 
-        Set<Guid> images = getVolumeChain();
+    public void attemptResolution() {
+        Set<Guid> images;
+        if (getVmDAO().get(getParameters().getVmId()).isDown()) {
+            StoragePool pool = getStoragePoolDAO().get(getParameters().getStoragePoolId());
+            if (pool.getspm_vds_id() == null || pool.getStatus() != StoragePoolStatus.Up) {
+                log.info("VM down, waiting on SPM election to resolve Live Merge");
+                setSucceeded(true);
+                return;
+            } else {
+                log.error("VM is not running, proceeding with Live Merge recovery");
+                images = getVolumeChainFromRecovery();
+            }
+        } else {
+            images = getVolumeChain();
+        }
         if (images == null) {
             setCommandStatus(CommandStatus.FAILED);
             return;
@@ -120,6 +134,24 @@ public class MergeStatusCommand<T extends MergeParameters>
         return images;
     }
 
+    private Set<Guid> getVolumeChainFromRecovery() {
+        ReconcileVolumeChainVDSCommandParameters parameters =
+                new ReconcileVolumeChainVDSCommandParameters(
+                        getParameters().getStoragePoolId(),
+                        getParameters().getStorageDomainId(),
+                        getParameters().getImageGroupId(),
+                        getParameters().getImageId()
+                );
+
+        VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.ReconcileVolumeChain,
+                parameters);
+        if (!vdsReturnValue.getSucceeded()) {
+            log.error("Unable to retrieve volume list during Live Merge recovery");
+            return null;
+        }
+        return new HashSet<>((List<Guid>) vdsReturnValue.getReturnValue());
+    }
+
     /**
      * Returns the set of images which may be merged/removed in the live merge operation
      * on this disk.  We don't know whether VDSM will choose a forward or backward merge
@@ -144,5 +176,10 @@ public class MergeStatusCommand<T extends MergeParameters>
         return Collections.singletonList(new PermissionSubject(getParameters().getStorageDomainId(),
                 VdcObjectType.Storage,
                 getActionType().getActionGroup()));
+    }
+
+    @Override
+    public CommandCallBack getCallBack() {
+        return new MergeStatusCommandCallback();
     }
 }
