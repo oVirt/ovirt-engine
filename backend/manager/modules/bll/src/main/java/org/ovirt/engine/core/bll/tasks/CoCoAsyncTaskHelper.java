@@ -19,10 +19,10 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.job.ExternalSystemType;
 import org.ovirt.engine.core.common.job.Step;
@@ -145,35 +145,20 @@ public class CoCoAsyncTaskHelper {
         }
     }
 
-    public List<AsyncTasks> getAllAsyncTasksFromDb(CommandCoordinator coco) {
-        List<AsyncTasks> asyncTasks = DbFacade.getInstance().getAsyncTaskDao().getAll();
-        for (AsyncTasks asyncTask : asyncTasks) {
-            map(coco.getCommandEntity(asyncTask.getCommandId()), asyncTask);
+    public List<AsyncTask> getAllAsyncTasksFromDb(CommandCoordinator coco) {
+        List<AsyncTask> asyncTasks = DbFacade.getInstance().getAsyncTaskDao().getAll();
+        for (AsyncTask asyncTask : asyncTasks) {
+            asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
+            asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
         }
         return asyncTasks;
     }
 
-    private void map(CommandEntity cmdEntity, AsyncTasks asyncTask) {
-        if (cmdEntity != null) {
-            asyncTask.setTaskParameters(cmdEntity.getCommandParameters());
-            asyncTask.setRootCommandId(cmdEntity.getRootCommandId());
-            asyncTask.setCommandStatus(cmdEntity.getCommandStatus());
-            asyncTask.setCommandType(cmdEntity.getCommandType());
-            asyncTask.setCreatedAt(cmdEntity.getCreatedAt());
-            asyncTask.setCallBackEnabled(cmdEntity.isCallBackEnabled());
+    private CommandEntity getCommandEntity(Guid cmdId) {
+        CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
+        if (cmdEntity == null) {
+            cmdEntity = coco.createCommandEntity(cmdId, VdcActionType.Unknown, new VdcActionParametersBase());
         }
-    }
-
-    private CommandEntity map(AsyncTasks asyncTask, CommandEntity entity) {
-        CommandStatus status = entity == null ? asyncTask.getCommandStatus() : entity.getCommandStatus();
-        CommandEntity cmdEntity = entity == null ? new CommandEntity() : entity;
-        cmdEntity.setId(asyncTask.getCommandId());
-        cmdEntity.setCommandParameters(asyncTask.getTaskParameters());
-        cmdEntity.setRootCommandId(asyncTask.getRootCommandId());
-        cmdEntity.setCommandStatus(status);
-        cmdEntity.setCommandType(asyncTask.getCommandType());
-        cmdEntity.setCreatedAt(asyncTask.getCreatedAt());
-        cmdEntity.setCallBackEnabled(asyncTask.isCallBackEnabled());
         return cmdEntity;
     }
 
@@ -181,22 +166,24 @@ public class CoCoAsyncTaskHelper {
      * This method is always called from with in a transaction
      * @param asyncTask
      */
-    public void saveAsyncTaskToDb(final AsyncTasks asyncTask) {
+    public void saveAsyncTaskToDb(final AsyncTask asyncTask) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
                 DbFacade.getInstance().getAsyncTaskDao().save(asyncTask);
-                coco.persistCommand(map(asyncTask, coco.getCommandEntity(asyncTask.getCommandId())));
+                coco.persistCommand(asyncTask.getRootCmdEntity());
+                coco.persistCommand(asyncTask.getChildCmdEntity());
                 return null;
             }
         });
     }
 
-    public AsyncTasks getAsyncTaskFromDb(Guid asyncTaskId) {
-        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
+    public AsyncTask getAsyncTaskFromDb(Guid asyncTaskId) {
+        AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(asyncTaskId);
         if (asyncTask != null) {
-            map(coco.getCommandEntity(asyncTask.getCommandId()), asyncTask);
+            asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
+            asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
         }
         return asyncTask;
     }
@@ -206,12 +193,15 @@ public class CoCoAsyncTaskHelper {
 
             @Override
             public Integer runInTransaction() {
-                AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
+                AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().get(taskId);
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().remove(taskId);
                 if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
                     CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
                     if (cmdEntity != null && !cmdEntity.isCallBackEnabled()) {
                         coco.removeCommand(asyncTask.getCommandId());
+                        if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                            coco.removeCommand(asyncTask.getRootCommandId());
+                        }
                     }
                 }
                 return retVal;
@@ -219,10 +209,11 @@ public class CoCoAsyncTaskHelper {
         });
     }
 
-    public AsyncTasks getByVdsmTaskId(Guid vdsmTaskId) {
-        AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
+    public AsyncTask getByVdsmTaskId(Guid vdsmTaskId) {
+        AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
         if (asyncTask != null) {
-            map(coco.getCommandEntity(asyncTask.getCommandId()), asyncTask);
+            asyncTask.setRootCmdEntity(getCommandEntity(asyncTask.getRootCommandId()));
+            asyncTask.setChildCmdEntity(getCommandEntity(asyncTask.getCommandId()));
         }
         return asyncTask;
     }
@@ -232,12 +223,15 @@ public class CoCoAsyncTaskHelper {
 
             @Override
             public Integer runInTransaction() {
-                AsyncTasks asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
+                AsyncTask asyncTask = DbFacade.getInstance().getAsyncTaskDao().getByVdsmTaskId(vdsmTaskId);
                 int retVal = DbFacade.getInstance().getAsyncTaskDao().removeByVdsmTaskId(vdsmTaskId);
                 if (asyncTask != null && !Guid.isNullOrEmpty(asyncTask.getCommandId())) {
                     CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
                     if (cmdEntity != null && !cmdEntity.isCallBackEnabled()) {
                         coco.removeCommand(asyncTask.getCommandId());
+                        if (!coco.hasCommandEntitiesWithRootCommandId(asyncTask.getRootCommandId())) {
+                            coco.removeCommand(asyncTask.getRootCommandId());
+                        }
                     }
                 }
                 return retVal;
@@ -245,27 +239,24 @@ public class CoCoAsyncTaskHelper {
         });
     }
 
-    public void addOrUpdateTaskInDB(final AsyncTasks asyncTask) {
+    public void addOrUpdateTaskInDB(final AsyncTask asyncTask) {
         TransactionSupport.executeInScope(TransactionScopeOption.Required, new TransactionMethod<Void>() {
 
             @Override
             public Void runInTransaction() {
-                CommandEntity cmdEntity = coco.getCommandEntity(asyncTask.getCommandId());
-                if (asyncTask.getstatus() == AsyncTaskStatusEnum.finished) {
-                    cmdEntity.setCommandStatus(CommandStatus.SUCCEEDED);
-                }
-                coco.persistCommand(map(asyncTask, cmdEntity));
+                coco.persistCommand(asyncTask.getRootCmdEntity());
+                coco.persistCommand(asyncTask.getChildCmdEntity());
                 DbFacade.getInstance().getAsyncTaskDao().saveOrUpdate(asyncTask);
                 return null;
             }
         });
     }
 
-    public AsyncTasks getAsyncTask(Guid taskId,
+    public AsyncTask getAsyncTask(Guid taskId,
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
-        AsyncTasks asyncTask = null;
+        AsyncTask asyncTask = null;
         if (!taskId.equals(Guid.Empty)) {
             asyncTask = getAsyncTaskFromDb(taskId);
         }
@@ -274,7 +265,7 @@ public class CoCoAsyncTaskHelper {
                 command.getParameters().setCommandType(command.getActionType());
             }
             VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
-            asyncTask.setaction_type(parentCommand);
+            asyncTask.setActionType(parentCommand);
             asyncTask.setVdsmTaskId(asyncTaskCreationInfo.getVdsmTaskId());
             asyncTask.setActionParameters(parentParameters);
             asyncTask.setTaskParameters(command.getParameters());
@@ -291,31 +282,52 @@ public class CoCoAsyncTaskHelper {
         return asyncTask;
     }
 
-    public AsyncTasks createAsyncTask(
+    public AsyncTask createAsyncTask(
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand) {
+        Guid parentCommandId = command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId();
         VdcActionParametersBase parentParameters = command.getParentParameters(parentCommand);
         if (VdcActionType.Unknown.equals(command.getParameters().getCommandType())) {
             command.getParameters().setCommandType(command.getActionType());
         }
-        AsyncTasks asyncTask = new AsyncTasks(parentCommand,
-                AsyncTaskResultEnum.success,
+        AsyncTask asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
                 AsyncTaskStatusEnum.running,
                 asyncTaskCreationInfo.getVdsmTaskId(),
-                parentParameters,
-                command.getParameters(),
                 asyncTaskCreationInfo.getStepId(),
-                command.getCommandId(),
-                command.getParameters().getParentParameters() == null ? Guid.Empty : command.getParameters().getParentParameters().getCommandId(),
                 asyncTaskCreationInfo.getStoragePoolID(),
                 asyncTaskCreationInfo.getTaskType(),
-                command.getCommandStatus());
+                getParentCommandEntity(parentCommandId,
+                        parentCommand,
+                        parentParameters),
+                getChildCommandEntity(command, parentCommand));
         return asyncTask;
     }
 
+    private CommandEntity getChildCommandEntity(CommandBase command, VdcActionType parentCommand) {
+        CommandEntity cmdEntity = coco.getCommandEntity(command.getCommandId());
+        if (cmdEntity == null) {
+            command.persistCommand(parentCommand, command.getCallBack() != null);
+        }
+        return coco.getCommandEntity(command.getCommandId());
+    }
+
+    private CommandEntity getParentCommandEntity(Guid cmdId,
+                                                 VdcActionType actionType,
+                                                 VdcActionParametersBase parameters) {
+        CommandEntity cmdEntity = coco.getCommandEntity(cmdId);
+        if (cmdEntity == null) {
+            cmdEntity = coco.createCommandEntity(cmdId, actionType, parameters);
+            if (!Guid.isNullOrEmpty(cmdId)) {
+                cmdEntity.setCommandStatus(CommandStatus.ACTIVE);
+                coco.persistCommand(cmdEntity);
+            }
+        }
+        return cmdEntity;
+    }
+
     public VdcReturnValueBase endAction(SPMTask task, ExecutionContext context) {
-        AsyncTasks dbAsyncTask = task.getParameters().getDbAsyncTask();
+        AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
         VdcActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
         CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
@@ -323,12 +335,12 @@ public class CoCoAsyncTaskHelper {
         return new DecoratedCommand(command).endAction();
     }
 
-    private VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+    private VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
         VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
         if (!VdcActionType.Unknown.equals(commandType)) {
             return commandType;
         }
-        return dbAsyncTask.getaction_type();
+        return dbAsyncTask.getActionType();
     }
 
     /**

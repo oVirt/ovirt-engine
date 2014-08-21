@@ -6,18 +6,17 @@ Create or replace FUNCTION Insertasync_tasks(v_action_type INTEGER,
 	v_status INTEGER,
 	v_vdsm_task_id UUID,
 	v_task_id UUID,
-        v_action_parameters text,
-	v_action_params_class varchar(256),
 	v_step_id UUID,
 	v_command_id UUID,
+	v_root_command_id UUID,
         v_started_at timestamp WITH TIME ZONE,
 	v_storage_pool_id UUID,
 	v_async_task_type INTEGER)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO async_tasks(action_type, result, status, vdsm_task_id, task_id, action_parameters, action_params_class, step_id, command_id, started_at,storage_pool_id, task_type)
-	VALUES(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_action_parameters, v_action_params_class, v_step_id, v_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
+INSERT INTO async_tasks(action_type, result, status, vdsm_task_id, task_id, step_id, command_id, root_command_id, started_at,storage_pool_id, task_type)
+	VALUES(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_step_id, v_command_id, v_root_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -27,10 +26,9 @@ Create or replace FUNCTION Updateasync_tasks(v_action_type INTEGER,
 	v_status INTEGER,
 	v_vdsm_task_id UUID,
 	v_task_id UUID,
-	v_action_parameters text,
-	v_action_params_class varchar(256),
 	v_step_id UUID,
 	v_command_id UUID,
+	v_root_command_id UUID,
         v_storage_pool_id UUID)
 RETURNS VOID
 
@@ -41,10 +39,9 @@ BEGIN
       SET action_type = v_action_type,
           result = v_result,
           status = v_status,
-          action_parameters = v_action_parameters,
-          action_params_class = v_action_params_class,
           step_id = v_step_id,
           command_id = v_command_id,
+          root_command_id = v_root_command_id,
           vdsm_task_id = v_vdsm_task_id,
           storage_pool_id = v_storage_pool_id
       WHERE task_id = v_task_id;
@@ -56,10 +53,9 @@ Create or replace FUNCTION InsertOrUpdateAsyncTasks(v_action_type INTEGER,
 	v_status INTEGER,
 	v_vdsm_task_id UUID,
 	v_task_id UUID,
-	v_action_parameters text,
-	v_action_params_class varchar(256),
 	v_step_id UUID,
 	v_command_id UUID,
+	v_root_command_id UUID,
         v_started_at timestamp WITH TIME ZONE,
 	v_storage_pool_id UUID,
 	v_async_task_type INTEGER)
@@ -68,9 +64,9 @@ RETURNS VOID
 BEGIN
       IF NOT EXISTS (SELECT 1 from async_tasks where async_tasks.task_id = v_task_id) THEN
             PERFORM Insertasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id,
-            v_action_parameters, v_action_params_class, v_step_id, v_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
+            v_step_id, v_command_id, v_root_command_id, v_started_at, v_storage_pool_id, v_async_task_type);
       ELSE
-            PERFORM Updateasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_action_parameters, v_action_params_class, v_step_id, v_command_id, v_storage_pool_id);
+            PERFORM Updateasync_tasks(v_action_type, v_result, v_status, v_vdsm_task_id, v_task_id, v_step_id, v_command_id, v_root_command_id, v_storage_pool_id);
       END IF;
 END; $procedure$
 LANGUAGE plpgsql;

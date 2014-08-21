@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.log.Log;
@@ -56,11 +56,11 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
         if (duringInit && isNewCommandAdded) {
             CommandBase<?> command =
-                    CommandsFactory.createCommand(parameters.getDbAsyncTask().getaction_type(),
+                    CommandsFactory.createCommand(parameters.getDbAsyncTask().getActionType(),
                             parameters.getDbAsyncTask().getActionParameters());
             if (!command.acquireLockAsyncTask()) {
                 log.warnFormat("Failed to acquire locks for command {0} with parameters {1}",
-                        parameters.getDbAsyncTask().getaction_type(),
+                        parameters.getDbAsyncTask().getActionType(),
                         parameters.getDbAsyncTask().getActionParameters());
             }
         }
@@ -118,7 +118,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         ExecutionContext context = null;
         boolean endActionRuntimeException = false;
 
-        AsyncTasks dbAsyncTask = getParameters().getDbAsyncTask();
+        AsyncTask dbAsyncTask = getParameters().getDbAsyncTask();
         ArrayList<VdcActionParametersBase> imagesParameters = new ArrayList<VdcActionParametersBase>();
         for (EndedTaskInfo taskInfo : entityInfo.getEndedTasksInfo().getTasksInfo()) {
             VdcActionParametersBase childTaskParameters =
@@ -175,12 +175,12 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
     }
 
-    private VdcActionType getEndActionType(AsyncTasks dbAsyncTask) {
+    private VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
         VdcActionType commandType = dbAsyncTask.getActionParameters().getCommandType();
         if (!VdcActionType.Unknown.equals(commandType)) {
             return commandType;
         }
-        return dbAsyncTask.getaction_type();
+        return dbAsyncTask.getActionType();
     }
 
     private String getErrorMessage() {
@@ -188,9 +188,9 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 getParameters().getDbAsyncTask().getActionParameters().getCommandType());
     }
 
-    private void handleEndActionRuntimeException(CommandMultiAsyncTasks commandInfo, AsyncTasks dbAsyncTask) {
+    private void handleEndActionRuntimeException(CommandMultiAsyncTasks commandInfo, AsyncTask dbAsyncTask) {
         try {
-            VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
+            VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
             log.infoFormat(
                     "CommandAsyncTask::HandleEndActionResult: endAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
                     actionType);
@@ -215,7 +215,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
             ExecutionContext context,
             boolean isTaskGroupSuccess) {
         try {
-            VdcActionType actionType = getParameters().getDbAsyncTask().getaction_type();
+            VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
             log.infoFormat(
                     "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{0}' completed, handling the result.",
                     actionType);

@@ -13,15 +13,13 @@ import java.util.Set;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
-import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskEntity;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 
@@ -33,8 +31,8 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 public class AsyncTaskDAOTest extends BaseDAOTestCase {
     private static final int TASK_COUNT = 2;
     private AsyncTaskDAO dao;
-    private AsyncTasks newAsyncTask;
-    private AsyncTasks existingAsyncTask;
+    private AsyncTask newAsyncTask;
+    private AsyncTask existingAsyncTask;
 
     private VdcActionParametersBase params;
     private VdcActionParametersBase taskParams;
@@ -55,11 +53,11 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         taskParams.setParentParameters(params);
 
         // create some test data
-        newAsyncTask = new AsyncTasks();
+        newAsyncTask = new AsyncTask();
         newAsyncTask.setTaskId(Guid.newGuid());
         newAsyncTask.setVdsmTaskId(Guid.newGuid());
         newAsyncTask.setStartTime(new Date());
-        newAsyncTask.setaction_type(VdcActionType.AddDisk);
+        newAsyncTask.setActionType(VdcActionType.AddDisk);
         newAsyncTask.setstatus(AsyncTaskStatusEnum.running);
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setActionParameters(params);
@@ -77,7 +75,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetWithInvalidId() {
-        AsyncTasks result = dao.get(Guid.newGuid());
+        AsyncTask result = dao.get(Guid.newGuid());
 
         assertNull(result);
     }
@@ -91,7 +89,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetAsyncTaskEntitiesById() {
-        List<AsyncTasks> tasks = dao.getTasksByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
+        List<AsyncTask> tasks = dao.getTasksByEntity(FixturesTool.ENTITY_WITH_TASKS_ID);
         assertNotNull(tasks);
         assertEquals(tasks.size(), 1);
     }
@@ -124,7 +122,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGet() {
-        AsyncTasks result = dao.get(existingAsyncTask.getTaskId());
+        AsyncTask result = dao.get(existingAsyncTask.getTaskId());
 
         assertNotNull(result);
         assertEquals(existingAsyncTask, result);
@@ -135,7 +133,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAll() {
-        List<AsyncTasks> result = dao.getAll();
+        List<AsyncTask> result = dao.getAll();
 
         assertEquals(TASK_COUNT, result.size());
     }
@@ -147,7 +145,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void testSave() {
         dao.save(newAsyncTask);
 
-        AsyncTasks result = dao.get(newAsyncTask.getTaskId());
+        AsyncTask result = dao.get(newAsyncTask.getTaskId());
         /*
          * //Setting startTime to null is required as DB auto generates //the value of start time //Without this, the
          * comparison would fail result.setStartTime(null);
@@ -162,17 +160,10 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void testUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
         existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
-        existingAsyncTask.setaction_type(VdcActionType.AddDisk);
-        AddDiskParameters addDiskToVmParams = new AddDiskParameters();
-        addDiskToVmParams.setSessionId("SESSION_ID");
-        AddImageFromScratchParameters taskParameters = new AddImageFromScratchParameters();
-        taskParameters.setParentParameters(addDiskToVmParams);
-        taskParameters.setParentCommand(VdcActionType.AddDisk);
-        existingAsyncTask.setActionParameters(addDiskToVmParams);
-        existingAsyncTask.setTaskParameters(taskParameters);
+        existingAsyncTask.setActionType(VdcActionType.AddDisk);
         dao.update(existingAsyncTask);
 
-        AsyncTasks result = dao.get(existingAsyncTask.getTaskId());
+        AsyncTask result = dao.get(existingAsyncTask.getTaskId());
 
         assertEquals(existingAsyncTask, result);
     }
@@ -182,7 +173,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        AsyncTasks result = dao.get(existingAsyncTask.getTaskId());
+        AsyncTask result = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(result);
 
         assertEquals(dao.remove(existingAsyncTask.getTaskId()), 1);
@@ -200,7 +191,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetTaskByVdsmTaskId() {
-        AsyncTasks result = dao.getByVdsmTaskId(FixturesTool.EXISTING_VDSM_TASK_ID);
+        AsyncTask result = dao.getByVdsmTaskId(FixturesTool.EXISTING_VDSM_TASK_ID);
         assertNotNull(result);
         assertEquals(existingAsyncTask, result);
 
@@ -208,7 +199,7 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testRemoveByVdsmTaskId() {
-        AsyncTasks result = dao.getByVdsmTaskId(FixturesTool.EXISTING_VDSM_TASK_ID);
+        AsyncTask result = dao.getByVdsmTaskId(FixturesTool.EXISTING_VDSM_TASK_ID);
         assertNotNull(result);
 
         assertEquals(dao.removeByVdsmTaskId(existingAsyncTask.getVdsmTaskId()), 1);
@@ -228,21 +219,14 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
     public void testSaveOrUpdate() {
         existingAsyncTask.setstatus(AsyncTaskStatusEnum.aborting);
         existingAsyncTask.setresult(AsyncTaskResultEnum.failure);
-        existingAsyncTask.setaction_type(VdcActionType.AddDisk);
-        AddDiskParameters addDiskToVmParams = new AddDiskParameters();
-        addDiskToVmParams.setSessionId("SESSION_ID");
-        AddImageFromScratchParameters taskParameters = new AddImageFromScratchParameters();
-        taskParameters.setParentParameters(addDiskToVmParams);
-        taskParameters.setParentCommand(VdcActionType.AddDisk);
-        existingAsyncTask.setActionParameters(addDiskToVmParams);
-        existingAsyncTask.setTaskParameters(taskParameters);
-        List<AsyncTasks> tasks = dao.getAll();
+        existingAsyncTask.setActionType(VdcActionType.AddDisk);
+        List<AsyncTask> tasks = dao.getAll();
         assertNotNull(tasks);
         int tasksNumber = tasks.size();
         dao.saveOrUpdate(existingAsyncTask);
         tasks = dao.getAll();
         assertEquals(tasksNumber, tasks.size());
-        AsyncTasks taskFromDb = dao.get(existingAsyncTask.getTaskId());
+        AsyncTask taskFromDb = dao.get(existingAsyncTask.getTaskId());
         assertNotNull(taskFromDb);
         assertEquals(taskFromDb, existingAsyncTask);
         dao.saveOrUpdate(newAsyncTask);

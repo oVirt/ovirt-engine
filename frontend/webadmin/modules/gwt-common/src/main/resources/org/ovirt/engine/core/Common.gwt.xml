@@ -174,7 +174,7 @@
 		<include name="common/businessentities/MigrationSupport.java" />
 		<include name="common/businessentities/VdsTransparentHugePagesState.java" />
 		<include name="common/businessentities/OvfExportOnlyField.java" />
-		<include name="common/businessentities/AsyncTasks.java" />
+		<include name="common/businessentities/AsyncTask.java" />
 		<include name="common/businessentities/NonOperationalReason.java" />
 		<include name="common/businessentities/MigrateOnErrorOptions.java" />
 		<include name="common/businessentities/TagsVmMapId.java" />

@@ -10,8 +10,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskParameters;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
-import org.ovirt.engine.core.common.businessentities.AsyncTasks;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -48,20 +48,20 @@ public interface TaskHelper {
 
     void revertTasks(CommandBase command);
 
-    AsyncTasks getAsyncTask(
+    AsyncTask getAsyncTask(
             Guid taskId,
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
-    public AsyncTasks createAsyncTask(
+    public AsyncTask createAsyncTask(
             CommandBase command,
             AsyncTaskCreationInfo asyncTaskCreationInfo,
             VdcActionType parentCommand);
 
     SPMTask construct(AsyncTaskCreationInfo creationInfo);
 
-    SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTasks asyncTask);
+    SPMTask construct(AsyncTaskCreationInfo creationInfo, AsyncTask asyncTask);
 
     SPMTask construct(AsyncTaskType taskType, AsyncTaskParameters asyncTaskParams, boolean duringInit);
 
