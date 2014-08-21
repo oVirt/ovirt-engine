@@ -1,8 +1,8 @@
 package org.ovirt.engine.ui.uicommonweb.models.providers;
 
 import java.util.Arrays;
-
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.OpenstackNetworkPluginType;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.AgentConfiguration;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.BrokerType;
@@ -16,6 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.validation.IntegerValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.InterfaceMappingsValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -117,12 +118,13 @@ public class NeutronAgentModel extends EntityModel {
         });
 
         getPluginType().setItems(NeutronPluginTranslator.getPresetDisplayStrings());
-        getPluginType().setSelectedItem(""); //$NON-NLS-1$
+        getPluginType().setSelectedItem(getDefaultPluginTypeString());
         getInterfaceMappingsLabel().setEntity(ConstantsManager.getInstance().getConstants().interfaceMappings());
         getInterfaceMappingsExplanation().setEntity(ConstantsManager.getInstance()
                 .getConstants()
                 .interfaceMappingsExplanation());
         getBrokerType().setItems(Arrays.asList(BrokerType.values()));
+        getBrokerType().setSelectedItem(BrokerType.RABBIT_MQ);
     }
 
     public boolean validate() {
@@ -143,7 +145,7 @@ public class NeutronAgentModel extends EntityModel {
 
     public void init(Provider<OpenstackNetworkProviderProperties> provider) {
         OpenstackNetworkProviderProperties properties = provider.getAdditionalProperties();
-        String pluginName = (properties == null) ? "" : properties.getPluginType(); //$NON-NLS-1$
+        String pluginName = (properties == null) ?  getDefaultPluginTypeString() : properties.getPluginType();
         getPluginType().setSelectedItem(NeutronPluginTranslator.getDisplayStringForPluginName(pluginName));
 
         if (properties != null) {
@@ -195,6 +197,10 @@ public class NeutronAgentModel extends EntityModel {
             messagingConfiguration.setPassword(getMessagingServerPassword().getEntity());
             messagingConfiguration.setBrokerType(getBrokerType().getSelectedItem());
         }
+    }
+
+    private String getDefaultPluginTypeString() {
+        return EnumTranslator.createAndTranslate(OpenstackNetworkPluginType.OPEN_VSWITCH);
     }
 
 }
