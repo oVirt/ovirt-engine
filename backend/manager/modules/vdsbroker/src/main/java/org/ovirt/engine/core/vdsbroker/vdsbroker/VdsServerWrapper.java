@@ -14,6 +14,8 @@ import org.ovirt.engine.core.vdsbroker.gluster.GlusterServersListReturnForXmlRpc
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterServicesReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTaskInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterTasksListReturnForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusForXmlRpc;
+import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeGeoRepStatusDetailForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeOptionsInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeProfileInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterVolumeStatusReturnForXmlRpc;
@@ -1365,6 +1367,48 @@ public class VdsServerWrapper implements IVdsServer {
             Map<String, Object> xmlRpcReturnValue = vdsServer.glusterVolumeRebalanceStatus(volumeName);
             GlusterVolumeTaskReturnForXmlRpc wrapper = new GlusterVolumeTaskReturnForXmlRpc(xmlRpcReturnValue);
             return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus() {
+        try {
+            Map<String, Object> response = vdsServer.glusterVolumeGeoRepStatus();
+            return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus(String volumeName) {
+        try {
+            Map<String, Object> response;
+            response = vdsServer.glusterVolumeGeoRepStatus(volumeName);
+            return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeGeoRepStatusForXmlRpc glusterVolumeGeoRepStatus(String volumeName, String slaveHost, String slaveVolumeName) {
+        try {
+            Map<String, Object> response;
+            response = vdsServer.glusterVolumeGeoRepStatus(volumeName, slaveHost, slaveVolumeName);
+            return new GlusterVolumeGeoRepStatusForXmlRpc(response);
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public GlusterVolumeGeoRepStatusDetailForXmlRpc glusterVolumeGeoRepStatusDetail(String volumeName, String slaveHost, String slaveVolumeName) {
+        try {
+            Map<String, Object> response = vdsServer.glusterVolumeGeoRepStatusDetail(volumeName, slaveHost, slaveVolumeName);
+            return new GlusterVolumeGeoRepStatusDetailForXmlRpc(response);
         } catch (UndeclaredThrowableException ute) {
             throw new XmlRpcRunTimeException(ute);
         }

@@ -79,7 +79,8 @@ public class GlusterDBUtils {
     }
 
     /**
-     * Returns a server from the given cluster, having given UUID
+     * Returns a server from the given cluster, having given
+     * gluster server UUID
      *
      * @return GlusterServer object for the said server if found, else null
      */
@@ -165,4 +166,16 @@ public class GlusterDBUtils {
         }
         return hostName;
     }
+
+    public GlusterBrickEntity getGlusterBrickByServerUuidAndBrickDir(Guid serverId, String brickDir)
+    {
+        return getGlusterBrickDao().getBrickByServerIdAndDirectory(serverId, brickDir);
+    }
+
+    public GlusterVolumeEntity getVolumeByNameAndHostId(String volumeName, Guid hostId) {
+        VdsStatic vds = getVdsStaticDao().get(hostId);
+        Guid vdsGroupId = vds.getVdsGroupId();
+        return getGlusterVolumeDao().getByName(vdsGroupId, volumeName);
+    }
+
 }

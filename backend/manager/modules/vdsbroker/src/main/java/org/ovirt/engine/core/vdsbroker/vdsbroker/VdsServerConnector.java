@@ -289,6 +289,14 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStatus(String volumeName);
 
+    public Map<String, Object> glusterVolumeGeoRepStatus();
+
+    public Map<String, Object> glusterVolumeGeoRepStatus(String volumeName);
+
+    public Map<String, Object> glusterVolumeGeoRepStatus(String volumeName, String slaveHost, String slaveVolumeName);
+
+    public Map<String, Object> glusterVolumeGeoRepStatusDetail(String volumeName, String slaveHost, String slaveVolumeName);
+
     public Map<String, Object> glusterVolumeRemoveBrickStatus(String volumeName, String[] bricksList);
 
     public Map<String, Object> setNumberOfCpus(String vmId, String numberOfCpus);

@@ -158,6 +158,8 @@ public enum VDSCommandType {
     GetDiskAlignment("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     GlusterTasksList("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeRemoveBricksStatus("org.ovirt.engine.core.vdsbroker.gluster"),
+    GetGlusterVolumeGeoRepStatus("org.ovirt.engine.core.vdsbroker.gluster"),
+    GetGlusterVolumeGeoRepStatusDetail("org.ovirt.engine.core.vdsbroker.gluster"),
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     UpdateVmPolicy("org.ovirt.engine.core.vdsbroker"),
     List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only
