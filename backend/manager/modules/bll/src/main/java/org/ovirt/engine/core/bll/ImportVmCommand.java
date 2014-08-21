@@ -1304,6 +1304,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected boolean setAndValidateCpuProfile() {
+        getVm().getStaticData().setVdsGroupId(getVdsGroupId());
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVm().getStaticData(),
                 getVdsGroup().getcompatibility_version()));
     }
