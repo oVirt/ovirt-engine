@@ -402,9 +402,7 @@ public class VmDeviceUtils {
                 addSoundCard(vm.getStaticData(), vm.getVdsGroupCompatibilityVersion());
             } else {
                 VDSGroup cluster = vmBase.getVdsGroupId() != null ? DbFacade.getInstance().getVdsGroupDao().get(vmBase.getVdsGroupId()) : null;
-                if (cluster != null) {
-                    addSoundCard(vmBase, cluster.getcompatibility_version());
-                }
+                addSoundCard(vmBase, cluster != null ? cluster.getcompatibility_version() : null);
             }
         }
 
