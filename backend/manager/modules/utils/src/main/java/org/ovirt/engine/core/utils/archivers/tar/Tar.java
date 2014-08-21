@@ -35,7 +35,7 @@ public class Tar {
             entry.setMode(0700);
             archive.putArchiveEntry(entry);
             archive.closeArchiveEntry();
-            for (String f : file.list()) {
+            for (String f : entry.getFile().list()) {
                 _recurse(
                     archive,
                     new File(entry.getFile(), f),
