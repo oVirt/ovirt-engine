@@ -156,6 +156,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
 
         getModel().getCpuPinning().setEntity(vm.getCpuPinning());
 
+        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
+
         if (isHotSetCpuSupported()) {
             // cancel related events while fetching data
             getModel().getTotalCPUCores().getEntityChangedEvent().removeListener(getModel());

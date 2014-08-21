@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -162,6 +163,11 @@ public class OvfVmReader extends OvfReader {
 
             }
         }
+
+        // {@link VM#predefinedProperties} and {@link VM#userDefinedProperties}
+        // are being set in the above alias handling, we need to update custom properties
+        // to keep them consistent
+        _vm.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(_vm.getPredefinedProperties(), _vm.getUserDefinedProperties()));
 
         node = content.SelectSingleNode(OvfProperties.APPLICATIONS_LIST);
         if (node != null) {
