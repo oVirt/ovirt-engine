@@ -74,7 +74,12 @@ public class CommandCoordinatorImpl extends CommandCoordinator {
             cmdEntity.setCallBackNotified(existingCmdEntity.isCallBackNotified());
         }
         commandsCache.put(cmdEntity);
-        if (cmdEntity.isCallBackEnabled()) {
+        // check if callback is enabled or if parent command has callback enabled
+        if (cmdEntity.isCallBackEnabled() ||
+                (!Guid.isNullOrEmpty(cmdEntity.getRootCommandId()) &&
+                        commandsCache.get(cmdEntity.getRootCommandId()) != null &&
+                        commandsCache.get(cmdEntity.getRootCommandId()).isCallBackEnabled()
+                )) {
             buildCmdHierarchy(cmdEntity);
             if (!cmdEntity.isCallBackNotified()) {
                 cmdExecutor.addToCallBackMap(cmdEntity);

@@ -140,11 +140,11 @@ public class CommandExecutor {
     }
 
     public Future<VdcReturnValueBase> executeAsyncCommand(final VdcActionType actionType,
-                                    final VdcActionParametersBase parameters,
-                                    final CommandContext cmdContext) {
+                                                          final VdcActionParametersBase parameters,
+                                                          final CommandContext cmdContext) {
         final CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
-        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, true);
         CommandCallBack callBack = command.getCallBack();
+        command.persistCommand(command.getParameters().getParentCommand(), cmdContext, callBack != null);
         if (callBack != null) {
             cmdCallBackMap.put(command.getCommandId(), callBack);
         }
