@@ -130,6 +130,10 @@ public class CloudInitHandler {
             List<VmInitNetwork> networks = vmInit.getNetworks();
 
             for (VmInitNetwork iface: networks) {
+                if (Boolean.TRUE.equals(iface.getStartOnBoot())) {
+                    output.append("auto ").append(iface.getName()).append("\n");
+                }
+
                 output.append("iface " + iface.getName() + " inet "
                         + iface.getBootProtocol().getDisplayName() + "\n");
                 if (StringUtils.isNotEmpty(iface.getIp())) {
@@ -155,12 +159,6 @@ public class CloudInitHandler {
                     output.append("\n");
                 }
             }
-
-            output.append("auto");
-            for (VmInitNetwork iface : networks) {
-                output.append(" " + iface.getName());
-            }
-            output.append("\n");
         }
 
         interfaces = output.toString();
