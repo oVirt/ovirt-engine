@@ -5,7 +5,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -208,44 +207,6 @@ public class LoginModel extends Model
         AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery);
     }
 
-    @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
-    {
-        super.eventRaised(ev, sender, args);
-
-        if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getUserName())
-        {
-            userName_EntityChanged();
-        }
-    }
-
-    private void userName_EntityChanged()
-    {
-        getProfile().setIsChangable(getDomainAvailability());
-    }
-
-    private boolean getDomainAvailability()
-    {
-        // Check whether the user name contains domain part.
-        boolean hasDomain = getUserNameParts(getUserName().getEntity())[1] != null;
-
-        return !hasDomain;
-    }
-
-    private String[] getUserNameParts(String value)
-    {
-        if (!StringHelper.isNullOrEmpty(value))
-        {
-            int index = value.indexOf('@');
-
-            // Always return array of two elements representing user name and domain.)
-            return new String[] { index > -1 ? value.substring(0, index) : value,
-                    index > -1 ? value.substring(index + 1) : null };
-        }
-
-        return new String[] { "", null }; //$NON-NLS-1$
-    }
-
     public void login()
     {
         if (!validate())
@@ -257,9 +218,6 @@ public class LoginModel extends Model
         startProgress(null);
         disableLoginScreen();
 
-        String fullUserName = getUserName().getEntity();
-        String[] parts = getUserNameParts(fullUserName);
-        String domain = parts[1];
         AsyncQuery _asyncQuery = new AsyncQuery();
         _asyncQuery.setModel(this);
         _asyncQuery.asyncCallback = new INewAsyncCallback() {
@@ -294,9 +252,10 @@ public class LoginModel extends Model
                 }
             }
         };
-        Frontend.getInstance().loginAsync(fullUserName, getPassword().getEntity(),
-                StringHelper.isNullOrEmpty(domain) ? getProfile().getSelectedItem() : domain, true,
-                _asyncQuery);
+
+        // run the login
+        Frontend.getInstance().loginAsync(getUserName().getEntity(), getPassword().getEntity(),
+                getProfile().getSelectedItem(), true, _asyncQuery);
     }
 
     protected void raiseLoggedInEvent() {
