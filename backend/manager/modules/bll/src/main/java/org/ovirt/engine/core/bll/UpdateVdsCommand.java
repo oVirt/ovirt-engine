@@ -14,9 +14,12 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters.AuthenticationMethod;
+import org.ovirt.engine.core.common.businessentities.KdumpStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.VdsDynamic;
+import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.config.Config;
@@ -26,6 +29,7 @@ import org.ovirt.engine.core.common.validation.group.PowerManagementCheck;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -207,6 +211,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         }
         AlertIfPowerManagementNotConfigured(getParameters().getVdsStaticData());
         TestVdsPowerManagementStatus(getParameters().getVdsStaticData());
+        checkKdumpIntegrationStatus();
         setSucceeded(true);
     }
 
@@ -262,4 +267,16 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
         logable.setVdsId(_oldVds.getId());
     }
 
+    private void checkKdumpIntegrationStatus() {
+        VdsStatic vdsSt = getParameters().getVdsStaticData();
+        if (vdsSt.isPmEnabled() && vdsSt.isPmKdumpDetection()) {
+            VdsDynamic vdsDyn = getDbFacade().getVdsDynamicDao().get(vdsSt.getId());
+            if (vdsDyn != null && vdsDyn.getKdumpStatus() != KdumpStatus.ENABLED) {
+                AuditLogDirector.log(
+                        new AuditLogableBase(vdsSt.getId()),
+                        AuditLogType.KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS
+                );
+            }
+        }
+    }
 }
