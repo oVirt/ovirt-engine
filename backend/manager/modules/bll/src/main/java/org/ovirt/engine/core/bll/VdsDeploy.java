@@ -581,7 +581,10 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             return true;
         }},
         new Callable<Boolean>() { public Boolean call() throws Exception {
-            if (_vds.isPmKdumpDetection() && !fenceKdumpSupported) {
+            boolean enabled = _vds.getpm_enabled() &&
+                    _vds.isPmKdumpDetection() &&
+                    fenceKdumpSupported;
+            if (!enabled) {
                 _messages.post(
                         InstallerMessages.Severity.INFO,
                         "Disabling Kdump integration"
@@ -590,7 +593,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
 
             _parser.cliEnvironmentSet(
                     KdumpEnv.ENABLE,
-                    _vds.isPmKdumpDetection() && fenceKdumpSupported
+                    enabled
             );
             return true;
         }},
