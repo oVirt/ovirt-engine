@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.businessentities.BusinessEntityWithStatus;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -10,6 +12,7 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
     private static final long serialVersionUID = 1L;
 
     private Guid masterVolumeId;
+    private String masterVolumeName;
     private String sessionKey;
     private String slaveHostName;
     private Guid slaveNodeUuid;
@@ -17,6 +20,7 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
     private Guid sessionId;
     private Guid slaveVolumeId;
     private GeoRepSessionStatus status;
+    private ArrayList<GlusterGeoRepSessionDetails> sessionDetails;
 
     public Guid getMasterVolumeId() {
         return masterVolumeId;
@@ -24,6 +28,14 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
 
     public void setMasterVolumeId(Guid masterVolumeId) {
         this.masterVolumeId = masterVolumeId;
+    }
+
+    public String getMasterVolumeName() {
+        return masterVolumeName;
+    }
+
+    public void setMasterVolumeName(String masterVolumeName) {
+        this.masterVolumeName = masterVolumeName;
     }
 
     public String getSessionKey() {
@@ -84,6 +96,19 @@ public class GlusterGeoRepSession extends IVdcQueryable implements BusinessEntit
     @Override
     public void setId(Guid id) {
         this.sessionId = id;
+    }
+
+    public ArrayList<GlusterGeoRepSessionDetails> getSessionDetails() {
+        return sessionDetails;
+    }
+
+    public void setSessionDetails(ArrayList<GlusterGeoRepSessionDetails> sessionDetails) {
+        this.sessionDetails = sessionDetails;
+    }
+
+    @Override
+    public Object getQueryableId() {
+        return sessionId;
     }
 
     @Override

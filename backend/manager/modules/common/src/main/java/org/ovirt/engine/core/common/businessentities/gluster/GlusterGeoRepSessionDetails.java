@@ -1,12 +1,12 @@
 package org.ovirt.engine.core.common.businessentities.gluster;
 
+import java.io.Serializable;
 import java.util.Date;
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
-public class GlusterGeoRepSessionDetails implements BusinessEntity<Guid>{
+public class GlusterGeoRepSessionDetails implements Serializable{
 
     private static final long serialVersionUID = -8084667500866439692L;
 
@@ -120,13 +120,11 @@ public class GlusterGeoRepSessionDetails implements BusinessEntity<Guid>{
         this.filesSkipped = filesSkipped;
     }
 
-    @Override
-    public Guid getId() {
+    public Guid getSessionId() {
         return sessionId;
     }
 
-    @Override
-    public void setId(Guid id) {
+    public void setSessionId(Guid id) {
         this.sessionId = id;
     }
 
@@ -134,7 +132,7 @@ public class GlusterGeoRepSessionDetails implements BusinessEntity<Guid>{
     public boolean equals(Object obj) {
         return (obj != null) &&
                 (obj instanceof GlusterGeoRepSessionDetails) &&
-                ObjectUtils.objectsEqual(getId(), ((GlusterGeoRepSessionDetails) obj).getId()) &&
+                ObjectUtils.objectsEqual(getSessionId(), ((GlusterGeoRepSessionDetails) obj).getSessionId()) &&
                 ObjectUtils.objectsEqual(getMasterBrickId(), ((GlusterGeoRepSessionDetails) obj).getMasterBrickId()) &&
                 ObjectUtils.objectsEqual(getSlaveNodeUuid(), ((GlusterGeoRepSessionDetails) obj).getSlaveNodeUuid()) &&
                 ObjectUtils.objectsEqual(getSlaveHostName(), ((GlusterGeoRepSessionDetails) obj).getSlaveHostName()) &&

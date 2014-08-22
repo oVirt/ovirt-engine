@@ -4,5 +4,29 @@ public enum GeoRepCrawlStatus {
 
     CHANGELOG_CRAWL,
     UNKNOWN,
+    NOT_APPLICABLE("N/A"),
     HYBRID_CRAWL;
+
+    private String statusMsg;
+
+    private GeoRepCrawlStatus(String status) {
+        statusMsg = status;
+    }
+
+    private GeoRepCrawlStatus() {
+        statusMsg = this.name();
+    }
+
+    public String value() {
+        return statusMsg;
+    }
+
+    public static GeoRepCrawlStatus from(String status) {
+        for (GeoRepCrawlStatus crawlStatus : values()) {
+            if (crawlStatus.value().equalsIgnoreCase(status)) {
+                return crawlStatus;
+            }
+        }
+        return GeoRepCrawlStatus.UNKNOWN;
+    }
 }
