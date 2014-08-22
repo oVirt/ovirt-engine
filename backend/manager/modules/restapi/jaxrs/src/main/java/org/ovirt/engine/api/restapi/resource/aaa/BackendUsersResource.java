@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
+import org.ovirt.engine.core.common.queries.GetDirectoryUserByPrincipalParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -209,8 +210,9 @@ public class BackendUsersResource
             result = getUserById(directoryName, namespace, user.getDomainEntryId());
         } else if (user.isSetId()) {
             result = getUserById(directoryName, namespace, user.getId());
-        } else {
-            if (user.isSetUserName()) {
+        } else  if (user.isSetPrincipal()) {
+            result = getEntity(DirectoryUser.class, VdcQueryType.GetDirectoryUserByPrincipal, new GetDirectoryUserByPrincipalParameters(directoryName, user.getPrincipal()), user.getPrincipal());
+        } else if (user.isSetUserName()) {
                 result = getEntity(
                         DirectoryUser.class,
                         SearchType.DirectoryUser,
@@ -220,8 +222,6 @@ public class BackendUsersResource
                                 directoryName)
                         );
             }
-
-        }
         return result;
     }
 

@@ -177,11 +177,12 @@ public class KerberosLdapAuthz implements Extension {
     }
 
     private void doFetchPrincipalRecord(ExtMap input, ExtMap output) {
+        ExtMap authRecord = input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
         LdapReturnValueBase ldapResult =
                 broker.runAdAction(AdActionType.GetAdUserByUserName, new LdapSearchByUserNameParameters(configuration,
                         null,
-                        getDirectoryName(),
-                        input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD).<String> get(Authn.AuthRecord.PRINCIPAL)));
+                        getDirectoryName(), authRecord != null ? authRecord.<String> get(Authn.AuthRecord.PRINCIPAL)
+                                : input.<String> get(Authz.InvokeKeys.PRINCIPAL)));
         output.mput(
                 Authz.InvokeKeys.PRINCIPAL_RECORD,
                 mapLdapUser(((LdapUser) ldapResult.getReturnValue()))
@@ -275,6 +276,9 @@ public class KerberosLdapAuthz implements Extension {
                 ).mput(
                         Authz.PrincipalRecord.TITLE,
                         user.getTitle()
+                ).mput(
+                        Authz.PrincipalRecord.PRINCIPAL,
+                        user.getUserName()
                 );
         if (user.getGroups() != null) {
             List<ExtMap> groups = new ArrayList<>();

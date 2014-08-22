@@ -76,7 +76,8 @@ public class InternalAuthz implements Extension {
     }
 
     private void doFetchPrincipalRecord(ExtMap input, ExtMap output) {
-        String principal = input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD).get(Authn.AuthRecord.PRINCIPAL);
+        ExtMap authRecord = input.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD);
+        String principal = authRecord != null ? authRecord.<String>get(Authn.AuthRecord.PRINCIPAL) : input.<String> get(Authz.InvokeKeys.PRINCIPAL);
         if (principal.equals(adminUser.<String> get(Authz.PrincipalRecord.NAME))) {
             output.put(Authz.InvokeKeys.PRINCIPAL_RECORD, adminUser);
         }
@@ -125,6 +126,8 @@ public class InternalAuthz implements Extension {
                 ).mput(
                         Authz.PrincipalRecord.ID,
                         configuration.getProperty("config.authz.user.id")
+                ).mput(Authz.PrincipalRecord.PRINCIPAL,
+                        userName
                 );
 
     }

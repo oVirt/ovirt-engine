@@ -35,15 +35,23 @@ public class AuthzUtils {
     }
 
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
+        return fetchPrincipalRecordImpl(extension, Authn.InvokeKeys.AUTH_RECORD, authRecord);
+    }
+
+    public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, String principal) {
+        return fetchPrincipalRecordImpl(extension, Authz.InvokeKeys.PRINCIPAL, principal);
+    }
+
+    private static ExtMap fetchPrincipalRecordImpl(final ExtensionProxy extension, ExtKey key, Object value) {
         ExtMap ret = null;
         ExtMap output = extension.invoke(new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
                 Authz.InvokeCommands.FETCH_PRINCIPAL_RECORD
                 ).mput(
-                        Authn.InvokeKeys.AUTH_RECORD,
-                        authRecord
+                        key,
+                        value
                 ));
-        if (output.<Integer>get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
+        if (output.<Integer> get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
             ret = output.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);
         }
         return ret;

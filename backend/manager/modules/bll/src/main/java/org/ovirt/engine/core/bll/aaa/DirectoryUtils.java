@@ -157,6 +157,7 @@ public class DirectoryUtils {
             directoryUser.setLastName(principalRecord.<String> get(Authz.PrincipalRecord.LAST_NAME));
             directoryUser.setEmail(principalRecord.<String> get(Authz.PrincipalRecord.EMAIL));
             directoryUser.setTitle(principalRecord.<String> get(Authz.PrincipalRecord.TITLE));
+            directoryUser.setPrincipal(principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL));
             List<DirectoryGroup> directoryGroups = new ArrayList<DirectoryGroup>();
             List<ExtMap> groups = principalRecord.<List<ExtMap>> get(Authz.PrincipalRecord.GROUPS);
             if (groups != null) {

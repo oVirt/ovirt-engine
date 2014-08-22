@@ -69,6 +69,7 @@ public class SystemPermissionView extends Composite {
                 getTableHeaderlessResources(), getTableResources(), eventBus, clientStorage);
 
         content.add(table);
+        table.enableColumnResizing();
 
         table.addColumn(new PermissionTypeColumn(), constants.empty(), "30px"); //$NON-NLS-1$
 
