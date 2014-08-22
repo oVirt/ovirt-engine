@@ -76,9 +76,9 @@ This class allows you to change the error icon on the error popup window. */
 .obrand_dialogLogoErrorImage {
     background: url(images/dialog/error.png);
     background-repeat: no-repeat;
-    background-position: 0 5px;
+    background-position: 3px 5px;
     width: 16px;
-    height: 14px;
+    height: 24px;
     border: 0px;
 }
 
