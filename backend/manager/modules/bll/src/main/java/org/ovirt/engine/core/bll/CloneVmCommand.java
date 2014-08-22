@@ -159,13 +159,30 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
     }
 
     @Override
-    protected void endSuccessfully() {
-        super.endSuccessfully();
-        attachDisks();
+    protected void removeVmRelatedEntitiesFromDb() {
+        detachDisks();
+        super.removeVmRelatedEntitiesFromDb();
+    }
+
+    @Override
+    protected boolean addVmImages() {
+        if (super.addVmImages()) {
+            attachDisks();
+            return true;
+        }
+
+        return false;
+    }
+
+    private void detachDisks() {
+        attachDetachDisks(VdcActionType.DetachDiskFromVm);
     }
 
     private void attachDisks() {
+        attachDetachDisks(VdcActionType.AttachDiskToVm);
+    }
 
+    private void attachDetachDisks(VdcActionType actionType) {
         VdcQueryReturnValue vdcReturnValue = runInternalQuery(
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
@@ -174,14 +191,14 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
         for (Disk disk : loadedImages) {
             if (disk.getDiskStorageType() == Disk.DiskStorageType.LUN || disk.isShareable()) {
-                attachDisk(disk);
+                attachDetachDisk(disk, actionType);
             }
         }
     }
 
-    private void attachDisk(Disk disk) {
+    private void attachDetachDisk(Disk disk, VdcActionType actionType) {
         runInternalAction(
-                VdcActionType.AttachDiskToVm,
+                actionType,
                 new AttachDetachVmDiskParameters(
                         getParameters().getNewVmGuid(),
                         disk.getId(),
