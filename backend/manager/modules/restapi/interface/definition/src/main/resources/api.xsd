@@ -1966,6 +1966,7 @@
           <xs:element name="last_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <!-- generally name@domain -->
           <xs:element name="user_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="principal" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <xs:element name="email" type="xs:string" minOccurs="0" maxOccurs="1"/>
           <!-- used only to represent the initial role assignments for a

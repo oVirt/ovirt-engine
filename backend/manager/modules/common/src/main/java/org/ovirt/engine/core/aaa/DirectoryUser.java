@@ -11,6 +11,7 @@ public class DirectoryUser extends DirectoryEntry {
     private String title;
     private String email;
     private String department;
+    private String principal;
 
     // Flag indicating if this user has the administrator role:
     private boolean isAdmin;
@@ -66,6 +67,14 @@ public class DirectoryUser extends DirectoryEntry {
 
     public void setTitle(String title) {
         this.title = title;
+    }
+
+    public String getPrincipal() {
+        return principal;
+    }
+
+    public void setPrincipal(String principal) {
+        this.principal = principal;
     }
 
     @Override

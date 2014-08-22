@@ -21,6 +21,7 @@ public class UserMapper {
         User model = template != null ? template : new User();
         model.setName(entity.getFirstName());
         model.setUserName(entity.getLoginName() + "@" + entity.getDomain());
+        model.setPrincipal(entity.getLoginName());
         model.setId(entity.getId().toString());
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
@@ -52,6 +53,7 @@ public class UserMapper {
         model.setLastName(entity.getLastName());
         model.setEmail(entity.getEmail());
         model.setDepartment(entity.getDepartment());
+        model.setPrincipal(entity.getPrincipal());
         model.setNamespace(entity.getNamespace());
         if (entity.getGroups() != null) {
             model.setGroups(new Groups());
@@ -72,7 +74,9 @@ public class UserMapper {
     @Mapping(from = User.class, to = DbUser.class)
     public static DbUser map(User model, DbUser template) {
         DbUser entity = template != null? template: new DbUser();
-        if (model.isSetName()) {
+        if (model.isSetPrincipal()) {
+            entity.setLoginName(model.getPrincipal());
+        } else if (model.isSetName()) {
             entity.setLoginName(model.getName());
         }
         if (model.isSetId()) {
