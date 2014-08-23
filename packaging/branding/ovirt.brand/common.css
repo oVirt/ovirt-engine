@@ -37,7 +37,7 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     right: 30px;
 }
 
-.obrand_dialogHeaderTitle {
+.obrand_dialogHeaderTitleContainer {
     text-align: left;
     font-size: 14px;
     font-weight: bold;
@@ -46,8 +46,13 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     height: 27px;
     overflow: hidden;
     z-index: 2;
-    margin-top: 1px;
+    margin-top: 0;
     left: -5px;
+}
+
+.obrand_dialogHeaderTitleElement {
+    float: left;
+    padding-right: 5px;
 }
 
 /* right */
