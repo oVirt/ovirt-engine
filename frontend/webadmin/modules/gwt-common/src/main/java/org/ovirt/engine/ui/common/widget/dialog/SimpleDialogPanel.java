@@ -26,6 +26,8 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
         String footerButton();
 
         String contentWidget();
+
+        String obrand_dialogHeaderTitleElement();
     }
 
     @UiField
@@ -63,6 +65,7 @@ public class SimpleDialogPanel extends AbstractDialogPanel {
     @Override
     @UiChild(tagname = "header", limit = 1)
     public void setHeader(Widget widget) {
+        widget.addStyleName(style.obrand_dialogHeaderTitleElement());
         headerTitlePanel.insert(widget, 0); //Put the label at the front.
     }
 
