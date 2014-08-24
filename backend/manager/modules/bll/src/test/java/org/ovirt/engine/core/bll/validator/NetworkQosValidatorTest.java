@@ -39,7 +39,7 @@ public class NetworkQosValidatorTest {
 
         validator = spy(new NetworkQosValidator(qos));
         doReturn(oldQos).when(validator).getOldQos();
-        doReturn(allQos).when(validator).getAllQosInDc();
+        doReturn(allQos).when(validator).getAllQosInDcByType();
 
         nullValidator = spy(new NetworkQosValidator(null));
         doReturn(oldQos).when(nullValidator).getOldQos();
@@ -72,7 +72,7 @@ public class NetworkQosValidatorTest {
     public void qosDoesNotExist() {
         qos.setId(DEFAULT_GUID);
         doReturn(null).when(validator).getOldQos();
-        qosExistsTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_FOUND), validator);
+        qosExistsTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND), validator);
     }
 
     private void consistentDataCenterTest(Matcher<ValidationResult> matcher) {
@@ -90,7 +90,7 @@ public class NetworkQosValidatorTest {
     public void differentDataCenter() {
         qos.setStoragePoolId(DEFAULT_GUID);
         oldQos.setStoragePoolId(OTHER_GUID);
-        consistentDataCenterTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID));
+        consistentDataCenterTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT));
     }
 
     private void nameNotChangedOrNotTakenTest(Matcher<ValidationResult> matcher) {
@@ -118,7 +118,7 @@ public class NetworkQosValidatorTest {
     @Test
     public void NameTaken() {
         qos.setName("foo");
-        nameNotChangedOrNotTakenTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NAME_EXIST));
+        nameNotChangedOrNotTakenTest(failsWith(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NAME_EXIST));
     }
 
     private void valuesPresentTest(Matcher<ValidationResult> matcher) {

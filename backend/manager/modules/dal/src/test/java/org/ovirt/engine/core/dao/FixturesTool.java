@@ -503,7 +503,7 @@ public class FixturesTool {
 
     public static final Guid VM_NETWORK_INTERFACE_PROFILE_NOT_USED = new Guid("2b75e023-a1fb-4dcb-9738-0ec7fe2d51c6");
 
-    public static final Guid NETWORK_QOS = new Guid("ae956031-6be2-43d6-bb90-5191c9253314");
+    public static final Guid NETWORK_QOS = new Guid("de956031-6be2-43d6-bb90-5191c9253314");
 
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
 

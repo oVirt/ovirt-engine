@@ -977,7 +977,7 @@ public class DbFacade {
         return getDao(VmGuestAgentInterfaceDao.class);
     }
 
-    public NetworkQoSDao getQosDao() {
+    public NetworkQoSDao getNetworkQosDao() {
         return getDao(NetworkQoSDao.class);
     }
 

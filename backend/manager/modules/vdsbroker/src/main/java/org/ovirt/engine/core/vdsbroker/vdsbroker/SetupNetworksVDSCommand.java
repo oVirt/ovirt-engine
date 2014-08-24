@@ -41,7 +41,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     private Map<String, Object> generateNetworks() {
         Map<String, Object> networks = new HashMap<String, Object>();
-        NetworkQoSDao qosDao = getDbFacade().getQosDao();
+        NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
         for (Network network : getParameters().getNetworks()) {
             Map<String, Object> opts = new HashMap<String, Object>();
             VdsNetworkInterface iface =

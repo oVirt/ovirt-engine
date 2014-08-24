@@ -1247,14 +1247,14 @@ SELECT vnic_profiles.id AS id,
        vnic_profiles.custom_properties as custom_properties,
        vnic_profiles.description as description,
        network.name as network_name,
-       network_qos.name as network_qos_name,
+       qos.name as network_qos_name,
        storage_pool.name as data_center_name,
        storage_pool.compatibility_version as compatibility_version,
        storage_pool.id as data_center_id
 FROM vnic_profiles
 
 INNER JOIN network ON vnic_profiles.network_id = network.id
-LEFT JOIN network_qos ON vnic_profiles.network_qos_id = network_qos.id
+LEFT JOIN qos ON vnic_profiles.network_qos_id = qos.id
 INNER JOIN storage_pool ON network.storage_pool_id = storage_pool.id;
 
 

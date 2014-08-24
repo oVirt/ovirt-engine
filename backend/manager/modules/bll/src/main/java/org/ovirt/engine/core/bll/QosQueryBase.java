@@ -25,6 +25,9 @@ public abstract class QosQueryBase extends QueriesCommandBase<QosQueryParameterB
         case CPU:
             qosDao = getDbFacade().getCpuQosDao();
             break;
+        case NETWORK:
+            qosDao = getDbFacade().getNetworkQosDao();
+            break;
         default:
             log.debugFormat("Not handled QoS type: {0}", qosType);
             break;

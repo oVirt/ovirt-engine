@@ -134,7 +134,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
-        NetworkQoSDao qosDao = DbFacade.getInstance().getQosDao();
+        NetworkQoSDao qosDao = DbFacade.getInstance().getNetworkQosDao();
         Guid id = entity.getId();
         NetworkQoS oldQos = qosDao.get(id);
         NetworkQoS qos = entity.getQos();
@@ -219,7 +219,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("id", id);
 
-        DbFacade.getInstance().getQosDao().remove(id);
+        DbFacade.getInstance().getNetworkQosDao().remove(id);
         getCallsHandler().executeModification("Deletevds_interface", parameterSource);
     }
 
@@ -318,7 +318,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
-                    entity.setQos(DbFacade.getInstance().getQosDao().get(entity.getId()));
+                    entity.setQos(DbFacade.getInstance().getNetworkQosDao().get(entity.getId()));
                     entity.setQosOverridden(rs.getBoolean("qos_overridden"));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));

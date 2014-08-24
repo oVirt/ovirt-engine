@@ -51,7 +51,7 @@ public class VnicProfileValidator {
 
     public ValidationResult networkQosExistsOrNull() {
         return vnicProfile.getNetworkQosId() == null
-                || getDbFacade().getQosDao().get(vnicProfile.getNetworkQosId()) != null
+                || getDbFacade().getNetworkQosDao().get(vnicProfile.getNetworkQosId()) != null
                 ? ValidationResult.VALID
                 : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_QOS_NOT_EXISTS);
     }

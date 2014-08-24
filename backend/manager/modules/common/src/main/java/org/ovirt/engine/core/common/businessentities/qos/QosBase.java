@@ -56,17 +56,6 @@ public class QosBase extends IVdcQueryable implements BusinessEntity<Guid>, Seri
         return toString();
     }
 
-    /**
-     * Check whether specific derived QoS values are equal.
-     *
-     * @param other
-     * @return are equals
-     */
-    public boolean equalValues(QosBase other) {
-        // no extra values, should be called for the derivative classes.
-        return false;
-    }
-
     @Override
     public Guid getId() {
         return id;

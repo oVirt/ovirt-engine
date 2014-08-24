@@ -11,6 +11,6 @@ public class GetAllNetworkQosByStoragePoolIdQuery<P extends IdQueryParameters> e
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getQosDao().getAllForStoragePoolId(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getNetworkQosDao().getAllForStoragePoolId(getParameters().getId()));
     }
 }

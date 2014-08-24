@@ -701,7 +701,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             specParams = new HashMap<>();
             struct.put(VdsProperties.SpecParams, specParams);
         }
-        NetworkQoS networkQoS = (qosId == null) ? new NetworkQoS() : DbFacade.getInstance().getQosDao().get(qosId);
+        NetworkQoS networkQoS = (qosId == null) ? new NetworkQoS() : DbFacade.getInstance().getNetworkQosDao().get(qosId);
         NetworkQosMapper qosMapper =
                 new NetworkQosMapper(specParams, VdsProperties.QOS_INBOUND, VdsProperties.QOS_OUTBOUND);
         qosMapper.serialize(networkQoS);

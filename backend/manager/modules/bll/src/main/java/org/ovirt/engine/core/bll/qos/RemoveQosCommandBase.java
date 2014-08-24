@@ -18,7 +18,7 @@ public abstract class RemoveQosCommandBase<T extends QosBase, M extends QosValid
             return false;
         }
         QosValidator<T> validator = getQosValidator(getQos());
-        return super.canDoAction() && validate(validator.qosExists());
+        return super.canDoAction() && validate(validator.qosExists()) && validate(validator.consistentDataCenter());
     }
 
     @Override
