@@ -4,7 +4,6 @@ import java.util.List;
 
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.StorageConnection;
 import org.ovirt.engine.api.model.StorageConnections;
 import org.ovirt.engine.api.resource.StorageServerConnectionResource;
@@ -43,18 +42,8 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
     }
 
     @Override
-    public Response remove(String id, Action action) {
-        // TODO should return BadRequest error
-        return null;
-    }
-
-    public Response remove(String id) {
-        return performRemove(id);
-    }
-
-    @Override
     public StorageServerConnectionResource getStorageConnectionSubResource(String id) {
-        return inject(new BackendIscsiBondStorageServerConnection(id, this));
+        return inject(new BackendIscsiBondStorageConnectionResource(id, this));
     }
 
     @Override
@@ -64,7 +53,7 @@ public class BackendIscsiBondStorageConnectionsResource extends BackendStorageSe
         return performAction(VdcActionType.EditIscsiBond, new EditIscsiBondParameters(iscsiBond));
     }
 
-    private IscsiBond getIscsiBond() {
+    protected IscsiBond getIscsiBond() {
         return getEntity(IscsiBond.class, VdcQueryType.GetIscsiBondById, new IdQueryParameters(iscsiBondId), iscsiBondId.toString());
     }
 
