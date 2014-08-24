@@ -103,13 +103,13 @@ label {
     line-height: 16px !important;
 }
 .lmtalb_listbox_pfly_fix {
-    height: 18px !important;
+    height: 19px !important;
 }
 .lmtalb_listbox_pfly_fix input {
-    height: 16px !important;
+    height: 17px !important;
 }
 .lmtalb_suggestboxWrapper_pfly_fix {
-    height: 18px !important;
+    height: 17px !important;
 }
 #VmPopupWidget_name, #PoolNewPopupWidget_name, #PoolNewPopupWidget_prestartedVms, #PoolNewPopupWidget_maxAssignedVmsPerUser,
     #PoolEditPopupWidget_name, #PoolEditPopupWidget_editPrestartedVms, #PoolEditPopupWidget_incraseNumOfVms,
