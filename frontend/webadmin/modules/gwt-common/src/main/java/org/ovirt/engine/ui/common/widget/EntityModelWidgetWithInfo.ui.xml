@@ -10,14 +10,14 @@
         }
     </ui:style>
 
-    <g:HorizontalPanel width="100%" addStyleNames="emwwi_outerPanel_pfly_fix">
-        <g:cell verticalAlignment="ALIGN_MIDDLE" addStyleNames="emwwi_leftCell_pfly_fix">
-            <g:HorizontalPanel width="100%" addStyleNames="emwwi_outerPanel_pfly_fix">
-                <ge:EntityModelLabel ui:field="label" addStyleNames="{style.labelStyle} emwwi_label_pfly_fix" />
-                <d:InfoIcon ui:field="infoIcon" addStyleNames="emwwi_infoIcon_pfly_fix" />
+    <g:HorizontalPanel width="100%" height="30px">
+        <g:cell verticalAlignment="ALIGN_MIDDLE">
+            <g:HorizontalPanel width="100%">
+                <ge:EntityModelLabel ui:field="label" addStyleNames="{style.labelStyle}" />
+                <d:InfoIcon ui:field="infoIcon" />
             </g:HorizontalPanel>
         </g:cell>
-        <g:cell width="230px" addStyleNames="emwwi_rightCell_pfly_fix">
+        <g:cell width="230px">
             <g:Composite ui:field="contentWidget" />
         </g:cell>
     </g:HorizontalPanel>
