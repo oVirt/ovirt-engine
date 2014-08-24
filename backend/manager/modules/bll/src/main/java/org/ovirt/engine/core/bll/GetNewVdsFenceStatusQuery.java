@@ -37,6 +37,7 @@ public class GetNewVdsFenceStatusQuery<P extends GetNewVdsFenceStatusParameters>
             tempVar.setPmSecondaryUser(getParameters().getUser());
             tempVar.setPmSecondaryPassword(getParameters().getPassword());
         }
+        tempVar.setPmProxyPreferences(getParameters().getPmProxyPreferences());
         VDS vds = tempVar;
         FenceExecutor executor = new FenceExecutor(vds, FenceActionType.Status);
         if (executor.findProxyHost()) {
