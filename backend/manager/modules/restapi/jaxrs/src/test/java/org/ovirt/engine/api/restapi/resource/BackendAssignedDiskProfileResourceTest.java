@@ -93,7 +93,6 @@ public class BackendAssignedDiskProfileResourceTest
         expect(entity.getName()).andReturn(NAMES[index]).anyTimes();
         expect(entity.getDescription()).andReturn(DESCRIPTIONS[index]).anyTimes();
         expect(entity.getStorageDomainId()).andReturn(GUIDS[index]).anyTimes();
-        expect(entity.getQosId()).andReturn(GUIDS[index]).anyTimes();
         return entity;
     }
 }

@@ -4,6 +4,7 @@ import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.QoS;
 import org.ovirt.engine.api.model.QosType;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
@@ -48,6 +49,23 @@ public class QosMapper {
                 return model;
             }
             model.setCpuLimit(cpuQos.getCpuLimit());
+            break;
+        case NETWORK:
+            NetworkQoS networkQos = null;
+            // avoid findbugs error.
+            if (entity instanceof NetworkQoS) {
+                networkQos = (NetworkQoS) entity;
+            }
+            // avoid findbugs error.
+            if (networkQos == null) {
+                return model;
+            }
+            model.setInboundAverage(networkQos.getInboundAverage());
+            model.setInboundPeak(networkQos.getInboundPeak());
+            model.setInboundBurst(networkQos.getInboundBurst());
+            model.setOutboundAverage(networkQos.getOutboundAverage());
+            model.setOutboundPeak(networkQos.getOutboundPeak());
+            model.setOutboundBurst(networkQos.getOutboundBurst());
             break;
         default:
             break;
@@ -103,6 +121,30 @@ public class QosMapper {
             if (model.isSetCpuLimit()) {
                 ((CpuQos) entity)
                         .setCpuLimit(IntegerMapper.mapMinusOneToNull(model.getCpuLimit()));
+            }
+            break;
+        case NETWORK:
+            if (entity == null) {
+                entity = new NetworkQoS();
+            }
+            if (model.isSetInboundAverage()) {
+                ((NetworkQoS) entity).setInboundAverage(IntegerMapper.mapMinusOneToNull(model.getInboundAverage()));
+            }
+            if (model.isSetInboundPeak()) {
+                ((NetworkQoS) entity).setInboundPeak(IntegerMapper.mapMinusOneToNull(model.getInboundPeak()));
+            }
+            if (model.isSetInboundBurst()) {
+                ((NetworkQoS) entity).setInboundBurst(IntegerMapper.mapMinusOneToNull(model.getInboundBurst()));
+            }
+            if (model.isSetOutboundAverage()) {
+                ((NetworkQoS) entity).setOutboundAverage(IntegerMapper.mapMinusOneToNull(model.getOutboundAverage()));
+            }
+            if (model.isSetOutboundPeak()) {
+                ((NetworkQoS) entity).setOutboundPeak(IntegerMapper.mapMinusOneToNull(model.getOutboundPeak()));
+
+            }
+            if (model.isSetOutboundBurst()) {
+                ((NetworkQoS) entity).setOutboundBurst(IntegerMapper.mapMinusOneToNull(model.getOutboundBurst()));
             }
             break;
         default:

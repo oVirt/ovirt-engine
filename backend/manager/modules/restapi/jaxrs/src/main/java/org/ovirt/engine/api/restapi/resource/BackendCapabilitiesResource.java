@@ -882,6 +882,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
 
     private void addSupportedQosTypes(VersionCaps version) {
         version.setQosTypes(new QosTypes());
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_3)) {
+            version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.NETWORK.name().toLowerCase());
+        }
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.STORAGE.name().toLowerCase());
             version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.CPU.name().toLowerCase());

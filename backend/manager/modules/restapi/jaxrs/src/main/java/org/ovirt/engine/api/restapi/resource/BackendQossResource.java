@@ -12,6 +12,7 @@ import org.ovirt.engine.api.resource.QosResource;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
@@ -51,6 +52,10 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
         case CPU:
             entity = new CpuQos();
             addVdcActionType = VdcActionType.AddCpuQos;
+            break;
+        case NETWORK:
+            entity = new NetworkQoS();
+            addVdcActionType = VdcActionType.AddNetworkQoS;
             break;
         default:
             break;
