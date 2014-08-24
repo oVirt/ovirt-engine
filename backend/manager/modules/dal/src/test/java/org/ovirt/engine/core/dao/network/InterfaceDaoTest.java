@@ -123,7 +123,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
             found |= (FixturesTool.VDS_NETWORK_INTERFACE.equals(iface.getId()));
         }
         assertTrue(found);
-        assertNotNull(dbFacade.getQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
+        assertNotNull(dbFacade.getNetworkQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
 
         dao.removeInterfaceFromVds(FixturesTool.VDS_NETWORK_INTERFACE);
 
@@ -132,7 +132,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         for (VdsNetworkInterface iface : after) {
             assertNotSame(FixturesTool.VDS_NETWORK_INTERFACE, iface.getId());
         }
-        assertNull(dbFacade.getQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
+        assertNull(dbFacade.getNetworkQosDao().get(FixturesTool.VDS_NETWORK_INTERFACE));
     }
 
     /**

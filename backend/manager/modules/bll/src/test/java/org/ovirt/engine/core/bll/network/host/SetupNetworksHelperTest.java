@@ -1961,7 +1961,7 @@ public class SetupNetworksHelperTest {
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();
         doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
         doReturn(networkDAO).when(dbFacade).getNetworkDao();
-        doReturn(qosDao).when(dbFacade).getQosDao();
+        doReturn(qosDao).when(dbFacade).getNetworkQosDao();
 
         return helper;
     }

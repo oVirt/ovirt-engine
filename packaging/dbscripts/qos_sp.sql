@@ -35,6 +35,25 @@ INSERT INTO qos(id, qos_type, name, description, storage_pool_id, cpu_limit)
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION InsertNetworkQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_inbound_average INTEGER,
+  v_inbound_peak INTEGER,
+  v_inbound_burst INTEGER,
+  v_outbound_average INTEGER,
+  v_outbound_peak INTEGER,
+  v_outbound_burst INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO qos(id, qos_type, name, description, storage_pool_id, inbound_average, inbound_peak, inbound_burst, outbound_average, outbound_peak, outbound_burst)
+  VALUES(v_id, v_qos_type, v_name, v_description, v_storage_pool_id, v_inbound_average, v_inbound_peak, v_inbound_burst, v_outbound_average, v_outbound_peak, v_outbound_burst);
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdateStorageQos(v_id uuid,
   v_qos_type SMALLINT,
   v_name VARCHAR(50),
@@ -69,6 +88,27 @@ BEGIN
       UPDATE qos
       SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id, cpu_limit = v_cpu_limit,
       _update_date = LOCALTIMESTAMP
+      WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateNetworkQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_inbound_average INTEGER,
+  v_inbound_peak INTEGER,
+  v_inbound_burst INTEGER,
+  v_outbound_average INTEGER,
+  v_outbound_peak INTEGER,
+  v_outbound_burst INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+      UPDATE qos
+      SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id, inbound_average = v_inbound_average, inbound_peak = v_inbound_peak, inbound_burst = v_inbound_burst,
+      outbound_average = v_outbound_average, outbound_peak = v_outbound_peak, outbound_burst = v_outbound_burst, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

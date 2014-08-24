@@ -1,74 +1,52 @@
 package org.ovirt.engine.core.dao.network;
 
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dao.DefaultGenericDaoDbFacade;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
-import java.util.List;
-
-public class NetworkQoSDaoFacadeImpl extends DefaultGenericDaoDbFacade<NetworkQoS, Guid> implements NetworkQoSDao {
+public class NetworkQoSDaoFacadeImpl extends QosBaseDaoFacadeImpl<NetworkQoS> implements NetworkQoSDao {
 
     protected final RowMapper<NetworkQoS> mapper = createEntityRowMapper();
 
     public NetworkQoSDaoFacadeImpl(){
-        super("NetworkQos");
-    }
-
-    private static Integer getIntegerOrNull(ResultSet rs, String columnName) throws SQLException {
-        int i = rs.getInt(columnName);
-        return rs.wasNull() ? null : i;
+        super(QosType.NETWORK);
     }
 
     @Override
-    protected MapSqlParameterSource createIdParameterMapper(Guid guid) {
-        return getCustomMapSqlParameterSource()
-                .addValue("id", guid);
+    protected MapSqlParameterSource createFullParametersMapper(NetworkQoS networkQos) {
+        MapSqlParameterSource map = super.createFullParametersMapper(networkQos);
+        map.addValue("inbound_average", networkQos.getInboundAverage());
+        map.addValue("inbound_peak", networkQos.getInboundPeak());
+        map.addValue("inbound_burst", networkQos.getInboundBurst());
+        map.addValue("outbound_average", networkQos.getOutboundAverage());
+        map.addValue("outbound_peak", networkQos.getOutboundPeak());
+        map.addValue("outbound_burst", networkQos.getOutboundBurst());
+        return map;
     }
 
     @Override
     protected RowMapper<NetworkQoS> createEntityRowMapper() {
-        return new RowMapper<NetworkQoS>() {
-            @Override
-            public NetworkQoS mapRow(ResultSet rs, int rowNum)
-                    throws SQLException {
-                NetworkQoS entity = new NetworkQoS();
-                entity.setId(getGuid(rs, "id"));
-                entity.setName(rs.getString("name"));
-                entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
-                entity.setInboundAverage(getIntegerOrNull(rs, "inbound_average"));
-                entity.setInboundPeak(getIntegerOrNull(rs, "inbound_peak"));
-                entity.setInboundBurst(getIntegerOrNull(rs, "inbound_burst"));
-                entity.setOutboundAverage(getIntegerOrNull(rs, "outbound_average"));
-                entity.setOutboundPeak(getIntegerOrNull(rs, "outbound_peak"));
-                entity.setOutboundBurst(getIntegerOrNull(rs, "outbound_burst"));
-                return entity;
-            }
-        };
+        return NetworkQosDaoDbFacadaeImplMapper.MAPPER;
     }
 
-    @Override
-    public List<NetworkQoS> getAllForStoragePoolId(Guid storagePoolId) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("storage_pool_id", storagePoolId.getUuid());
-        return getCallsHandler().executeReadList("GetAllNetworkQosForStoragePool", mapper, parameterSource);
-    }
+    public static class NetworkQosDaoDbFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<NetworkQoS> {
+        public static final NetworkQosDaoDbFacadaeImplMapper MAPPER = new NetworkQosDaoDbFacadaeImplMapper();
 
-    @Override
-    protected MapSqlParameterSource createFullParametersMapper(NetworkQoS networkQoS) {
-        return getCustomMapSqlParameterSource()
-                .addValue("id", networkQoS.getId())
-                .addValue("name", networkQoS.getName())
-                .addValue("storage_pool_id", networkQoS.getStoragePoolId())
-                .addValue("inbound_average", networkQoS.getInboundAverage())
-                .addValue("inbound_peak", networkQoS.getInboundPeak())
-                .addValue("inbound_burst", networkQoS.getInboundBurst())
-                .addValue("outbound_average", networkQoS.getOutboundAverage())
-                .addValue("outbound_peak", networkQoS.getOutboundPeak())
-                .addValue("outbound_burst", networkQoS.getOutboundBurst());
-
+        @Override
+        public NetworkQoS createQosEntity(ResultSet rs) throws SQLException {
+            NetworkQoS entity = new NetworkQoS();
+            entity.setInboundAverage(getInteger(rs, "inbound_average"));
+            entity.setInboundPeak(getInteger(rs, "inbound_peak"));
+            entity.setInboundBurst(getInteger(rs, "inbound_burst"));
+            entity.setOutboundAverage(getInteger(rs, "outbound_average"));
+            entity.setOutboundPeak(getInteger(rs, "outbound_peak"));
+            entity.setOutboundBurst(getInteger(rs, "outbound_burst"));
+            return entity;
+        }
     }
 }

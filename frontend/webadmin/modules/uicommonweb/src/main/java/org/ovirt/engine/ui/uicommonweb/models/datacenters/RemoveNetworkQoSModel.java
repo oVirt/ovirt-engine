@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters;
 
 
-import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
+import java.util.ArrayList;
+
+import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -18,8 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import java.util.ArrayList;
 
 public class RemoveNetworkQoSModel extends ConfirmationModel {
 
@@ -85,8 +85,9 @@ public class RemoveNetworkQoSModel extends ConfirmationModel {
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
 
         for (Object networkQoS : sourceListModel.getSelectedItems()) {
-            NetworkQoSParametersBase parameter = new NetworkQoSParametersBase();
-            parameter.setNetworkQoS((NetworkQoS) networkQoS);
+            QosParametersBase<NetworkQoS> parameter = new QosParametersBase<NetworkQoS>();
+            NetworkQoS tempQos = (NetworkQoS) networkQoS;
+            parameter.setQos(tempQos);
             parameters.add(parameter);
         }
         Frontend.getInstance().runMultipleAction(VdcActionType.RemoveNetworkQoS, parameters);

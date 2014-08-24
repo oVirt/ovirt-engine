@@ -25,8 +25,8 @@ public class CpuQos extends QosBase {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj)
-                && equalValues((QosBase) obj);
+        return super.equals(obj) &&
+                equalValues((CpuQos) obj);
     }
 
     @Override
@@ -37,12 +37,7 @@ public class CpuQos extends QosBase {
         return result;
     }
 
-    @Override
-    public boolean equalValues(QosBase obj) {
-        if (!(obj instanceof CpuQos)) {
-            return false;
-        }
-        CpuQos other = (CpuQos) obj;
+    public boolean equalValues(CpuQos other) {
         return ObjectUtils.objectsEqual(cpuLimit, other.getCpuLimit());
     }
 

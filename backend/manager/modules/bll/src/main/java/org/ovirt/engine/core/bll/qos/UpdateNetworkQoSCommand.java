@@ -3,37 +3,31 @@ package org.ovirt.engine.core.bll.qos;
 
 import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.action.QosParametersBase;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.dao.qos.QosDao;
 
-public class UpdateNetworkQoSCommand extends NetworkQoSCommandBase {
+public class UpdateNetworkQoSCommand extends UpdateQosCommandBase<NetworkQoS, NetworkQosValidator> {
 
-    public UpdateNetworkQoSCommand(NetworkQoSParametersBase parameters) {
+    public UpdateNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters) {
         super(parameters);
     }
 
     @Override
+    protected QosDao<NetworkQoS> getQosDao() {
+        return getDbFacade().getNetworkQosDao();
+    }
+
+    @Override
+    protected NetworkQosValidator getQosValidator(NetworkQoS qos) {
+        return new NetworkQosValidator(qos);
+    }
+
+
+    @Override
     protected boolean canDoAction() {
-        NetworkQosValidator validator = new NetworkQosValidator(getNetworkQoS());
-        return (validateParameters()
-                && validate(validator.qosExists())
-                && validate(validator.consistentDataCenter())
-                && validate(validator.allValuesPresent())
-                && validate(validator.peakConsistentWithAverage())
-                && validate(validator.nameNotChangedOrNotTaken()));
-    }
-
-    @Override
-    protected void executeCommand() {
-        getNetworkQoSDao().update(getNetworkQoS());
-        getReturnValue().setActionReturnValue(getNetworkQoS().getId());
-        setSucceeded(true);
-    }
-
-    @Override
-    protected void setActionMessageParameters() {
-        super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        return super.canDoAction() &&
+                validate(getQosValidator(getQos()).peakConsistentWithAverage());
     }
 
     @Override

@@ -12,12 +12,12 @@ import static org.junit.Assert.assertTrue;
 
 public class NetworkQosDaoTest extends BaseDAOTestCase {
 
-    private NetworkQoSDao dao = getDbFacade().getQosDao();
+    private NetworkQoSDao dao = getDbFacade().getNetworkQosDao();
 
-    private static final Guid qosAId = Guid.createGuidFromString("ae956031-6be2-43d6-bb90-5191c9253314");
-    private static final Guid qosBId = Guid.createGuidFromString("ae956031-6be2-43d6-bb90-5191c9253315");
-    private static final Guid qosCId = Guid.createGuidFromString("ae956031-6be2-43d6-bb90-5191c9253316");
-    private static final Guid qosDId = Guid.createGuidFromString("ae956031-6be2-43d6-bb90-5191c9253317");
+    private static final Guid qosAId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253314");
+    private static final Guid qosBId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253315");
+    private static final Guid qosCId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253316");
+    private static final Guid qosDId = Guid.createGuidFromString("de956031-6be2-43d6-bb90-5191c9253317");
 
 
     /**
@@ -38,7 +38,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
         NetworkQoS result = dao.get(qosAId);
         NetworkQoS trueA = new NetworkQoS();
         trueA.setId(qosAId);
-        trueA.setName("qos_a");
+        trueA.setName("network_qos_a");
         trueA.setStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES);
         trueA.setInboundAverage(1000);
         trueA.setInboundPeak(2000);
@@ -56,7 +56,7 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testGetAllNetworkQos() {
-        assertTrue(dao.getAll().size() == 4);
+        assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 2);
     }
 
     /**

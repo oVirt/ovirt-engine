@@ -1,30 +1,15 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.BusinessEntity;
-import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
+import org.ovirt.engine.core.common.businessentities.qos.QosBase;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
-import org.ovirt.engine.core.common.validation.annotation.ValidI18NName;
-import org.ovirt.engine.core.compat.Guid;
 
-import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Size;
-import java.io.Serializable;
-
-public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessEntity<Guid> {
+public class NetworkQoS extends QosBase {
 
     private static final long serialVersionUID = 1122772549710787758L;
-
-    @NotNull(message = "QOS_NAME_NOT_NULL")
-    @Size(min = 1, max = BusinessEntitiesDefinitions.NETWORK_QOS_NAME_SIZE, message = "QOS_NAME_TOO_LONG")
-    @ValidI18NName(message = "QOS_NAME_INVALID")
-    private String name;
-
-    @NotNull(message = "ACTION_TYPE_FAILED_NETWORK_QOS_INVALID_DC_ID")
-    private Guid storagePoolId;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxAverageNetworkQoSValue,
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
@@ -50,33 +35,8 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
             message = "ACTION_TYPE_FAILED_NETWORK_QOS_OUT_OF_RANGE_VALUES")
     private Integer outboundBurst;
 
-    private Guid id;
-
-
-    @Override
-    public Guid getId() {
-        return id;
-    }
-
-    @Override
-    public void setId(Guid id) {
-        this.id = id;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public Guid getStoragePoolId() {
-        return storagePoolId;
-    }
-
-    public void setStoragePoolId(Guid storagePoolId) {
-        this.storagePoolId = storagePoolId;
+    public NetworkQoS() {
+        super(QosType.NETWORK);
     }
 
     public Integer getInboundAverage() {
@@ -128,33 +88,22 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
     }
 
     public boolean equalValues(NetworkQoS other) {
-        return ObjectUtils.objectsEqual(this.getInboundAverage(), other.getInboundAverage())
-                && ObjectUtils.objectsEqual(this.getInboundPeak(), other.getInboundPeak())
-                && ObjectUtils.objectsEqual(this.getInboundBurst(), other.getInboundBurst())
-                && ObjectUtils.objectsEqual(this.getOutboundAverage(), other.getOutboundAverage())
-                && ObjectUtils.objectsEqual(this.getOutboundPeak(), other.getOutboundPeak())
-                && ObjectUtils.objectsEqual(this.getOutboundBurst(), other.getOutboundBurst());
+        return ObjectUtils.objectsEqual(getInboundAverage(), other.getInboundAverage())
+                && ObjectUtils.objectsEqual(getInboundPeak(), other.getInboundPeak())
+                && ObjectUtils.objectsEqual(getInboundBurst(), other.getInboundBurst())
+                && ObjectUtils.objectsEqual(getOutboundAverage(), other.getOutboundAverage())
+                && ObjectUtils.objectsEqual(getOutboundPeak(), other.getOutboundPeak())
+                && ObjectUtils.objectsEqual(getOutboundBurst(), other.getOutboundBurst());
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) {
-            return true;
-        }
-        if (o == null) {
-            return false;
-        }
-        if (!(o instanceof NetworkQoS)) {
-            return false;
-        }
-        NetworkQoS other = (NetworkQoS) o;
-        return ObjectUtils.objectsEqual(this.getName(), other.getName())
-                && ObjectUtils.objectsEqual(this.getStoragePoolId(), other.getStoragePoolId())
-                && equalValues(other);
+        return super.equals(o) &&
+                equalValues((NetworkQoS) o);
     }
 
     @Override
-    public String toString() {
+    public String getString() {
         StringBuilder builder = new StringBuilder();
         builder.append("[")
                .append("inbound ")
@@ -180,12 +129,14 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
     }
 
     @Override
+    public String toString() {
+        return getString();
+    }
+
+    @Override
     public int hashCode() {
         final int prime = 31;
-        int result = 1;
-        result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((name == null) ? 0 : name.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        int result = super.hashCode();
         result = prime * result + ((inboundAverage == null) ? 0 : inboundAverage.hashCode());
         result = prime * result + ((inboundPeak == null) ? 0 : inboundPeak.hashCode());
         result = prime * result + ((inboundBurst == null) ? 0 : inboundBurst.hashCode());
@@ -195,8 +146,4 @@ public class NetworkQoS extends IVdcQueryable implements Serializable, BusinessE
         return result;
     }
 
-    @Override
-    public Object getQueryableId() {
-        return getId();
-    }
 }

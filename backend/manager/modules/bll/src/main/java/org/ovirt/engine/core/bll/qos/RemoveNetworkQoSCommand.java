@@ -2,35 +2,24 @@ package org.ovirt.engine.core.bll.qos;
 
 import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.NetworkQoSParametersBase;
-import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.action.QosParametersBase;
+import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.dao.qos.QosDao;
 
-public class RemoveNetworkQoSCommand extends NetworkQoSCommandBase {
+public class RemoveNetworkQoSCommand extends RemoveQosCommandBase<NetworkQoS, NetworkQosValidator> {
 
-    public RemoveNetworkQoSCommand(NetworkQoSParametersBase parameters) {
+    public RemoveNetworkQoSCommand(QosParametersBase<NetworkQoS> parameters) {
         super(parameters);
     }
 
     @Override
-    protected boolean canDoAction() {
-        if (validateParameters()) {
-            NetworkQosValidator validator = new NetworkQosValidator(getNetworkQoS());
-            return validate(validator.qosExists()) && validate(validator.consistentDataCenter());
-        }
-        return true;
+    protected QosDao<NetworkQoS> getQosDao() {
+        return getDbFacade().getNetworkQosDao();
     }
 
     @Override
-    protected void executeCommand() {
-        getNetworkQoSDao().remove(getNetworkQoS().getId());
-        getReturnValue().setActionReturnValue(getNetworkQoS().getId());
-        setSucceeded(true);
-    }
-
-    @Override
-    protected void setActionMessageParameters() {
-        super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+    protected NetworkQosValidator getQosValidator(NetworkQoS qos) {
+        return new NetworkQosValidator(qos);
     }
 
     @Override

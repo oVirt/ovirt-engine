@@ -223,7 +223,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
 
     private static void logUnsynchronizedNetworks(VDS vds, Map<String, Network> networks) {
         List<String> networkNames = new ArrayList<String>();
-        NetworkQoSDao qosDao = DbFacade.getInstance().getQosDao();
+        NetworkQoSDao qosDao = DbFacade.getInstance().getNetworkQosDao();
 
         for (VdsNetworkInterface iface : vds.getInterfaces()) {
             Network network = networks.get(iface.getNetworkName());

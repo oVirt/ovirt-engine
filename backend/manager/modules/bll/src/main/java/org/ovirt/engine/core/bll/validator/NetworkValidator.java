@@ -195,7 +195,7 @@ public class NetworkValidator {
      *         belongs to the wrong DC.
      */
     public ValidationResult qosExistsInDc() {
-        NetworkQosValidator qosValidator = new NetworkQosValidator(getDbFacade().getQosDao().get(network.getQosId()));
+        NetworkQosValidator qosValidator = new NetworkQosValidator(getDbFacade().getNetworkQosDao().get(network.getQosId()));
         ValidationResult res = qosValidator.qosExists();
         return (res == ValidationResult.VALID) ? qosValidator.consistentDataCenter() : res;
     }

@@ -187,7 +187,9 @@ public class SetupNetworksVDSCommandTest {
         Map<String, Object> networkStruct = assertNeworkWasSent(network);
         NetworkQosMapper qosMapper =
                 new NetworkQosMapper(networkStruct, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
-        assertEquals(expectedQos, qosMapper.deserialize());
+        NetworkQoS deserialize = qosMapper.deserialize();
+        assertTrue((expectedQos == null && deserialize == null)
+                || (expectedQos != null && expectedQos.equalValues(deserialize)));
     }
 
     @Test
@@ -289,7 +291,7 @@ public class SetupNetworksVDSCommandTest {
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getQosDao()).thenReturn(qosDao);
+        when(dbFacade.getNetworkQosDao()).thenReturn(qosDao);
 
         when(vdsDao.get(any(Guid.class))).thenReturn(host);
 

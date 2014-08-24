@@ -391,7 +391,7 @@ public class SetupNetworksHelper {
         if (existingIfaces == null) {
             List<VdsNetworkInterface> ifaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
-            NetworkQoSDao qosDao = getDbFacade().getQosDao();
+            NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
 
             for (VdsNetworkInterface iface : ifaces) {
                 Network network = getExistingClusterNetworks().get(iface.getNetworkName());

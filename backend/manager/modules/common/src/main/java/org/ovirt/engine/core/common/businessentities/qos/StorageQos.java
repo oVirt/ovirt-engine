@@ -88,8 +88,8 @@ public class StorageQos extends QosBase implements Serializable {
 
     @Override
     public boolean equals(Object obj) {
-        return super.equals(obj)
-                && equalValues((QosBase) obj);
+        return super.equals(obj) &&
+                equalValues((StorageQos) obj);
     }
 
     @Override
@@ -105,12 +105,7 @@ public class StorageQos extends QosBase implements Serializable {
         return result;
     }
 
-    @Override
-    public boolean equalValues(QosBase obj) {
-        if (!(obj instanceof StorageQos)) {
-            return false;
-        }
-        StorageQos other = (StorageQos) obj;
+    public boolean equalValues(StorageQos other) {
         return ObjectUtils.objectsEqual(maxThroughput, other.getMaxThroughput())
                 && ObjectUtils.objectsEqual(maxReadThroughput, other.getMaxReadThroughput())
                 && ObjectUtils.objectsEqual(maxWriteThroughput, other.getMaxWriteThroughput())

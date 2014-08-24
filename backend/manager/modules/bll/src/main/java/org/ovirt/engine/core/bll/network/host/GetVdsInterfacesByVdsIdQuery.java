@@ -48,7 +48,7 @@ public class GetVdsInterfacesByVdsIdQuery<P extends IdQueryParameters> extends Q
 
         if (!list.isEmpty()) {
             VdsStatic vdsStatic = getDbFacade().getVdsStaticDao().get(getParameters().getId());
-            NetworkQoSDao qosDao = getDbFacade().getQosDao();
+            NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
             Map<String, Network> networks = Entities.entitiesByName(
                     getDbFacade().getNetworkDao().getAllForCluster(vdsStatic.getVdsGroupId()));
             for (final VdsNetworkInterface i : list) {

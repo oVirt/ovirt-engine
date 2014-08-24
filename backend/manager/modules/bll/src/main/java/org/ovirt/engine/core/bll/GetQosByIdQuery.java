@@ -10,7 +10,7 @@ public class GetQosByIdQuery extends QueriesCommandBase<IdQueryParameters> {
 
     @Override
     protected void executeQueryCommand() {
-        getQueryReturnValue().setReturnValue(getDbFacade().getStorageQosDao().get(getParameters().getId()));
+        getQueryReturnValue().setReturnValue(getDbFacade().getQosBaseDao().get(getParameters().getId()));
     }
 
 }

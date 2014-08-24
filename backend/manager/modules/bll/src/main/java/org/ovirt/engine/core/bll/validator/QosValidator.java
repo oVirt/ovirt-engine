@@ -23,7 +23,7 @@ public abstract class QosValidator<T extends QosBase> {
     }
 
     protected T getOldQos() {
-        if (oldQos == null && qos != null) {
+        if (oldQos == null) {
             oldQos = getQosDao().get(qos.getId());
         }
         return oldQos;
@@ -42,7 +42,7 @@ public abstract class QosValidator<T extends QosBase> {
      * Verify that the QoS entity had previously existed in the database.
      */
     public ValidationResult qosExists() {
-        return (getOldQos() == null)
+        return (qos != null && getOldQos() == null)
                 ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_NOT_FOUND)
                 : ValidationResult.VALID;
     }
@@ -69,6 +69,17 @@ public abstract class QosValidator<T extends QosBase> {
             }
         }
         return ValidationResult.VALID;
+    }
+
+    /**
+     * Verify that a QoS entity's name hasn't changed. This assumes that QoS entity has been verified to exist.
+     */
+    public ValidationResult nameNotChangedOrNotTaken() {
+        if (!getOldQos().getName().equals(getQos().getName())) {
+            return nameNotTakenInDc();
+        } else {
+            return ValidationResult.VALID;
+        }
     }
 
     /**

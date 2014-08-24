@@ -18,7 +18,8 @@ public abstract class UpdateQosCommandBase<T extends QosBase, M extends QosValid
         M qosValidator = getQosValidator(getQos());
         return super.canDoAction()
                 && validate(qosValidator.qosExists())
-                && validate(qosValidator.consistentDataCenter());
+                && validate(qosValidator.consistentDataCenter())
+                && validate(qosValidator.nameNotChangedOrNotTaken());
     }
 
     @Override

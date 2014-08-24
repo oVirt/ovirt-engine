@@ -81,7 +81,7 @@ public class VnicProfileValidatorTest {
         // mock some commonly used DAOs
         when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
         when(dbFacade.getNetworkDao()).thenReturn(networkDao);
-        when(dbFacade.getQosDao()).thenReturn(networkQosDao);
+        when(dbFacade.getNetworkQosDao()).thenReturn(networkQosDao);
         when(dbFacade.getVmDao()).thenReturn(vmDao);
 
         // mock their getters
