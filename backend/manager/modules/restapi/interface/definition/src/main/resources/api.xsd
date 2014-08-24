@@ -2417,6 +2417,7 @@
           <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
           <xs:element name="port_mirroring" type="xs:boolean" minOccurs="0"/>
           <xs:element ref="custom_properties" minOccurs="0"/>
+          <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4618,6 +4619,18 @@
             minOccurs="0" maxOccurs="1" />
           <xs:element name="cpu_limit" type="xs:int"
             minOccurs="0" maxOccurs="1" />
+          <xs:element name="inbound_average" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="inbound_peak" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="inbound_burst" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="outbound_average" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="outbound_peak" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
+          <xs:element name="outbound_burst" type="xs:int" minOccurs="0"
+            maxOccurs="1" />
         </xs:sequence>
         <xs:attribute name="type" type="xs:string"/>
       </xs:extension>

@@ -1417,7 +1417,13 @@ actions:
                            qos.max_iops: 'xs:int',
                            qos.max_read_iops: 'xs:int',
                            qos.max_write_iops: 'xs:int',
-                           qos.cpu_limit: 'xs:int'}
+                           qos.cpu_limit: 'xs:int',
+                           qos.inbound_average: 'xs:int',
+                           qos.inbound_peak: 'xs:int',
+                           qos.inbound_burst: 'xs:int',
+                           qos.outbound_average: 'xs:int',
+                           qos.outbound_peak: 'xs:int',
+                           qos.outbound_burst: 'xs:int'}
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
@@ -1436,7 +1442,13 @@ actions:
                            qos.max_iops: 'xs:int',
                            qos.max_read_iops: 'xs:int',
                            qos.max_write_iops: 'xs:int',
-                           qos.cpu_limit: 'xs:int'}
+                           qos.cpu_limit: 'xs:int',
+                           qos.inbound_average: 'xs:int',
+                           qos.inbound_peak: 'xs:int',
+                           qos.inbound_burst: 'xs:int',
+                           qos.outbound_average: 'xs:int',
+                           qos.outbound_peak: 'xs:int',
+                           qos.outbound_burst: 'xs:int'}
         description: add a new QoS to the datacenter
     urlparams: {}
     headers:
