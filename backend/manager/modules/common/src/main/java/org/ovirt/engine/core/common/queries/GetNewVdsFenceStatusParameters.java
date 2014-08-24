@@ -91,4 +91,14 @@ public class GetNewVdsFenceStatusParameters extends VdcQueryParametersBase {
     public void setOrder(FenceAgentOrder order) {
         this.order = order;
     }
+
+    private String pmProxyPreferences;
+
+    public String getPmProxyPreferences() {
+        return pmProxyPreferences;
+    }
+
+    public void setPmProxyPreferences(String pmProxyPreferences) {
+        this.pmProxyPreferences = pmProxyPreferences;
+    }
 }

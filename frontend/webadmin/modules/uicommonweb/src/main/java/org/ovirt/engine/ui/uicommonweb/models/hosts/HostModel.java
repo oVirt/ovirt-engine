@@ -1617,6 +1617,7 @@ public abstract class HostModel extends Model
         param.setPassword(isPrimary ? getPmPassword().getEntity() : getPmSecondaryPassword().getEntity());
         param.setStoragePoolId(cluster.getStoragePoolId() != null ? cluster.getStoragePoolId() : Guid.Empty);
         param.setFencingOptions(getPmOptionsMap());
+        param.setPmProxyPreferences(getPmProxyPreferences());
 
         Frontend.getInstance().runQuery(VdcQueryType.GetNewVdsFenceStatus, param, new AsyncQuery(this, new INewAsyncCallback() {
 

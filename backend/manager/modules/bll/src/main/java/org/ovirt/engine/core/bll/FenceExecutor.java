@@ -391,19 +391,23 @@ public class FenceExecutor {
                     if (onlyUpHost) {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
+                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId())
                                     && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getStatus() == VDSStatus.Up;
+                            return vds.getStatus() == VDSStatus.Up
+                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                     }
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds)
-                                    && !vds.getId().equals(_vds.getId());
+                                    && !vds.getId().equals(_vds.getId())
+                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds);
+                            return !isHostNetworkUnreacable(vds)
+                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
                         }
                     }
                 }
