@@ -4,7 +4,9 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
+import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.widget.editor.ListModelTypeAheadListBoxEditor.SuggestBoxRenderer;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.core.client.Scheduler;
@@ -58,6 +60,7 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
     @UiField
     Style style;
 
+    private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private final SuggestBoxRenderer<T> renderer;
 
     /**
@@ -236,23 +239,15 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
             return;
         }
 
-        // empty suggest box
         String providedText = asSuggestBox().getText();
-        if (providedText == null || "".equals(providedText)) {
-            if (getValue() != null) {
-                // something has been there, deleted on click inside and than hidden the box - restoring
-                asSuggestBox().setText(renderer.getReplacementString(getValue()));
-            }
-        } else {
-            // something has been typed inside - validate
-            try {
-                T newData = asEntity(providedText);
-                // correct provided - use it
-                setValue(newData);
-            } catch (IllegalArgumentException e) {
-                // incorrect - return to previous one
-                asSuggestBox().setText(renderer.getReplacementString(getValue()));
-            }
+        // validate input text
+        try {
+            T newData = asEntity(providedText);
+            // correct provided - use it
+            setValue(newData);
+        } catch (IllegalArgumentException e) {
+            // incorrect - return to previous one
+            render(getValue(), false);
         }
     }
 
@@ -319,7 +314,10 @@ public class ListModelTypeAheadListBox<T> extends BaseListModelSuggestBox<T> {
 
     @Override
     protected void render(T value, boolean fireEvents) {
-        asSuggestBox().setValue(renderer.getReplacementString(value), fireEvents);
+        String replacementString = renderer.getReplacementString(value);
+        boolean empty = StringUtils.isEmpty(replacementString);
+        asSuggestBox().setValue(empty ? constants.emptyListBoxText() : replacementString, fireEvents);
+        asSuggestBox().getElement().getStyle().setColor(empty ? "gray" : "black"); //$NON-NLS-1$ $NON-NLS-2$
     }
 
     @Override

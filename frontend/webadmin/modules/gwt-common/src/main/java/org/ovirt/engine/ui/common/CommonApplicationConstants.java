@@ -7,6 +7,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("")
     String empty();
 
+    @DefaultStringValue("Please select an item...")
+    String emptyListBoxText();
+
     @DefaultStringValue("http://www.ovirt.org")
     String vendorUrl();
 
