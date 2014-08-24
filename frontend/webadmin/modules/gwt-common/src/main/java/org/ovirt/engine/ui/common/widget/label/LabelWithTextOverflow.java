@@ -8,6 +8,7 @@ import com.google.gwt.dom.client.Style.WhiteSpace;
 import com.google.gwt.editor.client.IsEditor;
 import com.google.gwt.editor.client.LeafValueEditor;
 import com.google.gwt.user.client.ui.Composite;
+import com.google.gwt.user.client.ui.HasEnabled;
 import com.google.gwt.user.client.ui.Label;
 
 /*
@@ -15,9 +16,10 @@ import com.google.gwt.user.client.ui.Label;
  * '...' (three dots) are appended to the string. The tooltip contains the full text
  * string.
  */
-public class LabelWithTextOverflow extends Composite implements IsEditor<LeafValueEditor<String>> {
+public class LabelWithTextOverflow extends Composite implements IsEditor<LeafValueEditor<String>>, HasEnabled {
 
     private Label label;
+    private boolean enabled = true;
 
     public LabelWithTextOverflow() {
         label = new Label();
@@ -62,5 +64,16 @@ public class LabelWithTextOverflow extends Composite implements IsEditor<LeafVal
     @Override
     public LeafValueEditor<String> asEditor() {
         return label.asEditor();
+    }
+
+    @Override
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
+        getElement().getStyle().setColor(enabled ? "#333333" : "gray"); //$NON-NLS-1$ $NON-NLS-2$
     }
 }

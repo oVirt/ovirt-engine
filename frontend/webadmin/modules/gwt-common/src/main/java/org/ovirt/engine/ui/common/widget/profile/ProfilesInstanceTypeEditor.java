@@ -92,9 +92,8 @@ public class ProfilesInstanceTypeEditor extends AddRemoveRowWidget<VnicInstances
     }
 
     @Override
-    protected void toggleGhost(VnicInstanceType value, ProfileInstanceTypeEditor item, boolean becomingGhost) {
-        item.profileEditor.setEnabled(!becomingGhost);
-        item.profileEditor.asWidget().setEnabled(true);
+    protected void toggleGhost(VnicInstanceType value, ProfileInstanceTypeEditor widget, boolean becomingGhost) {
+        widget.vnicLabel.setEnabled(!becomingGhost);
     }
 
 }
