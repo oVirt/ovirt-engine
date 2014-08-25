@@ -689,9 +689,17 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public void setSpiceProxyEnabled(boolean enabled, String reason) {
         enableSpiceProxy.setEnabled(enabled);
-        if (!enabled) {
-            enableSpiceProxy.setTitle(reason);
-        }
+        enableSpiceProxy.setTitle(reason);
+    }
+
+    @Override
+    public void setSpiceProxy(boolean enabled) {
+        enableSpiceProxy.asCheckBox().setValue(enabled);
+    }
+
+    @Override
+    public Boolean getSpiceProxy() {
+        return enableSpiceProxy.asCheckBox().getValue();
     }
 
     @Override
@@ -816,6 +824,11 @@ public class ConsolePopupView extends AbstractModelBoundPopupView<ConsolePopupMo
     @Override
     public HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton() {
         return rdpPluginImplRadioButton.asRadioButton();
+    }
+
+    @Override
+    public HasValueChangeHandlers<Boolean> getSpiceProxyEnabledCheckBox() {
+        return enableSpiceProxy.asCheckBox();
     }
 
     @Override

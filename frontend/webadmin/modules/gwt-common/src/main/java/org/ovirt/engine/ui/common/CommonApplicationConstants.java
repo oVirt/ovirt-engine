@@ -1920,4 +1920,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("CPU Profile")
     String cpuProfileLabel();
 
+    @DefaultStringValue("SPICE-HTML5 does not support SPICE Proxy.")
+    String spiceHtml5DoesntSupportSpiceProxy();
 }

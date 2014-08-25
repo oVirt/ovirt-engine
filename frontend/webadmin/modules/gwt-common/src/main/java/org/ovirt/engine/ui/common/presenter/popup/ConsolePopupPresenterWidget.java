@@ -61,6 +61,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         HasValueChangeHandlers<Boolean> getRdpNativeImplRadioButton();
         HasValueChangeHandlers<Boolean> getRdpPluginImplRadioButton();
 
+        HasValueChangeHandlers<Boolean> getSpiceProxyEnabledCheckBox();
+
         HasClickHandlers getConsoleClientResourcesAnchor();
 
         void showRdpPanel(boolean visible);
@@ -97,6 +99,10 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
 
         void setSpiceProxyEnabled(boolean enabled, String reason);
 
+        void setSpiceProxy(boolean enabled);
+
+        Boolean getSpiceProxy();
+
         void selectVncImplementation(VncConsoleModel.ClientConsoleMode clientConsoleMode);
 
         void selectRdpImplementation(RdpConsoleModel.ClientConsoleMode consoleMode);
@@ -115,6 +121,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     private final CommonApplicationConstants constants;
     private final DynamicMessages dynamicMessages;
     private final ConsoleOptionsFrontendPersister consoleOptionsPersister;
+    private boolean spiceProxyUserPreference;
+    private boolean spiceProxyDefinedOnCluster;
 
     @Inject
     public ConsolePopupPresenterWidget(EventBus eventBus, ViewDef view,
@@ -161,7 +169,6 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         spice.getUsbAutoShareChangedEvent().addListener(viewUpdatingListener);
         spice.getWANColorDepthChangedEvent().addListener(viewUpdatingListener);
         spice.getWANDisableEffectsChangeEvent().addListener(viewUpdatingListener);
-
     }
 
     private void removeListeners(ConsolePopupModel model) {
@@ -209,6 +216,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             if (!spice.isWanOptionsEnabled()) {
                 getView().selectWanOptionsEnabled(false);
             }
+            spiceProxyUserPreference = vmConsoles.getConsoleModel(SpiceConsoleModel.class).getspice().isSpiceProxyEnabled();
         }
 
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.SPICE)) {
@@ -223,7 +231,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().setRdpPluginImplEnabled(false, constants.rdpPluginNotSupportedByBrowser());
         }
 
-        getView().selectSpiceImplementation(vmConsoles.getConsoleModel(SpiceConsoleModel.class).getClientConsoleMode());
+        spiceProxyDefinedOnCluster = consoleUtils.isSpiceProxyDefined(vmConsoles.getVm());
+
+        selectSpiceImplementation(vmConsoles.getConsoleModel(SpiceConsoleModel.class).getClientConsoleMode());
         getView().selectVncImplementation(vmConsoles.getConsoleModel(VncConsoleModel.class).getClientConsoleMode());
         getView().selectRdpImplementation(vmConsoles.getConsoleModel(RdpConsoleModel.class).getClientConsoleMode());
 
@@ -237,17 +247,23 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
         getView().setAdditionalConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.RDP));
         getView().setSpiceConsoleAvailable(vmConsoles.canSelectProtocol(ConsoleProtocol.SPICE));
 
-        boolean spiceProxyEnabled = consoleUtils.isSpiceProxyDefined(vmConsoles.getVm());
-
-        getView().setSpiceProxyEnabled(spiceProxyEnabled, constants.spiceProxyCanBeEnabledOnlyWhenDefined());
-
         registerHandler(getView().getConsoleClientResourcesAnchor().addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 Window.open(dynamicMessages.consoleClientResourcesUrl(), "_blank", "resizable=yes,scrollbars=yes"); //$NON-NLS-1$ $NON-NLS-2$
             }
         }));
+
+        registerHandler(getView().getSpiceProxyEnabledCheckBox().addValueChangeHandler(
+                new ValueChangeHandler<Boolean>() {
+                    @Override
+                    public void onValueChange(ValueChangeEvent<Boolean> booleanValueChangeEvent) {
+                        spiceProxyUserPreference = booleanValueChangeEvent.getValue();
+                    }
+                }
+        ));
     }
+
 
     @Override
     protected void beforeCommandExecuted(UICommand command) {
@@ -295,7 +311,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto);
+                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Auto);
                     }
                 }));
 
@@ -303,21 +319,23 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
+                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Native);
                     }
                 }));
         registerHandler(getView().getSpicePluginImplRadioButton()
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
+                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Plugin);
                     }
                 }));
         registerHandler(getView().getSpiceHtml5ImplRadioButton()
                 .addValueChangeHandler(new ValueChangeHandler<Boolean>() {
                     @Override
                     public void onValueChange(ValueChangeEvent<Boolean> event) {
-                        getView().selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
+                        boolean previousSpicePreference = getView().getSpiceProxy();
+                        selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode.Html5);
+                        spiceProxyUserPreference = previousSpicePreference;
                     }
                 }));
 
@@ -362,4 +380,33 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
                 }));
     }
 
+    /**
+     * Selects spice implementation.
+     * Handles spice proxy availability as well.
+     * @param clientMode
+     */
+    private void selectSpiceImplementation(SpiceConsoleModel.ClientConsoleMode clientMode) {
+        getView().selectSpiceImplementation(clientMode);
+        setSpiceProxyAvailability(clientMode);
+        getView().setSpiceProxy(clientMode == SpiceConsoleModel.ClientConsoleMode.Html5
+                ? false
+                : spiceProxyUserPreference);
+    }
+
+    private void setSpiceProxyAvailability(SpiceConsoleModel.ClientConsoleMode clientMode) {
+        boolean isHtml5 = clientMode == SpiceConsoleModel.ClientConsoleMode.Html5;
+
+        // firstly handle availability on cluster
+        getView().setSpiceProxyEnabled(
+                spiceProxyDefinedOnCluster,
+                spiceProxyDefinedOnCluster ? "" : constants.spiceProxyCanBeEnabledOnlyWhenDefined()); //$NON-NLS-1$
+
+        // then, if it's available on cluster, check if it's supported by selected client
+        if (spiceProxyDefinedOnCluster) {
+            getView().setSpiceProxyEnabled(
+                    !isHtml5,
+                    isHtml5 ? constants.spiceHtml5DoesntSupportSpiceProxy() : ""); //$NON-NLS-1$
+        }
+
+    }
 }
