@@ -23,6 +23,7 @@ import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
 import org.snmp4j.smi.OID;
 import org.snmp4j.smi.OctetString;
+import org.snmp4j.smi.TimeTicks;
 import org.snmp4j.smi.UdpAddress;
 import org.snmp4j.smi.VariableBinding;
 import org.snmp4j.transport.DefaultUdpTransportMapping;
@@ -40,6 +41,7 @@ public class Snmp extends Transport {
     private final Map<String, Profile> profiles = new HashMap<>();
     private org.snmp4j.Snmp snmp = null;
     private boolean active = false;
+    private static long nanoStart = System.nanoTime();
 
     public Snmp(NotificationProperties props) {
         for (Map.Entry<String, String> entry : props.getProperties().entrySet()) {
@@ -105,6 +107,8 @@ public class Snmp extends Transport {
         }
         OID trapOID = SnmpConstants.getTrapOID(profile.oid, ENTERPRISE_SPECIFIC, auditLogTypeVal);
         v2pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID, trapOID));
+        v2pdu.add(new VariableBinding(SnmpConstants.sysUpTime,
+                                      new TimeTicks((System.nanoTime() - nanoStart) / 10000000)));
         v2pdu.add(new VariableBinding(
                 new OID(trapOID).append(0),
                 new OctetString(event.getMessage())));
