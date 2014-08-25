@@ -1281,7 +1281,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Internal")
     String internalDisk();
 
-    @DefaultStringValue("External (Direct Lun)")
+    @DefaultStringValue("External (Direct LUN)")
     String externalDisk();
 
     @DefaultStringValue("LUNs > Targets")
