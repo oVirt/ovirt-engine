@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -144,6 +145,32 @@ public abstract class InstanceTypeManager {
     public void updateFields() {
         getModel().startProgress(null);
         doUpdateManagedFieldsFrom(getSource());
+    }
+
+    public void updateFildsAfterOsChanged() {
+        deactivateAndStartProgress();
+        VmBase vmBase = getSource();
+
+        maybeSetSingleQxlPci(vmBase);
+        updateWatchdog(vmBase, false);
+        updateBalloon(vmBase, false);
+        maybeSetSelectedItem(model.getUsbPolicy(), vmBase.getUsbPolicy());
+
+        activate();
+    }
+
+    /**
+     * Starts progress, deactivates the manager and waits until it gets activated again.
+     * On activation it stops the progress
+     */
+    public void deactivateAndStartProgress() {
+        model.startProgress(null);
+        deactivate(new ActivatedListener() {
+            @Override
+            public void activated() {
+                model.stopProgress();
+            }
+        });
     }
 
     private void registerListeners(UnitVmModel model) {
@@ -299,10 +326,10 @@ public abstract class InstanceTypeManager {
             activate();
         }
 
-        updateWatchdog(vmBase);
+        updateWatchdog(vmBase, true);
     }
 
-    private void updateWatchdog(final VmBase vmBase) {
+    private void updateWatchdog(final VmBase vmBase, final boolean continueWithNext) {
         AsyncDataProvider.getInstance().getWatchdogByVmId(new AsyncQuery(this.getModel(), new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
@@ -327,12 +354,15 @@ public abstract class InstanceTypeManager {
                 }
                 activate();
 
-                updateBalloon(vmBase);
+                if (continueWithNext) {
+                    updateBalloon(vmBase, true);
+                }
+
             }
         }), vmBase.getId());
     }
 
-    private void updateBalloon(final VmBase vmBase) {
+    protected void updateBalloon(final VmBase vmBase, final boolean continueWithNext) {
         if (model.getMemoryBalloonDeviceEnabled().getIsChangable() && model.getMemoryBalloonDeviceEnabled().getIsAvailable()) {
             Frontend.getInstance().runQuery(VdcQueryType.IsBalloonEnabled, new IdQueryParameters(vmBase.getId()), new AsyncQuery(this,
                     new INewAsyncCallback() {
@@ -341,17 +371,19 @@ public abstract class InstanceTypeManager {
                             deactivate();
                             getModel().getMemoryBalloonDeviceEnabled().setEntity((Boolean) ((VdcQueryReturnValue)returnValue).getReturnValue());
                             activate();
-                            updateRngDevice(vmBase);
+                            if (continueWithNext) {
+                                updateRngDevice(vmBase);
+                            }
                         }
                     }
             ));
-        } else {
+        } else if (continueWithNext) {
             updateRngDevice(vmBase);
         }
 
     }
 
-    private void updateRngDevice(final VmBase vmBase) {
+    protected void updateRngDevice(final VmBase vmBase) {
         if (model.getIsRngEnabled().getIsChangable() && model.getIsRngEnabled().getIsAvailable()) {
             Frontend.getInstance().runQuery(VdcQueryType.GetRngDevice, new IdQueryParameters(vmBase.getId()), new AsyncQuery(
                     this,
@@ -474,4 +506,20 @@ public abstract class InstanceTypeManager {
     protected abstract VmBase getSource();
 
     protected boolean isNextRunConfigurationExists() { return false; }
+
+    protected boolean isSourceCustomInstanceTypeOrBlankTemplate() {
+        if (getSource() instanceof VmTemplate) {
+            VmTemplate source = (VmTemplate) getSource();
+            if (source.getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+                // only the custom instance type has null id.
+                // not using instanceof check because findbugs can not handle it properly here
+                return source.getId() == null;
+            }
+
+            return source.getId().equals(Guid.Empty);
+        }
+
+        return false;
+
+    }
 }

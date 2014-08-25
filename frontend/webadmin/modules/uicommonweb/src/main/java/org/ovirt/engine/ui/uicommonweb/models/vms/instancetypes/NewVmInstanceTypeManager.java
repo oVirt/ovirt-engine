@@ -25,6 +25,15 @@ public class NewVmInstanceTypeManager extends VmInstanceTypeManager {
     }
 
     @Override
+    protected void updateBalloon(VmBase vmBase, boolean continueWithNext) {
+        if (!isSourceCustomInstanceTypeOrBlankTemplate()) {
+            super.updateBalloon(vmBase, continueWithNext);
+        } else if (continueWithNext) {
+            updateRngDevice(vmBase);
+        }
+    }
+
+    @Override
     protected ProfileBehavior getNetworkProfileBehavior() {
         return networkBehavior;
     }

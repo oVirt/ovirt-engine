@@ -1114,7 +1114,12 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     }
 
     public void vmTypeChanged(VmType vmType) {
-        getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
+        if (basedOnCustomInstanceType()) {
+            // this field is normally taken from instance type. If the "custom" is selected, then it is supposed to use the default
+            // determined by vm type
+            getModel().getIsSoundcardEnabled().setEntity(vmType == VmType.Desktop);
+        }
+
         getModel().getAllowConsoleReconnect().setEntity(vmType == VmType.Server);
     }
 
