@@ -58,6 +58,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        addCustomValue("AuditLogId", String.valueOf(getParameters().getAuditLogId()));
         return getSucceeded() ? AuditLogType.USER_REMOVE_AUDIT_LOG : AuditLogType.USER_REMOVE_AUDIT_LOG_FAILED;
     }
 }
