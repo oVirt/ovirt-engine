@@ -14,7 +14,7 @@ public class FcpStorageView extends AbstractSanStorageView {
 
     SanStorageLunToTargetList sanStorageLunToTargetList;
 
-    double panelHeight = 365;
+    double panelHeight = 378;
     double listHeight = 340;
 
     public FcpStorageView(boolean multiSelection) {

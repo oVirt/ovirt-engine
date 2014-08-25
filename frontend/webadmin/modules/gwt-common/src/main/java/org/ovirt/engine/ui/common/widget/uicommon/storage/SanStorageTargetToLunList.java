@@ -104,7 +104,7 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             public String getValue(SanTargetModel model) {
                 return ""; //$NON-NLS-1$
             }
-        }, constants.empty(), "35px"); //$NON-NLS-1$
+        }, constants.empty(), "30px"); //$NON-NLS-1$
         table.addColumn(new TextColumn<SanTargetModel>() {
             @Override
             public String getValue(SanTargetModel model) {
@@ -134,12 +134,12 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             }
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
-        loginButton.getElement().getStyle().setMarginRight(2, Unit.PX);
-        loginButton.getElement().getStyle().setProperty("lineHeight", "20px"); //$NON-NLS-1$ //$NON-NLS-2$
+        loginButton.getElement().getStyle().setMarginRight(6, Unit.PX);
+        loginButton.getElement().getElementsByTagName("span").getItem(0).getStyle().setMarginTop(0, Unit.PX); //$NON-NLS-1$
 
         panel.add(loginButton);
         panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
-        panel.setCellWidth(loginButton, "30px"); //$NON-NLS-1$
+        panel.setCellWidth(loginButton, "35px"); //$NON-NLS-1$
     }
 
     private void additemToRootNodePanel(HorizontalPanel panel,
