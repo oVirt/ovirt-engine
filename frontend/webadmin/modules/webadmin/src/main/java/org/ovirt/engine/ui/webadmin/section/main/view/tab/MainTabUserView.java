@@ -81,28 +81,12 @@ public class MainTabUserView extends AbstractMainTabWithDetailsTableView<DbUser,
         namespaceColumn.makeSortable();
         getTable().addColumn(namespaceColumn, constants.namespace(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<DbUser> groupColumn = new TextColumnWithTooltip<DbUser>() {
-            @Override
-            public String getValue(DbUser object) {
-                StringBuilder builder = new StringBuilder();
-                for (String name : object.getGroupNames()) {
-                    if (builder.length() > 0) {
-                        builder.append(","); //$NON-NLS-1$
-                    }
-                    builder.append(name);
-                }
-                return builder.toString();
-            }
-        };
-        groupColumn.makeSortable(VdcUserConditionFieldAutoCompleter.GROUP);
-        getTable().addColumn(groupColumn, constants.groupUser(), "150px"); //$NON-NLS-1$
-
         getTable().addColumn(new TextColumnWithTooltip<DbUser>() {
             @Override
             public String getValue(DbUser object) {
                 return object.getEmail();
             }
-        }, constants.emailUser(), "150px"); //$NON-NLS-1$
+        }, constants.emailUser());
 
         getTable().addActionButton(new WebAdminButtonDefinition<DbUser>(constants.addUser()) {
             @Override
