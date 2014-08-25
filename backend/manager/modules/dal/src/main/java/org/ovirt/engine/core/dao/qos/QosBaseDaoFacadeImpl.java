@@ -31,6 +31,15 @@ public abstract class QosBaseDaoFacadeImpl<T extends QosBase> extends DefaultGen
     }
 
     @Override
+    public List<T> getAll() {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("qos_type", getQosType());
+        return getCallsHandler().executeReadList("GetAllQosByQosType",
+                createEntityRowMapper(),
+                parameterSource);
+    }
+
+    @Override
     public List<T> getAllForStoragePoolId(Guid storagePoolId) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("storage_pool_id", storagePoolId.getUuid())
