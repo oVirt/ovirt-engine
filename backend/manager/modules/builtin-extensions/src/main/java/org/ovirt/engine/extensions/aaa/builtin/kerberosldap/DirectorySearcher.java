@@ -56,6 +56,7 @@ public class DirectorySearcher {
 
     public List<?> find(final LdapQueryData queryData, final long resultCount) {
         final String domainName = queryData.getDomain();
+        Utils.refreshLdapServers(configuration, domainName);
         List<String> ldapServerURIs =
                 Arrays.asList(configuration.getProperty("config.LdapServers").split(";"));
         List<String> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);

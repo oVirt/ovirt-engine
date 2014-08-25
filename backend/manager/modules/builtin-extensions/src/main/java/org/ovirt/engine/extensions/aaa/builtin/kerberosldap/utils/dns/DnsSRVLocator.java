@@ -401,6 +401,7 @@ public class DnsSRVLocator {
     }
 
     public URI constructURI(String protocol, String address, String defaultLdapSeverPort) throws URISyntaxException {
+        address = address.indexOf("://") != -1 ? address.substring(address.indexOf("://") + 3) : address;
         String[] parts = address.split("\\:");
         String hostname = address;
         String port = defaultLdapSeverPort;

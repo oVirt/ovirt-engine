@@ -5,9 +5,11 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+
 import javax.naming.spi.DirectoryManager;
 import javax.security.auth.login.Configuration;
 
@@ -15,10 +17,13 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.extensions.Base;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapSRVLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class Utils {
 
     private static boolean firstCallToInit = true;
+    private static Logger logger = LoggerFactory.getLogger(Utils.class);
 
     public static void setDefaults(Properties conf, String domain) {
         {
@@ -34,8 +39,13 @@ public class Utils {
             }
         }
 
-        List<String> ldapServers = new ArrayList<>();
+        refreshLdapServers(conf, domain);
+
+    }
+
+    public static void refreshLdapServers(Properties conf, String domain) {
         LdapSRVLocator locator = new LdapSRVLocator();
+        List<String> addresses = new ArrayList<>();
         try {
             if (StringUtils.isBlank(conf.getProperty("config.LdapServers"))) {
                 // list of LDAP servers is empty, find LDAP servers using DNS SRV records and convert them
@@ -45,21 +55,26 @@ public class Utils {
                     throw new Exception(String.format("No ldap servers  were found for domain %1$s", domain));
                 } else {
                     for (int counter = 0; counter < results.getNumOfValidAddresses(); counter++) {
-                        String address = results.getAddresses()[counter];
-                        String ldapURI = locator.constructURI("ldap", address, "389").toString();
-                        ldapServers.add(ldapURI);
+                        addresses.add(results.getAddresses()[counter]);
                     }
                 }
             } else {
                 // list of LDAP servers was entered, convert them to URIs
-                for (String server : conf.getProperty("config.LdapServers").split(";")) {
-                    ldapServers.add(locator.constructURI("ldap", server, "389").toString());
-                }
+                addresses = Arrays.asList(conf.getProperty("config.LdapServers").split(";"));
             }
+            List<String> ldapServers = new ArrayList<>();
+            for (String address : addresses) {
+                String ldapURI = locator.constructURI("ldap", address, "389").toString();
+                ldapServers.add(ldapURI);
+            }
+            conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ";"));
         } catch (Exception ex) {
-            throw new RuntimeException(ex);
+            logger.error("Exception has occurred during refreshing ldap servers. Exception message is: {} ",
+                    ex.getMessage());
+            if (logger.isDebugEnabled()) {
+                logger.debug("", ex);
+            }
         }
-        conf.setProperty("config.LdapServers", StringUtils.join(ldapServers, ";"));
     }
 
     private static void putIfAbsent(Properties props, String key, String value) {
