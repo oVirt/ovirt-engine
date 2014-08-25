@@ -23,6 +23,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -282,6 +283,10 @@ public class UpdateVmCommandTest {
         disk.setPlugged(true);
 
         mockDiskDaoGetAllForVm(Collections.singletonList(disk), true);
+
+        VmValidator vmValidator = spy(new VmValidator(vm));
+        doReturn(vmValidator).when(command).createVmValidator(vm);
+        doReturn(diskDAO).when(vmValidator).getDiskDao();
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);

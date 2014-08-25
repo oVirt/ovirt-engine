@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
@@ -128,6 +129,12 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
             return false;
         }
 
+        VmValidator vmValidator = createVmValidator(vmFromConfiguration);
+        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) &&
+                !validate(vmValidator.canDisableVirtioScsi(getDiskImagesFromConfiguration()))) {
+            return false;
+        }
+
         if (!super.canDoAction()) {
             return false;
         }
@@ -242,5 +249,9 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     protected void updateOriginalTemplate(VmStatic vmStatic) {
         // do not update it - it is already correctly configured from the snapshot
+    }
+
+    public VmValidator createVmValidator(VM vm) {
+        return new VmValidator(vm);
     }
 }
