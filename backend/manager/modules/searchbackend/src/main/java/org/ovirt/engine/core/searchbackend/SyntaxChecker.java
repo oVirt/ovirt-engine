@@ -946,7 +946,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     }
 
     private String getInnerQuery(String tableName, String primeryKey, String fromStatement, StringBuilder wherePhrase) {
-        return StringFormat.format("SELECT %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
+        return StringFormat.format("SELECT distinct %1$s.%2$s FROM %3$s %4$s", tableName, primeryKey, fromStatement,
                 wherePhrase);
     }
 
