@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.businessentities;
 import java.util.ArrayList;
 import java.util.Date;
 
-import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -506,7 +506,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     @Override
     public int compareTo(VmDynamic o) {
-        return BusinessEntityGuidComparator.<VmDynamic>newInstance().compare(this, o);
+        return BusinessEntityComparator.<VmDynamic, Guid>newInstance().compare(this, o);
     }
 
     public Long getLastWatchdogEvent() {

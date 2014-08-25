@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
-import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
@@ -34,7 +34,7 @@ public class VmNetworkStatistics extends NetworkStatistics implements Comparable
 
     @Override
     public int compareTo(VmNetworkStatistics o) {
-        return BusinessEntityGuidComparator.<VmNetworkStatistics>newInstance().compare(this, o);
+        return BusinessEntityComparator.<VmNetworkStatistics, Guid>newInstance().compare(this, o);
     }
 
     @Override

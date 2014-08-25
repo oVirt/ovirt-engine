@@ -4,7 +4,7 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
-import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 import org.ovirt.engine.core.common.validation.group.gluster.SetVolumeOption;
 import org.ovirt.engine.core.compat.Guid;
@@ -118,6 +118,6 @@ public class GlusterVolumeOptionEntity extends IVdcQueryable implements Business
 
     @Override
     public int compareTo(GlusterVolumeOptionEntity obj) {
-        return BusinessEntityGuidComparator.<GlusterVolumeOptionEntity>newInstance().compare(this, obj);
+        return BusinessEntityComparator.<GlusterVolumeOptionEntity, Guid>newInstance().compare(this, obj);
     }
 }

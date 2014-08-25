@@ -5,7 +5,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
@@ -213,7 +213,7 @@ public class VmStatistics implements BusinessEntity<Guid>, Comparable<VmStatisti
 
     @Override
     public int compareTo(VmStatistics o) {
-        return BusinessEntityGuidComparator.<VmStatistics>newInstance().compare(this, o);
+        return BusinessEntityComparator.<VmStatistics, Guid>newInstance().compare(this, o);
     }
 
     public List<VmJob> getVmJobs() {

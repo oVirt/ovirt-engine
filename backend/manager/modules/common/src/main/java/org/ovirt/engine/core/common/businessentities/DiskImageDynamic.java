@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
-import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityGuidComparator;
+import org.ovirt.engine.core.common.businessentities.comparators.BusinessEntityComparator;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -119,6 +119,6 @@ public class DiskImageDynamic implements BusinessEntity<Guid>, Comparable<DiskIm
 
     @Override
     public int compareTo(DiskImageDynamic o) {
-        return BusinessEntityGuidComparator.<DiskImageDynamic>newInstance().compare(this, o);
+        return BusinessEntityComparator.<DiskImageDynamic, Guid>newInstance().compare(this, o);
     }
 }
