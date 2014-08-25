@@ -13,7 +13,7 @@ public enum StorageType implements Identifiable {
     GLUSTERFS(7, Subtype.FILE),
     GLANCE(8, Subtype.FILE);
 
-    private enum Subtype { NONE, FILE, BLOCK }
+    public enum Subtype { NONE, FILE, BLOCK }
 
     private int value;
     private Subtype subtype;

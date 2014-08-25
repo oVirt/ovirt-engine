@@ -11,8 +11,8 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 public class WebAdminPlaceManager extends ApplicationPlaceManager {
 

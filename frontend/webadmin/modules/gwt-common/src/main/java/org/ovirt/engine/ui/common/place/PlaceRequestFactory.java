@@ -3,7 +3,7 @@ package org.ovirt.engine.ui.common.place;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
 /**
  * Factory that implements flyweight pattern for GWTP {@link PlaceRequest} instances.

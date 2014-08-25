@@ -14,8 +14,8 @@ import com.google.gwt.event.logical.shared.ValueChangeEvent;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.DOM;
 import com.gwtplatform.mvp.client.proxy.PlaceManagerImpl;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 /**
  * Place manager that handles transitions between different places in the application.

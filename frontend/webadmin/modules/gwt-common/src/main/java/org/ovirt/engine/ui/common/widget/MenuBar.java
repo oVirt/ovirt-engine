@@ -31,7 +31,7 @@ public class MenuBar extends com.google.gwt.user.client.ui.MenuBar {
     }-*/;
 
     private native MenuItem findItem(Element hItem) /*-{
-        return this.@com.google.gwt.user.client.ui.MenuBar::findItem(Lcom/google/gwt/user/client/Element;)(hItem);
+        return this.@com.google.gwt.user.client.ui.MenuBar::findItem(Lcom/google/gwt/dom/client/Element;)(hItem);
     }-*/;
 
     @Override

@@ -12,12 +12,6 @@
 
   <name>Search Backend</name>
 
-  <properties>
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
-    <animal.sniffer.signature>java16</animal.sniffer.signature>
-  </properties>
-
   <dependencies>
     <dependency>
       <groupId>${engine.groupId}</groupId>

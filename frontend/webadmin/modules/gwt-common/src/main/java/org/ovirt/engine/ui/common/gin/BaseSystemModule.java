@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.gin;
 
+import com.gwtplatform.common.client.CommonGinModule;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -42,9 +43,9 @@ import com.google.gwt.user.client.rpc.XsrfTokenServiceAsync;
 import com.google.inject.Provides;
 import com.google.inject.Singleton;
 import com.gwtplatform.mvp.client.RootPresenter;
-import com.gwtplatform.mvp.client.proxy.ParameterTokenFormatter;
+import com.gwtplatform.mvp.shared.proxy.ParameterTokenFormatter;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 /**
  * GIN module containing common infrastructure and configuration bindings.
@@ -52,6 +53,8 @@ import com.gwtplatform.mvp.client.proxy.TokenFormatter;
 public abstract class BaseSystemModule extends AbstractGinModule {
 
     protected void bindCommonInfrastructure(Class<? extends PlaceManager> placeManager) {
+        install(new CommonGinModule());
+
         bindEventBus();
         bindFrontendInfrastructure();
         bind(TokenFormatter.class).to(ParameterTokenFormatter.class).in(Singleton.class);

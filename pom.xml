@@ -75,7 +75,7 @@
     <org.ovirt.engine.api.ovirt-engine-extensions-api.version>0.0.0-SNAPSHOT</org.ovirt.engine.api.ovirt-engine-extensions-api.version>
     <vdsm-jsonrpc-java.version>1.1.0-SNAPSHOT</vdsm-jsonrpc-java.version>
     <slf4j.version>1.7.5</slf4j.version>
-    <gwt.version>2.5.1</gwt.version>
+    <gwt.version>2.6.1</gwt.version>
     <findbugs.version>2.5.2</findbugs.version>
     <mockito.version>1.9.0</mockito.version>
     <javassist.version>3.12.0.GA</javassist.version>

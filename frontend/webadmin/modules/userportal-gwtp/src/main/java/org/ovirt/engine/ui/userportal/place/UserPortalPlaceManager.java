@@ -12,8 +12,8 @@ import org.ovirt.engine.ui.userportal.section.DefaultMainSectionExtendedPlace;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
-import com.gwtplatform.mvp.client.proxy.TokenFormatter;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.TokenFormatter;
 
 public class UserPortalPlaceManager extends ApplicationPlaceManager {
 

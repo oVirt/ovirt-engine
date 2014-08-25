@@ -23,7 +23,7 @@ import com.google.gwt.user.cellview.client.LoadingStateChangeEvent.LoadingState;
 import com.google.gwt.view.client.SelectionChangeEvent;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 

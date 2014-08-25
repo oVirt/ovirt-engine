@@ -8,7 +8,7 @@ import com.google.gwt.event.shared.GwtEvent.Type;
 import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
 /**

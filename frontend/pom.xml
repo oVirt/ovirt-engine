@@ -17,7 +17,7 @@
   <properties>
     <engine.groupId>org.ovirt.engine.ui</engine.groupId>
     <engine.core.groupId>org.ovirt.engine.core</engine.core.groupId>
-    <aspectj.version>1.6.11</aspectj.version>
+    <aspectj.version>1.8.2</aspectj.version>
   </properties>
   <build>
     <pluginManagement>

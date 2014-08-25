@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.Extend
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public abstract class AbstractSubTabExtendedTemplatePresenter<D extends EntityModel, V extends AbstractSubTabPresenter.ViewDef<VmTemplate>, P extends TabContentProxyPlace<?>>

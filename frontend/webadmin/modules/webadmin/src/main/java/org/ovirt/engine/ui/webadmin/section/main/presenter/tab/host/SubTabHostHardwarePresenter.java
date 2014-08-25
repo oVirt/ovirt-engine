@@ -19,7 +19,7 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.client.proxy.PlaceRequest;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
 public class SubTabHostHardwarePresenter extends AbstractSubTabPresenter<VDS, HostListModel, HostHardwareGeneralModel, SubTabHostHardwarePresenter.ViewDef, SubTabHostHardwarePresenter.ProxyDef> {

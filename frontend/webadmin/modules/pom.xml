@@ -21,17 +21,13 @@
     <module>userportal-gwtp</module>
   </modules>
   <properties>
-    <!-- Enforce java 1.6 compilation for GWT integration -->
-    <maven.compiler.source>1.6</maven.compiler.source>
-    <maven.compiler.target>1.6</maven.compiler.target>
-    <animal.sniffer.signature>java16</animal.sniffer.signature>
     <!-- Directory where JSR-269 annotation processors generate their sources -->
     <generatedSourcesDirectory>generated-sources/annotations</generatedSourcesDirectory>
     <!-- Directory where GWT compiler generates normally-transient types for review (-gen compiler option) -->
     <gwtGenDirectory>gen</gwtGenDirectory>
-    <gwtp.version>1.0</gwtp.version>
+    <gwtp.version>1.3.1</gwtp.version>
     <guice.version>3.0</guice.version>
-    <gin.version>2.0.0</gin.version>
+    <gin.version>2.1.2</gin.version>
     <!-- gwtbootstrap3 version -->
     <gwtbootstrap3.version>0.6</gwtbootstrap3.version>
     <maven-resources-plugin.version>2.5</maven-resources-plugin.version>
@@ -206,7 +202,7 @@
       <id>all-user-agents</id>
       <properties>
         <!-- See [gwt-user.jar:com/google/gwt/useragent/UserAgent.gwt.xml] for a complete list -->
-        <gwt.userAgent>ie8,ie9,gecko1_8,safari</gwt.userAgent>
+        <gwt.userAgent>ie8,ie9,ie10,gecko1_8,safari</gwt.userAgent>
       </properties>
     </profile>
     <profile>
