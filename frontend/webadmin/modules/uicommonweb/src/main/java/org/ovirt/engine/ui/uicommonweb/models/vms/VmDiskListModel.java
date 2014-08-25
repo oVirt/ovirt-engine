@@ -525,9 +525,8 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         MoveDiskModel model = new MoveDiskModel();
         setWindow(model);
-        boolean vmIsUp = vm.getStatus() == VMStatus.Up;
-        model.setWarningAvailable(vmIsUp);
-        if (vmIsUp) {
+        if (vm.isRunningAndQualifyForDisksMigration()) {
+            model.setWarningAvailable(true);
             model.setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationWarning());
             model.setMessage(ConstantsManager.getInstance().getConstants().liveStorageMigrationStorageFilteringNote());
         }
