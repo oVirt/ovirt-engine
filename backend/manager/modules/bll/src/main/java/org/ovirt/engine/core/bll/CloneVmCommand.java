@@ -48,7 +48,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         super(parameters);
 
         oldVmId = getParameters().getVmId();
-        setVmName(getParameters().getVm().getName());
+        setVmName(getParameters().getNewName());
 
         // init the parameters only at first instantiation (not subsequent for end action)
         if (Guid.isNullOrEmpty(parameters.getNewVmGuid())) {
