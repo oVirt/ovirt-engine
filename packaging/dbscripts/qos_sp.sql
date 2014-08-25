@@ -150,6 +150,16 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllQosByQosType(v_qos_type SMALLINT) RETURNS SETOF qos STABLE
+   AS $procedure$
+BEGIN
+RETURN QUERY SELECT *
+   FROM qos
+   WHERE qos_type = v_qos_type;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 Create or replace FUNCTION GetQosByDiskProfile(v_disk_profile_id UUID) RETURNS SETOF qos STABLE
    AS $procedure$
 BEGIN
