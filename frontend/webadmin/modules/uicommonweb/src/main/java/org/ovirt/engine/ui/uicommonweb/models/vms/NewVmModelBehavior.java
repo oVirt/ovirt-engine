@@ -346,8 +346,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
 
     @Override
     public void vmTypeChanged(VmType vmType) {
-        deactivateInstanceTypeManager();
-
         // provisioning thin -> false
         // provisioning clone -> true
         if (getModel().getProvisioning().getIsAvailable()) {
@@ -355,7 +353,6 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         }
 
         super.vmTypeChanged(vmType);
-        activateInstanceTypeManager();
     }
 
     @Override

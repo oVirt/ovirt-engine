@@ -20,6 +20,14 @@ public class NewPoolInstanceTypeManager extends InstanceTypeManager {
         }
     }
 
+    @Override
+    protected void updateBalloon(VmBase vmBase, boolean continueWithNext) {
+        if (!isSourceCustomInstanceTypeOrBlankTemplate()) {
+            super.updateBalloon(vmBase, continueWithNext);
+        } else if (continueWithNext) {
+            updateRngDevice(vmBase);
+        }
+    }
 
     @Override
     protected void maybeSetSingleQxlPci(VmBase vmBase) {

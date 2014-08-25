@@ -1735,12 +1735,7 @@ public class UnitVmModel extends Model {
         else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition))
         {
             if (sender == getVmType()) {
-                deactivateInstanceTypeManagerAndUpdateFields();
-
                 vmTypeChanged();
-
-                getBehavior().activateInstanceTypeManager();
-
             } else if (sender == getDataCenterWithClustersList())
             {
                 dataCenterWithClusterSelectedItemChanged(sender, args);
@@ -1761,7 +1756,14 @@ public class UnitVmModel extends Model {
                 defaultHost_SelectedItemChanged(sender, args);
             }
             else if (sender == getOSType()) {
-                deactivateInstanceTypeManagerAndUpdateFields();
+                getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
+                    @Override
+                    public void activated() {
+                        if (getBehavior().getInstanceTypeManager() != null && !getBehavior().basedOnCustomInstanceType()) {
+                            getBehavior().getInstanceTypeManager().updateFildsAfterOsChanged();
+                        }
+                    }
+                });
 
                 oSType_SelectedItemChanged(sender, args);
                 getBehavior().oSType_SelectedItemChanged();
@@ -1849,17 +1851,6 @@ public class UnitVmModel extends Model {
             }
 
         }
-    }
-
-    private void deactivateInstanceTypeManagerAndUpdateFields() {
-        getBehavior().deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
-            @Override
-            public void activated() {
-                if (getBehavior().getInstanceTypeManager() != null) {
-                    getBehavior().getInstanceTypeManager().updateFields();
-                }
-            }
-        });
     }
 
     private void vmInitEnabledChanged() {
@@ -1980,11 +1971,13 @@ public class UnitVmModel extends Model {
             getUsbPolicy().setIsChangable(false);
         }
 
-        Collection<UsbPolicy> policies = getUsbPolicy().getItems();
-        if (policies.contains(prevSelectedUsbPolicy)) {
-            getUsbPolicy().setSelectedItem(prevSelectedUsbPolicy);
-        } else if (policies.size() > 0) {
-            getUsbPolicy().setSelectedItem(policies.iterator().next());
+        if (getBehavior().basedOnCustomInstanceType()) {
+            Collection<UsbPolicy> policies = getUsbPolicy().getItems();
+            if (policies.contains(prevSelectedUsbPolicy)) {
+                getUsbPolicy().setSelectedItem(prevSelectedUsbPolicy);
+            } else if (policies.size() > 0) {
+                getUsbPolicy().setSelectedItem(policies.iterator().next());
+            }
         }
     }
 
@@ -2076,12 +2069,10 @@ public class UnitVmModel extends Model {
 
         getMemoryBalloonDeviceEnabled().setIsChangable(isBalloonEnabled);
 
-        getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
-        if (!isBalloonEnabled) {
-            getBehavior().deactivateInstanceTypeManager();
+        if (getBehavior().basedOnCustomInstanceType()) {
             getMemoryBalloonDeviceEnabled().setEntity(isBalloonEnabled);
-            getBehavior().activateInstanceTypeManager();
         }
+
     }
 
     private void initFirstBootDevice()
