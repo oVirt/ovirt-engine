@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -34,7 +35,6 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -539,13 +539,9 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled())) {
-            List<Disk> allDisks = getDiskDao().getAllForVm(getVmId(), true);
-            for (Disk disk : allDisks) {
-                if (disk.getDiskInterface() == DiskInterface.VirtIO_SCSI) {
-                    return failCanDoAction(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
-                }
-            }
+        VmValidator vmValidator = createVmValidator(vmFromParams);
+        if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) && !validate(vmValidator.canDisableVirtioScsi(null))) {
+            return false;
         }
 
         if (vmFromParams.getMinAllocatedMem() > vmFromParams.getMemSizeMb()) {
@@ -746,4 +742,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return getParameters().getWatchdog() != null;
     }
 
+    public VmValidator createVmValidator(VM vm) {
+        return new VmValidator(vm);
+    }
 }

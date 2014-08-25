@@ -1,20 +1,25 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.DiskDao;
 
 /** A Validator for various VM canDoAction needs */
 public class VmValidator {
@@ -170,7 +175,34 @@ public class VmValidator {
         return ValidationResult.VALID;
     }
 
-    private DbFacade getDbFacade() {
+    /**
+     * Determines whether VirtIO-SCSI can be disabled for the VM
+     * (can be disabled when no disk uses VirtIO-SCSI interface).
+     */
+    public ValidationResult canDisableVirtioScsi(Collection<? extends Disk> vmDisks) {
+        if (vmDisks == null) {
+            vmDisks = getDiskDao().getAllForVm(vms.iterator().next().getId(), true);
+        }
+
+        boolean isVirtioScsiDiskExist = CollectionUtils.exists(vmDisks, new Predicate() {
+            @Override
+            public boolean evaluate(Object disk) {
+                return ((Disk) disk).getDiskInterface() == DiskInterface.VirtIO_SCSI;
+            }
+        });
+
+        if (isVirtioScsiDiskExist) {
+            return new ValidationResult(VdcBllMessages.CANNOT_DISABLE_VIRTIO_SCSI_PLUGGED_DISKS);
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public DiskDao getDiskDao() {
+        return getDbFacade().getDiskDao();
+    }
+
+    public DbFacade getDbFacade() {
         return DbFacade.getInstance();
     }
 }
