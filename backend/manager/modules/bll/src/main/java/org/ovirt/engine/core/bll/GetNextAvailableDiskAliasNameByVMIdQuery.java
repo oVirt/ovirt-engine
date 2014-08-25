@@ -38,7 +38,7 @@ public class GetNextAvailableDiskAliasNameByVMIdQuery<P extends IdQueryParameter
         int i = 0;
         do {
             i++;
-            suggestedDiskName = ImagesHandler.getDefaultDiskAlias(vm.getName(), Integer.toString(vm.getDiskMapCount() + i));
+            suggestedDiskName = ImagesHandler.getDefaultDiskAlias(vm.getName(), Integer.toString(i));
         } while (aliases.contains(suggestedDiskName));
         return suggestedDiskName;
     }
