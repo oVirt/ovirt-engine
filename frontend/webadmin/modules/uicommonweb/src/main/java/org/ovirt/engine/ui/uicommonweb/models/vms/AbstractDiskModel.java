@@ -694,6 +694,7 @@ public abstract class AbstractDiskModel extends DiskModel
         getHost().setIsAvailable(!isInternal);
         getStorageType().setIsAvailable(!isInternal);
         getDataCenter().setIsAvailable(!isInVm);
+        getDiskProfile().setIsAvailable(isInternal);
 
         if (!isInternal) {
             previousWipeAfterDeleteEntity = getIsWipeAfterDelete().getEntity();
