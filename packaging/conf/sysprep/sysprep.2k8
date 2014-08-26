@@ -2,19 +2,19 @@
 <unattend xmlns="urn:schemas-microsoft-com:unattend">
     <settings pass="specialize">
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-            <ComputerName>$ComputerName$</ComputerName>
-            <RegisteredOrganization>$OrgName$</RegisteredOrganization>
+            <ComputerName><![CDATA[$ComputerName$]]></ComputerName>
+            <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
             <RegisteredOwner>User</RegisteredOwner>
         </component>
         <component name="Microsoft-Windows-UnattendedJoin" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <Identification>
                 <Credentials>
-                    <Domain>$JoinDomain$</Domain>
-                    <Password>$DomainAdminPassword$</Password>
-                    <Username>$DomainAdmin$</Username>
+                    <Domain><![CDATA[$JoinDomain$]]></Domain>
+                    <Password><![CDATA[$DomainAdminPassword$]]></Password>
+                    <Username><![CDATA[$DomainAdmin$]]></Username>
                 </Credentials>
                 <DebugJoin>true</DebugJoin>
-                <JoinDomain>$JoinDomain$</JoinDomain>
+                <JoinDomain><![CDATA[$JoinDomain$]]></JoinDomain>
             </Identification>
         </component>
     </settings>
@@ -42,13 +42,13 @@
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>$DomainAdminPassword$</Value>
+                    <Value><![CDATA[$DomainAdminPassword$]]></Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
-            <RegisteredOrganization>$OrgName$</RegisteredOrganization>
+            <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
             <RegisteredOwner>User</RegisteredOwner>
-            <TimeZone>$TimeZone$</TimeZone>
+            <TimeZone><![CDATA[$TimeZone$]]></TimeZone>
         </component>
     </settings>
     <settings pass="windowsPE">
@@ -65,11 +65,11 @@
         <component name="Microsoft-Windows-Setup" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <UserData>
                 <ProductKey>
-                    <Key>$ProductKey$</Key>
+                    <Key><![CDATA[$ProductKey$]]></Key>
                     <WillShowUI>Never</WillShowUI>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
-                <Organization>$OrgName$</Organization>
+                <Organization><![CDATA[$OrgName$]]></Organization>
                 <FullName>User</FullName>
             </UserData>
         </component>

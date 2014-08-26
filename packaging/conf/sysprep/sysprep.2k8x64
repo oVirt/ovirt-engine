@@ -5,21 +5,21 @@
             <Identification>
                 <Credentials>
                     <!-- Identification/JoinDomain -->
-                    <Domain>$JoinDomain$</Domain>
+                    <Domain><![CDATA[$JoinDomain$]]></Domain>
                     <!-- Identification/DomainAdminPassword-->
-                    <Password>$DomainAdminPassword$</Password>
+                    <Password><![CDATA[$DomainAdminPassword$]]></Password>
                     <!-- Identification/DomainAdmin -->
-                    <Username>$DomainAdmin$</Username>
+                    <Username><![CDATA[$DomainAdmin$]]></Username>
                 </Credentials>
-                <JoinDomain>$JoinDomain$</JoinDomain>
+                <JoinDomain><![CDATA[$JoinDomain$]]></JoinDomain>
                 <DebugJoin>true</DebugJoin>
             </Identification>
         </component>
         <component name="Microsoft-Windows-Shell-Setup" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <!-- UserData/ComputerName -->
-	    <ComputerName>$ComputerName$</ComputerName>
+	    <ComputerName><![CDATA[$ComputerName$]]></ComputerName>
             <!-- UserData/OrgName -->
-	    <RegisteredOrganization>$OrgName$</RegisteredOrganization>
+	    <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
             <!-- UserData/FullName -->
             <RegisteredOwner>User</RegisteredOwner>
         </component>
@@ -47,15 +47,15 @@
             <UserAccounts>
                   <!-- GuiUnattended/AdminPassword -->
                 <AdministratorPassword>
-                    <Value>$AdminPassword$</Value>
+                    <Value><![CDATA[$AdminPassword$]]></Value>
                   <!-- GuiUnattended/EncryptedAdminPassword -->
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
             </UserAccounts>
 		<!-- GuiUnattended/TimeZone -->
-            <TimeZone>$TimeZone$</TimeZone>
+            <TimeZone><![CDATA[$TimeZone$]]></TimeZone>
             <!-- UserData/OrgName -->
-	    <RegisteredOrganization>$OrgName$</RegisteredOrganization>
+	    <RegisteredOrganization><![CDATA[$OrgName$]]></RegisteredOrganization>
             <!-- UserData/FullName -->
             <RegisteredOwner>User</RegisteredOwner>
         </component>
@@ -74,9 +74,9 @@
 		<!-- GuiUnattended/OemSkipWelcome -->
                 <AcceptEula>true</AcceptEula>
                 <FullName>User</FullName>
-                <Organization>$OrgName$</Organization>
+                <Organization><![CDATA[$OrgName$]]></Organization>
                 <ProductKey>
-                  <Key>$ProductKey$</Key>
+                  <Key><![CDATA[$ProductKey$]]></Key>
                   <WillShowUI>Never</WillShowUI>
                 </ProductKey>
             </UserData>

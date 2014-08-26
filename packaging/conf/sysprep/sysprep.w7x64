@@ -4,11 +4,11 @@
         <component name="Microsoft-Windows-Setup" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <UserData>
                 <ProductKey>
-                    <Key>$ProductKey$</Key>
+                    <Key><![CDATA[$ProductKey$]]></Key>
                 </ProductKey>
                 <AcceptEula>true</AcceptEula>
                 <FullName>"user"</FullName>
-                <Organization>$OrgName$</Organization>
+                <Organization><![CDATA[$OrgName$]]></Organization>
             </UserData>
             <ImageInstall>
                 <OSImage>
@@ -35,8 +35,8 @@
                 <RefreshRate>75</RefreshRate>
                 <VerticalResolution>768</VerticalResolution>
             </Display>
-            <ComputerName>$ComputerName$</ComputerName>
-            <TimeZone>$TimeZone$</TimeZone>
+            <ComputerName><![CDATA[$ComputerName$]]></ComputerName>
+            <TimeZone><![CDATA[$TimeZone$]]></TimeZone>
         </component>
         <component name="Microsoft-Windows-International-Core" processorArchitecture="x86" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <InputLocale>en-US</InputLocale>
@@ -47,11 +47,11 @@
         <component name="Microsoft-Windows-UnattendedJoin" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
             <Identification>
                 <Credentials>
-                    <Domain>$JoinDomain$</Domain>
-                    <Password>$DomainAdminPassword$</Password>
-                    <Username>$DomainAdmin$</Username>
+                    <Domain><![CDATA[$JoinDomain$]]></Domain>
+                    <Password><![CDATA[$DomainAdminPassword$]]></Password>
+                    <Username><![CDATA[$DomainAdmin$]]></Username>
                 </Credentials>
-                <JoinDomain>$JoinDomain$</JoinDomain>
+                <JoinDomain><![CDATA[$JoinDomain$]]></JoinDomain>
             </Identification>
         </component>
     </settings>
@@ -70,13 +70,13 @@
             </OOBE>
             <UserAccounts>
                 <AdministratorPassword>
-                    <Value>$AdminPassword$</Value>
+                    <Value><![CDATA[$AdminPassword$]]></Value>
                     <PlainText>true</PlainText>
                 </AdministratorPassword>
                 <LocalAccounts>
                     <LocalAccount wcm:action="add">
                         <Password>
-                            <Value>$AdminPassword$</Value>
+                            <Value><![CDATA[$AdminPassword$]]></Value>
                             <PlainText>true</PlainText>
                         </Password>
                         <Group>administrators</Group>
