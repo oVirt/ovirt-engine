@@ -3337,6 +3337,7 @@ public interface AppErrors extends ConstantsWithLookup {
             "Possible reasons:\n" +
             "- They are not of type iSCSI.\n" +
             "- Their status is not one of the following: Unknown, Active. Inactive.\n" +
+            "- They already exist in the iSCSI bond.\n" +
             "- They do not belong to the same Data Center as the specified iSCSI bond.\n")
     String ACTION_TYPE_FAILED_STORAGE_CONNECTIONS_CANNOT_BE_ADDED_TO_ISCSI_BOND();
 
