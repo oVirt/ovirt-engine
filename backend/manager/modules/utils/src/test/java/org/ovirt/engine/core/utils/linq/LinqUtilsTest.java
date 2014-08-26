@@ -10,10 +10,6 @@ import java.util.Map;
 
 import org.junit.Test;
 
-/**
- * Created by IntelliJ IDEA. User: gmostizk Date: Aug 9, 2009 Time: 4:05:52 PM To change this template use File |
- * Settings | File Templates.
- */
 public class LinqUtilsTest {
     private List<String> list = new LinkedList<String>() {
         {

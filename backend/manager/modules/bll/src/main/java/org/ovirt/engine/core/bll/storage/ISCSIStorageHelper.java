@@ -172,7 +172,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (!failedLuns.isEmpty()) {
                 for (LUNs lun : failedLuns) {
                     /**
-                     * TODO: Vitaly check if luns in the same pool.
+                     * TODO: check if LUNs in the same pool.
                      */
                     List<String> strings =
                             LinqUtils.foreach(

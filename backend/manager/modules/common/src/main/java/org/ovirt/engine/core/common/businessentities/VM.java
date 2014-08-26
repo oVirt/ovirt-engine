@@ -1112,7 +1112,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     private String floppyPath;
 
     /**
-     * Vitaly change. guest last logout time treatment. If vm stoped without logging out - set last logout time now
+     * Guest last logout time treatment. If vm stoped without logging out - set last logout time now
      */
     public void guestLogoutTimeTreatmentAfterDestroy() {
         if (getGuestLastLoginTime() != null

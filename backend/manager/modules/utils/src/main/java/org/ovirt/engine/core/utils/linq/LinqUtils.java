@@ -7,10 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-/**
- * Created by IntelliJ IDEA. User: gmostizk Date: Aug 9, 2009 Time: 3:44:57 PM To change this template use File |
- * Settings | File Templates.
- */
 public class LinqUtils {
 
     /**

@@ -1,9 +1,5 @@
 package org.ovirt.engine.core.utils.ejb;
 
-/**
- * Created by IntelliJ IDEA. User: gmostizk Date: Aug 16, 2009 Time: 2:45:41 PM To change this template use File |
- * Settings | File Templates.
- */
 public class EjbUtils {
 
     private static EJBUtilsStrategy strategy = new EngineEJBUtilsStrategy();

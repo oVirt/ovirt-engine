@@ -380,7 +380,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
     }
 
     /**
-     * Vitaly TODO: move it other class in hierarchy
+     * TODO: move it other class in hierarchy
      */
 
     protected void removeSnapshot(DiskImage snapshot) {
