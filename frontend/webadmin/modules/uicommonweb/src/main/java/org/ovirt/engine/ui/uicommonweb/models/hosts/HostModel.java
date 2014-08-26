@@ -93,8 +93,6 @@ public abstract class HostModel extends Model
         return getHostId() == null;
     }
 
-    public boolean getIsProvisioning() { return getExternalDiscoveredHosts().getSelectedItem() != null; }
-
     private Guid privateHostId;
 
     public Guid getHostId()
