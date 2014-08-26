@@ -24,7 +24,7 @@ public class CPUPolicyUnit extends PolicyUnitImpl {
         for (VDS vds : hosts) {
             Integer cores = SlaValidator.getInstance().getEffectiveCpuCores(vds);
             if (cores != null && vm.getNumOfCpus() > cores) {
-                messages.addMessage(vds.getId(), VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_CPUS.toString());
+                messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_ENOUGH_CORES.toString());
                 log.debugFormat("host {0} has less cores ({1}) than vm cores ({2})",
                         vds.getName(),
                         cores,
