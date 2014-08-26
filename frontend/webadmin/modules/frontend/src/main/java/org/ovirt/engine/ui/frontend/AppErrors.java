@@ -3231,6 +3231,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it has insufficient free memory to run the VM")
     String VAR__DETAIL__NOT_ENOUGH_MEMORY();
 
+    @DefaultStringValue("$detailMessage it has insufficient CPU cores to run the VM")
+    String VAR__DETAIL__NOT_ENOUGH_CORES();
+
     @DefaultStringValue("There are no hosts to use. Check that the cluster contains at least one host in Up state.")
     String SCHEDULING_NO_HOSTS();
 
