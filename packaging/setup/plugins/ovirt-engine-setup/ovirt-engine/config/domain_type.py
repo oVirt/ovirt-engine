@@ -27,6 +27,7 @@ from otopi import util
 from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -54,6 +55,10 @@ class Plugin(plugin.PluginBase):
             osetupcons.ConfigEnv.STORAGE_TYPE,
             None
         )
+        self.environment.setdefault(
+            osetupcons.ConfigEnv.STORAGE_IS_LOCAL,
+            None
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -76,24 +81,32 @@ class Plugin(plugin.PluginBase):
 
         if self.environment[
             osetupcons.ConfigEnv.STORAGE_TYPE
-        ] is None:
+        ] is not None:
+            if self.environment[
+                osetupcons.ConfigEnv.STORAGE_TYPE
+            ] in self.STORAGE_TYPES:
+                self.environment[
+                    osetupcons.ConfigEnv.STORAGE_IS_LOCAL
+                ] = False
             self.environment[
                 osetupcons.ConfigEnv.STORAGE_TYPE
-            ] = self.dialog.queryString(
-                name='OVESETUP_CONFIG_STORAGE_TYPE',
+            ] = None
+
+        if self.environment[
+            osetupcons.ConfigEnv.STORAGE_IS_LOCAL
+        ] is None:
+            self.environment[
+                osetupcons.ConfigEnv.STORAGE_IS_LOCAL
+            ] = dialog.queryBoolean(
+                dialog=self.dialog,
+                name='OVESETUP_CONFIG_STORAGE_IS_LOCAL',
                 note=_(
                     'Default storage type: (@VALUES@) [@DEFAULT@]: '
                 ),
                 prompt=True,
-                validValues=(
-                    'NFS',
-                    'FC',
-                    'ISCSI',
-                    'POSIXFS',
-                    'GLUSTERFS',
-                ),
-                caseSensitive=False,
-                default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_TYPE,
+                true=_('Local'),
+                false=_('Shared'),
+                default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_IS_LOCAL,
             )
 
     @plugin.event(
@@ -106,11 +119,11 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         self.environment[osetupcons.DBEnv.STATEMENT].execute(
             statement="""
-                select inst_update_default_storage_pool_type (%(type)s)
+                select inst_update_default_storage_pool_type (%(is_local)s)
             """,
             args={
-                'type': self.STORAGE_TYPES[
-                    self.environment[osetupcons.ConfigEnv.STORAGE_TYPE]
+                'is_local': self.environment[
+                    osetupcons.ConfigEnv.STORAGE_IS_LOCAL
                 ],
             },
         )

@@ -473,8 +473,7 @@ class Defaults(object):
     DEFAULT_WEBSOCKET_PROXY_PORT = 6100
 
     DEFAULT_CONFIG_APPLICATION_MODE = 'Both'
-    DEFAULT_CONFIG_STORAGE_TYPE = 'NFS'
-
+    DEFAULT_CONFIG_STORAGE_IS_LOCAL = False
     DEFAULT_ISO_DOMAIN_NAME = 'ISO_DOMAIN'
 
     DEFAULT_HTTPD_SERVICE = 'httpd'
@@ -903,11 +902,19 @@ class ConfigEnv(object):
 
     @osetupattrs(
         answerfile=True,
-        summary=True,
-        description=_('Datacenter storage type'),
+        summary=False,
+        description=_('Configure default datacenter as local'),
     )
     def STORAGE_TYPE(self):
         return 'OVESETUP_CONFIG/storageType'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Datacenter storage type'),
+    )
+    def STORAGE_IS_LOCAL(self):
+        return 'OVESETUP_CONFIG/storageIsLocal'
 
     @osetupattrs(
         answerfile=True,
