@@ -580,12 +580,14 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
 
         for (Disk disk : disks)
         {
-            boolean isTemplateDisk = disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType();
-            boolean isImageLocked = disk.getDiskStorageType() == DiskStorageType.IMAGE
-                    && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED;
+            // check if the disk is template disk
+            if (disk.getVmEntityType() != null && disk.getVmEntityType().isTemplateType()) {
+                return false;
+            }
 
-            if (isTemplateDisk || isImageLocked)
-            {
+            // check if the disk is locked (if it's a DiskImage)
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE
+                    && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
                 return false;
             }
         }
