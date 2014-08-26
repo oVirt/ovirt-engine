@@ -451,8 +451,7 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         optimizationTab.setLabel(constants.clusterPopupOptimizationTabLabel());
 
         memoryOptimizationPanelTitle.setText(constants.clusterPopupMemoryOptimizationPanelTitle());
-        optimizationNoneEditor.asRadioButton()
-                .setHTML(templates.radioButtonLabel(constants.clusterPopupOptimizationNoneLabel()));
+        optimizationNoneEditor.setLabel(constants.clusterPopupOptimizationNoneLabel());
 
         cpuThreadsPanelTitle.setText(constants.clusterPopupCpuThreadsPanelTitle());
         countThreadsAsCoresEditor.setLabel(constants.clusterPopupCountThreadsAsCoresLabel());
@@ -730,18 +729,16 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
     private void optimizationForServerFormatter(ClusterModel object) {
         if (object.getOptimizationForServer() != null
                 && object.getOptimizationForServer().getEntity() != null) {
-            optimizationForServerEditor.asRadioButton()
-                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
-                            object.getOptimizationForServer().getEntity().toString())));
+            optimizationForServerEditor.setLabel(messages.clusterPopupMemoryOptimizationForServerLabel(
+                            object.getOptimizationForServer().getEntity().toString()));
         }
     }
 
     private void optimizationForDesktopFormatter(ClusterModel object) {
         if (object.getOptimizationForDesktop() != null
                 && object.getOptimizationForDesktop().getEntity() != null) {
-            optimizationForDesktopEditor.asRadioButton()
-                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
-                            object.getOptimizationForDesktop().getEntity().toString())));
+            optimizationForDesktopEditor.setLabel(messages.clusterPopupMemoryOptimizationForDesktopLabel(
+                            object.getOptimizationForDesktop().getEntity().toString()));
         }
     }
 
@@ -749,9 +746,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         if (object.getOptimizationCustom() != null
                 && object.getOptimizationCustom().getEntity() != null) {
             // Use current value because object.getOptimizationCustom.getEntity() can be null
-            optimizationCustomEditor.asRadioButton()
-                    .setHTML(templates.radioButtonLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
-                            String.valueOf(object.getMemoryOverCommit()))));
+            optimizationCustomEditor.setLabel(messages.clusterPopupMemoryOptimizationCustomLabel(
+                    String.valueOf(object.getMemoryOverCommit())));
         }
     }
 
@@ -783,6 +779,8 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         String fullWidth();
 
         String timeTextBoxEditorWidget();
+
+        String optimizationTabPanel();
     }
 
 }

@@ -144,6 +144,14 @@
         margin-bottom: 5px;
         }
 
+        .optimizationTabPanel {
+            height: 470px;
+        }
+
+        .optimizationTabPanel label {
+            display: inline;
+        }
+
     </ui:style>
 
     <d:SimpleDialogPanel width="800px" height="560px">
@@ -189,7 +197,7 @@
                 <t:tab>
                     <t:DialogTab ui:field="optimizationTab">
                         <t:content>
-                            <g:FlowPanel>
+                            <g:FlowPanel addStyleNames="{style.optimizationTabPanel}">
                                 <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
                                     <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
                                     <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo} cpv_panelInfo_pfly_fix" />
