@@ -104,7 +104,11 @@ public class BackendVmResource extends
     public VM get() {
         VM vm;
         if (isNextRunRequested()) {
-            vm  = performGet(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(guid));
+            org.ovirt.engine.core.common.businessentities.VM entity =
+                    getEntity(org.ovirt.engine.core.common.businessentities.VM.class, VdcQueryType.GetVmNextRunConfiguration,
+                            new IdQueryParameters(guid), id, true);
+            vm = addLinks(populate(VmMapper.map(entity, null, false), entity));
+
         } else {
             vm = performGet(VdcQueryType.GetVmByVmId, new IdQueryParameters(guid));
         }

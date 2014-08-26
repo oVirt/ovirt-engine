@@ -249,6 +249,10 @@ public class VmMapper extends VmBaseMapper {
 
     @Mapping(from = org.ovirt.engine.core.common.businessentities.VM.class, to = org.ovirt.engine.api.model.VM.class)
     public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template) {
+        return map(entity, template, true);
+    }
+
+    public static VM map(org.ovirt.engine.core.common.businessentities.VM entity, VM template, boolean showDynamicInfo) {
         VM model = template != null ? template : new VM();
 
         mapVmBaseEntityToModel(model, entity.getStaticData());
@@ -300,12 +304,32 @@ public class VmMapper extends VmBaseMapper {
             pool.setId(entity.getVmPoolId().toString());
             model.setVmPool(pool);
         }
-        if (entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
-            if (model.getOs() != null && entity.getBootSequence() != null) {
-                for (Boot boot : map(entity.getBootSequence(), null)) {
+
+        // some fields (like boot-order,display..) have static value (= the permanent config)
+        // and dynamic value (current/last run value, that can be different in case of run-once or edit while running)
+        if (showDynamicInfo && entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
+           if (model.getOs() != null && entity.getBootSequence() != null) {
+               for (Boot boot : map(entity.getBootSequence(), null)) {
+                   model.getOs().getBoot().add(boot);
+               }
+           }
+
+            model.setDisplay(new Display());
+            model.getDisplay().setType(map(entity.getDisplayType(), null));
+        } else {
+            if (model.getOs() != null) {
+                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
                     model.getOs().getBoot().add(boot);
                 }
             }
+            if (entity.getDefaultDisplayType() != null) {
+                model.setDisplay(new Display());
+                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
+            }
+        }
+
+        // fill dynamic data
+        if (entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
             if(entity.getRunOnVds() != null) {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
@@ -336,8 +360,7 @@ public class VmMapper extends VmBaseMapper {
             if (entity.getLastStartTime() != null) {
                 model.setStartTime(DateMapper.map(entity.getLastStartTime(), null));
             }
-            model.setDisplay(new Display());
-            model.getDisplay().setType(map(entity.getDisplayType(), null));
+
             model.getDisplay().setAddress(entity.getDisplayIp());
             Integer displayPort = entity.getDisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
@@ -345,16 +368,6 @@ public class VmMapper extends VmBaseMapper {
             model.getDisplay().setSecurePort(displaySecurePort==null || displaySecurePort==-1 ? null : displaySecurePort);
             model.getDisplay().setMonitors(entity.getNumOfMonitors());
             model.getDisplay().setSingleQxlPci(entity.getSingleQxlPci());
-        } else {
-            if (model.getOs() != null) {
-                for (Boot boot : map(entity.getDefaultBootSequence(), null)) {
-                    model.getOs().getBoot().add(boot);
-                }
-            }
-            if (entity.getDefaultDisplayType() != null) {
-                model.setDisplay(new Display());
-                model.getDisplay().setType(map(entity.getDefaultDisplayType(), null));
-            }
         }
         if (entity.getLastStopTime() != null) {
             model.setStopTime(DateMapper.map(entity.getLastStopTime(), null));
