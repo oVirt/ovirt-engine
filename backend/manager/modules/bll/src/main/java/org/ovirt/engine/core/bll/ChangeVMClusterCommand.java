@@ -221,6 +221,10 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             dedicatedHostWasCleared = true;
         }
 
+        // Since CPU profile is coupled to cluster, when changing a cluster
+        // the 'old' CPU profile is invalid. The update VM command is called straight after
+        // will validate a right profile for VM and its cluster
+        vm.setCpuProfileId(null);
         vm.setVdsGroupId(getParameters().getClusterId());
         DbFacade.getInstance().getVmStaticDao().update(vm.getStaticData());
 
