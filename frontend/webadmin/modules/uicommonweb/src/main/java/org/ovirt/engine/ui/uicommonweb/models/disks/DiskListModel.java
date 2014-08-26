@@ -585,11 +585,18 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
                 return false;
             }
 
-            // check if the disk is locked (if it's a DiskImage)
-            if (disk.getDiskStorageType() == DiskStorageType.IMAGE
-                    && ((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
-                return false;
+            if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
+                ImageStatus imageStatus = ((DiskImage) disk).getImageStatus();
+                if (imageStatus == ImageStatus.LOCKED) {
+                    return false;
+                }
+
+                if (disk.isOvfStore() && imageStatus != ImageStatus.ILLEGAL) {
+                    return false;
+                }
             }
+
+
         }
 
         return true;
