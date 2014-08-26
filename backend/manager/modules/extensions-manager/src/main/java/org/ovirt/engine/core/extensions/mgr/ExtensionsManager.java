@@ -32,6 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ExtensionsManager extends Observable {
 
+    private static final Logger logger = LoggerFactory.getLogger(ExtensionsManager.class);
+
     public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG",
             Logger.class,
             "863db666-3ea7-4751-9695-918a3197ad83");
@@ -148,12 +150,12 @@ public class ExtensionsManager extends Observable {
     }
 
     private void dumpConfig(ExtensionProxy extension) {
-        Logger logger = extension.getContext().<Logger> get(TRACE_LOG_CONTEXT_KEY);
-        if (logger.isDebugEnabled()) {
+        Logger traceLogger = extension.getContext().<Logger> get(TRACE_LOG_CONTEXT_KEY);
+        if (traceLogger.isDebugEnabled()) {
             Collection sensitive = extension.getContext().<Collection>get(Base.ContextKeys.CONFIGURATION_SENSITIVE_KEYS);
-            logger.debug("Config BEGIN");
+            traceLogger.debug("Config BEGIN");
             for (Map.Entry<Object, Object> entry : extension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).entrySet()) {
-                logger.debug(
+                traceLogger.debug(
                     String.format(
                         "%s: %s",
                         entry.getKey(),
@@ -161,7 +163,7 @@ public class ExtensionsManager extends Observable {
                     )
                 );
             }
-            logger.debug("Config END");
+            traceLogger.debug("Config END");
         }
     }
 
@@ -210,12 +212,15 @@ public class ExtensionsManager extends Observable {
                             Base.ContextKeys.PROVIDES,
                             splitString(props.getProperty(Base.ConfigKeys.PROVIDES, ""))
                     );
+
+            logger.info("Loading extension '{}'", entry.name);
             ExtMap output = entry.extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
                             Base.InvokeCommands.LOAD
                             )
                     );
+            logger.info("Extension '{}' loaded", entry.name);
 
             entry.extension.getContext().put(
                     TRACE_LOG_CONTEXT_KEY,
@@ -290,12 +295,14 @@ public class ExtensionsManager extends Observable {
                     extensionName));
         }
         try {
+            logger.info("Initializing extension '{}'", entry.name);
             ExtMap output = entry.extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
                             Base.InvokeCommands.INITIALIZE
                             )
                     );
+            logger.info("Extension '{}' initialized", entry.name);
         } catch (Exception ex) {
             log.error("Error in activating extension {}. Exception message is {}", entry.name, ex.getMessage());
             if (log.isDebugEnabled()) {
