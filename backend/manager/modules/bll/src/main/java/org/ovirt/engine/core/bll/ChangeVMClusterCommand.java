@@ -43,7 +43,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
 
         VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         } else {
 

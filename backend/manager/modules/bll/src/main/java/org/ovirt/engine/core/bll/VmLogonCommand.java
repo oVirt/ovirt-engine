@@ -1,8 +1,7 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
@@ -31,7 +30,7 @@ public class VmLogonCommand<T extends VmOperationParameterBase> extends VmOperat
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

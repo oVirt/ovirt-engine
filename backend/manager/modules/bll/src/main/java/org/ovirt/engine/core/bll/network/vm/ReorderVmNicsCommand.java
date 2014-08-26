@@ -1,5 +1,12 @@
 package org.ovirt.engine.core.bll.network.vm;
 
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.VmCommand;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
@@ -9,13 +16,6 @@ import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends VmCommand<T> {
 
@@ -27,7 +27,7 @@ public class ReorderVmNicsCommand<T extends VmOperationParameterBase> extends Vm
     protected boolean canDoAction() {
         VM vm = getVm();
         if (vm == null || vm.getStaticData() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 

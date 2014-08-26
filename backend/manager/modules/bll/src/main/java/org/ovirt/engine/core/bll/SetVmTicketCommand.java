@@ -104,7 +104,7 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Check that the virtual machine exists:
         final VM vm = getVm();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
 
             return false;
         }

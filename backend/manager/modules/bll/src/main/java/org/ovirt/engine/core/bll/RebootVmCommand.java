@@ -35,7 +35,7 @@ public class RebootVmCommand<T extends VmOperationParameterBase> extends VmOpera
     protected boolean canDoAction() {
         final VM vm = getVm();
         if (vm == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {

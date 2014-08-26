@@ -37,7 +37,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
     @Override
     protected boolean canDoAction() {
         if (getVm() == null) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
 
         if (!canRunActionOnNonManagedVm()) {

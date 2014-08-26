@@ -538,9 +538,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot pin a vCPU to no pCPU.")
     String VM_PINNING_PINNED_TO_NO_CPU();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM doesn't exist.")
-    String ACTION_TYPE_FAILED_VM_NOT_EXIST();
-
     @DefaultStringValue("Cannot ${action} ${type}. A highly available VM cannot be pinned to a specific Host")
     String ACTION_TYPE_FAILED_VM_CANNOT_BE_HIGHLY_AVAILABLE_AND_PINNED_TO_HOST();
 

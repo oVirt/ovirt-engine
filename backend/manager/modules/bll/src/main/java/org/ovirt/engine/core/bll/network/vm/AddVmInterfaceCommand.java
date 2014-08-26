@@ -94,7 +94,7 @@ public class AddVmInterfaceCommand<T extends AddVmInterfaceParameters> extends A
     protected boolean canDoAction() {
         VmStatic vm = getVm().getStaticData();
         if (vm == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
             return false;
         }
 
