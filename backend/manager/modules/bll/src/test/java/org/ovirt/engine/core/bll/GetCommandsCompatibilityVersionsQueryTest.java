@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -18,14 +20,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertEquals;
 
 
 public class GetCommandsCompatibilityVersionsQueryTest extends AbstractUserQueryTest<VdcQueryParametersBase, GetCommandsCompatibilityVersionsQuery<VdcQueryParametersBase>> {
 
     private ActionGroupDAO actionGroupDaoMock;
-    private static final Version RUN_VM_VERSION = Version.v2_2;
+    private static final Version RUN_VM_VERSION = Version.v3_0;
     private static final Version ADD_VM_FROM_SNAPSHOT_VERSION = Version.v3_1;
 
     @Before
