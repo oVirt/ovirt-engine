@@ -1,15 +1,13 @@
 -- The following stored procedures are relevant to oVirt Installer only
 
-Create or replace FUNCTION inst_update_default_storage_pool_type(v_storage_pool_type INTEGER)
+Create or replace FUNCTION inst_update_default_storage_pool_type(v_is_local boolean)
 RETURNS VOID
    AS $procedure$
 BEGIN
-      if (v_storage_pool_type > 0 and v_storage_pool_type < 7) then
          UPDATE storage_pool
-         SET storage_pool_type = v_storage_pool_type, _update_date = LOCALTIMESTAMP
+         SET is_local = v_is_local, _update_date = LOCALTIMESTAMP
          WHERE storage_pool.name = 'Default' and not exists
          (select 1 from storage_domains where storage_domains.storage_pool_name = 'Default');
-      end if;
 END; $procedure$
 LANGUAGE plpgsql;
 
