@@ -155,11 +155,6 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
             return false;
         }
 
-        if (getVm() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_EXIST);
-            return false;
-        }
-
         if (!canRunActionOnNonManagedVm()) {
             return false;
         }
