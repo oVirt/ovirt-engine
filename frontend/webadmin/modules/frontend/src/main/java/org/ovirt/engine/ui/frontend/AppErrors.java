@@ -1630,7 +1630,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. The provider does not exist in the system.")
     String ACTION_TYPE_FAILED_PROVIDER_DOESNT_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'OpenStack Network'.")
+    @DefaultStringValue("Cannot ${action} ${type}. The provider type should be 'OpenStack Networking'.")
     String ACTION_TYPE_FAILED_PROVIDER_TYPE_MISMATCH();
 
     @DefaultStringValue("Cannot ${action} ${type}. The network provider's broker host address must be configured on the provider.")
