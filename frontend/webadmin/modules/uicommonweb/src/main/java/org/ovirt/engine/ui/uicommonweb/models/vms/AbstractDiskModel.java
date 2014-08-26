@@ -901,10 +901,8 @@ public abstract class AbstractDiskModel extends DiskModel
             getQuota().validateSelectedItem(new IValidation[] { new NotEmptyQuotaValidation() });
         }
 
-        getDiskProfile().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
-
         return getAlias().getIsValid() && getDescription().getIsValid() && getQuota().getIsValid()
-                && getDiskInterface().getIsValid() && getDiskProfile().getIsValid();
+                && getDiskInterface().getIsValid();
     }
 
     protected void forceCreationWarning(ArrayList<String> usedLunsMessages) {
