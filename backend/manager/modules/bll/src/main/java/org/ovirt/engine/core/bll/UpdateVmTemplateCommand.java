@@ -324,6 +324,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
     }
 
     protected boolean setAndValidateCpuProfile() {
+        // cpu profile isn't supported for instance types.
+        if (getVmTemplate().getTemplateType() == VmEntityType.INSTANCE_TYPE) {
+            return true;
+        }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
                 getVdsGroup().getcompatibility_version()));
     }
