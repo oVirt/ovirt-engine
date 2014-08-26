@@ -1664,7 +1664,7 @@ public abstract class HostModel extends Model
 
         ip.validateEntity(new IValidation[] {new NotEmptyValidation(), new HostAddressValidation()});
         userName.validateEntity(new IValidation[] {new NotEmptyValidation()});
-        password.validateEntity(new IValidation[] {new NotEmptyValidation()});
+        password.validateEntity(new IValidation[] {new NotEmptyValidation(), new LengthValidation(50)});
         type.validateSelectedItem(new IValidation[] {new NotEmptyValidation()});
         port.validateEntity(new IValidation[] {new IntegerValidation(1, 65535)});
         options.validateEntity(new IValidation[] {new KeyValuePairValidation(true)});
