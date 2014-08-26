@@ -15,5 +15,7 @@ public interface IRdp {
 
     void setUseLocalDrives(boolean value);
 
+    boolean getEnableCredSspSupport();
+
     void connect();
 }

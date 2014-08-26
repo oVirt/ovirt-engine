@@ -1581,10 +1581,10 @@ public interface CommonApplicationConstants extends Constants {
     String rdpInvokeAuto();
 
     @DefaultStringValue("Downloads a console configuration file to be opened by Remote Desktop client application on " +
-            "your system.")
+            "your system. Required for Network Level Authentication.")
     String rdpInvokeNative();
 
-    @DefaultStringValue("Uses browser plugin to invoke the RDP session (MS Internet Explorer only) .")
+    @DefaultStringValue("Uses browser plugin to invoke the RDP session (MS Internet Explorer only). Required for Single Sign On.")
     String rdpInvokePlugin();
 
     @DefaultStringValue("Console Invocation")

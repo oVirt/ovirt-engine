@@ -12,8 +12,6 @@ public class AbstractRdp {
     private Integer width = 640;
     private Integer height = 480;
     private Integer authenticationLevel = 2;
-    private Boolean enableCredSspSupport = false; // Disable 'Credential Security Support Provider (CredSSP)' to enable
-                                                  // SSO.
     private boolean useLocalDrives;
     private Boolean redirectPrinters = false;
     private Boolean redirectClipboard = true;
@@ -77,14 +75,6 @@ public class AbstractRdp {
 
     public void setAuthenticationLevel(Integer authenticationLevel) {
         this.authenticationLevel = authenticationLevel;
-    }
-
-    public Boolean getEnableCredSspSupport() {
-        return enableCredSspSupport;
-    }
-
-    public void setEnableCredSspSupport(Boolean enableCredSspSupport) {
-        this.enableCredSspSupport = enableCredSspSupport;
     }
 
     public Boolean getRedirectPrinters() {
