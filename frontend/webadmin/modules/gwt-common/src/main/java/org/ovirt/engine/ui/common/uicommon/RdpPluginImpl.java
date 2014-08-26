@@ -135,4 +135,9 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
                                  } catch(e) { alert(e); }
                                  }-*/;
 
+    @Override
+    public boolean getEnableCredSspSupport() {
+        return false;// Disable 'Credential Security Support Provider (CredSSP)' to enable SSO
+    }
+
 }

@@ -87,4 +87,9 @@ public class RdpNativeImpl extends AbstractRdp implements IRdp {
         ConsoleModel.makeConsoleConfigRequest("console.rdp", "application/rdp; charset=UTF-8", configBuilder.toString());//$NON-NLS-1$$NON-NLS-2$
     }
 
+    @Override
+    public boolean getEnableCredSspSupport() {
+        return true;
+    }
+
 }
