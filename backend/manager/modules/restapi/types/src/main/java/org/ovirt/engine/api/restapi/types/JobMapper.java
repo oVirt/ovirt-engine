@@ -4,8 +4,8 @@ import java.sql.Date;
 import java.util.Calendar;
 
 import org.ovirt.engine.api.model.Job;
-import org.ovirt.engine.api.model.JobOwner;
 import org.ovirt.engine.api.model.Status;
+import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 
@@ -19,7 +19,7 @@ public class JobMapper {
         model.setDescription(entity.getDescription());
         model.setStatus(map(entity.getStatus(), null));
         if (entity.getOwnerId() != null) {
-            JobOwner user = new JobOwner();
+            User user = new User();
             user.setId(entity.getOwnerId().toString());
             model.setOwner(user);
         }
