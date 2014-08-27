@@ -26,7 +26,15 @@ public class GlusterGeoRepSessionDetails implements Serializable{
     private Date checkPointTime;
     private Date checkPointCompletedAt;
     private boolean checkpointCompleted;
+    private String masterBrickHostName;
 
+    public String getMasterBrickHostName() {
+        return masterBrickHostName;
+    }
+
+    public void setMasterBrickHostName(String masterBrickHostName) {
+        this.masterBrickHostName = masterBrickHostName;
+    }
 
     public Guid getMasterBrickId() {
         return masterBrickId;
@@ -178,6 +186,7 @@ public class GlusterGeoRepSessionDetails implements Serializable{
                 Objects.equals(getLastSyncedAt(), geoRep.getLastSyncedAt()) &&
                 Objects.equals(getUpdatedAt(), geoRep.getUpdatedAt()) &&
                 Objects.equals(getFailures(), geoRep.getFailures()) &&
+                Objects.equals(getMasterBrickHostName(), geoRep.getMasterBrickHostName()) &&
                 isCheckpointCompleted() == geoRep.isCheckpointCompleted();
     }
 
@@ -201,6 +210,7 @@ public class GlusterGeoRepSessionDetails implements Serializable{
         result = prime * result + ((lastSyncedAt == null) ? 0 : lastSyncedAt.hashCode());
         result = prime * result + ((failures == null) ? 0 : failures.hashCode());
         result = prime * result + ((updatedAt == null) ? 0 : updatedAt.hashCode());
+        result = prime * result + ((masterBrickHostName == null) ? 0 : masterBrickHostName.hashCode());
         return result;
     }
 }

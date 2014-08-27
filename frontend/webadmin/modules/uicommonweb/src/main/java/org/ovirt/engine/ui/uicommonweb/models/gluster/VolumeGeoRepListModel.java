@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionConfiguration;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -26,6 +27,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
+import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -194,6 +196,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         boolean allowPauseSessionCommand = false;
         boolean allowSessionOptionsCommand = false;
         boolean allowRemoveSessionCommand = false;
+        boolean allowSessionDetailsCommand = false;
         if(volumeEntity == null) {
             return;
         }
@@ -209,6 +212,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
             allowSessionOptionsCommand = true;
             allowNewGeoRepSessionCommand = volumeEntity.getStatus() == GlusterStatus.UP;
             allowRemoveSessionCommand = true;
+            allowSessionDetailsCommand = true;
         }
         getNewSessionCommand().setIsExecutionAllowed(allowNewGeoRepSessionCommand);
         getRemoveSessionCommand().setIsExecutionAllowed(allowRemoveSessionCommand);
@@ -217,7 +221,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         getPauseSessionCommand().setIsExecutionAllowed(allowPauseSessionCommand);
         getResumeSessionCommand().setIsExecutionAllowed(allowResumeSessionCommand);
         getSessionOptionsCommand().setIsExecutionAllowed(allowSessionOptionsCommand);
-        getViewSessionDetailsCommand().setIsAvailable(false);
+        getViewSessionDetailsCommand().setIsExecutionAllowed(allowSessionDetailsCommand);
         getRefreshSessionsCommand().setIsAvailable(true);
     }
 
@@ -239,7 +243,7 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
         } else if(command.equals(getSessionOptionsCommand())) {
             showSessionOptions();
         } else if(command.equals(getViewSessionDetailsCommand())) {
-
+            showGeoRepSessionDetails((GlusterGeoRepSession)getSelectedItem());
         } else if (command.equals(getRefreshSessionsCommand())) {
             refreshSessions();
         } else if (command.getName().equalsIgnoreCase("onCreateSession")) {//$NON-NLS-1$
@@ -265,6 +269,48 @@ public class VolumeGeoRepListModel extends SearchableListModel<GlusterVolumeEnti
 
     private void closeConfirmWindow() {
         setConfirmWindow(null);
+    }
+
+    private void populateStatus(final List<GlusterGeoRepSessionDetails> details) {
+        final VolumeGeoRepSessionDetailsModel windowModel = new VolumeGeoRepSessionDetailsModel();
+        windowModel.setHelpTag(HelpTag.geo_replication_status_detail);
+        windowModel.setHashName("geo_replication_status_detail");//$NON-NLS-1$
+
+        final UIConstants constants = ConstantsManager.getInstance().getConstants();
+        windowModel.setTitle(constants.geoReplicationSessionDetailsTitle());
+
+        UICommand okCommand = new UICommand("closeWindow", this);//$NON-NLS-1$
+        okCommand.setIsCancel(true);
+        okCommand.setTitle(constants.ok());
+        windowModel.getCommands().add(okCommand);
+
+        setWindow(windowModel);
+
+        final List<EntityModel<GlusterGeoRepSessionDetails>> detailRows = new ArrayList<>();
+        for (GlusterGeoRepSessionDetails detail : details) {
+            detailRows.add(new EntityModel<GlusterGeoRepSessionDetails>(detail));
+        }
+        windowModel.getGeoRepSessionSummary().setItems(detailRows, detailRows.get(0));
+    }
+
+    public void showGeoRepSessionDetails(GlusterGeoRepSession session) {
+        ArrayList<GlusterGeoRepSessionDetails> details = session.getSessionDetails();
+        if(getWindow() != null) {
+            return;
+        }
+        if(details == null || details.size() == 0) {
+            final UIConstants constants = ConstantsManager.getInstance().getConstants();
+            final ConfirmationModel cModel = new ConfirmationModel();
+            cModel.setTitle(constants.geoReplicationSessionDetailsTitle());
+            UICommand okCommand = new UICommand("closeConfirmWindow", this);//$NON-NLS-1$
+            okCommand.setTitle(constants.ok());
+            okCommand.setIsCancel(true);
+            cModel.getCommands().add(okCommand);
+            setConfirmWindow(cModel);
+            cModel.setMessage(constants.geoRepSessionStatusDetailFetchFailed());
+        } else {
+            populateStatus(details);
+        }
     }
 
     private void showSessionOptions() {

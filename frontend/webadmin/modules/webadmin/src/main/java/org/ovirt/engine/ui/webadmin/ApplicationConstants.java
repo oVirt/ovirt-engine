@@ -3841,6 +3841,52 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Rebalance NOT STARTED")
     String rebalanceNotStarted();
 
+    //Volume Geo Rep Status Detail Column Headers
+    @DefaultStringValue("Master Host")
+    String geoRepSessionHostName();
+
+    @DefaultStringValue("Status")
+    String geoRepSessionStatus();
+
+    @DefaultStringValue("Last Synced At")
+    String geoRepLastSyncedAt();
+
+    @DefaultStringValue("Master Brick")
+    String geoRepMasterBrick();
+
+    @DefaultStringValue("Slave host")
+    String geoRepSlaveHostName();
+
+    @DefaultStringValue("Status")
+    String geoRepPairStatus();
+
+    @DefaultStringValue("Geo-Rep Session Detail")
+    String geoRepSessionDetailHeader();
+
+    @DefaultStringValue("Checkpoint Status")
+    String geoRepCheckPointStatus();
+
+    @DefaultStringValue("Crawl Status")
+    String georepCrawlStatus();
+
+    @DefaultStringValue("Pending Data operations")
+    String geoRepDataOpsPending();
+
+    @DefaultStringValue("Pending meta-operations")
+    String geoRepMetaOpsPending();
+
+    @DefaultStringValue("Pending Entry operations")
+    String geoRepEntryOpsPending();
+
+    @DefaultStringValue("Failures")
+    String geoRepFailures();
+
+    @DefaultStringValue("Checkpoint time")
+    String geoRepCheckPointTime();
+
+    @DefaultStringValue("Checkpoint completed at")
+    String geoRepCheckPointCompletedAt();
+
     @DefaultStringValue("Manage Policy Units")
     String managePolicyUnits();
 
