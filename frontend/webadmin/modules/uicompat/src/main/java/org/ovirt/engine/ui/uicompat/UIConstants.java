@@ -284,6 +284,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Geo-Replication")
     String geoReplicationTitle();
 
+    @DefaultStringValue("Geo-Replication Session Details")
+    String geoReplicationSessionDetailsTitle();
+
+    @DefaultStringValue("Could not fetch brick details")
+    String geoRepBrickDetailsFetchFailed();
+
+    @DefaultStringValue("Could not fetch Geo-Replication status details")
+    String geoRepSessionStatusDetailFetchFailed();
+
     @DefaultStringValue("Start Geo-Replication")
     String geoReplicationStartTitle();
 

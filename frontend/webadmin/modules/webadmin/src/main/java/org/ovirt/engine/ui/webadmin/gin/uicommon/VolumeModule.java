@@ -41,6 +41,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Gluster
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeGeoRepSessionDetailsPopUpPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeParameterPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
@@ -277,6 +278,7 @@ public class VolumeModule extends AbstractGinModule {
             final Provider<GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget> geoRepActionConfirmationPopupProvider,
             final Provider<GlusterVolumeGeoReplicationSessionConfigPopupPresenterWidget> geoRepConfigPopupProvider,
             final Provider<GlusterVolumeGeoRepCreateSessionPopupPresenterWidget> geoRepSessionCreatePopupProvider,
+            final Provider<VolumeGeoRepSessionDetailsPopUpPresenterWidget> geoRepSessionDetailsProvider,
             final Provider<VolumeListModel> mainModelProvider,
             final Provider<VolumeGeoRepListModel> modelProvider) {
         return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus,
@@ -295,6 +297,8 @@ public class VolumeModule extends AbstractGinModule {
                             return geoRepConfigPopupProvider.get();
                         } else if (lastExecutedCommand == getModel().getNewSessionCommand()) {
                             return geoRepSessionCreatePopupProvider.get();
+                        } else if (lastExecutedCommand == getModel().getViewSessionDetailsCommand()) {
+                            return geoRepSessionDetailsProvider.get();
                         } else {
                             return geoRepActionConfirmationPopupProvider.get();
                         }

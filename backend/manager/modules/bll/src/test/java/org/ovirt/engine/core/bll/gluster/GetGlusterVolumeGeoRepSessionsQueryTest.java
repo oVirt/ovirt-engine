@@ -12,6 +12,7 @@ import org.junit.Test;
 import org.ovirt.engine.core.bll.AbstractQueryTest;
 import org.ovirt.engine.core.common.businessentities.gluster.GeoRepSessionStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessionDetails;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -57,6 +58,7 @@ public class GetGlusterVolumeGeoRepSessionsQueryTest extends AbstractQueryTest<I
         doReturn(geoRepDao).when(getQuery()).getGeoRepDao();
         doReturn(masterVolumeId).when(getQueryParameters()).getId();
         doReturn(getMockGeoRepSessions()).when(geoRepDao).getGeoRepSessions(masterVolumeId);
+        doReturn(new ArrayList<GlusterGeoRepSessionDetails>()).when(geoRepDao).getGeoRepSessionDetails(sessionId);
     }
 
     @Test

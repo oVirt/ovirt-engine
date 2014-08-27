@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+	xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
+	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+	xmlns:w="urn:import:org.ovirt.engine.ui.common.widget">
+	<ui:style>
+		.tablePanel {
+		height: 280px;
+		width: 730px;
+		padding: 1px;
+		border: 1px solid #CED8DF;
+		}
+
+        .headerLabel {
+			font-weight: bold;
+			padding-bottom: 5px;
+		}
+
+        .button table{
+			width: 100%;
+		}
+	</ui:style>
+
+	<d:SimpleDialogPanel width="750px" height="625px">
+		<d:content>
+			<g:VerticalPanel>
+				<g:ScrollPanel addStyleNames="{style.tablePanel}">
+					<e:EntityModelCellTable ui:field="geoRepSessionSummaryTable" />
+				</g:ScrollPanel>
+				<g:FlowPanel>
+					<g:Label ui:field="georepSessionDetailsHeader"
+						addStyleNames="{style.headerLabel}" />
+					<ge:EntityModelLabelEditor ui:field="checkPointStatus" />
+					<ge:EntityModelLabelEditor ui:field="crawlStatus" />
+					<ge:EntityModelLabelEditor ui:field="dataOpsPending" />
+					<ge:EntityModelLabelEditor ui:field="metaOpsPending" />
+					<ge:EntityModelLabelEditor ui:field="entryOpsPending" />
+					<ge:EntityModelLabelEditor ui:field="failures" />
+					<ge:EntityModelLabelEditor ui:field="checkPointTime" />
+					<ge:EntityModelLabelEditor ui:field="checkPointCompletedAt" />
+				</g:FlowPanel>
+			</g:VerticalPanel>
+		</d:content>
+	</d:SimpleDialogPanel>
+</ui:UiBinder>
