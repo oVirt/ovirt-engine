@@ -3,6 +3,7 @@ package org.ovirt.engine.api.restapi.types;
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.DisplayType;
+import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmType;
@@ -39,6 +40,8 @@ public class TemplateMapperTest
         }
         from.setTimezone("Australia/Darwin");
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
+        from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
+        from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
         return from;
     }
 
@@ -89,5 +92,7 @@ public class TemplateMapperTest
         assertEquals(model.getDisplay().isFileTransferEnabled(), transform.getDisplay().isFileTransferEnabled());
         assertEquals(model.getDisplay().isCopyPasteEnabled(), transform.getDisplay().isCopyPasteEnabled());
         assertEquals(model.isStartPaused(), transform.isStartPaused());
+        assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
+        assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
     }
 }

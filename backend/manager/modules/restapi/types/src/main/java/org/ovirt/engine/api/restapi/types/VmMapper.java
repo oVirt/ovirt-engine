@@ -124,6 +124,8 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setRunAndPause(entity.isRunAndPause());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
+        staticVm.setAutoConverge(entity.getAutoConverge());
+        staticVm.setMigrateCompressed(entity.getMigrateCompressed());
         return staticVm;
     }
 

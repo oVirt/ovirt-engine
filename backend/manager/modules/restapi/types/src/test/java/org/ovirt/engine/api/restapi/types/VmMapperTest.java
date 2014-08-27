@@ -11,6 +11,7 @@ import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Host;
+import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Session;
@@ -99,6 +100,8 @@ public class VmMapperTest extends
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         from.getDisplay().setFileTransferEnabled(true);
         from.getDisplay().setCopyPasteEnabled(true);
+        from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
+        from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
         return from;
     }
 
@@ -151,6 +154,8 @@ public class VmMapperTest extends
         assertEquals(model.getDisplay().isFileTransferEnabled(), transform.getDisplay().isFileTransferEnabled());
         assertEquals(model.getDisplay().isCopyPasteEnabled(), transform.getDisplay().isCopyPasteEnabled());
         assertEquals(model.isStartPaused(), transform.isStartPaused());
+        assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
+        assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
     }
 
     @Test

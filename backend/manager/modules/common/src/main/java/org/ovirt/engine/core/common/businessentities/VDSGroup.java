@@ -21,7 +21,7 @@ import org.ovirt.engine.core.compat.Version;
 
 @ValidVdsGroup(groups = { CreateEntity.class })
 @ValidSerialNumberPolicy(groups = {CreateEntity.class, UpdateEntity.class})
-public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented, HasSerialNumberPolicy {
+public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented, HasSerialNumberPolicy, HasMigrationOptions {
 
     private static final long serialVersionUID = 5659359762655478095L;
 

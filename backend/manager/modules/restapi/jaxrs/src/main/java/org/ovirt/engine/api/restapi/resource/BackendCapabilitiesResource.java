@@ -46,9 +46,11 @@ import org.ovirt.engine.api.model.HostNICStates;
 import org.ovirt.engine.api.model.HostNonOperationalDetails;
 import org.ovirt.engine.api.model.HostStates;
 import org.ovirt.engine.api.model.HostStatus;
+import org.ovirt.engine.api.model.InheritableBoolean;
+import org.ovirt.engine.api.model.InheritableBooleans;
 import org.ovirt.engine.api.model.IpVersions;
-import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.KdumpStates;
+import org.ovirt.engine.api.model.KdumpStatus;
 import org.ovirt.engine.api.model.MigrateOnError;
 import org.ovirt.engine.api.model.NetworkStates;
 import org.ovirt.engine.api.model.NetworkStatus;
@@ -75,10 +77,10 @@ import org.ovirt.engine.api.model.PowerManagers;
 import org.ovirt.engine.api.model.QosTypes;
 import org.ovirt.engine.api.model.ReportedDeviceType;
 import org.ovirt.engine.api.model.ReportedDeviceTypes;
-import org.ovirt.engine.api.model.SELinuxMode;
-import org.ovirt.engine.api.model.SELinuxModes;
 import org.ovirt.engine.api.model.RngSource;
 import org.ovirt.engine.api.model.RngSources;
+import org.ovirt.engine.api.model.SELinuxMode;
+import org.ovirt.engine.api.model.SELinuxModes;
 import org.ovirt.engine.api.model.SchedulingPolicies;
 import org.ovirt.engine.api.model.SchedulingPolicyType;
 import org.ovirt.engine.api.model.SchedulingPolicyUnitTypes;
@@ -281,6 +283,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSpmStates(version, SpmState.values());
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
+        addInheritableBooleans(version, InheritableBoolean.values());
 
         version.setFeatures(featuresHelper.getFeatures(v));
 
@@ -907,6 +910,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
                 states.getSpmStates().add(state.value());
             }
             version.setSpmStates(states);
+        }
+    }
+
+    private void addInheritableBooleans(VersionCaps version, InheritableBoolean[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            version.setInheritableBooleans(new InheritableBooleans());
+            for (InheritableBoolean bool : values) {
+                version.getInheritableBooleans().getInheritableBooleans().add(bool.value());
+            }
         }
     }
 

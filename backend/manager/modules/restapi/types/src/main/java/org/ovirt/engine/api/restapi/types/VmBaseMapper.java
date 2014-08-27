@@ -157,6 +157,9 @@ public class VmBaseMapper {
         if (model.isSetCpuProfile() && model.getCpuProfile().isSetId()) {
             entity.setCpuProfileId(GuidUtils.asGuid(model.getCpuProfile().getId()));
         }
+        if (model.isSetMigration()) {
+            MigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -233,6 +236,8 @@ public class VmBaseMapper {
             cpuProfile.setId(entity.getCpuProfileId().toString());
             model.setCpuProfile(cpuProfile);
         }
+
+        model.setMigration(MigrationOptionsMapper.map(entity, null));
     }
 
     @Mapping(from = OriginType.class, to = String.class)

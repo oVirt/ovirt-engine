@@ -12,6 +12,7 @@ public class ClusterValidator implements Validator<Cluster> {
 
     private SchedulingPolicyValidator schedulingPolicyValidator = new SchedulingPolicyValidator();
     private CPUValidator cpuValidator = new CPUValidator();
+    private MigrationOptionsValidator migrationOptionsValidator = new MigrationOptionsValidator();
 
     @Override
     public void validateEnums(Cluster cluster) {
@@ -29,6 +30,9 @@ public class ClusterValidator implements Validator<Cluster> {
                 for (String rngSourceStr : cluster.getRequiredRngSources().getRngSources()) {
                     validateEnum(RngSource.class, rngSourceStr, true);
                 }
+            }
+            if (cluster.isSetMigration()) {
+                migrationOptionsValidator.validateEnums(cluster.getMigration());
             }
         }
     }

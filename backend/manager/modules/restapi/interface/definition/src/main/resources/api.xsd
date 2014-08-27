@@ -656,6 +656,7 @@
           <xs:element ref="rng_sources" minOccurs="0" />
           <xs:element ref="scheduling_policy_unit_types" minOccurs="0" />
           <xs:element ref="qos_types" minOccurs="0" />
+          <xs:element ref="inheritable_booleans" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1241,6 +1242,20 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="inheritable_booleans" type="InheritableBooleans" />
+
+  <xs:complexType name="InheritableBooleans">
+    <xs:sequence>
+      <xs:element name="inheritable_boolean" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="InheritableBooleans" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Mac Pools-->
   <xs:element name="mac_pool" type="MacPool"/>
   <xs:element name="mac_pools" type="MacPools"/>
@@ -1652,6 +1667,7 @@
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="required_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
           <xs:element ref="fencing_policy"  minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -3114,6 +3130,15 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="migration" type="MigrationOptions" />
+
+  <xs:complexType name="MigrationOptions">
+    <xs:sequence>
+      <xs:element name="auto_converge" type="xs:string" minOccurs="0" maxOccurs="1" />
+      <xs:element name="compressed" type="xs:string" minOccurs="0" maxOccurs="1" />
+    </xs:sequence>
+  </xs:complexType>
+
   <xs:complexType name="VmBase">
     <xs:annotation>
       <xs:appinfo>
@@ -3151,6 +3176,7 @@
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>

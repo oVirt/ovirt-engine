@@ -20,6 +20,7 @@ public class VmValidator implements Validator<VM> {
     private CPUValidator cpuValidator = new CPUValidator();
     private RngDeviceValidator rngDeviceValidator = new RngDeviceValidator();
     private GuestNicConfigurationValidator guestNicConfigurationValidator = new GuestNicConfigurationValidator();
+    private MigrationOptionsValidator migrationOptionsValidator = new MigrationOptionsValidator();
 
     @Override
     public void validateEnums(VM vm) {
@@ -63,6 +64,9 @@ public class VmValidator implements Validator<VM> {
                     guestNicConfigurationValidator.validateEnums(nic);
                 }
             }
+        }
+        if (vm.isSetMigration()) {
+            migrationOptionsValidator.validateEnums(vm.getMigration());
         }
     }
 }
