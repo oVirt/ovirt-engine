@@ -471,8 +471,12 @@ class Provisioning(base.Base):
 
     def applyEnvironment(self):
         for k in ('user', 'database', 'port', 'secured', 'hostValidation'):
-            self.environment[self._dbenvkeys[k]] = self._defaults[k]
-        self.environment[self._dbenvkeys['password']] = self.generatePassword()
+            if self.environment[self._dbenvkeys[k]] is None:
+                self.environment[self._dbenvkeys[k]] = self._defaults[k]
+        if self.environment[self._dbenvkeys['password']] is None:
+            self.environment[
+                self._dbenvkeys['password']
+            ] = self.generatePassword()
 
     def provision(self):
         if not self.supported():
