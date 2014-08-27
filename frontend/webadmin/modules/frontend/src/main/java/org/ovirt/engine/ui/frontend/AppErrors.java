@@ -3135,4 +3135,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. ${interface} disks can't be read-only.")
     String ACTION_TYPE_FAILED_INTERFACE_DOES_NOT_SUPPORT_READ_ONLY_ATTR();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Balloon is not supported on '${clusterArch}' architecture.")
+    String BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH();
 }

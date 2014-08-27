@@ -601,4 +601,25 @@ public class AddVmCommandTest {
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }
+
+    @Test
+    public void refuseBalloonOnPPC() {
+        ArrayList<String> reasons = new ArrayList<String>();
+        final int domainSizeGB = 20;
+        final int sizeRequired = 5;
+        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
+
+        cmd.getParameters().setBalloonEnabled(true);
+        cmd.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
+        VDSGroup cluster = new VDSGroup();
+        cluster.setArchitecture(ArchitectureType.ppc64);
+        cluster.setcompatibility_version(Version.getLast());
+        doReturn(cluster).when(cmd).getVdsGroup();
+        doReturn(true).when(cmd).buildAndCheckDestStorageDomains();
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
 }

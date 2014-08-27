@@ -191,6 +191,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
 
+        if (getVm().isBalloonEnabled() && !getVdsGroup().isBalloonSupported()) {
+            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH,
+                    String.format("$clusterArch %1$s", getVdsGroup().getArchitecture()));
+        }
+
         return canDoActionAfterCloneVm(domainsMap);
     }
 

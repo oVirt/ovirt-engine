@@ -19,6 +19,7 @@ import org.ovirt.engine.core.compat.Version;
 public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEntity<Guid>, HasStoragePool<Guid>, Nameable, Commented {
 
     private static final long serialVersionUID = 5659359762655478095L;
+    private static final ArchitectureType BALLOON_DEVICE_BLACKLISTED_ARCH = ArchitectureType.ppc64;
 
     private Guid id;
 
@@ -293,6 +294,10 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     public void setEnableBallooning(boolean enableBallooning) {
         this.enableBallooning = enableBallooning;
+    }
+
+    public boolean isBalloonSupported() {
+        return this.architecture != BALLOON_DEVICE_BLACKLISTED_ARCH;
     }
 
     public void setDetectEmulatedMachine(boolean detectEmulatedMachine) {

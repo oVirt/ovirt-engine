@@ -448,6 +448,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
         }
 
+        if (isBalloonEnabled() && !getVdsGroup().isBalloonSupported()) {
+            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH,
+                    String.format("$clusterArch %1$s", getVdsGroup().getArchitecture()));
+        }
+
         return true;
     }
 
@@ -630,6 +635,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     public boolean isVirtioScsiEnabledForVm(Guid vmId) {
         return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
+    }
+
+    boolean isBalloonEnabled() {
+        Boolean balloonEnabled = getParameters().isBalloonEnabled();
+        return balloonEnabled != null ? balloonEnabled : VmDeviceUtils.isBalloonEnabled(getVmId());
     }
 
     protected boolean isSoundDeviceEnabled() {

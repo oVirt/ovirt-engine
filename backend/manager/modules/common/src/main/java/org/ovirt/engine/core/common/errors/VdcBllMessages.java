@@ -959,7 +959,10 @@ public enum VdcBllMessages {
     // Iscsi bonds
     ISCSI_BOND_WITH_SAME_NAME_EXIST_IN_DATA_CENTER(ErrorType.CONFLICT),
     ISCSI_BOND_NOT_SUPPORTED(ErrorType.NOT_SUPPORTED),
-    ISCSI_BOND_NOT_EXIST(ErrorType.BAD_PARAMETERS);
+    ISCSI_BOND_NOT_EXIST(ErrorType.BAD_PARAMETERS),
+
+    //balloon on ppc
+    BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH(ErrorType.NOT_SUPPORTED);
 
     private ErrorType messageType;
 

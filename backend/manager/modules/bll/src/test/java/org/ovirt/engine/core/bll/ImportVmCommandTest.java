@@ -31,6 +31,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -91,6 +92,34 @@ public class ImportVmCommandTest {
         assertTrue(c.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_TARGET_STORAGE_DOMAIN.toString()));
+    }
+
+    @Test
+    public void refuseBalloonOnPPC() {
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(0);
+        c.getParameters().getVm().setBalloonEnabled(true);
+        c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
+        VDSGroup cluster = new VDSGroup();
+        cluster.setArchitecture(ArchitectureType.ppc64);
+        cluster.setcompatibility_version(Version.getLast());
+        doReturn(cluster).when(c).getVdsGroup();
+        assertFalse(c.canDoAction());
+        assertTrue(c.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
+
+    @Test
+    public void acceptBalloon() {
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(0);
+        c.getParameters().getVm().setBalloonEnabled(true);
+        c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
+        VDSGroup cluster = new VDSGroup();
+        cluster.setArchitecture(ArchitectureType.x86_64);
+        cluster.setcompatibility_version(Version.getLast());
+        doReturn(cluster).when(c).getVdsGroup();
+        osRepository.getDisplayTypes().get(0).put(Version.getLast(), Arrays.asList(DisplayType.qxl));
+        assertTrue(c.canDoAction());
     }
 
     @Test
