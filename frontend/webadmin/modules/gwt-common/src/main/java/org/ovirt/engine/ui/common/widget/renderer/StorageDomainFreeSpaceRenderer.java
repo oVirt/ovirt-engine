@@ -15,6 +15,11 @@ public class StorageDomainFreeSpaceRenderer<T extends StorageDomain> extends Abs
             return ""; //$NON-NLS-1$
         }
 
+        if (storageDomain.getAvailableDiskSize() == null) {
+            // 'getAvailableDiskSize' may return null when there's a connectivity issue with the storage domain
+            return storageDomain.getStorageName();
+        }
+
         return MESSAGES.storageDomainFreeSpace(storageDomain.getStorageName(),
                 storageDomain.getAvailableDiskSize(),
                 storageDomain.getTotalDiskSize());
