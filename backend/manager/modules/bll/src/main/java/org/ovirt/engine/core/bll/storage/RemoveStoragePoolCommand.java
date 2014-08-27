@@ -201,6 +201,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         });
 
         handleDestroyStoragePoolCommand();
+        runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
 
         setSucceeded(true);
 
@@ -222,7 +223,6 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             removeDomainFromDb(masterDomain);
         }
 
-        runSynchronizeOperation(new DisconnectStoragePoolAsyncOperationFactory());
         return retVal;
     }
 
