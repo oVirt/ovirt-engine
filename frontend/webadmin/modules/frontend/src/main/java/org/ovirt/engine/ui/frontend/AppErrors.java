@@ -3354,4 +3354,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Target cluster belongs to different Data Center.")
     String VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Plugged and unlinked VM network interface with external network is not supported.")
+    String PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED();
 }
