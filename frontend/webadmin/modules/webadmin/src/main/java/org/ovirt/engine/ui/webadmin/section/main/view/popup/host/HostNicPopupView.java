@@ -47,4 +47,10 @@ public class HostNicPopupView extends AbstractModelBoundPopupView<HostNicModel> 
         return driver.flush();
     }
 
+    @Override
+    public void focusInput() {
+        super.focusInput();
+        labelsWidget.focusInput();
+    }
+
 }

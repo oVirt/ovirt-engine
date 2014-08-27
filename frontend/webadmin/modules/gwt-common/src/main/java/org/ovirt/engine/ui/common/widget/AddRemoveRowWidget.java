@@ -274,6 +274,19 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
 
     }
 
+    @Override
+    public void focusInput() {
+        super.focusInput();
+
+        ListIterator<Pair<T, V>> last = items.listIterator(items.size());
+        if (last.hasPrevious()) {
+            V widget = last.previous().getSecond();
+            if (widget instanceof Focusable) {
+                ((Focusable) widget).setFocus(true);
+            }
+        }
+    }
+
     /**
      * This method is called straight after an entry is added by pressing the plus button. Note that this new entry will
      * necessarily be a "ghost" entry, as the plus button always adds entries that are initially in ghost state.
