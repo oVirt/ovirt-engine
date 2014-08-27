@@ -205,7 +205,8 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                 || !validate(nicValidator.isCompatibleWithOs())
                 || !validate(nicValidator.emptyNetworkValid())
                 || !validate(nicValidator.hotUpdatePossible())
-                || !validate(nicValidator.profileValid(getVm().getVdsGroupId()))) {
+                || !validate(nicValidator.profileValid(getVm().getVdsGroupId()))
+                || !validate(nicValidator.canVnicWithExternalNetworkBePlugged())) {
             return false;
         }
 
@@ -369,6 +370,18 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
                     && (newNetwork == null || !newNetwork.isExternal())
                     ? ValidationResult.VALID
                             : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_CANNOT_BE_REWIRED);
+        }
+
+        public ValidationResult canVnicWithExternalNetworkBePlugged() {
+            return ValidationResult.failWith(VdcBllMessages.PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED)
+                    .when(RequiredAction.PLUG == getRequiredAction()
+                          && !nic.isLinked()
+                          && isVnicAttachedToExternalNetwork());
+        }
+
+        private boolean isVnicAttachedToExternalNetwork() {
+            final Network network = NetworkHelper.getNetworkByVnicProfileId(nic.getVnicProfileId());
+            return (network != null && network.isExternal());
         }
     }
 }
