@@ -24,11 +24,17 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
         super(new MultiWordSuggestOracle());
         initWidget(asSuggestBox());
 
-        asSuggestBox().getTextBox().addFocusHandler(new FocusHandler() {
+        asSuggestBox().getValueBox().addFocusHandler(new FocusHandler() {
 
             @Override
             public void onFocus(FocusEvent event) {
-                asSuggestBox().showSuggestionList();
+                Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                    @Override
+                    public void execute() {
+                        asSuggestBox().showSuggestionList();
+                    }
+                });
             }
         });
         addKeyPressHandler(new KeyPressHandler() {
