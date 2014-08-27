@@ -359,8 +359,8 @@ class Provisioning(base.Base):
             # we cannot use all for address <psql-9
             (
                 '{host:7} '
-                '{user:15} '
                 '{database:15} '
+                '{user:15} '
                 '{address:23} '
                 '{auth}'
             ).format(
