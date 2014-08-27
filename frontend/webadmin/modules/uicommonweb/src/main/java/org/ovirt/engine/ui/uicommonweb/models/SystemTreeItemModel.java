@@ -126,7 +126,7 @@ public class SystemTreeItemModel extends EntityModel implements TreeNodeInfo {
         }
 
         // Compare item's children, if necessary
-        if (result && getChildren().size() > 0 && deepCompare) {
+        if (result && (!getChildren().isEmpty() || !otherModel.getChildren().isEmpty()) && deepCompare) {
             if (getChildren().size() != otherModel.getChildren().size()) {
                 result = false;
             } else {
