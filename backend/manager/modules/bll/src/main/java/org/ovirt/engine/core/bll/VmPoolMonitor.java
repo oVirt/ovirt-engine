@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RunVmParams;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -16,6 +17,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
@@ -132,6 +135,13 @@ public class VmPoolMonitor {
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().runInternalAction(VdcActionType.RunVm,
                 runVmParams, ExecutionHandler.createInternalJobContext());
         boolean prestartingVmSucceeded = vdcReturnValue.getSucceeded();
+
+        if (!prestartingVmSucceeded) {
+            AuditLogableBase log = new AuditLogableBase();
+            log.addCustomValue("VmPoolName", vmToRunAsStateless.getVmPoolName());
+            AuditLogDirector.log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
+        }
+
         log.infoFormat("Running Vm {0} as stateless {1}",
                 vmToRunAsStateless, prestartingVmSucceeded ? "succeeded" : "failed");
         return prestartingVmSucceeded;
