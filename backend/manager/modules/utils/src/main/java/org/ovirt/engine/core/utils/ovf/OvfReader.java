@@ -681,6 +681,20 @@ public abstract class OvfReader implements IOvfBuilder {
             vmBase.setSpiceCopyPasteEnabled(Boolean.parseBoolean(node.innerText));
         }
 
+        node = content.SelectSingleNode(OvfProperties.IS_AUTO_CONVERGE);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setAutoConverge(Boolean.parseBoolean(node.innerText));
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.IS_MIGRATE_COMPRESSED);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setMigrateCompressed(Boolean.parseBoolean(node.innerText));
+            }
+        }
+
         readGeneralData(content);
 
         readVmInit(content);

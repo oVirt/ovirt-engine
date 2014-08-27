@@ -340,6 +340,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private Guid cpuProfileId;
 
+    @CopyOnNewVersion
+    @EditableField
+    private Boolean autoConverge;
+
+    @CopyOnNewVersion
+    @EditableField
+    private Boolean migrateCompressed;
+
     public VmBase(VmBase vmBase) {
         this(vmBase.getName(),
                 vmBase.getId(),
@@ -389,7 +397,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.isSpiceFileTransferEnabled(),
                 vmBase.isSpiceCopyPasteEnabled(),
                 vmBase.getCpuProfileId(),
-                vmBase.getNumaTuneMode());
+                vmBase.getNumaTuneMode(),
+                vmBase.getAutoConverge(),
+                vmBase.getMigrateCompressed());
     }
 
     public VmBase(
@@ -441,7 +451,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean spiceFileTransferEnabled,
             boolean spiceCopyPasteEnabled,
             Guid cpuProfileId,
-            NumaTuneMode numaTuneMode) {
+            NumaTuneMode numaTuneMode,
+            Boolean autoConverge,
+            Boolean migrateCompressed) {
         this();
         this.name = name;
         this.id = id;
@@ -492,6 +504,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.numaTuneMode = numaTuneMode;
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
         this.cpuProfileId = cpuProfileId;
+        this.autoConverge = autoConverge;
+        this.migrateCompressed = migrateCompressed;
     }
 
     public long getDbGeneration() {
@@ -835,6 +849,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((cpuProfileId == null) ? 0 : cpuProfileId.hashCode());
         result = prime * result + ((numaTuneMode == null) ? 0 : numaTuneMode.getValue().hashCode());
         result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
+        result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
+        result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
         return result;
     }
 
@@ -892,7 +908,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
                 && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId)
                 && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
-                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList));
+                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList))
+                && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
+                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed);
     }
 
     public Guid getQuotaId() {
@@ -1088,4 +1106,19 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.vNumaNodeList = vNumaNodeList;
     }
 
+    public Boolean getAutoConverge() {
+        return autoConverge;
+    }
+
+    public void setAutoConverge(Boolean autoConverge) {
+        this.autoConverge = autoConverge;
+    }
+
+    public Boolean getMigrateCompressed() {
+        return migrateCompressed;
+    }
+
+    public void setMigrateCompressed(Boolean migrateCompressed) {
+        this.migrateCompressed = migrateCompressed;
+    }
 }

@@ -13,10 +13,13 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
     private String dstQemu;
     private Version clusterVersion;
     private Integer migrationDowntime;
+    private Boolean autoConverge;
+    private Boolean migrateCompressed;
 
     public MigrateVDSCommandParameters(Guid vdsId, Guid vmId, String srcHost, Guid dstVdsId,
             String dstHost, MigrationMethod migrationMethod, boolean tunnelMigration,
-            String dstQemu, Version clusterVersion, int migrationDowntime) {
+            String dstQemu, Version clusterVersion, int migrationDowntime,
+            Boolean autoConverge, Boolean migrateCompressed) {
         super(vdsId, vmId);
         this.srcHost = srcHost;
         this.dstVdsId = dstVdsId;
@@ -26,6 +29,8 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         this.dstQemu = dstQemu;
         this.clusterVersion = clusterVersion;
         this.migrationDowntime = migrationDowntime;
+        this.autoConverge = autoConverge;
+        this.migrateCompressed = migrateCompressed;
     }
 
     public String getSrcHost() {
@@ -56,20 +61,38 @@ public class MigrateVDSCommandParameters extends VdsAndVmIDVDSParametersBase {
         return migrationDowntime;
     }
 
+    public Boolean getMigrateCompressed() {
+        return migrateCompressed;
+    }
+
+    public void setMigrateCompressed(Boolean migrateCompressed) {
+        this.migrateCompressed = migrateCompressed;
+    }
+
+    public Boolean getAutoConverge() {
+        return autoConverge;
+    }
+
+    public void setAutoConverge(Boolean autoConverge) {
+        this.autoConverge = autoConverge;
+    }
+
     public MigrateVDSCommandParameters() {
         migrationMethod = MigrationMethod.OFFLINE;
     }
 
     @Override
     public String toString() {
-        return String.format("%s, srcHost=%s, dstVdsId=%s, dstHost=%s, migrationMethod=%s, tunnelMigration=%s, migrationDowntime=%s",
+        return String.format("%s, srcHost=%s, dstVdsId=%s, dstHost=%s, migrationMethod=%s, tunnelMigration=%s, migrationDowntime=%s, autoConverge=%s, migrateCompressed=%s",
                 super.toString(),
                 getSrcHost(),
                 getDstVdsId(),
                 getDstHost(),
                 getMigrationMethod(),
                 isTunnelMigration(),
-                getMigrationDowntime());
+                getMigrationDowntime(),
+                getAutoConverge(),
+                getMigrateCompressed());
     }
 
     public void setClusterVersion(Version clusterVersion) {

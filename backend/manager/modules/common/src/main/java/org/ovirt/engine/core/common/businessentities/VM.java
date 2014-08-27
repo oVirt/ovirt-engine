@@ -1854,4 +1854,20 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public void setCpuProfileId(Guid cpuProfileId) {
         vmStatic.setCpuProfileId(cpuProfileId);
     }
+
+    public Boolean getAutoConverge() {
+        return vmStatic.getAutoConverge();
+    }
+
+    public void setAutoConverge(Boolean autoConverge) {
+        vmStatic.setAutoConverge(autoConverge);
+    }
+
+    public Boolean getMigrateCompressed() {
+        return vmStatic.getMigrateCompressed();
+    }
+
+    public void setMigrateCompressed(Boolean migrateCompressed) {
+        vmStatic.setMigrateCompressed(migrateCompressed);
+    }
 }

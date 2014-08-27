@@ -376,6 +376,18 @@ public abstract class OvfWriter implements IOvfBuilder {
         _writer.WriteStartElement(OvfProperties.IS_SPICE_COPY_PASTE_ENABLED);
         _writer.WriteRaw(String.valueOf(vmBase.isSpiceCopyPasteEnabled()));
         _writer.WriteEndElement();
+
+        if (vmBase.getAutoConverge() != null) {
+            _writer.WriteStartElement(OvfProperties.IS_AUTO_CONVERGE);
+            _writer.WriteRaw(String.valueOf(vmBase.getAutoConverge()));
+            _writer.WriteEndElement();
+        }
+
+        if (vmBase.getMigrateCompressed() != null) {
+            _writer.WriteStartElement(OvfProperties.IS_MIGRATE_COMPRESSED);
+            _writer.WriteRaw(String.valueOf(vmBase.getMigrateCompressed()));
+            _writer.WriteEndElement();
+        }
     }
 
     protected abstract void writeAppList();

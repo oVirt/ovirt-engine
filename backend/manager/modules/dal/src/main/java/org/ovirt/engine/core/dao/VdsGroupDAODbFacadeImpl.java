@@ -233,7 +233,9 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
                 .addValue("skip_fencing_if_sd_active", group.getFencingPolicy().isSkipFencingIfSDActive())
                 .addValue("skip_fencing_if_connectivity_broken", group.getFencingPolicy().isSkipFencingIfConnectivityBroken())
                 .addValue("hosts_with_broken_connectivity_threshold", group.getFencingPolicy().getHostsWithBrokenConnectivityThreshold())
-                .addValue("fencing_enabled", group.getFencingPolicy().isFencingEnabled());
+                .addValue("fencing_enabled", group.getFencingPolicy().isFencingEnabled())
+                .addValue("is_auto_converge", group.getAutoConverge())
+                .addValue("is_migrate_compressed", group.getMigrateCompressed());
 
         return parameterSource;
     }
@@ -298,6 +300,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             entity.getFencingPolicy().setSkipFencingIfConnectivityBroken(rs.getBoolean("skip_fencing_if_connectivity_broken"));
             entity.getFencingPolicy().setHostsWithBrokenConnectivityThreshold(rs.getInt("hosts_with_broken_connectivity_threshold"));
             entity.getFencingPolicy().setFencingEnabled(rs.getBoolean("fencing_enabled"));
+            entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
+            entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
 
             return entity;
         }

@@ -78,7 +78,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             Guid baseTemplateId, String templateVersionName,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
             boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled,
-            Guid cpuProfileId, NumaTuneMode numaTuneMode) {
+            Guid cpuProfileId, NumaTuneMode numaTuneMode,
+            boolean autoConverge, boolean migrateCompressed) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -127,7 +128,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 spiceFIleTransferEnabled,
                 spiceCopyPasteEnabled,
                 cpuProfileId,
-                numaTuneMode);
+                numaTuneMode,
+                autoConverge,
+                migrateCompressed);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();
@@ -195,6 +198,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
         setSpiceFileTransferEnabled(template.isSpiceFileTransferEnabled());
         setNumaTuneMode(template.getNumaTuneMode());
         setSpiceCopyPasteEnabled(template.isSpiceCopyPasteEnabled());
+        setAutoConverge(template.getAutoConverge());
+        setMigrateCompressed(template.getMigrateCompressed());
     }
 
     public ArchitectureType getClusterArch() {

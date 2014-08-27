@@ -46,6 +46,14 @@ public class MigrateBrokerVDSCommand<P extends MigrateVDSCommandParameters> exte
             migrationInfo.put(VdsProperties.MIGRATION_DOWNTIME, Integer.toString(parameters.getMigrationDowntime()));
         }
 
+        if (parameters.getAutoConverge() != null) {
+            migrationInfo.put(VdsProperties.AUTO_CONVERGE, parameters.getAutoConverge().toString());
+        }
+
+        if (parameters.getMigrateCompressed() != null) {
+            migrationInfo.put(VdsProperties.MIGRATE_COMPRESSED, parameters.getMigrateCompressed().toString());
+        }
+
         return migrationInfo;
     }
 }

@@ -794,6 +794,8 @@
         <column>skip_fencing_if_connectivity_broken</column>
         <column>hosts_with_broken_connectivity_threshold</column>
         <column>fencing_enabled</column>
+        <column>is_auto_converge</column>
+        <column>is_migrate_compressed</column>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
             <value>rhel6.iscsi</value>
@@ -822,6 +824,8 @@
             <value>false</value>
             <value>false</value>
             <value>50</value>
+            <value>true</value>
+            <value>true</value>
             <value>true</value>
         </row>
         <row>
@@ -853,6 +857,8 @@
             <value>false</value>
             <value>50</value>
             <value>true</value>
+            <value>true</value>
+            <value>false</value>
         </row>
         <row>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d3</value>
@@ -882,6 +888,8 @@
             <value>false</value>
             <value>false</value>
             <value>50</value>
+            <value>true</value>
+            <value>false</value>
             <value>true</value>
         </row>
         <row>
@@ -913,6 +921,8 @@
             <value>false</value>
             <value>50</value>
             <value>true</value>
+            <null />
+            <value>true</value>
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7c</value>
@@ -943,6 +953,8 @@
             <value>false</value>
             <value>50</value>
             <value>true</value>
+            <value>true</value>
+            <null />
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7d</value>
@@ -972,6 +984,8 @@
             <value>false</value>
             <value>false</value>
             <value>50</value>
+            <value>false</value>
+            <null />
             <value>false</value>
         </row>
         <row>
@@ -1003,6 +1017,8 @@
             <value>false</value>
             <value>50</value>
             <value>true</value>
+            <value>false</value>
+            <null />
         </row>
         <row>
             <value>eba797fb-8e3b-4777-b63c-92e7a5957d7f</value>
@@ -1033,6 +1049,8 @@
             <value>false</value>
             <value>50</value>
             <value>true</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb8f-5191c9253314</value>
@@ -1063,6 +1081,8 @@
             <value>true</value>
             <value>50</value>
             <value>false</value>
+            <null />
+            <null />
         </row>
     </table>
 
@@ -2009,6 +2029,8 @@
         <column>is_spice_file_transfer_enabled</column>
         <column>is_spice_copy_paste_enabled</column>
         <column>cpu_profile_id</column>
+        <column>is_auto_converge</column>
+        <column>is_migrate_compressed</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -2069,6 +2091,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2129,6 +2153,8 @@
             <value>true</value>
             <value>true</value>
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>true</value>
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -2189,6 +2215,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>false</value>
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -2249,6 +2277,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <null />
+            <value>false</value>
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -2309,6 +2339,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>false</value>
+            <value>false</value>
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -2369,6 +2401,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -2429,6 +2463,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <null />
+            <value>true</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -2489,6 +2525,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
 
         <!-- VMS -->
@@ -2551,6 +2589,8 @@
             <value>true</value>
             <value>true</value>
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
+            <value>true</value>
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2611,6 +2651,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <null />
+            <value>false</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2669,6 +2711,8 @@
             <value>true</value>
             <value>preferred</value>
             <value>true</value>
+            <value>true</value>
+            <null />
             <value>true</value>
             <null />
         </row>
@@ -2731,6 +2775,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2791,6 +2837,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2851,6 +2899,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2911,6 +2961,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -2971,6 +3023,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>true</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -3031,6 +3085,8 @@
             <value>true</value>
             <value>true</value>
             <null />
+            <value>true</value>
+            <value>false</value>
         </row>
     </table>
 

@@ -1953,5 +1953,21 @@ public enum ConfigValues {
     @OptionBehaviourAttribute(behaviour = OptionBehaviour.CommaSeparatedStringArray)
     UnsupportedLocalesFilter,
 
-    Invalid;
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    AutoConvergenceSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("true")
+    MigrationCompressionSupported,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    DefaultAutoConvergence,
+
+    @TypeConverterAttribute(Boolean.class)
+    @DefaultValueAttribute("false")
+    DefaultMigrationCompression,
+
+    Invalid
 }

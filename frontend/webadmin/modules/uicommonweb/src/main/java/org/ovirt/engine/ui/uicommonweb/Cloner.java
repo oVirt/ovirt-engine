@@ -222,6 +222,8 @@ public final class Cloner
         vm.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         vm.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         vm.setCpuProfileId(instance.getCpuProfileId());
+        vm.setAutoConverge(instance.getAutoConverge());
+        vm.setMigrateCompressed(instance.getMigrateCompressed());
 
         return vm;
     }
@@ -311,6 +313,8 @@ public final class Cloner
         obj.setSerialNumberPolicy(instance.getSerialNumberPolicy());
         obj.setCustomSerialNumber(instance.getCustomSerialNumber());
         obj.setFencingPolicy(new FencingPolicy(instance.getFencingPolicy()));
+        obj.setAutoConverge(instance.getAutoConverge());
+        obj.setMigrateCompressed(instance.getMigrateCompressed());
 
         return obj;
     }
@@ -447,6 +451,8 @@ public final class Cloner
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         obj.setCpuProfileId(instance.getCpuProfileId());
+        obj.setAutoConverge(instance.getAutoConverge());
+        obj.setMigrateCompressed(instance.getMigrateCompressed());
 
         return obj;
     }
@@ -489,6 +495,8 @@ public final class Cloner
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         obj.setCpuProfileId(instance.getCpuProfileId());
+        obj.setAutoConverge(instance.getAutoConverge());
+        obj.setMigrateCompressed(instance.getMigrateCompressed());
 
         return obj;
     }

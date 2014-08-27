@@ -130,4 +130,9 @@
        <Field name="dbFacade" />
        <Bug pattern="URF_UNREAD_FIELD" />
     </Match>
+
+    <Match>
+      <Class name="org.ovirt.engine.core.bll.MigrateVmCommand" />
+      <Bug pattern="NP_BOOLEAN_RETURN_NULL" />
+    </Match>
 </FindBugsFilter>

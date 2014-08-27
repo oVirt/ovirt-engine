@@ -175,7 +175,7 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         return new MigrateVDSCommandParameters(getVdsId(), getVmId(), srcVdsHost, getDestinationVdsId(),
                 dstVdsHost, MigrationMethod.ONLINE, isTunnelMigrationUsed(), getMigrationNetworkIp(), getVds().getVdsGroupCompatibilityVersion(),
-                getMaximumMigrationDowntime());
+                getMaximumMigrationDowntime(), getAutoConverge(), getMigrateCompressed());
     }
 
     @Override
@@ -196,6 +196,38 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         ChangeVMClusterParameters params = new ChangeVMClusterParameters(getParameters().getTargetVdsGroupId(), getVmId());
         setSucceeded(getBackend().runInternalAction(VdcActionType.ChangeVMCluster, params).getSucceeded());
+    }
+
+    private Boolean getAutoConverge() {
+        if (FeatureSupported.autoConvergence(getVm().getVdsGroupCompatibilityVersion())) {
+            if (getVm().getAutoConverge() != null) {
+                return getVm().getAutoConverge();
+            }
+
+            if (getVdsGroup().getAutoConverge() != null) {
+                return getVdsGroup().getAutoConverge();
+            }
+
+            return Config.getValue(ConfigValues.DefaultAutoConvergence);
+        }
+
+        return null;
+    }
+
+    private Boolean getMigrateCompressed() {
+        if (FeatureSupported.migrationCompression(getVm().getVdsGroupCompatibilityVersion())) {
+            if (getVm().getMigrateCompressed() != null) {
+                return getVm().getMigrateCompressed();
+            }
+
+            if (getVdsGroup().getMigrateCompressed() != null) {
+                return getVdsGroup().getMigrateCompressed();
+            }
+
+            return Config.getValue(ConfigValues.DefaultMigrationCompression);
+        }
+
+        return null;
     }
 
     private int getMaximumMigrationDowntime() {

@@ -441,4 +441,22 @@ public class FeatureSupported {
     public static boolean jsonProtocol(Version version) {
         return supportedInConfig(ConfigValues.JsonProtocolSupported, version);
     }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if forcing convergence on migration is supported for the given version
+     */
+    public static boolean autoConvergence(Version version) {
+        return supportedInConfig(ConfigValues.AutoConvergenceSupported, version);
+    }
+
+    /**
+     * @param version
+     *            Compatibility version to check for.
+     * @return <code>true</code> if compressing memory pages on migration is supported for the given version
+     */
+    public static boolean migrationCompression(Version version) {
+        return supportedInConfig(ConfigValues.MigrationCompressionSupported, version);
+    }
 }

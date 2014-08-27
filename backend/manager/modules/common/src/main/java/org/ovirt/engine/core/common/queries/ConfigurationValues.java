@@ -148,7 +148,11 @@ public enum ConfigurationValues {
     MaxIopsUpperBoundQosValue,
     MaxReadIopsUpperBoundQosValue,
     MaxWriteIopsUpperBoundQosValue,
-    MaxCpuLimitQosValue;
+    MaxCpuLimitQosValue,
+    AutoConvergenceSupported(ConfigAuthType.User),
+    MigrationCompressionSupported(ConfigAuthType.User),
+    DefaultAutoConvergence,
+    DefaultMigrationCompression;
 
     public static enum ConfigAuthType {
         Admin,

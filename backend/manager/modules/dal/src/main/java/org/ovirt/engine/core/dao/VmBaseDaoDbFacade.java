@@ -70,7 +70,9 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("is_spice_file_transfer_enabled", entity.isSpiceFileTransferEnabled())
                 .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled())
                 .addValue("cpu_profile_id", entity.getCpuProfileId())
-                .addValue("numatune_mode", entity.getNumaTuneMode().getValue());
+                .addValue("numatune_mode", entity.getNumaTuneMode().getValue())
+                .addValue("is_auto_converge", entity.getAutoConverge())
+                .addValue("is_migrate_compressed", entity.getMigrateCompressed());
     }
 
     /**
@@ -126,6 +128,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
             entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
+            entity.setAutoConverge((Boolean) rs.getObject("is_auto_converge"));
+            entity.setMigrateCompressed((Boolean) rs.getObject("is_migrate_compressed"));
         }
     }
 }

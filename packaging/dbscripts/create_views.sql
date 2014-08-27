@@ -460,7 +460,8 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled,
        vm_templates.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
        vm_templates.cpu_profile_id as cpu_profile_id,
-       vm_templates.numatune_mode as numatune_mode
+       vm_templates.numatune_mode as numatune_mode,
+       vm_templates.is_auto_converge as is_auto_converge, vm_templates.is_migrate_compressed as is_migrate_compressed
 FROM       vm_static AS vm_templates  LEFT OUTER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -499,7 +500,8 @@ AS
                     vm_templates.serial_number_policy as serial_number_policy, vm_templates.custom_serial_number as custom_serial_number,
                     vm_templates.is_boot_menu_enabled as is_boot_menu_enabled,
                     vm_templates.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled, vm_templates.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
-                    vm_templates.cpu_profile_id as cpu_profile_id, vm_templates.numatune_mode as numatune_mode
+                    vm_templates.cpu_profile_id as cpu_profile_id, vm_templates.numatune_mode as numatune_mode,
+                    vm_templates.is_auto_converge as is_auto_converge, vm_templates.is_migrate_compressed as is_migrate_compressed
 FROM                  vm_static AS vm_templates LEFT OUTER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
@@ -530,7 +532,8 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled,
                       vm_templates_1.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
                       vm_templates_1.cpu_profile_id as cpu_profile_id,
-                      vm_templates_1.numatune_mode as numatune_mode
+                      vm_templates_1.numatune_mode as numatune_mode,
+                      vm_templates_1.is_auto_converge as is_auto_converge, vm_templates_1.is_migrate_compressed as is_migrate_compressed
 FROM                  vm_static AS vm_templates_1 LEFT OUTER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN
@@ -680,7 +683,8 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       (snapshots.snapshot_id is not null) as next_run_config_exists,
                       vm_static.numatune_mode as numatune_mode,
                       vm_static.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled, vm_static.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
-                      vm_static.cpu_profile_id as cpu_profile_id
+                      vm_static.cpu_profile_id as cpu_profile_id,
+                      vm_static.is_auto_converge as is_auto_converge, vm_static.is_migrate_compressed as is_migrate_compressed
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -728,7 +732,8 @@ SELECT      vms.vm_name, vms.mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vm
             (snapshots.snapshot_id is not null) as next_run_config_exists,
             vms.numatune_mode,
             vms.is_spice_file_transfer_enabled, vms.is_spice_copy_paste_enabled,
-            vms.cpu_profile_id
+            vms.cpu_profile_id,
+            vms.is_auto_converge, vms.is_migrate_compressed
 FROM        vms LEFT OUTER JOIN
             tags_vm_map_view ON vms.vm_guid = tags_vm_map_view.vm_id LEFT OUTER JOIN
             vm_device ON vm_device.vm_id = vms.vm_guid LEFT OUTER JOIN
