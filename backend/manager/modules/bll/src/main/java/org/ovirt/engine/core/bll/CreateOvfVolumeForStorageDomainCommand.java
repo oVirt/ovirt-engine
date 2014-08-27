@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.utils.SizeConverter;
@@ -68,13 +69,19 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         setSucceeded(true);
     }
 
+    private boolean shouldOvfStoreBeShareable() {
+        // we don't create shareable disks on gluster domains to avoid
+        // split brain - see BZ 1024654
+        return getStorageDomain().getStorageType() != StorageType.GLUSTERFS;
+    }
+
     public DiskImage createDisk(Guid domainId) {
         DiskImage mNewCreatedDiskImage = new DiskImage();
         mNewCreatedDiskImage.setDiskInterface(DiskInterface.IDE);
         mNewCreatedDiskImage.setWipeAfterDelete(false);
         mNewCreatedDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
         mNewCreatedDiskImage.setDiskDescription(OvfInfoFileConstants.OvfStoreDescriptionLabel);
-        mNewCreatedDiskImage.setShareable(true);
+        mNewCreatedDiskImage.setShareable(shouldOvfStoreBeShareable());
         mNewCreatedDiskImage.setStorageIds(new ArrayList<>(Arrays.asList(domainId)));
         mNewCreatedDiskImage.setSize(SizeConverter.BYTES_IN_MB * 128);
         mNewCreatedDiskImage.setvolumeFormat(VolumeFormat.RAW);
