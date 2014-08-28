@@ -108,8 +108,8 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 Collection<VmWatchdog> watchdogs =
                         ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
                 }
             }
         }), instanceType.getId());

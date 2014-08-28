@@ -1,9 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.List;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -18,6 +14,11 @@ import org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUni
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.List;
 
 public class TemplateVmModelBehavior extends VmModelBehaviorBase
 {
@@ -101,8 +102,8 @@ public class TemplateVmModelBehavior extends VmModelBehaviorBase
                 Collection<VmWatchdog> watchdogs =
                         ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
                 }
             }
         }), template.getId());

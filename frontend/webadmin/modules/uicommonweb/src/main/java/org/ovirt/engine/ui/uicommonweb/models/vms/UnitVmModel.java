@@ -1,15 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -64,12 +54,21 @@ import org.ovirt.engine.ui.uicommonweb.validation.PoolNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.SpecialAsciiI18NOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.ValidationResult;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
-import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 public class UnitVmModel extends Model {
 
@@ -1598,15 +1597,15 @@ public class UnitVmModel extends Model {
         setHostCpu(new NotChangableForVmInPoolEntityModel<Boolean>());
         getHostCpu().getEntityChangedEvent().addListener(this);
 
-        setWatchdogAction(new NotChangableForVmInPoolListModel<String>());
+        setWatchdogAction(new NotChangableForVmInPoolListModel<VmWatchdogAction>());
         getWatchdogAction().getEntityChangedEvent().addListener(this);
-        ArrayList<String> watchDogActions = new ArrayList<String>();
+        ArrayList<VmWatchdogAction> watchDogActions = new ArrayList<VmWatchdogAction>();
         for (VmWatchdogAction action : VmWatchdogAction.values()) {
-            watchDogActions.add(EnumTranslator.createAndTranslate(action));
+            watchDogActions.add(action);
         }
         getWatchdogAction().setItems(watchDogActions);
 
-        setWatchdogModel(new NotChangableForVmInPoolListModel<String>());
+        setWatchdogModel(new NotChangableForVmInPoolListModel<VmWatchdogType>());
         getWatchdogModel().getEntityChangedEvent().addListener(this);
 
         setIsAutoAssign(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1869,9 +1868,9 @@ public class UnitVmModel extends Model {
     }
 
     private void WatchdogModel_EntityChanged(Object sender, EventArgs args) {
-        if ("".equals(getWatchdogModel().getEntity())) {
+        if (getWatchdogModel().getEntity() == null) {
             getWatchdogAction().setIsChangable(false);
-            getWatchdogAction().setSelectedItem(""); //$NON-NLS-1$
+            getWatchdogAction().setSelectedItem(null); //$NON-NLS-1$
         } else {
             getWatchdogAction().setIsChangable(true);
         }
@@ -2248,13 +2247,13 @@ public class UnitVmModel extends Model {
     }
 
     public void updateWatchdogItems(Set<VmWatchdogType> vmWatchdogTypes) {
-        List<String> watchDogModels = new ArrayList<String>();
+        List<VmWatchdogType> watchDogModels = new ArrayList<VmWatchdogType>();
         for (VmWatchdogType vmWatchdogType : vmWatchdogTypes) {
-            watchDogModels.add(EnumTranslator.createAndTranslate(vmWatchdogType));
+            watchDogModels.add(vmWatchdogType);
         }
 
         watchDogModels.add(0, null);
-        String oldWatchdogSelected = (String) getWatchdogModel().getSelectedItem();
+        VmWatchdogType oldWatchdogSelected = getWatchdogModel().getSelectedItem();
         getWatchdogModel().setItems(watchDogModels);
 
         if (watchDogModels.contains(oldWatchdogSelected)) {
@@ -2974,23 +2973,23 @@ public class UnitVmModel extends Model {
         }
     }
 
-    private ListModel<String> watchdogModel;
+    private ListModel<VmWatchdogType> watchdogModel;
 
-    public ListModel<String> getWatchdogModel() {
+    public ListModel<VmWatchdogType> getWatchdogModel() {
         return watchdogModel;
     }
 
-    public void setWatchdogModel(ListModel<String> watchdogModel) {
+    public void setWatchdogModel(ListModel<VmWatchdogType> watchdogModel) {
         this.watchdogModel = watchdogModel;
     }
 
-    private ListModel<String> watchdogAction;
+    private ListModel<VmWatchdogAction> watchdogAction;
 
-    public ListModel<String> getWatchdogAction() {
+    public ListModel<VmWatchdogAction> getWatchdogAction() {
         return watchdogAction;
     }
 
-    public void setWatchdogAction(ListModel<String> watchdogAction) {
+    public void setWatchdogAction(ListModel<VmWatchdogAction> watchdogAction) {
         this.watchdogAction = watchdogAction;
     }
 

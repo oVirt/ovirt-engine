@@ -1,10 +1,5 @@
 package org.ovirt.engine.ui.uicommonweb.models.templates;
 
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.Map;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
@@ -18,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -53,6 +47,11 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.Map;
 
 public class TemplateListModel extends VmBaseListModel<VmTemplate> implements ISupportSystemTreeContext
 {
@@ -635,13 +634,11 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, UpdateVmTemplateParameters updateVmParams) {
-        VmWatchdogType wdModel = VmWatchdogType.getByName(model.getWatchdogModel()
-                .getSelectedItem());
+        VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
         updateVmParams.setUpdateWatchdog(true);
         if(wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(VmWatchdogAction.getByName(model.getWatchdogAction()
-                    .getSelectedItem()));
+            vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
         }

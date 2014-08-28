@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmEntityType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -384,13 +383,11 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmTemplateParametersBase updateVmParams) {
-        VmWatchdogType wdModel = VmWatchdogType.getByName(model.getWatchdogModel()
-                .getSelectedItem());
+        VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
         updateVmParams.setUpdateWatchdog(true);
         if (wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(VmWatchdogAction.getByName(model.getWatchdogAction()
-                    .getSelectedItem()));
+            vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
         }
