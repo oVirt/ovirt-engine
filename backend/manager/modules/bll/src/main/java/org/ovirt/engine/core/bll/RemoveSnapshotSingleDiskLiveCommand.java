@@ -18,11 +18,11 @@ import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBlockJobType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
@@ -89,8 +89,17 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                 return;
 
             case SUCCEEDED:
+                CommandEntity cmdEntity = CommandCoordinatorUtil.getCommandEntity(currentChildId);
+                if (!cmdEntity.isCallBackNotified()) {
+                    log.infoFormat("Waiting on Live Merge command step {0} to finalize",
+                            getParameters().getCommandStep());
+                    return;
+                }
+
                 vdcReturnValue = CommandCoordinatorUtil.getCommandReturnValue(currentChildId);
                 if (vdcReturnValue != null && vdcReturnValue.getSucceeded()) {
+                    log.debugFormat("Child command {0} succeeded",
+                            getParameters().getCommandStep());
                     getParameters().setCommandStep(getParameters().getNextCommandStep());
                     break;
                 } else {
@@ -264,6 +273,9 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             getBaseDiskDao().update(topImage);
             getImageDao().update(topImage.getImage());
             updateDiskImageDynamic(topImage);
+
+            updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
+                    baseImage.getImageId());
         } else {
             // For backwards merge, the prior base image now has the data associated with the newer
             // snapshot we want to keep.  Re-associate this older image with the newer snapshot.
@@ -300,6 +312,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             updateVmConfigurationForImageChange(topImage.getImage().getSnapshotId(),
                     baseImage.getImageId(), topImage);
+            updateVmConfigurationForImageRemoval(baseImage.getImage().getSnapshotId(),
+                    topImage.getImageId());
         }
 
         Set<Guid> imagesToUpdate = getParameters().getMergeStatusReturnValue().getImagesToRemove();
@@ -322,8 +336,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     private void updateVmConfigurationForImageChange(final Guid snapshotId, final Guid oldImageId, final DiskImage newImage) {
         try {
-            VM vm = getVm();
-            lockVmSnapshotsWithWait(vm);
+            lockVmSnapshotsWithWait(getVm());
 
             TransactionSupport.executeInNewTransaction(
                     new TransactionMethod<Object>() {
@@ -331,6 +344,27 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                         public Object runInTransaction() {
                             Snapshot s = getSnapshotDao().get(snapshotId);
                             s = ImagesHandler.prepareSnapshotConfigWithAlternateImage(s, oldImageId, newImage);
+                            getSnapshotDao().update(s);
+                            return null;
+                        }
+                    });
+        } finally {
+            if (getSnapshotsEngineLock() != null) {
+                getLockManager().releaseLock(getSnapshotsEngineLock());
+            }
+        }
+    }
+
+    private void updateVmConfigurationForImageRemoval(final Guid snapshotId, final Guid imageId) {
+        try {
+            lockVmSnapshotsWithWait(getVm());
+
+            TransactionSupport.executeInNewTransaction(
+                    new TransactionMethod<Object>() {
+                        @Override
+                        public Object runInTransaction() {
+                            Snapshot s = getSnapshotDao().get(snapshotId);
+                            s = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(s, imageId);
                             getSnapshotDao().update(s);
                             return null;
                         }
@@ -353,6 +387,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     Backend.getInstance().endAction(VdcActionType.DestroyImage,
                             command.getParameters(),
                             cloneContextAndDetachFromParent());
+                    CommandCoordinatorUtil.getCommandEntity(currentChildId).setCallBackNotified(true);
                 }
             }
         } else {

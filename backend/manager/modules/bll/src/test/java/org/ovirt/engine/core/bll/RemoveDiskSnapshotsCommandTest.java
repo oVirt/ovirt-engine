@@ -6,6 +6,7 @@ import static org.mockito.Mockito.spy;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 
 import org.junit.Before;
@@ -16,6 +17,7 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.DiskSnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -67,6 +69,9 @@ public class RemoveDiskSnapshotsCommandTest {
     @Mock
     private SnapshotsValidator snapshotsValidator;
 
+    @Mock
+    private StorageDomainValidator storageDomainValidator;
+
     private VmValidator vmValidator;
 
     private DiskImagesValidator diskImagesValidator;
@@ -104,6 +109,7 @@ public class RemoveDiskSnapshotsCommandTest {
         doReturn(sdDAO).when(cmd).getStorageDomainDAO();
         doReturn(vmDeviceDao).when(cmd).getVmDeviceDao();
         doReturn(snapshotsValidator).when(cmd).getSnapshotsValidator();
+        doReturn(storageDomainValidator).when(cmd).getStorageDomainValidator();
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
         doReturn(mockImages()).when(cmd).getImages();
 
@@ -138,6 +144,8 @@ public class RemoveDiskSnapshotsCommandTest {
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
         doReturn(ValidationResult.VALID).when(snapshotsValidator).snapshotExists(any(Guid.class), any(Guid.class));
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainExistAndActive();
+        doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForClonedDisks(any(Collection.class));
         doReturn(true).when(cmd).validateAllDiskImages();
         doReturn(sp).when(spDao).get(STORAGE_POOLD_ID);
     }
@@ -165,11 +173,24 @@ public class RemoveDiskSnapshotsCommandTest {
     }
 
     @Test
-    public void testCanDoActionVmUp() {
+    public void testCanDoActionVmUpLiveMergeNotSupported() {
         prepareForVmValidatorTests();
 
         cmd.getVm().setStatus(VMStatus.Up);
         doReturn(true).when(cmd).isDiskPlugged();
+        doReturn(false).when(cmd).isLiveMergeSupported();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_NOT_DOWN);
+    }
+
+    @Test
+    public void testCanDoActionVmUpLiveMergeSupported() {
+        prepareForVmValidatorTests();
+
+        cmd.getVm().setStatus(VMStatus.Up);
+        doReturn(true).when(cmd).isDiskPlugged();
+        doReturn(true).when(cmd).isLiveMergeSupported();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmQualifiedForSnapshotMerge();
+        doReturn(ValidationResult.VALID).when(vmValidator).vmHostCanLiveMerge();
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 }
