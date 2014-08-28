@@ -18,16 +18,37 @@ import config
 import gettext
 import json
 import os
-import signal
 import sys
 import urllib
 
 import websockify
+
 from ovirt_engine import configfile, service, ticket
 
 
 def _(m):
     return gettext.dgettext(message=m, domain='ovirt-engine')
+
+
+class OvirtProxyRequestHandler(websockify.ProxyRequestHandler):
+    def __init__(self, retsock, address, proxy, *args, **kwargs):
+        self._proxy = proxy
+        websockify.ProxyRequestHandler.__init__(self, retsock, address, proxy,
+                                                *args, **kwargs)
+
+    def get_target(self, target_cfg, path):
+        """
+        Parses the path, extracts a token, and looks for a valid
+        target for that token in the configuration file(s). Returns
+        target_host and target_port if successful and sets an ssl_target
+        flag.
+        """
+        connection_data = json.loads(urllib.unquote(
+            self._proxy._ticketDecoder.decode(path[1:])))
+        target_host = connection_data['host'].encode('utf8')
+        target_port = connection_data['port'].encode('utf8')
+        self.server.ssl_target = connection_data['ssl_target']
+        return (target_host, target_port)
 
 
 class OvirtWebSocketProxy(websockify.WebSocketProxy):
@@ -38,22 +59,11 @@ class OvirtWebSocketProxy(websockify.WebSocketProxy):
 
     def __init__(self, *args, **kwargs):
         self._ticketDecoder = kwargs.pop('ticketDecoder')
+        self._logger = kwargs.pop('logger')
         super(OvirtWebSocketProxy, self).__init__(*args, **kwargs)
 
-    def get_target(self, target_cfg, path):
-        """
-        Parses the path, extracts a token, and looks for a valid
-        target for that token in the configuration file(s). Returns
-        target_host and target_port if successful and sets an ssl_target
-        flag.
-        """
-        connection_data = json.loads(
-            urllib.unquote(self._ticketDecoder.decode(path[1:]))
-        )
-        target_host = connection_data['host'].encode('utf8')
-        target_port = connection_data['port'].encode('utf8')
-        self.ssl_target = connection_data['ssl_target']
-        return (target_host, target_port)
+    def get_logger(self):
+        return self._logger
 
 
 class Daemon(service.Daemon):
@@ -124,65 +134,41 @@ class Daemon(service.Daemon):
             pidfile=self.pidfile,
         )
 
-    def daemonStdHandles(self):
-        consoleLog = open(os.devnull, 'w+')
-        return (consoleLog, consoleLog)
-
     def daemonContext(self):
-        #
-        # WORKAROUND-BEGIN
-        # set terminate exception as
-        # the websockify library assumes interactive
-        # mode only (SIGINT).
-        # it also expect exit at the middle of processing.
-        # so we comply.
-        def myterm(signo, frame):
-            sys.exit(0)
-        oldterm = signal.getsignal(signal.SIGTERM)
-        signal.signal(signal.SIGTERM, myterm)
-        # WORKAROUND-END
+        with open(
+            self._config.get(
+                'CERT_FOR_DATA_VERIFICATION'
+            )
+        ) as f:
+            peer = f.read()
 
-        try:
-            with open(
-                self._config.get(
-                    'CERT_FOR_DATA_VERIFICATION'
-                )
-            ) as f:
-                peer = f.read()
-
-            OvirtWebSocketProxy(
-                listen_host=self._config.get('PROXY_HOST'),
-                listen_port=self._config.get('PROXY_PORT'),
-                source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
-                verbose=self.debug,
-                ticketDecoder=ticket.TicketDecoder(
-                    ca=None,
-                    eku=None,
-                    peer=peer,
-                ),
-                cert=self._config.get('SSL_CERTIFICATE'),
-                key=self._config.get('SSL_KEY'),
-                ssl_only=self._config.getboolean('SSL_ONLY'),
-                daemon=False,
-                record=(
-                    None if not self._config.getboolean('TRACE_ENABLE')
-                    else self._config.get('TRACE_FILE')
-                ),
-                web=None,
-                target_cfg='/dummy',
-                target_host=None,
-                target_port=None,
-                wrap_mode='exit',
-                wrap_cmd=None
-            ).start_server()
-        # WORKAROUND-BEGIN
-        # websockify exit because of signals.
-        # redirect it to expected termination sequence.
-        except SystemExit:
-            self.logger.debug('SystemExit', exc_info=True)
-        finally:
-            signal.signal(signal.SIGTERM, oldterm)
-        # WORKAROUND-END
+        OvirtWebSocketProxy(
+            listen_host=self._config.get('PROXY_HOST'),
+            listen_port=self._config.get('PROXY_PORT'),
+            source_is_ipv6=self._config.getboolean('SOURCE_IS_IPV6'),
+            verbose=self.debug,
+            ticketDecoder=ticket.TicketDecoder(
+                ca=None,
+                eku=None,
+                peer=peer,
+            ),
+            logger=self._logger,
+            cert=self._config.get('SSL_CERTIFICATE'),
+            key=self._config.get('SSL_KEY'),
+            ssl_only=self._config.getboolean('SSL_ONLY'),
+            daemon=False,
+            record=(
+                None if not self._config.getboolean('TRACE_ENABLE')
+                else self._config.get('TRACE_FILE')
+            ),
+            web=None,
+            target_cfg='/dummy',
+            target_host=None,
+            target_port=None,
+            wrap_mode='exit',
+            wrap_cmd=None,
+            RequestHandlerClass=OvirtProxyRequestHandler
+        ).start_server()
 
 
 if __name__ == '__main__':

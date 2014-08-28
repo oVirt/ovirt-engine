@@ -454,7 +454,7 @@ Summary:	%{ovirt_product_name_short} Websocket Proxy
 Group:		%{ovirt_product_group}
 Requires:	%{name}-lib >= %{version}-%{release}
 Requires:	numpy
-Requires:	python-websockify
+Requires:	python-websockify >= 0.6.0
 Requires:	%{name}-setup-plugin-websocket-proxy >= %{version}-%{release}
 
 Requires(post):		systemd
