@@ -47,8 +47,8 @@
     </dependency>
   </dependencies>
   <build>
-    <!-- overrides default value {artifactId}-${version} -->
-    <finalName>ovirt-engine-gwt-extension-${version}</finalName>
+    <!-- Overrides default value ${project.artifactId}-${project.version} -->
+    <finalName>ovirt-engine-gwt-extension-${project.version}</finalName>
     <plugins>
       <plugin>
         <artifactId>maven-compiler-plugin</artifactId>
