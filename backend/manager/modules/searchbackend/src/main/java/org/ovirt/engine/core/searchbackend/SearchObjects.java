@@ -1,7 +1,9 @@
 package org.ovirt.engine.core.searchbackend;
 
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.utils.CommonConstants;
@@ -63,53 +65,59 @@ public final class SearchObjects {
     private static final String DATACENTER_BY_NAME = "DataCenter: sortby name";
     private static final String VM_BY_STATUS = "Vms: status=Up or status=PoweringUp or status=MigratingTo or status=WaitForLaunch or status=RebootInProgress or status=PoweringDown or status=Paused or status=Unknown sortby cpu_usage desc";
 
-    private static final Set<String> SAFE_SEARCH_EXPR = Collections.unmodifiableSet(new HashSet<String>() {
-        {
-            final char SEPARATOR = ':';
+    private static final Set<String> SAFE_SEARCH_EXPR = Collections.unmodifiableSet(createSafeExpressionsSet());
 
-            add(getName(VDS_OBJ_NAME));
-            add(getName(VDS_PLU_OBJ_NAME));
-            add(getName(VM_OBJ_NAME));
-            add(getName(VM_PLU_OBJ_NAME));
-            add(getName(AUDIT_OBJ_NAME));
-            add(getName(AUDIT_PLU_OBJ_NAME));
-            add(getName(TEMPLATE_OBJ_NAME));
-            add(getName(TEMPLATE_PLU_OBJ_NAME));
-            add(getName(VDC_USER_OBJ_NAME));
-            add(getName(VDC_USER_PLU_OBJ_NAME));
-            add(getName(VDC_GROUP_OBJ_NAME));
-            add(getName(VDC_GROUP_PLU_OBJ_NAME));
-            add(getName(VDC_POOL_OBJ_NAME));
-            add(getName(VDC_POOL_PLU_OBJ_NAME));
-            add(getName(VDC_CLUSTER_OBJ_NAME));
-            add(getName(VDC_CLUSTER_PLU_OBJ_NAME));
-            add(getName(VDC_STORAGE_POOL_OBJ_NAME));
-            add(getName(VDC_STORAGE_DOMAIN_OBJ_NAME));
-            add(getName(VDC_STORAGE_DOMAIN_PLU_OBJ_NAME));
-            add(getName(VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME));
-            add(getName(DISK_OBJ_NAME));
-            add(getName(DISK_PLU_OBJ_NAME));
-            add(getName(GLUSTER_VOLUME_OBJ_NAME));
-            add(getName(GLUSTER_VOLUME_PLU_OBJ_NAME));
-            add(getName(QUOTA_OBJ_NAME));
-            add(getName(QUOTA_PLU_OBJ_NAME));
-            add(getName(NETWORK_OBJ_NAME));
-            add(getName(NETWORK_PLU_OBJ_NAME));
-            add(getName(PROVIDER_OBJ_NAME));
-            add(getName(PROVIDER_PLU_OBJ_NAME));
-            add(getName(ALERT));
-            add(getName(ERROR));
-            add(getName(HOST_BY_CPU));
-            add(getName(DATACENTER_BY_NAME));
-            add(getName(VM_BY_STATUS));
-            add(getName(INSTANCE_TYPE_OBJ_NAME));
-            add(getName(INSTANCE_TYPE_PLU_OBJ_NAME));
-            add(getName(IMAGE_TYPE_OBJ_NAME));
-            add(getName(IMAGE_TYPE_PLU_OBJ_NAME));
-            add(getName(SESSION_OBJ_NAME));
-            add(getName(SESSION_PLU_OBJ_NAME));
+    private static Set<String> createSafeExpressionsSet() {
+        List<String> names = Arrays.asList(
+                VDS_OBJ_NAME,
+                VDS_PLU_OBJ_NAME,
+                VM_OBJ_NAME,
+                VM_PLU_OBJ_NAME,
+                AUDIT_OBJ_NAME,
+                AUDIT_PLU_OBJ_NAME,
+                TEMPLATE_OBJ_NAME,
+                TEMPLATE_PLU_OBJ_NAME,
+                VDC_USER_OBJ_NAME,
+                VDC_USER_PLU_OBJ_NAME,
+                VDC_GROUP_OBJ_NAME,
+                VDC_GROUP_PLU_OBJ_NAME,
+                VDC_POOL_OBJ_NAME,
+                VDC_POOL_PLU_OBJ_NAME,
+                VDC_CLUSTER_OBJ_NAME,
+                VDC_CLUSTER_PLU_OBJ_NAME,
+                VDC_STORAGE_POOL_OBJ_NAME,
+                VDC_STORAGE_DOMAIN_OBJ_NAME,
+                VDC_STORAGE_DOMAIN_PLU_OBJ_NAME,
+                VDC_STORAGE_DOMAIN_IMAGE_OBJ_NAME,
+                DISK_OBJ_NAME,
+                DISK_PLU_OBJ_NAME,
+                GLUSTER_VOLUME_OBJ_NAME,
+                GLUSTER_VOLUME_PLU_OBJ_NAME,
+                QUOTA_OBJ_NAME,
+                QUOTA_PLU_OBJ_NAME,
+                NETWORK_OBJ_NAME,
+                NETWORK_PLU_OBJ_NAME,
+                PROVIDER_OBJ_NAME,
+                PROVIDER_PLU_OBJ_NAME,
+                ALERT,
+                ERROR,
+                HOST_BY_CPU,
+                DATACENTER_BY_NAME,
+                VM_BY_STATUS,
+                INSTANCE_TYPE_OBJ_NAME,
+                INSTANCE_TYPE_PLU_OBJ_NAME,
+                IMAGE_TYPE_OBJ_NAME,
+                IMAGE_TYPE_PLU_OBJ_NAME,
+                SESSION_OBJ_NAME,
+                SESSION_PLU_OBJ_NAME);
+
+        Set<String> result = new HashSet<>();
+        for (String name : names) {
+            result.add(getName(name));
         }
-    });
+
+        return result;
+    }
 
     private static String getName(String name) {
         return name.toLowerCase() + CommonConstants.QUERY_RETURN_TYPE_SEPARATOR;
