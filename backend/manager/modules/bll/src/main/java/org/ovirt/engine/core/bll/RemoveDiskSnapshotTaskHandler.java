@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
@@ -86,7 +87,7 @@ public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endSuccessfully() {
-        endRemoveSnapshotSingleDisk();
+        endRemoveSnapshotSingleDisk(true);
         enclosingCommand.taskEndSuccessfully();
         if (isLastTaskHandler()) {
             // Unlock on job finish
@@ -97,20 +98,22 @@ public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endWithFailure() {
-        endRemoveSnapshotSingleDisk();
+        endRemoveSnapshotSingleDisk(false);
         // Unlock all images since failure aborts the entire job
-        DiskImage diskImage = DbFacade.getInstance().getDiskImageDao().get(imageGroupId);
-        if (diskImage.getImageStatus() == ImageStatus.LOCKED) {
+        Disk disk = DbFacade.getInstance().getDiskDao().get(imageGroupId);
+        if (((DiskImage) disk).getImageStatus() == ImageStatus.LOCKED) {
             updateImagesStatus(ImageStatus.OK);
         }
         enclosingCommand.preventRollback();
         enclosingCommand.getReturnValue().setSucceeded(true);
     }
 
-    private void endRemoveSnapshotSingleDisk() {
+    private void endRemoveSnapshotSingleDisk(boolean taskGroupSuccess) {
+        ImagesContainterParametersBase parameters = buildRemoveSnapshotSingleDiskParameters();
+        parameters.setTaskGroupSuccess(taskGroupSuccess);
         VdcReturnValueBase vdcReturnValue = Backend.getInstance().endAction(
                 VdcActionType.RemoveSnapshotSingleDisk,
-                buildRemoveSnapshotSingleDiskParameters(),
+                parameters,
                 getCommandContext());
         enclosingCommand.getReturnValue().setSucceeded(vdcReturnValue.getSucceeded());
     }
