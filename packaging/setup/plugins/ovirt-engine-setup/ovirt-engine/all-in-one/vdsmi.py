@@ -22,6 +22,7 @@ VDSM configuration plugin.
 
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
+import sys
 import time
 import distutils.version
 
@@ -177,6 +178,23 @@ class Plugin(plugin.PluginBase):
     def _misc(self):
         self.environment[oengcommcons.ApacheEnv.NEED_RESTART] = True
 
+    def _getSupportedClusterLevels(self):
+        self.logger.debug('Attempting to load the dsaversion vdsm module')
+        savedPath = sys.path
+        vSupportedClusterLevels = []
+        raw_version_revision = ''
+        try:
+            sys.path.append(oenginecons.FileLocations.AIO_VDSM_PATH)
+            dsaversion = util.loadModule(
+                path=oenginecons.FileLocations.AIO_VDSM_PATH,
+                name='dsaversion',
+            )
+            vSupportedClusterLevels = dsaversion.version_info['clusterLevels']
+            raw_version_revision = dsaversion.raw_version_revision
+        finally:
+            sys.path = savedPath
+        return vSupportedClusterLevels, raw_version_revision
+
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
         name=oenginecons.Stages.AIO_CONFIG_VDSM,
@@ -208,21 +226,15 @@ class Plugin(plugin.PluginBase):
                 pv=osetupconfig.PACKAGE_VERSION,
             )
         )
-        from vdsm import vdscli
-        result = vdscli.connect().getVdsCapabilities()
-        code, message = result['status']['code'], result['status']['message']
-        if code != 0 or 'info' not in result:
-            raise RuntimeError(
-                'Failed to get vds capabilities. Error code: '
-                '"%s" message: "%s"' % (code, message)
-            )
-        vSupportedClusterLevels = result['info']['clusterLevels']
+
+        vSupportedClusterLevels, raw_version_revision = \
+            self._getSupportedClusterLevels()
 
         self.logger.debug(
             'VDSM SupportedClusterLevels [{levels}], '
-            'PACKAGE_VERSION [{pv}],'.format(
+            'VDSM VERSION [{rv}],'.format(
                 levels=vSupportedClusterLevels,
-                pv=result['info']['packages2']['vdsm']['version'],
+                rv=raw_version_revision,
             )
         )
 
