@@ -1555,10 +1555,13 @@ public class VdsUpdateRunTimeInfo {
     private void handleVmOnDown(VM cacheVm, VmDynamic vmDynamic, VmStatistics vmStatistics) {
         VmExitStatus exitStatus = vmDynamic.getExitStatus();
 
-        if (exitStatus != VmExitStatus.Normal) {
-
+        // we don't need to have an audit log for the case where the VM went down on a host
+        // which is different than the one it should be running on (must be in migration process)
+        if (cacheVm != null) {
             auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
+        }
 
+        if (exitStatus != VmExitStatus.Normal) {
             // Vm failed to run - try to rerun it on other Vds
             if (cacheVm != null) {
                 if (ResourceManager.getInstance().IsVmInAsyncRunningList(vmDynamic.getId())) {
@@ -1574,12 +1577,6 @@ public class VdsUpdateRunTimeInfo {
                 addVmDynamicToList(vmDynamic);
             }
         } else {
-            // if went down normally during migration process (either on source or on destination)
-            // don't generate an event
-            if (cacheVm != null) {
-                auditVmOnDownEvent(exitStatus, vmDynamic.getExitMessage(), vmStatistics.getId());
-            }
-
             // Vm moved safely to down status. May be migration - just remove it from Async Running command.
             ResourceManager.getInstance().RemoveAsyncRunningVm(vmDynamic.getId());
         }
