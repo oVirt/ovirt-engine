@@ -4,9 +4,13 @@ import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.core.client.Scheduler.ScheduledCommand;
 import com.google.gwt.event.dom.client.FocusEvent;
 import com.google.gwt.event.dom.client.FocusHandler;
+import com.google.gwt.event.dom.client.KeyCodes;
 import com.google.gwt.event.dom.client.KeyPressEvent;
 import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.logical.shared.ValueChangeEvent;
+import com.google.gwt.user.client.Event;
+import com.google.gwt.user.client.Event.NativePreviewEvent;
+import com.google.gwt.user.client.Event.NativePreviewHandler;
 import com.google.gwt.user.client.ui.MultiWordSuggestOracle;
 import java.util.Collection;
 import org.ovirt.engine.ui.common.widget.editor.BaseListModelSuggestBox;
@@ -38,6 +42,17 @@ public class ListModelSuggestBox extends BaseListModelSuggestBox<String> {
                         ValueChangeEvent.fire(asSuggestBox(), asSuggestBox().getText());
                     }
                 });
+            }
+        });
+        Event.addNativePreviewHandler(new NativePreviewHandler() {
+
+            @Override
+            public void onPreviewNativeEvent(NativePreviewEvent event) {
+                if (event.getTypeInt() == Event.ONKEYDOWN && event.getNativeEvent().getKeyCode() == KeyCodes.KEY_TAB) {
+                    // By default SuggestBox applies selection upon tab press - this is bad
+                    event.getNativeEvent().stopPropagation();
+                    hideSuggestions();
+                }
             }
         });
     }
