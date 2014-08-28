@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
+import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -317,11 +318,11 @@ public abstract class InstanceTypeManager {
                 }
 
                 for (VmWatchdog watchdog : watchdogs) {
-                    if (watchdogAvailable(watchdog.getModel().name())) {
+                    if (watchdogAvailable(watchdog.getModel())) {
                         model.getWatchdogAction().setSelectedItem(watchdog.getAction() == null ? null
-                                : watchdog.getAction().name().toLowerCase());
-                        model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? "" //$NON-NLS-1$
-                                : watchdog.getModel().name());
+                                : watchdog.getAction());
+                        model.getWatchdogModel().setSelectedItem(watchdog.getModel() == null ? null //$NON-NLS-1$
+                                : watchdog.getModel());
                     }
                 }
                 activate();
@@ -396,8 +397,8 @@ public abstract class InstanceTypeManager {
         });
     }
 
-    private boolean watchdogAvailable(String watchdogModel) {
-        for (String availableWatchdogModel : model.getWatchdogModel().getItems()) {
+    private boolean watchdogAvailable(VmWatchdogType watchdogModel) {
+        for (VmWatchdogType availableWatchdogModel : model.getWatchdogModel().getItems()) {
             if (watchdogModel == null && availableWatchdogModel == null) {
                 return true;
             }

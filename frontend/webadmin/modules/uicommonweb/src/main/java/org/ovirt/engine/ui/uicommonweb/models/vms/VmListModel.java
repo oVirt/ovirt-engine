@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
-import org.ovirt.engine.core.common.businessentities.VmWatchdogAction;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
@@ -2257,13 +2256,11 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void setVmWatchdogToParams(final UnitVmModel model, VmManagementParametersBase updateVmParams) {
-        VmWatchdogType wdModel = VmWatchdogType.getByName(model.getWatchdogModel()
-                .getSelectedItem());
+        VmWatchdogType wdModel = model.getWatchdogModel().getSelectedItem();
         updateVmParams.setUpdateWatchdog(true);
         if (wdModel != null) {
             VmWatchdog vmWatchdog = new VmWatchdog();
-            vmWatchdog.setAction(VmWatchdogAction.getByName(model.getWatchdogAction()
-                    .getSelectedItem()));
+            vmWatchdog.setAction(model.getWatchdogAction().getSelectedItem());
             vmWatchdog.setModel(wdModel);
             updateVmParams.setWatchdog(vmWatchdog);
         }

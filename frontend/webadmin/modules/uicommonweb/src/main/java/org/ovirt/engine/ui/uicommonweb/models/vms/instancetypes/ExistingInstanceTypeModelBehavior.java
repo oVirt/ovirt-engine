@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes;
 
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
-import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
@@ -97,8 +97,8 @@ public class ExistingInstanceTypeModelBehavior extends InstanceTypeModelBehavior
                 Collection<VmWatchdog> watchdogs =
                         ((VdcQueryReturnValue) returnValue).getReturnValue();
                 for (VmWatchdog watchdog : watchdogs) {
-                    model.getWatchdogAction().setSelectedItem(watchdog.getAction().name().toLowerCase());
-                    model.getWatchdogModel().setSelectedItem(watchdog.getModel().name());
+                    model.getWatchdogAction().setSelectedItem(watchdog.getAction());
+                    model.getWatchdogModel().setSelectedItem(watchdog.getModel());
                 }
             }
         }), instanceType.getId());
