@@ -1724,17 +1724,10 @@ public class VdsUpdateRunTimeInfo {
                 }
                 if (vmToUpdate != null) {
                     logVmStatusTransition(vmToUpdate, runningVm);
-                    // open spice for dedicated VMs
-                    if (vmToUpdate.getStatus() != VMStatus.Up && runningVm.getStatus() == VMStatus.Up
-                            || vmToUpdate.getStatus() != VMStatus.PoweringUp
-                            && runningVm.getStatus() == VMStatus.PoweringUp) {
-                        // Vm moved to powering Up or up status - launch spice
-                        // if no current client ip already connected.
-                        if (runningVm.getDisplay() != null) {
-                            _poweringUpVms.add(runningVm);
-                        } else {
-                            log.error("UpdateRepository - runningVm.display is null, cannot start spice for it");
-                        }
+
+                    if ((vmToUpdate.getStatus() != VMStatus.Up && vmToUpdate.getStatus() != VMStatus.PoweringUp && runningVm.getStatus() == VMStatus.Up)
+                            || (vmToUpdate.getStatus() != VMStatus.PoweringUp && runningVm.getStatus() == VMStatus.PoweringUp)) {
+                        _poweringUpVms.add(runningVm);
                     }
 
                     // Generate an event for those machines that transition from "PoweringDown" to
