@@ -1,29 +1,36 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
+import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
+import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.DiskSnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveDiskSnapshotsParameters;
+import org.ovirt.engine.core.common.action.RemoveSnapshotSingleDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -36,17 +43,24 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters> extends BaseImagesCommand<T>
         implements TaskHandlerCommand<RemoveDiskSnapshotsParameters> {
 
+    private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotsCommand.class);
     private List<DiskImage> images;
     private SnapshotsValidator snapshotsValidator;
     private StorageDomainValidator storageDomainValidator;
 
     public RemoveDiskSnapshotsCommand(T parameters) {
         super(parameters);
+    }
+
+    public RemoveDiskSnapshotsCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
     }
 
     @Override
@@ -77,6 +91,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 VM vm = listVms.get(0);
                 setVm(vm);
             }
+        }
+
+        // It would be better to not add the task handlers in the first place, but at
+        // the time they are added (via super.init()), setVm() hasn't been called and
+        // thus initTaskHandlers() can't yet tell if this is a live or cold merge.
+        if (isLiveMerge()) {
+            clearTaskHandlers();
         }
     }
 
@@ -146,9 +167,14 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             return false;
         }
 
-        VmValidator vmValidator = createVmValidator(getVm());
-        if (isDiskPlugged() && !validate(vmValidator.vmDown())) {
-            return false;
+        if (isDiskPlugged()) {
+            VmValidator vmValidator = createVmValidator(getVm());
+            if (isLiveMergeSupported()
+                    ? (!validate(vmValidator.vmQualifiedForSnapshotMerge())
+                       || !validate(vmValidator.vmHostCanLiveMerge()))
+                    : !validate(vmValidator.vmDown())) {
+                return false;
+            }
         }
 
         if (!validate(new StoragePoolValidator(getStoragePool()).isUp()) ||
@@ -166,6 +192,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         return true;
     }
 
+    protected boolean isLiveMergeSupported() {
+        return FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion());
+    }
+
     @Override
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
@@ -176,9 +206,10 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {
         List<SPMAsyncTaskHandler> taskHandlers = new ArrayList<>();
 
-        // Sort images from parent to leaf (active) - needed only on first task handler
-        // as the sorted list is being saved in the parameters.
-        if (isFirstTaskHandler()) {
+        // Sort images from parent to leaf (active) - needed only once as the sorted list is
+        // being saved in the parameters.  The conditions to check vary between cold and live
+        // merge (and we can't yet run isLiveMerge()), so we just use an explicit flag.
+        if (!getParameters().isImageIdsSorted()) {
             // Retrieve and sort the entire chain of images
             List<DiskImage> images = getAllImagesForDisk();
             ImagesHandler.sortImageList(images);
@@ -191,6 +222,7 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                 }
             });
             getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(sortedImages)));
+            getParameters().setImageIdsSorted(true);
         }
 
         for (Guid imageId : getParameters().getImageIds()) {
@@ -201,8 +233,86 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     @Override
+    public CommandCallBack getCallBack() {
+        // Handle first execution based on vm status, and recovery based on isLiveMerge (VM may be down)
+        if (isLiveMerge()) {
+            return new RemoveDiskSnapshotsCommandCallback();
+        } else {
+            return null;
+        }
+    }
+
+    private boolean isLiveMerge() {
+        return (getParameters().isLiveMerge() || (getVm() != null && getVm().isQualifiedForLiveSnapshotMerge()));
+    }
+
+    @Override
     protected void executeCommand() {
+        if (isLiveMerge()) {
+            getParameters().setLiveMerge(true);
+            persistCommand(getParameters().getParentCommand(), true);
+        }
         setSucceeded(true);
+    }
+
+    public void startNextLiveMerge(int completedChildren) {
+        if (completedChildren == 0) {
+            // Lock all disk images in advance
+            ImagesHandler.updateAllDiskImageSnapshotsStatus(getImageGroupId(), ImageStatus.LOCKED);
+        } else {
+            checkImageIdConsistency(completedChildren - 1);
+        }
+
+        Guid imageId = getParameters().getImageIds().get(completedChildren);
+        log.info("Starting child command {} of {}, image '{}'",
+                completedChildren + 1, getParameters().getImageIds().size(), imageId);
+
+        RemoveSnapshotSingleDiskParameters parameters = buildRemoveSnapshotSingleDiskLiveParameters(imageId);
+        if (getParameters().getChildImageIds() == null) {
+            getParameters().setChildImageIds(Arrays.asList(new Guid[getParameters().getImageIds().size()]));
+        }
+        getParameters().getChildImageIds().set(completedChildren, parameters.getDestinationImageId());
+        persistCommand(getParameters().getParentCommand(), true);
+
+        CommandCoordinatorUtil.executeAsyncCommand(
+                VdcActionType.RemoveSnapshotSingleDiskLive,
+                parameters,
+                cloneContextAndDetachFromParent());
+    }
+
+    /**
+     * Ensures that after a backwards merge (in which the current snapshot's image takes the
+     * place of the next snapshot's image), subsequent task handlers will refer to the correct
+     * image id and not the one that has been removed.
+     */
+    private void checkImageIdConsistency(int completedImageIndex) {
+        Guid imageId = getParameters().getImageIds().get(completedImageIndex);
+        Guid childImageId = getParameters().getChildImageIds().get(completedImageIndex);
+        if (getDiskImageDao().get(childImageId) == null) {
+            // Swap instances of the removed id with our id
+            for (int i = completedImageIndex + 1; i < getParameters().getImageIds().size(); i++) {
+                if (getParameters().getImageIds().get(i).equals(childImageId)) {
+                    getParameters().getImageIds().set(i, imageId);
+                    log.info("Switched child command {} image id from '{}' to '{}' due to backwards merge",
+                            i + 1, childImageId, imageId);
+                    persistCommand(getParameters().getParentCommand(), true);
+                }
+            }
+        }
+    }
+
+    private RemoveSnapshotSingleDiskParameters buildRemoveSnapshotSingleDiskLiveParameters(Guid imageId) {
+        DiskImage dest = getDiskImageDao().getAllSnapshotsForParent(imageId).get(0);
+        RemoveSnapshotSingleDiskParameters parameters =
+                new RemoveSnapshotSingleDiskParameters(imageId, getVmId());
+        parameters.setDestinationImageId(dest.getImageId());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        parameters.setParentParameters(getParameters());
+        parameters.setParentCommand(getActionType());
+        parameters.setCommandType(VdcActionType.RemoveSnapshotSingleDiskLive);
+        parameters.setVdsId(getVm().getRunOnVds());
+        parameters.setSessionId(getParameters().getSessionId());
+        return parameters;
     }
 
     protected void updateSnapshotVmConfiguration() {
@@ -224,12 +334,25 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
 
     @Override
     protected void endSuccessfully() {
+        unlockImages();
         setSucceeded(true);
     }
 
     @Override
     protected void endWithFailure() {
+        unlockImages();
         setSucceeded(true);
+    }
+
+    private void unlockImages() {
+        // Some Live Merge failure cases leave a subset of images illegal;
+        // they should remain illegal while the others are unlocked.
+        List<DiskImage> images = getAllImagesForDisk();
+        for (DiskImage image : images) {
+            if (image.getImageStatus() == ImageStatus.LOCKED) {
+                getImageDao().updateStatus(image.getImageId(), ImageStatus.OK);
+            }
+        }
     }
 
     @Override
