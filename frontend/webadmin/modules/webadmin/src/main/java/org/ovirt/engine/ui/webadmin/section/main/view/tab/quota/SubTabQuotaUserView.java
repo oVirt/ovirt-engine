@@ -29,9 +29,13 @@ public class SubTabQuotaUserView extends AbstractSubTabTableView<Quota, Permissi
     @Inject
     public SubTabQuotaUserView(SearchableDetailModelProvider<Permissions, QuotaListModel, QuotaUserListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     private void initTable(ApplicationConstants constants) {

@@ -7,6 +7,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostHooksListModel;
@@ -15,8 +16,15 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHookPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 
+import com.google.gwt.core.client.GWT;
+
 public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String, String>, HostListModel, HostHooksListModel>
         implements SubTabHostHookPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostHookView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private static final String EVENT_NAME = "EventName"; //$NON-NLS-1$
     private static final String SCRIPT_NAME = "ScriptName"; //$NON-NLS-1$
     private static final String PROPERTY_NAME = "PropertyName"; //$NON-NLS-1$
@@ -27,6 +35,11 @@ public class SubTabHostHookView extends AbstractSubTabTableView<VDS, Map<String,
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -29,6 +30,10 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabProviderGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabProviderGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface Driver extends SimpleBeanEditorDriver<ProviderGeneralModel, SubTabProviderGeneralView> { }
@@ -63,6 +68,11 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
         formBuilder.addFormItem(new FormItem(constants.typeProvider(), type, 1, 0));
         formBuilder.addFormItem(new FormItem(constants.descriptionProvider(), description, 2, 0));
         formBuilder.addFormItem(new FormItem(constants.urlProvider(), url, 3, 0));
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

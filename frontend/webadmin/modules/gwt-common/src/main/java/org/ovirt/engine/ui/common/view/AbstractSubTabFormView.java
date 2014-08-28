@@ -22,6 +22,7 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     public AbstractSubTabFormView(DetailModelProvider<M, D> modelProvider) {
         this.modelProvider = modelProvider;
+        generateIds();
     }
 
     protected D getDetailModel() {
@@ -33,5 +34,7 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
         // Form-based sub tab views have no table widget associated
         return null;
     }
+
+    protected abstract void generateIds();
 
 }

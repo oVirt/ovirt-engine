@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
@@ -20,6 +21,10 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<ClusterGeneralModelForm> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     TextBoxLabel name = new TextBoxLabel();
@@ -42,6 +47,7 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider,
             final ApplicationConstants constants) {
         super(modelProvider, 3, 6);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
         memoryOverCommit = new PercentLabel<Integer>();
         resiliencePolicy = new ResiliencePolicyLabel(constants);

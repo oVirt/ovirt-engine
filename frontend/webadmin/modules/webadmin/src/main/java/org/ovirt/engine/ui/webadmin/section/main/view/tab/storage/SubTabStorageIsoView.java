@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.utils.SizeConverter;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.renderer.DiskSizeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
@@ -16,10 +17,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabSto
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain, RepoImage, StorageListModel, StorageIsoListModel>
         implements SubTabStorageIsoPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageIsoView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabStorageIsoView(SearchableDetailModelProvider<RepoImage, StorageListModel, StorageIsoListModel> modelProvider,
@@ -27,6 +33,11 @@ public class SubTabStorageIsoView extends AbstractSubTabTableView<StorageDomain,
         super(modelProvider);
         initTable(resources, constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {

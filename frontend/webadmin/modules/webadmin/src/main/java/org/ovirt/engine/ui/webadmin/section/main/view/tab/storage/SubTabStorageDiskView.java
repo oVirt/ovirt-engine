@@ -29,9 +29,13 @@ public class SubTabStorageDiskView extends AbstractSubTabTableView<StorageDomain
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(resources, constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationResources resources, final ApplicationConstants constants) {

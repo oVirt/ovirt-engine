@@ -30,9 +30,13 @@ public class SubTabUserPermissionView extends AbstractSubTabTableView<DbUser, Pe
     @Inject
     public SubTabUserPermissionView(SearchableDetailModelProvider<Permissions, UserListModel, UserPermissionListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

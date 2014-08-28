@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.SubTableResources;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.ActionCellTable;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -43,6 +44,10 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageVmBackupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     @UiField
@@ -68,6 +73,11 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
 
         mainContainer.setCellWidth(vmTableContainer, "50%"); //$NON-NLS-1$
         mainContainer.setCellWidth(applicationsTableContainer, "50%"); //$NON-NLS-1$
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initVmTable(ApplicationConstants constants) {

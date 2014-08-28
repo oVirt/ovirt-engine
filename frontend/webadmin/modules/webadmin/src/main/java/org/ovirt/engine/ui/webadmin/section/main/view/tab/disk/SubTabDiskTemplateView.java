@@ -29,9 +29,13 @@ public class SubTabDiskTemplateView extends AbstractSubTabTableView<Disk, VmTemp
     @Inject
     public SubTabDiskTemplateView(SearchableDetailModelProvider<VmTemplate, DiskListModel, DiskTemplateListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

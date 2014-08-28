@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.virtualMachine;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
@@ -26,6 +27,10 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabVirtualMachineGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabVirtualMachineGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     // We need this in order to find the icon for alert messages:
@@ -56,6 +61,11 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         clearAlerts();
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -16,8 +17,14 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostGl
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.GWT;
+
 public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, GlusterServerService, HostListModel, HostGlusterSwiftListModel>
         implements SubTabHostGlusterSwiftPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostGlusterSwiftView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabHostGlusterSwiftView(SearchableDetailModelProvider<GlusterServerService, HostListModel, HostGlusterSwiftListModel> modelProvider,
@@ -25,6 +32,11 @@ public class SubTabHostGlusterSwiftView extends AbstractSubTabTableView<VDS, Glu
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

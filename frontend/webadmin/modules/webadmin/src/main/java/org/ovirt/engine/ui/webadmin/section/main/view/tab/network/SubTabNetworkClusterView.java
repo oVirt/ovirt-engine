@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.utils.PairQueryable;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
 import org.ovirt.engine.ui.common.widget.table.column.SafeHtmlWithSafeHtmlTooltipColumn;
@@ -27,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkClusterStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.NetworkRoleColumnHelper;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
@@ -35,6 +37,10 @@ import com.google.inject.Inject;
 
 public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkView, PairQueryable<VDSGroup, NetworkCluster>, NetworkListModel, NetworkClusterListModel>
         implements SubTabNetworkClusterPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabNetworkClusterView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     private final ApplicationConstants constants;
     private final ApplicationTemplates templates;
@@ -55,6 +61,11 @@ public class SubTabNetworkClusterView extends AbstractSubTabTableView<NetworkVie
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initTable();
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable() {

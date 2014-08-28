@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -26,6 +27,10 @@ import com.google.inject.Inject;
 public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDomain, StorageListModel, StorageGeneralModel> implements SubTabStorageGeneralPresenter.ViewDef, Editor<StorageGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<StorageGeneralModel, SubTabStorageGeneralView> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabStorageGeneralView> {
@@ -138,6 +143,11 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
                 return getDetailModel().getIsNfs() && getDetailModel().getTimeout() != null;
             }
         });
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

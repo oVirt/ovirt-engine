@@ -184,6 +184,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                 }
             }
 
+            @Override
+            protected String getGridElementId() {
+                return AbstractActionTable.this.getElementId();
+            }
+
         };
 
         // Can't do this in the onBrowserEvent, as GWT CellTable doesn't support double click.
@@ -222,6 +227,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             protected void configureElementId(Column<T, ?> column) {
                 // No-op, don't set element ID here, since column
                 // instances are shared between main and header table
+            }
+
+            @Override
+            protected String getGridElementId() {
+                return AbstractActionTable.this.getElementId();
             }
 
         };

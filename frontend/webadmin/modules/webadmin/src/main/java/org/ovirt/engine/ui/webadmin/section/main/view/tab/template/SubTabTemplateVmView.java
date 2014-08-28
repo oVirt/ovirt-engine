@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.template;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -15,16 +16,26 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabTemplateVmView extends AbstractSubTabTableView<VmTemplate, VM, TemplateListModel, TemplateVmListModel>
         implements SubTabTemplateVmPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabTemplateVmView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabTemplateVmView(SearchableDetailModelProvider<VM, TemplateListModel, TemplateVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

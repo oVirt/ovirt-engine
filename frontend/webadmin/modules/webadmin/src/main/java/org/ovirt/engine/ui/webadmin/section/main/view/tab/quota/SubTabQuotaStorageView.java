@@ -36,9 +36,13 @@ public class SubTabQuotaStorageView extends AbstractSubTabTableView<Quota, Quota
     public SubTabQuotaStorageView(SearchableDetailModelProvider<QuotaStorage, QuotaListModel, QuotaStorageListModel> modelProvider,
             ApplicationConstants constants, ApplicationMessages messages) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants, messages);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     private void initTable(final ApplicationConstants constants, final ApplicationMessages messages) {

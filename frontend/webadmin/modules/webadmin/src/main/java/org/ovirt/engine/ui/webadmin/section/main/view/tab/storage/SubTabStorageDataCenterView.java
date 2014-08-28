@@ -28,9 +28,13 @@ public class SubTabStorageDataCenterView extends AbstractSubTabTableView<Storage
     @Inject
     public SubTabStorageDataCenterView(SearchableDetailModelProvider<StorageDomain, StorageListModel, StorageDataCenterListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

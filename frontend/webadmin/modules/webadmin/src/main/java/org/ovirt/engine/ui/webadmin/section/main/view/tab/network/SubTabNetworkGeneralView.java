@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -30,6 +31,10 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabNetworkGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabNetworkGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface Driver extends SimpleBeanEditorDriver<NetworkGeneralModel, SubTabNetworkGeneralView> {
@@ -72,6 +77,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
         formBuilder.addFormItem(new FormItem(constants.roleNetwork(), role, 0, 1));
         formBuilder.addFormItem(new FormItem(constants.vlanNetwork(), vlan, 1, 1));
         formBuilder.addFormItem(new FormItem(constants.mtuNetwork(), mtu, 2, 1) {
+            @Override
             public boolean getIsAvailable() {
                 return getDetailModel().getExternalId() == null;
             }
@@ -83,6 +89,11 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
                 return getDetailModel().getExternalId() != null;
             }
         });
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

@@ -351,9 +351,13 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
 
     protected String getColumnWidthKey(Column<T, ?> column) {
         if (columnResizePersistenceEnabled) {
-            return GRID_COLUMN_WIDTH_PREFIX + "_" + gridController.getId() + "_" + getColumnIndex(column); //$NON-NLS-1$ //$NON-NLS-2$
+            return GRID_COLUMN_WIDTH_PREFIX + "_" + getGridElementId() + "_" + getColumnIndex(column); //$NON-NLS-1$ //$NON-NLS-2$
         }
         return null;
+    }
+
+    protected String getGridElementId() {
+        return gridController.getId();
     }
 
     protected void saveColumnWidth(Column<T, ?> column, String width) {

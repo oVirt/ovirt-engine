@@ -6,6 +6,7 @@ import java.util.EnumMap;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -17,6 +18,7 @@ import org.ovirt.engine.ui.uicommonweb.models.hosts.HostListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostHardwarePresenter;
+import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.dom.client.Style.BorderStyle;
@@ -28,11 +30,14 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.Widget;
-import org.ovirt.engine.ui.webadmin.widget.label.NullableNumberTextBoxLabel;
 
 public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostListModel, HostHardwareGeneralModel> implements SubTabHostHardwarePresenter.ViewDef, Editor<HostHardwareGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostHardwareGeneralModel, SubTabHostHardwareView> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostHardwareView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     ApplicationConstants constants = GWT.create(ApplicationConstants.class);
@@ -90,6 +95,11 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
         formBuilder.addFormItem(new FormItem(constants.numOfCoresPerSocketHostGeneral(), coresPerSocket, 0).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.numOfThreadsPerCoreHostGeneral(), threadsPerCore, 1).withAutoPlacement());
 
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

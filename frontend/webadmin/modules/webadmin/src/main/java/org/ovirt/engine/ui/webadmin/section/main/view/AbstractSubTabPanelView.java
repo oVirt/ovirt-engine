@@ -12,12 +12,18 @@ import com.gwtplatform.mvp.client.HasUiHandlers;
 
 public abstract class AbstractSubTabPanelView extends AbstractTabPanelView implements HasUiHandlers<TabWidgetHandler> {
 
+    protected AbstractSubTabPanelView() {
+        generateIds();
+    }
+
     protected void setTabBar(IsWidget content) {
         AbstractTabPanel panel = getTabPanel();
         if (panel instanceof SimpleTabPanel) {
             ((SimpleTabPanel) getTabPanel()).setTabBar(content);
         }
     }
+
+    protected abstract void generateIds();
 
     @Override
     public void setInSlot(Object slot, IsWidget content) {

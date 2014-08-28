@@ -8,6 +8,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -43,6 +44,10 @@ import com.google.gwt.user.client.ui.Widget;
 public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListModel, HostGeneralModel> implements SubTabHostGeneralPresenter.ViewDef, Editor<HostGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<HostGeneralModel, SubTabHostGeneralView> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     // We need this in order to find the icon for alert messages:
@@ -163,6 +168,11 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.liveSnapshotSupportHostGeneral(), liveSnapshotSupport, 2).withAutoPlacement());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initMemorySizeLabels() {

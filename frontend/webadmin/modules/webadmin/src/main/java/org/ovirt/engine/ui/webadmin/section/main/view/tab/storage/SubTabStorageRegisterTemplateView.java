@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -17,10 +18,15 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<StorageDomain, VmTemplate, StorageListModel, StorageRegisterTemplateListModel>
         implements SubTabStorageRegisterTemplatePresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageRegisterTemplateView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabStorageRegisterTemplateView(SearchableDetailModelProvider<VmTemplate, StorageListModel, StorageRegisterTemplateListModel> modelProvider,
@@ -28,6 +34,11 @@ public class SubTabStorageRegisterTemplateView extends AbstractSubTabTableView<S
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

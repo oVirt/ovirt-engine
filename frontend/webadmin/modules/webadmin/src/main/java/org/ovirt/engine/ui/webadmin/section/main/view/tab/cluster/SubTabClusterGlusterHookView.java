@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookContentT
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStage;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -19,10 +20,16 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GlusterHookSyncStatusColumn;
 
+import com.google.gwt.core.client.GWT;
+
 public class SubTabClusterGlusterHookView
         extends
         AbstractSubTabTableView<VDSGroup, GlusterHookEntity, ClusterListModel, ClusterGlusterHookListModel>
         implements SubTabClusterGlusterHookPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabClusterGlusterHookView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabClusterGlusterHookView(
@@ -31,6 +38,11 @@ public class SubTabClusterGlusterHookView
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(final ApplicationConstants constants) {

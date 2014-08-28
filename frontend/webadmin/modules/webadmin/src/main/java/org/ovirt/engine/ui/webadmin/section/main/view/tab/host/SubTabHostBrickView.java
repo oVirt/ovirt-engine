@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBricksListModel;
@@ -13,14 +14,25 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.host.SubTabHostBr
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.table.column.BrickStatusColumn;
 
+import com.google.gwt.core.client.GWT;
+
 public class SubTabHostBrickView extends AbstractSubTabTableView<VDS, GlusterBrickEntity, HostListModel, HostBricksListModel>
         implements SubTabHostBrickPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabHostBrickView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabHostBrickView(SearchableDetailModelProvider<GlusterBrickEntity, HostListModel, HostBricksListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

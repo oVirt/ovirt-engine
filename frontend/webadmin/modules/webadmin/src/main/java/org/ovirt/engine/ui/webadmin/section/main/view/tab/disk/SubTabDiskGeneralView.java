@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.disk;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -26,6 +27,10 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabDiskGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabDiskGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface Driver extends SimpleBeanEditorDriver<DiskGeneralModel, SubTabDiskGeneralView> {
@@ -83,6 +88,11 @@ public class SubTabDiskGeneralView extends AbstractSubTabFormView<Disk, DiskList
                 return getDetailModel().isQuotaAvailable();
             }
         });
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

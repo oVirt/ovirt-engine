@@ -62,13 +62,17 @@ public class SubTabHostInterfaceView extends AbstractSubTabFormView<VDS, HostLis
                         getTableResources(),
                         eventBus,
                         clientStorage);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants, templates);
 
         contentPanel = new VerticalPanel();
         contentPanel.add(table);
         contentPanel.add(new Label(constants.emptyInterface()));
         initWidget(contentPanel);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     Resources getTableResources() {

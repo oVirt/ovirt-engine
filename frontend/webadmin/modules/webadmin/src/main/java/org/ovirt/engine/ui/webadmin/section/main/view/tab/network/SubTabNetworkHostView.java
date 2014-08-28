@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.PairQueryable;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.view.ViewRadioGroup;
 import org.ovirt.engine.ui.common.widget.table.column.RxTxRateColumn;
@@ -30,6 +31,7 @@ import org.ovirt.engine.ui.webadmin.widget.host.InterfaceStatusImage;
 import org.ovirt.engine.ui.webadmin.widget.table.column.HostStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.WebAdminImageResourceColumn;
 
+import com.google.gwt.core.client.GWT;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.ImageResource;
@@ -40,6 +42,10 @@ import com.google.gwt.user.client.ui.RadioButton;
 
 public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, PairQueryable<VdsNetworkInterface, VDS>, NetworkListModel, NetworkHostListModel>
         implements SubTabNetworkHostPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabNetworkHostView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     private final ViewRadioGroup<NetworkHostFilter> viewRadioGroup;
     private final ApplicationConstants constants;
@@ -62,6 +68,11 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.tagImage()).getHTML());
         initTable();
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTableOverhead() {
@@ -231,7 +242,7 @@ public class SubTabNetworkHostView extends AbstractSubTabTableView<NetworkView, 
         nicStatusColumn.makeSortable(new SimpleStatusColumnComparator<PairQueryable<VdsNetworkInterface, VDS>>(nicStatusColumn));
         nicColumn.makeSortable(new Comparator<PairQueryable<VdsNetworkInterface, VDS>>() {
 
-            private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+            private final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
 
             @Override
             public int compare(PairQueryable<VdsNetworkInterface, VDS> o1, PairQueryable<VdsNetworkInterface, VDS> o2) {

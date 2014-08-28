@@ -36,6 +36,7 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
     public AbstractSubTabTableView(SearchableDetailModelProvider<T, M, D> modelProvider) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
+        generateIds();
     }
 
     protected SimpleActionTable<T> createActionTable() {
@@ -65,4 +66,5 @@ public abstract class AbstractSubTabTableView<I, T, M extends ListWithDetailsMod
         // No-op since table-based sub tab views don't handle main tab selection on their own
     }
 
+    protected abstract void generateIds();
 }

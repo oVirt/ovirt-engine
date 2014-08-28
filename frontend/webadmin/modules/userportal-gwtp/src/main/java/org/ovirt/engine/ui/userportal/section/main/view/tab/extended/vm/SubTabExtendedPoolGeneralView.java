@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -18,6 +19,10 @@ import com.google.inject.Inject;
 public class SubTabExtendedPoolGeneralView extends AbstractSubTabFormView<UserPortalItemModel, UserPortalListModel, PoolGeneralModel>
         implements SubTabExtendedPoolGeneralPresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedPoolGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     interface ViewUiBinder extends UiBinder<Widget, SubTabExtendedPoolGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
@@ -30,6 +35,11 @@ public class SubTabExtendedPoolGeneralView extends AbstractSubTabFormView<UserPo
         super(modelProvider);
         form = new PoolGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

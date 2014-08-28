@@ -1,11 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
+import java.text.ParseException;
+
 import javax.inject.Inject;
 
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -29,6 +31,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.Parser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -36,12 +39,14 @@ import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
 
-import java.text.ParseException;
-
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, SubTabClusterGeneralView> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabClusterGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterGeneralView> {
@@ -117,6 +122,11 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         });
 
         driver.initialize(this);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     private void initManageGlusterSwift() {

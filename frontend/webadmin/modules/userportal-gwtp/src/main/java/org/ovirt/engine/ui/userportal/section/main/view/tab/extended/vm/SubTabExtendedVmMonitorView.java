@@ -54,8 +54,12 @@ public class SubTabExtendedVmMonitorView extends AbstractSubTabFormView<UserPort
     public SubTabExtendedVmMonitorView(VmMonitorModelProvider modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         localize(constants);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void localize(ApplicationConstants constants) {

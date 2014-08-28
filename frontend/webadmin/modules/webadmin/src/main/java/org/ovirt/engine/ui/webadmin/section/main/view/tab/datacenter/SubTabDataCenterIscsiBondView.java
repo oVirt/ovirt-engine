@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter;
 
-import com.google.gwt.core.client.GWT;
-import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -15,6 +13,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTab
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
+
 public class SubTabDataCenterIscsiBondView extends AbstractSubTabTableView<StoragePool, IscsiBond, DataCenterListModel, DataCenterIscsiBondListModel>
         implements SubTabDataCenterIscsiBondPresenter.ViewDef {
 
@@ -26,9 +27,13 @@ public class SubTabDataCenterIscsiBondView extends AbstractSubTabTableView<Stora
     public SubTabDataCenterIscsiBondView(SearchableDetailModelProvider<IscsiBond, DataCenterListModel,
             DataCenterIscsiBondListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

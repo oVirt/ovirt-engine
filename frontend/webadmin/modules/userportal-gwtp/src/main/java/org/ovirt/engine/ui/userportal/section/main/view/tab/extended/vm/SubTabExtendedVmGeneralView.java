@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
@@ -22,6 +23,10 @@ public class SubTabExtendedVmGeneralView extends AbstractSubTabFormView<UserPort
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabExtendedVmGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     @UiField(provided = true)
     VmGeneralModelForm form;
 
@@ -30,6 +35,11 @@ public class SubTabExtendedVmGeneralView extends AbstractSubTabFormView<UserPort
         super(modelProvider);
         form = new VmGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

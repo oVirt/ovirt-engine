@@ -5,9 +5,9 @@ import java.util.Comparator;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
-import org.ovirt.engine.core.common.businessentities.event_subscriber;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
@@ -32,9 +32,13 @@ public class SubTabUserEventNotifierView extends AbstractSubTabTableView<DbUser,
     @Inject
     public SubTabUserEventNotifierView(SearchableDetailModelProvider<event_subscriber, UserListModel, UserEventNotifierListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

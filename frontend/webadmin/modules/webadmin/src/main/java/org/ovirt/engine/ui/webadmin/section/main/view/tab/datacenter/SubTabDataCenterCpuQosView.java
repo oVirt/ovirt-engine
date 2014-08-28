@@ -30,9 +30,13 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
             DataCenterListModel, DataCenterCpuQosListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(final ApplicationConstants constants) {

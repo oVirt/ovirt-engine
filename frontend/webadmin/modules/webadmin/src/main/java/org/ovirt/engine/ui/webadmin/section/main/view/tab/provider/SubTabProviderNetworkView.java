@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.LinkColumnWithTooltip;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -17,9 +18,14 @@ import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
 import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
 
 public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider, NetworkView, ProviderListModel, ProviderNetworkListModel>
         implements SubTabProviderNetworkPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabProviderNetworkView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     private final ApplicationConstants constants;
 
@@ -33,6 +39,11 @@ public class SubTabProviderNetworkView extends AbstractSubTabTableView<Provider,
         this.constants = constants;
         initTable();
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable() {

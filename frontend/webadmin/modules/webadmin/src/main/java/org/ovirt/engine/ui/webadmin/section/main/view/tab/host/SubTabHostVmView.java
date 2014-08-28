@@ -37,9 +37,13 @@ public class SubTabHostVmView extends AbstractSubTabTableView<VDS, VM, HostListM
     public SubTabHostVmView(SearchableDetailModelProvider<VM, HostListModel, HostVmListModel> modelProvider,
         ApplicationResources resources, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(resources, constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationResources resources, ApplicationConstants constants) {

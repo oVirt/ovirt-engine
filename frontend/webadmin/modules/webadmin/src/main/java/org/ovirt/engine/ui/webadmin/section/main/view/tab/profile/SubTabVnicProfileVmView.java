@@ -28,10 +28,14 @@ public class SubTabVnicProfileVmView extends AbstractSubTabTableView<VnicProfile
     public SubTabVnicProfileVmView(SearchableDetailModelProvider<VM, VnicProfileListModel, VnicProfileVmListModel> modelProvider,
             ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         this.constants = constants;
         initTable();
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable() {

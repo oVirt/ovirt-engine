@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.network;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.BooleanColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -13,10 +14,15 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.network.SubTabNet
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 
+import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkView, VnicProfileView, NetworkListModel, NetworkProfileListModel>
         implements SubTabNetworkProfilePresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabNetworkProfileView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabNetworkProfileView(SearchableDetailModelProvider<VnicProfileView, NetworkListModel, NetworkProfileListModel> modelProvider,
@@ -24,6 +30,11 @@ public class SubTabNetworkProfileView extends AbstractSubTabTableView<NetworkVie
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

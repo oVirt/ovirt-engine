@@ -44,7 +44,6 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
     @Inject
     public SubTabNetworkVmView(SearchableDetailModelProvider<PairQueryable<VmNetworkInterface, VM>, NetworkListModel, NetworkVmListModel> modelProvider, ApplicationConstants constants, ApplicationTemplates templates) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         this.constants = constants;
         this.templates = templates;
         viewRadioGroup = new ViewRadioGroup<NetworkVmFilter>(Arrays.asList(NetworkVmFilter.values()));
@@ -52,6 +51,11 @@ public class SubTabNetworkVmView extends AbstractSubTabTableView<NetworkView, Pa
         viewRadioGroup.addStyleName("stnvmv_radioGroup_pfly_fix"); //$NON-NLS-1$
         initTable();
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     private void initTableOverhead() {

@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -33,6 +34,10 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
         WidgetUiBinder uiBinder = GWT.create(WidgetUiBinder.class);
     }
 
+    interface ViewIdHandler extends ElementIdHandler<CpuProfilesListModelTable> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private final PermissionWithInheritedPermissionListModelTable<PermissionListModel> permissionListModelTable;
 
     @UiField
@@ -51,6 +56,7 @@ public class CpuProfilesListModelTable extends AbstractModelBoundTableWidget<Cpu
             ClientStorage clientStorage,
             CommonApplicationConstants constants) {
         super(modelProvider, eventBus, clientStorage, false);
+        ViewIdHandler.idHandler.generateAndSetIds(this);
         // Create cpu profile table
         tableContainer.add(getTable());
 

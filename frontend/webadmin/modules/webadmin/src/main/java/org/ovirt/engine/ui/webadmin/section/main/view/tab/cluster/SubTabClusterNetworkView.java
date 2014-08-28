@@ -50,7 +50,6 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
             ApplicationTemplates templates,
             ApplicationResources resources) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         displayImage =
                 SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkMonitor()).getHTML());
         migrationImage =
@@ -58,6 +57,11 @@ public class SubTabClusterNetworkView extends AbstractSubTabTableView<VDSGroup, 
         emptyImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkEmpty()).getHTML());
         initTable(constants, templates);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(final ApplicationConstants constants, final ApplicationTemplates templates) {

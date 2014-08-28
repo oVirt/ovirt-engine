@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.searchbackend.VmConditionFieldAutoCompleter;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -18,14 +19,25 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.core.client.GWT;
+
 public class SubTabClusterVmView extends AbstractSubTabTableView<VDSGroup, VM, ClusterListModel, ClusterVmListModel>
         implements SubTabClusterVmPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabClusterVmView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabClusterVmView(SearchableDetailModelProvider<VM, ClusterListModel, ClusterVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

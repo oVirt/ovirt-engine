@@ -1,8 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 
+import java.util.Date;
+
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
@@ -12,15 +15,18 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.StorageRegisterVmListModel
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.storage.SubTabStorageRegisterVmPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.view.AbstractSubTabTableView;
-
-import com.google.inject.Inject;
 import org.ovirt.engine.ui.webadmin.widget.action.WebAdminButtonDefinition;
 import org.ovirt.engine.ui.webadmin.widget.table.column.GeneralDateTimeColumn;
 
-import java.util.Date;
+import com.google.gwt.core.client.GWT;
+import com.google.inject.Inject;
 
 public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<StorageDomain, VM, StorageListModel, StorageRegisterVmListModel>
         implements SubTabStorageRegisterVmPresenter.ViewDef {
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageRegisterVmView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
 
     @Inject
     public SubTabStorageRegisterVmView(SearchableDetailModelProvider<VM, StorageListModel, StorageRegisterVmListModel> modelProvider,
@@ -28,6 +34,11 @@ public class SubTabStorageRegisterVmView extends AbstractSubTabTableView<Storage
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(ApplicationConstants constants) {

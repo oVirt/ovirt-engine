@@ -47,7 +47,7 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
 
     protected SubTabTreeActionPanel actionPanel;
 
-    protected EntityModelCellTable<ListModel> table;
+    public EntityModelCellTable<ListModel> table;
 
     protected E tree;
 
@@ -134,6 +134,11 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
     protected SubTabTreeActionPanel createActionPanel(SearchableDetailModelProvider modelProvider) {
         return null;
     }
+
+    @Override
+    protected void generateIds() {
+        //Do nothing, we don't want the tree tables to have ids.
+    };
 
     interface WidgetStyle extends CssResource {
         String treeContainer();

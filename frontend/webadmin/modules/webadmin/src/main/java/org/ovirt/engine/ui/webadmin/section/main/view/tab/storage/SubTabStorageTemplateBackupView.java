@@ -5,6 +5,7 @@ import java.util.Date;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.StringFormat;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -23,6 +24,10 @@ import com.google.inject.Inject;
 public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<StorageDomain, VmTemplate, StorageListModel, TemplateBackupModel>
         implements SubTabStorageTemplateBackupPresenter.ViewDef {
 
+    interface ViewIdHandler extends ElementIdHandler<SubTabStorageTemplateBackupView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
+    }
+
     private static final UIConstants messageConstants = GWT.create(UIConstants.class);
 
     @Inject
@@ -30,6 +35,11 @@ public class SubTabStorageTemplateBackupView extends AbstractSubTabTableView<Sto
         super(modelProvider);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(final ApplicationConstants constants) {

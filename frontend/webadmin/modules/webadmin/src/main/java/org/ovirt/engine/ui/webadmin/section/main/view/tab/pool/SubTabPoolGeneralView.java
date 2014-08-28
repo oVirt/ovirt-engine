@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.pool;
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -26,6 +27,10 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabPoolGeneralView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabPoolGeneralView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface Driver extends SimpleBeanEditorDriver<PoolGeneralModel, SubTabPoolGeneralView> {
@@ -101,6 +106,11 @@ public class SubTabPoolGeneralView extends AbstractSubTabFormView<VmPool, PoolLi
                 return getDetailModel().getHasTimeZone();
             }
         });
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     @Override

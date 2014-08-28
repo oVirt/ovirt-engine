@@ -32,9 +32,13 @@ public class SubTabDiskVmView extends AbstractSubTabTableView<Disk, VM, DiskList
     @Inject
     public SubTabDiskVmView(SearchableDetailModelProvider<VM, DiskListModel, DiskVmListModel> modelProvider, ApplicationConstants constants) {
         super(modelProvider);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(constants);
         initWidget(getTable());
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     void initTable(final ApplicationConstants constants) {

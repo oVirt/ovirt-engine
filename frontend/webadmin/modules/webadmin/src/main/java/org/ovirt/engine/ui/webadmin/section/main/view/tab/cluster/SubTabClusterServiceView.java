@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
+import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
@@ -37,6 +38,10 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         implements SubTabClusterServicePresenter.ViewDef, Editor<ClusterServiceModel> {
 
     interface Driver extends SimpleBeanEditorDriver<ClusterServiceModel, SubTabClusterServiceView> {
+    }
+
+    interface ViewIdHandler extends ElementIdHandler<SubTabClusterServiceView> {
+        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
     }
 
     interface ViewUiBinder extends UiBinder<Widget, SubTabClusterServiceView> {
@@ -79,6 +84,11 @@ public class SubTabClusterServiceView extends AbstractSubTabFormView<VDSGroup, C
         initTableColumns(constants);
         initButtons();
         driver.initialize(this);
+    }
+
+    @Override
+    protected void generateIds() {
+        ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 
     private void initListBoxEditors() {
