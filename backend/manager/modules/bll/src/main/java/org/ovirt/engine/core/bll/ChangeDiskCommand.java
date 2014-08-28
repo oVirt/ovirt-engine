@@ -16,6 +16,7 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     public ChangeDiskCommand(T parameters) {
         super(parameters);
+        cdImagePath = getParameters().getCdImagePath();
     }
 
     public String getDiskName() {
@@ -24,7 +25,12 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
 
     @Override
     protected void setActionMessageParameters() {
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
+        // An empty 'cdImagePath' means eject CD
+        if (!StringUtils.isEmpty(cdImagePath)) {
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
+        } else {
+            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
+        }
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
     }
 
@@ -38,28 +44,16 @@ public class ChangeDiskCommand<T extends ChangeDiskCommandParameters> extends Vm
             return false;
         }
 
-        cdImagePath = getParameters().getCdImagePath();
-
         if (!getVm().isRunningOrPaused()) {
-            addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM);
-
-            // An empty 'cdImagePath' means eject CD
-            if (!StringUtils.isEmpty(cdImagePath)) {
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
-            } else {
-                addCanDoActionMessage(VdcBllMessages.VAR__ACTION__EJECT_CD);
-            }
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL, LocalizedVmStatus.from(getVm().getStatus()));
         }
 
         if ((IsoDomainListSyncronizer.getInstance().findActiveISODomain(getVm().getStoragePoolId()) == null)
                 && !StringUtils.isEmpty(cdImagePath)) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             return failCanDoAction(VdcBllMessages.VM_CANNOT_WITHOUT_ACTIVE_STORAGE_DOMAIN_ISO);
         }
 
         if (StringUtils.isNotEmpty(cdImagePath) && !cdImagePath.endsWith(ValidationUtils.ISO_SUFFIX)) {
-            addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CHANGE_CD);
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT);
         }
 
