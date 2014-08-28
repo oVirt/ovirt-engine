@@ -34,7 +34,7 @@ public interface IVdsEventListener {
 
     void processOnCpuFlagsChange(Guid vdsId);
 
-    void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port);
+    void processOnVmPoweringUp(Guid vmId);
 
     void handleVdsVersion(Guid vdsId);
 

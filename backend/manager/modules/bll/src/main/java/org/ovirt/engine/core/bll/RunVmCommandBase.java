@@ -277,16 +277,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         return vds != null ? vds.getId() : null;
     }
 
-    @Override
-    public boolean getAutoStart() {
-        return getVm().isAutoStartup();
-    }
-
-    @Override
-    public Guid getAutoStartVdsId() {
-        return null;
-    }
-
     protected boolean connectLunDisks(Guid hostId) {
         if (getVm().getDiskMap().isEmpty()) {
             VmHandler.updateDisksFromDb(getVm());

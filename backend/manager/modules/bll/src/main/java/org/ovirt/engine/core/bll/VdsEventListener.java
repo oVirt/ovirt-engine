@@ -59,8 +59,6 @@ import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmPolicyVDSParams;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -68,7 +66,6 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.Ticketing;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
@@ -359,8 +356,8 @@ public class VdsEventListener implements IVdsEventListener {
     }
 
     @Override
-    public void processOnVmPoweringUp(Guid vds_id, Guid vmid, String display_ip, int display_port) {
-        IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmid);
+    public void processOnVmPoweringUp(Guid vmId) {
+        IVdsAsyncCommand command = Backend.getInstance().getResourceManager().GetAsyncCommandForVm(vmId);
 
         /*
          * XXX: command is null after successful migration, because runningSucceeded removes the
@@ -370,30 +367,6 @@ public class VdsEventListener implements IVdsEventListener {
          */
         if (command != null) {
             command.onPowerringUp();
-            if (command.getAutoStart() && command.getAutoStartVdsId() != null) {
-                try {
-                    String otp64 = Ticketing.generateOTP();
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(VDSCommandType.SetVmTicket,
-                                    new SetVmTicketVDSCommandParameters(vds_id, vmid, otp64, 60, "", Guid.Empty));
-                    log.infoFormat(
-                            "VdsEventListener.ProcessOnVmPoweringUp - Auto start logic, starting spice to vm - {0} ",
-                            vmid);
-                    Backend.getInstance()
-                            .getResourceManager()
-                            .RunVdsCommand(
-                                    VDSCommandType.StartSpice,
-                                    new StartSpiceVDSCommandParameters(command.getAutoStartVdsId(), display_ip,
-                                            display_port, otp64));
-                } catch (RuntimeException ex) {
-                    log.errorFormat(
-                            "VdsEventListener.ProcessOnVmPoweringUp - failed to start spice on VM - {0} - {1} - {2}",
-                            vmid,
-                            ex.getMessage(),
-                            ex.getStackTrace());
-                }
-            }
         }
     }
 

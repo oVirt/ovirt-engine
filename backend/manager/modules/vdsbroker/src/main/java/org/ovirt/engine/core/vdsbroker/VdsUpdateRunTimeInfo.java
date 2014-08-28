@@ -580,8 +580,7 @@ public class VdsUpdateRunTimeInfo {
 
             // process all vms that powering up.
             for (VmDynamic runningVm : _poweringUpVms) {
-                getVdsEventListener().processOnVmPoweringUp(_vds.getId(), runningVm.getId(),
-                        runningVm.getDisplayIp(), runningVm.getDisplay());
+                getVdsEventListener().processOnVmPoweringUp(runningVm.getId());
             }
 
             // process all vms that went down
