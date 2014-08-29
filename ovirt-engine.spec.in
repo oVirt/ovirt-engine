@@ -7,11 +7,11 @@
 %if 0%{?ovirt_build_quick}
 %global _ovirt_build_ut 0
 %global ovirt_build_gwt 0
-%global ovirt_build_locales 0
 %global __jar_repack 0
 %endif
 %if 0%{?ovirt_build_minimal}
 %global _ovirt_build_ut 0
+%global ovirt_build_all_user_agents 0
 %global ovirt_build_locales 0
 %global _ovirt_build_extra_flags -D gwt.userAgent=gecko1_8
 %endif
@@ -27,6 +27,9 @@
 %endif
 %if 0%{!?ovirt_build_locales:1}
 %global ovirt_build_locales 1
+%endif
+%if 0%{!?ovirt_build_all_user_agents:1}
+%global ovirt_build_all_user_agents 1
 %endif
 #
 # CUSTOMIZATION-END
@@ -133,6 +136,7 @@ getent passwd %1 >/dev/null || useradd -r -u %2 -g %3 -c %5 -s /sbin/nologin -d 
 %global make_common_opts \\\
 	-j1 \\\
 	BUILD_GWT=%{ovirt_build_gwt} \\\
+	BUILD_ALL_USER_AGENTS=%{ovirt_build_all_user_agents} \\\
 	BUILD_LOCALES=%{ovirt_build_locales} \\\
 	BUILD_UT=%{ovirt_build_ut} \\\
 	BUILD_VALIDATION=0 \\\

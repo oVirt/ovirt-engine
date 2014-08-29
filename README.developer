@@ -121,13 +121,16 @@ BUILD_GWT [1]
     Build GWT.
 
 BUILD_GWT_USERPORTAL [1]
-    Build user portal if gwt is enabled.
+    Build user portal if GWT is enabled.
 
 BUILD_GWT_WEBADMIN [1]
-    Build web admin if gwt is enabled.
+    Build web admin if GWT is enabled.
+
+BUILD_ALL_USER_AGENTS [0]
+    Build GWT applications for all supported browsers.
 
 BUILD_LOCALES [0]
-    Build additional locales.
+    Build GWT applications for all supported locales.
 
 BUILD_DEV [0]
     Add extra development flags. Usually this should not be used
@@ -137,7 +140,7 @@ BUILD_UT [0]
     Perform unit tests during build.
 
 DEV_BUILD_GWT_DRAFT [0]
-    Build draft gwt application without optimizations, this is
+    Build draft GWT application without optimizations, this is
     useful when profiling compiled application in web browser.
 
     Following changes are applied for draft builds:
@@ -150,13 +153,15 @@ DEV_EXTRA_BUILD_FLAGS
     For example, if your machine is low on memory, use:
     DEV_EXTRA_BUILD_FLAGS="-Dgwt.compiler.localWorkers=2"
 
-DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS [-D gwt.userAgent=gecko1_8]
-    By default, only the gecko1_8 (Mozilla Firefox) support is built,
-    building all permutations is possible by specifying
-    DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="".
+DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS
+    By default, GWT applications are built for Firefox only.
+    To build for additional browsers, provide comma-separated list of
+    user agents, see frontend/webadmin/modules/pom.xml for full list.
 
-    A list of all supported browsers is available at gwt.userAgent
-    property within frontend/webadmin/modules/pom.xml.
+    For example, to build for Firefox and Chrome:
+    DEV_EXTRA_BUILD_FLAGS_GWT_DEFAULTS="-Dgwt.userAgent=gecko1_8,safari"
+
+    To build for all supported browsers, use BUILD_ALL_USER_AGENTS=1.
 
 DEV_REBUILD [1]
     Disable if only packaging components were modified.
@@ -254,10 +259,13 @@ ovirt_build_minimal [0]
     Build minimal Firefox only package.
 
 ovirt_build_gwt [1]
-    Build gwt components.
+    Build GWT components.
+
+ovirt_build_all_user_agents [1]
+    Build GWT components for all supported browsers.
 
 ovirt_build_locales [1]
-    Build extra locales.
+    Build GWT components for all supported locales.
 
 Example:
 

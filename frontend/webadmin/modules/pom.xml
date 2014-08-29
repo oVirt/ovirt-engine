@@ -56,8 +56,8 @@
       -Djava.util.prefs.userRoot="${project.build.directory}/tmp/.java"
     </gwt-plugin.extraJvmArgs>
     <!-- Control target browsers for GWT compilation, maps to 'user.agent' deferred binding property in *.gwt.xml -->
-    <!-- By default, all modern browsers are supported, see [gwt-user.jar:com/google/gwt/user/UserAgent.gwt.xml] for a complete list -->
-    <gwt.userAgent>ie8,ie9,gecko1_8,safari,opera</gwt.userAgent>
+    <!-- By default, compile for Firefox browser only, use 'all-user-agents' profile to compile for all browsers -->
+    <gwt.userAgent>gecko1_8</gwt.userAgent>
     <!-- Control target locales for GWT compilation, maps to 'locale' deferred binding property in *.gwt.xml -->
     <!-- By default, only English locale is supported, see 'all-langs' profile for a complete list -->
     <gwt.locale>en_US</gwt.locale>
@@ -203,6 +203,13 @@
     </pluginManagement>
   </build>
   <profiles>
+    <profile>
+      <id>all-user-agents</id>
+      <properties>
+        <!-- See [gwt-user.jar:com/google/gwt/useragent/UserAgent.gwt.xml] for a complete list -->
+        <gwt.userAgent>ie8,ie9,gecko1_8,safari</gwt.userAgent>
+      </properties>
+    </profile>
     <profile>
       <id>all-langs</id>
       <properties>
