@@ -2026,7 +2026,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 hostTab,
                 highAvailabilityTab,
                 resourceAllocationTab,
-                customPropertiesTab
+                customPropertiesTab,
+                rngDeviceTab
         );
     }
 
