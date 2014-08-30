@@ -315,6 +315,7 @@ public class ProviderModel extends Model {
 
     private void onTest() {
         if (!validateConnectionSettings()) {
+            getTestResult().setEntity(ConstantsManager.getInstance().getConstants().testFailedInsufficientParams());
             return;
         }
 

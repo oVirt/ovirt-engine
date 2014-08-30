@@ -2418,5 +2418,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("CPU Profile")
     String cpuProfileTitle();
+
+    @DefaultStringValue("Insufficient parameters to test connectivity")
+    String testFailedInsufficientParams();
 }
 
