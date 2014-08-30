@@ -2383,5 +2383,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Click on Numa Pinning to configure VM's virtual node span on top of physical host NUMA nodes")
     String numaInfoMessage();
+
+    @DefaultStringValue("Insufficient parameters to test connectivity")
+    String testFailedInsufficientParams();
 }
 
