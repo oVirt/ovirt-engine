@@ -1008,7 +1008,9 @@ public abstract class HostModel extends Model
         getProviderSearchFilterLabel().setIsAvailable(false);
         setExternalDiscoveredHosts(new ListModel());
         setExternalHostGroups(new ListModel());
+        getExternalHostGroups().setIsChangable(true);
         setExternalComputeResource(new ListModel());
+        getExternalComputeResource().setIsChangable(true);
         getUpdateHostsCommand().setIsExecutionAllowed(false);
 
         // Initialize primary PM fields.
@@ -1679,6 +1681,19 @@ public abstract class HostModel extends Model
                 new LengthValidation(255),
                 new HostAddressValidation() });
 
+        if (Boolean.TRUE.equals(getIsDiscoveredHosts().getEntity())) {
+            getUserPassword().validateEntity(new IValidation[] {
+                    new NotEmptyValidation(),
+                    new LengthValidation(255)
+            });
+            getExternalComputeResource().setIsValid(getExternalComputeResource().getSelectedItem() != null);
+            getExternalHostGroups().setIsValid(getExternalHostGroups().getSelectedItem() != null);
+        }
+        else {
+            getExternalComputeResource().setIsValid(true);
+            getExternalHostGroups().setIsValid(true);
+        }
+
         getAuthSshPort().validateEntity(new IValidation[] {new NotEmptyValidation(), new IntegerValidation(1, 65535)});
 
         if (getConsoleAddressEnabled().getEntity()) {
@@ -1721,6 +1736,9 @@ public abstract class HostModel extends Model
                 && getHost().getIsValid()
                 && getAuthSshPort().getIsValid()
                 && getCluster().getIsValid()
+                && getExternalHostGroups().getIsValid()
+                && getExternalComputeResource().getIsValid()
+                && getUserPassword().getIsValid()
         );
 
         setIsPowerManagementTabValid(getManagementIp().getIsValid()
