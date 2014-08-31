@@ -9,6 +9,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -80,6 +81,15 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class VdsBrokerObjectsBuilder {
     private final static int VNC_START_PORT = 5900;
     private final static double NANO_SECONDS = 1000000000;
+
+    private static final Comparator<VdsNumaNode> numaNodeComparator = new Comparator<VdsNumaNode>() {
+
+        @Override
+        public int compare(VdsNumaNode arg0, VdsNumaNode arg1) {
+            return arg0.getIndex() < arg1.getIndex() ? -1 : 1;
+        }
+
+    };
 
     public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmdynamic = new VmDynamic();
@@ -1657,12 +1667,14 @@ public class VdsBrokerObjectsBuilder {
                 newNumaNodeList.add(numaNode);
             }
 
-            for (Map.Entry<String, Object> item : numaNodeDistanceMap.entrySet()) {
-                int index = Integer.valueOf(item.getKey());
-                List<Integer> distances = extractIntegerList(numaNodeDistanceMap, item.getKey());
+            Collections.sort(newNumaNodeList, numaNodeComparator);
+
+            for (VdsNumaNode vdsNumaNode : newNumaNodeList) {
+                int index = vdsNumaNode.getIndex();
+                List<Integer> distances = extractIntegerList(numaNodeDistanceMap, String.valueOf(index));
                 Map<Integer, Integer> distanceMap = new HashMap<>(distances.size());
                 for (int i = 0; i < distances.size(); i++) {
-                    distanceMap.put(i, distances.get(i));
+                    distanceMap.put(newNumaNodeList.get(i).getIndex(), distances.get(i));
                 }
                 VdsNumaNode newNumaNode = NumaUtils.getVdsNumaNodeByIndex(newNumaNodeList, index);
                 if (newNumaNode != null) {
