@@ -550,9 +550,9 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                             if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
                                 DiskImage diskImage = (DiskImage) disk;
 
-                                EntityModel tempVar = new EntityModel();
-                                tempVar.setEntity((int) diskImage.getSizeInGigabytes());
-                                diskModel.setSize(tempVar);
+                                EntityModel<Integer> sizeEntity = new EntityModel<Integer>();
+                                sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
+                                diskModel.setSize(sizeEntity);
                                 ListModel tempVar2 = new ListModel();
                                 tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))
                                         : AsyncDataProvider.getInstance().getVolumeTypeList()));

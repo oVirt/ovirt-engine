@@ -811,7 +811,7 @@ public final class Linq
 
         if (disk.getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) disk;
-            EntityModel sizeEntity = new EntityModel();
+            EntityModel<Integer> sizeEntity = new EntityModel<Integer>();
             sizeEntity.setEntity((int) diskImage.getSizeInGigabytes());
             diskModel.setSize(sizeEntity);
             ListModel volumeList = new ListModel();
