@@ -14,6 +14,7 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.SimplePanel;
@@ -78,7 +79,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     SimplePanel snapshotInfoContainer;
 
     @UiField
-    SimplePanel warningPanel;
+    FlowPanel warningPanel;
 
     private PreviewSnapshotModel previewSnapshotModel;
     private VmSnapshotInfoPanel vmSnapshotInfoPanel;
@@ -153,7 +154,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.setSnapshotModel(snapshotModel);
                 previewSnapshotModel.clearMemorySelection();
-                updateMemoryWarning();
+                updateWarnings();
                 refreshTable(previewTable);
 
                 if (snapshotModel.getVm() == null) {
@@ -177,7 +178,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
                 refreshTable(previewTable);
-                updateMemoryWarning();
+                updateWarnings();
             }
         }) {
             @Override
@@ -216,7 +217,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
 
                     diskListModel.setSelectedItem(Boolean.TRUE.equals(value) ? image : null);
                     refreshTable(previewTable);
-                    updateMemoryWarning();
+                    updateWarnings();
                     updateInfoPanel();
                 }
             }) {
@@ -266,7 +267,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                         SnapshotModel selectedSnapshotModel = (SnapshotModel) event.getValue();
                         previewSnapshotModel.clearSelection();
                         previewSnapshotModel.selectSnapshot(selectedSnapshotModel.getEntity().getId());
-                        updateMemoryWarning();
+                        updateWarnings();
                         refreshTable(previewTable);
                     }
                     lastClick = System.currentTimeMillis();
@@ -280,20 +281,53 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         table.redraw();
     }
 
-    private void updateMemoryWarning() {
-        List<DiskImage> allSnapshotsDisks = previewSnapshotModel.getSnapshotModel().getEntity().getDiskImages();
+    private void updateWarnings() {
         List<DiskImage> selectedDisks = previewSnapshotModel.getSelectedDisks();
+        List<DiskImage> disksOfSelectedSnapshot = previewSnapshotModel.getSnapshotModel().getEntity().getDiskImages();
+        List<DiskImage> disksOfActiveSnapshot = previewSnapshotModel.getActiveSnapshotModel().getEntity().getDiskImages();
 
-        boolean partialDisksSelection = !selectedDisks.containsAll(allSnapshotsDisks);
-        boolean isIncludeMemory = (Boolean) previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
+        boolean isIncludeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
+        boolean isIncludeMemory = previewSnapshotModel.getSnapshotModel().getMemory().getEntity();
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());
-        HTML warningWidget = new HTML(templates.iconWithText(
+
+        HTML partialSnapshotWarningWidget = new HTML(templates.iconWithText(
+                warningImage, constants.snapshotPreviewWithExcludedDisksWarning()));
+        HTML memoryWarningWidget = new HTML(templates.iconWithText(
                 warningImage, constants.snapshotPreviewWithMemoryAndPartialDisksWarning()));
 
-        // Show warning in case of previewing a memory snapshot and excluding some disks.
-        warningPanel.setWidget(isIncludeMemory && partialDisksSelection ? warningWidget : null);
+        warningPanel.clear();
+
+        // Show warning in case of previewing a memory snapshot and excluding disks of the selected snapshot.
+        if (!isIncludeAllDisksOfSnapshot && isIncludeMemory) {
+            warningPanel.add(memoryWarningWidget);
+        }
+
+        // Show warning when excluding disks.
+        if (isDisksExcluded(disksOfActiveSnapshot, selectedDisks)) {
+            warningPanel.add(partialSnapshotWarningWidget);
+        }
+    }
+
+    // Search disks by ID (i.e. for each image, determines whether any image from the image-group is selected)
+    private boolean isDisksExcluded(List<DiskImage> disks, List<DiskImage> selectedDisks) {
+        for (DiskImage disk : disks) {
+            if (!containsDisk(disk, selectedDisks)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    // Check whether the specified disk list contains a disk by its ID (image-group)
+    private boolean containsDisk(DiskImage snapshotDisk, List<DiskImage> disks) {
+        for (DiskImage disk : disks) {
+            if (disk.getId().equals(snapshotDisk.getId())) {
+                return true;
+            }
+        }
+        return false;
     }
 
     private void updateInfoPanel() {

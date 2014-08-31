@@ -41,6 +41,8 @@
         .warningPanel {
             color: red;
             text-align: right;
+            height: 24px;
+            overflow: auto;
         }
     </ui:style>
 
@@ -50,7 +52,7 @@
                 <g:FlowPanel addStyleNames="{style.containerPanelInner}">
                     <g:HorizontalPanel width="100%">
                         <g:Label ui:field="previewTableLabel" addStyleNames="{style.previewTableLabel}"/>
-                        <g:SimplePanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
+                        <g:FlowPanel ui:field="warningPanel" addStyleNames="{style.warningPanel}"/>
                     </g:HorizontalPanel>
                     <e:EntityModelCellTable ui:field="previewTable"/>
                 </g:FlowPanel>

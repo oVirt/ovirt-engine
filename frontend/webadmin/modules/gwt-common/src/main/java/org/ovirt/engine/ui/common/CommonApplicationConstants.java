@@ -1793,6 +1793,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Previewing memory may cause data loss when excluding disks!")
     String snapshotPreviewWithMemoryAndPartialDisksWarning();
 
+    @DefaultStringValue("Excluded disks will be deleted when the snapshot is committed.")
+    String snapshotPreviewWithExcludedDisksWarning();
+
     @DefaultStringValue("Import as Template")
     String importAsTemplate();
 
