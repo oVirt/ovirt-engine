@@ -68,7 +68,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
                                 storagePool.getId(),
                                 storageDomainId,
                                 vmConfImageGroupId,
-                                HibernateVmCommand.META_DATA_SIZE_IN_BYTES,
+                                MemoryUtils.META_DATA_SIZE_IN_BYTES,
                                 VolumeType.Sparse,
                                 VolumeFormat.COW,
                                 vmConfVolumeId,
@@ -151,7 +151,7 @@ public class LiveSnapshotMemoryImageBuilder implements MemoryImageBuilder {
         imageForMemory.setvolumeFormat(VolumeFormat.RAW);
 
         DiskImage imageForMetadata = DiskImage.copyOf(imageForMemory);
-        imageForMetadata.setSize(HibernateVmCommand.META_DATA_SIZE_IN_BYTES);
+        imageForMetadata.setSize(MemoryUtils.META_DATA_SIZE_IN_BYTES);
         imageForMetadata.setVolumeType(VolumeType.Sparse);
         imageForMetadata.setvolumeFormat(VolumeFormat.COW);
         return Arrays.asList(imageForMemory, imageForMetadata);
