@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
-import org.ovirt.engine.ui.common.widget.editor.generic.LongEntityModelTextBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -90,7 +90,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @UiField
     @Path("size.entity")
     @WithElementId("size")
-    LongEntityModelTextBoxEditor sizeEditor;
+    IntegerEntityModelTextBoxEditor sizeEditor;
 
     @UiField
     @Path("sizeExtend.entity")

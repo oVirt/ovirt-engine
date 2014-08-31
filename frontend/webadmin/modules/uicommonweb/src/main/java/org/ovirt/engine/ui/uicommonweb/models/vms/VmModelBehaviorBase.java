@@ -551,7 +551,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                                 DiskImage diskImage = (DiskImage) disk;
 
                                 EntityModel tempVar = new EntityModel();
-                                tempVar.setEntity(diskImage.getSizeInGigabytes());
+                                tempVar.setEntity((int) diskImage.getSizeInGigabytes());
                                 diskModel.setSize(tempVar);
                                 ListModel tempVar2 = new ListModel();
                                 tempVar2.setItems((diskImage.getVolumeType() == VolumeType.Preallocated ? new ArrayList<VolumeType>(Arrays.asList(new VolumeType[] {VolumeType.Preallocated}))

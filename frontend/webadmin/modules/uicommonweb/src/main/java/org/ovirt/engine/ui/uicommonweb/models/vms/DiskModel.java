@@ -17,7 +17,7 @@ public class DiskModel extends Model
     private Disk disk;
     private VM vm;
 
-    private EntityModel<Long> size;
+    private EntityModel<Integer> size;
     private EntityModel<String> alias;
     private EntityModel<String> description;
     private EntityModel<String> sourceStorageDomainName;
@@ -47,11 +47,11 @@ public class DiskModel extends Model
         this.vm = vm;
     }
 
-    public EntityModel<Long> getSize() {
+    public EntityModel<Integer> getSize() {
         return size;
     }
 
-    public void setSize(EntityModel<Long> size) {
+    public void setSize(EntityModel<Integer> size) {
         this.size = size;
     }
 
@@ -136,7 +136,7 @@ public class DiskModel extends Model
     }
 
     public DiskModel() {
-        setSize(new EntityModel<Long>());
+        setSize(new EntityModel<Integer>());
         setAlias(new EntityModel<String>());
         setDescription(new EntityModel<String>());
         setSourceStorageDomainName(new EntityModel<String>());

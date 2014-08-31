@@ -160,7 +160,7 @@ public class NewDiskModel extends AbstractDiskModel
         boolean isInternal = getIsInternal().getEntity();
         if (isInternal) {
             DiskImage diskImage = (DiskImage) getDisk();
-            diskImage.setSizeInGigabytes(Integer.parseInt(getSize().getEntity().toString()));
+            diskImage.setSizeInGigabytes(getSize().getEntity());
             diskImage.setVolumeType(getVolumeType().getSelectedItem());
             diskImage.setvolumeFormat(getVolumeFormat());
         }

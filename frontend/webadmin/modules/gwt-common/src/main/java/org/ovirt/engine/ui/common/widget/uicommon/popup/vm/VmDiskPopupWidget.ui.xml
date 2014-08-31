@@ -103,7 +103,7 @@
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
 				<g:VerticalPanel>
-					<ge:LongEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
+					<ge:IntegerEntityModelTextBoxEditor ui:field="sizeEditor" addStyleNames="{style.boxEditor}"/>
           <ge:StringEntityModelTextBoxEditor ui:field="sizeExtendEditor" addStyleNames="{style.boxEditor}"/>
 					<ge:StringEntityModelTextBoxEditor ui:field="aliasEditor" addStyleNames="{style.boxEditor}"/>
 					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" addStyleNames="{style.boxEditor}"/>
