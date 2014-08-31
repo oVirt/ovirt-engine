@@ -6,6 +6,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.NumaNodeStatistics;
@@ -195,14 +196,16 @@ public class VdsNumaNodeDAODbFacadeImpl extends BaseDAODbFacade implements VdsNu
                 }
             };
 
+    // format: (<index_id>, <distance>);*, for example: "0, 10; 2, 16"
     private static Map<Integer, Integer> getDistanceMap(String distance) {
         Map<Integer, Integer> nodeDistance = new HashMap<>();
         if (StringUtils.isBlank(distance)) {
             return nodeDistance;
         }
-        String[] distanceArray = distance.split(",");
+        String[] distanceArray = distance.split(";");
         for (int i = 0; i < distanceArray.length; i++) {
-            nodeDistance.put(i, Integer.valueOf(distanceArray[i]));
+            String[] nodeDistanceArray = distanceArray[i].split(",");
+            nodeDistance.put(Integer.valueOf(nodeDistanceArray[0]), Integer.valueOf(nodeDistanceArray[1]));
         }
         return nodeDistance;
     }
@@ -212,9 +215,11 @@ public class VdsNumaNodeDAODbFacadeImpl extends BaseDAODbFacade implements VdsNu
             return null;
         }
         StringBuilder sb = new StringBuilder();
-        for (int i = 0; i < distance.size(); i++) {
-            sb.append(distance.get(i));
+        for (Entry<Integer, Integer> entry : distance.entrySet()) {
+            sb.append(entry.getKey());
             sb.append(",");
+            sb.append(entry.getValue());
+            sb.append(";");
         }
         return sb.deleteCharAt(sb.length() - 1).toString();
     }
