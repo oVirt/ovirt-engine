@@ -37,6 +37,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.vdscommands.GetImagesListVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -47,6 +48,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @Deprecated
 public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends StorageDomainCommandBase<T> {
+
+    private static final Pattern VALIDATE_MAC_ADDRESS =
+            Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
     /**
      * Map which contains the disk id (new generated id if the disk is cloned) and the disk parameters from the export
@@ -59,7 +63,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
     private List<DiskImage> _templateDisks;
     private StorageDomain sourceDomain;
     private Guid sourceDomainId = Guid.Empty;
-    private final static Pattern VALIDATE_MAC_ADDRESS = Pattern.compile(VmNic.UNICAST_MAC_ADDRESS_FORMAT);
 
     /**
      * Constructor for command creation when compensation is applied on startup

@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
+import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.validation.annotation.ValidNameWithDot;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -14,15 +15,15 @@ import org.ovirt.engine.core.compat.Guid;
  * <code>VmNic</code> defines a type of {@link NetworkInterface} for instances of {@link VM}.
  */
 public class VmNic extends NetworkInterface<VmNetworkStatistics> {
-    public static final String UNICAST_MAC_ADDRESS_FORMAT = "\\p{XDigit}[02468aAcCeE](:\\p{XDigit}{2}){5}";
-    public static final String NON_NULLABLE_MAC_ADDRESS_FORMAT = "^.*(?<!(00:){5}00)$";
 
     private static final long serialVersionUID = 7428150502868988886L;
 
-    protected static final String VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL =
+    static final String VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL =
             "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL";
-    protected static final String VALIDATION_MESSAGE_NAME_NOT_NULL = "VALIDATION.VM.NETWORK.NAME.NOT_NULL";
+    static final String VALIDATION_MESSAGE_NAME_NOT_NULL = "VALIDATION.VM.NETWORK.NAME.NOT_NULL";
     public static final String VALIDATION_MESSAGE_MAC_ADDRESS_INVALID = "VALIDATION.VM.NETWORK.MAC.ADDRESS.INVALID";
+    public static final String VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST =
+            "VALIDATION.VM.NETWORK.MAC.ADDRESS.MULTICAST";
 
     private Guid vmId;
     private Guid vnicProfileId;
@@ -64,7 +65,8 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         this.linked = linked;
     }
 
-    @NotNull(message = VmNic.VALIDATION_MESSAGE_NAME_NOT_NULL, groups = { CreateEntity.class,
+    @NotNull(message = VALIDATION_MESSAGE_NAME_NOT_NULL,
+             groups = { CreateEntity.class,
             UpdateEntity.class })
     @ValidNameWithDot(groups = { CreateEntity.class, UpdateEntity.class })
     @Override
@@ -72,17 +74,24 @@ public class VmNic extends NetworkInterface<VmNetworkStatistics> {
         return super.getName();
     }
 
-    @NotNull(message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL, groups = { UpdateVmNic.class })
+    @NotNull(message = VALIDATION_MESSAGE_MAC_ADDRESS_NOT_NULL,
+             groups = { UpdateVmNic.class })
     @Pattern.List({
-            @Pattern(regexp = "(^$)|(" + UNICAST_MAC_ADDRESS_FORMAT + ")",
-                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
-                    groups = { CreateEntity.class }),
-            @Pattern(regexp = UNICAST_MAC_ADDRESS_FORMAT,
-                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
-                    groups = { UpdateEntity.class }),
-            @Pattern(regexp = NON_NULLABLE_MAC_ADDRESS_FORMAT,
-                    message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
-                    groups = { CreateEntity.class, UpdateEntity.class })
+                   @Pattern(regexp = "(^$)|(" + MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT + ")",
+                            message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                            groups = { CreateEntity.class }),
+                   @Pattern(regexp = "(^$)|(" + MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT + ")",
+                            message = VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST,
+                            groups = { CreateEntity.class }),
+                   @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
+                            message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                            groups = { UpdateEntity.class }),
+                   @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
+                            message = VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST,
+                            groups = { UpdateEntity.class }),
+                   @Pattern(regexp = MacAddressValidationPatterns.NON_NULLABLE_MAC_ADDRESS_FORMAT,
+                            message = VALIDATION_MESSAGE_MAC_ADDRESS_INVALID,
+                            groups = { CreateEntity.class, UpdateEntity.class })
     })
     @Override
     public String getMacAddress() {
