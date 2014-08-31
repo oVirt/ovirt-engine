@@ -25,6 +25,7 @@ public class PreviewSnapshotModel extends Model {
     private ListModel snapshots;
     private Map<Guid, ListModel> diskSnapshotsMap;
     private Guid vmId;
+    private Guid activeSnapshotId;
 
     public PreviewSnapshotModel() {
         setSnapshots(new ListModel());
@@ -44,7 +45,6 @@ public class PreviewSnapshotModel extends Model {
                     ArrayList<Snapshot> snapshots = response.getReturnValue();
                     previewSnapshotModel.sortSnapshots(snapshots);
 
-                    Guid activeSnapshotId = null;
                     Guid userSelectedSnapshotId = previewSnapshotModel.getSnapshotModel().getEntity().getId();
 
                     for (Snapshot snapshot : snapshots) {
@@ -196,6 +196,10 @@ public class PreviewSnapshotModel extends Model {
             }
         }
         return null;
+    }
+
+    public SnapshotModel getActiveSnapshotModel() {
+        return getSnapshotModelById(activeSnapshotId);
     }
 
     public void selectSnapshot(Guid id) {
