@@ -2244,6 +2244,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("MAC address must be in format \"HH:HH:HH:HH:HH:HH\" where H is a hexadecimal character (either a digit or A-F, case is insignificant).")
     String VALIDATION_VM_NETWORK_MAC_ADDRESS_INVALID();
 
+    @DefaultStringValue("Multi-cast MAC address is not allowed.")
+    String VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST();
+
     @DefaultStringValue("MAC address is required.")
     String VALIDATION_VM_NETWORK_MAC_ADDRESS_NOT_NULL();
 

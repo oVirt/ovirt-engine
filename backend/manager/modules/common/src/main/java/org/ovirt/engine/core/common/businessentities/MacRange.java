@@ -6,6 +6,7 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
+import org.ovirt.engine.core.common.utils.MacAddressValidationPatterns;
 import org.ovirt.engine.core.compat.Guid;
 
 public class MacRange implements Serializable {
@@ -13,14 +14,21 @@ public class MacRange implements Serializable {
 
     private Guid macPoolId;
 
-    @Pattern(regexp = VmNic.UNICAST_MAC_ADDRESS_FORMAT,
-            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
+    @Pattern.List({
+                   @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
+                            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID),
+                   @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
+                            message = VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST)
+    })
     @NotNull(message= "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
     private String macFrom;
 
-    @Pattern(regexp = VmNic.UNICAST_MAC_ADDRESS_FORMAT,
-            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID)
-    @NotNull(message = "VALIDATION.VM.NETWORK.MAC.ADDRESS.NOT_NULL")
+    @Pattern.List({
+                   @Pattern(regexp = MacAddressValidationPatterns.VALID_MAC_ADDRESS_FORMAT,
+                            message = VmNic.VALIDATION_MESSAGE_MAC_ADDRESS_INVALID),
+                   @Pattern(regexp = MacAddressValidationPatterns.NON_MULTICAST_MAC_ADDRESS_FORMAT,
+                            message = VmNic.VALIDATION_VM_NETWORK_MAC_ADDRESS_MULTICAST)
+    })
     private String macTo;
 
     public String getMacFrom() {
