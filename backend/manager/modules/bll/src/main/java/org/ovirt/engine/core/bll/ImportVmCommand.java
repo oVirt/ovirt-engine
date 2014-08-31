@@ -481,7 +481,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
             VM vm = getVmFromSnapshot(snapshot);
             int requiredSizeForMemory = (int) Math.ceil((vm.getTotalMemorySizeInBytes() +
-                    HibernateVmCommand.META_DATA_SIZE_IN_BYTES) * 1.0 / BYTES_IN_GB);
+                    MemoryUtils.META_DATA_SIZE_IN_BYTES) * 1.0 / BYTES_IN_GB);
             StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(
                     getParameters().getStoragePoolId(), requiredSizeForMemory, domain2requiredSize);
             if (storageDomain == null) {

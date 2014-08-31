@@ -47,10 +47,6 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
     private boolean isHibernateVdsProblematic = false;
 
-    /** The size for the snapshot's meta data which is vm related properties at the
-     *  time the snapshot was taken */
-    public static final long META_DATA_SIZE_IN_BYTES = 10 * 1024;
-
     /**
      * Constructor for command creation when compensation is applied on startup
      *
@@ -90,7 +86,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     @Override
     public Guid getStorageDomainId() {
         if (_storageDomainId.equals(Guid.Empty) && getVm() != null) {
-            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), META_DATA_SIZE_IN_BYTES);
+            List<DiskImage> diskDummiesForMemSize = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(),
+                    MemoryUtils.META_DATA_SIZE_IN_BYTES);
             StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getVm().getStoragePoolId(), diskDummiesForMemSize);
             if (storageDomain != null) {
                 _storageDomainId = storageDomain.getId();
@@ -175,7 +172,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                                     new CreateImageVDSCommandParameters(getVm().getStoragePoolId(),
                                             getStorageDomainId(),
                                             image2GroupId,
-                                            META_DATA_SIZE_IN_BYTES,
+                                            MemoryUtils.META_DATA_SIZE_IN_BYTES,
                                             VolumeType.Sparse,
                                             VolumeFormat.COW,
                                             hiberVol2,

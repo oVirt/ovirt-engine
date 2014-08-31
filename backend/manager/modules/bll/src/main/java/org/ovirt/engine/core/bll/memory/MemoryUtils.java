@@ -15,6 +15,10 @@ import org.ovirt.engine.core.utils.GuidUtils;
 
 public class MemoryUtils {
 
+    /** The size for the snapshot's meta data which is vm related properties at the
+     *  time the snapshot was taken */
+    public static final long META_DATA_SIZE_IN_BYTES = 10 * 1024;
+
     /**
      * Modified the given memory volume String representation to have the given storage
      * pool and storage domain

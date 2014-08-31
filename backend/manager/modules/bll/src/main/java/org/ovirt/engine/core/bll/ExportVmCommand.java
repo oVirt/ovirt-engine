@@ -10,6 +10,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.EngineContext;
+import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.ClusterUtils;
@@ -201,7 +202,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         long sizeInBytes = 0;
         for (Snapshot snapshot : snapshotsWithMemory) {
             VM vm = getVmFromSnapshot(snapshot);
-            sizeInBytes += vm.getTotalMemorySizeInBytes() + HibernateVmCommand.META_DATA_SIZE_IN_BYTES;
+            sizeInBytes += vm.getTotalMemorySizeInBytes() + MemoryUtils.META_DATA_SIZE_IN_BYTES;
         }
         return (int) Math.ceil(1.0 * sizeInBytes / BYTES_IN_GB);
     }
