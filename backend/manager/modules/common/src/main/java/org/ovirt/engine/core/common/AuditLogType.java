@@ -181,6 +181,7 @@ public enum AuditLogType {
     USER_REMOVE_VM_FINISHED(113),
     USER_REMOVE_VM_FINISHED_WITH_ILLEGAL_DISKS(172, AuditLogSeverity.WARNING),
     USER_ADD(149),
+    @Deprecated
     USER_FAILED_REMOVE_VM(59, AuditLogSeverity.ERROR),
     USER_CHANGE_DISK_VM(38),
     USER_FAILED_CHANGE_DISK_VM(102, AuditLogSeverity.ERROR),
@@ -666,6 +667,7 @@ public enum AuditLogType {
     NETWORK_HOST_USING_WRONG_CLUSER_VLAN(1106, AuditLogSeverity.WARNING),
     @Deprecated
     NETWORK_HOST_MISSING_CLUSER_VLAN(1107, AuditLogSeverity.WARNING),
+    @Deprecated
     VDS_NETWORK_MTU_DIFFER_FROM_LOGICAL_NETWORK(1108, AuditLogTimeInterval.HOUR.getValue()),
     BRIDGED_NETWORK_OVER_MULTIPLE_INTERFACES(1109, AuditLogSeverity.WARNING),
     VDS_NETWORKS_OUT_OF_SYNC(1110, AuditLogSeverity.WARNING),
@@ -916,6 +918,7 @@ public enum AuditLogType {
     VDS_ACTIVATE_MANUAL_HA_ASYNC(10455, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
     VDS_ACTIVATE_FAILED_ASYNC(9503, AuditLogSeverity.WARNING, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated
+    @Deprecated
     STORAGE_ACTIVATE_ASYNC(9504, AuditLogTimeInterval.HOUR.getValue() * 3), // When VDS is reactivated by autorecovery
 
     USER_ACTIVATED_STORAGE_DOMAIN_ASYNC(9505, AuditLogTimeInterval.HOUR.getValue() * 3),
