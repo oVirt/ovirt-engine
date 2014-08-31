@@ -551,10 +551,7 @@ public abstract class SanStorageModel extends SanStorageModelBase
     }
 
     protected void proposeDiscover() {
-        boolean proposeDiscover =
-                !getProposeDiscoverTargets() && (getItems() == null || Linq.count(getItems()) == 0);
-
-        setProposeDiscoverTargets(proposeDiscover);
+        setProposeDiscoverTargets(getItems() == null || Linq.count(getItems()) == 0);
     }
 
     @Override
