@@ -513,10 +513,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return true;
     }
 
-    protected boolean isDiskExists(Guid id) {
-        return getBaseDiskDao().exists(id);
-    }
-
     protected boolean validateDiskInterface(Iterable<DiskImage> images) {
         for (DiskImage diskImage : images) {
             if (diskImage.getDiskInterface() == DiskInterface.VirtIO_SCSI &&
