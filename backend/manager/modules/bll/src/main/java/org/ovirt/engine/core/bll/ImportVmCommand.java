@@ -417,16 +417,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
 
         if (!isImagesAlreadyOnTarget()) {
-            Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(imageList);
-
-            if (!setDomainsForMemoryImages(domainMap)) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
-            }
-
-            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
-                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
-                    return false;
-                }
+            if (!handleDestStorageDomains()) {
+                return false;
             }
         }
 
@@ -457,16 +449,32 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return true;
     }
 
+    protected boolean handleDestStorageDomains() {
+        List<DiskImage> dummiesDisksList = createDiskDummiesForSpaceValidations(imageList);
+        if (getParameters().getCopyCollapse()) {
+            Snapshot activeSnapshot = getActiveSnapshot();
+            if (activeSnapshot != null && activeSnapshot.containsMemory()) {
+                //Checking space for memory volume of the active image (if there is one)
+                StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(dummiesDisksList);
+                if (storageDomain == null) {
+                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
+                }
+            }
+        } else { //Check space for all the snapshot's memory volumes
+            if (!updateDomainsForMemoryImages(dummiesDisksList)) {
+                return false;
+            }
+        }
+        return validateSpaceRequirements(dummiesDisksList);
+    }
+
     /**
-     * This method fills the given map of domain to the required size for storing memory images
-     * within it, and also update the memory volume in each snapshot that has memory volume with
-     * the right storage pool and storage domain where it is going to be imported.
+     * For each snapshot that has memory volume, this method updates the memory volume with
+     * the storage pool and storage domain it's going to be imported to.
      *
-     * @param domain2requiredSize
-     *           Maps domain to size required for storing memory volumes in it
      * @return true if we managed to assign storage domain for every memory volume, false otherwise
      */
-    private boolean setDomainsForMemoryImages(Map<StorageDomain, Integer> domain2requiredSize) {
+    private boolean updateDomainsForMemoryImages(List<DiskImage> disksList) {
         Map<String, String> handledMemoryVolumes = new HashMap<String, String>();
         for (Snapshot snapshot : getVm().getSnapshots()) {
             String memoryVolume = snapshot.getMemoryVolume();
@@ -480,17 +488,10 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 continue;
             }
 
-            VM vm = getVmFromSnapshot(snapshot);
-            int requiredSizeForMemory = (int) Math.ceil((vm.getTotalMemorySizeInBytes() +
-                    MemoryUtils.META_DATA_SIZE_IN_BYTES) * 1.0 / BYTES_IN_GB);
-            StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(
-                    getParameters().getStoragePoolId(), requiredSizeForMemory, domain2requiredSize);
+            StorageDomain storageDomain = updateStorageDomainInMemoryVolumes(disksList);
             if (storageDomain == null) {
-                return false;
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_NO_SUITABLE_DOMAIN_FOUND);
             }
-            int requiredSizeInDomainIncludingMemoryVolumes = domain2requiredSize.containsKey(storageDomain) ?
-                    domain2requiredSize.get(storageDomain) + requiredSizeForMemory : requiredSizeForMemory;
-            domain2requiredSize.put(storageDomain, requiredSizeInDomainIncludingMemoryVolumes);
             String modifiedMemoryVolume = MemoryUtils.changeStorageDomainAndPoolInMemoryState(
                     memoryVolume, storageDomain.getId(), getParameters().getStoragePoolId());
             // replace the volume representation with the one with the correct domain & pool
@@ -499,6 +500,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             handledMemoryVolumes.put(memoryVolume, modifiedMemoryVolume);
         }
         return true;
+    }
+
+    private StorageDomain updateStorageDomainInMemoryVolumes(List<DiskImage> disksList) {
+        List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(getVm().getTotalMemorySizeInBytes(), MemoryUtils.META_DATA_SIZE_IN_BYTES);
+        StorageDomain storageDomain = VmHandler.findStorageDomainForMemory(getParameters().getStoragePoolId(), memoryDisksList);
+        disksList.addAll(memoryDisksList);
+        return storageDomain;
     }
 
     /**
@@ -959,12 +967,20 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private String getMemoryVolumeFromActiveSnapshotInExportDomain() {
+        Snapshot activeSnapshot = getActiveSnapshot();
+        if (activeSnapshot != null) {
+            return activeSnapshot.getMemoryVolume();
+        }
+        return StringUtils.EMPTY;
+    }
+
+    private Snapshot getActiveSnapshot() {
         for (Snapshot snapshot : getVm().getSnapshots()) {
             if (snapshot.getType() == SnapshotType.ACTIVE)
-                return snapshot.getMemoryVolume();
+                return snapshot;
         }
         log.warnFormat("VM {0} doesn't have active snapshot in export domain", getVmId());
-        return StringUtils.EMPTY;
+        return null;
     }
 
     /**
