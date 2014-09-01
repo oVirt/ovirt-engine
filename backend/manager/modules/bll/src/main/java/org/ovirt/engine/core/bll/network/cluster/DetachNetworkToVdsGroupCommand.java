@@ -36,7 +36,9 @@ public class DetachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
             @Override
             public Void runInTransaction() {
-                getNetworkClusterDAO().remove(getParameters().getVdsGroupId(), getParameters().getNetworkCluster().getNetworkId());
+                NetworkClusterHelper helper = new NetworkClusterHelper(getParameters().getNetworkCluster());
+                helper.removeNetworkAndReassignRoles();
+
                 return null;
             }
         });

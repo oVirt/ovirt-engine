@@ -45,8 +45,8 @@ public class DetachNetworksFromClusterCommand<T extends ClusterNetworksParameter
             @Override
             public Void runInTransaction() {
                 for (AttachNetworkToVdsGroupParameter param : getParameters().getClusterNetworksParameters()) {
-                    getNetworkClusterDAO().remove(getParameters().getVdsGroupId(),
-                            param.getNetworkCluster().getNetworkId());
+                    NetworkClusterHelper helper = new NetworkClusterHelper(param.getNetworkCluster());
+                    helper.removeNetworkAndReassignRoles();
                 }
 
                 return null;
