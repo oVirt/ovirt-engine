@@ -339,75 +339,71 @@ public class FenceExecutor {
                     return false;
                 }
                 if (proxyOptions == PMProxyOptions.CLUSTER) {
+                    if (! vds.getVdsGroupId().equals(_vds.getVdsGroupId())) {
+                        return false;
+                    }
                     if (onlyUpHost) {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
-                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId())
                                     && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getStatus() == VDSStatus.Up
-                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
+                            return vds.getStatus() == VDSStatus.Up;
                         }
                     }
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds) &&
-                                    !vds.getId().equals(_vds.getId())
-                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
+                                    !vds.getId().equals(_vds.getId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds)
-                                    && vds.getVdsGroupId().equals(_vds.getVdsGroupId());
-
+                            return !isHostNetworkUnreacable(vds);
                         }
                     }
                 }
                 else if (proxyOptions == PMProxyOptions.DC) {
+                    if(! vds.getStoragePoolId().equals(_vds.getStoragePoolId())) {
+                        return false;
+                    }
                     if (onlyUpHost) {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
-                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId())
                                     && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getStatus() == VDSStatus.Up
-                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                            return vds.getStatus() == VDSStatus.Up;
                         }
                     }
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds)
-                                    && !vds.getId().equals(_vds.getId())
-                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                                    && !vds.getId().equals(_vds.getId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds)
-                                    && vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                            return !isHostNetworkUnreacable(vds);
                         }
                     }
                 }
                 else if (proxyOptions == PMProxyOptions.OTHER_DC) {
+                    if (vds.getStoragePoolId().equals(_vds.getStoragePoolId())) {
+                        return false;
+                    }
                     if (onlyUpHost) {
                         if (filterSelf) {
                             return !vds.getId().equals(_vds.getId())
-                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId())
                                     && vds.getStatus() == VDSStatus.Up;
                         }
                         else {
-                            return vds.getStatus() == VDSStatus.Up
-                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                            return vds.getStatus() == VDSStatus.Up;
                         }
                     }
                     else {
                         if (filterSelf) {
                             return !isHostNetworkUnreacable(vds)
-                                    && !vds.getId().equals(_vds.getId())
-                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                                    && !vds.getId().equals(_vds.getId());
                         }
                         else {
-                            return !isHostNetworkUnreacable(vds)
-                                    && !vds.getStoragePoolId().equals(_vds.getStoragePoolId());
+                            return !isHostNetworkUnreacable(vds);
                         }
                     }
                 }
