@@ -23,6 +23,7 @@ public enum VdcActionType {
     MigrateVm(14, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
     InternalMigrateVm(15, QuotaDependency.NONE),
     MigrateVmToServer(16, ActionGroup.MIGRATE_VM, QuotaDependency.NONE),
+    ReorderVmNics(17, ActionGroup.CREATE_VM, false, QuotaDependency.NONE),
     VmLogon(18, ActionGroup.CONNECT_TO_VM, QuotaDependency.NONE),
     SetVmTicket(22, ActionGroup.CONNECT_TO_VM, false, QuotaDependency.NONE),
     ExportVm(23, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.NONE),
@@ -31,7 +32,6 @@ public enum VdcActionType {
     AddVmInterface(28, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     RemoveVmInterface(29, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     UpdateVmInterface(30, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
-    ReorderVmNics(17, ActionGroup.CONFIGURE_VM_NETWORK, false, QuotaDependency.NONE),
     AddDisk(31, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     RegisterDisk(32, ActionGroup.CONFIGURE_VM_STORAGE, QuotaDependency.STORAGE),
     @Deprecated
