@@ -31,6 +31,7 @@ import org.ovirt.engine.api.model.PmProxies;
 import org.ovirt.engine.api.model.PmProxy;
 import org.ovirt.engine.api.model.PowerManagement;
 import org.ovirt.engine.api.model.SELinuxMode;
+import org.ovirt.engine.api.model.SPM;
 import org.ovirt.engine.api.model.SSH;
 import org.ovirt.engine.api.model.StorageManager;
 import org.ovirt.engine.api.model.TransparentHugePages;
@@ -38,6 +39,7 @@ import org.ovirt.engine.api.model.User;
 import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VmSummary;
 import org.ovirt.engine.api.model.SELinux;
+import org.ovirt.engine.api.model.SpmState;
 import org.ovirt.engine.api.restapi.model.AuthenticationMethod;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.VdsOperationActionParameters;
@@ -50,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.compat.Guid;
+
 
 public class HostMapper {
 
@@ -92,6 +95,11 @@ public class HostMapper {
         if (model.isSetStorageManager()) {
             if (model.getStorageManager().getPriority() != null) {
                 entity.setVdsSpmPriority(model.getStorageManager().getPriority());
+            }
+        }
+        if (model.isSetSpm()) {
+            if (model.getSpm().getPriority() != null) {
+                entity.setVdsSpmPriority(model.getSpm().getPriority());
             }
         }
         if (model.isSetDisplay() && model.getDisplay().isSetAddress()) {
@@ -357,6 +365,12 @@ public class HostMapper {
         sm.setPriority(entity.getVdsSpmPriority());
         sm.setValue(entity.getSpmStatus() == VdsSpmStatus.SPM);
         model.setStorageManager(sm);
+        SPM spm = new SPM();
+        spm.setPriority(entity.getVdsSpmPriority());
+        if (spm.getStatus() != null) {
+            spm.setStatus(StatusUtils.create(map(entity.getSpmStatus(), null)));
+        }
+        model.setSpm(spm);
         if (entity.getVersion() != null &&
                 entity.getVersion().getMajor() != -1 &&
                 entity.getVersion().getMinor() != -1 &&
@@ -827,5 +841,19 @@ public class HostMapper {
             }
         }
         return result;
+    }
+
+    @Mapping(from = VdsSpmStatus.class, to = SpmState.class)
+    public static SpmState map(VdsSpmStatus entityStatus, SpmState template) {
+        switch (entityStatus) {
+            case None:
+                return SpmState.NONE;
+            case Contending:
+                return SpmState.CONTENDING;
+            case SPM:
+                return SpmState.SPM;
+            default:
+                return null;
+        }
     }
 }

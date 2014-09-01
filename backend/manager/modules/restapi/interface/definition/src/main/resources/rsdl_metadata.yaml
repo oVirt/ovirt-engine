@@ -2710,7 +2710,8 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {host.name: 'xs:string', host.comment: 'xs:string', host.address: 'xs:string', host.root_password--DEPRECATED: 'xs:string',
-          host.display.address: 'xs:string', host.cluster.id|name: 'xs:string', host.port: 'xs:int', host.storage_manager.priority: 'xs:int',
+          host.display.address: 'xs:string', host.cluster.id|name: 'xs:string', host.port: 'xs:int',
+          host.spm.priority: 'xs:int',
           host.power_management.type: 'xs:string', host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string',
           host.power_management.username: 'xs:string', host.power_management.password: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
@@ -2721,7 +2722,9 @@ actions:
       - mandatoryArguments: {}
         optionalArguments: {host.name: 'xs:string', host.comment: 'xs:string', host.address: 'xs:string',
           host.ssh.port: 'xs:int', host.ssh.user.user_name: 'xs:string', host.ssh.fingerprint: 'xs:string', host.display.address: 'xs:string',
-          host.cluster.id|name: 'xs:string', host.port: 'xs:int', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
+          host.cluster.id|name: 'xs:string', host.port: 'xs:int',
+          host.spm.priority: 'xs:int',
+          host.power_management.type: 'xs:string',
           host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string',
@@ -2743,7 +2746,9 @@ actions:
       signatures:
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.root_password--DEPRECATED: 'xs:string', host.cluster.id|name: 'xs:string'}
         optionalArguments: {host.comment: 'xs:string', host.port: 'xs:int',
-          host.display.address: 'xs:string', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string',
+          host.display.address: 'xs:string',
+          host.spm.priority: 'xs:int',
+          host.power_management.type: 'xs:string',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string',
@@ -2753,7 +2758,9 @@ actions:
       - mandatoryArguments: {host.name: 'xs:string', host.address: 'xs:string', host.cluster.id|name: 'xs:string'}
         optionalArguments: {host.comment: 'xs:string', host.ssh.port: 'xs:int', host.ssh.fingerprint: 'xs:string', host.ssh.authentication_method: 'xs:string',
           host.ssh.user.user_name: 'xs:string', host.ssh.user.password: 'xs:string', host.port: 'xs:int',
-          host.display.address: 'xs:string', host.storage_manager.priority: 'xs:int', host.power_management.type: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
+          host.display.address: 'xs:string',
+          host.spm.priority: 'xs:int',
+          host.power_management.type: 'xs:string', host.power_management.automatic_pm_enabled: 'xs:boolean',
           host.power_management.enabled: 'xs:boolean', host.power_management.address: 'xs:string', host.power_management.username: 'xs:string',
           host.power_management.password: 'xs:string', host.power_management.options.option--COLLECTION: {option.name: 'xs:string', option.value: 'xs:string'},
           host.power_management.pm_proxy--COLLECTION: {propietary : 'xs:string'}, host.power_management.agents.agent--COLLECTION:{type: 'xs:string', address: 'xs:string',

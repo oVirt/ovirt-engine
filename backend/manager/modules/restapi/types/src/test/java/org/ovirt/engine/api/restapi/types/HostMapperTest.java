@@ -26,7 +26,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         while (from.getPort() == 0) {
             from.setPort(MappingTestHelper.rand(65535));
         }
-        from.getStorageManager().setPriority(3);
+        from.getSpm().setPriority(3);
         return from;
     }
 
@@ -59,7 +59,7 @@ public class HostMapperTest extends AbstractInvertibleMappingTest<Host, VdsStati
         assertEquals(model.getCluster().getId(), transform.getCluster().getId());
         assertEquals(model.getAddress(), transform.getAddress());
         assertEquals(model.getPort(), transform.getPort());
-        assertEquals(model.getStorageManager().getPriority(), transform.getStorageManager().getPriority());
+        assertEquals(model.getSpm().getPriority(), transform.getSpm().getPriority());
         assertEquals(model.getDisplay().getAddress(), transform.getDisplay().getAddress());
     }
 

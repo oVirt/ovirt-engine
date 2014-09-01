@@ -634,6 +634,7 @@
           <xs:element ref="watchdog_actions" minOccurs="0"/>
           <xs:element ref="authentication_methods" minOccurs="0"/>
           <xs:element ref="kdump_states" minOccurs="0"/>
+          <xs:element ref="spm_states" minOccurs="0"/>
           <!--  External tasks -->
           <xs:element ref="step_types" minOccurs="0"/>
           <xs:element ref="payload_encodings" minOccurs="0"/>
@@ -1083,6 +1084,20 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="KdumpStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="spm_states" type="SpmStates"/>
+
+  <xs:complexType name="SpmStates">
+    <xs:sequence>
+      <xs:element name="spm_state" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="SpmStates"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -1711,7 +1726,10 @@
                e.g. the standard VDSM port 54321 -->
           <xs:element name="port" type="xs:unsignedShort" minOccurs="0"/>
           <xs:element name="type" type="xs:string" minOccurs="0"/>
+          <!-- This element is deprecated because it uses a mix of attributes and text content, which makes it
+               impossible to send the values independently. Use the the "spm" element instead. -->
           <xs:element name="storage_manager" type="StorageManager" minOccurs="0"/>
+          <xs:element name="spm" type="SPM" minOccurs="0"/>
           <xs:element name="version" type="Version" minOccurs="0"/>
           <xs:element ref="hardware_information" minOccurs="0"/>
           <xs:element ref="power_management" minOccurs="0"/>
@@ -1747,6 +1765,8 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- This element is deprecated because it uses a mix of attributes and text content, which makes it
+       impossible to send the values independently. Use the the "spm" element instead. -->
   <xs:element name="storage_manager" type="StorageManager"/>
 
   <xs:complexType name="StorageManager">
@@ -1761,6 +1781,16 @@
         </xs:attribute>
       </xs:extension>
     </xs:simpleContent>
+  </xs:complexType>
+
+  <xs:element name="spm" type="SPM"/>
+
+  <xs:complexType name="SPM">
+    <xs:sequence>
+      <xs:element name="priority" type="xs:int" minOccurs="0" maxOccurs="1"/>
+
+      <xs:element ref="status" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
   </xs:complexType>
 
   <xs:element name="hosted_engine" type="HostedEngine"/>
