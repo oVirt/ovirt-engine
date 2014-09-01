@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import javax.validation.Valid;
 
+import org.codehaus.jackson.annotate.JsonIgnore;
 import org.ovirt.engine.core.compat.Guid;
 
 public class DiskImageBase extends Disk {
@@ -57,6 +58,11 @@ public class DiskImageBase extends Disk {
 
     public void setSize(long size) {
         getImage().setSize(size);
+    }
+
+    @JsonIgnore
+    public long getCapacity() {
+        return getSize();
     }
 
     /**

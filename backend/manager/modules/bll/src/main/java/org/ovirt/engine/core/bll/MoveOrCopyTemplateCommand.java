@@ -15,6 +15,7 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -359,6 +360,42 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             spaceMap.put(image, domain);
         }
         return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
+    }
+
+    /**
+     * Space Validations are done using data extracted from the disks. The disks in question in this command
+     * don't have all the needed data, and in order not to contaminate the command's data structures, as alter
+     * one is created specifically fo this validation - hence dummy.
+     * @param disksList
+     * @return
+     */
+    protected List<DiskImage> createDiskDummiesForSpaceValidations(List<DiskImage> disksList) {
+        List<DiskImage> dummies = new ArrayList<>(disksList.size());
+        for (DiskImage image : disksList) {
+            Guid targetSdId = imageToDestinationDomainMap.get(image.getId());
+            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            dummies.add(dummy);
+        }
+        return dummies;
+    }
+
+    protected boolean validateSpaceRequirements(List<DiskImage> disksList) {
+        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
+        if (!validate(sdValidator.allDomainsExistAndActive())
+                || !validate(sdValidator.allDomainsWithinThresholds())) {
+            return false;
+        }
+
+        if (getParameters().getCopyCollapse()) {
+            return validate(sdValidator.allDomainsHaveSpaceForClonedDisks(disksList));
+        }
+
+        return validate(sdValidator.allDomainsHaveSpaceForDisksWithSnapshots(disksList));
+    }
+
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator( List<DiskImage> disksList) {
+        return new MultipleStorageDomainsValidator(getStoragePoolId(),
+                ImagesHandler.getAllStorageIdsForImageIds(disksList));
     }
 
     protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {

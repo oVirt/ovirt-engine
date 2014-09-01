@@ -6,10 +6,13 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -31,6 +34,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -38,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -74,6 +79,9 @@ public class ImportVmCommandTest {
     @Mock
     private MacPoolManagerStrategy macPoolManagerStrategy;
 
+    @Mock
+    private MultipleStorageDomainsValidator multipleSdValidator;
+
     @Before
     public void setUp() {
         // init the injector with the osRepository instance
@@ -88,18 +96,34 @@ public class ImportVmCommandTest {
     }
 
     @Test
-    public void insufficientDiskSpace() {
-        final int lotsOfSpace = 1073741824;
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(lotsOfSpace);
-        assertFalse(c.canDoAction());
-        assertTrue(c.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
+    public void insufficientDiskSpaceWithCollapse() {
+        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void insufficientDiskSpaceWithSnapshots() {
+        ImportVmParameters parameters = createParameters();
+        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(parameters);
+        parameters.setCopyCollapse(false);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     @Test
     public void refuseBalloonOnPPC() {
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(0);
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
         c.getParameters().getVm().setBalloonEnabled(true);
         c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
@@ -115,7 +139,7 @@ public class ImportVmCommandTest {
 
     @Test
     public void acceptBalloon() {
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(0);
+        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
         c.getParameters().getVm().setBalloonEnabled(true);
         c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         VDSGroup cluster = new VDSGroup();
@@ -129,15 +153,25 @@ public class ImportVmCommandTest {
 
     @Test
     public void sufficientDiskSpace() {
-        final int extraDiskSpaceRequired = 0;
-        final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(extraDiskSpaceRequired);
-        assertTrue(c.canDoAction());
+        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
-    private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(final int diskSpaceRequired) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, diskSpaceRequired);
+    @Test
+    public void lowThresholdStorageSpace() {
+        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsWithinThresholds();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
+    }
 
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(createParameters()));
+    private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(parameters));
+        parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
         doReturn(true).when(cmd).validateUsbPolicy();
@@ -155,6 +189,17 @@ public class ImportVmCommandTest {
         doReturn(new VDSGroup()).when(cmd).getVdsGroup();
         doReturn(macPoolManagerStrategy).when(cmd).getMacPool();
 
+        ArrayList<Guid> sdIds = new ArrayList<Guid>(Collections.singletonList(Guid.newGuid()));
+        for (DiskImage image : parameters.getVm().getImages()) {
+            image.setStorageIds(sdIds);
+        }
+
+        doReturn(mockCreateDiskDummiesForSpaceValidations()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
+        doReturn(multipleSdValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
         return cmd;
     }
 
@@ -204,6 +249,20 @@ public class ImportVmCommandTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setAvailableDiskSize(2);
         return sd;
+    }
+
+    protected List<DiskImage> mockCreateDiskDummiesForSpaceValidations() {
+        List<DiskImage> disksList = new ArrayList<>();
+        for (int i = 0; i < 3; ++i) {
+            DiskImage diskImage = new DiskImage();
+            diskImage.setActive(false);
+            diskImage.setId(Guid.newGuid());
+            diskImage.setImageId(Guid.newGuid());
+            diskImage.setParentId(Guid.newGuid());
+            diskImage.setImageStatus(ImageStatus.OK);
+            disksList.add(diskImage);
+        }
+        return disksList;
     }
 
     @Test
@@ -360,7 +419,7 @@ public class ImportVmCommandTest {
 
     @Test
     public void testValidateClusterSupportForVirtioScsi() {
-        ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(0);
+        ImportVmCommand<ImportVmParameters> cmd = setupDiskSpaceTest(createParameters());
         cmd.getParameters().getVm().getDiskMap().values().iterator().next().setDiskInterface(DiskInterface.VirtIO_SCSI);
         cmd.getVdsGroup().setcompatibility_version(Version.v3_2);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,

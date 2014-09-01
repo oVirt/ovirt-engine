@@ -25,15 +25,18 @@ public class StorageDomainValidatorFreeSpaceTest {
 
     private boolean isValidForCloned;
     private boolean isValidForNew;
+    private boolean isValidForSnapshots;
 
     public StorageDomainValidatorFreeSpaceTest(DiskImage disk,
             StorageDomain sd,
             boolean isValidForCloned,
-            boolean isValidForNew) {
+            boolean isValidForNew,
+            boolean isValidForSnapshots) {
         this.disk = disk;
         this.sd = sd;
         this.isValidForCloned = isValidForCloned;
         this.isValidForNew = isValidForNew;
+        this.isValidForSnapshots = isValidForSnapshots;
     }
 
     @Parameters
@@ -60,13 +63,23 @@ public class StorageDomainValidatorFreeSpaceTest {
 
                         params.add(new Object[] { disk, sd,
                                 volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse,
-                                volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse });
+                                volumeFormat == VolumeFormat.COW || volumeType == VolumeType.Sparse,
+                                volumeFormat == VolumeFormat.RAW && volumeType == VolumeType.Sparse
+                        });
                     }
                 }
             }
         }
 
         return params;
+    }
+
+    @Test
+    public void testValidateDiskWithSnapshots() {
+        StorageDomainValidator sdValidator = new StorageDomainValidator(sd);
+        assertEquals(disk.getVolumeFormat() + ", " + disk.getVolumeType() + ", " + sd.getStorageType(),
+                isValidForSnapshots,
+                sdValidator.hasSpaceForDiskWithSnapshots(disk).isValid());
     }
 
     @Test

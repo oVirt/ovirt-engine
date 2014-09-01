@@ -118,11 +118,10 @@ public class StorageDomainValidator {
      *
      */
     private double getTotalSizeForNewDisks(Collection<DiskImage> diskImages) {
-        double totalSizeForDisks = 0.0;
-        if (diskImages != null) {
-            for (DiskImage diskImage : diskImages) {
-                double sizeForDisk = diskImage.getSize();
-
+        return getTotalSizeForDisksByMethod(diskImages, new SizeAssessment() {
+            @Override
+            public double getSizeForDisk(DiskImage diskImage) {
+                double sizeForDisk = diskImage.getCapacity();
                 if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
                     if (storageDomain.getStorageType().isFileDomain()) {
                         sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
@@ -132,10 +131,9 @@ public class StorageDomainValidator {
                 } else if (diskImage.getVolumeType() == VolumeType.Sparse) {
                     sizeForDisk = EMPTY_QCOW_HEADER_SIZE;
                 }
-                totalSizeForDisks += sizeForDisk;
+                return sizeForDisk;
             }
-        }
-        return totalSizeForDisks;
+        });
     }
 
     /**
@@ -153,25 +151,53 @@ public class StorageDomainValidator {
      *
      * */
     private double getTotalSizeForClonedDisks(Collection<DiskImage> diskImages) {
-        double totalSizeForDisks = 0.0;
-        if (diskImages != null) {
-            for (DiskImage diskImage : diskImages) {
-                double diskCapacity = diskImage.getSize();
-                double sizeForDisk = diskCapacity;
-
+        return getTotalSizeForDisksByMethod(diskImages, new SizeAssessment() {
+            @Override
+            public double getSizeForDisk(DiskImage diskImage) {
+                double sizeForDisk = diskImage.getCapacity();
                 if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse) ||
                         storageDomain.getStorageType().isBlockDomain() && diskImage.getVolumeFormat() == VolumeFormat.COW) {
-                    double usedSapce = diskImage.getActualDiskWithSnapshotsSizeInBytes();
-                    sizeForDisk = Math.min(diskCapacity, usedSapce);
+                    double usedSpace = diskImage.getActualDiskWithSnapshotsSizeInBytes();
+                    sizeForDisk = Math.min(diskImage.getCapacity(), usedSpace);
                 }
 
                 if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
                     sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
                 }
-                totalSizeForDisks += sizeForDisk;
+                return sizeForDisk;
             }
-        }
-        return totalSizeForDisks;
+        });
+    }
+
+    /**
+     * Verify there's enough space in the storage domain for creating cloned DiskImages with snapshots without collapse.
+     * Space should be allocated according to the volumes type and format, and allocation policy,
+     * according to the following table:
+     *
+     *      | File Domain                             | Block Domain
+     * -----|-----------------------------------------|----------------
+     * qcow | 1.1 * used space                        |1.1 * used space
+     * -----|-----------------------------------------|----------------
+     * raw  | preallocated: disk capacity             |disk capacity
+     *      | sparse: used space                      |
+     *
+     * */
+    private double getTotalSizeForDisksWithSnapshots(Collection<DiskImage> diskImages) {
+        return getTotalSizeForDisksByMethod(diskImages, new SizeAssessment() {
+            @Override
+            public double getSizeForDisk(DiskImage diskImage) {
+                double sizeForDisk = diskImage.getCapacity();
+                if ((storageDomain.getStorageType().isFileDomain() && diskImage.getVolumeType() == VolumeType.Sparse)
+                    || diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    sizeForDisk = diskImage.getActualDiskWithSnapshotsSizeInBytes();
+                }
+
+                if (diskImage.getVolumeFormat() == VolumeFormat.COW) {
+                    sizeForDisk = Math.ceil(QCOW_OVERHEAD_FACTOR * sizeForDisk);
+                }
+                return sizeForDisk;
+            }
+        });
     }
 
     public ValidationResult hasSpaceForNewDisks(Collection<DiskImage> diskImages) {
@@ -188,6 +214,13 @@ public class StorageDomainValidator {
         return validateRequiredSpace(availableSize, totalSizeForDisks);
     }
 
+    public ValidationResult hasSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
+        double availableSize = storageDomain.getAvailableDiskSizeInBytes();
+        double totalSizeForDisks = getTotalSizeForDisksWithSnapshots(diskImages);
+
+        return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
+
     public ValidationResult hasSpaceForAllDisks(Collection<DiskImage> newDiskImages, Collection<DiskImage> clonedDiskImages) {
         double availableSize = storageDomain.getAvailableDiskSizeInBytes();
         double totalSizeForNewDisks = getTotalSizeForNewDisks(newDiskImages);
@@ -195,6 +228,10 @@ public class StorageDomainValidator {
         double totalSizeForDisks = totalSizeForNewDisks + totalSizeForClonedDisks;
 
         return validateRequiredSpace(availableSize, totalSizeForDisks);
+    }
+
+    public ValidationResult hasSpaceForDiskWithSnapshots(DiskImage diskImage) {
+        return hasSpaceForDisksWithSnapshots(Collections.singleton(diskImage));
     }
 
     public ValidationResult hasSpaceForClonedDisk(DiskImage diskImage) {
@@ -275,5 +312,26 @@ public class StorageDomainValidator {
         }
 
         return isDomainHasSpaceForRequest(Math.min(maxVirtualSize, sumOfActualSizes), false);
+    }
+
+    /**
+     * Validates all the storage domains by a given predicate.
+     *
+     * @return {@link ValidationResult#VALID} if all the domains are OK, or the
+     * first validation error if they aren't.
+     */
+    private double getTotalSizeForDisksByMethod(Collection<DiskImage> diskImages, SizeAssessment sizeAssessment) {
+        double totalSizeForDisks = 0.0;
+        if (diskImages != null) {
+            for (DiskImage diskImage : diskImages) {
+                double sizeForDisk = sizeAssessment.getSizeForDisk(diskImage);
+                totalSizeForDisks += sizeForDisk;
+            }
+        }
+        return totalSizeForDisks;
+    }
+
+    private static interface SizeAssessment {
+        public double getSizeForDisk(DiskImage diskImage);
     }
 }

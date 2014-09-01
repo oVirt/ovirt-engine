@@ -816,4 +816,11 @@ public final class ImagesHandler {
         }
         return snapshot;
     }
+
+    public static DiskImage createDiskImageWithExcessData(DiskImage diskImage, Guid sdId) {
+        DiskImage dummy = DiskImage.copyOf(diskImage);
+        dummy.setStorageIds(new ArrayList<Guid>(Collections.singletonList(sdId)));
+        dummy.getSnapshots().addAll(ImagesHandler.getAllImageSnapshots(dummy.getImageId()));
+        return dummy;
+    }
 }
