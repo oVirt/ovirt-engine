@@ -56,7 +56,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
                     @Override
                     public void onClick(ClickEvent event) {
                         if (((HostPopupView)getView()).rbDiscoveredHost.getValue()) {
-                            model.getIsDiscorveredHosts().setEntity(true);
+                            model.getIsDiscoveredHosts().setEntity(true);
                         }
                     }
                 }));
@@ -65,7 +65,7 @@ public class HostPopupPresenterWidget extends AbstractModelBoundPopupPresenterWi
                     @Override
                     public void onClick(ClickEvent event) {
                         if (((HostPopupView)getView()).rbProvisionedHost.getValue()) {
-                            model.getIsDiscorveredHosts().setEntity(false);
+                            model.getIsDiscoveredHosts().setEntity(false);
                         }
                     }
                 }));

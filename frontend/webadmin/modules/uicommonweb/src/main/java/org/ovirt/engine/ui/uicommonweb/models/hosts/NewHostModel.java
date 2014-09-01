@@ -159,8 +159,8 @@ public class NewHostModel extends HostModel {
                 providersListModel.setItems(providers);
                 providersListModel.setIsChangable(true);
                 providersListModel.setSelectedItem(providers.get(0));
-                getIsDiscorveredHosts().setEntity(null);
-                getIsDiscorveredHosts().setEntity(true);
+                getIsDiscoveredHosts().setEntity(null);
+                getIsDiscoveredHosts().setEntity(true);
             }
         };
         AsyncDataProvider.getAllProvidersByType(getProvidersQuery, ProviderType.FOREMAN);
