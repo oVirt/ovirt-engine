@@ -99,6 +99,7 @@ a.gwt-InlineHyperlink,a.gwt-Anchor {
 
 .gwt-ListBox {
     background-color: white;
+    color: #000000;
 }
 
 .gwt-ListBox:disabled {

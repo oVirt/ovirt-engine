@@ -149,7 +149,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     protected Column getClusterColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
-        customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
+        customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
         Column column = new Column<ImportEntityData, String>(customSelectionCell) {
             @Override
@@ -173,7 +173,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
 
     protected Column getClusterQuotaColumn() {
         CustomSelectionCell customSelectionCell = new CustomSelectionCell(new ArrayList<String>());
-        customSelectionCell.setStyle("input-group col-xs-11"); //$NON-NLS-1$
+        customSelectionCell.setStyle("input-group col-xs-11 gwt-ListBox"); //$NON-NLS-1$
 
         Column column = new Column<ImportEntityData, String>(customSelectionCell) {
             @Override
