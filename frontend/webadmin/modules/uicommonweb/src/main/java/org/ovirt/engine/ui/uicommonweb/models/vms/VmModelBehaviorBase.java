@@ -755,7 +755,7 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
             VDSGroup cluster = getModel().getSelectedCluster();
             boolean hasMemoryBalloon = (cluster.getcompatibility_version()
                     .compareTo(VmListModel.BALLOON_DEVICE_MIN_VERSION) >= 0
-                    && cluster.getArchitecture()
+                    && !cluster.getArchitecture()
                     .equals(VmListModel.BALLOON_DEVICE_BLACKLISTED_ARCH));
 
             getModel().getMemoryBalloonDeviceEnabled().setIsAvailable(hasMemoryBalloon);
