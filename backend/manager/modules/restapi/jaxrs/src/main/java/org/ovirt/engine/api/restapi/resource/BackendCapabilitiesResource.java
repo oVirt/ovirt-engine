@@ -88,6 +88,8 @@ import org.ovirt.engine.api.model.SerialNumberPolicies;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.SnapshotStatus;
 import org.ovirt.engine.api.model.SnapshotStatuses;
+import org.ovirt.engine.api.model.SpmState;
+import org.ovirt.engine.api.model.SpmStates;
 import org.ovirt.engine.api.model.Stages;
 import org.ovirt.engine.api.model.StepEnum;
 import org.ovirt.engine.api.model.StepTypes;
@@ -270,6 +272,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSELinuxModes(version, SELinuxMode.values());
         addRngSources(version, RngSource.values());
         addPolicyUnitTypes(version, PolicyUnitType.values());
+        addSpmStates(version, SpmState.values());
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
 
@@ -888,6 +891,16 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
             version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.STORAGE.name().toLowerCase());
             version.getQosTypes().getQosTypes().add(org.ovirt.engine.api.model.QosType.CPU.name().toLowerCase());
+        }
+    }
+
+    private void addSpmStates(VersionCaps version, SpmState[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_5)) {
+            SpmStates states = new SpmStates();
+            for (SpmState state : values) {
+                states.getSpmStates().add(state.value());
+            }
+            version.setSpmStates(states);
         }
     }
 
