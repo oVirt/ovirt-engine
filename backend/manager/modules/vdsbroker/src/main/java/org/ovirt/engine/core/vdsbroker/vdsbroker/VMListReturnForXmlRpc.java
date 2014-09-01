@@ -15,9 +15,10 @@ public final class VMListReturnForXmlRpc {
 
     private static final String STATUS = "status";
     private static final String VM_LIST = "vmList";
+    private static final Map<String, Object>[] EMPTY_ARRAY_OF_MAPS = new HashMap[0];
 
     public StatusForXmlRpc mStatus;
-    public Map<String, Object>[] mVmList;
+    public Map<String, Object>[] mVmList = EMPTY_ARRAY_OF_MAPS;
 
     public VMListReturnForXmlRpc(Map<String, Object> innerMap) {
         mStatus = new StatusForXmlRpc((Map<String, Object>) innerMap.get(STATUS));
