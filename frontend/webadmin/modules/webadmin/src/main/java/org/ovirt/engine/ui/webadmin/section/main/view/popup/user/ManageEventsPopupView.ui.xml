@@ -42,14 +42,14 @@
 			<g:VerticalPanel>
 				<g:Label ui:field="titleLabel" addStyleNames="{style.titleLabel}" />
 				<g:HTML>
-					<hr style="width:100%;" />
+					<hr style="width:100%; margin: 5px 0" />
 				</g:HTML>
 				<g:HorizontalPanel addStyleNames="{style.buttonPanel}">
 					<g:Button ui:field="expandAllButton" />
 					<g:Button ui:field="collapseAllButton" />
 				</g:HorizontalPanel>
 				<g:ScrollPanel height="385px" addStyleNames="{style.treePanel}">
-					<we:EntityModelCellTree ui:field="tree" />
+					<we:EntityModelCellTree ui:field="tree" addStyleNames="atpv_tree_pfly_fix " />
 				</g:ScrollPanel>
 				<ge:StringEntityModelTextBoxEditor ui:field="emailEditor" />
 				<g:Label ui:field="infoLabel" addStyleNames="{style.infoLabel}" />
