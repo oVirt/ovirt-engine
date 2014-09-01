@@ -376,13 +376,6 @@ public class DataCenterStorageListModel extends SearchableListModel
                                                     .compareTo(Version.v3_0) <= 0) {
                                         continue;
                                     }
-                                    // skip V2 format for DC <= 2.2
-                                    else if (a.getStorageStaticData().getStorageFormat() == StorageFormatType.V2
-                                            && dcStorageModel.getEntity()
-                                                    .getcompatibility_version()
-                                                    .compareTo(Version.v2_2) <= 0) {
-                                        continue;
-                                    }
 
                                     addToList = true;
                                 }
