@@ -52,7 +52,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Setting default ${type} is not supported.")
     String ACTION_TYPE_FAILED_SETTING_DEFAULT_MAC_POOL_IS_NOT_SUPPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. ${type} must contain at least one mac range.")
+    @DefaultStringValue("Cannot ${action} ${type}. ${type} must contain at least one MAC address range.")
     String ACTION_TYPE_FAILED_MAC_POOL_MUST_HAVE_RANGE();
 
     @DefaultStringValue("Cannot delete Template. Template is being used by the following VMs: ${vmsList}.")
