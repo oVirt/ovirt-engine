@@ -1797,9 +1797,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Shareable Disk is not supported by the selected configuration")
     String shareableDiskNotSupportedByConfiguration();
 
-    @DefaultStringValue("Wipe after delete is not supported for file domains")
-    String wipeAfterDeleteNotSupportedForFileDomains();
-
     @DefaultStringValue("Moving disk(s) while the VM is running")
     String liveStorageMigrationWarning();
 

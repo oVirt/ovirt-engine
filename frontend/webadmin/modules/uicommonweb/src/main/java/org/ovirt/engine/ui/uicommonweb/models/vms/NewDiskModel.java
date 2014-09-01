@@ -130,19 +130,6 @@ public class NewDiskModel extends AbstractDiskModel
     }
 
     @Override
-    protected void updateWipeAfterDelete(StorageType storageType) {
-        if (storageType.isFileDomain()) {
-            getIsWipeAfterDelete().setChangeProhibitionReason(CONSTANTS.wipeAfterDeleteNotSupportedForFileDomains());
-            getIsWipeAfterDelete().setIsChangable(false);
-            getIsWipeAfterDelete().setEntity(false);
-        }
-        else {
-            getIsWipeAfterDelete().setIsChangable(true);
-            getIsWipeAfterDelete().setEntity((Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.SANWipeAfterDelete));
-        }
-    }
-
-    @Override
     public void setDefaultInterface() {
         getDiskInterface().setSelectedItem(DiskInterface.VirtIO);
     }

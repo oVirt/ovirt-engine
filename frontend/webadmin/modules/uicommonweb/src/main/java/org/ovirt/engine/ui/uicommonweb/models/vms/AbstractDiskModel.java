@@ -281,7 +281,6 @@ public abstract class AbstractDiskModel extends DiskModel
 
         setIsWipeAfterDelete(new EntityModel<Boolean>());
         getIsWipeAfterDelete().setEntity(false);
-        getIsWipeAfterDelete().getEntityChangedEvent().addListener(this);
 
         setIsBootable(new EntityModel<Boolean>());
         getIsBootable().setEntity(false);
@@ -340,8 +339,6 @@ public abstract class AbstractDiskModel extends DiskModel
     }
 
     protected abstract boolean isDatacenterAvailable(StoragePool dataCenter);
-
-    protected abstract void updateWipeAfterDelete(StorageType storageType);
 
     protected abstract DiskImage getDiskImage();
 
@@ -798,14 +795,6 @@ public abstract class AbstractDiskModel extends DiskModel
         return vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Paused;
     }
 
-
-    private void wipeAfterDelete_EntityChanged(EventArgs e) {
-        if (!getIsWipeAfterDelete().getIsChangable() && getIsWipeAfterDelete().getEntity())
-        {
-            getIsWipeAfterDelete().setEntity(false);
-        }
-    }
-
     private void attachDisk_EntityChanged(EventArgs e) {
         if (getIsAttachDisk().getEntity())
         {
@@ -865,7 +854,6 @@ public abstract class AbstractDiskModel extends DiskModel
         StorageDomain selectedStorage = getStorageDomain().getSelectedItem();
         if (selectedStorage != null) {
             updateVolumeType(selectedStorage.getStorageType());
-            updateWipeAfterDelete(selectedStorage.getStorageType());
         }
         updateQuota(getDataCenter().getSelectedItem());
         updateDiskProfiles(getDataCenter().getSelectedItem());
@@ -994,9 +982,7 @@ public abstract class AbstractDiskModel extends DiskModel
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
-            if (sender == getIsWipeAfterDelete()) {
-                wipeAfterDelete_EntityChanged(args);
-            } else if (sender == getIsAttachDisk()) {
+            if (sender == getIsAttachDisk()) {
                 attachDisk_EntityChanged(args);
             } else if (sender == getIsReadOnly()) {
                 updateScsiPassthroguhChangeability();
