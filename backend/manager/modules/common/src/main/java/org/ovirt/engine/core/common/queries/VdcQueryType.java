@@ -257,7 +257,7 @@ public enum VdcQueryType implements Serializable {
     GetDeviceList,
     DiscoverSendTargets,
     GetStorageDomainsByVmTemplateId(VdcQueryAuthType.User),
-    GetVmsFromExportDomain("org.ovirt.engine.core.bll.storage"),
+    GetVmsFromExportDomain,
     GetTemplatesFromExportDomain,
     GetVmTemplatesFromStorageDomain(VdcQueryAuthType.User),
     GetAllStorageDomains(VdcQueryAuthType.User),
@@ -392,24 +392,13 @@ public enum VdcQueryType implements Serializable {
         User
     }
 
-    private static final String DEFAULT_PACKAGE_NAME = "org.ovirt.engine.core.bll";
-
-    private String packageName;
-
     private VdcQueryAuthType authType;
 
     private VdcQueryType() {
-        packageName = DEFAULT_PACKAGE_NAME;
-        authType = VdcQueryAuthType.Admin;
-    }
-
-    private VdcQueryType(String packageName) {
-        this.packageName = packageName;
         authType = VdcQueryAuthType.Admin;
     }
 
     private VdcQueryType(VdcQueryAuthType authType) {
-        packageName = DEFAULT_PACKAGE_NAME;
         this.authType = authType;
     }
 
@@ -419,10 +408,6 @@ public enum VdcQueryType implements Serializable {
 
     public static VdcQueryType forValue(int value) {
         return values()[value];
-    }
-
-    public String getPackageName() {
-        return packageName;
     }
 
     public VdcQueryAuthType getAuthType() {
