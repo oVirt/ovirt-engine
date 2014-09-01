@@ -587,7 +587,7 @@ actions:
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
     headers: {}
-- name: /vms/{vm:id}/wacthdogs/{watchdog:id}|rel=get
+- name: /vms/{vm:id}/watchdogs/{watchdog:id}|rel=get
   description: get the watchdog identified by the id for a given virtual machine
   request:
     body:
@@ -3936,6 +3936,59 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+- name: /templates/{template:id}/watchdogs|rel=get
+  description: get all the watchdogs for the template identified by the given id
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=get
+  description: get the watchdog identified by the id for a given template
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=delete
+  description: delete the watchdog for the template identified by the given id
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /templates/{template:id}/watchdogs/{watchdog:id}|rel=update
+  description: update the watchdog for the template identified by the given id
+  request:
+    body:
+      parameterType: WatchDog
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+        description: update the watchdog for the template identified by the given id with a new action and model as specified in the request data
+    urlparams:
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /templates/{template:id}/watchdogs|rel=add
+  description: add a watchdog to the template identified by the given id
+  request:
+    body:
+      parameterType: WatchDog
+      signatures:
+      - mandatoryArguments: {watchdog.action: 'xs:string', watchdog.model: 'xs:string'}
+        description: add a watchdog to the template identified by the given id
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
 - name: /templates/{template:id}/disks|rel=get
   description: get the list of disks attached to the template
   request:
