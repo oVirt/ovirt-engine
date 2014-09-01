@@ -11,7 +11,10 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
 public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
@@ -22,6 +25,7 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     private boolean needsAttach;
     private boolean needsDetach;
     private boolean needsUpdate;
+    private ClusterNetworkModel managementNetwork;
 
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -35,6 +39,18 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
         okCommand.setIsDefault(true);
         getCommands().add(0, okCommand);
+
+        getItemsChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                for (ClusterNetworkModel model : getItems()) {
+                    if (model.isManagement()) {
+                        managementNetwork = model;
+                    }
+                }
+            }
+        });
     }
 
     public boolean isMultiCluster() {
@@ -52,11 +68,16 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         return null;
     }
 
-    public void setDisplayNetwork(ClusterNetworkModel model, boolean value){
-        if (!isMultiCluster()){
-            // Reset the old display
-            if (getDisplayNetwork()!= null){
-                getDisplayNetwork().setDisplayNetwork(!value);
+    public void setDisplayNetwork(ClusterNetworkModel model, boolean value) {
+        if (!isMultiCluster()) {
+            if (value) {
+                // Reset the old display
+                if (getDisplayNetwork() != null) {
+                    getDisplayNetwork().setDisplayNetwork(false);
+                }
+            } else {
+                // Set the management network as display
+                managementNetwork.setDisplayNetwork(true);
             }
         }
         model.setDisplayNetwork(value);
@@ -75,9 +96,14 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
     public void setMigrationNetwork(ClusterNetworkModel model, boolean value) {
         if (!isMultiCluster()) {
-            // Reset the old migration
-            if (getMigrationNetwork() != null) {
-                getMigrationNetwork().setMigrationNetwork(!value);
+            if (value) {
+                // Reset the old migration
+                if (getMigrationNetwork() != null) {
+                    getMigrationNetwork().setMigrationNetwork(false);
+                }
+            } else {
+                // Set the management network as migration
+                managementNetwork.setMigrationNetwork(true);
             }
         }
         model.setMigrationNetwork(value);
