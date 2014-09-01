@@ -390,7 +390,7 @@ public class ExtMap implements ConcurrentMap<ExtKey, Object>, Cloneable, Seriali
      * @return Value.
      */
     public <T> T get(ExtKey key, T defaultValue) {
-        if (!key.getType().isAssignableFrom(defaultValue.getClass())) {
+        if (defaultValue != null && !key.getType().isAssignableFrom(defaultValue.getClass())) {
             throw new IllegalArgumentException(
                 String.format(
                     "Cannnot assign default value of '%s' into type '%s'",
