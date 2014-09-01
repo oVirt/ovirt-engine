@@ -757,7 +757,7 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         object.getIsDiscorveredHosts().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (object.getIsDiscorveredHosts().getEntity() == true) {
+                if (Boolean.TRUE.equals(object.getIsDiscorveredHosts().getEntity())) {
                     rbDiscoveredHost.setValue(true);
                     showDiscoveredHostsWidgets(true);
                 } else {
