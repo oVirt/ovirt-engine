@@ -54,7 +54,6 @@ public class VersionStorageFormatUtil {
     private static final Map<Version, StorageFormatTypeMapper> versionToFormat =
             new TreeMap<Version, StorageFormatTypeMapper>() {
                 {
-                    put(Version.v2_2, new ConstantStorageFormatTypeMapper(StorageFormatType.V1));
                     put(Version.v3_0, new V2FormatTypeMapper());
                     put(Version.v3_1, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
                     put(Version.v3_2, new ConstantStorageFormatTypeMapper(StorageFormatType.V3));
