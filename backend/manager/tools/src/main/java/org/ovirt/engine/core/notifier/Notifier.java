@@ -60,7 +60,9 @@ public class Notifier {
             notificationService.registerTransport(new Smtp(prop));
             notificationService.registerTransport(new Snmp(prop));
             if (!notificationService.hasTransports()) {
-                throw new RuntimeException("No transport is enabled, nothing to do");
+                throw new RuntimeException(
+                        "No transport is enabled, please enable at least one of SMTP (using MAIL_SERVER option)"
+                        + " or SNMP (using SNMP_MANAGERS option) transports.");
             }
         } catch (Exception ex) {
             log.error("Failed to initialize", ex);
