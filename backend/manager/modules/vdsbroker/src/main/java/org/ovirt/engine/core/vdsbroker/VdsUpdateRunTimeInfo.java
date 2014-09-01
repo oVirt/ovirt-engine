@@ -1669,6 +1669,9 @@ public class VdsUpdateRunTimeInfo {
         if (!vmsToQuery.isEmpty()) {
             // Query VDSM for VMs info, and creating a proper VMStatic to be used when importing them
             Map[] vmsInfo = getVmInfo(vmsToQuery);
+            if (vmsInfo == null) {
+                return;
+            }
             for (Map vmInfo : vmsInfo) {
                 Guid vmId = Guid.createGuidFromString((String) vmInfo.get(VdsProperties.vm_guid));
                 VmStatic vmStatic = new VmStatic();
