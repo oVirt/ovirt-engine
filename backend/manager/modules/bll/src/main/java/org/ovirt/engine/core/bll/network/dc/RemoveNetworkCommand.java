@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.dc;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.network.NetworkProviderProxy;
@@ -9,6 +10,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.RemoveNetworkParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -53,6 +55,7 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
             @Override
             public Void runInTransaction() {
                 removeVnicProfiles();
+                removeFromClusters();
                 getCompensationContext().snapshotEntity(getNetwork());
                 getNetworkDAO().remove(getNetwork().getId());
                 getCompensationContext().stateChanged();
@@ -78,6 +81,13 @@ public class RemoveNetworkCommand<T extends RemoveNetworkParameters> extends Net
                 getStoragePoolId(),
                 cloneContextAndDetachFromParent()
         );
+    }
+
+    private void removeFromClusters() {
+        for (NetworkCluster networkCluster : getNetworkClusterDAO().getAllForNetwork(getNetwork().getId())) {
+            NetworkClusterHelper helper = new NetworkClusterHelper(networkCluster);
+            helper.removeNetworkAndReassignRoles();
+        }
     }
 
     private void removeExternalNetwork() {

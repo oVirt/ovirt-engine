@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkClusterDao;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -22,6 +24,49 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  * Class to hold common static methods that are used in several different places.
  */
 public class NetworkClusterHelper {
+
+    private final NetworkCluster networkCluster;
+    private NetworkCluster managementNetworkCluster;
+
+    public NetworkClusterHelper(NetworkCluster networkCluster) {
+        this.networkCluster = networkCluster;
+    }
+
+    private NetworkClusterDao getNetworkClusterDao() {
+        return DbFacade.getInstance().getNetworkClusterDao();
+    }
+
+    private NetworkCluster getManagementNetworkCluster() {
+        if (managementNetworkCluster == null) {
+            Guid clusterId = networkCluster.getClusterId();
+            Network mgmt =
+                    DbFacade.getInstance()
+                            .getNetworkDao()
+                            .getByNameAndCluster(NetworkUtils.getEngineNetwork(), clusterId);
+            managementNetworkCluster = getNetworkClusterDao().get(new NetworkClusterId(clusterId, mgmt.getId()));
+        }
+
+        return managementNetworkCluster;
+    }
+
+    public void removeNetworkAndReassignRoles() {
+        getNetworkClusterDao().remove(networkCluster.getClusterId(), networkCluster.getNetworkId());
+        boolean updateManagementNetwork = false;
+
+        if (networkCluster.isDisplay()) {
+            getManagementNetworkCluster().setDisplay(true);
+            updateManagementNetwork = true;
+        }
+
+        if (networkCluster.isMigration()) {
+            getManagementNetworkCluster().setMigration(true);
+            updateManagementNetwork = true;
+        }
+
+        if (updateManagementNetwork) {
+            getNetworkClusterDao().update(managementNetworkCluster);
+        }
+    }
 
     /**
      * Set the network on cluster status in the DB to {@link NetworkStatus#OPERATIONAL} or
