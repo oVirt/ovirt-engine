@@ -18,14 +18,10 @@ public class FencingPolicyHelper {
             throw new IllegalArgumentException();
         }
 
-        // Version 2.2 is not supported by VDSM, but it's still contained in version list,
-        // so we cannot just get first element from version list
-        Version ver = Version.v3_0;
+        Version ver = Version.ALL.get(0);
         if (fp.isSkipFencingIfSDActive()) {
             for (Version v : Version.ALL) {
-                // Version 2.2 is included in version list, but it's not included in db to set up config values
-                if (v.compareTo(Version.v3_0) >= 0 &&
-                        FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
+                if (FeatureSupported.isSkipFencingIfSDActiveSupported(v)) {
                     ver = v;
                     break;
                 }
