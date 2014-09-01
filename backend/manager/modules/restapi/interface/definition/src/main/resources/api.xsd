@@ -2675,6 +2675,7 @@
           <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <!-- also rel="cdroms/disks/nics/watchdogs" links, see Devices below -->
           <xs:element name="version" type="TemplateVersion" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -3070,7 +3071,6 @@
           <xs:element name="tunnel_migration" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="migration_downtime" type="xs:int" minOccurs="0" maxOccurs="1" />
           <xs:element ref="virtio_scsi" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="start_paused" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element ref="cpu_profile" minOccurs="0" maxOccurs="1"/>
@@ -3130,6 +3130,7 @@
           <xs:element name="use_latest_template_version" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="next_run_configuration_exists" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
           <xs:element name="numa_tune_mode" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="permissions" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
