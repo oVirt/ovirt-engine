@@ -118,11 +118,16 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
 
     private void changeIsAttached(ClusterNetworkModel clusterNetworkModel, Boolean value) {
         clusterNetworkModel.setAttached(value);
-        if (!value && clusterNetworkModel.isDisplayNetwork()) {
-            clusterNetworkModel.setDisplayNetwork(false);
-        }
-        if (!value && clusterNetworkModel.isRequired()) {
-            clusterNetworkModel.setRequired(false);
+        if (!value) {
+            if (clusterNetworkModel.isDisplayNetwork()) {
+                updateDisplayNetwork(clusterNetworkModel, false);
+            }
+            if (clusterNetworkModel.isMigrationNetwork()) {
+                updateMigrationNetwork(clusterNetworkModel, false);
+            }
+            if (clusterNetworkModel.isRequired()) {
+                clusterNetworkModel.setRequired(false);
+            }
         }
     }
 
@@ -326,18 +331,25 @@ public class ClusterManageNetworkPopupView extends AbstractModelBoundPopupView<C
     private final class MigrationNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
         @Override
         public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
-
-            networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
+            updateMigrationNetwork(clusterNetworkModel, value);
             refreshNetworksTable();
         }
+    }
+
+    private void updateMigrationNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
+        networks.asEditor().flush().setMigrationNetwork(clusterNetworkModel, value);
     }
 
     private final class DisplayNetworkIndicatorFieldUpdater implements FieldUpdater<ClusterNetworkModel, Boolean> {
         @Override
         public void update(int index, ClusterNetworkModel clusterNetworkModel, Boolean value) {
-            networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
+            updateDisplayNetwork(clusterNetworkModel, value);
             refreshNetworksTable();
         }
+    }
+
+    private void updateDisplayNetwork(ClusterNetworkModel clusterNetworkModel, boolean value) {
+        networks.asEditor().flush().setDisplayNetwork(clusterNetworkModel, value);
     }
 
     private final static class DisplayNetworkIndicatorCheckboxColumn extends CheckboxColumn<ClusterNetworkModel> {
