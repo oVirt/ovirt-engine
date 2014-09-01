@@ -733,10 +733,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        object.getIsDiscorveredHosts().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (Boolean.TRUE.equals(object.getIsDiscorveredHosts().getEntity())) {
+                if (Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
                     rbDiscoveredHost.setValue(true);
                     showDiscoveredHostsWidgets(true);
                 } else {
@@ -894,7 +894,7 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         showExternalProvisionedHosts(false);
         rbProvisionedHost.setValue(false);
         rbDiscoveredHost.setValue(false);
-        object.getIsDiscorveredHosts().setEntity(null);
+        object.getIsDiscoveredHosts().setEntity(null);
     }
 
     private void initExternalHostProviderWidgets(boolean isAvailable) {

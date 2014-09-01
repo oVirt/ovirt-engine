@@ -850,16 +850,16 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         networkProviderModel = value;
     }
 
-    private EntityModel<Boolean> isDiscorveredHosts;
+    private EntityModel<Boolean> isDiscoveredHosts;
 
-    public EntityModel<Boolean> getIsDiscorveredHosts()
+    public EntityModel<Boolean> getIsDiscoveredHosts()
     {
-        return isDiscorveredHosts;
+        return isDiscoveredHosts;
     }
 
-    public void setDiscorveredHosts(EntityModel<Boolean> value)
+    public void setIsDiscoveredHosts(EntityModel<Boolean> value)
     {
-        isDiscorveredHosts = value;
+        isDiscoveredHosts = value;
     }
 
     public ListModel<Provider<org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties>> getNetworkProviders() {
@@ -1054,7 +1054,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         fetchPublicKey();
 
         setNetworkProviderModel(new HostNetworkProviderModel());
-        setDiscorveredHosts(new EntityModel<Boolean>());
+        setIsDiscoveredHosts(new EntityModel<Boolean>());
     }
 
     private void proxyUp() {

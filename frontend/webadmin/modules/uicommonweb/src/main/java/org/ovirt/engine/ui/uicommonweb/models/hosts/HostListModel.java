@@ -992,7 +992,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 parameters.setNetworkMappings(model.getInterfaceMappings().getEntity());
             }
 
-            if (Boolean.TRUE.equals(model.getIsDiscorveredHosts().getEntity())) {
+            if (Boolean.TRUE.equals(model.getIsDiscoveredHosts().getEntity())) {
                 Provider<?> provider = (Provider<?>) model.getProviders().getSelectedItem();
                 ExternalHostGroup hostGroup = (ExternalHostGroup) model.getExternalHostGroups().getSelectedItem();
                 ExternalComputeResource computeResource = (ExternalComputeResource) model.getExternalComputeResource().getSelectedItem();
