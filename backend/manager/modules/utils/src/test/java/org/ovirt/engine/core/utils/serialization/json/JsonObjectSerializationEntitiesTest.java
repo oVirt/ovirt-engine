@@ -123,7 +123,6 @@ public class JsonObjectSerializationEntitiesTest {
         vdsDynamic.setprevious_status(random.nextEnum(VDSStatus.class));
         vdsDynamic.setsoftware_version(random.nextNumericString(5) + '.' + random.nextNumericString(5));
         vdsDynamic.setversion_name(random.nextString(10));
-        vdsDynamic.setcpu_over_commit_time_stamp(new Date(random.nextLong()));
         vdsDynamic.setpending_vcpus_count(random.nextInt());
         vdsDynamic.setpending_vmem_size(random.nextInt());
         vdsDynamic.setnet_config_dirty(random.nextBoolean());
@@ -151,6 +150,7 @@ public class JsonObjectSerializationEntitiesTest {
         vdsStatistics.setusage_cpu_percent(random.nextInt());
         vdsStatistics.setusage_mem_percent(random.nextInt());
         vdsStatistics.setusage_network_percent(random.nextInt());
+        vdsStatistics.setcpu_over_commit_time_stamp(new Date(random.nextLong()));
         return vdsStatistics;
     }
 

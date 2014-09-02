@@ -30,14 +30,15 @@ Create or replace FUNCTION InsertVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_ha_configured BOOLEAN,
  v_ha_active BOOLEAN,
  v_ha_global_maintenance BOOLEAN,
- v_ha_local_maintenance BOOLEAN)
+ v_ha_local_maintenance BOOLEAN,
+ v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE )
 RETURNS VOID
    AS $procedure$
 BEGIN
 
    BEGIN
-INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, anonymous_hugepages, boot_time, ha_score, ha_configured, ha_active, ha_global_maintenance, ha_local_maintenance)
-	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_anonymous_hugepages, v_boot_time, v_ha_score, v_ha_configured, v_ha_active, v_ha_global_maintenance, v_ha_local_maintenance);
+INSERT INTO vds_statistics(cpu_idle, cpu_load, cpu_sys, cpu_user, usage_cpu_percent, usage_mem_percent, usage_network_percent, vds_id, mem_available, mem_free, mem_shared,swap_free,swap_total,ksm_cpu_percent,ksm_pages,ksm_state, anonymous_hugepages, boot_time, ha_score, ha_configured, ha_active, ha_global_maintenance, ha_local_maintenance,cpu_over_commit_time_stamp)
+	VALUES(v_cpu_idle, v_cpu_load, v_cpu_sys, v_cpu_user, v_usage_cpu_percent, v_usage_mem_percent, v_usage_network_percent, v_vds_id, v_mem_available, v_mem_free, v_mem_shared,v_swap_free,v_swap_total,v_ksm_cpu_percent,v_ksm_pages,v_ksm_state, v_anonymous_hugepages, v_boot_time, v_ha_score, v_ha_configured, v_ha_active, v_ha_global_maintenance, v_ha_local_maintenance,v_cpu_over_commit_time_stamp);
    END;
 
    RETURN;
@@ -70,7 +71,8 @@ Create or replace FUNCTION UpdateVdsStatistics(v_cpu_idle DECIMAL(18,0) ,
  v_ha_configured BOOLEAN,
  v_ha_active BOOLEAN,
  v_ha_global_maintenance BOOLEAN,
- v_ha_local_maintenance BOOLEAN)
+ v_ha_local_maintenance BOOLEAN,
+ v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE)
 RETURNS VOID
 
 	--The [vds_dynamic] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -88,7 +90,7 @@ BEGIN
       boot_time = v_boot_time,
       ha_score = v_ha_score, ha_configured = v_ha_configured, ha_active = v_ha_active,
       ha_global_maintenance = v_ha_global_maintenance, ha_local_maintenance = v_ha_local_maintenance,
-      _update_date = LOCALTIMESTAMP
+      _update_date = LOCALTIMESTAMP, cpu_over_commit_time_stamp = v_cpu_over_commit_time_stamp
       WHERE vds_id = v_vds_id;
    END;
 
@@ -177,7 +179,6 @@ Create or replace FUNCTION InsertVdsDynamic(v_cpu_cores INTEGER ,
  v_build_name VARCHAR(40) ,
  v_previous_status INTEGER ,
  v_cpu_flags VARCHAR(4000) ,
- v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE ,
  v_pending_vcpus_count INTEGER ,
  v_pending_vmem_size INTEGER ,
  v_cpu_sockets INTEGER ,
@@ -214,8 +215,8 @@ RETURNS VOID
 BEGIN
 
    BEGIN
-INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, cpu_over_commit_time_stamp, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported)
-	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_cpu_over_commit_time_stamp, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported);
+INSERT INTO vds_dynamic(cpu_cores, cpu_threads, cpu_model, cpu_speed_mh, if_total_speed, kvm_enabled, mem_commited, physical_mem_mb,	status, vds_id, vm_active, vm_count, vm_migrating, reserved_mem, guest_overhead, rpm_version, software_version, version_name, build_name, previous_status, cpu_flags, vms_cores_count, pending_vcpus_count, pending_vmem_size, cpu_sockets,net_config_dirty, supported_cluster_levels, supported_engines, host_os, kvm_version, libvirt_version, spice_version, gluster_version, kernel_version, iscsi_initiator_name, transparent_hugepages_state, hooks, hw_manufacturer, hw_product_name, hw_version, hw_serial_number, hw_uuid, hw_family, hbas, supported_emulated_machines, controlled_by_pm_policy, kdump_status, selinux_enforce_mode, auto_numa_balancing, is_numa_supported, supported_rng_sources, is_live_snapshot_supported, is_live_merge_supported)
+	VALUES(v_cpu_cores,	v_cpu_threads, v_cpu_model,	v_cpu_speed_mh,	v_if_total_speed, v_kvm_enabled, v_mem_commited, v_physical_mem_mb,	v_status, v_vds_id, v_vm_active, v_vm_count, v_vm_migrating,	v_reserved_mem, v_guest_overhead, v_rpm_version, v_software_version, v_version_name, v_build_name, v_previous_status, v_cpu_flags, v_vms_cores_count,v_pending_vcpus_count, v_pending_vmem_size, v_cpu_sockets, v_net_config_dirty, v_supported_cluster_levels, v_supported_engines, v_host_os, v_kvm_version, v_libvirt_version, v_spice_version, v_gluster_version, v_kernel_version, v_iscsi_initiator_name, v_transparent_hugepages_state, v_hooks, v_hw_manufacturer, v_hw_product_name, v_hw_version, v_hw_serial_number, v_hw_uuid, v_hw_family, v_hbas, v_supported_emulated_machines, v_controlled_by_pm_policy, v_kdump_status, v_selinux_enforce_mode, v_auto_numa_balancing, v_is_numa_supported, v_supported_rng_sources, v_is_live_snapshot_supported, v_is_live_merge_supported);
    END;
 
    RETURN;
@@ -260,7 +261,6 @@ Create or replace FUNCTION UpdateVdsDynamic(v_cpu_cores INTEGER ,
  v_build_name VARCHAR(40) ,
  v_previous_status INTEGER ,
  v_cpu_flags VARCHAR(4000) ,
- v_cpu_over_commit_time_stamp TIMESTAMP WITH TIME ZONE ,
  v_pending_vcpus_count INTEGER ,
  v_pending_vmem_size INTEGER ,
  v_cpu_sockets INTEGER ,
@@ -308,7 +308,7 @@ BEGIN
       vm_migrating = v_vm_migrating,reserved_mem = v_reserved_mem,
       guest_overhead = v_guest_overhead,rpm_version = v_rpm_version, software_version = v_software_version,
       version_name = v_version_name,build_name = v_build_name,previous_status = v_previous_status,
-      cpu_flags = v_cpu_flags,cpu_over_commit_time_stamp = v_cpu_over_commit_time_stamp,
+      cpu_flags = v_cpu_flags,
       vms_cores_count = v_vms_cores_count,pending_vcpus_count = v_pending_vcpus_count,
       pending_vmem_size = v_pending_vmem_size,
       cpu_sockets = v_cpu_sockets,net_config_dirty = v_net_config_dirty,

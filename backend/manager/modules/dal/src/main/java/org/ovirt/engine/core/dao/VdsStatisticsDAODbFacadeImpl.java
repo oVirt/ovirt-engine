@@ -7,6 +7,7 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.VdsStatistics;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -52,6 +53,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
             entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
             entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
             entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
+            entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
+                    .getTimestamp("cpu_over_commit_time_stamp")));
             return entity;
         }
     }
@@ -92,7 +95,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
                 .addValue("ha_active", stats.getHighlyAvailableIsActive())
                 .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
-                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance());
+                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance())
+                .addValue("cpu_over_commit_time_stamp", stats.getcpu_over_commit_time_stamp());
 
         getCallsHandler().executeModification("InsertVdsStatistics", parameterSource);
     }
@@ -123,7 +127,8 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
                 .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
                 .addValue("ha_active", stats.getHighlyAvailableIsActive())
                 .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
-                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance());
+                .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance())
+                .addValue("cpu_over_commit_time_stamp", stats.getcpu_over_commit_time_stamp());
 
         getCallsHandler().executeModification("UpdateVdsStatistics", parameterSource);
     }

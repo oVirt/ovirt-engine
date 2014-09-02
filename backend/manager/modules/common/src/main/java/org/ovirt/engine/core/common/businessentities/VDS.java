@@ -846,11 +846,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Date getCpuOverCommitTimestamp() {
-        return mVdsDynamic.getcpu_over_commit_time_stamp();
+        return mVdsStatistics.getcpu_over_commit_time_stamp();
     }
 
     public void setCpuOverCommitTimestamp(Date value) {
-        mVdsDynamic.setcpu_over_commit_time_stamp(value);
+        mVdsStatistics.setcpu_over_commit_time_stamp(value);
     }
 
     public int getVdsStrength() {
