@@ -30,7 +30,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public class AdElementListModel extends SearchableListModel
@@ -48,7 +47,7 @@ public class AdElementListModel extends SearchableListModel
 
     private Iterable privateExcludeItems;
 
-    private HashMap<String, List<String>> namespacesMap;
+    private HashMap<String, List<String>> namespacesMap = new HashMap<String, List<String>>();
 
     public Iterable getExcludeItems()
     {
@@ -153,6 +152,8 @@ public class AdElementListModel extends SearchableListModel
 
     private boolean isEveryoneSelected;
 
+    private List<ProfileEntry> profileEntries;
+
     public boolean getIsEveryoneSelected()
     {
         return isEveryoneSelected;
@@ -193,26 +194,20 @@ public class AdElementListModel extends SearchableListModel
 
             @Override
             public void onSuccess(Object model, Object result) {
-                populateProfiles((List<ProfileEntry>) result);
-                getProfile().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                setProfileEntries((List<ProfileEntry>) result);
+                AsyncDataProvider.getInstance().getAAANamespaces(new AsyncQuery(this, new INewAsyncCallback() {
+
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
-                        populateNamespaces();
+                    public void onSuccess(Object model, Object result) {
+                        namespacesMap = (HashMap<String, List<String>>) result;
+                        populateProfiles(getProfileEntries());
                     }
-                });
+                }));
             }
+
         }));
 
-        AsyncDataProvider.getInstance().getAAANamespaces(new AsyncQuery(this, new INewAsyncCallback() {
 
-            @Override
-            public void onSuccess(Object model, Object result) {
-                if (getProfile().getSelectedItem() != null) {
-                    namespacesMap = (HashMap<String, List<String>>) result;
-                    populateNamespaces();
-                }
-            }
-        }));
 
         AsyncDataProvider.getInstance().getRoleList(new AsyncQuery(this, new INewAsyncCallback() {
 
@@ -226,13 +221,24 @@ public class AdElementListModel extends SearchableListModel
 
     protected void populateProfiles(List<ProfileEntry> profiles) {
         getProfile().setItems(profiles);
-        getProfile().setSelectedItem(Linq.firstOrDefault(profiles));
+        getProfile().setSelectedItem(Linq.firstOrDefault(getProfile().getItems()));
     }
 
-    protected void populateNamespaces() {
+    public void populateNamespaces() {
         if (namespacesMap != null) {
-            getNamespace().setItems(namespacesMap.get(((ProfileEntry) getProfile().getSelectedItem()).getAuthz()));
+            getNamespace().setItems(getAuthzNamespaces());
+            getNamespace().setSelectedItem(Linq.firstOrDefault(getNamespace().getItems()));
+
         }
+    }
+
+    protected void setProfileEntries(List<ProfileEntry> value) {
+        profileEntries = value;
+    }
+
+    protected List<ProfileEntry> getProfileEntries() {
+        return profileEntries;
+
     }
 
     protected void populateRoles(List<Role> roles){
@@ -451,6 +457,10 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
+    public boolean availableNamespaces() {
+        return getAuthzNamespaces() != null && !getAuthzNamespaces().isEmpty();
+    }
+
     @Override
     protected String getListName() {
         return "AdElementListModel"; //$NON-NLS-1$
@@ -473,6 +483,11 @@ public class AdElementListModel extends SearchableListModel
         }
 
         return false;
+    }
+
+    private List<String> getAuthzNamespaces() {
+        ProfileEntry profileEntry = (ProfileEntry) getProfile().getSelectedItem();
+        return profileEntry != null ? namespacesMap.get(profileEntry.getAuthz()) : Collections.<String> emptyList();
     }
 
 }

@@ -107,6 +107,24 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             }
         }));
 
+        model.getProfile().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+            @Override
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+                model.populateNamespaces();
+            }
+        });
+
+        model.getNamespace().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
+
+            @Override
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+                getView().getSearchButton()
+                .getCommand()
+                .setIsExecutionAllowed(model.availableNamespaces());
+            }
+        });
+
         model.getIsRoleListHiddenModel().getPropertyChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
