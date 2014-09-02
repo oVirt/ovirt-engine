@@ -154,11 +154,17 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             }
 
             @Override
-            public void setRowData(int start, List<? extends T> values) {
+            public void setRowData(int start, final List<? extends T> values) {
                 super.setRowData(start, values);
                 selectionModel.resolveChanges();
                 if (values.size() == 1 && selectionModel.getSelectedList().isEmpty() && doAutoSelect) {
-                    selectionModel.setSelected(values.get(0), true);
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+
+                        @Override
+                        public void execute() {
+                            selectionModel.setSelected(values.get(0), true);
+                        }
+                    });
                     doAutoSelect = false;
                 }
                 updateTableControls();
