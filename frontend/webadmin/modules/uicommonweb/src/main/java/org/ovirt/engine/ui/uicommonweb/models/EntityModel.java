@@ -18,7 +18,6 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
-@SuppressWarnings("unused")
 public class EntityModel<T> extends Model implements HasHandlers {
 
     /**
@@ -29,14 +28,14 @@ public class EntityModel<T> extends Model implements HasHandlers {
     private final List<HandlerRegistration> handlerRegistrations = new ArrayList<HandlerRegistration>();
 
     public static final EventDefinition entityChangedEventDefinition;
-    private Event privateEntityChangedEvent;
+    private Event<EventArgs> privateEntityChangedEvent;
 
-    public Event getEntityChangedEvent()
+    public Event<EventArgs> getEntityChangedEvent()
     {
         return privateEntityChangedEvent;
     }
 
-    private void setEntityChangedEvent(Event value)
+    private void setEntityChangedEvent(Event<EventArgs> value)
     {
         privateEntityChangedEvent = value;
     }
@@ -89,7 +88,7 @@ public class EntityModel<T> extends Model implements HasHandlers {
 
     public EntityModel()
     {
-        setEntityChangedEvent(new Event(entityChangedEventDefinition));
+        setEntityChangedEvent(new Event<EventArgs>(entityChangedEventDefinition));
     }
 
     public EntityModel(T entity) {

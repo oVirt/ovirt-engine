@@ -19,40 +19,40 @@ public class ListModel<T> extends EntityModel<T>
 {
 
     public static final EventDefinition selectedItemChangedEventDefinition;
-    private Event privateSelectedItemChangedEvent;
+    private Event<EventArgs> privateSelectedItemChangedEvent;
 
-    public Event getSelectedItemChangedEvent()
+    public Event<EventArgs> getSelectedItemChangedEvent()
     {
         return privateSelectedItemChangedEvent;
     }
 
-    private void setSelectedItemChangedEvent(Event value)
+    private void setSelectedItemChangedEvent(Event<EventArgs> value)
     {
         privateSelectedItemChangedEvent = value;
     }
 
     public static final EventDefinition selectedItemsChangedEventDefinition;
-    private Event privateSelectedItemsChangedEvent;
+    private Event<EventArgs> privateSelectedItemsChangedEvent;
 
-    public Event getSelectedItemsChangedEvent()
+    public Event<EventArgs> getSelectedItemsChangedEvent()
     {
         return privateSelectedItemsChangedEvent;
     }
 
-    private void setSelectedItemsChangedEvent(Event value)
+    private void setSelectedItemsChangedEvent(Event<EventArgs> value)
     {
         privateSelectedItemsChangedEvent = value;
     }
 
     public static final EventDefinition itemsChangedEventDefinition;
-    private Event privateItemsChangedEvent;
+    private Event<EventArgs> privateItemsChangedEvent;
 
-    public Event getItemsChangedEvent()
+    public Event<EventArgs> getItemsChangedEvent()
     {
         return privateItemsChangedEvent;
     }
 
-    private void setItemsChangedEvent(Event value)
+    private void setItemsChangedEvent(Event<EventArgs> value)
     {
         privateItemsChangedEvent = value;
     }
@@ -157,9 +157,9 @@ public class ListModel<T> extends EntityModel<T>
 
     public ListModel()
     {
-        setSelectedItemChangedEvent(new Event(selectedItemChangedEventDefinition));
-        setSelectedItemsChangedEvent(new Event(selectedItemsChangedEventDefinition));
-        setItemsChangedEvent(new Event(itemsChangedEventDefinition));
+        setSelectedItemChangedEvent(new Event<EventArgs>(selectedItemChangedEventDefinition));
+        setSelectedItemsChangedEvent(new Event<EventArgs>(selectedItemsChangedEventDefinition));
+        setItemsChangedEvent(new Event<EventArgs>(itemsChangedEventDefinition));
     }
 
     protected void onSelectedItemChanging(T newValue, T oldValue)
