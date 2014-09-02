@@ -24,7 +24,8 @@ public class ValidationUtils {
     public static final String NO_TRIMMING_WHITE_SPACES_PATTERN = "^$|\\S.*\\S";
     public static final String IP_PATTERN =
             "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
-
+    public static final String CIDR_FORMAT_PATTERN =
+            "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)(?:/(?:3[0-2]|[12]?[0-9]))$";
     public static final String ISO_SUFFIX = ".iso";
     public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
 
