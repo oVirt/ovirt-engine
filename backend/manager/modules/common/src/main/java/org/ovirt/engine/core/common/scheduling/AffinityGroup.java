@@ -34,7 +34,6 @@ public class AffinityGroup extends IVdcQueryable implements BusinessEntity<Guid>
      * affinity group description
      */
     @Size(min = 0, max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE, message = "AFFINITY_GROUP_DESCRIPTION_INVALID")
-    @ValidI18NName(message = "AFFINITY_GROUP_DESCRIPTION_INVALID")
     private String description;
     /**
      * affinity group associated cluster id
