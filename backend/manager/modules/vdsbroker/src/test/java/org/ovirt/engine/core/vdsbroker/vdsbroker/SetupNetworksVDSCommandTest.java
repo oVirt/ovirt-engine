@@ -72,7 +72,7 @@ public class SetupNetworksVDSCommandTest {
         when(host.getSupportedClusterVersionsSet()).thenReturn(supportedClusters);
         when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
         configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
-        configRule.mockConfigValue(ConfigValues.DefaultMtu, 1500);
+        configRule.mockConfigValue(ConfigValues.DefaultMTU, 1500);
     }
 
     @Test

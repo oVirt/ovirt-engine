@@ -45,7 +45,7 @@ public class ItemInfoPopup extends DecoratedPopupPanel {
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.networkNotSyncImage()).getHTML());
     SafeHtml alertImage =
             SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(resources.alertImage()).getHTML());
-    private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMtu);
+    private static int defaultMtu = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMTU);
 
     public ItemInfoPopup() {
         super(true);

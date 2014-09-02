@@ -26,7 +26,7 @@ public final class NetworkUtils {
     }
 
     public static Integer getDefaultMtu() {
-        return Config.<Integer> getValue(ConfigValues.DefaultMtu);
+        return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }
 
     /**

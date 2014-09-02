@@ -41,6 +41,7 @@ select fn_db_rename_config_key('GlusterAysncTasksSupport', 'GlusterAsyncTasksSup
 select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.0');
 select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.1');
 select fn_db_rename_config_key('NormalizedMgmgNetworkEnabled', 'NormalizedMgmtNetworkEnabled', '3.2');
+select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
@@ -800,7 +801,7 @@ select fn_db_add_config_value('ChangePasswordMsg','','general');
 select fn_db_add_config_value('DefaultSerialNumberPolicy','HOST_ID','general');
 select fn_db_add_config_value('DefaultCustomSerialNumber','Dummy serial number.','general');
 
-select fn_db_add_config_value('DefaultMtu', '1500', 'general');
+select fn_db_add_config_value('DefaultMTU', '1500', 'general');
 
 select fn_db_add_config_value('FenceKdumpDestinationAddress','','general');
 select fn_db_add_config_value('FenceKdumpDestinationPort','7410','general');

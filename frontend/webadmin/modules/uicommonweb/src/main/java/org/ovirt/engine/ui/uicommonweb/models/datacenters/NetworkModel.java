@@ -804,7 +804,7 @@ public abstract class NetworkModel extends Model
     public enum MtuSelector {
         defaultMtu(ConstantsManager.getInstance()
                 .getMessages()
-                .defaultMtu((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMtu))),
+                .defaultMtu((Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMTU))),
         customMtu(ConstantsManager.getInstance().getConstants().customMtu());
 
         private String description;

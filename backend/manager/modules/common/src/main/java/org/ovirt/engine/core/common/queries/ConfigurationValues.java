@@ -137,7 +137,7 @@ public enum ConfigurationValues {
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
     SpiceFileTransferToggleSupported(ConfigAuthType.User),
     SpiceCopyPasteToggleSupported(ConfigAuthType.User),
-    DefaultMtu,
+    DefaultMTU,
     LiveMergeSupported(ConfigAuthType.User),
     SkipFencingIfSDActiveSupported,
     JsonProtocolSupported(ConfigAuthType.User),

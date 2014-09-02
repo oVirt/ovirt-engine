@@ -30,7 +30,7 @@ public class NetworkUtilsTest {
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, MANAGEMENT_NETWORK),
-            MockConfigRule.mockConfig(ConfigValues.DefaultMtu, DEFAULT_MTU));
+            MockConfigRule.mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
 
     @Test
     public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {
