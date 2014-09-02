@@ -211,25 +211,27 @@ public class ManageDomains {
     }
 
     private void validateKdcServers(String ldapSecurityAuthentication, String domainName) throws ManageDomainsResult {
-        KDCLocator locator = new KDCLocator();
-        DnsSRVResult result = null;
-        boolean foundServers = true;
-        try {
-            result = locator.getKdc(DnsSRVLocator.TCP, domainName);
-            if (!foundSrvRecords(result)) {
-                result = locator.getKdc(DnsSRVLocator.UDP, domainName);
+        if (shouldResolveKdc()) {
+            KDCLocator locator = new KDCLocator();
+            DnsSRVResult result = null;
+            boolean foundServers = true;
+            try {
+                result = locator.getKdc(DnsSRVLocator.TCP, domainName);
                 if (!foundSrvRecords(result)) {
-                    foundServers =false;
+                    result = locator.getKdc(DnsSRVLocator.UDP, domainName);
+                    if (!foundSrvRecords(result)) {
+                        foundServers = false;
+                    }
                 }
+            } catch (Exception ex) {
+                foundServers = false;
             }
-        } catch (Exception ex) {
-            foundServers = false;
+            if (!foundServers) {
+                throw new ManageDomainsResult("Could not locate KDC servers to be used to validate the input of the utility",
+                        ManageDomainsResultEnum.NO_KDC_SERVERS_FOR_DOMAIN,
+                        domainName);
+            }
         }
-        if (!foundServers) {
-            throw new ManageDomainsResult("Could not locate KDC servers to be used to validate the input of the utility",
-                    ManageDomainsResultEnum.NO_KDC_SERVERS_FOR_DOMAIN, domainName);
-        }
-
     }
 
     private boolean foundSrvRecords(DnsSRVResult result) {
@@ -700,8 +702,7 @@ public class ManageDomains {
                 log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
                 String domainRealmMappingFile = utilityConfiguration.getDomainRealmMappingFile();
-                if (!args.contains(ARG_LDAP_SERVERS) && useDnsLookup
-                        || args.contains(ARG_RESOLVE_KDC)) {
+                if (shouldResolveKdc()) {
                     // Arguments do not contain a list of ldap servers, so the
                     // kerberos configuration should not be created according to it if
                     // useDnsLookup is set to true or resolve KDC argument was entered.
@@ -722,6 +723,11 @@ public class ManageDomains {
                 throw result;
             }
         }
+    }
+
+    private boolean shouldResolveKdc() {
+        return !args.contains(ARG_LDAP_SERVERS) && useDnsLookup
+                || args.contains(ARG_RESOLVE_KDC);
     }
 
     private void checkKerberosConfiguration(String domainName,
