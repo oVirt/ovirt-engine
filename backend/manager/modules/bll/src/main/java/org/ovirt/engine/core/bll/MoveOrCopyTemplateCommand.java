@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -135,12 +134,11 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
                             getReturnValue().getCanDoActionMessages(), true, true, true, false, getTemplateDisks());
             if (retValue) {
                 setStoragePoolId(getVmTemplate().getStoragePoolId());
-                retValue =
-                        checkStorageDomain()
-                                && checkStorageDomainStatus(StorageDomainStatus.Active)
-                                && (getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
-                                && checkFreeSpaceOnDestinationDomain(getStorageDomain(),
-                                        (int) getVmTemplate().getActualDiskSize());
+                StorageDomainValidator sdValidator = createStorageDomainValidator(getStorageDomain());
+                retValue = validate(sdValidator.isDomainExistAndActive())
+                        && validate(sdValidator.isDomainWithinThresholds())
+                        && (getParameters().getForceOverride() || (!isImagesAlreadyOnTarget() && checkIfDisksExist(getTemplateDisks())))
+                        && validateFreeSpaceOnDestinationDomain(sdValidator, getTemplateDisks());
             }
             if (retValue
                     && DbFacade.getInstance()
@@ -152,6 +150,10 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             }
         }
         return retValue;
+    }
+
+    private StorageDomainValidator createStorageDomainValidator(StorageDomain storageDomain) {
+        return new StorageDomainValidator(storageDomain);
     }
 
     protected boolean validateUnregisteredEntity(IVdcQueryable entityFromConfiguration, OvfEntityData ovfEntityData) {
@@ -195,8 +197,8 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__VM_TEMPLATE);
     }
 
-    private boolean checkFreeSpaceOnDestinationDomain(StorageDomain domain, int requestedSizeGB) {
-        return validate(new StorageDomainValidator(domain).isDomainHasSpaceForRequest(requestedSizeGB));
+    private boolean validateFreeSpaceOnDestinationDomain(StorageDomainValidator storageDomainValidator, List<DiskImage> disksList) {
+        return validate(storageDomainValidator.hasSpaceForClonedDisks(disksList));
     }
 
     @Override
