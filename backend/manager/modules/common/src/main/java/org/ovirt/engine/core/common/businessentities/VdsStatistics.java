@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
@@ -37,6 +38,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private boolean highlyAvailableIsActive;
     private boolean highlyAvailableGlobalMaintenance;
     private boolean highlyAvailableLocalMaintenance;
+    private Date cpu_over_commit_time_stamp;
 
     private List<CpuStatistics> cpuCoreStatistics;
 
@@ -95,6 +97,7 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
         result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
         result = prime * result + ((cpuCoreStatistics == null) ? 0 : cpuCoreStatistics.hashCode());
+        result = prime * result + ((cpu_over_commit_time_stamp == null) ? 0 : cpu_over_commit_time_stamp.hashCode());
         return result;
     }
 
@@ -132,7 +135,8 @@ public class VdsStatistics implements BusinessEntity<Guid> {
                 && (highlyAvailableIsActive == other.highlyAvailableIsActive)
                 && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
                 && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
-                && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics));
+                && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics)
+                && ObjectUtils.objectsEqual(cpu_over_commit_time_stamp, other.cpu_over_commit_time_stamp));
     }
 
     public Double getcpu_idle() {
@@ -334,4 +338,11 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpuCoreStatistics = cpuCoreStatistics;
     }
 
+    public Date getcpu_over_commit_time_stamp() {
+        return this.cpu_over_commit_time_stamp;
+    }
+
+    public void setcpu_over_commit_time_stamp(Date value) {
+        this.cpu_over_commit_time_stamp = value;
+    }
 }

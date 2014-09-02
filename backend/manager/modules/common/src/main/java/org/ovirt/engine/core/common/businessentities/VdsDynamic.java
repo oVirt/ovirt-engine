@@ -2,7 +2,6 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -59,8 +58,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
     private VDSStatus previous_status;
 
     private String cpu_flags;
-
-    private Date cpu_over_commit_time_stamp;
 
     private Integer vms_cores_count;
 
@@ -377,14 +374,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         this.cpu_flags = value;
     }
 
-    public Date getcpu_over_commit_time_stamp() {
-        return this.cpu_over_commit_time_stamp;
-    }
-
-    public void setcpu_over_commit_time_stamp(Date value) {
-        this.cpu_over_commit_time_stamp = value;
-    }
-
     public Integer getpending_vcpus_count() {
         return this.pending_vcpus_count;
     }
@@ -680,7 +669,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((cpuThreads == null) ? 0 : cpuThreads.hashCode());
         result = prime * result + ((cpu_flags == null) ? 0 : cpu_flags.hashCode());
         result = prime * result + ((cpu_model == null) ? 0 : cpu_model.hashCode());
-        result = prime * result + ((cpu_over_commit_time_stamp == null) ? 0 : cpu_over_commit_time_stamp.hashCode());
         result = prime * result + ((cpu_sockets == null) ? 0 : cpu_sockets.hashCode());
         result = prime * result + ((cpu_speed_mh == null) ? 0 : cpu_speed_mh.hashCode());
         result = prime * result + ((guest_overhead == null) ? 0 : guest_overhead.hashCode());
@@ -753,7 +741,6 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(cpuThreads, other.cpuThreads)
                 && ObjectUtils.objectsEqual(cpu_flags, other.cpu_flags)
                 && ObjectUtils.objectsEqual(cpu_model, other.cpu_model)
-                && ObjectUtils.objectsEqual(cpu_over_commit_time_stamp, other.cpu_over_commit_time_stamp)
                 && ObjectUtils.objectsEqual(cpu_sockets, other.cpu_sockets)
                 && ObjectUtils.objectsEqual(cpu_speed_mh, other.cpu_speed_mh)
                 && ObjectUtils.objectsEqual(guest_overhead, other.guest_overhead)

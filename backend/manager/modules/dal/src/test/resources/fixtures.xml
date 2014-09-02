@@ -2952,7 +2952,6 @@
         <column>build_name</column>
         <column>previous_status</column>
         <column>cpu_flags</column>
-        <column>cpu_over_commit_time_stamp</column>
         <column>vms_cores_count</column>
         <column>pending_vcpus_count</column>
         <column>cpu_sockets</column>
@@ -3006,7 +3005,6 @@
             <null />
             <value>12</value>
             <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
-            <value>2010-11-17 17:26:10</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -3061,7 +3059,6 @@
             <null />
             <value>12</value>
             <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
-            <value>2010-11-17 17:26:10</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -3116,7 +3113,6 @@
             <null />
             <value>12</value>
             <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
-            <value>2010-11-17 17:26:10</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -3171,7 +3167,6 @@
             <null />
             <value>12</value>
             <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
-            <value>2010-11-17 17:26:10</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -3226,7 +3221,6 @@
             <null />
             <value>12</value>
             <value>fpu,vme,de,pse,tsc,msr,pae,mce,cx8,apic,mtrr,pge,mca,cmov,pat,pse36,clflush,dts,acpi,mmx,fxsr,sse,sse2,ss,ht,tm,pbe,syscall,nx,lm,constant_tsc,arch_perfmon,pebs,bts,rep_good,aperfmperf,pni,dtes64,monitor,ds_cpl,vmx,est,tm2,ssse3,cx16,xtpr,pdcm,dca,sse4_1,lahf_lm,tpr_shadow,vnmi,flexpriority,model_486,model_pentium,model_pentium2,model_pentium3,model_pentiumpro,model_qemu32,model_coreduo,model_core2duo,model_n270,model_Conroe,model_Penryn,model_Opteron_G1</value>
-            <value>2010-11-17 17:26:10</value>
             <value>0</value>
             <value>0</value>
             <value>2</value>
@@ -3285,7 +3279,8 @@
         <column>ha_active</column>
         <column>ha_global_maintenance</column>
         <column>ha_local_maintenance</column>
-       <column>boot_time</column>
+        <column>boot_time</column>
+        <column>cpu_over_commit_time_stamp</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>100</value>
@@ -3310,6 +3305,7 @@
             <value>false</value>
             <value>false</value>
             <value>123456789</value>
+            <value>2010-12-01 14:13:10</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -3335,6 +3331,7 @@
             <value>false</value>
             <value>false</value>
             <value>123456789</value>
+            <value>2010-12-01 14:13:10</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -3360,6 +3357,7 @@
             <value>false</value>
             <value>false</value>
             <value>123456789</value>
+            <value>2010-12-01 14:13:10</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -3385,6 +3383,7 @@
             <value>false</value>
             <value>false</value>
             <value>123456789</value>
+            <value>2010-12-01 14:13:10</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -3409,8 +3408,8 @@
             <value>false</value>
             <value>false</value>
             <value>false</value>
-            <null />
             <value>123456789</value>
+            <value>2010-12-01 14:13:10</value>
         </row>
     </table>
 

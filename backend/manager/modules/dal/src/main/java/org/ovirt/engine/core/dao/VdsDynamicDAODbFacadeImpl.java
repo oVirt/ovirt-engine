@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -68,8 +67,6 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setprevious_status(VDSStatus.forValue(rs
                     .getInt("previous_status")));
             entity.setcpu_flags(rs.getString("cpu_flags"));
-            entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
-                    .getTimestamp("cpu_over_commit_time_stamp")));
             entity.setpending_vcpus_count((Integer) rs
                     .getObject("pending_vcpus_count"));
             entity.setpending_vmem_size(rs.getInt("pending_vmem_size"));
@@ -233,8 +230,6 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("build_name", vds.getbuild_name())
                 .addValue("previous_status", vds.getprevious_status())
                 .addValue("cpu_flags", vds.getcpu_flags())
-                .addValue("cpu_over_commit_time_stamp",
-                        vds.getcpu_over_commit_time_stamp())
                 .addValue("pending_vcpus_count", vds.getpending_vcpus_count())
                 .addValue("pending_vmem_size", vds.getpending_vmem_size())
                 .addValue("cpu_sockets", vds.getcpu_sockets())
