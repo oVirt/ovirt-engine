@@ -47,10 +47,12 @@
         }
 
         .mtuSelector {
-            width: auto;
             padding: 0px;
             float: none;
             display: inline-block;
+            width: 100%;
+            padding-left: 15px;
+            padding-top: 5px;
         }
 
         .vmNetworkStyle {
@@ -81,19 +83,27 @@
             width: 338px;
         }
 
+        .mtuWrapper {
+            line-height: 45px;
+        }
+
         .mtuLabel {
-            width: 230px;
             position: relative;
-            top: -25px !important;
+            top: 10px !important;
+            display: block;
         }
 
         .inlineBlock {
             display: inline-block;
         }
 
+        .floatRight {
+            float: right;
+        }
+
     </ui:style>
 
-    <d:SimpleDialogPanel ui:field="mainPanel" width="780px" height="550px">
+    <d:SimpleDialogPanel ui:field="mainPanel" width="780px" height="565px">
         <d:content>
             <t:DialogTabPanel ui:field="tabPanel" height="100%" width="100%">
                 <t:tab>
@@ -124,7 +134,7 @@
                                         <ge:EntityModelCheckBoxEditor ui:field="isVmNetworkEditor" />
                                         <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
                                     </g:HorizontalPanel>
-                                    <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField}" />
+                                    <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField} {style.mtuWrapper} {style.propertyWidth}" />
                                     <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
                                         <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
