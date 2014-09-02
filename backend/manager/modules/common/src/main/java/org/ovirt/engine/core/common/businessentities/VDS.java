@@ -24,6 +24,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     private ArrayList<VdsNetworkInterface> mInterfaceList;
     private ArrayList<Network> mNetworkList;
     private String activeNic;
+    private boolean balloonEnabled;
 
     /**
      * This map holds the disk usage reported by the host. The mapping is path to usage (in MB).
@@ -64,6 +65,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
         result = prime * result + ((vdsGroupVirtService == null) ? 0 : vdsGroupVirtService.hashCode());
         result = prime * result + ((vdsGroupGlusterService == null) ? 0 : vdsGroupGlusterService.hashCode());
+        result = prime * result + (balloonEnabled ? 0 : 1);
         return result;
     }
 
@@ -87,6 +89,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
                 && ObjectUtils.objectsEqual(mInterfaceList, other.mInterfaceList)
                 && ObjectUtils.objectsEqual(mNetworkList, other.mNetworkList)
                 && maxVdsMemoryOverCommit == other.maxVdsMemoryOverCommit
+                && balloonEnabled == other.balloonEnabled
                 && ObjectUtils.objectsEqual(privateDomains, other.privateDomains)
                 && ObjectUtils.objectsEqual(vdsSpmId, other.vdsSpmId)
                 && ObjectUtils.objectsEqual(storagePoolId, other.storagePoolId)
@@ -182,6 +185,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setHighlyAvailableIsActive(getHighlyAvailableIsActive());
         vds.setHighlyAvailableGlobalMaintenance(getHighlyAvailableGlobalMaintenance());
         vds.setHighlyAvailableLocalMaintenance(getHighlyAvailableLocalMaintenance());
+        vds.setBalloonEnabled(isBalloonEnabled());
 
         return vds;
     }
@@ -1420,4 +1424,13 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     public boolean getLiveMergeSupport() {
         return this.mVdsDynamic.getLiveMergeSupport();
     }
+
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean enableBalloon) {
+        this.balloonEnabled = enableBalloon;
+    }
+
 }

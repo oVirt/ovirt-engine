@@ -361,6 +361,7 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
             entity.setNumaSupport(rs.getBoolean("is_numa_supported"));
             entity.setLiveSnapshotSupport(rs.getBoolean("is_live_snapshot_supported"));
             entity.setLiveMergeSupport(rs.getBoolean("is_live_merge_supported"));
+            entity.setBalloonEnabled(rs.getBoolean("enable_balloon"));
             return entity;
         }
     }

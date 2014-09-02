@@ -751,7 +751,7 @@ WHERE vm_type = '0';
 
 CREATE OR REPLACE VIEW vds
 as
-SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description, vds_groups.architecture as architecture,
+SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group_name, vds_groups.description as vds_group_description, vds_groups.architecture as architecture, vds_groups.enable_balloon as enable_balloon,
                       vds_static.vds_id as vds_id, vds_static.vds_name as vds_name, vds_static.ip as ip, vds_static.vds_unique_id as vds_unique_id,
                       vds_static.host_name as host_name, vds_static.free_text_comment as free_text_comment,
                       vds_static.port as port, vds_static.vds_strength as vds_strength, vds_static.server_SSL_enabled as server_SSL_enabled, vds_static.vds_type as vds_type,

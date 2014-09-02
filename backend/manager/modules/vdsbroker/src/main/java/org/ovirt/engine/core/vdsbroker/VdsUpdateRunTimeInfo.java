@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UnchangeableByVdsm;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -1415,7 +1414,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     private void proceedBalloonCheck() {
-        if (isBalloonActiveOnHost()) {
+        if (_vds.isBalloonEnabled()) {
             for (VmInternalData vmInternalData : _runningVms.values()) {
                 VmBalloonInfo balloonInfo = vmInternalData.getVmStatistics().getVmBalloonInfo();
                 Guid vmId = vmInternalData.getVmDynamic().getId();
@@ -1486,11 +1485,6 @@ public class VdsUpdateRunTimeInfo {
                 vmsWithBalloonDriverProblem.put(vmId, 0);
             }
         }
-    }
-
-    private boolean isBalloonActiveOnHost() {
-        VDSGroup cluster = getDbFacade().getVdsGroupDao().get(_vds.getVdsGroupId());
-        return cluster != null && cluster.isEnableBallooning();
     }
 
     private boolean isBalloonDeviceActiveOnVm(VmInternalData vmInternalData) {
