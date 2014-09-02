@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connecti
 import org.ovirt.engine.core.common.businessentities.LUN_storage_server_connection_map_id;
 import org.ovirt.engine.core.common.businessentities.LUNs;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
@@ -46,7 +45,6 @@ import org.ovirt.engine.core.dao.ImageDao;
 import org.ovirt.engine.core.dao.ImageStorageDomainMapDao;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
@@ -59,8 +57,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public abstract class StorageDomainCommandBase<T extends StorageDomainParametersBase> extends
         StorageHandlingCommandBase<T> {
-
-    private List<StorageDomainOvfInfo> ovfInfo;
 
     protected StorageDomainCommandBase(T parameters) {
         this(parameters, null);
@@ -136,21 +132,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         return returnValue;
     }
 
-    private boolean hasImages() {
-        int allowedDisksNum = getOvfInfo().size();
-        return getDiskImageDao()
-                .getAllSnapshotsForStorageDomain(getStorageDomain().getId())
-                .size() > allowedDisksNum
-                || getImageStorageDomainMapDao().getAllByStorageDomainId(getStorageDomain().getId()).size() > allowedDisksNum;
-    }
-
-    public List<StorageDomainOvfInfo> getOvfInfo() {
-        if (ovfInfo == null) {
-            ovfInfo = getStorageDomainOvfInfoDao().getAllForDomain(getStorageDomain().getId());
-        }
-        return ovfInfo;
-    }
-
     private StoragePoolIsoMap getStoragePoolIsoMap() {
         return getStoragePoolIsoMapDAO()
                 .get(new StoragePoolIsoMapId(getStorageDomain().getId(),
@@ -178,10 +159,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected boolean checkStorageDomain() {
         return isStorageDomainNotNull(getStorageDomain());
-    }
-
-    protected boolean checkStorageDomainInDb() {
-        return getStorageDomainStaticDAO().get(getStorageDomain().getId()) != null;
     }
 
     protected boolean checkStorageDomainStatus(final StorageDomainStatus... statuses) {
@@ -464,10 +441,6 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
 
     protected ImageDao getImageDao() {
         return getDbFacade().getImageDao();
-    }
-
-    protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {
-        return getDbFacade().getStorageDomainOvfInfoDao();
     }
 
     protected DiskImageDynamicDAO getDiskImageDynamicDAO() {
