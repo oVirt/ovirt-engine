@@ -18,10 +18,8 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
-import org.ovirt.engine.core.bll.validator.DiskValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
@@ -290,12 +288,6 @@ public class MoveOrCopyDiskCommandTest {
         DiskImage diskImage = new DiskImage();
         diskImage.setVmEntityType(VmEntityType.VM);
         when(diskImageDao.get(any(Guid.class))).thenReturn(diskImage);
-    }
-
-    private DiskValidator spyDiskValidator(Disk disk) {
-        DiskValidator diskValidator = spy(new DiskValidator(disk));
-        doReturn(diskValidator).when(command).createDiskValidator();
-        return diskValidator;
     }
 
     /**
