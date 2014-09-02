@@ -197,10 +197,10 @@ public class VdsUpdateRunTimeInfo {
 
         getDbFacade().getDiskImageDynamicDao().updateAllDiskImageDynamicWithDiskIdByVmId(_vmDiskImageDynamicToSave);
         getDbFacade().getLunDao().updateAllInBatch(vmLunDisksToSave);
+        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
         saveVmDevicesToDb();
         saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
-        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
     }
 
     private void saveVmGuestAgentNetworkDevices() {
