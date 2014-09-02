@@ -261,6 +261,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         mtuSelectorEditor.addContentWidgetStyleName(style.mtuSelector());
         mtuEditor.addContentWidgetStyleName(style.valueBox());
         mtuEditor.addWrapperStyleName(style.inlineBlock());
+        mtuEditor.addWrapperStyleName(style.floatRight());
         networkLabel.addContentWidgetStyleName(style.valueBox());
         qosEditor.addContentWidgetStyleName(style.valueBox());
         isVmNetworkEditor.addContentWidgetStyleName(style.vmNetworkStyle());
@@ -475,6 +476,8 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
         String inlineBlock();
 
         String mtuLabel();
+
+        String floatRight();
     }
 
 }
