@@ -24,6 +24,7 @@ public class ObjectIdentityChecker {
     private Map<Enum<?>, Set<String>> dictionary =
             new HashMap<Enum<?>, Set<String>>();
     private Set<String> permitted = new HashSet<String>();
+    private Set<String> hotsetAllowedFields = new HashSet<String>();
 
     public ObjectIdentityChecker(Class<?> type) {
         identities.put(type, this);
@@ -83,11 +84,21 @@ public class ObjectIdentityChecker {
         }
     }
 
+    public final void AddHotsetFields(String... fieldNames) {
+        for (String fieldName : fieldNames) {
+            hotsetAllowedFields.add(fieldName);
+        }
+    }
+
     public final boolean IsFieldUpdatable(String name) {
         return permitted.contains(name);
     }
 
     public boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
+        return IsFieldUpdatable(status, name, fieldContainer, false);
+    }
+
+    public boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer, boolean hotsetEnabled) {
         boolean returnValue = true;
         if (!IsFieldUpdatable(name)) {
             if (fieldContainer != null && container != null
@@ -96,6 +107,11 @@ public class ObjectIdentityChecker {
             } else {
                 Set<String> values = dictionary.get(status);
                 returnValue = values != null ? values.contains(name) : false;
+
+                // if field is not updateable in this status, check if hotset request and its an hotset allowed field
+                if (!returnValue && hotsetEnabled) {
+                    returnValue = hotsetAllowedFields.contains(name);
+                }
             }
             if (!returnValue) {
                 LogError(name, status);
@@ -147,11 +163,15 @@ public class ObjectIdentityChecker {
     }
 
     public final boolean IsUpdateValid(Object source, Object destination, Enum<?> status) {
+        return IsUpdateValid(source, destination, status, false);
+    }
+
+    public final boolean IsUpdateValid(Object source, Object destination, Enum<?> status, boolean hotsetEnabled) {
         if (source.getClass() != destination.getClass()) {
             return false;
         }
         for (String fieldName : GetChangedFields(source, destination)) {
-            if (!IsFieldUpdatable(status, fieldName, null)) {
+            if (!IsFieldUpdatable(status, fieldName, null, hotsetEnabled)) {
                 log.warn(String.format("ObjectIdentityChecker.IsUpdateValid:: Not updatable field '%1$s' was updated",
                         fieldName));
                 return false;

@@ -113,6 +113,9 @@ public class VmHandler {
         for (Pair<EditableOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableOnVmStatusField.class,
                 inspectedClassNames)) {
             mUpdateVmsStatic.AddField(Arrays.asList(pair.getFirst().statuses()), pair.getSecond().getName());
+            if (pair.getFirst().isHotsetAllowed()) {
+                mUpdateVmsStatic.AddHotsetFields(pair.getSecond().getName());
+            }
         }
 
         for (Pair<EditableDeviceOnVmStatusField, Field> pair : BaseHandler.extractAnnotatedFields(EditableDeviceOnVmStatusField.class,
@@ -140,6 +143,10 @@ public class VmHandler {
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status) {
         return mUpdateVmsStatic.IsUpdateValid(source, destination, status);
+    }
+
+    public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
+        return mUpdateVmsStatic.IsUpdateValid(source, destination, status, hotsetEnabled);
     }
 
     public static boolean isUpdateValid(VmStatic source, VmStatic destination) {
