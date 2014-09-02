@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
@@ -28,7 +27,7 @@ public class GetAvailableNamespacesQuery<P extends VdcQueryParametersBase> exten
     protected void executeQueryCommand() {
         HashMap<String, List<String>> namespacesMap = new HashMap<>();
         for (ExtensionProxy authz: EngineExtensionsManager.getInstance().getExtensionsByService(Authz.class.getName())) {
-            for (String namespace : authz.getContext().get(Authz.ContextKeys.AVAILABLE_NAMESPACES, Arrays.asList("*"))) {
+            for (String namespace : authz.getContext().get(Authz.ContextKeys.AVAILABLE_NAMESPACES, Collections.<String>emptyList())) {
                 MultiValueMapUtils.addToMap(AuthzUtils.getName(authz), namespace, namespacesMap);
 
             }

@@ -600,11 +600,12 @@ public final class Linq
 
     public static <TSource> TSource firstOrDefault(Iterable<TSource> source)
     {
-        for (TSource item : source)
-        {
-            return item;
+        if (source != null) {
+            for (TSource item : source)
+            {
+                return item;
+            }
         }
-
         return null;
     }
 
