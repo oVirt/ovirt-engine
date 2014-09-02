@@ -104,6 +104,7 @@ public class ExtensionsManager extends Observable {
 
         private String name;
         private File file;
+        private boolean enabled;
         private boolean initialized;
         private ExtensionProxy extension;
 
@@ -113,6 +114,7 @@ public class ExtensionsManager extends Observable {
                 Base.ConfigKeys.NAME,
                 String.format("__unamed_%1$03d__", extensionNameIndex++)
             );
+            this.enabled = Boolean.valueOf(props.getProperty(Base.ConfigKeys.ENABLED, "true"));
         }
 
         private String getFileName() {
@@ -173,6 +175,10 @@ public class ExtensionsManager extends Observable {
 
     private synchronized String loadImpl(Properties props, File confFile) {
         ExtensionEntry entry = new ExtensionEntry(props, confFile);
+        if (!entry.enabled) {
+            return null;
+        }
+
         ExtensionEntry alreadyLoadedEntry = loadedEntries.get(entry.name);
         if (alreadyLoadedEntry != null) {
             throw new ConfigurationException(String.format(
