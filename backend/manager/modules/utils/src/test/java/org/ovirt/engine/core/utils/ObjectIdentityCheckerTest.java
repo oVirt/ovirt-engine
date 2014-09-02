@@ -7,6 +7,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.VMStatus;
 
 public class ObjectIdentityCheckerTest {
     @Test
@@ -47,5 +48,36 @@ public class ObjectIdentityCheckerTest {
         assertFalse("No Change", changed);
         changed = oic.IsFieldsUpdated(jedi1, jedi2, Arrays.asList("saberColor"));
         assertTrue("1 Change", changed);
+    }
+
+    @Test
+    public void testHotsetUpdateableWhenHotsetRequested() {
+        ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
+        oic.AddHotsetFields("name");
+        assertTrue("hot set requested for hot set fields should be true", oic.IsFieldUpdatable(null, "name", null, true));
+    }
+
+    @Test
+    public void testHotsetNotUpdateableWhenHotsetNotRequested() {
+        ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
+        assertFalse("Should be false by default", oic.IsFieldUpdatable("name"));
+        oic.AddHotsetFields("name");
+        assertFalse("hot set not requested should return false even if field is hot set", oic.IsFieldUpdatable(null, "name", null, false));
+    }
+
+    @Test
+    public void testHotsetUpdateableWhenHotsetRequestedWithStatus() {
+        ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
+        oic.AddField(VMStatus.Down, "name");
+        oic.AddHotsetFields("name");
+        assertTrue("hot set requested for hot set fields should be true", oic.IsFieldUpdatable(VMStatus.Down, "name", null, true));
+    }
+
+    @Test
+    public void testHotsetUpdateableWhenHotsetNotRequestedWithStatus() {
+        ObjectIdentityChecker oic = new ObjectIdentityChecker(Jedi.class);
+        oic.AddField(VMStatus.Down, "name");
+        oic.AddHotsetFields("name");
+        assertTrue("hot set not requested field should be updateable according to status", oic.IsFieldUpdatable(VMStatus.Down, "name", null, false));
     }
 }

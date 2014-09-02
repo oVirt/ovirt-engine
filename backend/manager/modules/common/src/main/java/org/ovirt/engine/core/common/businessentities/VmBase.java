@@ -72,7 +72,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private int memSizeMb;
 
-    @EditableField
+    @EditableOnVmStatusField(isHotsetAllowed = true)
+    @EditableOnTemplate
     @CopyOnNewVersion
     private int numOfSockets;
 

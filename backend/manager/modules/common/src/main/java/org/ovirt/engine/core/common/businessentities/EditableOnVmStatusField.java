@@ -11,4 +11,5 @@ public @interface EditableOnVmStatusField {
 
     VMStatus[] statuses() default { VMStatus.Down };
 
+    boolean isHotsetAllowed() default false;
 }

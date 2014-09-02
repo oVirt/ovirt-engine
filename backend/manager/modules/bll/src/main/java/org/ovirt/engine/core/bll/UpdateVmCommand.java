@@ -128,6 +128,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         int cpuPerSocket = newVmStatic.getCpuPerSocket();
+        int numOfSockets = newVmStatic.getNumOfSockets();
 
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
             newVmStatic.setCreationDate(new Date());
@@ -143,7 +144,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         UpdateVmNetworks();
         if (!getParameters().isApplyChangesLater()) {
-            hotSetCpus(cpuPerSocket);
+            hotSetCpus(cpuPerSocket, numOfSockets);
         }
         getVmStaticDAO().update(newVmStatic);
         if (getVm().isNotRunning()) {
@@ -219,23 +220,22 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return DbFacade.getInstance().getSnapshotDao();
     }
 
-    private void hotSetCpus(int cpuPerSocket) {
+    private void hotSetCpus(int cpuPerSocket, int newNumOfSockets) {
         int currentSockets = getVm().getNumOfSockets();
-        int newSockets = newVmStatic.getNumOfSockets();
         int currentCpuPerSocket = getVm().getCpuPerSocket();
 
         // try hotplug only if topology (cpuPerSocket) hasn't changed
-        if (getVm().getStatus() == VMStatus.Up && currentSockets != newSockets
+        if (getVm().getStatus() == VMStatus.Up && currentSockets != newNumOfSockets
                 && currentCpuPerSocket == cpuPerSocket) {
             HotSetNumerOfCpusParameters params =
                     new HotSetNumerOfCpusParameters(
                             newVmStatic,
-                            currentSockets < newSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
+                            currentSockets < newNumOfSockets ? PlugAction.PLUG : PlugAction.UNPLUG);
             setNumberOfCpusResult =
                     runInternalAction(
                             VdcActionType.HotSetNumberOfCpus,
                             params, cloneContextAndDetachFromParent());
-            newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newSockets : currentSockets);
+            newVmStatic.setNumOfSockets(setNumberOfCpusResult.getSucceeded() ? newNumOfSockets : currentSockets);
             auditLogHotSetCpusCandos(params);
         }
     }
@@ -595,7 +595,8 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return getVm().isNextRunConfigurationExists() ||
                 !VmHandler.isUpdateValid(getVm().getStaticData(),
                         getParameters().getVmStaticData(),
-                        getVm().getStatus()) ||
+                        getVm().getStatus(),
+                        !getParameters().isApplyChangesLater()) ||
                 !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
     }
 
