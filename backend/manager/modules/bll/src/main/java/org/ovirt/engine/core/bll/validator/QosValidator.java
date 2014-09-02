@@ -23,7 +23,7 @@ public abstract class QosValidator<T extends QosBase> {
     }
 
     protected T getOldQos() {
-        if (oldQos == null) {
+        if (oldQos == null && qos != null) {
             oldQos = getQosDao().get(qos.getId());
         }
         return oldQos;
@@ -51,7 +51,7 @@ public abstract class QosValidator<T extends QosBase> {
      * Verify that the QoS entity has the same DC ID as the one stored in the database.
      */
     public ValidationResult consistentDataCenter() {
-        return (getOldQos() == null || !qos.getStoragePoolId().equals(getOldQos().getStoragePoolId()))
+        return (qos != null && (getOldQos() == null || !qos.getStoragePoolId().equals(getOldQos().getStoragePoolId())))
                 ? new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_STORAGE_POOL_NOT_CONSISTENT)
                 : ValidationResult.VALID;
     }
