@@ -19,10 +19,17 @@ import org.codehaus.jackson.JsonParseException;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.ovirt.engine.core.utils.servlet.LocaleFilter;
 
 public class BrandingManagerTest {
     BrandingManager testManager;
+
+    @BeforeClass
+    public static void setLocale() {
+        Locale.setDefault(LocaleFilter.DEFAULT_LOCALE);
+    }
 
     @Before
     public void setUp() throws Exception {
