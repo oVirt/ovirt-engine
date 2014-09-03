@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.searchbackend;
 
+
 public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCompleter {
     public static final String FIRST_NAME = "NAME";
     public static final String LAST_NAME = "LASTNAME";
@@ -27,6 +28,7 @@ public class VdcUserConditionFieldAutoCompleter extends BaseConditionFieldAutoCo
         mVerbs.add("TAG");
         mVerbs.add("POOL");
         mVerbs.add("TYPE");
+        verbsWithMultipleValues.add(GROUP);
 
         // Building the auto completion dictionary.
         buildCompletions();
