@@ -21,7 +21,6 @@
     <module name="org.slf4j"/>
     <module name="org.springframework.ldap"/>
     <module name="sun.jdk"/>
-
   </dependencies>
 
 </module>
