@@ -20,6 +20,10 @@ public interface IConditionFieldAutoCompleter extends IAutoCompleter {
 
     String buildFreeTextConditionSql(String tableName, String relations, String value, boolean caseSensitive);
 
+    String getMatchingSyntax(String fieldName, boolean positive, boolean caseSensitive);
+
+    String getWildcard(String fieldName);
+
     String buildConditionSql(String fieldName,
             String customizedValue,
             String customizedRelation,

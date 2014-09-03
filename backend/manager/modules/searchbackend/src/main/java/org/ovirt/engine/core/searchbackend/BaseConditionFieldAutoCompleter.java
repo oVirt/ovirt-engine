@@ -5,8 +5,10 @@ import java.text.DateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.DateEnumForSearch;
 import org.ovirt.engine.core.common.businessentities.Tags;
@@ -34,6 +36,7 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
     protected final Map<String, String> columnNameDict = new HashMap<String, String>();
     protected final Map<String, String> sortableFieldDict = new HashMap<String, String>();
     protected final List<String> notFreeTextSearchableFieldsList = new ArrayList<String>();
+    protected Set<String> verbsWithMultipleValues = new HashSet<String>();
 
     /**
      * Gets the LIKE clause syntax for non case-sensitive search
@@ -48,6 +51,13 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
         else
             return Config.<String> getValue(ConfigValues.DBLikeSyntax);
     }
+
+    public String getMatchingSyntax(String fieldName, boolean positive, boolean caseSensitive) {
+        return verbsWithMultipleValues.contains(fieldName) ?
+                new StringBuilder(positive ? "" : " !").append(caseSensitive ? "~" : "~*").toString()
+                : new StringBuilder(positive ? "" : " NOT ").append(getLikeSyntax(caseSensitive)).toString();
+    }
+
 
     /**
      * Gets the I18N prefix used for value compare.
@@ -376,5 +386,10 @@ public class BaseConditionFieldAutoCompleter extends BaseAutoCompleter implement
             return StringFormat.format(" %1$s.%2$s %3$s %4$s ", tableName, getDbFieldName(fieldName),
                     pair.getFirst(), pair.getSecond());
         }
+    }
+
+    @Override
+    public String getWildcard(String fieldName) {
+        return verbsWithMultipleValues.contains(fieldName) ? ".*" : "%";
     }
 }

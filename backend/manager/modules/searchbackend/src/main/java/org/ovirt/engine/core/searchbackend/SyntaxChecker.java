@@ -1091,9 +1091,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                 String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
             /* enable case-insensitive search by changing operation to I/LIKE */
             if ("=".equals(customizedRelation)) {
-                customizedRelation = BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
+                customizedRelation = conditionFieldAC.getMatchingSyntax(fieldName, true, caseSensitive);
             } else if ("!=".equals(customizedRelation)) {
-                customizedRelation = "NOT " + BaseConditionFieldAutoCompleter.getLikeSyntax(caseSensitive);
+                customizedRelation = conditionFieldAC.getMatchingSyntax(fieldName, false, caseSensitive);
             }
         }
         return customizedRelation;
@@ -1116,7 +1116,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     conditionValueAC.convertFieldEnumValueToActualValue(obj.getBody()));
         } else if ("".equals(fieldName) /* search on all relevant fields */||
                 (String.class.equals(conditionFieldAC.getDbFieldType(fieldName)))) {
-            customizedValue = customizedValue.replace('*', '%');
+            customizedValue = customizedValue.replace("*", conditionFieldAC.getWildcard(fieldName));
         }
         return customizedValue;
     }
