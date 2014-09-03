@@ -26,7 +26,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -60,28 +59,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_UNSUPPORTED_ACTION_FOR_STORAGE_TYPE);
         }
 
-        // Check if the NFS path has a valid format
-        if (newConnectionDetails.getstorage_type() == StorageType.NFS
-                && !new NfsMountPointConstraint().isValid(newConnectionDetails.getconnection(), null)) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
-        }
-
-        if (newConnectionDetails.getstorage_type() == StorageType.POSIXFS
-                && (StringUtils.isEmpty(newConnectionDetails.getVfsType()))) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
-        }
-
-        if (newConnectionDetails.getstorage_type() == StorageType.ISCSI
-                && StringUtils.isEmpty(newConnectionDetails.getiqn())) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
-        }
-
-        if (newConnectionDetails.getstorage_type() == StorageType.ISCSI
-                && !isValidStorageConnectionPort(newConnectionDetails.getport())) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-        }
-
-        if (checkIsConnectionFieldEmpty(newConnectionDetails)) {
+        if (!isValidConnection(newConnectionDetails)) {
             return false;
         }
 
