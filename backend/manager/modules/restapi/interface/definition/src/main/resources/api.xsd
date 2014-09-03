@@ -4799,7 +4799,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="storage_domain" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="storage_domain" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -4830,7 +4830,7 @@
       <xs:extension base="BaseResource">
         <xs:sequence>
           <xs:element ref="qos" minOccurs="0" maxOccurs="1"/>
-          <xs:element ref="cluster" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="cluster" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
