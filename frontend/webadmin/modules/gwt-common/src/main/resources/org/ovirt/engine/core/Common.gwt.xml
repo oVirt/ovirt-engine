@@ -82,6 +82,8 @@
         <include name="common/businessentities/network/VmNic.java" />
         <include name="common/businessentities/network/ExternalSubnet.java" />
         <include name="common/businessentities/network/HostNicVfsConfig.java" />
+        <include name="common/businessentities/network/IpConfiguration.java" />
+        <include name="common/businessentities/network/NetworkAttachment.java" />
 
         <include name="common/businessentities/Commented.java" />
         <include name="common/businessentities/Reasoned.java" />
