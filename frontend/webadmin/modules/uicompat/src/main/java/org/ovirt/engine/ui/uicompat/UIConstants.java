@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-
 import org.ovirt.engine.core.common.businessentities.VmPool;
 
 import com.google.gwt.i18n.client.Constants;
@@ -708,14 +707,18 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             + " operational after connectivity is restored.\n\nAre you sure you want to continue?")
     String youAreAboutChangeClusterCompatibilityVersionNonResponsiveHostsMsg();
 
-    @DefaultStringValue("Moving Quota to Enforce Mode\n" +
-            "All the templates, virtual machines, and disks must be assigned into specific quota allocations otherwise will be unusable.\nUsers should be added as quota consumers.\n\n" +
+    @DefaultStringValue("Moving Quota to Enforce Mode\n"
+            +
+            "All the templates, virtual machines, and disks must be assigned into specific quota allocations otherwise will be unusable.\nUsers should be added as quota consumers.\n\n"
+            +
             "Please consider using Audit mode until you define Quotas for the users.\n\n" +
             "Are you sure you want to continue?")
     String youAreAboutChangeDCQuotaEnforcementMsg();
 
-    @DefaultStringValue("You are about to disable CPU thread support for this cluster. Disabling this can affect the ability to run VMs with certain CPU configurations.\n\n" +
-            "Please ensure there are no VMs in this cluster making use of specific CPU settings such as CPU-pinning which may be affected by this change.\n\n" +
+    @DefaultStringValue("You are about to disable CPU thread support for this cluster. Disabling this can affect the ability to run VMs with certain CPU configurations.\n\n"
+            +
+            "Please ensure there are no VMs in this cluster making use of specific CPU settings such as CPU-pinning which may be affected by this change.\n\n"
+            +
             "Are you sure you want to continue?")
     String youAreAboutChangeClusterCpuThreadSupportMsg();
 
@@ -737,7 +740,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters.")
     String i18NNameValidationMsg();
 
-    @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters, and optionally one sequence of '" + VmPool.MASK_CHARACTER + "' to specify mask for the VM indexes")
+    @DefaultStringValue("Name can contain only alphanumeric, '.', '_' or '-' characters, and optionally one sequence of '"
+            + VmPool.MASK_CHARACTER + "' to specify mask for the VM indexes")
     String poolNameValidationMsg();
 
     @DefaultStringValue("UTF characters are not allowed.")
@@ -880,6 +884,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("This field must contain a CIDR in format xxx.xxx.xxx.xxx/yy, where xxx is between 0 and 255 and yy is between 0 and 32.")
     String thisFieldMustContainCidrInFormatMsg();
+
+    @DefaultStringValue("This field must contain CIDR notation of an IP subnet, please ensure that the IP address matches the prefix.\nexample:\n\tvalid network address: 2.2.0.0/16\n\tinvalid: 2.2.0.1/16")
+    String cidrNotNetworkAddress();
 
     @DefaultStringValue("This field can't contain spaces.")
     String thisFieldCantConatainSpacesMsg();
@@ -1416,13 +1423,17 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Could not read templates from Export Domain")
     String couldNotReadTemplatesFromExportDomainMsg();
 
-    @DefaultStringValue("The following virtual machines are based on templates which do not exist on the export domain and are required for the virtual machines to function.\n" +
-            "If you proceed you will not be able to import these virtual machines unless you already have the relevant templates on the target domains.\n" +
+    @DefaultStringValue("The following virtual machines are based on templates which do not exist on the export domain and are required for the virtual machines to function.\n"
+            +
+            "If you proceed you will not be able to import these virtual machines unless you already have the relevant templates on the target domains.\n"
+            +
             "Do you wish to continue anyway?")
     String theFollowingTemplatesAreMissingOnTargetExportDomainMsg();
 
-    @DefaultStringValue("The following template versions are based on templates which do not exist on the export domain and are required for the template version to function.\n" +
-            "If you proceed you will not be able to import these template versions unless you already have the relevant templates on the target domains, or by using Clone.\n" +
+    @DefaultStringValue("The following template versions are based on templates which do not exist on the export domain and are required for the template version to function.\n"
+            +
+            "If you proceed you will not be able to import these template versions unless you already have the relevant templates on the target domains, or by using Clone.\n"
+            +
             "Do you wish to continue anyway?")
     String theFollowingTemplatesAreMissingOnTargetExportDomainForTemplateVersionsMsg();
 
@@ -1877,7 +1888,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Some imported VMs depend on one or more templates which are " +
             "not available in the system. Therefore you must Import those VMs with 'collapse snapshots', " +
-    "another option is to Import missing templates first and then try import the VMs again")
+            "another option is to Import missing templates first and then try import the VMs again")
     String importMissingStorages();
 
     @DefaultStringValue("The selected default Storage Domain is not applicable for all disks " +
@@ -2240,6 +2251,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Not available when Templates are not configured.")
     String notAvailableWithNoTemplates();
+
     @DefaultStringValue("Connecting to pool not supported.")
     String connectToPoolNotSupported();
 
@@ -2429,4 +2441,3 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Click on Numa Pinning to configure VM's virtual node span on top of physical host NUMA nodes")
     String numaInfoMessage();
 }
-

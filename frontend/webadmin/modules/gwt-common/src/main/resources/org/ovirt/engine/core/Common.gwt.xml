@@ -292,6 +292,7 @@
 		<!-- Backend Validation framework -->
 		<include name="common/validation/annotation/HostnameOrIp.java" />
 		<include name="common/validation/group/**" />
+		<include name="common/validation/CidrValidator.java"/>
 
 		<!-- Gluster -->
 		<include name="common/businessentities/gluster/GlusterVolumeEntity.java" />
