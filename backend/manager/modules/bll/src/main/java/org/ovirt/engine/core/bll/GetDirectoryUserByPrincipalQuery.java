@@ -25,7 +25,9 @@ public class GetDirectoryUserByPrincipalQuery<P extends GetDirectoryUserByPrinci
                                 EngineExtensionsManager.getInstance().getExtensionByName(
                                         getParameters().getAuthz()
                                         ),
-                                getParameters().getPrincnipal()
+                                getParameters().getPrincnipal(),
+                                false,
+                                false
                         )
                 )
         );

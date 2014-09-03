@@ -35,14 +35,14 @@ public class AuthzUtils {
     }
 
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
-        return fetchPrincipalRecordImpl(extension, Authn.InvokeKeys.AUTH_RECORD, authRecord);
+        return fetchPrincipalRecordImpl(extension, Authn.InvokeKeys.AUTH_RECORD, authRecord, true, true);
     }
 
-    public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, String principal) {
-        return fetchPrincipalRecordImpl(extension, Authz.InvokeKeys.PRINCIPAL, principal);
+    public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, String principal, boolean resolveGroups, boolean resolveGroupsRecursive) {
+        return fetchPrincipalRecordImpl(extension, Authz.InvokeKeys.PRINCIPAL, principal, resolveGroups, resolveGroupsRecursive);
     }
 
-    private static ExtMap fetchPrincipalRecordImpl(final ExtensionProxy extension, ExtKey key, Object value) {
+    private static ExtMap fetchPrincipalRecordImpl(final ExtensionProxy extension, ExtKey key, Object value, boolean resolveGroups, boolean resolveGroupsRecursive) {
         ExtMap ret = null;
         ExtMap output = extension.invoke(new ExtMap().mput(
                 Base.InvokeKeys.COMMAND,
@@ -50,6 +50,13 @@ public class AuthzUtils {
                 ).mput(
                         key,
                         value
+                ).mput(
+                        Authz.InvokeKeys.QUERY_FLAGS,
+                        (
+                            (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
+                            (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0) |
+                            0
+                        )
                 ));
         if (output.<Integer> get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
             ret = output.<ExtMap> get(Authz.InvokeKeys.PRINCIPAL_RECORD);

@@ -59,7 +59,7 @@ public class Authz {
          * Principal value.
          * @see PrincipalRecord
          */
-        public static final ExtKey PRINCIPAL = new ExtKey("AAA_AUTHZ_PRINCIPAL_RECORD", String.class, "a3c1d5ca-f1ea-131c-86ae-a1ecbcadd6b7");
+        public static final ExtKey PRINCIPAL = new ExtKey("AAA_AUTHZ_PRINCIPAL", String.class, "a3c1d5ca-f1ea-131c-86ae-a1ecbcadd6b7");
         /**
          * AuthResult of operation.
          * @see Status
@@ -117,6 +117,7 @@ public class Authz {
          * <ul>
          * <li>{@link Authn.InvokeKeys#AUTH_RECORD}[O] - authentication record.</li>
          * <li>{@link Authz.InvokeKeys#PRINCIPAL}[O] - principal.</li>
+         * <li>{@link InvokeKeys#QUERY_FLAGS}[O] - query flags.</li>
          * </ul>
          * </p>
          *
