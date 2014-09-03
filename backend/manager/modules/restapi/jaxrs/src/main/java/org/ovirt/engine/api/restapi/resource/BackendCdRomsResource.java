@@ -55,7 +55,7 @@ public class BackendCdRomsResource
 
     @Override
     protected String[] getRequiredUpdateFields() {
-        return new String[] { "file.id" };
+        return new String[] { "file" };
     }
 
     @Override

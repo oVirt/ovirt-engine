@@ -32,6 +32,7 @@ import org.ovirt.engine.core.compat.Guid;
 public class BackendCdRomResourceTest
         extends AbstractBackendSubResourceTest<CdRom, VM, BackendDeviceResource<CdRom, CdRoms, VM>> {
 
+    protected static final String EJECT_ISO = "";
     protected static BackendCdRomsResource collection = getCollection();
 
     public BackendCdRomResourceTest() {
@@ -147,18 +148,19 @@ public class BackendCdRomResourceTest
     }
 
     @Test
-    public void testChangeCdIncompleteParameters() throws Exception {
-        setUriInfo(setUpBasicUriExpectations());
-        resource.setUriInfo(setUpBasicUriExpectations());
+    public void testEjectCd() throws Exception {
+        setUriInfo(setUpChangeCdUriMatrixExpectations());
+        setUpGetEntityExpectations(1, VMStatus.Up);
+        setUpActionExpectations(VdcActionType.ChangeDisk,
+                                ChangeDiskCommandParameters.class,
+                                new String[] {"CdImagePath"},
+                                new Object[] {EJECT_ISO},
+                                true,
+                                true);
         CdRom update = getUpdate();
-        update.getFile().setId(null);
-        control.replay();
-        try {
-            resource.update(update);
-            fail("expected WebApplicationException on incomplete parameters");
-        } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "CdRom", "update", "file.id");
-        }
+        update.getFile().setId(EJECT_ISO);
+        CdRom cdrom = resource.update(update);
+        assertEquals(EJECT_ISO, cdrom.getFile().getId());
     }
 
     @Test
@@ -251,14 +253,14 @@ public class BackendCdRomResourceTest
     @Test
     public void testUpdateIncompleteParameters() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
-        CdRom update = getUpdate();
-        update.getFile().setId(null);
+        CdRom update = new CdRom();
+        update.setFile(null);
         control.replay();
         try {
             resource.update(update);
             fail("expected WebApplicationException on incomplete parameters");
         } catch (WebApplicationException wae) {
-             verifyIncompleteException(wae, "CdRom", "update", "file.id");
+             verifyIncompleteException(wae, "CdRom", "update", "file");
         }
     }
 

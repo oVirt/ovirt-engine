@@ -375,7 +375,7 @@ public final class ImagesHandler {
 
     public static String cdPathWindowsToLinux(String windowsPath, Guid storagePoolId, Guid vdsId) {
         if (StringUtils.isEmpty(windowsPath)) {
-            return windowsPath; // empty string is used for 'eject'
+            return ""; // empty string is used for 'eject'
         }
         return cdPathWindowsToLinux(windowsPath, (String) Backend.getInstance()
                 .getResourceManager()
