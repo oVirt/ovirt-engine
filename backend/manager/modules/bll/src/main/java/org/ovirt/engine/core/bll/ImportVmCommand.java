@@ -724,7 +724,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                     moveOrCopyAllImageGroups();
                 }
                 VmDeviceUtils.addImportedDevices(getVm().getStaticData(), getParameters().isImportAsNewEntity());
-                VmHandler.lockVm(getVm().getId());
                 if (getParameters().isImportAsNewEntity()) {
                     getParameters().setVm(getVm());
                     setVmId(getVm().getId());
