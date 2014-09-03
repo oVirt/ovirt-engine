@@ -448,6 +448,7 @@ public class VmDAODbFacadeImpl extends BaseDAODbFacade implements VmDAO {
             entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
             entity.setSpiceFileTransferEnabled(rs.getBoolean("is_spice_file_transfer_enabled"));
             entity.setSpiceCopyPasteEnabled(rs.getBoolean("is_spice_copy_paste_enabled"));
+            entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
             return entity;
         }
     }
