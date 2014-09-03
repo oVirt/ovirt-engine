@@ -54,8 +54,7 @@ public class AuthzUtils {
                         Authz.InvokeKeys.QUERY_FLAGS,
                         (
                             (resolveGroups ? Authz.QueryFlags.RESOLVE_GROUPS : 0) |
-                            (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0) |
-                            0
+                            (resolveGroupsRecursive ? Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE : 0)
                         )
                 ));
         if (output.<Integer> get(Authz.InvokeKeys.STATUS) == Authz.Status.SUCCESS) {
