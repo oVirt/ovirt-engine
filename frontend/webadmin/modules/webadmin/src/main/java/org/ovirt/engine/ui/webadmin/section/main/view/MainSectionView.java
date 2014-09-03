@@ -173,6 +173,8 @@ public class MainSectionView extends AbstractView implements MainSectionPresente
                     case TREE_INDEX:
                         bookmarkModelProvider.getModel().stopRefresh();
                         tagModelProvider.getModel().stopRefresh();
+                        // Reset system tree to the root item.
+                        treeModelProvider.getModel().getResetCommand().execute();
                         break;
                     case BOOKMARK_INDEX:
                         treeModelProvider.getModel().stopRefresh();

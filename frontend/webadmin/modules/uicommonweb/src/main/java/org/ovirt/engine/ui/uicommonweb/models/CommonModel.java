@@ -224,10 +224,6 @@ public class CommonModel extends ListModel
 
     private void tagListModel_SelectedItemsChanged(Object sender, EventArgs e)
     {
-        // Reset system tree to the root item.
-        getSystemTree().getSelectedItemChangedEvent().removeListener(this);
-        getSystemTree().getResetCommand().execute();
-        getSystemTree().getSelectedItemChangedEvent().addListener(this);
 
         boolean hadSelectedTags = getHasSelectedTags();
         updateHasSelectedTags();
@@ -274,17 +270,12 @@ public class CommonModel extends ListModel
         }
     }
 
-    private void bookmarkListModel_Navigated(Object sender, BookmarkEventArgs e)
+    private void bookmarkListModel_Navigated(Object sender, final BookmarkEventArgs e)
     {
         // Reset tags tree to the root item.
         getTagList().getSelectedItemsChangedEvent().removeListener(this);
         getTagList().getResetCommand().execute();
         getTagList().getSelectedItemsChangedEvent().addListener(this);
-
-        // Reset system tree to the root item.
-        getSystemTree().getSelectedItemChangedEvent().removeListener(this);
-        getSystemTree().getResetCommand().execute();
-        getSystemTree().getSelectedItemChangedEvent().addListener(this);
 
         // the main tabs that should appear when a bookmark is selected should
         // be the exact same main tabs that are displayed when the "System" node
