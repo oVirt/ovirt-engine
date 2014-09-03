@@ -37,9 +37,4 @@ public class DnsServersWidget extends ScrollableAddRemoveRowWidget<ListModel<Ent
     protected boolean isGhost(EntityModel<String> value) {
         return StringUtils.isEmpty(value.getEntity());
     }
-
-    @Override
-    protected void toggleGhost(EntityModel<String> value, DnsServerEditor widget, boolean becomingGhost) {
-        // do nothing, widgets look the same as ghost widgets (only one UI field)
-    }
 }

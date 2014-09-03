@@ -44,11 +44,6 @@ public class NicLabelWidget extends ScrollableAddRemoveRowWidget<NicLabelModel, 
     }
 
     @Override
-    protected void toggleGhost(ListModel<String> value, NicLabelEditor widget, boolean becomingGhost) {
-        // do nothing, widgets look the same as ghost widgets (only one UI field)
-    }
-
-    @Override
     public void edit(NicLabelModel model) {
         suggestions = model.getSuggestedLabels();
         super.edit(model);

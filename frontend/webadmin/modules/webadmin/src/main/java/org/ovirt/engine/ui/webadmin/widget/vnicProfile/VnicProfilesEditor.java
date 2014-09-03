@@ -59,6 +59,7 @@ public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProf
 
     @Override
     protected void toggleGhost(VnicProfileModel value, VnicProfileWidget widget, boolean becomingGhost) {
+        super.toggleGhost(value, widget, becomingGhost);
         widget.publicUseEditor.setEnabled(!becomingGhost && value.getPublicUse().getIsChangable());
         widget.networkQoSEditor.setEnabled(!becomingGhost && value.getNetworkQoS().getIsChangable());
     }
