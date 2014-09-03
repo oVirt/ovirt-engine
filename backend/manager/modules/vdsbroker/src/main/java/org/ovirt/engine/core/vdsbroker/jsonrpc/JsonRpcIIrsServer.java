@@ -401,7 +401,7 @@ public class JsonRpcIIrsServer implements IIrsServer {
                 new RequestBuilder("Image.move").withParameter("imageID", imgGUID)
                         .withParameter("storagepoolID", spUUID)
                         .withParameter("storagedomainID", srcDomUUID)
-                        .withParameter("dstSdUUID  ", dstDomUUID)
+                        .withParameter("dstSdUUID", dstDomUUID)
                         .withParameter("operation", op)
                         .withParameter("postZero", postZero)
                         .withParameter("force", force)
