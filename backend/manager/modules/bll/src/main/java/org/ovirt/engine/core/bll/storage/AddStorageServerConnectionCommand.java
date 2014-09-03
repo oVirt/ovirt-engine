@@ -13,14 +13,12 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
-import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -79,26 +77,7 @@ public class AddStorageServerConnectionCommand<T extends StorageServerConnection
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_CONNECTION_ID_NOT_EMPTY);
         }
 
-        if (paramConnection.getstorage_type() == StorageType.NFS
-                && !new NfsMountPointConstraint().isValid(paramConnection.getconnection(), null)) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
-        }
-        if (paramConnection.getstorage_type() == StorageType.POSIXFS
-                && (StringUtils.isEmpty(paramConnection.getVfsType()))) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
-        }
-
-        if (paramConnection.getstorage_type() == StorageType.ISCSI
-                && StringUtils.isEmpty(paramConnection.getiqn())) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
-        }
-
-        if (paramConnection.getstorage_type() == StorageType.ISCSI
-                && !isValidStorageConnectionPort(paramConnection.getport())) {
-            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-        }
-
-        if (checkIsConnectionFieldEmpty(paramConnection)) {
+        if (!isValidConnection(paramConnection)) {
             return false;
         }
 

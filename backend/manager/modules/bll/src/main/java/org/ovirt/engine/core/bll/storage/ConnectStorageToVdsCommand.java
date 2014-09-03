@@ -13,8 +13,10 @@ import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
+import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
@@ -71,5 +73,32 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
 
     protected boolean isValidStorageConnectionPort(String port) {
          return !StringUtils.isEmpty(port) && StringUtils.isNumeric(port) && Integer.parseInt(port) > 0;
+    }
+
+    protected boolean isValidConnection(StorageServerConnections conn) {
+        StorageType storageType = conn.getstorage_type();
+
+        if (storageType == StorageType.NFS && !new NfsMountPointConstraint().isValid(conn.getconnection(), null)) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
+        }
+
+        if (storageType == StorageType.POSIXFS && (StringUtils.isEmpty(conn.getVfsType()))) {
+            return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+        }
+
+        if (storageType == StorageType.ISCSI) {
+            if (StringUtils.isEmpty(conn.getiqn())) {
+                return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
+            }
+            if (!isValidStorageConnectionPort(conn.getport())) {
+                return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
+            }
+        }
+
+        if (checkIsConnectionFieldEmpty(conn)) {
+            return false;
+        }
+
+        return true;
     }
 }
