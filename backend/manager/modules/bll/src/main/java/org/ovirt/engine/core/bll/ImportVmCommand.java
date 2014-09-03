@@ -1041,18 +1041,16 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     private int computeMinAllocatedMem() {
-        int vmMem = getVm().getMemSizeMb();
-        int minAllocatedMem = vmMem;
         if (getVm().getMinAllocatedMem() > 0) {
-            minAllocatedMem = getVm().getMinAllocatedMem();
-        } else {
-            // first get cluster memory over commit value
-            VDSGroup vdsGroup = getVdsGroup();
-            if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
-                minAllocatedMem = (vmMem * 100) / vdsGroup.getmax_vds_memory_over_commit();
-            }
+            return getVm().getMinAllocatedMem();
         }
-        return minAllocatedMem;
+
+        VDSGroup vdsGroup = getVdsGroup();
+        if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
+            return (getVm().getMemSizeMb() * 100) / vdsGroup.getmax_vds_memory_over_commit();
+        }
+
+        return getVm().getMemSizeMb();
     }
 
     private void logImportEvents() {
