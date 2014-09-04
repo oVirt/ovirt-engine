@@ -47,7 +47,7 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class UpdateStorageServerConnectionCommandTest {
+public class UpdateStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
 
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
@@ -75,7 +75,6 @@ public class UpdateStorageServerConnectionCommandTest {
     @Mock
     private StorageDomainDAO storageDomainDAO;
 
-    private StorageServerConnectionParametersBase parameters;
 
     @Before
     public void prepareParams() {
@@ -104,61 +103,14 @@ public class UpdateStorageServerConnectionCommandTest {
 
         command = spy(new UpdateStorageServerConnectionCommand<StorageServerConnectionParametersBase>(parameters));
         doReturn(storageConnDao).when(command).getStorageConnDao();
-        doReturn(storageDomainDynamicDao).when(command).getStorageDomainDynamicDao();
-        doReturn(storagePoolIsoMapDAO).when(command).getStoragePoolIsoMapDao();
+        doReturn(storageDomainDynamicDao).when((UpdateStorageServerConnectionCommand) command).getStorageDomainDynamicDao();
+        doReturn(storagePoolIsoMapDAO).when((UpdateStorageServerConnectionCommand) command).getStoragePoolIsoMapDao();
         doReturn(lunDAO).when(command).getLunDao();
         doReturn(vmDAO).when(command).getVmDAO();
         doReturn(storageDomainDAO).when(command).getStorageDomainDao();
     }
 
-    private StorageServerConnections createNFSConnection(String connection,
-            StorageType type,
-            NfsVersion version,
-            int timeout,
-            int retrans) {
-        Guid id = Guid.newGuid();
-        StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
-        connectionDetails.setNfsVersion(version);
-        connectionDetails.setNfsTimeo((short) timeout);
-        connectionDetails.setNfsRetrans((short) retrans);
-        return connectionDetails;
-    }
-
-    private StorageServerConnections createPosixConnection(String connection,
-            StorageType type,
-            String vfsType,
-            String mountOptions) {
-        Guid id = Guid.newGuid();
-        StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
-        connectionDetails.setVfsType(vfsType);
-        connectionDetails.setMountOptions(mountOptions);
-        return connectionDetails;
-    }
-
-    private StorageServerConnections createISCSIConnection(String connection,
-            StorageType type,
-            String iqn,
-            String port,
-            String user,
-            String password) {
-        Guid id = Guid.newGuid();
-        StorageServerConnections connectionDetails = populateBasicConnectionDetails(id, connection, type);
-        connectionDetails.setiqn(iqn);
-        connectionDetails.setport(port);
-        connectionDetails.setuser_name(user);
-        connectionDetails.setpassword(password);
-        return connectionDetails;
-    }
-
-    private StorageServerConnections populateBasicConnectionDetails(Guid id, String connection, StorageType type) {
-        StorageServerConnections connectionDetails = new StorageServerConnections();
-        connectionDetails.setid(id.toString());
-        connectionDetails.setconnection(connection);
-        connectionDetails.setstorage_type(type);
-        return connectionDetails;
-    }
-
-    private StorageDomain createDomain(StorageDomainDynamic domainDynamic) {
+    protected StorageDomain createDomain(StorageDomainDynamic domainDynamic) {
         StorageDomain domain = new StorageDomain();
         domain.setStorageName("mydomain");
         return domain;
@@ -239,59 +191,6 @@ public class UpdateStorageServerConnectionCommandTest {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID);
     }
-
-    @Test
-    public void updatePosixEmptyVFSType() {
-        StorageServerConnections newPosixConnection =
-                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
-                        StorageType.POSIXFS,
-                        null,
-                        "timeo=30");
-        parameters.setStorageServerConnection(newPosixConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
-    }
-
-    @Test
-    public void updateISCSIConnectionEmptyIqn() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "3260", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
-    }
-
-    @Test
-    public void addISCSIEmptyPort() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-    }
-
-    @Test
-    public void addISCSIInvalidPort() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "-3650", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-    }
-
-    @Test
-    public void addISCSIInvalidPortWithCharacters() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "abc", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-    }
-
 
     @Test
     public void updateSeveralConnectionsWithSamePath() {
@@ -809,5 +708,13 @@ public class UpdateStorageServerConnectionCommandTest {
        when(storageConnDao.getAllForConnection(newISCSIConnection)).thenReturn(connections);
        boolean isExists = command.isConnWithSameDetailsExists(newISCSIConnection, null);
         assertFalse(isExists);
+    }
+
+    protected ConnectStorageToVdsCommand getCommand() {
+        return command;
+    }
+
+    protected boolean createConnectionWithId() {
+        return true;
     }
 }

@@ -30,13 +30,11 @@ import org.ovirt.engine.core.dao.StorageServerConnectionDAO;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
 
 @RunWith(MockitoJUnitRunner.class)
-public class AddStorageServerConnectionCommandTest {
+public class AddStorageServerConnectionCommandTest extends StorageServerConnectionTestCommon {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule();
 
     private AddStorageServerConnectionCommand<StorageServerConnectionParametersBase> command = null;
-
-    private StorageServerConnectionParametersBase parameters;
 
     @Mock
     StorageServerConnectionDAO storageConnDao;
@@ -53,49 +51,6 @@ public class AddStorageServerConnectionCommandTest {
         doReturn(storageDomainDao).when(command).getStorageDomainDao();
     }
 
-    private StorageServerConnections createPosixConnection(String connection,
-            StorageType type,
-            String vfsType,
-            String mountOptions) {
-        StorageServerConnections connectionDetails = populateBasicConnectionDetails(connection, type);
-        connectionDetails.setVfsType(vfsType);
-        connectionDetails.setMountOptions(mountOptions);
-        return connectionDetails;
-    }
-
-    private StorageServerConnections createISCSIConnection(String connection,
-            StorageType type,
-            String iqn,
-            String port,
-            String user,
-            String password) {
-        StorageServerConnections connectionDetails = populateBasicConnectionDetails(connection, type);
-        connectionDetails.setiqn(iqn);
-        connectionDetails.setport(port);
-        connectionDetails.setuser_name(user);
-        connectionDetails.setpassword(password);
-        return connectionDetails;
-    }
-
-    private StorageServerConnections populateBasicConnectionDetails(String connection, StorageType type) {
-        StorageServerConnections connectionDetails = new StorageServerConnections();
-        connectionDetails.setconnection(connection);
-        connectionDetails.setstorage_type(type);
-        return connectionDetails;
-    }
-
-    @Test
-    public void addPosixEmptyVFSType() {
-        StorageServerConnections newPosixConnection =
-                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
-                        StorageType.POSIXFS,
-                        null,
-                        "timeo=30");
-        parameters.setStorageServerConnection(newPosixConnection);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
-    }
-
     @Test
     public void addPosixNonEmptyVFSType() {
         StorageServerConnections newPosixConnection =
@@ -107,46 +62,6 @@ public class AddStorageServerConnectionCommandTest {
         parameters.setVdsId(Guid.Empty);
         doReturn(false).when(command).isConnWithSameDetailsExists(newPosixConnection, null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
-    }
-
-    @Test
-    public void addISCSIEmptyIqn() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "", "3650", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
-    }
-
-    @Test
-    public void addISCSIEmptyPort() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-    }
-
-    @Test
-    public void addISCSIInvalidPort() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "-3650", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
-    }
-
-    @Test
-    public void addISCSIInvalidPortWithCharacters() {
-        StorageServerConnections newISCSIConnection =
-                createISCSIConnection("10.35.16.25", StorageType.ISCSI, "iqn.2013-04.myhat.com:aaa-target1", "abc", "user1", "mypassword123");
-        parameters.setStorageServerConnection(newISCSIConnection);
-        parameters.setVdsId(Guid.Empty);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.VALIDATION_STORAGE_CONNECTION_INVALID_PORT);
     }
 
     @Test
@@ -289,8 +204,8 @@ public class AddStorageServerConnectionCommandTest {
 
     @Test
     public void isLocalDomainConnWithSamePathAndPoolExist() {
-        StorageServerConnections newLocalConnection = populateBasicConnectionDetails("/localSD", StorageType.LOCALFS);
-        StorageServerConnections existingConn = populateBasicConnectionDetails("/localSD", StorageType.LOCALFS);
+        StorageServerConnections newLocalConnection = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
+        StorageServerConnections existingConn = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
         existingConn.setid(Guid.newGuid().toString());
 
         Guid storagePoolId = Guid.newGuid();
@@ -305,8 +220,8 @@ public class AddStorageServerConnectionCommandTest {
 
     @Test
     public void isLocalDomainConnWithSamePathAndPoolNotExist() {
-        StorageServerConnections newLocalConnection = populateBasicConnectionDetails("/localSD", StorageType.LOCALFS);
-        StorageServerConnections existingConn = populateBasicConnectionDetails("/localSD", StorageType.LOCALFS);
+        StorageServerConnections newLocalConnection = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
+        StorageServerConnections existingConn = populateBasicConnectionDetails(null, "/localSD", StorageType.LOCALFS);
 
         Guid newLocalConnectionStoragePoolId = Guid.newGuid();
         Guid existingLocalConnectionStoragePoolId = Guid.newGuid();
@@ -318,5 +233,13 @@ public class AddStorageServerConnectionCommandTest {
 
         boolean isExists = command.isConnWithSameDetailsExists(newLocalConnection, newLocalConnectionStoragePoolId);
         assertFalse(isExists);
+    }
+
+    protected ConnectStorageToVdsCommand getCommand() {
+        return command;
+    }
+
+    protected boolean createConnectionWithId() {
+        return false;
     }
 }
