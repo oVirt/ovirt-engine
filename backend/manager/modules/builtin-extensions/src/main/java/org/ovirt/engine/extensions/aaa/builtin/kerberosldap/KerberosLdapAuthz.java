@@ -278,7 +278,7 @@ public class KerberosLdapAuthz implements Extension {
                         user.getTitle()
                 ).mput(
                         Authz.PrincipalRecord.PRINCIPAL,
-                        user.getUserName()
+                        removeUpnSuffix(user.getUserName())
                 );
         if (user.getGroups() != null) {
             List<ExtMap> groups = new ArrayList<>();
