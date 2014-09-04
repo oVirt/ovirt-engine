@@ -10,7 +10,6 @@ import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -2200,9 +2199,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         VM vm = vmListModel.getcurrentVm();
                         vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                        AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
-                                unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
-                                Guid.Empty);
+                        VmManagementParametersBase param = new VmManagementParametersBase(vm);
+                        param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                         param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());

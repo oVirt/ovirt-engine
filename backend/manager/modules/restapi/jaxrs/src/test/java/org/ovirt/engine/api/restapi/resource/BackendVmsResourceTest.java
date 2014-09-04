@@ -33,7 +33,6 @@ import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -524,7 +523,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  AddVmFromTemplateParameters.class,
+                                  VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -607,7 +606,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  AddVmFromTemplateParameters.class,
+                                  VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -1139,7 +1138,7 @@ public class BackendVmsResourceTest
                                      getVdsGroupEntity());
 
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  AddVmFromTemplateParameters.class,
+                                  VmManagementParametersBase.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
                                   new Object[] { GUIDS[0], copy },
                                   true,

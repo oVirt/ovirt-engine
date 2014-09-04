@@ -40,7 +40,6 @@ import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -311,7 +310,8 @@ public class BackendVmsResource extends
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
-        AddVmFromTemplateParameters params = new AddVmFromTemplateParameters(staticVm, getDisksToClone(vm.getDisks(), templateId), Guid.Empty);
+        VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         params.setVmPayload(getPayload(vm));
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
                 vm.getVirtioScsi().isEnabled() : null);

@@ -36,7 +36,6 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -132,7 +131,7 @@ public class AddVmCommandTest {
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
         VM vm = createVm();
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
+        AddVmFromTemplateCommand<VmManagementParametersBase> cmd = createVmFromTemplateCommand(vm);
 
         mockStorageDomainDAOGetForStoragePool();
         mockVdsGroupDAOReturnVdsGroup();
@@ -208,7 +207,7 @@ public class AddVmCommandTest {
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         VM vm = createVm();
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
+        AddVmFromTemplateCommand<VmManagementParametersBase> cmd = createVmFromTemplateCommand(vm);
 
         VDSGroup vdsGroup = createVdsGroup();
 
@@ -294,11 +293,11 @@ public class AddVmCommandTest {
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 
-    protected AddVmFromTemplateCommand<AddVmFromTemplateParameters> createVmFromTemplateCommand(VM vm) {
-        AddVmFromTemplateParameters param = new AddVmFromTemplateParameters();
+    protected AddVmFromTemplateCommand<VmManagementParametersBase> createVmFromTemplateCommand(VM vm) {
+        VmManagementParametersBase param = new VmManagementParametersBase();
         param.setVm(vm);
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> concrete =
-                new AddVmFromTemplateCommand<AddVmFromTemplateParameters>(param) {
+        AddVmFromTemplateCommand<VmManagementParametersBase> concrete =
+                new AddVmFromTemplateCommand<VmManagementParametersBase>(param) {
                     @Override
                     protected void initTemplateDisks() {
                         // Stub for testing
@@ -314,7 +313,7 @@ public class AddVmCommandTest {
                         return createVmTemplate();
                     }
                 };
-        AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
+        AddVmFromTemplateCommand<VmManagementParametersBase> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
         doReturn(Collections.emptyList()).when(result).validateCustomProperties(any(VmStatic.class));
@@ -603,7 +602,7 @@ public class AddVmCommandTest {
         return disksList;
     }
 
-    private void mockGetAllSnapshots(AddVmFromTemplateCommand<AddVmFromTemplateParameters> command) {
+    private void mockGetAllSnapshots(AddVmFromTemplateCommand<VmManagementParametersBase> command) {
         doAnswer(new Answer<List<DiskImage>>() {
             @Override
             public List<DiskImage> answer(InvocationOnMock invocation) throws Throwable {

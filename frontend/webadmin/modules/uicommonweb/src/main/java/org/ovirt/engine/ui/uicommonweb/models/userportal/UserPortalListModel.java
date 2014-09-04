@@ -9,7 +9,6 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -1122,9 +1121,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             VM vm = gettempVm();
                             vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                            AddVmFromTemplateParameters param = new AddVmFromTemplateParameters(vm,
-                                    unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap(),
-                                    Guid.Empty);
+                            VmManagementParametersBase param = new VmManagementParametersBase(vm);
+                            param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
                             param.setMakeCreatorExplicitOwner(true);
                             param.setCopyTemplatePermissions(unitVmModel.getCopyPermissions().getEntity());
 

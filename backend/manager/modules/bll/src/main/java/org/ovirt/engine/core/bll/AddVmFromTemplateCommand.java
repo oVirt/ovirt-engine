@@ -9,12 +9,12 @@ import java.util.Set;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AddVmFromTemplateParameters;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -32,7 +32,7 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 /**
  * This class adds a cloned VM from a template (Deep disk copy)
  */
-public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> extends AddVmCommand<T> {
+public class AddVmFromTemplateCommand<T extends VmManagementParametersBase> extends AddVmCommand<T> {
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
 
@@ -57,7 +57,6 @@ public class AddVmFromTemplateCommand<T extends AddVmFromTemplateParameters> ext
     @Override
     protected void executeVmCommand() {
         super.executeVmCommand();
-        getParameters().originalTemplate = getVm().getVmtGuid();
         getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
         getVm().getStaticData().setQuotaId(getParameters().getVmStaticData().getQuotaId());
         DbFacade.getInstance().getVmStaticDao().update(getVm().getStaticData());
