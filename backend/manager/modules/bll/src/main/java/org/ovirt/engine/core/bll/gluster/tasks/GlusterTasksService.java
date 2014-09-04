@@ -27,7 +27,7 @@ public class GlusterTasksService {
         VDS upServer = ClusterUtils.getInstance().getRandomUpServer(id);
         if (upServer == null) {
             log.info("No up server in cluster");
-            throw new VdcBLLException(VdcBllErrors.NO_UP_SERVER_FOUND);
+            return null;
         }
         VDSReturnValue returnValue =runVdsCommand(VDSCommandType.GlusterTasksList,
                 new VdsIdVDSCommandParametersBase(upServer.getId()));
