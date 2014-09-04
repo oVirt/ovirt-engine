@@ -997,16 +997,15 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     void addVmDynamic() {
-        VmDynamic tempVar = new VmDynamic();
-        tempVar.setId(getVmId());
-        tempVar.setStatus(VMStatus.Down);
-        tempVar.setVmHost("");
-        tempVar.setVmIp("");
-        tempVar.setVmFQDN("");
-        tempVar.setDisplayType(getParameters().getVmStaticData().getDefaultDisplayType());
-        tempVar.setLastStopTime(new Date());
-        VmDynamic vmDynamic = tempVar;
-        DbFacade.getInstance().getVmDynamicDao().save(vmDynamic);
+        VmDynamic vmDynamic = new VmDynamic();
+        vmDynamic.setId(getVmId());
+        vmDynamic.setStatus(VMStatus.Down);
+        vmDynamic.setVmHost("");
+        vmDynamic.setVmIp("");
+        vmDynamic.setVmFQDN("");
+        vmDynamic.setDisplayType(getParameters().getVmStaticData().getDefaultDisplayType());
+        vmDynamic.setLastStopTime(new Date());
+        getDbFacade().getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);
     }
 
@@ -1018,25 +1017,16 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
     }
 
     protected boolean addVmImages() {
-        if (vmDisksSource.getDiskTemplateMap().size() > 0) {
+        if (!vmDisksSource.getDiskTemplateMap().isEmpty()) {
             if (getVm().getStatus() != VMStatus.Down) {
                 log.error("Cannot add images. VM is not Down");
                 throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
             }
             VmHandler.lockVm(getVmId());
-            for (DiskImage dit : getImagesToCheckDestinationStorageDomains()) {
-                CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
-                        dit.getImageId(), getParameters().getVmStaticData().getId());
-                tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(dit.getId()).getStorageIds().get(0));
-                tempVar.setDiskAlias(diskInfoDestinationMap.get(dit.getId()).getDiskAlias());
-                tempVar.setStorageDomainId(dit.getStorageIds().get(0));
-                tempVar.setVmSnapshotId(getVmSnapshotId());
-                tempVar.setParentCommand(VdcActionType.AddVm);
-                tempVar.setEntityInfo(getParameters().getEntityInfo());
-                tempVar.setParentParameters(getParameters());
-                tempVar.setQuotaId(diskInfoDestinationMap.get(dit.getId()).getQuotaId());
-                tempVar.setDiskProfileId(diskInfoDestinationMap.get(dit.getId()).getDiskProfileId());
-                VdcReturnValueBase result = runInternalActionWithTasksContext(VdcActionType.CreateSnapshotFromTemplate, tempVar);
+            for (DiskImage image : getImagesToCheckDestinationStorageDomains()) {
+                VdcReturnValueBase result = runInternalActionWithTasksContext(
+                        VdcActionType.CreateSnapshotFromTemplate,
+                        buildCreateSnapshotFromTemplateParameters(image));
 
                 /**
                  * if couldn't create snapshot then stop the transaction and the command
@@ -1046,18 +1036,33 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 } else {
                     getTaskIdList().addAll(result.getInternalVdsmTaskIdList());
                     DiskImage newImage = (DiskImage) result.getActionReturnValue();
-                    srcDiskIdToTargetDiskIdMapping.put(dit.getId(), newImage.getId());
+                    srcDiskIdToTargetDiskIdMapping.put(image.getId(), newImage.getId());
                 }
             }
         }
         return true;
     }
 
+    private CreateSnapshotFromTemplateParameters buildCreateSnapshotFromTemplateParameters(DiskImage image) {
+        CreateSnapshotFromTemplateParameters tempVar = new CreateSnapshotFromTemplateParameters(
+                image.getImageId(), getParameters().getVmStaticData().getId());
+        tempVar.setDestStorageDomainId(diskInfoDestinationMap.get(image.getId()).getStorageIds().get(0));
+        tempVar.setDiskAlias(diskInfoDestinationMap.get(image.getId()).getDiskAlias());
+        tempVar.setStorageDomainId(image.getStorageIds().get(0));
+        tempVar.setVmSnapshotId(getVmSnapshotId());
+        tempVar.setParentCommand(VdcActionType.AddVm);
+        tempVar.setEntityInfo(getParameters().getEntityInfo());
+        tempVar.setParentParameters(getParameters());
+        tempVar.setQuotaId(diskInfoDestinationMap.get(image.getId()).getQuotaId());
+        tempVar.setDiskProfileId(diskInfoDestinationMap.get(image.getId()).getDiskProfileId());
+
+        return tempVar;
+    }
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
         case EXECUTE:
-            return getSucceeded() ? (getReturnValue().getVdsmTaskIdList().size() > 0 ? AuditLogType.USER_ADD_VM_STARTED
+            return getSucceeded() ? (!getReturnValue().getVdsmTaskIdList().isEmpty() ? AuditLogType.USER_ADD_VM_STARTED
                     : AuditLogType.USER_ADD_VM) : AuditLogType.USER_FAILED_ADD_VM;
 
         case END_SUCCESS:
