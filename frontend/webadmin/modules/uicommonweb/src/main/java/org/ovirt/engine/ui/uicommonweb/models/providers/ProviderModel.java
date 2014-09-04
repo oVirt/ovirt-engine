@@ -431,10 +431,10 @@ public class ProviderModel extends Model {
     private void setTestResultValue(VdcReturnValueBase result) {
         String errorMessage = EMPTY_ERROR_MESSAGE;
         if (result == null || !result.getSucceeded()) {
-            if ((Boolean) requiresAuthentication.getEntity() && StringHelper.isNullOrEmpty(keystoneUrl)) {
-                errorMessage = ConstantsManager.getInstance().getConstants().noAuthUrl();
-            } else if (result != null) {
+            if (result != null) {
                 errorMessage = Frontend.getInstance().translateVdcFault(result.getFault());
+            } else if ((Boolean) requiresAuthentication.getEntity() && StringHelper.isNullOrEmpty(keystoneUrl)) {
+                errorMessage = ConstantsManager.getInstance().getConstants().noAuthUrl();
             } else {
                 errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
             }

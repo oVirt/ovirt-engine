@@ -344,10 +344,12 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
         try {
             int result = httpClient.executeMethod(httpMethod);
 
+            if (result == HttpURLConnection.HTTP_UNAUTHORIZED) {
+                throw new VdcBLLException(VdcBllErrors.PROVIDER_AUTHENTICATION_FAILURE);
+            }
+
             // after post request the return value is HTTP_MOVED_TEMP on success
             if (result != HttpURLConnection.HTTP_OK && result != HttpURLConnection.HTTP_MOVED_TEMP) {
-                // check other results and report better.
-                // 422: conflicts in data
                 throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
             }
         } catch (HttpException e) {
