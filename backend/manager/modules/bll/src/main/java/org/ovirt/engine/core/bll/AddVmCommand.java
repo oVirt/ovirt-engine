@@ -460,6 +460,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
+                getVdsGroup().getcompatibility_version())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
         // otherwise..
         storageToDisksMap =
                 ImagesHandler.buildStorageToDiskMap(getImagesToCheckDestinationStorageDomains(),

@@ -3379,4 +3379,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Plugged and unlinked VM network interface with external network is not supported.")
     String PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Balloon is not supported on '${clusterArch}' architecture.")
+    String BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH();
 }

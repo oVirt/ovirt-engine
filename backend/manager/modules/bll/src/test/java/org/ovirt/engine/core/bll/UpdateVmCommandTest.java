@@ -153,6 +153,8 @@ public class UpdateVmCommandTest {
         doReturn(vm).when(command).getVm();
 
         doReturn(false).when(command).isVirtioScsiEnabledForVm(any(Guid.class));
+        doReturn(true).when(command).isBalloonEnabled();
+        doReturn(true).when(osRepository).isBalloonEnabled(vm.getVmOsId(), group.getcompatibility_version());
     }
 
     @Test

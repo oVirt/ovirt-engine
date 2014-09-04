@@ -1058,7 +1058,10 @@ public enum VdcBllMessages {
 
     // Kdump detection
     KDUMP_DETECTION_NOT_ENABLED_FOR_VDS(ErrorType.BAD_PARAMETERS),
-    KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS(ErrorType.BAD_PARAMETERS);
+    KDUMP_DETECTION_NOT_CONFIGURED_ON_VDS(ErrorType.BAD_PARAMETERS),
+
+    //balloon on ppc
+    BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH(ErrorType.NOT_SUPPORTED);
 
     private ErrorType messageType;
 
