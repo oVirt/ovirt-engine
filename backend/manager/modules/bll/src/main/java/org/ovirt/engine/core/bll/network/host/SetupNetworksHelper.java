@@ -127,9 +127,9 @@ public class SetupNetworksHelper {
     }
 
     private void validateNotRemovingLabeledNetworks() {
-        Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(params.getInterfaces());
+        Map<String, VdsNetworkInterface> existingIfaces = getExistingIfaces();
         Map<String, VdsNetworkInterface> hostInterfacesByNetworkName =
-                Entities.hostInterfacesByNetworkName(getExistingIfaces().values());
+                Entities.hostInterfacesByNetworkName(existingIfaces.values());
 
         for (String network : removedNetworks) {
             VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
@@ -137,18 +137,20 @@ public class SetupNetworksHelper {
 
             if (!removedBonds.containsKey(baseInterfaceName)) {
                 if (NetworkUtils.isVlan(nic)) {
-                    nic = nicsByName.get(baseInterfaceName);
-                    if (nic == null) {
-                        continue;
-                    }
-                }
-
-                Network removedNetwork = getExistingClusterNetworks().get(network);
-                if (NetworkUtils.isLabeled(nic) && removedNetwork != null
-                        && nic.getLabels().contains(removedNetwork.getLabel())) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
+                    final VdsNetworkInterface baseInterface = existingIfaces.get(baseInterfaceName);
+                    validateNicForNotRemovingLabeledNetworks(network, baseInterface);
+                } else {
+                    validateNicForNotRemovingLabeledNetworks(network, nic);
                 }
             }
+        }
+    }
+
+    private void validateNicForNotRemovingLabeledNetworks(String network, VdsNetworkInterface nic) {
+        Network removedNetwork = getExistingClusterNetworks().get(network);
+        if (NetworkUtils.isLabeled(nic) && removedNetwork != null
+                && nic.getLabels().contains(removedNetwork.getLabel())) {
+            addViolation(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_LABELED_NETWORK_FROM_NIC, network);
         }
     }
 
