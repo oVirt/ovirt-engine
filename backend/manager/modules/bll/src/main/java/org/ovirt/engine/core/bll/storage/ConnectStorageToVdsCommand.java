@@ -1,11 +1,14 @@
 package org.ovirt.engine.core.bll.storage;
 
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.context.CommandContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
+import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.common.validation.NfsMountPointConstraint;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 
 @InternalCommandAttribute
 public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParametersBase> extends
@@ -86,6 +90,10 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
             return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
         }
 
+        if ((storageType == StorageType.POSIXFS || storageType == StorageType.NFS) && !validate(validateMountOptions())) {
+            return false;
+        }
+
         if (storageType == StorageType.ISCSI) {
             if (StringUtils.isEmpty(conn.getiqn())) {
                 return failCanDoAction(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_IQN);
@@ -100,5 +108,30 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
         }
 
         return true;
+    }
+
+    private static final List<String> NFS_MANAGED_OPTIONS = Arrays.asList("timeo", "retrans", "vfs_type", "protocol_version", "nfsvers", "vers", "minorversion", "addr", "clientaddr");
+    private static final List<String> POSIX_MANAGED_OPTIONS = Arrays.asList("vfs_type", "addr", "clientaddr");
+
+    private ValidationResult validateMountOptions() {
+        String mountOptions = getConnection().getMountOptions();
+        if (StringUtils.isBlank(mountOptions)) {
+            return ValidationResult.VALID;
+        }
+
+        List<String> disallowedOptions =
+                getConnection().getstorage_type() == StorageType.POSIXFS ? POSIX_MANAGED_OPTIONS : NFS_MANAGED_OPTIONS;
+        Map<String, String> optionsMap = XmlRpcStringUtils.string2Map(mountOptions);
+
+        Set<String> optionsKeys = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        optionsKeys.addAll(optionsMap.keySet());
+        optionsKeys.retainAll(disallowedOptions);
+
+        if (!optionsKeys.isEmpty()) {
+            addCanDoActionMessageVariable("invalidOptions", StringUtils.join(optionsKeys, ", "));
+            return new ValidationResult(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
+        }
+
+        return ValidationResult.VALID;
     }
 }
