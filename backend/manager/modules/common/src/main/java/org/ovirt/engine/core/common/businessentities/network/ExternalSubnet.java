@@ -7,6 +7,8 @@ import javax.validation.constraints.NotNull;
 
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.validation.annotation.Cidr;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.common.validation.group.RemoveEntity;
 
 public class ExternalSubnet extends IVdcQueryable implements Serializable, Nameable {
@@ -18,6 +20,7 @@ public class ExternalSubnet extends IVdcQueryable implements Serializable, Namea
 
     private String name;
 
+    @Cidr(groups = { CreateEntity.class })
     private String cidr;
 
     private IpVersion ipVersion;

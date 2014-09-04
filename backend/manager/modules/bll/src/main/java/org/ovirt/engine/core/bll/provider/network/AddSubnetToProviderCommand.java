@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
@@ -30,7 +31,6 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
         super(parameters);
     }
 
-
     private Provider<?> getProvider() {
         if (provider == null && getExternalNetwork() != null) {
             provider = getDbFacade().getProviderDao().get(getExternalNetwork().getProviderId());
@@ -38,7 +38,6 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
 
         return provider;
     }
-
 
     private ProviderNetwork getExternalNetwork() {
         if (externalNetwork == null) {
@@ -96,4 +95,11 @@ public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> e
                 VdcObjectType.System,
                 ActionGroup.CREATE_STORAGE_POOL));
     }
+
+    @Override
+    protected List<Class<?>> getValidationGroups() {
+        addValidationGroup(CreateEntity.class);
+        return super.getValidationGroups();
+    }
+
 }

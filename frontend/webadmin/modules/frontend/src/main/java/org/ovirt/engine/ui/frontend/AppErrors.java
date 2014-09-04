@@ -1882,8 +1882,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Template ${TemplateName} is being exported.")
     String ACTION_TYPE_FAILED_TEMPLATE_IS_BEING_EXPORTED();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Can't find Domain(s) in ${applicableStatus} status for some of the Template disks.\n" +
-            "Please make sure that there is at least one Storage Domain in applicable status for each one of the disks :\n" +
+    @DefaultStringValue("Cannot ${action} ${type}. Can't find Domain(s) in ${applicableStatus} status for some of the Template disks.\n"
+            +
+            "Please make sure that there is at least one Storage Domain in applicable status for each one of the disks :\n"
+            +
             "${disksInfo}")
     String ACTION_TYPE_FAILED_NO_VALID_DOMAINS_STATUS_FOR_TEMPLATE_DISKS();
 
@@ -3345,7 +3347,8 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Custom serial number must be non-empty when \"Custom\" serial number policy is specified.")
     String ACTION_TYPE_FAILED_INVALID_SERIAL_NUMBER();
 
-    @DefaultStringValue("Cannot ${action} ${type}. The following storage connections ${connectionIds} cannot be added to the specified iSCSI bond.\n" +
+    @DefaultStringValue("Cannot ${action} ${type}. The following storage connections ${connectionIds} cannot be added to the specified iSCSI bond.\n"
+            +
             "Possible reasons:\n" +
             "- They are not of type iSCSI.\n" +
             "- Their status is not one of the following: Unknown, Active. Inactive.\n" +
@@ -3397,4 +3400,10 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Change of Data Center ID is not allowed.")
     String ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED();
+
+    @DefaultStringValue("CIDR not represnting a network address.\nplease ensure IP and mask are matching to network IP address. \nexample:\n\tvalid network address: 2.2.0.0/16\n\tinvalid: 2.2.0.1/16")
+    String CIDR_NOT_NETWORK_ADDRESS();
+
+    @DefaultStringValue("CIDR bad format, expected:\n x.x.x.x/y  where:\n x belongs to [0,255] \n y belongs to [0,32] \n both inclusive")
+    String BAD_CIDR_FORMAT();
 }
