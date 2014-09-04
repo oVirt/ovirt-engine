@@ -113,7 +113,7 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
     private static final List<String> NFS_MANAGED_OPTIONS = Arrays.asList("timeo", "retrans", "vfs_type", "protocol_version", "nfsvers", "vers", "minorversion", "addr", "clientaddr");
     private static final List<String> POSIX_MANAGED_OPTIONS = Arrays.asList("vfs_type", "addr", "clientaddr");
 
-    private ValidationResult validateMountOptions() {
+    protected ValidationResult validateMountOptions() {
         String mountOptions = getConnection().getMountOptions();
         if (StringUtils.isBlank(mountOptions)) {
             return ValidationResult.VALID;

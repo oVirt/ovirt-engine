@@ -2,12 +2,16 @@ package org.ovirt.engine.core.bll.storage;
 
 import org.junit.Test;
 import org.ovirt.engine.core.bll.CanDoActionTestUtils;
+import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.businessentities.NfsVersion;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.when;
 
 public abstract class StorageServerConnectionTestCommon {
 
@@ -116,6 +120,29 @@ public abstract class StorageServerConnectionTestCommon {
         parameters.setStorageServerConnection(newPosixConnection);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(),
                 VdcBllMessages.VALIDATION_STORAGE_CONNECTION_EMPTY_VFSTYPE);
+    }
+
+    @Test
+    public void testConnectionWithInvalidMountOptionsFails() {
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.NFS, "nfs", "timeo=30");
+        parameters.setStorageServerConnection(newPosixConnection);
+        parameters.setVdsId(Guid.Empty);
+        doReturn(new ValidationResult(VdcBllMessages.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY)).when(getCommand()).validateMountOptions();
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(getCommand(), VdcBllMessages.VALIDATION_STORAGE_CONNECTION_MOUNT_OPTIONS_CONTAINS_MANAGED_PROPERTY);
+    }
+
+    @Test
+    public void testConnectionWithValidMountOptionsSucceeds() {
+        StorageServerConnections newPosixConnection =
+                createPosixConnection("multipass.my.domain.tlv.company.com:/export/allstorage/data1",
+                        StorageType.NFS, "nfs", "timeo=30");
+        parameters.setStorageServerConnection(newPosixConnection);
+        parameters.setVdsId(Guid.Empty);
+        doReturn(ValidationResult.VALID).when(getCommand()).validateMountOptions();
+        when(getCommand().getStorageConnDao().get(newPosixConnection.getid())).thenReturn(newPosixConnection);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(getCommand());
     }
 
     protected abstract ConnectStorageToVdsCommand getCommand();
