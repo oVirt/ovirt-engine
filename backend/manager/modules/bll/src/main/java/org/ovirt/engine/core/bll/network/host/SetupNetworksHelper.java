@@ -133,9 +133,11 @@ public class SetupNetworksHelper {
 
         for (String network : removedNetworks) {
             VdsNetworkInterface nic = hostInterfacesByNetworkName.get(network);
-            if (nic != null && !removedBonds.containsKey(nic.getName())) {
+            final String baseInterfaceName = NetworkUtils.stripVlan(nic);
+
+            if (!removedBonds.containsKey(baseInterfaceName)) {
                 if (NetworkUtils.isVlan(nic)) {
-                    nic = nicsByName.get(NetworkUtils.stripVlan(nic));
+                    nic = nicsByName.get(baseInterfaceName);
                     if (nic == null) {
                         continue;
                     }
