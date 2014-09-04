@@ -63,6 +63,7 @@
     <include name="common/businessentities/HasSerialNumberPolicy.java" />
     <include name="common/businessentities/SerialNumberPolicy.java" />
     <include name="common/businessentities/KdumpStatus.java" />
+    <include name="common/businessentities/HasMigrationOptions.java" />
 
 		<!-- Network business entities -->
 		<include name="common/businessentities/network/VdsNetworkInterface.java" />

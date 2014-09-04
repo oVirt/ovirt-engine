@@ -1968,4 +1968,28 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Changed fields list")
     String changedFieldsList();
+
+    @DefaultStringValue("Auto Converge migrations")
+    String autoConvergeLabel();
+
+    @DefaultStringValue("Enable migration compression")
+    String migrateCompressedLabel();
+
+    @DefaultStringValue("Auto Converge")
+    String autoConverge();
+
+    @DefaultStringValue("Don't Auto Converge")
+    String dontAutoConverge();
+
+    @DefaultStringValue("Compress")
+    String compress();
+
+    @DefaultStringValue("Don't compress")
+    String dontCompress();
+
+    @DefaultStringValue("Inherit from cluster setting")
+    String inheritFromCluster();
+
+    @DefaultStringValue("Inherit from global setting")
+    String inheritFromGlobal();
 }

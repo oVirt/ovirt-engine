@@ -6,14 +6,18 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.ILogger;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.common.ProgressModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -338,6 +342,19 @@ public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvid
             privateChangeProhibitionReason = value;
             onPropertyChanged(new PropertyChangedEventArgs("ChangeProhibitionReason")); //$NON-NLS-1$
         }
+    }
+
+    /**
+     * Update Model's changeability based on the support of given feature in given version.
+     *
+     * @param feature {@link org.ovirt.engine.core.common.queries.ConfigurationValues} [SomeFeature]Supported value
+     * @param version compatibility version to check the feature against
+     */
+    public void updateChangeability(ConfigurationValues feature, Version version) {
+        boolean featureSupported = (Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(feature, version.getValue());
+
+        setIsChangable(featureSupported);
+        setChangeProhibitionReason(ConstantsManager.getInstance().getMessages().optionNotSupportedClusterVersionTooOld(version.getValue()));
     }
 
     private boolean isSelected;

@@ -815,6 +815,26 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         hostsWithBrokenConnectivityThreshold = value;
     }
 
+    private ListModel<Boolean> autoConverge;
+
+    public ListModel<Boolean> getAutoConverge() {
+        return autoConverge;
+    }
+
+    public void setAutoConverge(ListModel<Boolean> autoConverge) {
+        this.autoConverge = autoConverge;
+    }
+
+    private ListModel<Boolean> migrateCompressed;
+
+    public ListModel<Boolean> getMigrateCompressed() {
+        return migrateCompressed;
+    }
+
+    public void setMigrateCompressed(ListModel<Boolean> migrateCompressed) {
+        this.migrateCompressed = migrateCompressed;
+    }
+
     public ClusterModel()
     {
         super();
@@ -865,6 +885,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setEnableGlusterService(new EntityModel<Boolean>());
 
         setSerialNumberPolicy(new SerialNumberPolicyModel());
+
+        setAutoConverge(new ListModel<Boolean>());
+        getAutoConverge().setItems(Arrays.asList(null, true, false));
+        setMigrateCompressed(new ListModel<Boolean>());
+        getMigrateCompressed().setItems(Arrays.asList(null, true, false));
 
         getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -1503,6 +1528,18 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         }
 
         updateMigrateOnError();
+
+        updateMigrationOptions();
+    }
+
+    private void updateMigrationOptions() {
+        Version version = getVersion().getSelectedItem();
+        if (version == null) {
+            return;
+        }
+
+        autoConverge.updateChangeability(ConfigurationValues.AutoConvergenceSupported, version);
+        migrateCompressed.updateChangeability(ConfigurationValues.MigrationCompressionSupported, version);
     }
 
     private void updateMigrateOnError() {

@@ -385,6 +385,8 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         clusterModel.getArchitecture().setSelectedItem(cluster.getArchitecture());
         clusterModel.getSerialNumberPolicy().setSelectedSerialNumberPolicy(cluster.getSerialNumberPolicy());
         clusterModel.getSerialNumberPolicy().getCustomSerialNumber().setEntity(cluster.getCustomSerialNumber());
+        clusterModel.getAutoConverge().setSelectedItem(cluster.getAutoConverge());
+        clusterModel.getMigrateCompressed().setSelectedItem(cluster.getMigrateCompressed());
 
         if (cluster.supportsTrustedService())
         {
@@ -735,6 +737,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
 
         cluster.setSerialNumberPolicy(model.getSerialNumberPolicy().getSelectedSerialNumberPolicy());
         cluster.setCustomSerialNumber(model.getSerialNumberPolicy().getCustomSerialNumber().getEntity());
+
+        cluster.setAutoConverge(model.getAutoConverge().getSelectedItem());
+        cluster.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
 
         cluster.getRequiredRngSources().clear();
         if (Boolean.TRUE.equals(model.getRngRandomSourceRequired().getEntity())) {

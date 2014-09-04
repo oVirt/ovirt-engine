@@ -9,7 +9,8 @@
              xmlns:s="urn:import:org.ovirt.engine.ui.common.widget.uicommon.storage"
              xmlns:k="urn:import:org.ovirt.engine.ui.common.widget.form.key_value"
              xmlns:p="urn:import:org.ovirt.engine.ui.common.widget.profile"
-             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm">
+             xmlns:vm="urn:import:org.ovirt.engine.ui.common.widget.uicommon.popup.vm"
+             xmlns:we="urn:import:org.ovirt.engine.ui.common.widget.editor">
 
     <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
@@ -90,7 +91,7 @@
       }
       <!-- 			turns off the original styles -->
 
-        .checkbox {
+        .checkbox, .listbox div select {
             margin-left: -9px;
         }
 
@@ -613,6 +614,8 @@
                                <d:InfoIcon ui:field="migrationDowntimeInfoIcon" addStyleNames="{style.migrationDowntimeInfoIcon} avmpw_infoIcon_pfly_fix" />
                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
                              </g:FlowPanel>
+                             <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" addStyleNames="{style.listbox}" />
+                             <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" addStyleNames="{style.listbox}" />
                              <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}"/>
                              <g:FlowPanel ui:field="numaPanel">
                                  <d:InfoIcon ui:field="numaInfoIcon" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>

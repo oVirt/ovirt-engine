@@ -69,6 +69,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
 import org.ovirt.engine.ui.common.widget.parser.MemorySizeParser;
 import org.ovirt.engine.ui.common.widget.profile.ProfilesInstanceTypeEditor;
+import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.MemorySizeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -600,6 +601,16 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "migrationDowntime.entity")
     @WithElementId("migrationDowntime")
     public IntegerEntityModelTextBoxOnlyEditor migrationDowntimeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "autoConverge.selectedItem")
+    @WithElementId("autoConverge")
+    public ListModelListBoxEditor<Boolean> autoConvergeEditor;
+
+    @UiField(provided = true)
+    @Path(value = "migrateCompressed.selectedItem")
+    @WithElementId("migrateCompressed")
+    public ListModelListBoxEditor<Boolean> migrateCompressedEditor;
 
     @UiField(provided = true)
     @Ignore
@@ -1250,6 +1261,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
 
+        autoConvergeEditor = new ListModelListBoxEditor<Boolean>(
+                new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromCluster()),
+                new ModeSwitchingVisibilityRenderer());
+
+        migrateCompressedEditor = new ListModelListBoxEditor<Boolean>(
+                new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromCluster()),
+                new ModeSwitchingVisibilityRenderer());
+
         // Resource Allocation
         provisioningThinEditor =
                 new EntityModelRadioButtonEditor("provisioningGroup", new ModeSwitchingVisibilityRenderer()); //$NON-NLS-1$
@@ -1859,6 +1878,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationModeEditor.setTabIndex(nextTabIndex++);
         overrideMigrationDowntimeEditor.setTabIndex(nextTabIndex++);
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);
+        autoConvergeEditor.setTabIndex(nextTabIndex++);
+        migrateCompressedEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
 
         numaNodeCount.setTabIndex(nextTabIndex++);

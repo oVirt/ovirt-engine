@@ -1343,6 +1343,26 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     private boolean numaChanged = false;
 
+    private ListModel<Boolean> autoConverge;
+
+    public ListModel<Boolean> getAutoConverge() {
+        return autoConverge;
+    }
+
+    public void setAutoConverge(NotChangableForVmInPoolListModel<Boolean> autoConverge) {
+        this.autoConverge = autoConverge;
+    }
+
+    private ListModel<Boolean> migrateCompressed;
+
+    public ListModel<Boolean> getMigrateCompressed() {
+        return migrateCompressed;
+    }
+
+    public void setMigrateCompressed(NotChangableForVmInPoolListModel<Boolean> migrateCompressed) {
+        this.migrateCompressed = migrateCompressed;
+    }
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1619,6 +1639,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                         numaSupport();
                     }
                 }));
+
+        setAutoConverge(new NotChangableForVmInPoolListModel<Boolean>());
+        getAutoConverge().setItems(Arrays.asList(null, true, false));
+        setMigrateCompressed(new NotChangableForVmInPoolListModel<Boolean>());
+        getMigrateCompressed().setItems(Arrays.asList(null, true, false));
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1931,16 +1956,19 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         VDSGroup cluster = dataCenterWithCluster.getCluster();
+        Version version = cluster.getcompatibility_version();
 
         Boolean isMigrationSupported =
-                AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(),
-                                                                     cluster.getcompatibility_version());
+                AsyncDataProvider.getInstance().isMigrationSupported(cluster.getArchitecture(), version);
 
         if (isMigrationSupported) {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.values()));
         } else {
             getMigrationMode().setItems(Arrays.asList(MigrationSupport.PINNED_TO_HOST));
         }
+
+        autoConverge.updateChangeability(ConfigurationValues.AutoConvergenceSupported, version);
+        migrateCompressed.updateChangeability(ConfigurationValues.MigrationCompressionSupported, version);
     }
 
     private void initDisplayProtocol()

@@ -25,6 +25,7 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswor
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.form.key_value.KeyValueWidget;
+import org.ovirt.engine.ui.common.widget.renderer.BooleanRendererWithNullText;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
@@ -332,6 +333,16 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId("serialNumberPolicy")
     SerialNumberPolicyWidget serialNumberPolicyEditor;
 
+    @UiField(provided = true)
+    @Path("autoConverge.selectedItem")
+    @WithElementId("autoConverge")
+    ListModelListBoxEditor<Boolean> autoConvergeEditor;
+
+    @UiField(provided = true)
+    @Path("migrateCompressed.selectedItem")
+    @WithElementId("migrateCompressed")
+    ListModelListBoxEditor<Boolean> migrateCompressedEditor;
+
     @UiField
     @Ignore
     DialogTab consoleTab;
@@ -399,7 +410,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         this.templates = templates;
         this.resources = resources;
         this.eventBus = eventBus;
-        initListBoxEditors();
+        initListBoxEditors(constants);
         initRadioButtonEditors();
         initCheckBoxEditors();
         initInfoIcons(resources, constants, templates);
@@ -524,7 +535,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, templates, messages, resources, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
-    private void initListBoxEditors() {
+    private void initListBoxEditors(ApplicationConstants constants) {
         dataCenterEditor = new ListModelListBoxEditor<StoragePool>(new NullSafeRenderer<StoragePool>() {
             @Override
             public String renderNullSafe(StoragePool object) {
@@ -566,6 +577,12 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
         hostsWithBrokenConnectivityThresholdEditor.getContentWidgetContainer().setWidth("75px"); //$NON-NLS-1$
+
+        autoConvergeEditor = new ListModelListBoxEditor<Boolean>(
+                new BooleanRendererWithNullText(constants.autoConverge(), constants.dontAutoConverge(), constants.inheritFromGlobal()));
+
+        migrateCompressedEditor = new ListModelListBoxEditor<Boolean>(
+                new BooleanRendererWithNullText(constants.compress(), constants.dontCompress(), constants.inheritFromGlobal()));
     }
 
     private void initCheckBoxEditors() {

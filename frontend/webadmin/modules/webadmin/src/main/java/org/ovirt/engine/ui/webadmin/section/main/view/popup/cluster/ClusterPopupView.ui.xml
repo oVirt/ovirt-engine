@@ -262,6 +262,8 @@
                                     <ge:EntityModelCheckBoxEditor ui:field="enableHaReservationEditor" />
                                 </g:FlowPanel>
                                 <vm:SerialNumberPolicyWidget ui:field="serialNumberPolicyEditor" />
+                                <e:ListModelListBoxEditor ui:field="autoConvergeEditor" label="{constants.autoConvergeLabel}" />
+                                <e:ListModelListBoxEditor ui:field="migrateCompressedEditor" label="{constants.migrateCompressedLabel}" />
                             </g:FlowPanel>
                         </t:content>
                     </t:DialogTab>

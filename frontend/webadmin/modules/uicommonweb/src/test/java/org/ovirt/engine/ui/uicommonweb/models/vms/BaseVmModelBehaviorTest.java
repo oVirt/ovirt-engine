@@ -43,6 +43,8 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setSmartcardEnabled(true);
         vm.setDefaultBootSequence(BOOT_SEQUENCE);
         vm.setSingleQxlPci(true);
+        vm.setAutoConverge(true);
+        vm.setMigrateCompressed(true);
     }
 
     @Before
@@ -117,6 +119,8 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertTrue(model.getSsoMethodGuestAgent().getEntity());
         assertTrue(model.getSpiceFileTransferEnabled().getEntity());
         assertTrue(model.getSpiceCopyPasteEnabled().getEntity());
+        assertTrue(model.getAutoConverge().getSelectedItem());
+        assertTrue(model.getMigrateCompressed().getSelectedItem());
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */

@@ -78,6 +78,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getCpuProfiles()).thenReturn(cpuProfiles);
         when(model.getNumaNodeCount().getEntity()).thenReturn(0);
         when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
+        when(model.getAutoConverge().getSelectedItem()).thenReturn(true);
+        when(model.getMigrateCompressed().getSelectedItem()).thenReturn(true);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -114,6 +116,8 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(DISPLAY_TYPE, vm.getDefaultDisplayType());
         assertTrue(vm.isSpiceFileTransferEnabled());
         assertTrue(vm.isSpiceCopyPasteEnabled());
+        assertTrue(vm.getAutoConverge());
+        assertTrue(vm.getMigrateCompressed());
     }
 
     /**
