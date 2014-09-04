@@ -150,7 +150,8 @@ public class DirectoryUtils {
                     authzName,
                     principalRecord.<String> get(Authz.PrincipalRecord.NAMESPACE),
                     principalRecord.<String> get(Authz.PrincipalRecord.ID),
-                    principalRecord.<String> get(Authz.PrincipalRecord.NAME)
+                    principalRecord.<String> get(Authz.PrincipalRecord.NAME),
+                    principalRecord.<String> get(Authz.PrincipalRecord.PRINCIPAL)
                     );
             directoryUser.setDepartment(principalRecord.<String> get(Authz.PrincipalRecord.DEPARTMENT));
             directoryUser.setFirstName(principalRecord.<String> get(Authz.PrincipalRecord.FIRST_NAME));
