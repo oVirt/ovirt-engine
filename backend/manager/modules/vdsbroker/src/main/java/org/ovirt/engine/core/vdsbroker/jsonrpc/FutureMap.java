@@ -6,6 +6,8 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -29,6 +31,7 @@ import org.ovirt.vdsm.jsonrpc.client.utils.LockWrapper;
 public class FutureMap implements Map<String, Object> {
     private final static String STATUS = "status";
     private final static String DEFAULT_KEY = "info";
+    private final static long DEFAULT_RESPONSE_WAIT = 1;
     private static Log log = LogFactory.getLog(FutureMap.class);
     private final Lock lock = new ReentrantLock();
     private Future<JsonRpcResponse> response;
@@ -63,26 +66,51 @@ public class FutureMap implements Map<String, Object> {
     /**
      * Whenever any method is executed to obtain value of response during the first invocation it gets real response
      * from the <code>Future</code> and decompose it to object of provided type and structure.
+     *
+     * This method blocks waiting on response or error.
      */
     private void lazyEval() {
         try (LockWrapper wrapper = new LockWrapper(this.lock)) {
             if (this.responseMap.isEmpty()) {
-                ResponseDecomposer decomposer;
                 try {
-                    decomposer = new ResponseDecomposer(this.response.get());
-                    if (decomposer.isError()) {
-                        this.responseMap = decomposer.decomposeError();
-                    } else if (Object[].class.equals(clazz) && this.subtypeKey != null && !this.subtypeKey.trim().isEmpty()
-                            && this.subTypeClazz != null) {
-                        Object[] array = (Object[]) decomposer.decomposeResponse(this.clazz);
-                        updateResponse(decomposer.decomposeTypedArray(array, this.subTypeClazz, subtypeKey));
-                    } else {
-                        updateResponse(decomposer.decomposeResponse(this.clazz));
-                    }
-                    checkAndUpdateStatus();
+                    populate(this.response.get());
                 } catch (InterruptedException | ExecutionException e) {
                     log.error("Exception occured during response decomposition", e);
                     throw new IllegalStateException(e);
+                }
+            }
+        }
+    }
+
+    private void populate(JsonRpcResponse response) {
+        ResponseDecomposer decomposer = new ResponseDecomposer(response);
+        if (decomposer.isError()) {
+            this.responseMap = decomposer.decomposeError();
+        } else if (Object[].class.equals(clazz) && this.subtypeKey != null && !this.subtypeKey.trim().isEmpty()
+                && this.subTypeClazz != null) {
+            Object[] array = (Object[]) decomposer.decomposeResponse(this.clazz);
+            updateResponse(decomposer.decomposeTypedArray(array, this.subTypeClazz, subtypeKey));
+        } else {
+            updateResponse(decomposer.decomposeResponse(this.clazz));
+        }
+        checkAndUpdateStatus();
+    }
+
+    /**
+     * Whenever any method is executed to obtain value of response during the first invocation it gets real response
+     * from the <code>Future</code> and decompose it to object of provided type and structure.
+     *
+     * This method waits for a response or error for specified amount of time.
+     *
+     * @param wait - time in seconds how long we want to wait for response.
+     */
+    private void lazyEval(long wait) {
+        try (LockWrapper wrapper = new LockWrapper(this.lock)) {
+            if (this.responseMap.isEmpty()) {
+                try {
+                    populate(this.response.get(wait, TimeUnit.SECONDS));
+                } catch (InterruptedException | ExecutionException | TimeoutException e) {
+                    log.debug("Response not arrived yet");
                 }
             }
         }
@@ -123,6 +151,11 @@ public class FutureMap implements Map<String, Object> {
     public boolean isEmpty() {
         lazyEval();
         return this.responseMap.isEmpty();
+    }
+
+    public boolean isDone() {
+        lazyEval(DEFAULT_RESPONSE_WAIT);
+        return !this.responseMap.isEmpty();
     }
 
     @Override

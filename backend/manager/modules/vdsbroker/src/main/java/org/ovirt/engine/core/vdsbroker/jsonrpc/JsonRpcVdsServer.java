@@ -52,6 +52,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
+import org.ovirt.vdsm.jsonrpc.client.utils.retry.RetryPolicy;
 
 /**
  * Implementation of <code>IVdsServer</code> interface which provides JSONRPC by
@@ -390,6 +391,29 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
+    static class FutureCallable implements Callable<Map<String, Object>> {
+        private Callable<Map<String, Object>> callable;
+
+        private FutureMap map;
+
+        public FutureCallable(Callable<Map<String, Object>> callable) {
+            this.callable = callable;
+        }
+
+        @Override
+        public Map<String, Object> call() throws Exception {
+            this.map = (FutureMap) this.callable.call();
+            return this.map;
+        }
+
+        public boolean isDone() {
+            if (this.map == null) {
+                return false;
+            }
+            return this.map.isDone();
+        }
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public Future<Map<String, Object>> setupNetworks(Map networks, Map bonding, Map options) {
@@ -398,16 +422,32 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("bondings", bonding)
                         .withParameter("options", options)
                         .build();
-        FutureTask<Map<String, Object>> future =
-                new FutureTask<Map<String, Object>>(new Callable<Map<String, Object>>() {
+        final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
+            @Override
+            public Map<String, Object> call() throws Exception {
+                updateHeartbeatPolicy(false);
+                return new FutureMap(client, request).withResponseKey("status");
+            }
+        });
+        FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
                     @Override
-                    public Map<String, Object> call() throws Exception {
-                        return new FutureMap(client, request).withResponseKey("status");
+                    public boolean isDone() {
+                        if (callable.isDone()) {
+                            updateHeartbeatPolicy(true);
+                            return true;
+                        }
+                        return false;
                     }
-                });
+                };
         ThreadPoolUtil.execute(future);
         return future;
+    }
+
+    private void updateHeartbeatPolicy(boolean isheartbeat) {
+        RetryPolicy policy = client.getRetryPolicy();
+        policy.setHeartbeat(isheartbeat);
+        client.setRetryPolicy(policy);
     }
 
     @Override
@@ -871,14 +911,22 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public FutureTask<Map<String, Object>> poll() {
         final JsonRpcRequest request = new RequestBuilder("Host.ping").build();
-        FutureTask<Map<String, Object>> future =
-                new FutureTask<Map<String, Object>>(new Callable<Map<String, Object>>() {
+        final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
+
+            @Override
+            public Map<String, Object> call() throws Exception {
+                return new FutureMap(client, request);
+            }
+        });
+
+        FutureTask<Map<String, Object>> future = new FutureTask<Map<String, Object>>(callable) {
 
                     @Override
-                    public Map<String, Object> call() throws Exception {
-                        return new FutureMap(client, request);
+                    public boolean isDone() {
+                        return callable.isDone();
                     }
-                });
+                };
+
         ThreadPoolUtil.execute(future);
         return future;
     }
