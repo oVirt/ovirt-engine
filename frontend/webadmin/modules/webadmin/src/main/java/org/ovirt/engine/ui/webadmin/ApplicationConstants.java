@@ -794,7 +794,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Resilience Policy")
     String clusterPopupResiliencePolicyTabLabel();
 
-    @DefaultStringValue("Cluster Policy")
+    @DefaultStringValue("Scheduling Policy")
     String clusterPopupClusterPolicyTabLabel();
 
     @DefaultStringValue("Migrate Virtual Machines")
@@ -3405,7 +3405,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("MAC Address Ranges")
     String macPoolWidgetRangesLabel();
 
-    @DefaultStringValue("Cluster Policies")
+    @DefaultStringValue("Scheduling Policies")
     String configureClusterPolicyTabLabel();
 
     @DefaultStringValue("Name")

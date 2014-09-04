@@ -301,7 +301,7 @@ public enum VdcActionType {
     CommitRemoveGlusterVolumeBricks(1424, ActionGroup.MANIPULATE_GLUSTER_VOLUME, false, QuotaDependency.NONE),
     RefreshGlusterVolumeDetails(1425, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
-    // Cluster Policy
+    // Scheduling Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     EditClusterPolicy(1451, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveClusterPolicy(1452, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),

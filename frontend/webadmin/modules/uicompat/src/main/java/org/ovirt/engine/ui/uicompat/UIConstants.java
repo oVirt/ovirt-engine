@@ -2149,16 +2149,16 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Are you sure you want to remove this Network QoS")
     String removeNetworkQoSMessage();
 
-    @DefaultStringValue("New Cluster Policy")
+    @DefaultStringValue("New Scheduling Policy")
     String newClusterPolicyTitle();
 
-    @DefaultStringValue("Edit Cluster Policy")
+    @DefaultStringValue("Edit Scheduling Policy")
     String editClusterPolicyTitle();
 
-    @DefaultStringValue("Clone Cluster Policy")
+    @DefaultStringValue("Clone Scheduling Policy")
     String copyClusterPolicyTitle();
 
-    @DefaultStringValue("Remove Cluster Policy")
+    @DefaultStringValue("Remove Scheduling Policy")
     String removeClusterPolicyTitle();
 
     @DefaultStringValue("KSM control is only available for Cluster compatibility version 3.4 and higher")

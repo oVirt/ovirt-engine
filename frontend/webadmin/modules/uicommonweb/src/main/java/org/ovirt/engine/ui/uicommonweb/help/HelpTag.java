@@ -236,7 +236,7 @@ public enum HelpTag {
 
     manage_gluster_swift("manage_gluster_swift", HelpTagType.WEBADMIN, "[gluster] 'Clusters' main tab -> 'General' sub tab -> 'Manage Gluster Swift' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    manage_policy_units("manage_policy_units", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Cluster Policy' section -> 'Manage Policy Units' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    manage_policy_units("manage_policy_units", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'Manage Policy Units' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     manual_fence_are_you_sure("manual_fence_are_you_sure", HelpTagType.WEBADMIN, "Host Tab > Confirm Host has been Rebooted"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -346,7 +346,7 @@ public enum HelpTag {
 
     remove_cluster("remove_cluster", HelpTagType.WEBADMIN, "Cluster Tab > Remove"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    remove_cluster_policy("remove_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Cluster Policy' section -> 'Remove Cluster Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    remove_cluster_policy("remove_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'Remove Scheduling Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     remove_data_center("remove_data_center", HelpTagType.WEBADMIN, "Data Center Tab > Remove Data Center(s)"), //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -484,11 +484,11 @@ public enum HelpTag {
 
     attach_storage("attach_storage", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
-    new_cluster_policy("new_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Cluster Policy' section -> 'New Cluster Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    new_cluster_policy("new_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'New Scheduling Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    edit_cluster_policy("edit_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Cluster Policy' section -> 'Edit Cluster Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    edit_cluster_policy("edit_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'Edit Scheduling Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
-    copy_cluster_policy("copy_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Cluster Policy' section -> 'Copy Cluster Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+    copy_cluster_policy("copy_cluster_policy", HelpTagType.WEBADMIN, "'Configure' dialog -> 'Scheduling Policy' section -> 'Copy Scheduling Policy' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
     shutdown_virtual_machine("shutdown_virtual_machine", HelpTagType.WEBADMIN, "VMs main tab -> Shutdown confirmation dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
