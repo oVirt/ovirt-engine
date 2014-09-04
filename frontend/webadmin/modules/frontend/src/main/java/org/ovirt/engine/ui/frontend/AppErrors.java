@@ -3369,4 +3369,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The guest OS doesn't support the following CPUs: ${unsupportedCpus}. Its possible to change the cluster cpu or set a different one per VM")
     String CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Balloon is not supported on '${clusterArch}' architecture.")
+    String BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH();
 }

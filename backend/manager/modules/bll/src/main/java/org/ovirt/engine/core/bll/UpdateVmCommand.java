@@ -624,6 +624,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return false;
         }
 
+        if (isBalloonEnabled() && !osRepository.isBalloonEnabled(getParameters().getVmStaticData().getOsId(),
+                getVdsGroup().getcompatibility_version())) {
+            addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
+            return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
+        }
+
         return true;
     }
 
@@ -800,7 +806,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         return VmDeviceUtils.isVirtioScsiControllerAttached(vmId);
     }
 
-    private boolean isBalloonEnabled() {
+    protected boolean isBalloonEnabled() {
         Boolean balloonEnabled = getParameters().isBalloonEnabled();
         return balloonEnabled != null ? balloonEnabled : VmDeviceUtils.isBalloonEnabled(getVmId());
     }
