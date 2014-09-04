@@ -926,6 +926,9 @@ public class SyntaxChecker implements ISyntaxChecker {
                 inQuery = "(" + getInnerQuery(tableName, "*", fromStatement,
                         wherePhrase);
             }
+            if (syntax.getSearchFrom() > 0) {
+                inQuery = StringFormat.format("%1$s and  %2$s >  %3$s", inQuery, primeryKey, syntax.getSearchFrom());
+            }
             retval =
                     StringFormat.format(Config.<String> getValue(ConfigValues.DBSearchTemplate),
                             sortExpr.toString(),
