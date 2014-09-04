@@ -78,6 +78,7 @@ public class BackendDomainUserResourceTest
     protected DirectoryUser getEntity(int index) {
         return new DirectoryUser(DOMAIN, NAMESPACE,
                 DirectoryEntryIdUtils.decode(EXTERNAL_IDS[index]),
+                NAMES[index],
                 NAMES[index]);
     }
 }

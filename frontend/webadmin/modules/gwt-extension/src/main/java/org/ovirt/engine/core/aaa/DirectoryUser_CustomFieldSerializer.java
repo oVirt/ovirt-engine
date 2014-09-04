@@ -15,7 +15,8 @@ public class DirectoryUser_CustomFieldSerializer {
         String namespace =  reader.readString();
         String id =  reader.readString();
         String name = reader.readString();
-        return new DirectoryUser(directoryName, namespace, id, name);
+        String principal = reader.readString();
+        return new DirectoryUser(directoryName, namespace, id, name, principal);
     }
 
     public static void serialize(SerializationStreamWriter writer, DirectoryUser user) throws SerializationException {
@@ -23,6 +24,7 @@ public class DirectoryUser_CustomFieldSerializer {
         writer.writeObject(user.getNamespace());
         writer.writeObject(user.getId());
         writer.writeString(user.getName());
+        writer.writeString(user.getPrincipal());
         writer.writeBoolean(user.isAdmin());
         writer.writeString(user.getDepartment());
         writer.writeString(user.getEmail());

@@ -220,7 +220,7 @@ public class BackendUsersResourceTest
     }
 
     private DirectoryUser getDirectoryUser(int index) {
-        return new DirectoryUser(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index]);
+        return new DirectoryUser(DOMAIN, NAMESPACE, EXTERNAL_IDS[index], NAMES[index], NAMES[index]);
     }
 
     @Override
