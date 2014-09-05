@@ -1283,7 +1283,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 builder.append(" ID: ").append(permSubject.getObjectId())
                         .append(" Type: ").append(permSubject.getObjectType());
                 if (permSubject.getActionGroup() != null) {
-                    builder.append(permSubject.getActionGroup().toString());
+                    builder.append("Action group " + permSubject.getActionGroup().name() + " with role type " + permSubject.getActionGroup().getRoleType().name());
                 }
             }
         }
