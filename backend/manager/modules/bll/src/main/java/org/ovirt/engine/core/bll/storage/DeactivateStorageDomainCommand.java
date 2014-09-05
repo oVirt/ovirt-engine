@@ -132,7 +132,14 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_NON_DATA_DOMAINS);
             }
 
-            if (!filterDomainsByStatus(domains, StorageDomainStatus.Locked).isEmpty()) {
+            List<StorageDomain> busyDomains = LinqUtils.filter(domains, new Predicate<StorageDomain>() {
+                @Override
+                public boolean eval(StorageDomain storageDomain) {
+                    return storageDomain.getStatus().isStorageDomainInProcess();
+                }
+            });
+
+            if (!busyDomains.isEmpty()) {
                 return failCanDoAction(VdcBllMessages.ERROR_CANNOT_DEACTIVATE_MASTER_WITH_LOCKED_DOMAINS);
             }
         }
