@@ -8,6 +8,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
@@ -63,13 +64,20 @@ import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
 public class JsonRpcVdsServer implements IVdsServer {
 
     private final JsonRpcClient client;
+    private final HttpClient httpClient;
 
-    public JsonRpcVdsServer(JsonRpcClient client) {
+    public JsonRpcVdsServer(JsonRpcClient client, HttpClient httpClient) {
         this.client = client;
+        this.httpClient = httpClient;
     }
 
     public void close() {
         this.client.close();
+    }
+
+    @Override
+    public HttpClient getHttpClient() {
+        return this.httpClient;
     }
 
     @SuppressWarnings("rawtypes")

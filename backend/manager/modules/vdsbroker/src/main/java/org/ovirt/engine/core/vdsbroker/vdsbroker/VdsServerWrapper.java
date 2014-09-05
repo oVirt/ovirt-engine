@@ -34,6 +34,7 @@ public class VdsServerWrapper implements IVdsServer {
         this.httpClient = httpClient;
     }
 
+    @Override
     public HttpClient getHttpClient() {
         return httpClient;
     }

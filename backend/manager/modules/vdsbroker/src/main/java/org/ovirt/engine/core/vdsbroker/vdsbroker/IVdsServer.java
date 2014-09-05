@@ -4,6 +4,7 @@ import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
 
+import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHookContentInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.gluster.GlusterHooksListReturnForXmlRpc;
@@ -22,6 +23,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 
 public interface IVdsServer {
+    HttpClient getHttpClient();
+
     OneVmReturnForXmlRpc create(Map createInfo);
 
     StatusOnlyReturnForXmlRpc destroy(String vmId);

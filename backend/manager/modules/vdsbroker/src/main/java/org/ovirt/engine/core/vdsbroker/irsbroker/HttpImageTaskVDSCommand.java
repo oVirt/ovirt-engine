@@ -28,7 +28,6 @@ import org.ovirt.engine.core.vdsbroker.VdsManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusOnlyReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSErrorException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerWrapper;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extends ImageHttpAccessVDSCommandParameters> extends VdsBrokerCommand<P> {
@@ -65,7 +64,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
     protected void executeHttpMethod(final T method) {
         int responseCode = -1;
         VdsManager manager = ResourceManager.getInstance().GetVdsManager(getParameters().getVdsId());
-        final HttpClient httpclient = ((VdsServerWrapper) manager.getVdsProxy()).getHttpClient();
+        final HttpClient httpclient = manager.getVdsProxy().getHttpClient();
         try {
             FutureTask<Integer> futureTask = new FutureTask(new Callable<Integer>() {
                 @Override
