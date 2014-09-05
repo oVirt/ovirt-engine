@@ -34,15 +34,16 @@ public class TransportFactory {
     public static IVdsServer createVdsServer(VdsProtocol vdsProtocol, String hostname, int port, int clientTimeOut,
             int connectionTimeOut, int clientRetries, int heartbeat) {
         IVdsServer vdsServer = null;
+        Pair<VdsServerConnector, HttpClient> returnValue =
+                XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
+                        clientRetries, VdsServerConnector.class,
+                        Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
+
         if (VdsProtocol.STOMP == vdsProtocol) {
             vdsServer = new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
-                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)));
+                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)), returnValue.getSecond());
         } else if (VdsProtocol.XML == vdsProtocol) {
-            Pair<VdsServerConnector, HttpClient> returnValue =
-                    XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
-                            clientRetries, VdsServerConnector.class,
-                            Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication));
             vdsServer = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
         }
         return vdsServer;
