@@ -240,7 +240,7 @@
 
         .nameEditorContent {
             float: right !important;
-            width: 230px;
+            width: 238px;
             padding-left: 5px;
             padding-right: 5px;
         }
