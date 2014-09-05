@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.common.widget.uicommon.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.google.gwt.dom.client.Style;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.label.TextBoxLabel;
@@ -135,7 +136,9 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
         });
         loginButton.getElement().getStyle().setFloat(Float.RIGHT);
         loginButton.getElement().getStyle().setMarginRight(6, Unit.PX);
-        loginButton.getElement().getElementsByTagName("span").getItem(0).getStyle().setMarginTop(0, Unit.PX); //$NON-NLS-1$
+        Style spanStyle = loginButton.getElement().getElementsByTagName("span").getItem(0).getStyle(); //$NON-NLS-1$
+        spanStyle.setPosition(Style.Position.RELATIVE);
+        spanStyle.setTop(-3, Unit.PX);
 
         panel.add(loginButton);
         panel.setCellVerticalAlignment(loginButton, HasVerticalAlignment.ALIGN_MIDDLE);
