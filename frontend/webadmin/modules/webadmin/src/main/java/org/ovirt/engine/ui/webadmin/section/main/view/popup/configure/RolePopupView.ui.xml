@@ -82,7 +82,7 @@
                         <g:RadioButton name="accountTypeRadioButton" ui:field="userRadioButtonEditor" addStyleNames="{style.radioButton}"/>
                         <g:RadioButton name="accountTypeRadioButton" ui:field="adminRadioButtonEditor" addStyleNames="{style.radioButton}"/>
                     </g:HorizontalPanel>
-                    <g:HTML><hr style="width:100%;" /></g:HTML>
+                    <g:HTML><hr style="width:100%; margin-top:0px; margin-bottom:0px;" /></g:HTML>
                     <g:Label ui:field="explainationLabel" addStyleNames="{style.explanationLabel}"/>
                     <g:HorizontalPanel addStyleNames="{style.buttonPanel}">
                         <g:Button ui:field="expandAllButton" addStyleNames="{style.expandAllButton}"/>
