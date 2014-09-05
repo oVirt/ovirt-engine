@@ -736,6 +736,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Profile Start Failed.")
     String GlusterVolumeProfileStartFailed();
 
+    @DefaultStringValue("Gluster volume geo-replication start failed")
+    String GlusterVolumeGeoRepStartFailed();
+
     @DefaultStringValue("Gluster Volume Profile Stop Failed.")
     String GlusterVolumeProfileStopFailed();
 

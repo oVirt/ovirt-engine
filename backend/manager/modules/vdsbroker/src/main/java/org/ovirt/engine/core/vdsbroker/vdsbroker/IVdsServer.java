@@ -279,6 +279,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc glusterVolumeProfileStop(String volumeName);
 
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+
     GlusterVolumeStatusReturnForXmlRpc glusterVolumeStatus(Guid clusterId,
             String volumeName,
             String brickName,

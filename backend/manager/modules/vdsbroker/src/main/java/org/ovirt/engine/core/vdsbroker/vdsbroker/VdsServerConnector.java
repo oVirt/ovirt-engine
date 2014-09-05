@@ -263,6 +263,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeProfileStop(String volumeName);
 
+    public Map<String, Object> glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+
     public Map<String, Object> glusterVolumeStatus(String volumeName, String brickName, String volumeStatusOption);
 
     public Map<String, Object> glusterVolumeProfileInfo(String volumeName, boolean nfs);

@@ -30,6 +30,7 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case AddBricksToGlusterVolumeFailed:
         case GlusterVolumeSetOptionFailed:
         case GlusterVolumeRebalanceStartFailed:
+        case GlusterVolumeGeoRepStartFailedException:
         case GlusterVolumeDeleteFailed:
         case GlusterVolumeReplaceBrickStartFailed:
         case GlusterVolumeListFailed:
