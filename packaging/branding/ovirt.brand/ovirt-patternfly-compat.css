@@ -301,6 +301,10 @@ div.avw_contentWidget_pfly_fix {
 .mtev_buttonPanel_pfly_fix label {
     padding-left: 3px !important;
 }
+.db_text {
+    position: relative !important;
+    top: -1px;
+}
 .tslp_sliderButton_pfly_fix {
     top: -3px !important;
 }
@@ -392,6 +396,11 @@ a.dropdown-toggle {
 }
 .gpv_flowPanel_pfly_fix {
     padding: 4px;
+}
+.gpv_flowPanel_pfly_fix .db_text {
+    position: relative !important;
+    top: -23px !important;
+    left: 20px !important;
 }
 .gpv_flowPanel_pfly_fix .db_image_container img {
     position: relative !important;
