@@ -1,7 +1,9 @@
 package org.ovirt.engine.ui.uicompat;
 
-import com.google.gwt.i18n.client.Constants;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+
+import com.google.gwt.i18n.client.Constants;
+import com.google.gwt.i18n.client.Messages.DefaultMessage;
 
 public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
@@ -290,6 +292,42 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("Geo-Replication")
     String geoReplicationTitle();
+
+    @DefaultStringValue("Start Geo-Replication")
+    String geoReplicationStartTitle();
+
+    @DefaultStringValue("Stop Geo-Replication")
+    String geoReplicationStopTitle();
+
+    @DefaultStringValue("Pause Geo-Replication")
+    String geoReplicationPauseTitle();
+
+    @DefaultStringValue("Resume Geo-Replication")
+    String geoReplicationResumeTitle();
+
+    @DefaultStringValue("Start")
+    String startGeoRepProgressText();
+
+    @DefaultStringValue("Stop")
+    String stopGeoRepProgressText();
+
+    @DefaultStringValue("Pause")
+    String pauseGeoRepProgressText();
+
+    @DefaultStringValue("Resume")
+    String resumeGeoRepProgressText();
+
+    @DefaultStringValue("start")
+    String startGeoRep();
+
+    @DefaultStringValue("stop")
+    String stopGeoRep();
+
+    @DefaultStringValue("pause")
+    String pauseGeoRep();
+
+    @DefaultStringValue("resume")
+    String resumeGeoRep();
 
     @DefaultStringValue("Rebalance Status")
     String volumeRebalanceStatusTitle();
@@ -2500,4 +2538,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
 
     @DefaultStringValue("This field is not a valid Guid (use 0-9,A-F format: 00000000-0000-0000-0000-000000000000)")
     String invalidGuidMsg();
+
+    @DefaultStringValue("This will force the operation on geo-replication sessions on the nodes that are part of the master volume \n."
+            + "If it is unable to successfully perform the operation on any node which is online and part of the master volume,\n "
+            + "the command will still perform the operation on as many nodes as it can.\n"
+            + "This command can also be used to re-perform the operation on the nodes where the session has died, or the operation has not be executed.")
+    String geoRepForceHelp();
 }

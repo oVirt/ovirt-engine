@@ -492,6 +492,14 @@ public enum HelpTag {
 
     volume_snapshots("volume_snapshots", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
+    volume_geo_rep_start_confirmation("volume_geo_rep_start_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Start' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    volume_geo_rep_stop_confirmation("volume_geo_rep_stop_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Stop' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    volume_geo_rep_pause_confirmation("volume_geo_rep_pause_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Pause' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
+    volume_geo_rep_resume_confirmation("volume_geo_rep_resume_confirmation", HelpTagType.WEBADMIN, "[gluster] Volumes main tab -> Geo-Replication sub-tab -> 'Resume' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_role("new_role", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     edit_role("edit_role", HelpTagType.WEBADMIN), //$NON-NLS-1$

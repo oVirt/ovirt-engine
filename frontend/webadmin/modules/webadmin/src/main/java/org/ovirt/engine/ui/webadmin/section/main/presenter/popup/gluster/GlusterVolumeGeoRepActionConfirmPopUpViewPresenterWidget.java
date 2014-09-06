@@ -25,18 +25,21 @@ public class GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget extends Ab
             public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if(args.propertyName.equalsIgnoreCase("forceLabel")) {//$NON-NLS-1$
                     if(model.getForceLabel() != null) {
-                        getView().setForceLabelMessage(model);
+                        getView().setForceLabelMessage(model.getForceLabel());
                     }
                 } else if(args.propertyName.equalsIgnoreCase("forceHelp")) {//$NON-NLS-1$
-                    getView().setForceHelp(model);
+                    getView().setForceHelp(model.getForceHelp());
+                } else if (args.propertyName.equalsIgnoreCase("Message")) {//$NON-NLS-1$
+                    getView().setErrorMessage(model.getMessage());
                 }
             }
         });
     }
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<GlusterVolumeGeoRepActionConfirmationModel> {
-        public void setForceLabelMessage(GlusterVolumeGeoRepActionConfirmationModel object);
-        public void setForceHelp(GlusterVolumeGeoRepActionConfirmationModel object);
+        public void setForceLabelMessage(String forceLabelMessage);
+        public void setForceHelp(String forceHelpText);
+        public void setErrorMessage(String errorMessage);
     }
 
 }

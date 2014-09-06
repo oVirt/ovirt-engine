@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import java.util.Date;
 import java.util.List;
 
 public interface UIMessages extends com.google.gwt.i18n.client.Messages {
@@ -415,4 +414,8 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Do you approve trusting self signed certificate subject {0}, SHA-1 fingerprint {1}?")
     String approveRootCertificateTrust(String subject, String sha1Fingerprint);
+
+    @DefaultMessage("Force {0} session")
+    String geoRepForceTitle(String action);
+
 }

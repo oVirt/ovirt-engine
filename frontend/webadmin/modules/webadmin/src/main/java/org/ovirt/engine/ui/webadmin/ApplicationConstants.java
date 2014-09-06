@@ -133,6 +133,12 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Stop")
     String stopGeoRepSession();
 
+    @DefaultStringValue("Pause")
+    String pauseGeoRepSession();
+
+    @DefaultStringValue("Resume")
+    String resumeGeoRepSession();
+
     @DefaultStringValue("Options")
     String geoRepSessionsOptions();
 

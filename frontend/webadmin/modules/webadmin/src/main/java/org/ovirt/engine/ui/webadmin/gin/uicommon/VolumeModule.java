@@ -31,6 +31,7 @@ import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -228,6 +229,24 @@ public class VolumeModule extends AbstractGinModule {
         return result;
     }
 
+    @Provides
+    @Singleton
+    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider, final Provider<GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget> geoRepActionConfirmationPopupProvider, final Provider<VolumeListModel> mainModelProvider, final Provider<VolumeGeoRepListModel> modelProvider) {
+        SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> result = new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus, defaultConfirmPopupProvider) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source, UICommand lastExecutedCommand, Model windowModel) {
+                if(lastExecutedCommand == getModel().getStartSessionCommand() || lastExecutedCommand == getModel().getStopSessionCommand() || lastExecutedCommand == getModel().getPauseSessionCommand() || lastExecutedCommand == getModel().getResumeSessionCommand()) {
+                    return geoRepActionConfirmationPopupProvider.get();
+                } else {
+                    return defaultConfirmPopupProvider.get();
+                }
+            }
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
     @Override
     protected void configure() {
         bind(VolumeListModel.class).in(Singleton.class);
@@ -242,10 +261,6 @@ public class VolumeModule extends AbstractGinModule {
         // Form Detail Models
         bind(new TypeLiteral<DetailModelProvider<VolumeListModel, VolumeGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<VolumeListModel, VolumeGeneralModel>>(){}).in(Singleton.class);
-        // Search-able Detail Models
-        bind(new TypeLiteral<SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>>(){})
-           .to(new TypeLiteral<SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>>(){})
-           .in(Singleton.class);
         // Permission Detail Model
         bind(new TypeLiteral<SearchableDetailModelProvider<Permissions, VolumeListModel, PermissionListModel<VolumeListModel>>>(){})
            .to(new TypeLiteral<PermissionModelProvider<VolumeListModel>>(){}).in(Singleton.class);
