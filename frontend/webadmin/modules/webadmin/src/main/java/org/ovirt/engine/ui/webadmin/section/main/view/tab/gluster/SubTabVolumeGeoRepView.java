@@ -17,9 +17,9 @@ import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
 public class SubTabVolumeGeoRepView
-            extends
-            AbstractSubTabTableView<GlusterVolumeEntity, GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>
-            implements SubTabVolumeGeoRepPresenter.ViewDef {
+extends
+AbstractSubTabTableView<GlusterVolumeEntity, GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>
+implements SubTabVolumeGeoRepPresenter.ViewDef {
 
     interface ViewIdHandler extends ElementIdHandler<SubTabVolumeGeoRepView> {
         ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
@@ -74,14 +74,28 @@ public class SubTabVolumeGeoRepView
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.startGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
-                return null;
+                return getDetailModel().getStartSessionCommand();
             }
         });
 
         getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.stopGeoRepSession()) {
             @Override
             protected UICommand resolveCommand() {
-                return null;
+                return getDetailModel().getStopSessionCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.pauseGeoRepSession()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getPauseSessionCommand();
+            }
+        });
+
+        getTable().addActionButton(new WebAdminButtonDefinition<GlusterGeoRepSession>(constants.resumeGeoRepSession()) {
+            @Override
+            protected UICommand resolveCommand() {
+                return getDetailModel().getResumeSessionCommand();
             }
         });
 

@@ -16,11 +16,11 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.Gluster
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Ignore;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
 
 public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<GlusterVolumeGeoRepActionConfirmationModel> implements GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget.ViewDef {
@@ -63,6 +63,11 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     @Ignore
     InfoIcon geoRepForceHelpIcon;
 
+    @UiField
+    @Ignore
+    @WithElementId
+    Label errorMsg;
+
     private ApplicationConstants constants;
     private ApplicationResources resources;
     private CommonApplicationTemplates templates;
@@ -81,6 +86,7 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
         localize();
         addStyles();
         driver.initialize(this);
+        errorMsg.setVisible(false);
     }
 
     private void addStyles() {
@@ -94,9 +100,9 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     }
 
     @Override
-    public void setForceLabelMessage(GlusterVolumeGeoRepActionConfirmationModel object) {
-        forceEditor.setLabel(object.getForceLabel() == null ? constants.notAvailableLabel() : object.getForceLabel());
-        forceEditor.setVisible(object.getForceLabel() != null);
+    public void setForceLabelMessage(String forceLabelMessage) {
+        forceEditor.setLabel(forceLabelMessage == null ? constants.notAvailableLabel() : forceLabelMessage);
+        forceEditor.setVisible(forceLabelMessage != null);
     }
 
     private void initEditors() {
@@ -110,13 +116,19 @@ public class GeoRepActionConfirmPopUpView extends AbstractModelBoundPopupView<Gl
     }
 
     @Override
-    public void setForceHelp(GlusterVolumeGeoRepActionConfirmationModel object) {
-        geoRepForceHelpIcon.setText(templates.italicText(object.getForceHelp()));
+    public void setForceHelp(String forceHelpText) {
+        geoRepForceHelpIcon.setText(templates.italicText(forceHelpText));
     }
 
     @Override
     public GlusterVolumeGeoRepActionConfirmationModel flush() {
         return driver.flush();
+    }
+
+    @Override
+    public void setErrorMessage(String errorMessage) {
+        errorMsg.setText(errorMessage);
+        errorMsg.setVisible(errorMessage != null);
     }
 
     interface WidgetStyle extends CssResource {

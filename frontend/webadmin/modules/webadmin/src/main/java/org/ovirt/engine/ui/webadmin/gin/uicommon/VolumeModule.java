@@ -32,6 +32,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.event.EventPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.AddBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.BrickAdvancedDetailsPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.RemoveBrickStatusPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.ReplaceBrickPopupPresenterWidget;
@@ -149,11 +150,15 @@ public class VolumeModule extends AbstractGinModule {
 
     @Provides
     @Singleton
-    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider) {
+    public SearchableDetailModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel> getVolumeGeoRepListProvider(EventBus eventBus, final Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider, final Provider<GlusterVolumeGeoRepActionConfirmPopUpViewPresenterWidget> geoRepActionConfirmationPopupProvider) {
         return new SearchableDetailTabModelProvider<GlusterGeoRepSession, VolumeListModel, VolumeGeoRepListModel>(eventBus, defaultConfirmPopupProvider, VolumeListModel.class, VolumeGeoRepListModel.class) {
             @Override
             public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(VolumeGeoRepListModel source, UICommand lastExecutedCommand, Model windowModel) {
-                return null;
+                if(lastExecutedCommand == getModel().getStartSessionCommand() || lastExecutedCommand == getModel().getStopSessionCommand() || lastExecutedCommand == getModel().getPauseSessionCommand() || lastExecutedCommand == getModel().getResumeSessionCommand()) {
+                    return geoRepActionConfirmationPopupProvider.get();
+                } else {
+                    return defaultConfirmPopupProvider.get();
+                }
             }
         };
     }
