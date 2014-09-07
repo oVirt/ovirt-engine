@@ -9,6 +9,7 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
@@ -92,6 +93,7 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         createEntityTable(model);
         createInfoPanel(model);
         entityTable.asEditor().edit(model.getEntities());
+        model.getEntities().setSelectedItem(Linq.firstOrDefault(model.getEntities().getItems()));
     }
 
     private void refreshEntityTable() {
