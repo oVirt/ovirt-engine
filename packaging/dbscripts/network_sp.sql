@@ -1485,6 +1485,119 @@ BEGIN
 END; $procedure$
 LANGUAGE plpgsql;
 
+
+-------------------------------------------------------------------------------------------
+-- Network attachments
+-------------------------------------------------------------------------------------------
+
+Create or replace FUNCTION GetNetworkAttachmentByNetworkAttachmentId(v_id UUID)
+RETURNS SETOF network_attachments STABLE
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM network_attachments
+   WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION InsertNetworkAttachment(v_id UUID,
+  v_network_id UUID,
+  v_nic_id UUID,
+  v_boot_protocol CHARACTER VARYING(20),
+  v_address CHARACTER VARYING(20),
+  v_netmask CHARACTER VARYING(20),
+  v_gateway CHARACTER VARYING(20),
+  v_custom_properties TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   INSERT INTO network_attachments(id, network_id, nic_id, boot_protocol, address, netmask, gateway, custom_properties)
+       VALUES(v_id, v_network_id, v_nic_id, v_boot_protocol, v_address, v_netmask, v_gateway, v_custom_properties);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION UpdateNetworkAttachment(v_id UUID,
+  v_network_id UUID,
+  v_nic_id UUID,
+  v_boot_protocol CHARACTER VARYING(20),
+  v_address CHARACTER VARYING(20),
+  v_netmask CHARACTER VARYING(20),
+  v_gateway CHARACTER VARYING(20),
+  v_custom_properties TEXT)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+   UPDATE network_attachments
+   SET network_id = v_network_id,
+       nic_id = v_nic_id,
+       boot_protocol = v_boot_protocol,
+       address = v_address,
+       netmask = v_netmask,
+       gateway = v_gateway,
+       custom_properties = v_custom_properties,
+      _update_date = LOCALTIMESTAMP
+WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION DeleteNetworkAttachment(v_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+    DELETE FROM network_attachments
+    WHERE id = v_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetAllFromNetworkAttachments()
+RETURNS SETOF network_attachments STABLE
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM network_attachments;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetNetworkAttachmentsByNicId(v_nic_id UUID)
+RETURNS SETOF network_attachments STABLE
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM network_attachments
+   WHERE nic_id = v_nic_id;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION GetNetworkAttachmentsByHostId(v_host_id UUID)
+RETURNS SETOF network_attachments STABLE
+   AS $procedure$
+BEGIN
+
+   RETURN QUERY SELECT *
+   FROM network_attachments
+   WHERE EXISTS (SELECT 1
+                 FROM vds_interface
+                 WHERE network_attachments.nic_id = vds_interface.id
+                 AND   vds_interface.vds_id = v_host_id);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 ----------------------------------------------------------------------
 --  vfsConfigNetworks
 ----------------------------------------------------------------------

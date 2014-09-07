@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.common.businessentities.network;
 
 import java.io.Serializable;
+import java.util.Objects;
 
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.utils.ToStringBuilder;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
 
 public class IpConfiguration implements Serializable {
@@ -58,50 +60,30 @@ public class IpConfiguration implements Serializable {
     }
 
     @Override
-    public int hashCode() {
-        final int prime = 31;
-        int result = 1;
-        result = prime * result + ((address == null) ? 0 : address.hashCode());
-        result = prime * result + ((bootProtocol == null) ? 0 : bootProtocol.hashCode());
-        result = prime * result + ((gateway == null) ? 0 : gateway.hashCode());
-        result = prime * result + ((netmask == null) ? 0 : netmask.hashCode());
-        return result;
+    public boolean equals(Object o) {
+        if (this == o)
+            return true;
+        if (!(o instanceof IpConfiguration))
+            return false;
+        IpConfiguration that = (IpConfiguration) o;
+        return Objects.equals(getBootProtocol(), that.getBootProtocol()) &&
+                Objects.equals(getAddress(), that.getAddress()) &&
+                Objects.equals(getNetmask(), that.getNetmask()) &&
+                Objects.equals(getGateway(), that.getGateway());
     }
 
     @Override
-    public boolean equals(Object obj) {
-        if (this == obj)
-            return true;
-        if (obj == null)
-            return false;
-        if (getClass() != obj.getClass())
-            return false;
-        IpConfiguration other = (IpConfiguration) obj;
-        if (address == null) {
-            if (other.address != null)
-                return false;
-        } else if (!address.equals(other.address))
-            return false;
-        if (bootProtocol != other.bootProtocol)
-            return false;
-        if (gateway == null) {
-            if (other.gateway != null)
-                return false;
-        } else if (!gateway.equals(other.gateway))
-            return false;
-        if (netmask == null) {
-            if (other.netmask != null)
-                return false;
-        } else if (!netmask.equals(other.netmask))
-            return false;
-        return true;
+    public int hashCode() {
+        return Objects.hash(getBootProtocol(), getAddress(), getNetmask(), getGateway());
     }
 
     @Override
     public String toString() {
-        return "IpConfiguration [bootProtocol=" + bootProtocol
-                + ", address=" + address
-                + ", netmask=" + netmask
-                + ", gateway=" + gateway + "]";
+        return ToStringBuilder.forInstance(this)
+                .append("bootProtocol", getBootProtocol())
+                .append("address", getAddress())
+                .append("netmask", getNetmask())
+                .append("gateway", getGateway())
+                .build();
     }
 }

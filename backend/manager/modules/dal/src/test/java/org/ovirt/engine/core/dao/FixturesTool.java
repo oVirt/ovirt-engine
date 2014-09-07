@@ -606,6 +606,14 @@ public class FixturesTool {
 
     public static final int NUMBER_OF_VM_INTERFACES = 4;
 
+    public static final Guid NETWORK_ATTACHMENT = new Guid("fd81f1f1-785b-4579-ab75-1419ebb87051");
+
+    public static final Guid NETWORK_ATTACHMENT_NIC = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9dd");
+
+    public static final Guid NETWORK_ATTACHMENT_NIC2 = new Guid("ba31682e-6ae7-4f9d-8c6f-04c93acca9df");
+
+    public static final Guid NETWORK_ATTACHMENT_HOST = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
+
     /**
      * Gluster Hook ID(s)
      */

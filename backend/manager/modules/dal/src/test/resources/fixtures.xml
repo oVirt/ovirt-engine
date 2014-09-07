@@ -5983,6 +5983,55 @@
         </row>
     </table>
 
+    <table name="network_attachments">
+        <column>id</column>
+        <column>network_id</column>
+        <column>nic_id</column>
+        <column>boot_protocol</column>
+        <column>address</column>
+        <column>netmask</column>
+        <column>gateway</column>
+        <column>custom_properties</column>
+        <column>_create_date</column>
+        <column>_update_date</column>
+        <row>
+            <value>fd81f1f1-785b-4579-ab75-1419ebb87051</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
+            <value>DHCP</value>
+            <null />
+            <null />
+            <null />
+            <value>{ "prop1" : "true", "prop2" : "123456" }</value>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+        <row>
+            <value>fd81f1f1-785b-4579-ab75-1419ebb87052</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9dd</value>
+            <value>NONE</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+        <row>
+            <value>fd81f1f1-785b-4579-ab75-1419ebb87053</value>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
+            <value>NONE</value>
+            <null/>
+            <null/>
+            <null/>
+            <null/>
+            <value>2013-07-02 08:38:36</value>
+            <value>2013-07-02 08:38:36</value>
+        </row>
+    </table>
+
     <table name="vm_pool_map">
         <column>vm_pool_id</column>
         <column>vm_guid</column>
