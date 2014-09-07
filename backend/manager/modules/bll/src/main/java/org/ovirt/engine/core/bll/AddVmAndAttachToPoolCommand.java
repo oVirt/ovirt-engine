@@ -56,8 +56,9 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     }
 
     private VdcReturnValueBase addVmFromScratch(VmStatic vmStatic) {
-        AddVmParameters parameters = new AddVmParameters(vmStatic, getParameters()
-                .getDiskInfoList(), getParameters().getStorageDomainId());
+        AddVmParameters parameters = new AddVmParameters(vmStatic);
+        parameters.setDiskInfoList(getParameters().getDiskInfoList());
+        parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setDontAttachToDefaultTag(true);
         return runInternalActionWithTasksContext(VdcActionType.AddVmFromScratch, parameters);

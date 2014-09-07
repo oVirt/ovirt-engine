@@ -16,7 +16,6 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -1093,10 +1092,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             if (gettempVm().getVmtGuid().equals(Guid.Empty))
             {
-                AddVmParameters parameters =
-                        new AddVmParameters(gettempVm(),
-                                new ArrayList<DiskImage>(),
-                                Guid.Empty);
+                AddVmParameters parameters = new AddVmParameters(gettempVm());
                 parameters.setMakeCreatorExplicitOwner(true);
                 parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());

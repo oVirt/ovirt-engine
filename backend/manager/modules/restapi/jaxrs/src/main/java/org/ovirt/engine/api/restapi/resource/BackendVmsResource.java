@@ -413,7 +413,8 @@ public class BackendVmsResource extends
     }
 
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
-        AddVmParameters params = new AddVmParameters(staticVm, mapDisks(vm.getDisks()), Guid.Empty);
+        AddVmParameters params = new AddVmParameters(staticVm);
+        params.setDiskInfoList(mapDisks(vm.getDisks()));
         params.setVmPayload(getPayload(vm));
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());

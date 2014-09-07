@@ -422,7 +422,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void addExternallyManagedVms(List<VmStatic> externalVmList) {
         for (VmStatic currVm : externalVmList) {
-            AddVmParameters params = new AddVmParameters(currVm, null, null);
+            AddVmParameters params = new AddVmParameters(currVm);
             VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch, params, ExecutionHandler.createInternalJobContext());
             if (!returnValue.getSucceeded()) {
                 log.debugFormat("Failed adding Externally managed VM {0}", currVm.getName());

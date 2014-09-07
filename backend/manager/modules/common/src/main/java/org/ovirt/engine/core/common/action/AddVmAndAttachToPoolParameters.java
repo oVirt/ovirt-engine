@@ -18,8 +18,9 @@ public class AddVmAndAttachToPoolParameters extends AddVmParameters {
     }
 
     public AddVmAndAttachToPoolParameters(VmStatic currVm, Guid poolId, String currentVmName, Guid storageDomainId) {
-        super(currVm, new ArrayList<DiskImage>(
-                Arrays.asList(new DiskImage())), storageDomainId);
+        super(currVm);
+        setDiskInfoList(new ArrayList<DiskImage>(Arrays.asList(new DiskImage())));
+        setStorageDomainId(storageDomainId);
         this.poolId = poolId;
         this.currentVmName = currentVmName;
     }
@@ -28,8 +29,8 @@ public class AddVmAndAttachToPoolParameters extends AddVmParameters {
             Guid poolId,
             String currentVmName,
             HashMap<Guid, DiskImage> diskInfoDestinationMap) {
-        super(currVm, new ArrayList<DiskImage>(
-                Arrays.asList(new DiskImage())), Guid.Empty);
+        super(currVm);
+        setDiskInfoList(new ArrayList<DiskImage>(Arrays.asList(new DiskImage())));
         this.poolId = poolId;
         this.currentVmName = currentVmName;
         setDiskInfoDestinationMap(diskInfoDestinationMap);

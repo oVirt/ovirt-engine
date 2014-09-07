@@ -2146,9 +2146,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             model.startProgress(null);
 
-            AddVmParameters parameters = new AddVmParameters(getcurrentVm(),
-                    new ArrayList<DiskImage>(),
-                    Guid.Empty);
+            AddVmParameters parameters = new AddVmParameters(getcurrentVm());
             parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
             parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
             parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());

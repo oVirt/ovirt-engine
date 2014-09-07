@@ -5,7 +5,6 @@ import java.util.ArrayList;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmParameters extends VmManagementParametersBase {
     private static final long serialVersionUID = 8641610721114989096L;
@@ -15,22 +14,20 @@ public class AddVmParameters extends VmManagementParametersBase {
     public AddVmParameters() {
     }
 
-    public AddVmParameters(VmStatic vmStatic, ArrayList<DiskImage> diskInfoList,
-            Guid storageDomainId) {
+    public AddVmParameters(VmStatic vmStatic) {
         super(vmStatic);
-        setDiskInfoList((diskInfoList != null) ? diskInfoList : new ArrayList<DiskImage>());
-        setStorageDomainId(storageDomainId);
+        diskInfoList = new ArrayList<DiskImage>();
     }
 
-    public AddVmParameters(VM vm, ArrayList<DiskImage> diskInfoList, Guid storageDomainId) {
-        this(vm.getStaticData(), diskInfoList, storageDomainId);
+    public AddVmParameters(VM vm) {
+        this(vm.getStaticData());
     }
 
     public ArrayList<DiskImage> getDiskInfoList() {
-        return diskInfoList != null ? diskInfoList : new ArrayList<DiskImage>();
+        return diskInfoList;
     }
 
-    public void setDiskInfoList(ArrayList<DiskImage> value) {
-        diskInfoList = value;
+    public void setDiskInfoList(ArrayList<DiskImage> diskInfoList) {
+        this.diskInfoList = diskInfoList;
     }
 }
