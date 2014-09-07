@@ -265,11 +265,20 @@ public class VmSnapshotListModel extends SearchableListModel
             }
         }
 
-        super.setItems(sortedSnapshots);
+        if (getInPreview(sortedSnapshots) != null) {
+            updatePreviewedDiskSnapshots(sortedSnapshots);
+        }
+        else {
+            updateItems(sortedSnapshots);
+        }
+    }
+
+    private void updateItems(List<Snapshot> snapshots) {
+        super.setItems(snapshots);
 
         // Try to select the last created snapshot (fallback to active snapshot)
         if (getSelectedItem() == null) {
-            setSelectedItem(sortedSnapshots.size() > 1 ? sortedSnapshots.get(1) : sortedSnapshots.get(0));
+            setSelectedItem(snapshots.size() > 1 ? snapshots.get(1) : snapshots.get(0));
         }
 
         updateActionAvailability();
@@ -424,6 +433,25 @@ public class VmSnapshotListModel extends SearchableListModel
 
             addCommands(model, "OnPreview"); //$NON-NLS-1$
         }
+    }
+
+    private void updatePreviewedDiskSnapshots(final List<Snapshot> snapshots) {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
+                for (DiskImage disk : disks) {
+                    if (disk.getSnapshots().size() <= 1) {
+                        continue;
+                    }
+
+                    Guid snapshotId = disk.getSnapshots().get(1).getVmSnapshotId();
+                    snapshotsMap.get(snapshotId).getEntity().getDiskImages().add(disk);
+                }
+
+                updateItems(snapshots);
+            }
+        }), ((VM) getEntity()).getId());
     }
 
     private void customPreview()
@@ -705,7 +733,11 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     public Snapshot getInPreview() {
-        for (Snapshot snapshot : (ArrayList<Snapshot>) getItems()) {
+        return getInPreview(getItems());
+    }
+
+    public Snapshot getInPreview(Collection<Snapshot> snapshots) {
+        for (Snapshot snapshot : snapshots) {
             if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
                 return snapshot;
             }

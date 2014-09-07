@@ -150,4 +150,7 @@ public interface CommonApplicationMessages extends Messages {
 
     @DefaultMessage("The following values can be applied immediately:<br/>- cpu")
     String nextRunConfigurationCanBeAppliedImmediately();
+
+    @DefaultMessage("{0} (Previewing: {1})")
+    String snapshotPreviewing(String snapshotDescription, String diskAliases);
 }

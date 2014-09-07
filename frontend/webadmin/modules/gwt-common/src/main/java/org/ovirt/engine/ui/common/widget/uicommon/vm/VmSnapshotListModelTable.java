@@ -151,7 +151,7 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
                 constants.memorySnapshot(), memorySnapshotSupported, "55px"); //$NON-NLS-1$
 
         getTable().ensureColumnPresent(SnapshotsViewColumns.descriptionColumn,
-                constants.descriptionSnapshot(), true, "185px"); //$NON-NLS-1$
+                constants.descriptionSnapshot(), true, "300px"); //$NON-NLS-1$
     }
 
     private void initActionButtons(final CommonApplicationConstants constants) {
