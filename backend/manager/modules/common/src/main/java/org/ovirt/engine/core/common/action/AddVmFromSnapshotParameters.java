@@ -10,7 +10,7 @@ import org.ovirt.engine.core.compat.Guid;
 /**
  * Parameter class for AddVmFromSnapshot command
  */
-public class AddVmFromSnapshotParameters extends VmManagementParametersBase implements Serializable {
+public class AddVmFromSnapshotParameters extends AddVmParameters implements Serializable {
     private static final long serialVersionUID = -3400982291165788716L;
 
     //Unique Identifier of Source Snapshot

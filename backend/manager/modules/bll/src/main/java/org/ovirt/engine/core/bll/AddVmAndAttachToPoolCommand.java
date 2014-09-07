@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.utils.Pair;
 
@@ -65,7 +64,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     }
 
     private VdcReturnValueBase addVm(VmStatic vmStatic) {
-        VmManagementParametersBase parameters = new VmManagementParametersBase(vmStatic);
+        AddVmParameters parameters = new AddVmParameters(vmStatic);
         if (StringUtils.isEmpty(getParameters().getSessionId())) {
             parameters.setParametersCurrentUser(getCurrentUser());
         } else {

@@ -38,7 +38,7 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageBase;
@@ -134,7 +134,7 @@ public class AddVmCommandTest {
     @Test
     public void create10GBVmWith11GbAvailableAndA5GbBuffer() throws Exception {
         VM vm = createVm();
-        AddVmFromTemplateCommand<VmManagementParametersBase> cmd = createVmFromTemplateCommand(vm);
+        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
         mockStorageDomainDAOGetForStoragePool();
         mockVdsGroupDAOReturnVdsGroup();
@@ -167,7 +167,7 @@ public class AddVmCommandTest {
         ArrayList<String> reasons = new ArrayList<String>();
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
-        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
@@ -211,7 +211,7 @@ public class AddVmCommandTest {
     @Test
     public void canAddVmWithVirtioScsiControllerNotSupportedOs() {
         VM vm = createVm();
-        AddVmFromTemplateCommand<VmManagementParametersBase> cmd = createVmFromTemplateCommand(vm);
+        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
         VDSGroup vdsGroup = createVdsGroup();
 
@@ -239,7 +239,7 @@ public class AddVmCommandTest {
 
     @Test
     public void isVirtioScsiEnabledDefaultedToTrue() {
-        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(0, 0);
         doReturn(createVdsGroup()).when(cmd).getVdsGroup();
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
                 new ArrayList<>(Arrays.asList("VirtIO_SCSI")));
@@ -248,7 +248,7 @@ public class AddVmCommandTest {
 
     @Test
     public void validateSpaceAndThreshold() {
-        AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(ValidationResult.VALID).when(storageDomainValidator).hasSpaceForNewDisks(anyList());
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
@@ -259,7 +259,7 @@ public class AddVmCommandTest {
 
     @Test
     public void validateSpaceNotEnough() throws Exception {
-        AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
                 when(storageDomainValidator).hasSpaceForNewDisks(anyList());
@@ -271,7 +271,7 @@ public class AddVmCommandTest {
 
     @Test
     public void validateSpaceNotWithinThreshold() throws Exception {
-        AddVmCommand<VmManagementParametersBase> command = setupCanAddVmTests(0, 0);
+        AddVmCommand<AddVmParameters> command = setupCanAddVmTests(0, 0);
         doReturn((new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN))).
                when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
@@ -285,7 +285,7 @@ public class AddVmCommandTest {
         vm.setVmOs(OsRepository.DEFAULT_X86_OS);
         VDSGroup vdsGroup = createVdsGroup();
 
-        AddVmFromTemplateCommand<VmManagementParametersBase> cmd = createVmFromTemplateCommand(vm);
+        AddVmFromTemplateCommand<AddVmParameters> cmd = createVmFromTemplateCommand(vm);
 
         mockStorageDomainDAOGetForStoragePool();
         mockVmTemplateDAOReturnVmTemplate();
@@ -333,11 +333,11 @@ public class AddVmCommandTest {
         doReturn(MAX_PCI_SLOTS).when(osRepository).getMaxPciDevices(anyInt(), any(Version.class));
     }
 
-    protected AddVmFromTemplateCommand<VmManagementParametersBase> createVmFromTemplateCommand(VM vm) {
-        VmManagementParametersBase param = new VmManagementParametersBase();
+    protected AddVmFromTemplateCommand<AddVmParameters> createVmFromTemplateCommand(VM vm) {
+        AddVmParameters param = new AddVmParameters();
         param.setVm(vm);
-        AddVmFromTemplateCommand<VmManagementParametersBase> concrete =
-                new AddVmFromTemplateCommand<VmManagementParametersBase>(param) {
+        AddVmFromTemplateCommand<AddVmParameters> concrete =
+                new AddVmFromTemplateCommand<AddVmParameters>(param) {
                     @Override
                     protected void initTemplateDisks() {
                         // Stub for testing
@@ -353,7 +353,7 @@ public class AddVmCommandTest {
                         return createVmTemplate();
                     }
                 };
-        AddVmFromTemplateCommand<VmManagementParametersBase> result = spy(concrete);
+        AddVmFromTemplateCommand<AddVmParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
         doReturn(Collections.emptyList()).when(result).validateCustomProperties(any(VmStatic.class));
@@ -408,16 +408,16 @@ public class AddVmCommandTest {
         when(vmDAO.get(Matchers.<Guid>any(Guid.class))).thenReturn(vm);
     }
 
-    private AddVmCommand<VmManagementParametersBase> setupCanAddVmTests(final int domainSizeGB,
+    private AddVmCommand<AddVmParameters> setupCanAddVmTests(final int domainSizeGB,
             final int sizeRequired) {
         VM vm = initializeMock(domainSizeGB, sizeRequired);
-        AddVmCommand<VmManagementParametersBase> cmd = createCommand(vm);
+        AddVmCommand<AddVmParameters> cmd = createCommand(vm);
         initCommandMethods(cmd);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
         return cmd;
     }
 
-    private static <T extends VmManagementParametersBase> void initCommandMethods(AddVmCommand<T> cmd) {
+    private static <T extends AddVmParameters> void initCommandMethods(AddVmCommand<T> cmd) {
         doReturn(Guid.newGuid()).when(cmd).getStoragePoolId();
         doReturn(true).when(cmd).canAddVm(anyListOf(String.class), anyString(), any(Guid.class), anyInt());
         doReturn(STORAGE_POOL_ID).when(cmd).getStoragePoolId();
@@ -572,9 +572,9 @@ public class AddVmCommandTest {
         return vm;
     }
 
-    private AddVmCommand<VmManagementParametersBase> createCommand(VM vm) {
-        VmManagementParametersBase param = new VmManagementParametersBase(vm);
-        AddVmCommand<VmManagementParametersBase> cmd = new AddVmCommand<VmManagementParametersBase>(param) {
+    private AddVmCommand<AddVmParameters> createCommand(VM vm) {
+        AddVmParameters param = new AddVmParameters(vm);
+        AddVmCommand<AddVmParameters> cmd = new AddVmCommand<AddVmParameters>(param) {
             @Override
             protected void initTemplateDisks() {
                 // Stub for testing
@@ -603,7 +603,7 @@ public class AddVmCommandTest {
         return cmd;
     }
 
-     protected void generateStorageToDisksMap(AddVmCommand<? extends VmManagementParametersBase> command) {
+     protected void generateStorageToDisksMap(AddVmCommand<? extends AddVmParameters> command) {
         command.storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_1, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_1));
         command.storageToDisksMap.put(STORAGE_DOMAIN_ID_2, generateDisksList(NUM_DISKS_STORAGE_DOMAIN_2));
@@ -619,7 +619,7 @@ public class AddVmCommandTest {
         return disksList;
     }
 
-    protected void initDestSDs(AddVmCommand<? extends VmManagementParametersBase> command) {
+    protected void initDestSDs(AddVmCommand<? extends AddVmParameters> command) {
         StorageDomain sd1 = new StorageDomain();
         StorageDomain sd2 = new StorageDomain();
         sd1.setId(STORAGE_DOMAIN_ID_1);
@@ -642,7 +642,7 @@ public class AddVmCommandTest {
         return disksList;
     }
 
-    private void mockGetAllSnapshots(AddVmFromTemplateCommand<VmManagementParametersBase> command) {
+    private void mockGetAllSnapshots(AddVmFromTemplateCommand<AddVmParameters> command) {
         doAnswer(new Answer<List<DiskImage>>() {
             @Override
             public List<DiskImage> answer(InvocationOnMock invocation) throws Throwable {
@@ -656,7 +656,7 @@ public class AddVmCommandTest {
 
 
 
-    private <T extends VmManagementParametersBase> void mockUninterestingMethods(AddVmCommand<T> spy) {
+    private <T extends AddVmParameters> void mockUninterestingMethods(AddVmCommand<T> spy) {
         doReturn(true).when(spy).isVmNameValidLength(Matchers.<VM> any(VM.class));
         doReturn(false).when(spy).isVmWithSameNameExists(anyString());
         doReturn(STORAGE_POOL_ID).when(spy).getStoragePoolId();
@@ -676,7 +676,7 @@ public class AddVmCommandTest {
 
     @Test
     public void testPatternBasedNameFails() {
-        AddVmCommand<VmManagementParametersBase> cmd = createCommand(initializeMock(1, 1));
+        AddVmCommand<AddVmParameters> cmd = createCommand(initializeMock(1, 1));
         cmd.getParameters().getVm().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for VM", cmd.validateInputs());
     }
@@ -686,7 +686,7 @@ public class AddVmCommandTest {
         ArrayList<String> reasons = new ArrayList<String>();
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
-        AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
         doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
 

@@ -2200,7 +2200,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         VM vm = vmListModel.getcurrentVm();
                         vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                        VmManagementParametersBase param = new VmManagementParametersBase(vm);
+                        AddVmParameters param = new AddVmParameters(vm);
                         param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                         param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
@@ -2226,7 +2226,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 VM vm = getcurrentVm();
                 vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                VmManagementParametersBase params = new VmManagementParametersBase(vm);
+                AddVmParameters params = new AddVmParameters(vm);
                 params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                 params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                 params.setBalloonEnabled(balloonEnabled(model));

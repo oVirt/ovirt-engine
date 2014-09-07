@@ -310,7 +310,7 @@ public class BackendVmsResource extends
     }
 
     private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
-        VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
+        AddVmParameters params = new AddVmParameters(staticVm);
         params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
         params.setVmPayload(getPayload(vm));
         params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
@@ -374,7 +374,7 @@ public class BackendVmsResource extends
     }
 
     protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, Guid templateId) {
-        VmManagementParametersBase params = new VmManagementParametersBase(staticVm);
+        AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());

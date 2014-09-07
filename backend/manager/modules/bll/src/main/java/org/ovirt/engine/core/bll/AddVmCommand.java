@@ -28,13 +28,13 @@ import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.CreateSnapshotFromTemplateParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RngDeviceParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.action.WatchdogParameters;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
@@ -96,7 +96,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  */
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-public class AddVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
+public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;

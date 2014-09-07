@@ -20,7 +20,7 @@ import org.mockito.invocation.InvocationOnMock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -34,7 +34,7 @@ public class AddVmFromTemplateCommandTest extends AddVmCommandTest {
     /**
      * The command under test.
      */
-    protected AddVmFromTemplateCommand<VmManagementParametersBase> command;
+    protected AddVmFromTemplateCommand<AddVmParameters> command;
 
     @Test
     public void validateSpaceAndThreshold() {

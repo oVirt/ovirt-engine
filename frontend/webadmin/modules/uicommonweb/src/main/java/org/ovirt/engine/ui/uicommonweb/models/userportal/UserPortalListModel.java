@@ -1117,7 +1117,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                             VM vm = gettempVm();
                             vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                            VmManagementParametersBase param = new VmManagementParametersBase(vm);
+                            AddVmParameters param = new AddVmParameters(vm);
                             param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
                             param.setMakeCreatorExplicitOwner(true);
                             param.setCopyTemplatePermissions(unitVmModel.getCopyPermissions().getEntity());
@@ -1135,7 +1135,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                     VM vm = gettempVm();
                     vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                    VmManagementParametersBase param = new VmManagementParametersBase(vm);
+                    AddVmParameters param = new AddVmParameters(vm);
                     param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
                     param.setMakeCreatorExplicitOwner(true);
                     param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());

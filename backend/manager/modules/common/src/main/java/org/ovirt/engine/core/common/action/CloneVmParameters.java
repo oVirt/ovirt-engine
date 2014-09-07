@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.action;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
-public class CloneVmParameters extends VmManagementParametersBase {
+public class CloneVmParameters extends AddVmParameters {
 
     private Guid newVmGuid;
 

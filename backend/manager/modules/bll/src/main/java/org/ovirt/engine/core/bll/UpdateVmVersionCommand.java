@@ -12,6 +12,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.RemoveVmFromPoolParameters;
@@ -155,7 +156,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
                             new HashMap<Guid, DiskImage>());
             action = VdcActionType.AddVmAndAttachToPool;
         } else {
-            addVmParams = new VmManagementParametersBase(getParameters().getVmStaticData());
+            addVmParams = new AddVmParameters(getParameters().getVmStaticData());
             action = VdcActionType.AddVm;
         }
 

@@ -35,7 +35,6 @@ import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatus;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
@@ -519,7 +518,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -602,7 +601,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -648,7 +647,7 @@ public class BackendVmsResourceTest
         vm.setUseLatestVersion(true);
 
         setUpCreationExpectations(VdcActionType.AddVm,
-                VmManagementParametersBase.class,
+                AddVmParameters.class,
                 new String[]{"StorageDomainId"},
                 new Object[]{GUIDS[0]},
                 true,
@@ -691,7 +690,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
-                VmManagementParametersBase.class,
+                AddVmParameters.class,
                 new String[] { "StorageDomainId" },
                 new Object[] { GUIDS[0] },
                 true,
@@ -920,7 +919,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -971,7 +970,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[1] },
                                   true,
@@ -1020,7 +1019,7 @@ public class BackendVmsResourceTest
                 setUpVDSGroup(GUIDS[2]));
 
         setUpCreationExpectations(VdcActionType.AddVm,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[0] },
                                   true,
@@ -1079,7 +1078,7 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[2] },
                                      getVdsGroupEntity());
         setUpCreationExpectations(VdcActionType.AddVm,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
                                   new Object[] { GUIDS[0], copy },
                                   true,
@@ -1134,7 +1133,7 @@ public class BackendVmsResourceTest
                                      getVdsGroupEntity());
 
         setUpCreationExpectations(VdcActionType.AddVmFromTemplate,
-                                  VmManagementParametersBase.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId", "CopyTemplatePermissions" },
                                   new Object[] { GUIDS[0], copy },
                                   true,
@@ -1274,7 +1273,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[2] },
                 getVdsGroupEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVm,
-                                           VmManagementParametersBase.class,
+                                           AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { GUIDS[0] },
                                            canDo,

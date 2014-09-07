@@ -17,11 +17,11 @@ import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.CopyVolumeType;
@@ -48,7 +48,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * This abstract class holds helper methods for concrete command classes that require to add a VM and clone an image in
  * the process
  */
-public abstract class AddVmAndCloneImageCommand<T extends VmManagementParametersBase> extends AddVmCommand<T> {
+public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> extends AddVmCommand<T> {
 
     protected AddVmAndCloneImageCommand(Guid commandId) {
         super(commandId);
