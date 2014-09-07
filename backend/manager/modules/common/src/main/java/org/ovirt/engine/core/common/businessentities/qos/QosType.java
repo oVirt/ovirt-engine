@@ -9,7 +9,8 @@ public enum QosType implements Identifiable {
     ALL(0),
     STORAGE(1),
     CPU(2),
-    NETWORK(3);
+    NETWORK(3),
+    HOSTNETWORK(4);
 
     private int value;
     private static final Map<Integer, QosType> valueToStatus = new HashMap<Integer, QosType>();

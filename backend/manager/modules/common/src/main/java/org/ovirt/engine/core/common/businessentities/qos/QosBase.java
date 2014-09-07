@@ -15,6 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
  * Base class for QoS objects derived class will hold qos limit according to type.
  */
 public class QosBase extends IVdcQueryable implements BusinessEntity<Guid>, Serializable {
+
+    private static final String UNLIMITED = "Unlimited";
     private static final long serialVersionUID = 1122772549710787678L;
     private Guid id = Guid.Empty;
     private QosType qosType;
@@ -54,6 +56,10 @@ public class QosBase extends IVdcQueryable implements BusinessEntity<Guid>, Seri
      */
     public String getString() {
         return toString();
+    }
+
+    protected String renderQosParameter(Object qosParameter) {
+        return (qosParameter == null) ? UNLIMITED : String.valueOf(qosParameter);
     }
 
     @Override
