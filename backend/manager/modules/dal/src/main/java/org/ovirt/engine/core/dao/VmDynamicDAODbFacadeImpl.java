@@ -126,7 +126,8 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("current_cd", vm.getCurrentCd())
                 .addValue("reason", vm.getStopReason())
                 .addValue("exit_reason", vm.getExitReason().getValue())
-                .addValue("guest_cpu_count", vm.getGuestCpuCount());
+                .addValue("guest_cpu_count", vm.getGuestCpuCount())
+                .addValue("emulated_machine", vm.getEmulatedMachine());
     }
 
     @Override
@@ -185,6 +186,7 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             VmExitReason exitReason = VmExitReason.forValue(rs.getInt("exit_reason"));
             entity.setExitReason(exitReason);
             entity.setGuestCpuCount(rs.getInt("guest_cpu_count"));
+            entity.setEmulatedMachine(rs.getString("emulated_machine"));
             return entity;
         }
     }

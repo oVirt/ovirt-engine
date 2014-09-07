@@ -82,7 +82,8 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             Boolean autoConverge, Boolean migrateCompressed,
             String userDefinedProperties,
             String predefinedProperties,
-            String customProperties) {
+            String customProperties,
+            String emulatedMachine, String customCpuName) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -136,7 +137,9 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 migrateCompressed,
                 userDefinedProperties,
                 predefinedProperties,
-                customProperties);
+                customProperties,
+                emulatedMachine,
+                customCpuName);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

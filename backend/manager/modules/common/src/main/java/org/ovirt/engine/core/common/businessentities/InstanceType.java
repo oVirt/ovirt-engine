@@ -85,6 +85,14 @@ public interface InstanceType extends BusinessEntity<Guid>, Nameable {
 
     public Integer getMigrationDowntime();
 
+    String getCustomEmulatedMachine();
+
+    void setCustomEmulatedMachine(String emulatedMachine);
+
+    void setCustomCpuName(String customCpuName);
+
+    String getCustomCpuName();
+
     // TODO: these should be add as well
     // userdefined_properties
     // predefined_properties

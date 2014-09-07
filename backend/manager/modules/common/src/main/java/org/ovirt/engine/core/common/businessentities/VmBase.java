@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.utils.ValidationUtils;
 import org.ovirt.engine.core.common.validation.annotation.IntegerContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.NullOrStringContainedInConfigValueList;
 import org.ovirt.engine.core.common.validation.annotation.ValidDescription;
+import org.ovirt.engine.core.common.validation.annotation.ValidI18NExtraName;
 import org.ovirt.engine.core.common.validation.annotation.ValidSerialNumberPolicy;
 import org.ovirt.engine.core.common.validation.annotation.ValidTimeZone;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -81,6 +82,22 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnVmStatusField
     @EditableOnTemplate
     private int cpuPerSocket;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @Size(max = BusinessEntitiesDefinitions.VM_EMULATED_MACHINE_SIZE)
+    @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_EMULATED_MACHINE_MAY_NOT_CONTAIN_SPECIAL_CHARS",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    private String customEmulatedMachine;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @Size(max = BusinessEntitiesDefinitions.VM_CPU_NAME_SIZE)
+    @ValidI18NExtraName(message = "ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS",
+            groups = { CreateEntity.class, UpdateEntity.class })
+    private String customCpuName; // overrides cluster cpu. (holds the actual vdsVerb)
 
     @CopyOnNewVersion
     @EditableOnVmStatusField
@@ -422,7 +439,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getMigrateCompressed(),
                 vmBase.getUserDefinedProperties(),
                 vmBase.getPredefinedProperties(),
-                vmBase.getCustomProperties());
+                vmBase.getCustomProperties(),
+                vmBase.getCustomEmulatedMachine(),
+                vmBase.getCustomCpuName());
     }
 
     public VmBase(
@@ -479,7 +498,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Boolean migrateCompressed,
             String userDefinedProperties,
             String predefinedProperties,
-            String customProperties) {
+            String customProperties,
+            String customEmulatedMachine,
+            String customCpuName) {
         this();
         this.name = name;
         this.id = id;
@@ -535,6 +556,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.userDefinedProperties = userDefinedProperties;
         this.predefinedProperties = predefinedProperties;
         this.customProperties = customProperties;
+        this.customEmulatedMachine = customEmulatedMachine;
+        this.customCpuName = customCpuName;
     }
 
     public long getDbGeneration() {
@@ -882,6 +905,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
+        result = prime * result + ((customEmulatedMachine == null) ? 0 : customEmulatedMachine.hashCode());
+        result = prime * result + ((customCpuName== null) ? 0 : customCpuName.hashCode());
         return result;
     }
 
@@ -943,7 +968,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
                 && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
                 && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
-                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties);
+                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
+                && ObjectUtils.objectsEqual(customEmulatedMachine, other.customEmulatedMachine)
+                && ObjectUtils.objectsEqual(customCpuName, other.customCpuName);
     }
 
     public Guid getQuotaId() {
@@ -1177,6 +1204,22 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setUserDefinedProperties(String userDefinedProperties) {
         this.userDefinedProperties = userDefinedProperties;
+    }
+
+    public String getCustomEmulatedMachine() {
+        return customEmulatedMachine;
+    }
+
+    public void setCustomEmulatedMachine(String customEmulatedMachine) {
+        this.customEmulatedMachine = ((customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty()) ? null : customEmulatedMachine);
+    }
+
+    public String getCustomCpuName() {
+        return customCpuName;
+    }
+
+    public void setCustomCpuName(String customCpuName) {
+        this.customCpuName = ((customCpuName==null || customCpuName.trim().isEmpty()) ? null : customCpuName);
     }
 
 }

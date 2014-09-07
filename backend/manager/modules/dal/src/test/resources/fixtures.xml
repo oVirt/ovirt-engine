@@ -2039,6 +2039,8 @@
         <column>cpu_profile_id</column>
         <column>is_auto_converge</column>
         <column>is_migrate_compressed</column>
+        <column>custom_emulated_machine</column>
+        <column>custom_cpu_name</column>
         <!-- Templates -->
         <row>
             <value>00000000-0000-0000-0000-000000000000</value>
@@ -2101,6 +2103,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b79</value>
@@ -2163,6 +2167,8 @@
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>true</value>
             <null />
+            <value>emulated1</value>
+            <value>cpu1</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b80</value>
@@ -2225,6 +2231,8 @@
             <null />
             <value>false</value>
             <value>true</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b81</value>
@@ -2287,6 +2295,8 @@
             <null />
             <null />
             <value>false</value>
+            <value></value>
+            <null />
         </row>
          <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b82</value>
@@ -2349,6 +2359,8 @@
             <null />
             <value>false</value>
             <value>false</value>
+            <null />
+            <value>Penryn</value>
         </row>
          <row>
             <value>99408929-82cf-4dc7-a532-9d998063fa95</value>
@@ -2411,6 +2423,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
          <row>
             <value>5849b030-626e-47cb-ad90-3ce782d831b3</value>
@@ -2473,6 +2487,8 @@
             <null />
             <null />
             <value>true</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
         <row>
             <value>1b85420c-b84c-4f29-997e-0eb674b40b83</value>
@@ -2535,6 +2551,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <null />
+            <null />
         </row>
 
         <!-- VMS -->
@@ -2599,6 +2617,8 @@
             <value>fd81f1e1-785b-4579-ab75-1419ebb87052</value>
             <value>true</value>
             <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -2661,6 +2681,8 @@
             <null />
             <null />
             <value>false</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4356</value>
@@ -2722,6 +2744,8 @@
             <value>true</value>
             <null />
             <value>true</value>
+            <null />
+            <value>rhel6.5.0</value>
             <null />
         </row>
         <row>
@@ -2785,6 +2809,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <null />
+            <value>Penryn</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
@@ -2847,6 +2873,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <value></value>
+            <value></value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4360</value>
@@ -2909,6 +2937,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <value></value>
+            <value>Penryn</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5001</value>
@@ -2971,6 +3001,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <value>rhel6.5.0</value>
+            <value></value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5002</value>
@@ -3033,6 +3065,8 @@
             <null />
             <value>true</value>
             <value>true</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f5003</value>
@@ -3095,6 +3129,8 @@
             <null />
             <value>true</value>
             <value>false</value>
+            <value>rhel6.5.0</value>
+            <value>Penryn</value>
         </row>
     </table>
 
@@ -3622,6 +3658,7 @@
         <column>exit_message</column>
         <column>guest_agent_nics_hash</column>
         <column>cpu_name</column>
+        <column>emulated_machine</column>
         <column>current_cd</column>
         <column>exit_reason</column>
         <column>guest_cpu_count</column>
@@ -3659,6 +3696,7 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null/>
             <null/>
             <null/>
             <null/>
@@ -3701,6 +3739,7 @@
             <null />
             <value>0</value>
             <null />
+            <value>rhel6.5.0</value>
             <value>current_cd.iso</value>
             <value>-1</value>
             <value>1</value>
@@ -3740,6 +3779,7 @@
             <value>0</value>
             <null />
             <value>3452354</value>
+            <value>Penryn</value>
             <null />
             <null/>
             <value>-1</value>
@@ -3780,7 +3820,8 @@
             <value>0</value>
             <value>0</value>
             <null />
-            <null />
+            <value>Penryn</value>
+            <value>rhel6.5.0</value>
             <null/>
             <value>-1</value>
             <value>8</value>
@@ -3820,7 +3861,8 @@
             <value>0</value>
             <null />
             <null />
-            <null />
+            <value></value>
+            <value></value>
             <null/>
             <value>-1</value>
             <value>8</value>
@@ -3860,6 +3902,9 @@
             <value>0</value>
             <null />
             <null />
+            <value></value>
+            <value>rhel6.5.0</value>
+            <null />
             <value>-1</value>
             <value>64</value>
         </row>
@@ -3897,6 +3942,9 @@
             <value>0</value>
             <value>0</value>
             <null />
+            <null />
+            <value></value>
+            <value></value>
             <null />
             <value>-1</value>
             <value>64</value>

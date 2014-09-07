@@ -75,7 +75,9 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("is_auto_converge", entity.getAutoConverge())
                 .addValue("is_migrate_compressed", entity.getMigrateCompressed())
                 .addValue("predefined_properties", entity.getPredefinedProperties())
-                .addValue("userdefined_properties", entity.getUserDefinedProperties());
+                .addValue("userdefined_properties", entity.getUserDefinedProperties())
+                .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
+                .addValue("custom_cpu_name", entity.getCustomCpuName());
     }
 
     /**
@@ -139,6 +141,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setUserDefinedProperties(userDefinedProperties);
             entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
                     userDefinedProperties));
+            entity.setCustomEmulatedMachine(rs.getString("custom_emulated_machine"));
+            entity.setCustomCpuName(rs.getString("custom_cpu_name"));
         }
     }
 }

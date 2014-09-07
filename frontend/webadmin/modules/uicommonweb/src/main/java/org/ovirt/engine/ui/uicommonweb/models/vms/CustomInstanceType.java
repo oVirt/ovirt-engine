@@ -208,4 +208,23 @@ public class CustomInstanceType implements InstanceType {
     public void setId(Guid id) {
 
     }
+
+    public String getCustomEmulatedMachine() {
+        return null;
+    }
+
+    public void setCustomEmulatedMachine(String emulatedMachine) {
+
+    }
+
+    @Override
+    public void setCustomCpuName(String customCpuName) {
+
+    }
+
+    @Override
+    public String getCustomCpuName() {
+        return null;
+    }
+
 }

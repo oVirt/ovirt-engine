@@ -463,7 +463,9 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.numatune_mode as numatune_mode,
        vm_templates.is_auto_converge as is_auto_converge, vm_templates.is_migrate_compressed as is_migrate_compressed,
        vm_templates.predefined_properties as predefined_properties,
-       vm_templates.userdefined_properties as userdefined_properties
+       vm_templates.userdefined_properties as userdefined_properties,
+       vm_templates.custom_emulated_machine as custom_emulated_machine,
+       vm_templates.custom_cpu_name as custom_cpu_name
 FROM       vm_static AS vm_templates  LEFT OUTER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -680,7 +682,7 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       vm_static.default_display_type as default_display_type, vm_static.priority as priority,vm_static.iso_path as iso_path, vm_static.origin as origin, vds_groups.compatibility_version as vds_group_compatibility_version,
                       vm_static.initrd_url as initrd_url, vm_static.kernel_url as kernel_url, vm_static.kernel_params as kernel_params, vm_dynamic.pause_status as pause_status, vm_dynamic.exit_message as exit_message, vm_dynamic.exit_status as exit_status,vm_static.migration_support as migration_support,vm_static.predefined_properties as predefined_properties,vm_static.userdefined_properties as userdefined_properties,vm_static.min_allocated_mem as min_allocated_mem,  vm_dynamic.hash as hash, vm_static.cpu_pinning as cpu_pinning, vm_static.db_generation as db_generation, vm_static.host_cpu_flags as host_cpu_flags,
                       vm_static.tunnel_migration as tunnel_migration, vm_static.vnc_keyboard_layout as vnc_keyboard_layout, vm_static.is_run_and_pause as is_run_and_pause, vm_static.created_by_user_id as created_by_user_id,
-                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.current_cd as current_cd, vm_dynamic.reason as reason, vm_dynamic.exit_reason as exit_reason,
+                      vm_dynamic.last_watchdog_event as last_watchdog_event, vm_dynamic.last_watchdog_action as last_watchdog_action, vm_dynamic.is_run_once as is_run_once, vm_dynamic.vm_fqdn as vm_fqdn, vm_dynamic.cpu_name as cpu_name, vm_dynamic.emulated_machine as emulated_machine, vm_dynamic.current_cd as current_cd, vm_dynamic.reason as reason, vm_dynamic.exit_reason as exit_reason,
                       vm_static.instance_type_id as instance_type_id, vm_static.image_type_id as image_type_id, vds_groups.architecture as architecture, vm_static.original_template_id as original_template_id, vm_static.original_template_name as original_template_name, vm_dynamic.last_stop_time as last_stop_time,
                       vm_static.migration_downtime as migration_downtime, vm_static.template_version_number as template_version_number,
                       vm_static.serial_number_policy as serial_number_policy, vm_static.custom_serial_number as custom_serial_number,
@@ -689,7 +691,9 @@ SELECT     vm_static.vm_name as vm_name, vm_static.mem_size_mb as mem_size_mb, v
                       vm_static.numatune_mode as numatune_mode,
                       vm_static.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled, vm_static.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
                       vm_static.cpu_profile_id as cpu_profile_id,
-                      vm_static.is_auto_converge as is_auto_converge, vm_static.is_migrate_compressed as is_migrate_compressed
+                      vm_static.is_auto_converge as is_auto_converge, vm_static.is_migrate_compressed as is_migrate_compressed,
+                      vm_static.custom_emulated_machine as custom_emulated_machine,
+                      vm_static.custom_cpu_name as custom_cpu_name
 FROM         vm_static INNER JOIN
 vm_dynamic ON vm_static.vm_guid = vm_dynamic.vm_guid INNER JOIN
 vm_static AS vm_templates ON vm_static.vmt_guid = vm_templates.vm_guid INNER JOIN
@@ -727,7 +731,8 @@ SELECT      vms.vm_name, vms.mem_size_mb, vms.nice_level, vms.cpu_shares, vms.vm
             vms.vds_group_compatibility_version, vms.initrd_url, vms.kernel_url, vms.kernel_params, vms.pause_status,
             vms.exit_status, vms.exit_message, vms.min_allocated_mem, storage_domain_static.id AS storage_id,
             vms.quota_id as quota_id, vms.quota_name as quota_name, vms.tunnel_migration as tunnel_migration,
-            vms.vnc_keyboard_layout as vnc_keyboard_layout, vms.is_run_and_pause as is_run_and_pause, vms.created_by_user_id as created_by_user_id, vms.vm_fqdn, vms.cpu_name as cpu_name,
+            vms.vnc_keyboard_layout as vnc_keyboard_layout, vms.is_run_and_pause as is_run_and_pause, vms.created_by_user_id as created_by_user_id, vms.vm_fqdn, vms.cpu_name as cpu_name, vms.emulated_machine as emulated_machine,
+            vms.custom_emulated_machine as custom_emulated_machine, vms.custom_cpu_name as custom_cpu_name,
             vms.vm_pool_spice_proxy as vm_pool_spice_proxy, vms.vds_group_spice_proxy as vds_group_spice_proxy,
             vms.instance_type_id as instance_type_id, vms.image_type_id as image_type_id, vms.architecture as architecture, vms.original_template_id as original_template_id, vms.original_template_name as original_template_name,
             vms.migration_downtime as migration_downtime, vms.template_version_number as template_version_number,

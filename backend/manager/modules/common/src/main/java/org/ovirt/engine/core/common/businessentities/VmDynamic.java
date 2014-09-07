@@ -66,6 +66,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     private boolean runOnce;
     @UnchangeableByVdsm
     private String cpuName;
+    @UnchangeableByVdsm
+    private String emulatedMachine;
     private String currentCd;
     @UnchangeableByVdsm
     private String stopReason;
@@ -122,6 +124,7 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + (currentCd == null ? 0 : currentCd.hashCode());
         result = prime * result + (stopReason == null ? 0 : stopReason.hashCode());
         result = prime * result + exitReason.hashCode();
+        result = prime * result + (emulatedMachine == null ? 0 : emulatedMachine.hashCode());
         return result;
     }
 
@@ -179,7 +182,8 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(cpuName, other.cpuName)
                 && ObjectUtils.objectsEqual(currentCd, other.currentCd)
                 && ObjectUtils.objectsEqual(stopReason, other.stopReason)
-                && exitReason == other.exitReason);
+                && exitReason == other.exitReason
+                && ObjectUtils.objectsEqual(emulatedMachine, other.emulatedMachine));
     }
 
     public String getExitMessage() {
@@ -570,5 +574,13 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public int getGuestCpuCount() {
         return guestCpuCount;
+    }
+
+    public String getEmulatedMachine() {
+        return emulatedMachine;
+    }
+
+    public void setEmulatedMachine(String emulatedMachine) {
+        this.emulatedMachine = emulatedMachine;
     }
 }

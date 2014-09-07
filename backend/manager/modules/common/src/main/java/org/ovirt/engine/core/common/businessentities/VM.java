@@ -220,6 +220,22 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmStatic.setComment(value);
     }
 
+    public String getEmulatedMachine() {
+        return this.vmDynamic.getEmulatedMachine();
+    }
+
+    public void setEmulatedMachine(String value) {
+        this.vmDynamic.setEmulatedMachine(value);
+    }
+
+    public String getCustomEmulatedMachine() {
+        return this.vmStatic.getCustomEmulatedMachine();
+    }
+
+    public void setCustomEmulatedMachine(String value) {
+        this.vmStatic.setCustomEmulatedMachine(value);
+    }
+
     @Override
     public String getStopReason() {
         return this.vmDynamic.getStopReason();
@@ -1040,6 +1056,14 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setHibernationVolHandle(String value) {
         this.vmDynamic.setHibernationVolHandle(value);
+    }
+
+    public String getCustomCpuName() {
+        return this.vmStatic.getCustomCpuName();
+    }
+
+    public void setCustomCpuName(String value) {
+        this.vmStatic.setCustomCpuName(value);
     }
 
     public String getCpuName() {

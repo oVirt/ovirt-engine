@@ -3263,6 +3263,15 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage its CPU level ${hostCPULevel} is lower than the VM requires ${vmCPULevel}")
     String VAR__DETAIL__LOW_CPU_LEVEL();
 
+    @DefaultStringValue("$detailMessage it doesn't support the emulated machine '${vmEmulatedMachine}' which is required by the VM")
+    String VAR__DETAIL__UNSUPPORTED_EMULATED_MACHINE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The given emulated machine contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.' are allowed.")
+    String ACTION_TYPE_FAILED_EMULATED_MACHINE_MAY_NOT_CONTAIN_SPECIAL_CHARS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The given CPU name contains special characters. Only lower-case and upper-case letters, numbers, '_', '-', '.' are allowed.")
+    String ACTION_TYPE_FAILED_CPU_NAME_MAY_NOT_CONTAIN_SPECIAL_CHARS();
+
     @DefaultStringValue("$detailMessage it did not match positive affinity rules ${affinityRules}")
     String VAR__DETAIL__AFFINITY_FAILED_POSITIVE();
 
