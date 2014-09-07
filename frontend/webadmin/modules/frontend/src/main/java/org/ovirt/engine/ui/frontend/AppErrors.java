@@ -1974,9 +1974,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk ${DiskName} in VM ${VmName} already marked as boot.")
     String ACTION_TYPE_FAILED_DISK_BOOT_IN_USE();
 
-    @DefaultStringValue("Cannot set a disk to be both shareable and bootable.")
-    String ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE();
-
     @DefaultStringValue("Cannot ${action} ${type}. The VMs ${VmsName} already have a disk marked as boot.")
     String ACTION_TYPE_FAILED_VMS_BOOT_IN_USE();
 

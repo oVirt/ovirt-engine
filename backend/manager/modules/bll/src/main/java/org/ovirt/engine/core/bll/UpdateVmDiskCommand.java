@@ -170,7 +170,6 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
                 validate(diskValidator.isVirtIoScsiValid(getVm())) &&
                 (getOldDisk().getDiskInterface() == getNewDisk().getDiskInterface()
                 || validate(diskValidator.isDiskInterfaceSupported(getVm()))) &&
-                validate(diskValidator.areBootableAndSharableCompatibleWithDisk()) &&
                 setAndValidateDiskProfiles();
     }
 

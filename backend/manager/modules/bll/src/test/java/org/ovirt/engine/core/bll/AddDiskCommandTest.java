@@ -131,7 +131,6 @@ public class AddDiskCommandTest {
         when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
         when(diskValidator.isDiskInterfaceSupported(any(VM.class))).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_DISK_INTERFACE_UNSUPPORTED));
         when(diskValidator.isVirtIoScsiValid(any(VM.class))).thenReturn(ValidationResult.VALID);
-        when(diskValidator.areBootableAndSharableCompatibleWithDisk()).thenReturn(ValidationResult.VALID);
         when(command.getDiskValidator(any(Disk.class))).thenReturn(diskValidator);
 
         assertFalse(command.canDoAction());
@@ -910,37 +909,9 @@ public class AddDiskCommandTest {
         doReturn(true).when(command).isDiskPassPciAndIdeLimit(any(Disk.class));
         doReturn(true).when(command).checkIfImageDiskCanBeAdded(any(VM.class), any(DiskValidator.class));
         doReturn(ValidationResult.VALID).when(diskValidator).isReadOnlyPropertyCompatibleWithInterface();
-        when(diskValidator.areBootableAndSharableCompatibleWithDisk()).thenReturn(ValidationResult.VALID);
         doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
-    }
-
-    @Test
-    public void canDoActionFailsWhenDiskIsBothShareableAndBootable() {
-        prepareForDiskShareableBootableTest(
-                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE));
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
-                command, VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE);
-    }
-
-    @Test
-    public void canDoActionSucceedsWhenDiskIsNotBothShareableAndBootable() {
-        prepareForDiskShareableBootableTest(ValidationResult.VALID);
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
-    }
-
-    private void prepareForDiskShareableBootableTest(ValidationResult isDiskShareableAndBootableValidationResult) {
-        Guid storageId = Guid.newGuid();
-        initializeCommand(storageId);
-
-        VM vm = mockVm();
-        mockMaxPciSlots();
-
-        when(diskValidator.areBootableAndSharableCompatibleWithDisk()).thenReturn(isDiskShareableAndBootableValidationResult);
-        when(diskValidator.isReadOnlyPropertyCompatibleWithInterface()).thenReturn(ValidationResult.VALID);
-        doReturn(true).when(command).checkIfImageDiskCanBeAdded(vm, diskValidator);
-        doReturn(diskValidator).when(command).getDiskValidator(any(Disk.class));
     }
 
     private void fillDiskMap(LunDisk disk, VM vm, int expectedMapSize) {

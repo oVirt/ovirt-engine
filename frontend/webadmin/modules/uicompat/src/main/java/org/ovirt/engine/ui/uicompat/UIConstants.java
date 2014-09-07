@@ -2308,12 +2308,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("SCSI pass-through is not supported for read-only disks.")
     String cannotEnableScsiPassthroughForLunReadOnlyDisk();
 
-    @DefaultStringValue("A shareable disk cannot be bootable.")
-    String cannotEnableBootableForShareableDisk();
-
-    @DefaultStringValue("A bootable disk cannot be shareable.")
-    String cannotEnableShareableForBootableDisk();
-
     @DefaultStringValue("Global Maintenance Enabled")
     String haGlobalMaintenance();
 

@@ -146,13 +146,6 @@ public class DiskValidator {
         return ValidationResult.VALID;
     }
 
-    public ValidationResult areBootableAndSharableCompatibleWithDisk() {
-        if (disk.isShareable() && disk.isBoot()) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_CANNOT_BE_BOTH_SHAREABLE_AND_BOOTABLE);
-        }
-        return ValidationResult.VALID;
-    }
-
     /**
      * Determines whether the specified LUN is visible to the specified host.
      *
