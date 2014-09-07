@@ -40,6 +40,9 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         if (getParameters().getVmPayload() == null) {
             loadPayload();
         }
+
+        /* if run-once was used then the dynamic vm fields must be updated before running the scheduler filters (which are called via super.CanDoAction->runVmValidator) */
+        earlyUpdateVmDynamicRunOnce();
     }
 
 
@@ -79,6 +82,23 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
         }
 
         return true;
+    }
+
+    /**
+     * The function updates the dynamic vm fields with the run-once parameters for fields which are accessed during
+     * the validation process and thus must be updated at an earlier stage than the initVm() stage.
+     */
+    private void earlyUpdateVmDynamicRunOnce() {
+        if(getVm() != null) { // function is called before super.canDoAction(), vm object is not safe yet
+            if (getParameters().getCustomCpuName() != null) {
+                getVm().setCpuName(getParameters().getCustomCpuName());
+            }
+
+            if (getParameters().getCustomEmulatedMachine() != null) {
+                getVm().setEmulatedMachine(getParameters().getCustomEmulatedMachine());
+            }
+        }
+
     }
 
     private void loadPayload() {

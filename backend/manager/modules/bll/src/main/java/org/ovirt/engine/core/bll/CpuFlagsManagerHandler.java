@@ -42,6 +42,14 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
+    public static String getCpuNameByCpuId(String name, Version ver) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
+            return cpuFlagsManager.getCpuNameByCpuId(name);
+        }
+        return null;
+    }
+
     public static ArchitectureType getArchitectureByCpuName(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
@@ -105,7 +113,22 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    private static class CpuFlagsManager {
+
+    public static Version getLatestDictionaryVersion() {
+        return Collections.max(_managersDictionary.keySet());
+
+    }
+
+    public static List<ServerCpu> getSupportedServerCpuList(Version ver, String maxCpuName) {
+        final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
+        if (cpuFlagsManager != null) {
+            return cpuFlagsManager.getSupportedServerCpuList(maxCpuName);
+        }
+        return new ArrayList<ServerCpu>();
+
+    }
+
+        private static class CpuFlagsManager {
         private List<ServerCpu> _intelCpuList;
         private List<ServerCpu> _amdCpuList;
         private List<ServerCpu> _ibmCpuList;
@@ -115,6 +138,12 @@ public final class CpuFlagsManagerHandler {
         private Map<String, ServerCpu> _amdCpuByNameDictionary =
                 new HashMap<String, ServerCpu>();
         private Map<String, ServerCpu> _ibmCpuByNameDictionary =
+                new HashMap<String, ServerCpu>();
+        private Map<String, ServerCpu> _intelCpuByVdsNameDictionary =
+                new HashMap<String, ServerCpu>();
+        private Map<String, ServerCpu> _amdCpuByVdsNameDictionary =
+                new HashMap<String, ServerCpu>();
+        private Map<String, ServerCpu> _ibmCpuByVdsNameDictionary =
                 new HashMap<String, ServerCpu>();
         private final String _intelFlag = "vmx";
         private final String _amdFlag = "svm";
@@ -186,10 +215,13 @@ public final class CpuFlagsManagerHandler {
                         ServerCpu sc = new ServerCpu(info[1], level, flgs, info[3], archType);
                         if (sc.getFlags().contains(_intelFlag)) {
                             _intelCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            _intelCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         } else if (sc.getFlags().contains(_amdFlag)) {
                             _amdCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            _amdCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         } else if (sc.getFlags().contains(_ibmFlag)) {
                             _ibmCpuByNameDictionary.put(sc.getCpuName(), sc);
+                            _ibmCpuByVdsNameDictionary.put(sc.getVdsVerbData(), sc);
                         }
 
                         _allCpuList.add(sc);
@@ -224,6 +256,19 @@ public final class CpuFlagsManagerHandler {
                         || (sc = _amdCpuByNameDictionary.get(name)) != null
                         || (sc = _ibmCpuByNameDictionary.get(name)) != null) {
                     result = sc.getVdsVerbData();
+                }
+            }
+            return result;
+        }
+
+        public String getCpuNameByCpuId(String vdsName) {
+            String result = null;
+            ServerCpu sc = null;
+            if (vdsName != null) {
+                if ((sc = _intelCpuByVdsNameDictionary.get(vdsName)) != null
+                        || (sc = _amdCpuByVdsNameDictionary.get(vdsName)) != null
+                        || (sc = _ibmCpuByVdsNameDictionary.get(vdsName)) != null) {
+                    result = sc.getCpuName();
                 }
             }
             return result;
@@ -346,6 +391,40 @@ public final class CpuFlagsManagerHandler {
             return result;
         }
 
+
+
+
+        /**
+         * Returns a list with all CPU's which are with a lower CPU level than the given CPU.
+         *
+         * @param maxCpuName
+         * @return list of supported CPUs.
+         */
+        public List<ServerCpu> getSupportedServerCpuList(String maxCpuName) {
+
+            List<ServerCpu> supportedCpus = new ArrayList<ServerCpu>();
+            if (_intelCpuByNameDictionary.containsKey(maxCpuName)) {
+                ServerCpu selected = _intelCpuByNameDictionary.get(maxCpuName);
+                int selectedCpuIndex = _intelCpuList.indexOf(selected);
+                for (int i = 0; i <= selectedCpuIndex; i++) { // list is sorted by level
+                    supportedCpus.add(_intelCpuList.get(i));
+                }
+            } else if (_ibmCpuByNameDictionary.containsKey(maxCpuName)) {
+                    ServerCpu selected = _ibmCpuByNameDictionary.get(maxCpuName);
+                    int selectedCpuIndex =_ibmCpuList.indexOf(selected);
+                    for (int i = 0; i <= selectedCpuIndex; i++) {
+                        supportedCpus.add(_ibmCpuList.get(i));
+                    }
+            } else if (_amdCpuByNameDictionary.containsKey(maxCpuName)) {
+                ServerCpu selected = _amdCpuByNameDictionary.get(maxCpuName);
+                int selectedCpuIndex =_amdCpuList.indexOf(selected);
+                for (int i = 0; i <= selectedCpuIndex; i++) {
+                    supportedCpus.add(_amdCpuList.get(i));
+                }
+            }
+            return supportedCpus;
+
+        }
     }
 
     public static int compareCpuLevels(String cpuName1, String cpuName2, Version ver) {

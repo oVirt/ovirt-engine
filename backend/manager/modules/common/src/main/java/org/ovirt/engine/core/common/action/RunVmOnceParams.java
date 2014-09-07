@@ -16,6 +16,9 @@ public class RunVmOnceParams extends RunVmParams {
     private VmInit vmInit;
     private Guid destinationVdsId;
 
+    private String customEmulatedMachine;
+    private String customCpuName;
+
     @NullOrStringContainedInConfigValueList(configValue = ConfigValues.VncKeyboardLayoutValidValues,
             groups = { StartEntity.class }, message = "VALIDATION.VM.INVALID_KEYBOARD_LAYOUT")
     private String vncKeyboardLayout;
@@ -75,4 +78,21 @@ public class RunVmOnceParams extends RunVmParams {
     public void setDestinationVdsId(Guid destinationVdsId) {
         this.destinationVdsId = destinationVdsId;
     }
+
+    public String getCustomEmulatedMachine() {
+        return customEmulatedMachine;
+    }
+
+    public void setCustomEmulatedMachine(String customEmulatedMachine) {
+        this.customEmulatedMachine = ((customEmulatedMachine == null || customEmulatedMachine.trim().isEmpty()) ? null : customEmulatedMachine);
+    }
+
+    public String getCustomCpuName() {
+        return customCpuName;
+    }
+
+    public void setCustomCpuName(String customCpuName) {
+        this.customCpuName = ((customCpuName == null || customCpuName.trim().isEmpty()) ? null : customCpuName);
+    }
+
 }

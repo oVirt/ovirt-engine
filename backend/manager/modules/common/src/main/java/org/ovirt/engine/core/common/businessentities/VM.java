@@ -1434,7 +1434,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         result = prime * result + (transparentHugePages ? 1231 : 1237);
         result =
                 prime * result + ((vdsGroupCompatibilityVersion == null) ? 0 : vdsGroupCompatibilityVersion.hashCode());
-        result = prime * result + ((vdsGroupCpuFlagsData == null) ? 0 : vdsGroupCpuFlagsData.hashCode());
         result = prime * result + ((vdsGroupCpuName == null) ? 0 : vdsGroupCpuName.hashCode());
         result = prime * result + ((vdsGroupDescription == null) ? 0 : vdsGroupDescription.hashCode());
         result = prime * result + ((vdsGroupName == null) ? 0 : vdsGroupName.hashCode());
@@ -1509,16 +1508,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public boolean getHasSpiceDriver() {
         return getSpiceDriverVersion() != null;
-    }
-
-    private String vdsGroupCpuFlagsData;
-
-    public String getVdsGroupCpuFlagsData() {
-        return vdsGroupCpuFlagsData;
-    }
-
-    public void setVdsGroupCpuFlagsData(String value) {
-        vdsGroupCpuFlagsData = value;
     }
 
     private boolean transparentHugePages;

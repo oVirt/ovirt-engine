@@ -333,6 +333,7 @@ public class ResourceManager {
         vm.setVmIp(null);
         vm.setVmFQDN(null);
         vm.setCpuName(null);
+        vm.setEmulatedMachine(null);
         vm.setMigrationProgressPercent(0);
         List<VmNetworkInterface> interfaces = vm.getInterfaces();
         for (VmNetworkInterface ifc : interfaces) {

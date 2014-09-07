@@ -83,7 +83,9 @@ public abstract class VmInfoBuilderBase {
         }
         final String compatibilityVersion = vm.getVdsGroupCompatibilityVersion().toString();
         addCpuPinning(compatibilityVersion);
-        createInfo.put(VdsProperties.emulatedMachine, getVdsGroup().getEmulatedMachine());
+        if(vm.getEmulatedMachine() != null) {
+            createInfo.put(VdsProperties.emulatedMachine, vm.getEmulatedMachine());
+        }
         // send cipher suite and spice secure channels parameters only if ssl
         // enabled.
         if (Config.<Boolean> getValue(ConfigValues.SSLEnabled)) {
@@ -108,9 +110,8 @@ public abstract class VmInfoBuilderBase {
         if (vm.isUseHostCpuFlags()) {
             createInfo.put(VdsProperties.cpuType,
                     "hostPassthrough");
-        } else if (vm.getVdsGroupCpuFlagsData() != null) {
-            createInfo.put(VdsProperties.cpuType,
-                    vm.getVdsGroupCpuFlagsData());
+        } else if (vm.getCpuName() != null) { // uses dynamic vm data which was already updated by runVmCommand
+            createInfo.put(VdsProperties.cpuType, vm.getCpuName());
         }
         createInfo.put(VdsProperties.niceLevel,
                 String.valueOf(vm.getNiceLevel()));

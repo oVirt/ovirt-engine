@@ -698,15 +698,23 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             getVm().setVmPayload(null);
         }
 
-        // get what cpu flags should be passed to vdsm according to cluster
-        // cpu name
-        getVm().setVdsGroupCpuFlagsData(
-                CpuFlagsManagerHandler.getCpuId(getVm().getVdsGroupCpuName(), getVm()
-                        .getVdsGroupCompatibilityVersion()));
-
         VmHandler.updateVmGuestAgentVersion(getVm());
 
-        getVm().setCpuName(getVdsGroup().getcpu_name());
+        // update dynamic cluster-parameters
+        if (getVm().getCpuName() == null) { // no run-once data -> use static field or inherit from cluster
+            if (getVm().getCustomCpuName() != null) {
+                getVm().setCpuName(getVm().getCustomCpuName());
+            } else {
+                // get what cpu flags should be passed to vdsm according to the cluster
+                getVm().setCpuName(CpuFlagsManagerHandler.getCpuId(getVm().getVdsGroupCpuName(), getVm()
+                        .getVdsGroupCompatibilityVersion()));
+            }
+        }
+        if (getVm().getEmulatedMachine() == null) {
+            getVm().setEmulatedMachine((getVm().getCustomEmulatedMachine() != null ?
+                    getVm().getCustomEmulatedMachine() :
+                    getVdsGroup().getEmulatedMachine()));
+        }
 
         if (getFlow() != RunVmFlow.RESUME_HIBERNATE) {
             getVm().setHibernationVolHandle(getMemoryFromSnapshot());

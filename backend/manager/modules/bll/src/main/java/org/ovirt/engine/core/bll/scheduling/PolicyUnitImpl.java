@@ -7,6 +7,7 @@ import java.util.Map;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CPUPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.CpuLevelFilterPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.EmulatedMachineFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenDistributionWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.EvenGuestDistributionBalancePolicyUnit;
@@ -107,6 +108,8 @@ public class PolicyUnitImpl {
             } else if (policyUnit.getPolicyUnitType() == PolicyUnitType.WEIGHT) {
                 return new VmAffinityWeightPolicyUnit(policyUnit);
             }
+        case "Emulated-Machine":
+            return new EmulatedMachineFilterPolicyUnit(policyUnit);
         default:
             break;
         }
