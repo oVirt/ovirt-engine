@@ -520,7 +520,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         setValidTab(TabName.PROFILES_TAB, profilesValid);
 
         ValidationCompleteEvent.fire(getEventBus(), this);
-        return getName().getIsValid() && getVLanTag().getIsValid() && getDescription().getIsValid();
+        return allTabsValid();
     }
 
     protected boolean isCustomMtu() {
