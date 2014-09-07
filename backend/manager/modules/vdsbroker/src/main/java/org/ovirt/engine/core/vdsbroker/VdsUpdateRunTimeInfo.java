@@ -130,6 +130,7 @@ public class VdsUpdateRunTimeInfo {
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
     private boolean vdsMaintenanceTimeoutOccurred;
+    private Map<String, InterfaceStatus> oldInterfaceStatus = new HashMap<String, InterfaceStatus>();
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
@@ -684,6 +685,7 @@ public class VdsUpdateRunTimeInfo {
                     _vds.getName());
         }
         // get statistics data, images checks and vm_count data (dynamic)
+        fetchHostInterfaces();
         GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetStatsVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(_vds));
         vdsBrokerCommand.execute();
@@ -717,6 +719,22 @@ public class VdsUpdateRunTimeInfo {
 
         if (Config.<Boolean> getValue(ConfigValues.DebugTimerLogging)) {
             log.debugFormat("vds::refreshVdsStats\n{0}", toString());
+        }
+    }
+
+    private void fetchHostInterfaces() {
+        List<VdsNetworkInterface> nics;
+        if (_vds.getInterfaces().isEmpty()) {
+             nics = getDbFacade().getInterfaceDao().getAllInterfacesForVds(_vds.getId());
+            _vds.getInterfaces().addAll(nics);
+        } else {
+            nics = _vds.getInterfaces();
+        }
+
+        // cache previous state of interfaces for comparison with those reported by host
+        oldInterfaceStatus.clear();
+        for (VdsNetworkInterface nic : nics) {
+            oldInterfaceStatus.put(nic.getName(), nic.getStatistics().getStatus());
         }
     }
 
@@ -880,13 +898,14 @@ public class VdsUpdateRunTimeInfo {
             }
         }
 
-        for (VdsNetworkInterface oldIface : getDbFacade().getInterfaceDao().getAllInterfacesForVds(_vds.getId())) {
-            VdsNetworkInterface iface = monitoredInterfaces.get(oldIface.getName());
+        for (Map.Entry<String, InterfaceStatus> entry : oldInterfaceStatus.entrySet()) {
+            VdsNetworkInterface iface = monitoredInterfaces.get(entry.getKey());
+            InterfaceStatus oldStatus = entry.getValue();
             InterfaceStatus status;
             if (iface != null) {
                 status = iface.getStatistics().getStatus();
-                if (oldIface.getStatistics().getStatus() != InterfaceStatus.NONE
-                        && oldIface.getStatistics().getStatus() != status) {
+                if (oldStatus != InterfaceStatus.NONE
+                        && oldStatus != status) {
                     AuditLogableBase logable = new AuditLogableBase(_vds.getId());
                     logable.setCustomId(iface.getName());
                     if (iface.getBondName() != null) {
