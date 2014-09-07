@@ -7,22 +7,22 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmFromScratchParameters extends VmManagementParametersBase {
+public class AddVmParameters extends VmManagementParametersBase {
     private static final long serialVersionUID = 8641610721114989096L;
 
     private ArrayList<DiskImage> diskInfoList;
 
-    public AddVmFromScratchParameters() {
+    public AddVmParameters() {
     }
 
-    public AddVmFromScratchParameters(VmStatic vmStatic, ArrayList<DiskImage> diskInfoList,
+    public AddVmParameters(VmStatic vmStatic, ArrayList<DiskImage> diskInfoList,
             Guid storageDomainId) {
         super(vmStatic);
         setDiskInfoList((diskInfoList != null) ? diskInfoList : new ArrayList<DiskImage>());
         setStorageDomainId(storageDomainId);
     }
 
-    public AddVmFromScratchParameters(VM vm, ArrayList<DiskImage> diskInfoList, Guid storageDomainId) {
+    public AddVmParameters(VM vm, ArrayList<DiskImage> diskInfoList, Guid storageDomainId) {
         this(vm.getStaticData(), diskInfoList, storageDomainId);
     }
 

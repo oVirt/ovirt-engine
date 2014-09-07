@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmToPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -57,7 +56,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
     }
 
     private VdcReturnValueBase addVmFromScratch(VmStatic vmStatic) {
-        AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(vmStatic, getParameters()
+        AddVmParameters parameters = new AddVmParameters(vmStatic, getParameters()
                 .getDiskInfoList(), getParameters().getStorageDomainId());
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setDontAttachToDefaultTag(true);

@@ -38,8 +38,8 @@ import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -413,7 +413,7 @@ public class BackendVmsResource extends
     }
 
     protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
-        AddVmFromScratchParameters params = new AddVmFromScratchParameters(staticVm, mapDisks(vm.getDisks()), Guid.Empty);
+        AddVmParameters params = new AddVmParameters(staticVm, mapDisks(vm.getDisks()), Guid.Empty);
         params.setVmPayload(getPayload(vm));
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
             params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());

@@ -22,7 +22,7 @@ import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.HostStoragePoolParametersBase;
@@ -416,7 +416,7 @@ public class VdsEventListener implements IVdsEventListener {
     @Override
     public void addExternallyManagedVms(List<VmStatic> externalVmList) {
         for (VmStatic currVm : externalVmList) {
-            AddVmFromScratchParameters params = new AddVmFromScratchParameters(currVm, null, null);
+            AddVmParameters params = new AddVmParameters(currVm, null, null);
             VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch, params, ExecutionHandler.createInternalJobContext());
             if (!returnValue.getSucceeded()) {
                 log.debugFormat("Failed adding Externally managed VM {0}", currVm.getName());

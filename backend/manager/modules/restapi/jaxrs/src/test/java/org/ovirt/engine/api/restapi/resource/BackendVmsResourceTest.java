@@ -31,8 +31,8 @@ import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -256,7 +256,7 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getTemplateEntity(0));
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
-                                  AddVmFromScratchParameters.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId"},
                                   new Object[] { Guid.Empty},
                                   true,
@@ -315,7 +315,7 @@ public class BackendVmsResourceTest
         Disks disks = new Disks();
         disks.getDisks().add(new Disk());
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
-                                  AddVmFromScratchParameters.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId", "DiskInfoList" },
                                   new Object[] { Guid.Empty, mapDisks(disks) },
                                   true,
@@ -370,7 +370,7 @@ public class BackendVmsResourceTest
                                      new Object[] { GUIDS[0] },
                                      getTemplateEntity(0));
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
-                                  AddVmFromScratchParameters.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { GUIDS[1] },
                                   true,
@@ -432,7 +432,7 @@ public class BackendVmsResourceTest
                                      getTemplateEntity(0));
 
         setUpCreationExpectations(VdcActionType.AddVmFromScratch,
-                                  AddVmFromScratchParameters.class,
+                                  AddVmParameters.class,
                                   new String[] { "StorageDomainId" },
                                   new Object[] { Guid.Empty },
                                   true,
@@ -480,7 +480,7 @@ public class BackendVmsResourceTest
                 new Object[] { GUIDS[1] },
                 getVdsGroupEntity());
         setUriInfo(setUpActionExpectations(VdcActionType.AddVmFromScratch,
-                                           AddVmFromScratchParameters.class,
+                                           AddVmParameters.class,
                                            new String[] { "StorageDomainId" },
                                            new Object[] { Guid.Empty },
                                            canDo,

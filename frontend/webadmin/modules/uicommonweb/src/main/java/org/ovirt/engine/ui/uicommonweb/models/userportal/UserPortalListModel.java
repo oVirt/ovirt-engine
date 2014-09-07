@@ -8,7 +8,7 @@ import java.util.LinkedList;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
@@ -1093,8 +1093,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         {
             if (gettempVm().getVmtGuid().equals(Guid.Empty))
             {
-                AddVmFromScratchParameters parameters =
-                        new AddVmFromScratchParameters(gettempVm(),
+                AddVmParameters parameters =
+                        new AddVmParameters(gettempVm(),
                                 new ArrayList<DiskImage>(),
                                 Guid.Empty);
                 parameters.setMakeCreatorExplicitOwner(true);

@@ -9,7 +9,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.AttachEntityToTagParameters;
 import org.ovirt.engine.core.common.action.ChangeDiskCommandParameters;
@@ -2146,7 +2146,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
             model.startProgress(null);
 
-            AddVmFromScratchParameters parameters = new AddVmFromScratchParameters(getcurrentVm(),
+            AddVmParameters parameters = new AddVmParameters(getcurrentVm(),
                     new ArrayList<DiskImage>(),
                     Guid.Empty);
             parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());

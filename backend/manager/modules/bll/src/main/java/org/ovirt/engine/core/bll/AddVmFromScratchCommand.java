@@ -8,7 +8,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
-import org.ovirt.engine.core.common.action.AddVmFromScratchParameters;
+import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
  */
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute
-public class AddVmFromScratchCommand<T extends AddVmFromScratchParameters> extends AddVmCommand<T> {
+public class AddVmFromScratchCommand<T extends AddVmParameters> extends AddVmCommand<T> {
     public AddVmFromScratchCommand(T parameters) {
         super(parameters, null);
     }

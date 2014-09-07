@@ -8,7 +8,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.compat.Guid;
 
-public class AddVmAndAttachToPoolParameters extends AddVmFromScratchParameters {
+public class AddVmAndAttachToPoolParameters extends AddVmParameters {
     private static final long serialVersionUID = -2676528333942591702L;
 
     private Guid poolId;
