@@ -695,6 +695,20 @@ public abstract class OvfReader implements IOvfBuilder {
             }
         }
 
+        node = content.SelectSingleNode(OvfProperties.CUSTOM_EMULATED_MACHINE);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setCustomEmulatedMachine(node.innerText);
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.CUSTOM_CPU_NAME);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setCustomCpuName(node.innerText);
+            }
+        }
+
         readGeneralData(content);
 
         readVmInit(content);

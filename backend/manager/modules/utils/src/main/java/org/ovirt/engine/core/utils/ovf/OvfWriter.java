@@ -388,6 +388,14 @@ public abstract class OvfWriter implements IOvfBuilder {
             _writer.WriteRaw(String.valueOf(vmBase.getMigrateCompressed()));
             _writer.WriteEndElement();
         }
+
+        _writer.WriteStartElement(OvfProperties.CUSTOM_EMULATED_MACHINE);
+        _writer.WriteRaw(vmBase.getCustomEmulatedMachine());
+        _writer.WriteEndElement();
+
+        _writer.WriteStartElement(OvfProperties.CUSTOM_CPU_NAME);
+        _writer.WriteRaw(vmBase.getCustomCpuName());
+        _writer.WriteEndElement();
     }
 
     protected abstract void writeAppList();

@@ -71,4 +71,6 @@ public class OvfProperties {
     final static String COMMENT = "Comment";
     final static String IS_AUTO_CONVERGE = "IsAutoConverge";
     final static String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";
+    final static String CUSTOM_EMULATED_MACHINE = "CustomEmulatedMachine";
+    final static String CUSTOM_CPU_NAME = "CustomCpuName";
 }
