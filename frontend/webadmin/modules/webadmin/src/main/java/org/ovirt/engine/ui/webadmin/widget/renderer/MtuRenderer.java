@@ -10,7 +10,7 @@ import com.google.gwt.text.shared.AbstractRenderer;
 public class MtuRenderer extends AbstractRenderer<Integer> {
 
     private static int defaultMtu =
-            (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMtu);
+            (Integer) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.DefaultMTU);
 
     private final ApplicationMessages messages = GWT.create(ApplicationMessages.class);
 

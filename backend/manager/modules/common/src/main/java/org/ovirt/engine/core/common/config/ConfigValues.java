@@ -1812,7 +1812,7 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1500")
-    DefaultMtu,
+    DefaultMTU,
 
     /**
      * Defines the hostname(s) or IP address(es) to send fence_kdump messages to. If empty, engine FQDN is used.

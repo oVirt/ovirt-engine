@@ -74,7 +74,7 @@ public class SetupNetworksHelperTest {
             mockConfig(ConfigValues.UserDefinedNetworkCustomProperties,
                     Version.v3_5.toString(),
                     "bridge_opts=^[^\\s=]+=[^\\s=]+(\\s+[^\\s=]+=[^\\s=]+)*$"),
-            mockConfig(ConfigValues.DefaultMtu, DEFAULT_MTU));
+            mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
 
     @Mock
     private NetworkDao networkDAO;
