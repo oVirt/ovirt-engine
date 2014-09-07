@@ -44,7 +44,7 @@ public class RetrieveImageDataVDSCommand<P extends ImageHttpAccessVDSCommandPara
 
     @Override
     protected AsyncTaskType getCreatedTaskType() {
-        return AsyncTaskType.uploadImageFromStream;
+        return AsyncTaskType.uploadImageToStream;
     }
 
     @Override
