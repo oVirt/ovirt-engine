@@ -4,6 +4,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.widget.renderer.FullDateTimeRenderer;
 import org.ovirt.engine.ui.common.widget.table.column.CheckboxColumn;
@@ -14,10 +15,17 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 public class SnapshotsViewColumns {
     private static final CommonApplicationConstants constants = GWT.create(CommonApplicationConstants.class);
     private static final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+    private static final CommonApplicationMessages messages = GWT.create(CommonApplicationMessages.class);
 
     public static final TextColumnWithTooltip<Snapshot> dateColumn = new TextColumnWithTooltip<Snapshot>() {
         @Override
@@ -57,16 +65,28 @@ public class SnapshotsViewColumns {
             String descriptionStr = description.asString();
 
             if (snapshot.getStatus() == SnapshotStatus.IN_PREVIEW) {
-                descriptionStr = descriptionStr + " (" + constants.previewModelLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
+                List<String> previewedItems = new ArrayList<String>(Arrays.asList(constants.vmConfiguration()));
+                previewedItems.addAll(Linq.getDiskAliases(snapshot.getDiskImages()));
+                descriptionStr = messages.snapshotPreviewing(
+                        descriptionStr, StringUtils.join(previewedItems, ", ")); //$NON-NLS-1$
                 description = templates.snapshotDescription("color:orange", descriptionStr); //$NON-NLS-1$
             }
             else if (snapshot.getType() == SnapshotType.STATELESS) {
                 descriptionStr = descriptionStr + " (" + constants.readonlyLabel() + ")"; //$NON-NLS-1$ //$NON-NLS-2$
                 description = templates.snapshotDescription("font-style:italic", descriptionStr); //$NON-NLS-1$
             }
-            else if (snapshot.getType() == SnapshotType.ACTIVE || snapshot.getType() == SnapshotType.PREVIEW) {
-                descriptionStr = snapshot.getType() == SnapshotType.ACTIVE ? constants.snapshotDescriptionActiveVm() : constants.snapshotDescriptionActiveVmBeforePreview();
+            else if (snapshot.getType() == SnapshotType.PREVIEW) {
+                descriptionStr = constants.snapshotDescriptionActiveVmBeforePreview();
                 description = templates.snapshotDescription("color:gray", descriptionStr); //$NON-NLS-1$
+            }
+            else if (snapshot.getType() == SnapshotType.ACTIVE) {
+                descriptionStr = constants.snapshotDescriptionActiveVm();
+                description = templates.snapshotDescription("color:gray", descriptionStr); //$NON-NLS-1$
+            }
+            else if (snapshot.getType() == SnapshotType.REGULAR && !snapshot.getDiskImages().isEmpty()) {
+                descriptionStr = messages.snapshotPreviewing(
+                        descriptionStr, StringUtils.join(Linq.getDiskAliases(snapshot.getDiskImages()), ", ")); //$NON-NLS-1$
+                description = templates.snapshotDescription("color:gold", descriptionStr); //$NON-NLS-1$
             }
 
             return description;

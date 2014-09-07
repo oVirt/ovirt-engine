@@ -400,9 +400,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Installed Applications")
     String applicationsLabel();
 
-    @DefaultStringValue("Preview Mode")
-    String previewModelLabel();
-
     @DefaultStringValue("Read-Only")
     String readonlyLabel();
 

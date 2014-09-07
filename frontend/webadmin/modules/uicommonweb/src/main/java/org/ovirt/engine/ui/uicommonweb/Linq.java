@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -837,6 +838,14 @@ public final class Linq
         }
 
         return diskModels;
+    }
+
+    public static Set<String> getDiskAliases(List<? extends Disk> disks) {
+        Set<String> aliases = new HashSet<String>();
+        for (Disk disk : disks) {
+            aliases.add(disk.getDiskAlias());
+        }
+        return aliases;
     }
 
     public final static class TimeZonePredicate implements IPredicate<TimeZoneModel>
