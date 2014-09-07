@@ -59,20 +59,9 @@ public final class CommandsFactory {
         return createCommand(action, parameters, null);
     }
 
-    @SuppressWarnings("unchecked")
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters, CommandContext commandContext) {
         try {
-            CommandBase<P> result = null;
-            if (commandContext == null) {
-                result = (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()).newInstance(parameters);
-            } else {
-                result =
-                        (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), CommandSuffix),
-                                parameters.getClass(),
-                                commandContext.getClass()).newInstance(parameters, commandContext);
-            }
-            Injector.injectMembers(result);
-            return result;
+            return Injector.injectMembers(instantiateCommand(action, parameters, commandContext));
         }
         catch (InvocationTargetException ex) {
             log.error("Error in invocating CTOR of command " + action.name() + ". Exception is ", ex);
@@ -84,6 +73,15 @@ public final class CommandsFactory {
         }
     }
 
+    @SuppressWarnings("unchecked")
+    private static <P extends VdcActionParametersBase> CommandBase<P> instantiateCommand(VdcActionType action, P parameters, CommandContext commandContext)
+            throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
+        return commandContext == null ?
+                (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()).newInstance(parameters)
+                : (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), CommandSuffix),
+                        parameters.getClass(),
+                        commandContext.getClass()).newInstance(parameters, commandContext);
+    }
 
     /**
      * Creates an instance of the given command class and passed the command id to it's constructor
@@ -105,8 +103,7 @@ public final class CommandsFactory {
                 constructor.setAccessible(true);
             }
             CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(new Object[]{commandId});
-            Injector.injectMembers(cmd);
-            return cmd;
+            return Injector.injectMembers(cmd);
         } catch (Exception e) {
             log.error(
                     "CommandsFactory : Failed to get type information using " +
@@ -163,6 +160,7 @@ public final class CommandsFactory {
         if (clazz != null) {
             return clazz;
         }
+
         for (String commandPackage : COMMAND_PACKAGES) {
             String className = String.format(CLASS_NAME_FORMAT, commandPackage, name, suffix);
             Class<CommandBase<? extends VdcActionParametersBase>> type = loadClass(className);

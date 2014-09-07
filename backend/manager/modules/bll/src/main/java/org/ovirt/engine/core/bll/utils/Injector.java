@@ -8,6 +8,9 @@ import javax.enterprise.inject.spi.InjectionTarget;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
+import org.ovirt.engine.core.bll.CommandBase;
+import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+
 /**
  * an application wide interaction point with the CDI container mostly to gap all the existing unmanged code
  * or for unmanaged code which wants interaction with managed beans.
@@ -35,11 +38,12 @@ public class Injector {
      * @param <T> an unmanaged CDI instance with some members containing <code>@Inject</code> annotated
      *           members
      */
-    public static <T extends  Object> void injectMembers(T instance) {
+    public static <T extends  CommandBase<? extends VdcActionParametersBase>> T injectMembers(T instance) {
         AnnotatedType type = injector.manager.createAnnotatedType(instance.getClass());
         InjectionTarget injectionTarget = injector.manager.createInjectionTarget(type);
         injectionTarget.inject(instance, injector.manager.createCreationalContext(null));
         injectionTarget.postConstruct(instance);
+        return instance;
     }
 
     /**
