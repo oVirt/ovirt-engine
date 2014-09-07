@@ -12,7 +12,7 @@ public enum AsyncTaskType {
     syncImageData,
     extendImageSize,
     downloadImage,
-    uploadImageFromStream,
+    uploadImageToStream,
     downloadImageFromStream,
     notSupported;
 
