@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -39,7 +40,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.AttachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.ImageHttpAccessVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
@@ -205,16 +205,16 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 DiskImage ovfDisk = ovfDiskAndSize.getFirst();
                 if (ovfDisk != null) {
                     try {
-                        VDSReturnValue retrievedByteData = runVdsCommand(VDSCommandType.RetrieveImageData,
-                                new ImageHttpAccessVDSCommandParameters(getVdsId(),
-                                        getParameters().getStoragePoolId(),
+                        VdcReturnValueBase vdcReturnValue = runInternalAction(VdcActionType.RetrieveImageData,
+                                new RetrieveImageDataParameters(getParameters().getStoragePoolId(),
                                         getParameters().getStorageDomainId(),
                                         ovfDisk.getId(),
                                         ovfDisk.getImage().getId(),
-                                        ovfDiskAndSize.getSecond()));
+                                        ovfDiskAndSize.getSecond()), cloneContextAndDetachFromParent());
 
-                        if (retrievedByteData.getSucceeded()) {
-                            return OvfUtils.getOvfEntities((byte[]) retrievedByteData.getReturnValue(),
+                        getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValue.getInternalVdsmTaskIdList());
+                        if (vdcReturnValue.getSucceeded()) {
+                            return OvfUtils.getOvfEntities((byte[]) vdcReturnValue.getActionReturnValue(),
                                     getParameters().getStorageDomainId());
                         } else {
                             log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}",
