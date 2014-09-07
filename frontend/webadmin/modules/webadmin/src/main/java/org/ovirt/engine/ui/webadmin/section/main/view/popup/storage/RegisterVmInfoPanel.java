@@ -10,6 +10,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -46,7 +47,8 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
 
         disksTable.setRowData((List) Arrays.asList(vm.getDiskMap().values().toArray()));
         nicsTable.setRowData((List) Arrays.asList(vm.getInterfaces().toArray()));
-        appsTable.setRowData((List) Arrays.asList(vm.getAppList().split("[,]", -1))); //$NON-NLS-1$
+        appsTable.setRowData((List) Arrays.asList(vm.getAppList() != null ?
+                vm.getAppList().split("[,]", -1) : new ArrayList<String>())); //$NON-NLS-1$
     }
 
     private void initGeneralForm() {
