@@ -18,6 +18,7 @@ import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
+import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -42,7 +43,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
-     /**
+    /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
      */
@@ -62,7 +63,7 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             // TODO: remove this later, and rely only on the custom and built in extensions directories configuration
             DbUserCacheManager.getInstance().init();
             CommandCoordinatorUtil.initAsyncTaskManager();
-            ResourceManager.getInstance().init();
+            Injector.get(ResourceManager.class);
             OvfDataUpdater.getInstance().initOvfDataUpdater();
             SchedulingManager.getInstance().setMigrationHandler(new MigrationHandler() {
 

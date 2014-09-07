@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatistics;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
+import org.ovirt.engine.core.common.qualifiers.VmDeleted;
 import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
@@ -46,13 +47,19 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.annotation.PostConstruct;
+import javax.enterprise.event.Observes;
+import javax.inject.Singleton;
+
+@Singleton
 public class ResourceManager {
 
-    private static ResourceManager instance = new ResourceManager();
+    private static ResourceManager instance;
     private final Map<Guid, HashSet<Guid>> vdsAndVmsList = new ConcurrentHashMap<>();
     private final Map<Guid, VdsManager> vdsManagersDict = new ConcurrentHashMap<>();
     private final Set<Guid> asyncRunningVms =
             Collections.newSetFromMap(new ConcurrentHashMap<Guid, Boolean>());
+    private ConcurrentHashMap<Guid, VmManager> vmManagers = new ConcurrentHashMap<>();
 
     private static final String VDSCommandPrefix = "VDSCommand";
 
@@ -62,11 +69,19 @@ public class ResourceManager {
 
     }
 
+    /**
+     * TODO remove this after moving all places to use CDI.
+     * kept for backward compatibility.
+     */
+    @Deprecated
     public static ResourceManager getInstance() {
         return instance;
     }
 
-    public void init() {
+    @PostConstruct
+    private void init() {
+        // init the singleton. TODO remove once all code is using CDI
+        instance = this;
         log.info("Start initializing {}", getClass().getSimpleName());
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
@@ -440,5 +455,13 @@ public class ResourceManager {
         }
 
         return null;
+    }
+
+    public VmManager getVmManager(Guid vmId) {
+        return vmManagers.putIfAbsent(vmId, new VmManager(vmId));
+    }
+
+    public void onVmDelete(@Observes @VmDeleted Guid vmId) {
+        vmManagers.remove(vmId);
     }
 }

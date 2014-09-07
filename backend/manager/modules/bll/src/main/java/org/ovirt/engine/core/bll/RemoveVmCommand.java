@@ -47,9 +47,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
+import javax.enterprise.event.Event;
+import javax.inject.Inject;
+
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<RemoveVmParameters> {
+
+    @Inject
+    private Event<Guid> vmDeleted;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -126,6 +132,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
             }
         }
 
+        vmDeleted.fire(getVmId());
         return true;
     }
 
