@@ -35,11 +35,6 @@ public class VmStatic extends VmBase {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String predefinedProperties;
 
-    /**
-     * Disk size in sectors of 512 bytes
-     */
-    private int diskSize;
-
     @EditableOnVmStatusField
     private String customProperties;
 
@@ -113,14 +108,6 @@ public class VmStatic extends VmBase {
         this.userDefinedProperties = userDefinedProperties;
     }
 
-    public int getDiskSize() {
-        return diskSize;
-    }
-
-    public void setDiskSize(int value) {
-        diskSize = value;
-    }
-
     public boolean isFirstRun() {
         return !isInitialized();
     }
@@ -167,7 +154,6 @@ public class VmStatic extends VmBase {
         final int prime = 31;
         int result = super.hashCode();
         result = prime * result + (initialized ? 1231 : 1237);
-        result = prime * result + diskSize;
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
         result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
         result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
@@ -197,7 +183,6 @@ public class VmStatic extends VmBase {
         }
         VmStatic other = (VmStatic) obj;
         return (initialized == other.initialized
-                && diskSize == other.diskSize
                 && ObjectUtils.objectsEqual(getName(), other.getName())
                 && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
                 && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)

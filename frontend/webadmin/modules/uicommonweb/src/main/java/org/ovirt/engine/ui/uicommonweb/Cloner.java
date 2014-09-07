@@ -472,7 +472,6 @@ public final class Cloner
         obj.setStateless(instance.isStateless());
         obj.setRunAndPause(instance.isRunAndPause());
         obj.setMemSizeMb(instance.getMemSizeMb());
-        obj.setDiskSize(instance.getDiskSize());
         obj.setNiceLevel(instance.getNiceLevel());
         obj.setNumOfMonitors(instance.getNumOfMonitors());
         obj.setAllowConsoleReconnect(instance.isAllowConsoleReconnect());
