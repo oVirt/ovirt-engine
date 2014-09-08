@@ -2553,7 +2553,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         boolean vmInitIsValid = getVmInitModel().validate();
         setValidTab(TabName.FIRST_RUN, vmInitIsValid);
 
-        boolean isValid = hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid();
+        boolean isValid = hwPartValid && vmInitIsValid && allTabsValid();
         getValid().setEntity(isValid);
         ValidationCompleteEvent.fire(getEventBus(), this);
         return isValid;
@@ -2599,32 +2599,25 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setValidTab(TabName.CONSOLE_TAB, getUsbPolicy().getIsValid() && getNumOfMonitors().getIsValid()
                 && getSpiceProxy().getIsValid());
         setValidTab(TabName.HOST_TAB, getMigrationDowntime().getIsValid());
-        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());
 
         getRngBytes().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE), new RngDevValidation()});
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
 
         setValidTab(TabName.TAB_RNG, getRngBytes().getIsValid() && getRngPeriod().getIsValid());
 
-        setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
-                            getTotalCPUCores().getIsValid() &&
-                            getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
-
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
         if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
+        setValidTab(TabName.RESOURCE_ALLOCATION_TAB, getMinAllocatedMemory().getIsValid());
+
+        setValidTab(TabName.SYSTEM_TAB, getMemSize().getIsValid() &&
+                getTotalCPUCores().getIsValid() &&
+                getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
 
 
-
-        boolean isValid = behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
-                && getMinAllocatedMemory().getIsValid()
-                && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
-                && getMigrationDowntime().getIsValid()
-                && getRngBytes().getIsValid()
-                && getRngPeriod().getIsValid()
-                && getTotalCPUCores().getIsValid();
+        boolean isValid = behaviorValid && allTabsValid();
 
         getValid().setEntity(isValid);
         ValidationCompleteEvent.fire(getEventBus(), this);

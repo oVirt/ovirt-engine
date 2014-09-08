@@ -617,4 +617,8 @@ public class Model implements IEventListener, ICommandTarget, IProvidePropertyCh
     public boolean isValidTab(TabName tab) {
         return !invalidTabs.contains(tab);
     }
+
+    public boolean allTabsValid() {
+        return invalidTabs.isEmpty();
+    }
 }
