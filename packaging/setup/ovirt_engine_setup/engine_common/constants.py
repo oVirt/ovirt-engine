@@ -166,6 +166,9 @@ class Stages(object):
 
     CONFIG_DB_ENCRYPTION_AVAILABLE = 'osetup.config.encryption.available'
 
+    NETWORK_OWNERS_CONFIG_CUSTOMIZED = \
+        'osetup.network.owners.config.customized'
+
     DIALOG_TITLES_S_ALLINONE = 'osetup.dialog.titles.allinone.start'
     DIALOG_TITLES_S_APACHE = 'osetup.dialog.titles.apache.start'
     DIALOG_TITLES_S_DATABASE = 'osetup.dialog.titles.database.start'
