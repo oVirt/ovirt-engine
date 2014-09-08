@@ -4,6 +4,7 @@ import static org.ovirt.engine.api.utils.ReflectionHelper.assignChildModel;
 
 import java.nio.charset.Charset;
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -19,6 +20,7 @@ import org.ovirt.engine.api.resource.aaa.UsersResource;
 import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
+import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.aaa.DirectoryUser;
 import org.ovirt.engine.core.common.action.AddUserParameters;
@@ -76,16 +78,12 @@ public class BackendUsersResource
                user_defined_pattern + AND_SEARCH_PATTERN + USERS_SEARCH_PATTERN;
     }
 
-    protected String getDomain(User user) {
+    protected String getAuthzProviderName(User user, Collection<String> authzProvidersNames) {
         if (user.isSetDomain() && user.getDomain().isSetName()) {
             return user.getDomain().getName();
         }
         else if (user.isSetDomain() && user.getDomain().isSetId()) {
-            List<String> domains = getBackendCollection(
-               String.class,
-               VdcQueryType.GetDomainList,
-               new VdcQueryParametersBase());
-            for (String domain :domains) {
+            for (String domain : authzProvidersNames) {
                 Guid domainId = asGuid(domain.getBytes(Charset.forName("UTF-8")), true);
                 if (domainId.toString().equals(user.getDomain().getId())) {
                    return domain;
@@ -93,10 +91,7 @@ public class BackendUsersResource
             }
             throw new WebFaultException(null, "Domain: '" + user.getDomain().getId().toString() + "' does not exist.", Response.Status.BAD_REQUEST);
         }
-        else if (isNameContainsDomain(user)) {
-            return user.getUserName().substring(user.getUserName().lastIndexOf("@") + 1);
-        }
-        return null;
+        return AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames);
     }
 
     /**
@@ -174,10 +169,14 @@ public class BackendUsersResource
     @Override
     public Response add(User user) {
         validateParameters(user, "userName");
-        if (!isNameContainsDomain(user)) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
+        List<String> authzProvidersNames = getBackendCollection(
+                String.class,
+                VdcQueryType.GetDomainList,
+                new VdcQueryParametersBase());
+        if (AuthzUtils.getAuthzNameFromEntityName(user.getUserName(), authzProvidersNames) == null) {// user-name may contain the domain (e.g: oliel@xxx.yyy)
             validateParameters(user, "domain.id|name");
         }
-        String domain = getDomain(user);
+        String domain = getAuthzProviderName(user, authzProvidersNames);
         DirectoryUser directoryUser = findDirectoryUser(domain, user);
         if (directoryUser == null) {
             return Response.status(Status.BAD_REQUEST)
@@ -187,11 +186,6 @@ public class BackendUsersResource
         AddUserParameters parameters = new AddUserParameters(new DbUser(directoryUser));
         QueryIdResolver<Guid> resolver = new QueryIdResolver<>(VdcQueryType.GetDbUserByUserId, IdQueryParameters.class);
         return performCreate(VdcActionType.AddUser, parameters, resolver, BaseResource.class);
-    }
-
-    private boolean isNameContainsDomain(User user) {
-        return ((user.getUserName().contains("@")) && (user.getUserName().lastIndexOf('@') != user.getUserName()
-                .length() - 1));
     }
 
     /**
@@ -217,7 +211,7 @@ public class BackendUsersResource
                         DirectoryUser.class,
                         SearchType.DirectoryUser,
                         getDirectoryUserSearchPattern(
-                                isNameContainsDomain(user) ? user.getUserName().substring(0, user.getUserName().lastIndexOf("@")) : user.getUserName(),
+                            AuthzUtils.getEntityNameWithoutAuthz(user.getUserName(), directoryName),
                                 user.getNamespace(),
                                 directoryName)
                         );

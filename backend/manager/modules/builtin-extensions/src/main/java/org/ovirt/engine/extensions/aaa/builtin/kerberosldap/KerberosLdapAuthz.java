@@ -272,13 +272,13 @@ public class KerberosLdapAuthz implements Extension {
                         user.getSurName()
                 ).mput(
                         Authz.PrincipalRecord.NAME,
-                        removeUpnSuffix(user.getUserName())
+                        formatValue(user.getUserName(), Authz.PrincipalRecord.NAME)
                 ).mput(
                         Authz.PrincipalRecord.TITLE,
                         user.getTitle()
                 ).mput(
                         Authz.PrincipalRecord.PRINCIPAL,
-                        removeUpnSuffix(user.getUserName())
+                        formatValue(user.getUserName(), Authz.PrincipalRecord.PRINCIPAL)
                 );
         if (user.getGroups() != null) {
             List<ExtMap> groups = new ArrayList<>();
@@ -327,7 +327,7 @@ public class KerberosLdapAuthz implements Extension {
                     String.format(
                             "(%1$s%2$s%3$s)", keysToAttributes.get(key),
                             operatorsToChars.get(queryFilterRecord.get(QueryFilterRecord.OPERATOR)),
-                            removeUpnSuffix(queryFilterRecord.get(key).toString())
+                            formatValue(queryFilterRecord.get(key).toString(), key)
                             )
                     );
         } else {
@@ -346,8 +346,14 @@ public class KerberosLdapAuthz implements Extension {
         return query;
     }
 
-    private String removeUpnSuffix(String value) {
-        return value.contains("@") ? value.substring(0, value.indexOf("@")) : value;
+    private String formatValue(String value, ExtKey key) {
+        String result = value;
+        if (key.equals(Authz.PrincipalRecord.NAME) || key.equals(Authz.PrincipalRecord.PRINCIPAL)) {
+            result = value.contains("@") ? value.substring(0, value.indexOf("@")) : value;
+        } else if (key.equals(Authz.GroupRecord.NAME)) {
+            result = value.contains("/") ? value.substring(value.lastIndexOf('/') + 1) : value;
+        }
+        return result;
     }
 
 }

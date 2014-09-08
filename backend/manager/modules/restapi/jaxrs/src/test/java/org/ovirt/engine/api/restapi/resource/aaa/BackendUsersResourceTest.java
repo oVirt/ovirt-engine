@@ -129,6 +129,11 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser_2() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: username=" + NAMES[0]);
         User model = new User();
         Domain domain = new Domain();
@@ -141,6 +146,11 @@ public class BackendUsersResourceTest
 
     @Test
     public void testAddUser_3() throws Exception {
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpAddUserExpectations("ADUSER@" + DOMAIN + ":: username=" + NAMES[0]);
         User model = new User();
         model.setUserName(NAMES[0] + "@" + DOMAIN);
