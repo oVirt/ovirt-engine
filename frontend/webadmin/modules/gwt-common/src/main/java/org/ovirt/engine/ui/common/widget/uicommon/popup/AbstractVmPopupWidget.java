@@ -641,9 +641,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     public Label specificHostLabel;
 
     @UiField(provided = true)
-    public InfoIcon nonEditableWhileVmNotDownInfo;
-
-    @UiField(provided = true)
     @Path(value = "defaultHost.selectedItem")
     @WithElementId("defaultHost")
     public ListModelListBoxEditor<VDS> defaultHostEditor;
@@ -933,9 +930,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         .replaceAll("(\r\n|\n)", "<br />")), resources);//$NON-NLS-1$ //$NON-NLS-2$
         isVirtioScsiEnabledInfoIcon =
                 new InfoIcon(applicationTemplates.italicText(constants.isVirtioScsiEnabledInfo()), resources);
-        nonEditableWhileVmNotDownInfo =
-                new InfoIcon(applicationTemplates.italicText(constants.nonEditableMigrationFieldsWhileVmNotDownInfo()),
-                        resources);
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
         migrationDowntimeInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)), resources);
         priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(

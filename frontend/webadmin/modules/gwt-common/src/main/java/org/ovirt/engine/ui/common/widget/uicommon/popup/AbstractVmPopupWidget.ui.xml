@@ -597,7 +597,6 @@
                 <t:content>
                     <g:FlowPanel>
                     <g:FlowPanel ui:field="startRunningOnPanel">
-                        <d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>
                         <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runOnVmPopup}" />
                         <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
                             <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
