@@ -781,6 +781,8 @@ public abstract class OvfReader implements IOvfBuilder {
         XmlNode linkedNode = node.SelectSingleNode(OvfProperties.VMD_LINKED, _xmlNS);
         iface.setLinked(linkedNode == null ? true : Boolean.valueOf(linkedNode.innerText));
 
+        iface.setName(node.SelectSingleNode(OvfProperties.VMD_NAME, _xmlNS).innerText);
+
         String resourceSubType = node.SelectSingleNode("rasd:ResourceSubType", _xmlNS).innerText;
         if (StringUtils.isNotEmpty(resourceSubType)) {
             iface.setType(Integer.parseInt(resourceSubType));
