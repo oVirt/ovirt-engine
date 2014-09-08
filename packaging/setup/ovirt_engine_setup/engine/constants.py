@@ -28,6 +28,7 @@ from otopi import util
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.constants import classproperty
 from ovirt_engine_setup.constants import osetupattrsclass
 from ovirt_engine_setup.constants import osetupattrs
@@ -439,6 +440,9 @@ class EngineDBEnv(object):
 
     @osetupattrs(
         answerfile=True,
+        answerfile_condition=lambda env: not env.get(
+            oengcommcons.ProvisioningEnv.POSTGRES_PROVISIONING_ENABLED
+        ),
     )
     def PASSWORD(self):
         return 'OVESETUP_DB/password'

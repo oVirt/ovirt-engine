@@ -48,6 +48,7 @@ def osetupattrs(
     summary=False,
     description=None,
     postinstallfile=False,
+    answerfile_condition=lambda env: True,
     summary_condition=lambda env: True,
 ):
     class decorator(classproperty):
@@ -58,6 +59,7 @@ def osetupattrs(
                 summary=summary,
                 description=description,
                 postinstallfile=postinstallfile,
+                answerfile_condition=answerfile_condition,
                 summary_condition=summary_condition,
             )
     return decorator
