@@ -107,7 +107,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         }
     }
 
-    private ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
+    private static ArrayList<DiskImage> getDiskImageListFromDiskMap(Map<Guid, Disk> diskMap) {
         return new ArrayList<>(LinqUtils.transformToList(diskMap.values(), new Function<Disk, DiskImage>() {
             @Override
             public DiskImage eval(Disk disk) {
@@ -136,7 +136,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         setActionReturnValue(getVm().getId());
     }
 
-    private void clearVmDisks(VM vm) {
+    private static void clearVmDisks(VM vm) {
         vm.setDiskMap(Collections.<Guid, Disk> emptyMap());
         vm.getImages().clear();
         vm.getDiskList().clear();
