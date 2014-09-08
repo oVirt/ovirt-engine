@@ -7,7 +7,9 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
+import static org.mockito.internal.verification.VerificationModeFactory.atLeastOnce;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.failsWith;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.isValid;
 import static org.ovirt.engine.core.bll.validator.ValidationResultMatchers.replacements;
@@ -201,16 +203,20 @@ public class VmNicValidatorTest {
     }
 
     private void vnicProfileValidationTest(Matcher<ValidationResult> matcher,
-            boolean profileExist,
-            boolean networkExist) {
-        when(dbFacade.getVnicProfileDao()).thenReturn(vnicProfileDao);
-        when(vnicProfileDao.get(any(Guid.class))).thenReturn(profileExist ? vnicProfile : null);
-        when(vnicProfile.getNetworkId()).thenReturn(DEFAULT_GUID);
-        doReturn(networkExist ? network : null).when(validator).getNetworkByVnicProfile(vnicProfile);
-        doReturn(networkExist).when(validator).isNetworkInCluster(any(Network.class), any(Guid.class));
+                                           boolean profileExists,
+                                           boolean networkExists) {
         when(nic.getVnicProfileId()).thenReturn(VNIC_PROFILE_ID);
+        doReturn(profileExists ? vnicProfile : null).when(validator).loadVnicProfile(VNIC_PROFILE_ID);
+        doReturn(networkExists ? network : null).when(validator).getNetworkByVnicProfile(vnicProfile);
+        doReturn(networkExists).when(validator).isNetworkInCluster(network, OTHER_GUID);
 
         assertThat(validator.profileValid(OTHER_GUID), matcher);
-    }
 
+        verify(nic, atLeastOnce()).getVnicProfileId();
+        verify(validator).loadVnicProfile(VNIC_PROFILE_ID);
+        if (networkExists) {
+            verify(validator).getNetworkByVnicProfile(vnicProfile);
+            verify(validator).isNetworkInCluster(network, OTHER_GUID);
+        }
+    }
 }

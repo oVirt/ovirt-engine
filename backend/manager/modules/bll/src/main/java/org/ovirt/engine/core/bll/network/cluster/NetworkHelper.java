@@ -74,24 +74,24 @@ public class NetworkHelper {
     }
 
     public static Network getNetworkByVnicProfileId(Guid vnicProfileId) {
+        VnicProfile vnicProfile = getVnicProfile(vnicProfileId);
+        return getNetworkByVnicProfile(vnicProfile);
+    }
+
+    public static VnicProfile getVnicProfile(Guid vnicProfileId) {
         if (vnicProfileId == null) {
             return null;
         }
 
-        VnicProfile vnicProfile = DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
-        return getNetworkByVnicProfile(vnicProfile);
+        return DbFacade.getInstance().getVnicProfileDao().get(vnicProfileId);
     }
 
     public static Network getNetworkByVnicProfile(VnicProfile vnicProfile) {
-        if (vnicProfile == null) {
+        if (vnicProfile == null || vnicProfile.getNetworkId() == null) {
             return null;
         }
 
-        Network retVal = null;
-        if (vnicProfile.getNetworkId() != null) {
-            retVal = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
-        }
-        return retVal;
+        return DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
     }
 
     public static boolean isNetworkInCluster(Network network, Guid clusterId) {

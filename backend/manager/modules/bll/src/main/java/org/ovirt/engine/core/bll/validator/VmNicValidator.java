@@ -30,6 +30,10 @@ public class VmNicValidator {
 
     protected int osId;
 
+    private VnicProfile vnicProfile = null;
+
+    private Network network = null;
+
     public VmNicValidator(VmNic nic, Version version) {
         this.nic = nic;
         this.version = version;
@@ -70,7 +74,7 @@ public class VmNicValidator {
     public ValidationResult profileValid(Guid clusterId) {
         if (nic.getVnicProfileId() != null) {
             // Check that the profile exists
-            VnicProfile vnicProfile = getDbFacade().getVnicProfileDao().get(nic.getVnicProfileId());
+            VnicProfile vnicProfile = getVnicProfile();
             if (vnicProfile == null) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VNIC_PROFILE_NOT_EXISTS);
             }
@@ -121,5 +125,25 @@ public class VmNicValidator {
 
     protected DbFacade getDbFacade() {
         return DbFacade.getInstance();
+    }
+
+    protected VnicProfile getVnicProfile() {
+        if (vnicProfile == null) {
+            vnicProfile = loadVnicProfile(nic.getVnicProfileId());
+        }
+
+        return vnicProfile;
+    }
+
+    VnicProfile loadVnicProfile(Guid vnicProfileId) {
+        return NetworkHelper.getVnicProfile(vnicProfileId);
+    }
+
+    protected Network getNetwork() {
+        if (network == null) {
+            network = getNetworkByVnicProfile(getVnicProfile());
+        }
+
+        return network;
     }
 }

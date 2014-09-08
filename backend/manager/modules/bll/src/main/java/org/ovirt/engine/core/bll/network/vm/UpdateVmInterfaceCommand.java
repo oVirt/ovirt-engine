@@ -380,7 +380,7 @@ public class UpdateVmInterfaceCommand<T extends AddVmInterfaceParameters> extend
         }
 
         private boolean isVnicAttachedToExternalNetwork() {
-            final Network network = NetworkHelper.getNetworkByVnicProfileId(nic.getVnicProfileId());
+            final Network network = getNetwork();
             return (network != null && network.isExternal());
         }
     }
