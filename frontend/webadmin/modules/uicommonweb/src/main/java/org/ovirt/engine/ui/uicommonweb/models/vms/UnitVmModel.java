@@ -2685,10 +2685,10 @@ public class UnitVmModel extends Model {
         boolean vmInitIsValid = getVmInitModel().validate();
         setIsFirstRunTabValid(vmInitIsValid);
 
-        boolean isValid = hwPartValid && vmInitIsValid && getDataCenterWithClustersList().getIsValid()
+        boolean isValid = hwPartValid && vmInitIsValid && allTabsValid()
                 && getDisksAllocationModel().getIsValid() && getTemplate().getIsValid() && getComment().getIsValid()
                 && getDefaultHost().getIsValid()
-                && getTimeZone().getIsValid() && getOSType().getIsValid() && getCdImage().getIsValid()
+                && getOSType().getIsValid()
                 && getKernel_path().getIsValid()
                 && getInitrd_path().getIsValid()
                 && getKernel_parameters().getIsValid()
@@ -2744,28 +2744,33 @@ public class UnitVmModel extends Model {
         getRngPeriod().validateEntity(new IValidation[]{new IntegerValidation(0, Integer.MAX_VALUE)});
         setRngTabValid(getRngBytes().getIsValid() && getRngPeriod().getIsValid());
 
-        setIsSystemTabValid(getMemSize().getIsValid() &&
-                            getTotalCPUCores().getIsValid() &&
-                            getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
-
         // Minimum 'Physical Memory Guaranteed' is 1MB
         validateMemorySize(getMemSize(), Integer.MAX_VALUE, 1);
         if (!(getBehavior() instanceof TemplateVmModelBehavior) && getMemSize().getIsValid()) {
             validateMemorySize(getMinAllocatedMemory(), getMemSize().getEntity(), 1);
         }
 
+        setIsSystemTabValid(getMemSize().getIsValid() &&
+                            getTotalCPUCores().getIsValid() &&
+                            getSerialNumberPolicy().getCustomSerialNumber().getIsValid());
 
 
-        boolean isValid = behaviorValid && customPropertySheetValid && getName().getIsValid() && getDescription().getIsValid()
-                && getMinAllocatedMemory().getIsValid()
-                && getNumOfMonitors().getIsValid() && getUsbPolicy().getIsValid()
-                && getMigrationDowntime().getIsValid()
-                && getRngBytes().getIsValid()
-                && getRngPeriod().getIsValid()
-                && getTotalCPUCores().getIsValid();
+        boolean isValid = behaviorValid && allTabsValid();
 
         getValid().setEntity(isValid);
         return isValid;
+    }
+
+    private boolean allTabsValid() {
+        return getIsGeneralTabValid() &&
+                getIsSystemTabValid() &&
+                getIsFirstRunTabValid() &&
+                getIsDisplayTabValid() &&
+                getIsHostTabValid() &&
+                getIsAllocationTabValid() &&
+                getIsBootSequenceTabValid() &&
+                isRngTabValid() &&
+                getIsCustomPropertiesTabValid();
     }
 
     private void resetTabsValidity() {
