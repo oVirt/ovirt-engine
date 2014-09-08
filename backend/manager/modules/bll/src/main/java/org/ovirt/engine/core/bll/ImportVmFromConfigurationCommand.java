@@ -161,6 +161,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
         return AuditLogType.VM_IMPORT_FROM_CONFIGURATION_EXECUTED_SUCCESSFULLY;
     }
 
+    @Override
     protected Guid getSourceDomainId(DiskImage image) {
         return image.getStorageIds().get(0);
     }
