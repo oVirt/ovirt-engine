@@ -27,6 +27,10 @@ public interface NetworkPanelsStyle extends CssResource {
 
     String networkPanel();
 
+    String networkPanelAttached();
+
+    String networkPanelNotAttached();
+
     String disabledNetworkPanel();
 
     String nicPanel();
@@ -50,4 +54,8 @@ public interface NetworkPanelsStyle extends CssResource {
     String requiredTitlePanel();
 
     String requiredLabel();
+
+    String vlanLabel();
+
+    String titleLabel();
 }
