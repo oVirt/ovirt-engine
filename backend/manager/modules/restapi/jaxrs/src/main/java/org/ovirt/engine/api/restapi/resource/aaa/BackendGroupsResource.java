@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.text.MessageFormat;
+import java.util.Collection;
 import java.util.List;
 
 import javax.ws.rs.core.Response;
@@ -17,6 +18,7 @@ import org.ovirt.engine.api.restapi.resource.AbstractBackendCollectionResource;
 import org.ovirt.engine.api.restapi.resource.ResourceConstants;
 import org.ovirt.engine.api.restapi.resource.SingleEntityResource;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
+import org.ovirt.engine.api.restapi.utils.aaa.AuthzUtils;
 import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.common.action.AddGroupParameters;
 import org.ovirt.engine.core.common.action.IdParameters;
@@ -64,18 +66,16 @@ public class BackendGroupsResource
      * model directly, or it can be embedded in the name.
      *
      * @param group the model of the group
+     * @param authzProvidersNames
+     *            list of existing authz provider names, including the returned provider name, if exists in the list
      * @return the name of the directory or {@code null} if the group can't be determined
      */
-    private String getDirectoryName(Group group) {
+    private String getAuthzProviderName(Group group, Collection<String> authzProvidersNames) {
         if (group.isSetDomain() && group.getDomain().isSetName()) {
             return group.getDomain().getName();
         }
         else if (group.isSetDomain() && group.getDomain().isSetId()) {
-            List<String> domains = getBackendCollection(
-                String.class,
-                VdcQueryType.GetDomainList,
-                new VdcQueryParametersBase());
-            for (String domain :domains) {
+            for (String domain : authzProvidersNames) {
                 Guid domainId = new Guid(domain.getBytes(), true);
                 if (domainId.toString().equals(group.getDomain().getId())) {
                    return domain;
@@ -84,13 +84,9 @@ public class BackendGroupsResource
             throw new WebFaultException(
                 null,
                 "Domain: '" + group.getDomain().getId().toString() + "' does not exist.",
-                Response.Status.BAD_REQUEST
-            );
+                Response.Status.BAD_REQUEST);
         }
-        else if (group.isSetName() && group.getName().contains("/")) {
-            return group.getName().substring(0, group.getName().indexOf("/"));
-        }
-        return null;
+        return AuthzUtils.getAuthzNameFromEntityName(group.getName(), authzProvidersNames);
     }
 
     /**
@@ -150,11 +146,15 @@ public class BackendGroupsResource
 
     @Override
     public Response add(Group group) {
+        List<String> authzProvidersNames = getBackendCollection(
+                String.class,
+                VdcQueryType.GetDomainList,
+                new VdcQueryParametersBase());
         validateParameters(group, "name");
-        if (!isNameContainsDomain(group)) {
+        if (AuthzUtils.getAuthzNameFromEntityName(group.getName(), authzProvidersNames) == null) {
             validateParameters(group, "domain.id|name");
         }
-        String directoryName = getDirectoryName(group);
+        String directoryName = getAuthzProviderName(group, authzProvidersNames);
         DirectoryGroup directoryGroup = findDirectoryGroup(directoryName, group);
         if (directoryGroup == null) {
             return Response.status(Status.BAD_REQUEST)
@@ -182,16 +182,11 @@ public class BackendGroupsResource
         } else if (groupModel.isSetDomainEntryId()) {
             return getGroupById(directoryName, namespace, groupModel.getDomainEntryId());
         } else if (groupModel.isSetName()) {
-            String groupName = groupModel.getName();
-            if (groupName.startsWith(directoryName + "/")) {
-                int lastSlash = groupName.lastIndexOf("/");
-                groupName = groupName.substring(lastSlash + 1);
-            }
             return getEntity(
-                DirectoryGroup.class,
-                SearchType.DirectoryGroup,
-                getDirectoryGroupSearchPattern(groupName, directoryName)
-            );
+                    DirectoryGroup.class,
+                    SearchType.DirectoryGroup,
+                    getDirectoryGroupSearchPattern(AuthzUtils.getEntityNameWithoutAuthz(groupModel.getName(), directoryName), directoryName)
+                );
         }
 
         return null;
@@ -210,11 +205,6 @@ public class BackendGroupsResource
     @Override
     public Response performRemove(String id) {
         return performAction(VdcActionType.RemoveGroup, new IdParameters(asGuid(id)));
-    }
-
-    private boolean isNameContainsDomain(Group group) {
-        String name = group.getName();
-        return name.contains("/") && name.indexOf('/') != name.length() - 1;
     }
 
 }

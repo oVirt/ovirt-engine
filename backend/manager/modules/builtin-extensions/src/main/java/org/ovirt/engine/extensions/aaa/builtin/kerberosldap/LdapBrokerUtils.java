@@ -44,19 +44,25 @@ public class LdapBrokerUtils {
         }
 
         StringBuilder sb = new StringBuilder();
+        StringBuilder domainName = new StringBuilder();
 
         List<Rdn> rdns = name.getRdns();
         for (Rdn rdn : rdns) {
             String type = rdn.getType();
             String val = (String) rdn.getValue();
             if (type.equalsIgnoreCase("dc")) {
-                sb.insert(0, "." + val);
+                if (domainName.length() > 0) {
+                    domainName.insert(0, ".");
+                }
+                domainName.insert(0, val);
                 continue;
+            } else {
+                sb.append("/" + val);
             }
-            sb.append("/" + val);
         }
         // remove the first "." character.
         sb.delete(0, 1);
+        sb.append("@").append(domainName);
         return sb.toString();
     }
 

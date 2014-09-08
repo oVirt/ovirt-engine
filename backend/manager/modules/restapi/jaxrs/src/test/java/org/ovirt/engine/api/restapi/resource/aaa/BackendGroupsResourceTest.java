@@ -1,6 +1,7 @@
 package org.ovirt.engine.api.restapi.resource.aaa;
 
 import java.nio.charset.Charset;
+import java.util.LinkedList;
 import java.util.List;
 
 import javax.ws.rs.WebApplicationException;
@@ -21,6 +22,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.queries.DirectoryIdQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -45,11 +47,14 @@ public class BackendGroupsResourceTest
      * searches, thus then must have the same format that we generate when searching in directories.
      */
     private static final String[] GROUP_NAMES;
+    private static final String[] GROUP_NAMES_WITH_NO_DOMAIN;
 
     static {
         GROUP_NAMES = new String[NAMES.length];
+        GROUP_NAMES_WITH_NO_DOMAIN = new String[NAMES.length];
         for (int i = 0; i < NAMES.length; i++) {
-            GROUP_NAMES[i] = DOMAIN + "/Groups/" + NAMES[i];
+            GROUP_NAMES_WITH_NO_DOMAIN[i] = "Groups/" + NAMES[i];
+            GROUP_NAMES[i] = GROUP_NAMES_WITH_NO_DOMAIN[i] + "@" + DOMAIN;
         }
     }
 
@@ -204,8 +209,13 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithExplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpGetEntityExpectations(
-                "ADGROUP@" + DOMAIN + ":: name=" + NAMES[0],
+                "ADGROUP@" + DOMAIN + ":: name=" + GROUP_NAMES_WITH_NO_DOMAIN[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
@@ -227,13 +237,20 @@ public class BackendGroupsResourceTest
         Domain domain = new Domain();
         domain.setName(DOMAIN);
         Group model = new Group();
-        model.setName(NAMES[0]);
+        model.setName(GROUP_NAMES_WITH_NO_DOMAIN[0]);
         model.setDomain(domain);
 
         Response response = collection.add(model);
         assertEquals(201, response.getStatus());
         assertTrue(response.getEntity() instanceof Group);
         verifyModel((Group) response.getEntity(), 0);
+    }
+
+    private List<String> setUpDomains() {
+        List<String> domains = new LinkedList<>();
+        domains.add("some.domain");
+        domains.add(DOMAIN);
+        return domains;
     }
 
     /**
@@ -243,8 +260,13 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithImplicitDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpGetEntityExpectations(
-                "ADGROUP@" + DOMAIN + ":: name=" + NAMES[0],
+                "ADGROUP@" + DOMAIN + ":: name=" + GROUP_NAMES_WITH_NO_DOMAIN[0],
             SearchType.DirectoryGroup,
             getDirectoryGroup(0)
         );
@@ -278,10 +300,15 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupWithoutDirectoryName() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         control.replay();
 
         Group model = new Group();
-        model.setName(NAMES[0]);
+        model.setName(GROUP_NAMES_WITH_NO_DOMAIN[0]);
 
         try {
            collection.add(model);
@@ -299,6 +326,11 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupById() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpGetEntityExpectations(
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
@@ -338,6 +370,11 @@ public class BackendGroupsResourceTest
     @Test
     public void testAddGroupByIdFailure() throws Exception {
         setUriInfo(setUpBasicUriExpectations());
+        setUpEntityQueryExpectations(VdcQueryType.GetDomainList,
+                VdcQueryParametersBase.class,
+                new String[] {},
+                new Object[] {},
+                setUpDomains());
         setUpGetEntityExpectations(
             VdcQueryType.GetDirectoryGroupById,
             DirectoryIdQueryParameters.class,
