@@ -95,7 +95,12 @@ class Plugin(plugin.PluginBase):
                 for c in consts:
                     for k in c.__dict__.values():
                         if hasattr(k, '__osetup_attrs__'):
-                            if k.__osetup_attrs__['answerfile']:
+                            if (
+                                    k.__osetup_attrs__['answerfile'] and
+                                    k.__osetup_attrs__[
+                                        'answerfile_condition'
+                                    ](self.environment)
+                            ):
                                 k = k.fget(None)
                                 if k in self.environment:
                                     v = self.environment[k]
