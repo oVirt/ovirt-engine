@@ -43,6 +43,23 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
+        after=(
+            osetupcons.Stages.CONFIG_PROTOCOLS_CUSTOMIZATION,
+        ),
+        before=(
+            oengcommcons.Stages.NETWORK_OWNERS_CONFIG_CUSTOMIZED,
+        ),
+    )
+    def _customization(self):
+        self.environment[
+            oenginecons.ConfigEnv.ENGINE_FQDN
+        ] = self.environment[
+            osetupcons.ConfigEnv.FQDN
+        ]
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
         condition=lambda self: self.environment[oenginecons.CoreEnv.ENABLE],
     )

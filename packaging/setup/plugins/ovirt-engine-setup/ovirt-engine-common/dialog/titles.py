@@ -109,6 +109,19 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        name=oengcommcons.Stages.NETWORK_OWNERS_CONFIG_CUSTOMIZED,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
+        ),
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+        ),
+    )
+    def _network_owners_config_customized(self):
+        pass
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
         name=osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
         after=(
             osetupcons.Stages.DIALOG_TITLES_S_NETWORK,

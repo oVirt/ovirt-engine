@@ -595,6 +595,8 @@ class ConfigEnv(object):
 
     MAC_RANGE_POOL = 'OVESETUP_CONFIG/macRangePool'
 
+    ENGINE_FQDN = 'OVESETUP_ENGINE_CONFIG/fqdn'
+
 
 @util.export
 @util.codegen
