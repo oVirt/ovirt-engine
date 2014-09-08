@@ -159,8 +159,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 Objects.equals(oldNetwork.getProvidedBy(), newNetwork.getProvidedBy()) &&
                 Objects.equals(oldNetwork.getStp(), newNetwork.getStp()) &&
                 Objects.equals(oldNetwork.getVlanId(), newNetwork.getVlanId()) &&
-                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork() &&
-                Objects.equals(oldNetwork.getLabel(), newNetwork.getLabel()));
+                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork()) &&
+                Objects.equals(oldNetwork.getLabel(), newNetwork.getLabel());
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
