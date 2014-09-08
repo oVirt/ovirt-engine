@@ -90,6 +90,7 @@ class Plugin(plugin.PluginBase):
                         )
                     )
                     consts = []
+                    wlist = []
                     for constobj in self.environment[
                         osetupcons.CoreEnv.SETUP_ATTRS_MODULES
                     ]:
@@ -104,7 +105,10 @@ class Plugin(plugin.PluginBase):
                                         ](self.environment)
                                 ):
                                     k = k.fget(None)
-                                    if k in self.environment:
+                                    if (
+                                        k in self.environment and
+                                        k not in wlist
+                                    ):
                                         v = self.environment[k]
                                         f.write(
                                             '%s=%s:%s\n' % (
@@ -115,6 +119,7 @@ class Plugin(plugin.PluginBase):
                                                 else v,
                                             )
                                         )
+                                        wlist.append(k)
 
             except IOError as e:
                 self.logger.warning(
