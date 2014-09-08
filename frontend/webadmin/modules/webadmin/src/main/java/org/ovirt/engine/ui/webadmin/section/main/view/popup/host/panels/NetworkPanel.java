@@ -1,23 +1,29 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.host.panels;
 
+import org.ovirt.engine.ui.common.utils.ElementUtils;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.LogicalNetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkCommand;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperation;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.network.NetworkOperationFactory.OperationMap;
 
+import com.google.gwt.dom.client.Style.Unit;
 import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.Grid;
+import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Image;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.Panel;
 import com.google.gwt.user.client.ui.Widget;
-import com.google.gwt.user.client.ui.HTMLTable.ColumnFormatter;
 
 public abstract class NetworkPanel extends NetworkItemPanel {
 
+    Label titleLabel;
+
     public NetworkPanel(LogicalNetworkModel item, NetworkPanelsStyle style, boolean draggable) {
         super(item, style, draggable);
+        getElement().addClassName(item.getAttachedToNic() != null ? style.networkPanelAttached()
+                : style.networkPanelNotAttached());
         if (item.isManagement()) {
             getElement().addClassName(style.mgmtNetwork());
         }
@@ -105,26 +111,33 @@ public abstract class NetworkPanel extends NetworkItemPanel {
         if (statusImage != null) {
             statusPanel.add(new Image(statusImage));
         }
-        Label titleLabel = new Label(getItemTitle());
-        rowPanel.setWidget(0, 2, titleLabel);
+
+        rowPanel.setWidget(0, 2, createTitlePanel());
         rowPanel.setWidget(0, 3, mgmtNetworkImage);
         rowPanel.setWidget(0, 4, monitorImage);
         rowPanel.setWidget(0, 5, vmImage);
         rowPanel.setWidget(0, 6, migrationImage);
         rowPanel.setWidget(0, 7, notSyncImage);
         rowPanel.setWidget(0, 8, actionButton);
+
         return rowPanel;
     }
 
-    protected abstract ImageResource getStatusImage();
-
-    private String getItemTitle() {
+    private Panel createTitlePanel() {
         LogicalNetworkModel networkModel = (LogicalNetworkModel) item;
+        titleLabel = new Label(networkModel.getName());
+        titleLabel.getElement().addClassName(style.titleLabel());
+        Panel titlePanel = new HorizontalPanel();
+        titlePanel.add(titleLabel);
         if (networkModel.hasVlan()) {
-            return messages.vlanNetwork(networkModel.getName(), String.valueOf(networkModel.getVlanId()));
+            Label vlanLabel = new Label(messages.vlanNetwork(networkModel.getVlanId()));
+            vlanLabel.getElement().addClassName(style.vlanLabel());
+            titlePanel.add(vlanLabel);
         }
-        return item.getName();
+        return titlePanel;
     }
+
+    protected abstract ImageResource getStatusImage();
 
     @Override
     protected void onAction() {
@@ -135,6 +148,15 @@ public abstract class NetworkPanel extends NetworkItemPanel {
             OperationMap operationMap = item.getSetupModel().commandsFor(item);
             final NetworkCommand detach = operationMap.get(NetworkOperation.REMOVE_UNMANAGED_NETWORK).get(0);
             item.getSetupModel().onOperation(NetworkOperation.REMOVE_UNMANAGED_NETWORK, detach);
+        }
+    }
+
+    @Override
+    protected void onLoad() {
+        super.onLoad();
+
+        while (ElementUtils.detectOverflowUsingScrollWidth(getElement())) {
+            titleLabel.getElement().getStyle().setWidth(titleLabel.getElement().getClientWidth() - 1, Unit.PX);
         }
     }
 

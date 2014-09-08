@@ -56,8 +56,8 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("The Network will be added to the Data Center {0} as well.")
     String theNetworkWillBeAddedToTheDataCenterAsWell(String dcName);
 
-    @DefaultMessage("{0} (VLAN {1})")
-    String vlanNetwork(String name, String vlanId);
+    @DefaultMessage("(VLAN {0})")
+    String vlanNetwork(int vlanId);
 
     @DefaultMessage("Virtual Machine {0} already exists")
     String sameVmNameExists(String vmName);
