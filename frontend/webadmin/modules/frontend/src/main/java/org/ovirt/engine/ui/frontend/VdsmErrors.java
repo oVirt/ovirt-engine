@@ -745,6 +745,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Profile Stop Failed.")
     String GlusterVolumeProfileStopFailed();
 
+    @DefaultStringValue("Failed to pause the geo-replication session.")
+    String GlusterVolumeGeoRepPauseFailed();
+
     String ACTIVATE_NIC_FAILED();
 
     String DEACTIVATE_NIC_FAILED();

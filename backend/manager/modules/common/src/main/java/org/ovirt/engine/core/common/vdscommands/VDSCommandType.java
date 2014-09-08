@@ -142,6 +142,7 @@ public enum VDSCommandType {
     GlusterServersList("org.ovirt.engine.core.vdsbroker.gluster"),
     StartGlusterVolumeProfile("org.ovirt.engine.core.vdsbroker.gluster"),
     StopGlusterVolumeProfile("org.ovirt.engine.core.vdsbroker.gluster"),
+    PauseGlusterVolumeGeoRepSession("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeAdvancedDetails("org.ovirt.engine.core.vdsbroker.gluster"),
     GlusterVolumesList("org.ovirt.engine.core.vdsbroker.gluster"),
     GetGlusterVolumeProfileInfo("org.ovirt.engine.core.vdsbroker.gluster"),

@@ -1299,6 +1299,15 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepPause(String masterVolumeName, String slaveHost, String slaveVolumeName, boolean force) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepPause").withParameter("volumeName", masterVolumeName)
+                .withParameter("remoteHost", slaveHost)
+                .withParameter("remoteVolumeName", slaveVolumeName)
+                .withParameter("force", force).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
     @Override
     public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepStart(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
         JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepStart").withParameter("volumeName", volumeName)
