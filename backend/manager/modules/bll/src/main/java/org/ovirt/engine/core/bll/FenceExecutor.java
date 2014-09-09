@@ -70,7 +70,7 @@ public class FenceExecutor {
     public boolean findProxyHost() {
         PMProxyOptions proxyOption=null;
         final Guid NO_VDS = Guid.Empty;
-        int count = 0;
+        int count;
         // make sure that loop is executed at least once , no matter what is the
         // value in config
         int retries = Math.max(Config.<Integer> getValue(ConfigValues.FindFenceProxyRetries), 1);
@@ -85,6 +85,7 @@ public class FenceExecutor {
                 : _vds.getPmProxyPreferences();
         String[] pmProxyOptions = pmProxyPreferences.split(",");
         for (String pmProxyOption : pmProxyOptions) {
+            count = 0;
             if (pmProxyOption.equalsIgnoreCase(PMProxyOptions.CLUSTER.name())) {
                 proxyOption = PMProxyOptions.CLUSTER;
             }
