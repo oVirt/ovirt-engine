@@ -91,7 +91,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
 
     protected static final String CANT_DO = "circumstances outside our control";
     protected static final String FAILURE = "a fine mess";
-    protected static final String BACKEND_FAILED_SERVER_LOCALE = "Ruckenende ist kaput";
+    protected static final String BACKEND_FAILED_SERVER_LOCALE = "Hinteres Ende mit Gebietsschema gescheitert";
     protected static final String BACKEND_FAILED_CLIENT_LOCALE = "Theip ar an obair";
     protected static final String INCOMPLETE_PARAMS_REASON_SERVER_LOCALE = "Unvollstandig Parameter";
     protected static final String INCOMPLETE_PARAMS_DETAIL_SERVER_LOCALE = " erforderlich fur ";
