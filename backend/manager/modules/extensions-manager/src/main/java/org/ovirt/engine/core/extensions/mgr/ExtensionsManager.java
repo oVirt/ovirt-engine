@@ -271,6 +271,9 @@ public class ExtensionsManager extends Observable {
     }
 
     public ExtensionProxy getExtensionByName(String name) throws ConfigurationException {
+        if (name == null) {
+            throw new ConfigurationException(String.format("Extension was not specified"));
+        }
         ExtensionEntry entry = initializedEntries.get(name);
         if (entry == null) {
             throw new ConfigurationException(String.format("Extension %1$s could not be found", name));
