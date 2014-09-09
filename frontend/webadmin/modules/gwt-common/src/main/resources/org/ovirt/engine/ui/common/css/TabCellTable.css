@@ -1,13 +1,6 @@
 .cellTableWidget {
 }
 
-.cellTableFirstColumn {
-    padding: 2px 15px;
-}
-
-.cellTableLastColumn {
-}
-
 .cellTableFooter {
 }
 
@@ -26,7 +19,7 @@
 }
 
 .cellTableCell {
-    padding: 0px 3px 0px 0px;
+    padding: 0px 8px 0px 2px;
     height: 26px !important;
     border-top: 0px;
     border-bottom: 1px solid #EDEEF0;
@@ -57,4 +50,15 @@
 @sprite .cellTableLoading {
     gwt-image: 'cellTableLoading';
     margin: 3px;
+}
+
+.cellTableFirstColumn {
+    padding-left: 3px;
+}
+
+.cellTableLastColumn {
+}
+
+.cellTableFirstColumnHeader {
+    padding-left: 4px;
 }
