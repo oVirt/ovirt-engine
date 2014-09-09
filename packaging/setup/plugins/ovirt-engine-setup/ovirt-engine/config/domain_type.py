@@ -27,7 +27,6 @@ from otopi import util
 from otopi import plugin
 
 from ovirt_engine_setup import constants as osetupcons
-from ovirt_engine_setup import dialog
 
 
 @util.export
@@ -57,7 +56,7 @@ class Plugin(plugin.PluginBase):
         )
         self.environment.setdefault(
             osetupcons.ConfigEnv.STORAGE_IS_LOCAL,
-            None
+            osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_IS_LOCAL
         )
 
     @plugin.event(
@@ -91,23 +90,6 @@ class Plugin(plugin.PluginBase):
             self.environment[
                 osetupcons.ConfigEnv.STORAGE_TYPE
             ] = None
-
-        if self.environment[
-            osetupcons.ConfigEnv.STORAGE_IS_LOCAL
-        ] is None:
-            self.environment[
-                osetupcons.ConfigEnv.STORAGE_IS_LOCAL
-            ] = dialog.queryBoolean(
-                dialog=self.dialog,
-                name='OVESETUP_CONFIG_STORAGE_IS_LOCAL',
-                note=_(
-                    'Default storage type: (@VALUES@) [@DEFAULT@]: '
-                ),
-                prompt=True,
-                true=_('Local'),
-                false=_('Shared'),
-                default=osetupcons.Defaults.DEFAULT_CONFIG_STORAGE_IS_LOCAL,
-            )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,
