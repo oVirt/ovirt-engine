@@ -77,6 +77,18 @@ public class ModulesMojo extends AbstractMojo {
     private boolean generateIndex;
 
     /**
+     * Category of the module:
+     * <dl>
+     *     <dt>common</dt>
+     *     <dd>modules that are used inside JBoss instance and in standalone tools</dd>
+     *     <dt>tools</dt>
+     *     <dd>modules that are used only in standalone tools</dd>
+     * </dl>
+     */
+    @Parameter(property = "category", defaultValue="common")
+    private String category;
+
+    /**
      * The temporary directory where modules will be stored.
      */
     private File modulesDir;
@@ -134,7 +146,11 @@ public class ModulesMojo extends AbstractMojo {
 
         // Create the archive containing all the contents of the modules
         // directory:
-        File modulesArchive = new File(targetDir, project.getBuild().getFinalName() + "-modules.zip");
+        File modulesArchive = new File(targetDir,
+                String.format(
+                        "%s-%s-modules.zip",
+                        project.getBuild().getFinalName(),
+                        category));
         ZipArchiver modulesArchiver = new ZipArchiver();
         modulesArchiver.setDestFile(modulesArchive);
         modulesArchiver.addDirectory(modulesDir);
@@ -151,7 +167,11 @@ public class ModulesMojo extends AbstractMojo {
         // Attach the generated zip file containing the modules as an
         // additional artifact:
         getLog().info("Attaching modules artifact \"" + modulesArchive + "\"");
-        projectHelper.attachArtifact(project, "zip", "modules", modulesArchive);
+        projectHelper.attachArtifact(
+                project,
+                "zip",
+                String.format("%s-modules", category),
+                modulesArchive);
     }
 
     private void createModule(Module module) throws MojoExecutionException {
