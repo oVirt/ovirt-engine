@@ -131,7 +131,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             }
         }
 
-
         // check that the images requested format are valid (COW+Sparse)
         if (!ImagesHandler.checkImagesConfiguration(getParameters().getStorageDomainId(),
                 disksForExport,
@@ -159,12 +158,11 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
                     String.format("$storageDomainName %1$s", getStorageDomainName()));
         }
 
-        // get the snapshot that are going to be exported and have memory
+        // get the snapshots that are going to be exported and have memory
         snapshotsWithMemory = getSnapshotsToBeExportedWithMemory();
 
         // check destination storage have free space
-        int sizeInGB = (int) ImagesHandler.sumImagesTotalSizeWithSnapshotSize(disksForExport) + getTotalMemoryStatesSizeGb();
-        if (!doesStorageDomainhaveSpaceForRequest(getStorageDomain(), sizeInGB)) {
+        if (!handleDestStorageDomain(disksForExport)) {
             return false;
         }
 
@@ -182,6 +180,27 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         return true;
     }
 
+    protected boolean handleDestStorageDomain(List<DiskImage> disksList) {
+        ensureDomainMap(disksList, getStorageDomainId());
+        List<DiskImage> dummiesDisksList = createDiskDummiesForSpaceValidations(disksList);
+        dummiesDisksList.addAll(getMemoryVolumes());
+        return validateSpaceRequirements(dummiesDisksList);
+    }
+
+    private List<DiskImage> getMemoryVolumes() {
+        int numOfSnapshots = snapshotsWithMemory.size();
+        long memorySize = numOfSnapshots * getVm().getTotalMemorySizeInBytes();
+        long metadataSize = numOfSnapshots * MemoryUtils.META_DATA_SIZE_IN_BYTES;
+        List<DiskImage> memoryDisksList = MemoryUtils.createDiskDummies(memorySize, metadataSize);
+
+        //Set target domain in memory disks
+        ArrayList<Guid> sdId = new ArrayList<Guid>(Collections.singletonList(getStorageDomainId()));
+        for (DiskImage diskImage : memoryDisksList) {
+            diskImage.setStorageIds(sdId);
+        }
+        return memoryDisksList;
+    }
+
     private Collection<Snapshot> getSnapshotsToBeExportedWithMemory() {
         if (getParameters().getCopyCollapse()) {
             Snapshot activeSnapshot = getSnapshotDao().get(getVmId(), SnapshotType.ACTIVE);
@@ -196,15 +215,6 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
             memory2snapshot.remove(StringUtils.EMPTY);
             return memory2snapshot.values();
         }
-    }
-
-    private int getTotalMemoryStatesSizeGb() {
-        long sizeInBytes = 0;
-        for (Snapshot snapshot : snapshotsWithMemory) {
-            VM vm = getVmFromSnapshot(snapshot);
-            sizeInBytes += vm.getTotalMemorySizeInBytes() + MemoryUtils.META_DATA_SIZE_IN_BYTES;
-        }
-        return (int) Math.ceil(1.0 * sizeInBytes / BYTES_IN_GB);
     }
 
     @Override
