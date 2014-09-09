@@ -193,10 +193,10 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         return new Header<SafeHtml>(new SafeHtmlCellWithTooltip()) {
             @Override
             public SafeHtml getValue() {
-                if (text != null) {
+                if (text != null && applyResizableHeaderStyle) {
                     return templates.nonResizeableColumnHeader(text);
                 }
-                return null;
+                return text;
             }
         };
     }
