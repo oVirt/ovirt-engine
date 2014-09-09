@@ -91,7 +91,6 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                     convertFencingPolicy()
             );
 
-            proceedProxyReturnValue();
             getVDSReturnValue().setSucceeded(false);
             if (getParameters().getAction() == FenceActionType.Status && _result.power != null) {
                 String stat = _result.power.toLowerCase();
@@ -112,7 +111,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                         _result.mStatus.mMessage != null ? _result.mStatus.mMessage : ""
                 );
                 setReturnValue(fenceStatusReturnValue);
-                getVDSReturnValue().setSucceeded(true);
+                getVDSReturnValue().setSucceeded(_result.mStatus.mCode == 0);
             }
         } else {
             handleSkippedOperation();
