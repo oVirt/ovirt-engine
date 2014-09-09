@@ -81,7 +81,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         if (!getNetwork().isExternal()) {
             if (NetworkHelper.setupNetworkSupported(getStoragePool().getcompatibility_version())) {
                 applyNetworkChangesToHosts();
-            } else if (!onlyPermittedFieldsChanged()) {
+            } else if (!onlyPermittedFieldsChanged() || !allowedNetworkLabelManipulation()) {
                 List<VdsNetworkInterface> nics =
                         getDbFacade().getInterfaceDao().getVdsInterfacesByNetworkId(getNetwork().getId());
                 if (!nics.isEmpty()) {
@@ -115,7 +115,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     @Override
     protected boolean canDoAction() {
-        if (onlyPermittedFieldsChanged()) {
+        if (onlyPermittedFieldsChanged() && allowedNetworkLabelManipulation()) {
             return true;
         }
 
@@ -140,6 +140,13 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 || validate(validatorOld.externalNetworkDetailsUnchanged(getNetwork())));
     }
 
+    private boolean allowedNetworkLabelManipulation() {
+        boolean labelNotChanged = !new SyncNetworkParametersBuilder(getContext()).labelChanged();
+        boolean newLabelAssigned = !new SyncNetworkParametersBuilder(getContext()).labelAdded();
+
+        return !getNetwork().isExternal() && (labelNotChanged || newLabelAssigned);
+    }
+
     /**
      * @return <code>true</code> iff only the description or comment field were changed, otherwise <code>false</code>.
      */
@@ -159,8 +166,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 Objects.equals(oldNetwork.getProvidedBy(), newNetwork.getProvidedBy()) &&
                 Objects.equals(oldNetwork.getStp(), newNetwork.getStp()) &&
                 Objects.equals(oldNetwork.getVlanId(), newNetwork.getVlanId()) &&
-                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork()) &&
-                Objects.equals(oldNetwork.getLabel(), newNetwork.getLabel());
+                Objects.equals(oldNetwork.isVmNetwork(), newNetwork.isVmNetwork());
     }
 
     private boolean oldAndNewNetworkIsNotExternal() {
