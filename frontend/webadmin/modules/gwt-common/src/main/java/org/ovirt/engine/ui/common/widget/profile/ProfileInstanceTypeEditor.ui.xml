@@ -24,9 +24,13 @@
 			width: 310px;
 			margin-right: 10px;
 		}
+
+		.panelStyle {
+			line-height: 30px;
+		}
 	</ui:style>
 
-	<g:FlowPanel>
+	<g:FlowPanel addStyleNames="{style.panelStyle}">
 		<l:LabelWithTextOverflow ui:field="vnicLabel" addStyleNames="{style.labelStyle}" />
 		<p:ProfileEditor ui:field="profileEditor" addStyleNames="{style.containerStyle}" />
 	</g:FlowPanel>
