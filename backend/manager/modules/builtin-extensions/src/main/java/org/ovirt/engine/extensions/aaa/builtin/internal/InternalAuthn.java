@@ -77,7 +77,10 @@ public class InternalAuthn implements Extension {
                         "N/A"
                 ).mput(
                         Authn.ContextKeys.CAPABILITIES,
-                        Authn.Capabilities.AUTHENTICATE_PASSWORD
+                        (
+                            Authn.Capabilities.AUTHENTICATE_CREDENTIALS |
+                            Authn.Capabilities.AUTHENTICATE_PASSWORD
+                        )
                 ).mput(
                         Base.ContextKeys.BUILD_INTERFACE_VERSION,
                         Base.INTERFACE_VERSION_CURRENT);
