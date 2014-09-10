@@ -56,11 +56,15 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("hostSupportedEmulatedMachines", vds.getSupportedEmulatedMachines());
-            customLogValues.put("clusterEmulatedMachines", StringUtils.isEmpty(vdsGroup.getEmulatedMachine()) ?
-                    Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines, vds.getVdsGroupCompatibilityVersion().getValue()).toString() :
-                    vdsGroup.getEmulatedMachine());
+            if (vdsGroup.isDetectEmulatedMachine()) {
+                customLogValues.put("clusterEmulatedMachines", Config.<List<String>>getValue(ConfigValues.ClusterEmulatedMachines, vds.getVdsGroupCompatibilityVersion().getValue()).toString());
+                vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL, customLogValues);
+            } else {
+                customLogValues.put("clusterEmulatedMachines", vdsGroup.getEmulatedMachine());
+                vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
+            }
 
-            vdsNonOperational(vds, NonOperationalReason.EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
+
             vds.setStatus(VDSStatus.NonOperational);
         }
 
