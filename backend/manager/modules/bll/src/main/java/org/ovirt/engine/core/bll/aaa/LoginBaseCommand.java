@@ -182,7 +182,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 return false;
             }
 
-            if (!isPasswordAuth(authnExtension)) {
+            if (!AuthzUtils.supportsPasswordAuthentication(authnExtension)) {
                 log.errorFormat(
                         "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password "
                                 +
@@ -342,11 +342,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         AuditLogableBase logable = new AuditLogableBase();
         logable.setUserName(getParameters().getLoginName());
         AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
-    }
-
-    private boolean isPasswordAuth(ExtensionProxy authnExtension) {
-        return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
-                Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
     }
 
     private ExtMap authenticate(AuthenticationProfile profile, String user, String password) {

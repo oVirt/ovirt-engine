@@ -476,12 +476,12 @@ public final class AsyncDataProvider {
     }
 
     public static void getAAAProfilesList(AsyncQuery aQuery) {
-        convertAAAProfilesResult(aQuery);
+        convertAAAProfilesResult(aQuery, true);
         Frontend.getInstance().runQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
-    public static void getAAAProfilesListViaPublic(AsyncQuery aQuery) {
-        convertAAAProfilesResult(aQuery);
+    public static void getAAAProfilesListViaPublic(AsyncQuery aQuery, boolean passwordBasedOnly) {
+        convertAAAProfilesResult(aQuery, passwordBasedOnly);
         Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
@@ -3784,14 +3784,16 @@ public final class AsyncDataProvider {
         }
     }
 
-    private static void convertAAAProfilesResult(AsyncQuery aQuery) {
+    private static void convertAAAProfilesResult(AsyncQuery aQuery, final boolean passwordBasedOnly) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override
             public Object Convert(Object source, AsyncQuery _asyncQuery)
             {
                 List<String> results = new ArrayList<String>();
                 for (ProfileEntry profileEntry : (Collection<ProfileEntry>) source) {
-                    results.add(profileEntry.getProfile());
+                    if (!passwordBasedOnly || profileEntry.getSupportsPasswordAuthenication()) {
+                        results.add(profileEntry.getProfile());
+                    }
                 }
                 return results;
             }

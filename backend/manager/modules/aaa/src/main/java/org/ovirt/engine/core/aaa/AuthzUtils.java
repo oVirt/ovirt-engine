@@ -34,6 +34,10 @@ public class AuthzUtils {
         return proxy.getContext().<String> get(Base.ContextKeys.INSTANCE_NAME);
     }
 
+    public static boolean supportsPasswordAuthentication(ExtensionProxy proxy) {
+        return (proxy.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES, 0L) & Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
+    }
+
     public static ExtMap fetchPrincipalRecord(final ExtensionProxy extension, ExtMap authRecord) {
         return fetchPrincipalRecordImpl(extension, Authn.InvokeKeys.AUTH_RECORD, authRecord, true, true);
     }

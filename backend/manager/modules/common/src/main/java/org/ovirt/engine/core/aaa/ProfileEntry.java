@@ -8,13 +8,15 @@ public class ProfileEntry implements Serializable {
 
     private String profile;
     private String authz;
+    private boolean supportsPasswordAuthentication;
 
     public ProfileEntry() {
     }
 
-    public ProfileEntry(String profile, String authz) {
+    public ProfileEntry(String profile, String authz, boolean supportsPasswordAuthentication) {
         this.profile = profile;
         this.authz = authz;
+        this.supportsPasswordAuthentication = supportsPasswordAuthentication;
     }
 
     public String getProfile() {
@@ -23,6 +25,10 @@ public class ProfileEntry implements Serializable {
 
     public String getAuthz() {
         return authz;
+    }
+
+    public boolean getSupportsPasswordAuthenication() {
+        return supportsPasswordAuthentication;
     }
 
     public String toString() {
