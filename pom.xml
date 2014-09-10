@@ -413,6 +413,10 @@
       </snapshots>
     </repository>
     <repository>
+      <id>powermock-repo</id>
+      <url>http://powermock.googlecode.com/svn/repo/</url>
+    </repository>
+    <repository>
       <!-- temporary until vdsm-jsonrpc-java-client and ovirt-host-deploy 1.3.0 released -->
       <id>sonatype-snapshots</id>
       <url>http://oss.sonatype.org/content/repositories/snapshots/</url>

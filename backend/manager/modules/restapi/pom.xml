@@ -35,34 +35,4 @@
     </dependency>
   </dependencies>
 
-  <repositories>
-    <repository>
-      <id>sonatype.oss.snapshot.repo</id>
-      <name>Sonatype OSS Snapshot Respository</name>
-      <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-      <snapshots>
-        <enabled>true</enabled>
-      </snapshots>
-      <releases>
-        <enabled>false</enabled>
-      </releases>
-    </repository>
-
-    <repository>
-      <id>jboss.repo</id>
-      <url>https://repository.jboss.org/nexus/content/repositories/releases</url>
-    </repository>
-
-	<repository>
-      <id>thirdparty-releases</id>
-      <name>JBoss Thirdparty Releases</name>
-      <url>https://repository.jboss.org/nexus/content/repositories/thirdparty-releases</url>
-    </repository>
-
-    <repository>
-      <id>powermock-repo</id>
-      <url>http://powermock.googlecode.com/svn/repo/</url>
-    </repository>
-  </repositories>
-
 </project>
