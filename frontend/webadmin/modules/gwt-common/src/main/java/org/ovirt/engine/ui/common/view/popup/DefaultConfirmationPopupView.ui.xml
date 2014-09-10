@@ -13,8 +13,8 @@
         <d:content>
             <g:FlowPanel>
                 <g:HTML ui:field="messageHTML" addStyleNames="{style.messageHTML}" />
-                <g:ScrollPanel>
-                    <g:VerticalPanel ui:field="descriptionPanel" addStyleNames="{style.descriptionPanel}" />
+                <g:ScrollPanel addStyleNames="{style.descriptionPanel}">
+                    <g:VerticalPanel ui:field="descriptionPanel"/>
                 </g:ScrollPanel>
             </g:FlowPanel>
         </d:content>
