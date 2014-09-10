@@ -194,6 +194,7 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 NetworkStatus.OPERATIONAL,
                 false,
                 networkCluster.isRequired(),
+                false,
                 false));
 
         if (network.getCluster().isDisplay()) {

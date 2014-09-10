@@ -17,9 +17,10 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
      */
     private boolean required;
     private boolean migration;
+    private boolean management;
 
     public NetworkCluster() {
-        this (null, null, NetworkStatus.NON_OPERATIONAL, false, true, false);
+        this(null, null, NetworkStatus.NON_OPERATIONAL, false, true, false, false);
     }
 
     public NetworkCluster(boolean required) {
@@ -27,11 +28,12 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
     }
 
     public NetworkCluster(Guid clusterId,
-            Guid networkId,
-            NetworkStatus status,
-            boolean display,
-            boolean required,
-            boolean migration) {
+                          Guid networkId,
+                          NetworkStatus status,
+                          boolean display,
+                          boolean required,
+                          boolean migration,
+                          boolean management) {
         this(required);
         id = new NetworkClusterId();
         id.setClusterId(clusterId);
@@ -39,6 +41,7 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         this.status = status;
         this.display = display;
         this.migration = migration;
+        this.management = management;
     }
 
     @Override
@@ -101,6 +104,14 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         this.migration = migration;
     }
 
+    public boolean isManagement() {
+        return management;
+    }
+
+    public void setManagement(boolean management) {
+        this.management = management;
+    }
+
     @Override
     public Object getQueryableId() {
         return getId();
@@ -119,6 +130,8 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
                 .append(isRequired())
                 .append(", migration=")
                 .append(isMigration())
+                .append(", management=")
+                .append(isManagement())
                 .append("}");
         return builder.toString();
     }
@@ -132,36 +145,51 @@ public class NetworkCluster extends IVdcQueryable implements BusinessEntityWithS
         result = prime * result + ((id == null) ? 0 : id.hashCode());
         result = prime * result + (required ? 11 : 13);
         result = prime * result + (migration ? 1231 : 1237);
+        result = prime * result + (management ? 1231 : 1237);
         return result;
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (this == obj)
+        if (this == obj) {
             return true;
-        if (obj == null)
+        }
+        if (obj == null) {
             return false;
-        if (getClass() != obj.getClass())
+        }
+        if (getClass() != obj.getClass()) {
             return false;
+        }
+
         NetworkCluster other = (NetworkCluster) obj;
-        if (display != other.display)
+
+        if (display != other.display) {
             return false;
+        }
         if (status == null) {
-            if (other.status != null)
+            if (other.status != null) {
                 return false;
-        } else if (!status.equals(other.status))
+            }
+        } else if (!status.equals(other.status)) {
             return false;
+        }
         if (id == null) {
-            if (other.id != null)
+            if (other.id != null) {
                 return false;
-        } else if (!id.equals(other.id))
+            }
+        } else if (!id.equals(other.id)) {
             return false;
+        }
         if (required != other.required) {
             return false;
         }
         if (migration != other.migration) {
             return false;
         }
+        if (management != other.management) {
+            return false;
+        }
+
         return true;
     }
 }

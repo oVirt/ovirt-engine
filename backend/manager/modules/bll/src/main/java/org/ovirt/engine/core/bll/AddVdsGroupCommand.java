@@ -57,7 +57,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
                         NetworkStatus.OPERATIONAL,
                         true,
                         true,
-                        true));
+                        true,
+                        false));
             }
         }
 

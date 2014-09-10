@@ -21,7 +21,9 @@ public class AttachNetworkToVdsGroupParameter extends NetworkClusterParameters {
                 // Cluster attachment data can sometimes be missing, so use defaults in that case.
                 net.getCluster() == null ? false : net.getCluster().isDisplay(),
                 net.getCluster() == null ? true : net.getCluster().isRequired(),
-                net.getCluster() == null ? false : net.getCluster().isMigration()));
+                net.getCluster() == null ? false : net.getCluster().isMigration(),
+                net.getCluster() == null ? false : net.getCluster().isManagement()));
+
         _network = net;
     }
 

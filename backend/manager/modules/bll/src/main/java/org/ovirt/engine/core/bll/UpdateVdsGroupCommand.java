@@ -126,7 +126,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                     NetworkStatus.OPERATIONAL,
                     true,
                     true,
-                    true));
+                    true,
+                    false));
         }
 
         alertIfFencingDisabled();
