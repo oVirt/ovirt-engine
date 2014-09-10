@@ -3835,7 +3835,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Read IOps")
     String storageQosIopsRead();
 
-    @DefaultStringValue("Read IOps")
+    @DefaultStringValue("Write IOps")
     String storageQosIopsWrite();
 
     @DefaultStringValue("New")
