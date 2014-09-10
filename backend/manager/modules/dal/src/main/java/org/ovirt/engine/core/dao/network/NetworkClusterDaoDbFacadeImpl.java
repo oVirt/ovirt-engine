@@ -125,4 +125,13 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
 
         getCallsHandler().executeModification("set_network_exclusively_as_migration", parameterSource);
     }
+
+
+    @Override
+    public void setNetworkExclusivelyAsManagement(Guid clusterId, Guid networkId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("cluster_id", clusterId).addValue("network_id", networkId);
+
+        getCallsHandler().executeModification("set_network_exclusively_as_management", parameterSource);
+    }
 }

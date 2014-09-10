@@ -1108,6 +1108,25 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION set_network_exclusively_as_management(v_cluster_id UUID, v_network_id UUID)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+
+   UPDATE network_cluster
+   SET management = true
+   WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
+
+   IF FOUND THEN
+       UPDATE network_cluster
+       SET management = false
+       WHERE cluster_id = v_cluster_id AND network_id != v_network_id;
+   END IF;
+
+END; $procedure$
+LANGUAGE plpgsql;
+
+
 ----------------------------------------------------------------------
 --  Vnic Profile
 ----------------------------------------------------------------------
