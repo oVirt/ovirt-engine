@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.IVdsAsyncCommand;
 import org.ovirt.engine.core.common.businessentities.IVdsEventListener;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -213,7 +214,12 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void vdsNonOperational(Guid vdsId, NonOperationalReason reason, boolean logCommand, Guid domainId) {
-        vdsNonOperational(vdsId, reason, logCommand, domainId, null);
+        StorageDomainStatic storageDomain = DbFacade.getInstance().getStorageDomainStaticDao().get(domainId);
+        Map<String, String> customLogValues = null;
+        if (storageDomain != null) {
+            customLogValues = Collections.singletonMap("StorageDomainNames", storageDomain.getName());
+        }
+        vdsNonOperational(vdsId, reason, logCommand, domainId, customLogValues);
     }
 
     @Override
