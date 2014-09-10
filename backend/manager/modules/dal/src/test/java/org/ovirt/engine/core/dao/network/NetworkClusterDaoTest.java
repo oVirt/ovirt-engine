@@ -42,11 +42,20 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
         network = networkDAO.getByName("engine");
         networkNoCluster = networkDAO.getByName("engine3");
 
+        createNewNetworkCluster();
+
+        existingNetworkCluster = dao.getAll().get(0);
+    }
+
+    private void createNewNetworkCluster() {
         newNetworkCluster = new NetworkCluster();
         newNetworkCluster.setNetworkId(networkNoCluster.getId());
         newNetworkCluster.setClusterId(freeCluster.getId());
-
-        existingNetworkCluster = dao.getAll().get(0);
+        newNetworkCluster.setStatus(NetworkStatus.OPERATIONAL);
+        newNetworkCluster.setManagement(true);
+        newNetworkCluster.setRequired(true);
+        newNetworkCluster.setDisplay(true);
+        newNetworkCluster.setMigration(true);
     }
 
     /**
@@ -134,7 +143,17 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
         List<NetworkCluster> after = dao.getAllForNetwork(networkNoCluster.getId());
 
         assertFalse(after.isEmpty());
-        assertEquals(newNetworkCluster, after.get(0));
+        assertNetworkClustersEqual(newNetworkCluster, after.get(0));
+    }
+
+    private void assertNetworkClustersEqual(NetworkCluster expected, NetworkCluster actual) {
+        assertEquals(expected.getClusterId(), actual.getClusterId());
+        assertEquals(expected.getNetworkId(), actual.getNetworkId());
+        assertEquals(expected.getStatus(), actual.getStatus());
+        assertEquals(expected.isManagement(), actual.isManagement());
+        assertEquals(expected.isRequired(), actual.isRequired());
+        assertEquals(expected.isMigration(), actual.isMigration());
+        assertEquals(expected.isDisplay(), actual.isDisplay());
     }
 
     /**
@@ -142,20 +161,22 @@ public class NetworkClusterDaoTest extends BaseDAOTestCase {
      */
     @Test
     public void testUpdate() {
+
         existingNetworkCluster.setRequired(!existingNetworkCluster.isRequired());
+        existingNetworkCluster.setDisplay(!existingNetworkCluster.isDisplay());
+        existingNetworkCluster.setMigration(!existingNetworkCluster.isMigration());
+        existingNetworkCluster.setManagement(!existingNetworkCluster.isManagement());
+        existingNetworkCluster.setStatus(invert(existingNetworkCluster.getStatus()));
 
         dao.update(existingNetworkCluster);
 
-        List<NetworkCluster> result = dao.getAll();
-        boolean itworked = false;
+        NetworkCluster result = dao.get(existingNetworkCluster.getId());
 
-        for (NetworkCluster thiscluster : result) {
-            itworked |= (thiscluster.getClusterId().equals(existingNetworkCluster.getClusterId())) &&
-                    (thiscluster.getNetworkId().equals(existingNetworkCluster.getNetworkId())) &&
-                    (thiscluster.getStatus() == existingNetworkCluster.getStatus());
-        }
+        assertNetworkClustersEqual(existingNetworkCluster, result);
+    }
 
-        assertTrue(itworked);
+    private NetworkStatus invert(NetworkStatus networkStatus) {
+        return networkStatus == NetworkStatus.OPERATIONAL ? NetworkStatus.NON_OPERATIONAL : NetworkStatus.OPERATIONAL;
     }
 
     /**

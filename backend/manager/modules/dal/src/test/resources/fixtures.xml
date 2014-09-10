@@ -1674,6 +1674,7 @@
         <column>is_display</column>
         <column>required</column>
         <column>migration</column>
+        <column>management</column>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
@@ -1681,6 +1682,7 @@
             <value>0</value>
             <value>0</value>
             <value>0</value>
+            <value>0</value>
         </row>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
@@ -1689,11 +1691,13 @@
             <value>0</value>
             <value>0</value>
             <value>1</value>
+            <value>1</value>
         </row>
         <row>
             <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
             <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d2</value>
             <value>1</value>
+            <value>0</value>
             <value>0</value>
             <value>0</value>
             <value>0</value>

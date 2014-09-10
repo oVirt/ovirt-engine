@@ -26,6 +26,7 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
                     entity.setDisplay(rs.getBoolean("is_display"));
                     entity.setRequired(rs.getBoolean("required"));
                     entity.setMigration(rs.getBoolean("migration"));
+                    entity.setManagement(rs.getBoolean("management"));
                     return entity;
                 }
             };
@@ -66,28 +67,28 @@ public class NetworkClusterDaoDbFacadeImpl extends BaseDAODbFacade implements Ne
 
     @Override
     public void save(NetworkCluster cluster) {
-        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cluster_id", cluster.getClusterId())
-                .addValue("network_id", cluster.getNetworkId())
-                .addValue("status", cluster.getStatus())
-                .addValue("is_display", cluster.isDisplay())
-                .addValue("required", cluster.isRequired())
-                .addValue("migration", cluster.isMigration());
+        MapSqlParameterSource parameterSource = createAllFieldsParameterSource(cluster);
 
         getCallsHandler().executeModification("Insertnetwork_cluster", parameterSource);
     }
 
     @Override
     public void update(NetworkCluster cluster) {
+        MapSqlParameterSource parameterSource = createAllFieldsParameterSource(cluster);
+
+        getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
+    }
+
+    private MapSqlParameterSource createAllFieldsParameterSource(NetworkCluster cluster) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("cluster_id", cluster.getClusterId())
                 .addValue("network_id", cluster.getNetworkId())
                 .addValue("status", cluster.getStatus())
                 .addValue("is_display", cluster.isDisplay())
                 .addValue("required", cluster.isRequired())
-                .addValue("migration", cluster.isMigration());
-
-        getCallsHandler().executeModification("Updatenetwork_cluster", parameterSource);
+                .addValue("migration", cluster.isMigration())
+                .addValue("management", cluster.isManagement());
+        return parameterSource;
     }
 
     @Override

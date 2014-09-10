@@ -930,12 +930,13 @@ Create or replace FUNCTION Insertnetwork_cluster(v_cluster_id UUID,
    v_status INTEGER,
    v_is_display BOOLEAN,
    v_required BOOLEAN,
-   v_migration BOOLEAN)
+   v_migration BOOLEAN,
+   v_management BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
-INSERT INTO network_cluster(cluster_id, network_id, status, is_display, required, migration)
-	VALUES(v_cluster_id, v_network_id, v_status, v_is_display, v_required, v_migration);
+INSERT INTO network_cluster(cluster_id, network_id, status, is_display, required, migration, management)
+	VALUES(v_cluster_id, v_network_id, v_status, v_is_display, v_required, v_migration, v_management);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -947,13 +948,19 @@ Create or replace FUNCTION Updatenetwork_cluster(v_cluster_id UUID,
     v_status INTEGER,
     v_is_display BOOLEAN,
     v_required BOOLEAN,
-    v_migration BOOLEAN)
+    v_migration BOOLEAN,
+    v_management BOOLEAN)
 RETURNS VOID
    AS $procedure$
 BEGIN
    UPDATE network_cluster
-   SET status = v_status,is_display = v_is_display, required = v_required, migration = v_migration
-   WHERE cluster_id = v_cluster_id AND network_id = v_network_id;
+   SET status = v_status,
+       is_display = v_is_display,
+       required = v_required,
+       migration = v_migration,
+       management = v_management
+   WHERE cluster_id = v_cluster_id
+   AND network_id = v_network_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
