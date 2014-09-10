@@ -344,18 +344,31 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
+    private boolean isPasswordAuth(ExtensionProxy authnExtension) {
+        return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
+                Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
+    }
+
+    private boolean isCredentialsAuth(ExtensionProxy authnExtension) {
+        return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
+                Authn.Capabilities.AUTHENTICATE_CREDENTIALS) != 0;
+    }
+
     private ExtMap authenticate(AuthenticationProfile profile, String user, String password) {
         ExtensionProxy authnExtension = profile.getAuthn();
         ExtMap authRecord = null;
-        ExtensionProxy mapper = profile.getMapper();
-        if (mapper != null) {
-            user = mapper.invoke(new ExtMap().mput(
-                    Base.InvokeKeys.COMMAND,
-                    Mapping.InvokeCommands.MAP_USER
-                    ).mput(
-                            Mapping.InvokeKeys.USER,
-                            user),
-                    true).<String> get(Mapping.InvokeKeys.USER, user);
+
+        if (isCredentialsAuth(authnExtension)) {
+            ExtensionProxy mapper = profile.getMapper();
+            if (mapper != null) {
+                user = mapper.invoke(new ExtMap().mput(
+                        Base.InvokeKeys.COMMAND,
+                        Mapping.InvokeCommands.MAP_USER
+                        ).mput(
+                                Mapping.InvokeKeys.USER,
+                                user),
+                        true).<String> get(Mapping.InvokeKeys.USER, user);
+            }
         }
 
         ExtMap outputMap = authnExtension.invoke(new ExtMap().mput(
