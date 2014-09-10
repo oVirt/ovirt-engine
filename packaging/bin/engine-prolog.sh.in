@@ -29,7 +29,7 @@ load_config() {
 
 	# we use jboss specific loader (jboss-modules.jar)
 	# setup module path
-	export JAVA_MODULEPATH="${ENGINE_JAVA_MODULEPATH}:${JBOSS_HOME}/modules"
+	export JAVA_MODULEPATH="${ENGINE_USR}/modules/tools:${ENGINE_JAVA_MODULEPATH}:${JBOSS_HOME}/modules"
 
 	# clean the class path
 	# jboss module loader will not run otherwise.

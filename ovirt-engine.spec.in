@@ -617,22 +617,22 @@ done << __EOF__
 %{engine_ear}/userportal.war/WEB-INF/lib/branding.jar
 %{engine_ear}/webadmin.war/WEB-INF/lib/branding.jar
 %{engine_ear}/welcome.war/WEB-INF/lib/branding.jar
-%{engine_jboss_modules}/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
-%{engine_jboss_modules}/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
-%{engine_jboss_modules}/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
-%{engine_jboss_modules}/org/ovirt/engine/api/restapi-jaxrs/main/restapi-jaxrs.jar
-%{engine_jboss_modules}/org/ovirt/engine/api/restapi-types/main/restapi-types.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/aaa/main/aaa.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/branding/main/branding.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/common/main/common.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/compat/main/compat.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/dal/main/dal.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/extensions-manager/main/extensions-manager.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/tools/main/tools.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/utils/main/utils.jar
-%{engine_jboss_modules}/org/ovirt/engine/core/uutils/main/uutils.jar
-%{engine_jboss_modules}/org/ovirt/engine/extensions/builtin/main/builtin.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/api/interface-common-jaxrs/main/interface-common-jaxrs.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/api/ovirt-engine-extensions-api/main/ovirt-engine-extensions-api.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-definition/main/restapi-definition.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-jaxrs/main/restapi-jaxrs.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/api/restapi-types/main/restapi-types.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/aaa/main/aaa.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/branding/main/branding.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/common/main/common.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/compat/main/compat.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/dal/main/dal.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/extensions-manager/main/extensions-manager.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/searchbackend/main/searchbackend.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/tools/main/tools.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/utils/main/utils.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/core/uutils/main/uutils.jar
+%{engine_jboss_modules}/common/org/ovirt/engine/extensions/builtin/main/builtin.jar
 __EOF__
 
 # Needed for compatibility if package is different than the directory structure
@@ -702,61 +702,61 @@ while read dst src; do
 	rm -f "%{buildroot}${dst}"
 	ln -s "${src}" "%{buildroot}${dst}"
 done << __EOF__
-org/apache/commons/io/main/commons-io.jar
-org/apache/ws/commons/main/ws-commons-util.jar
-org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
-org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar
-org/apache/xmlgraphics/batik/main/batik-css.jar batik/batik-css.jar
-org/apache/xmlgraphics/batik/main/batik-ext.jar batik/batik-ext.jar
-org/apache/xmlgraphics/batik/main/batik-extension.jar batik/batik-extension.jar
-org/apache/xmlgraphics/batik/main/batik-gvt.jar batik/batik-gvt.jar
-org/apache/xmlgraphics/batik/main/batik-svg-dom.jar batik/batik-svg-dom.jar
-org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transcoder.jar
-org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
-org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
-org/apache/xmlgraphics/fop/main/fop.jar
-org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
-org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
-org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+common/org/apache/commons/io/main/commons-io.jar
+common/org/apache/ws/commons/main/ws-commons-util.jar
+common/org/apache/xmlgraphics/batik/main/batik-awt-util.jar batik/batik-awt-util.jar
+common/org/apache/xmlgraphics/batik/main/batik-bridge.jar batik/batik-bridge.jar
+common/org/apache/xmlgraphics/batik/main/batik-css.jar batik/batik-css.jar
+common/org/apache/xmlgraphics/batik/main/batik-ext.jar batik/batik-ext.jar
+common/org/apache/xmlgraphics/batik/main/batik-extension.jar batik/batik-extension.jar
+common/org/apache/xmlgraphics/batik/main/batik-gvt.jar batik/batik-gvt.jar
+common/org/apache/xmlgraphics/batik/main/batik-svg-dom.jar batik/batik-svg-dom.jar
+common/org/apache/xmlgraphics/batik/main/batik-transcoder.jar batik/batik-transcoder.jar
+common/org/apache/xmlgraphics/batik/main/batik-util.jar batik/batik-util.jar
+common/org/apache/xmlgraphics/commons/main/xmlgraphics-commons.jar
+common/org/apache/xmlgraphics/fop/main/fop.jar
+common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
+common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
+common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
 %if 0%{?fedora}
 %if %{fedora} >= 19
-com/mchange/c3p0/main/c3p0.jar
-com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
-com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
-com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
-com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
-com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
-com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
-com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
-com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
-org/aopalliance/main/aopalliance.jar
-org/apache/avalon/framework/main/avalon-framework-api.jar
-org/apache/avalon/framework/main/avalon-framework-impl.jar
-org/apache/commons/compress/main/commons-compress.jar
-org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
-org/apache/commons/httpclient/main/commons-httpclient.jar
-org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
-org/apache/xmlrpc/main/xmlrpc-client.jar
-org/apache/xmlrpc/main/xmlrpc-common.jar
-org/postgresql/main/postgresql.jar postgresql-jdbc.jar
-org/quartz/main/quartz.jar
-org/snmp4j/main/snmp4j.jar
-org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
-org/springframework/main/spring-aop.jar springframework/spring-aop.jar
-org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
-org/springframework/main/spring-beans.jar springframework/spring-beans.jar
-org/springframework/main/spring-context.jar springframework/spring-context.jar
-org/springframework/main/spring-core.jar springframework/spring-core.jar
-org/springframework/main/spring-expression.jar springframework/spring-expression.jar
-org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
-org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
-org/springframework/main/spring-tx.jar springframework/spring-tx.jar
-org/tukaani/xz/main/xz.jar
+common/com/mchange/c3p0/main/c3p0.jar
+common/com/woorea/openstack/sdk/main/glance-client.jar openstack-java-sdk/glance-client.jar
+common/com/woorea/openstack/sdk/main/glance-model.jar openstack-java-sdk/glance-model.jar
+common/com/woorea/openstack/sdk/main/keystone-client.jar openstack-java-sdk/keystone-client.jar
+common/com/woorea/openstack/sdk/main/keystone-model.jar openstack-java-sdk/keystone-model.jar
+common/com/woorea/openstack/sdk/main/openstack-client.jar openstack-java-sdk/openstack-client.jar
+common/com/woorea/openstack/sdk/main/quantum-client.jar openstack-java-sdk/quantum-client.jar
+common/com/woorea/openstack/sdk/main/quantum-model.jar openstack-java-sdk/quantum-model.jar
+common/com/woorea/openstack/sdk/main/resteasy-connector.jar openstack-java-sdk/resteasy-connector.jar
+common/org/aopalliance/main/aopalliance.jar
+common/org/apache/avalon/framework/main/avalon-framework-api.jar
+common/org/apache/avalon/framework/main/avalon-framework-impl.jar
+common/org/apache/commons/compress/main/commons-compress.jar
+common/org/apache/commons/configuration/main/commons-configuration.jar commons-configuration.jar
+common/org/apache/commons/httpclient/main/commons-httpclient.jar
+common/org/apache/commons/jxpath/main/commons-jxpath.jar commons-jxpath.jar
+common/org/apache/xmlrpc/main/xmlrpc-client.jar
+common/org/apache/xmlrpc/main/xmlrpc-common.jar
+common/org/postgresql/main/postgresql.jar postgresql-jdbc.jar
+common/org/quartz/main/quartz.jar
+common/org/snmp4j/main/snmp4j.jar
+common/org/springframework/ldap/main/spring-ldap-core.jar spring-ldap/spring-ldap-core.jar
+common/org/springframework/main/spring-aop.jar springframework/spring-aop.jar
+common/org/springframework/main/spring-asm.jar objectweb-asm/asm.jar
+common/org/springframework/main/spring-beans.jar springframework/spring-beans.jar
+common/org/springframework/main/spring-context.jar springframework/spring-context.jar
+common/org/springframework/main/spring-core.jar springframework/spring-core.jar
+common/org/springframework/main/spring-expression.jar springframework/spring-expression.jar
+common/org/springframework/main/spring-instrument.jar springframework/spring-instrument.jar
+common/org/springframework/main/spring-jdbc.jar springframework/spring-jdbc.jar
+common/org/springframework/main/spring-tx.jar springframework/spring-tx.jar
+common/org/tukaani/xz/main/xz.jar
 %endif
 %endif
 %if 0%{?rhel}
-org/apache/avalon/framework/main/avalon-framework-api.jar avalon-framework.jar
-org/apache/avalon/framework/main/avalon-framework-impl.jar avalon-framework.jar
+common/org/apache/avalon/framework/main/avalon-framework-api.jar avalon-framework.jar
+common/org/apache/avalon/framework/main/avalon-framework-impl.jar avalon-framework.jar
 %endif
 __EOF__
 

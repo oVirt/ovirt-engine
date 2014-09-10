@@ -366,7 +366,10 @@ install_artifacts:
 	# we should use search MAVEN_OUTPUT_DIR as it may contain
 	# pre-compiled artifacts at different hierarchy.
 	install -dm 0755 "$(DESTDIR)$(PKG_JBOSS_MODULES)"
-	find "$(MAVEN_OUTPUT_DIR)" -name '*-modules.zip' | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_JBOSS_MODULES)"
+	for category in common tools; do \
+		install -dm 0755 "$(DESTDIR)$(PKG_JBOSS_MODULES)/$${category}"; \
+		find "$(MAVEN_OUTPUT_DIR)" -name '*'"-$${category}-modules.zip" | grep -v tmp.repos | xargs -r -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_JBOSS_MODULES)/$${category}"; \
+	done
 	install -dm 0755 "$(DESTDIR)$(PKG_EAR_DIR)"
 	find "$(MAVEN_OUTPUT_DIR)" -name '*.ear' -type f | grep -v tmp.repos | xargs -n 1 unzip -q -o -d "$(DESTDIR)$(PKG_EAR_DIR)"
 	install -dm 0755 "$(DESTDIR)$(DATA_DIR)/restapi.war"
@@ -389,7 +392,7 @@ install_artifacts:
 	# extract embedded artifacts as doc
 	# no need to relay on source tree for these
 	install -d -m 755 "$(DESTDIR)$(PKG_DOC_DIR)"
-	unzip -q -c "$(DESTDIR)$(PKG_JBOSS_MODULES)/org/ovirt/engine/core/dal/main/dal.jar" bundles/AuditLogMessages.properties > \
+	unzip -q -c "$(DESTDIR)$(PKG_JBOSS_MODULES)/common/org/ovirt/engine/core/dal/main/dal.jar" bundles/AuditLogMessages.properties > \
 		"$(DESTDIR)$(PKG_DOC_DIR)/AuditLogMessages.properties"
 	chmod 0644 "$(DESTDIR)$(PKG_DOC_DIR)/AuditLogMessages.properties"
 

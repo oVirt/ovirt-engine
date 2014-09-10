@@ -126,7 +126,7 @@ ENGINE_JVM_ARGS="${ENGINE_JVM_ARGS} -XX:HeapDumpPath=\"${ENGINE_LOG}/dump\""
 # JBoss is always appended, cannot be appended here
 # as it may be resolved to different value.
 #
-ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules"
+ENGINE_JAVA_MODULEPATH="${ENGINE_USR}/modules/common"
 
 #
 # Additional applications to be deployed in the instance of the
