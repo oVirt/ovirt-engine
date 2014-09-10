@@ -528,13 +528,13 @@ public class JsonRpcVdsServer implements IVdsServer {
             String arg,
             int storageType,
             String storageFormatType) {
-        // storageFormatType not used and it can be removed from interface
         JsonRpcRequest request =
                 new RequestBuilder("StorageDomain.create").withParameter("storagedomainID", sdUUID)
                         .withParameter("domainType", domainType)
                         .withParameter("typeArgs", arg)
                         .withParameter("name", domainName)
                         .withParameter("domainClass", storageType)
+                        .withOptionalParameter("version", storageFormatType)
                         .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
