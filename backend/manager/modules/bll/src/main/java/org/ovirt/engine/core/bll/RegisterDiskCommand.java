@@ -47,7 +47,7 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
             return false;
         }
 
-        if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
+        if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExist())) {
             addCanDoActionMessageVariable("diskId", getParameters().getDiskImage().getId());
             addCanDoActionMessageVariable("domainId", getStorageDomainId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_UNAVAILABLE);
