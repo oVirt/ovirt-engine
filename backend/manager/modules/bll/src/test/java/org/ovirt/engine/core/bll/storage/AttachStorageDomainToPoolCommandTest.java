@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
@@ -115,6 +116,7 @@ public class AttachStorageDomainToPoolCommandTest {
         mockAttachStorageDomainVdsCommand();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
         doReturn(getUnregisteredList()).when(cmd).getEntitiesFromStorageOvfDisk();
+        doReturn(Collections.<DiskImage>emptyList()).when(cmd).getAllOVFDisks();
         doAnswer(new Answer<Object>() {
             @Override
             public Object answer(InvocationOnMock invocation) throws Throwable {
