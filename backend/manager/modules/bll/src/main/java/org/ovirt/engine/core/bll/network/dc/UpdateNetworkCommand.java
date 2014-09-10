@@ -141,8 +141,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
     }
 
     private boolean allowedNetworkLabelManipulation() {
-        boolean labelNotChanged = !new SyncNetworkParametersBuilder(getContext()).labelChanged();
-        boolean newLabelAssigned = !new SyncNetworkParametersBuilder(getContext()).labelAdded();
+        boolean labelNotChanged = !labelChanged();
+        boolean newLabelAssigned = !labelAdded();
 
         return !getNetwork().isExternal() && (labelNotChanged || newLabelAssigned);
     }
@@ -466,21 +466,21 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
         }
 
-        private boolean labelChanged() {
-            return !Objects.equals(getNetwork().getLabel(), getOldNetwork().getLabel());
-        }
+    }
 
-        private boolean labelAdded() {
-            return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
-        }
+    private boolean labelChanged() {
+        return !Objects.equals(getNetwork().getLabel(), getOldNetwork().getLabel());
+    }
 
-        private boolean labelRemoved() {
-            return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
-        }
+    private boolean labelAdded() {
+        return !NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork());
+    }
 
-        private boolean labelRenamed() {
-            return NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork()) && labelChanged();
-        }
+    private boolean labelRemoved() {
+        return NetworkUtils.isLabeled(getOldNetwork()) && !NetworkUtils.isLabeled(getNetwork());
+    }
 
+    private boolean labelRenamed() {
+        return NetworkUtils.isLabeled(getOldNetwork()) && NetworkUtils.isLabeled(getNetwork()) && labelChanged();
     }
 }
