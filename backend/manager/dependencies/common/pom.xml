@@ -1,0 +1,699 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core.manager</groupId>
+    <artifactId>dependencies</artifactId>
+    <version>3.6.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>common-dependencies</artifactId>
+  <packaging>jar</packaging>
+
+  <name>oVirt Engine common dependencies</name>
+
+  <!-- We need to put here all the dependencies corresponding to the
+       .jar files that will be added to the modules archive: -->
+
+  <dependencies>
+
+    <dependency>
+      <groupId>commons-configuration</groupId>
+      <artifactId>commons-configuration</artifactId>
+      <version>${commons-configuration.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-httpclient</groupId>
+      <artifactId>commons-httpclient</artifactId>
+      <version>${httpclient.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-jxpath</groupId>
+      <artifactId>commons-jxpath</artifactId>
+      <version>${commons-jxpath.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>${commons-compress.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.sshd</groupId>
+      <artifactId>sshd-core</artifactId>
+      <version>${sshd-core.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.ws.commons.util</groupId>
+      <artifactId>ws-commons-util</artifactId>
+      <version>${ws-commons-util.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-client</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+   <dependency>
+      <groupId>org.apache.xmlrpc</groupId>
+      <artifactId>xmlrpc-common</artifactId>
+      <version>${xmlrpc-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.otopi</groupId>
+      <artifactId>otopi</artifactId>
+      <version>${otopi.version}</version>
+   </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.ovirt-host-deploy</groupId>
+      <artifactId>ovirt-host-deploy</artifactId>
+      <version>${ovirt-host-deploy.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.ovirt.engine.api</groupId>
+      <artifactId>ovirt-engine-extensions-api</artifactId>
+      <version>${org.ovirt.engine.api.ovirt-engine-extensions-api.version}</version>
+    </dependency>
+
+    <dependency>
+        <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+        <artifactId>vdsm-jsonrpc-java-client</artifactId>
+        <version>${vdsm-jsonrpc-java.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.quartz-scheduler</groupId>
+      <artifactId>quartz</artifactId>
+      <version>${quartz.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework.ldap</groupId>
+      <artifactId>spring-ldap-core</artifactId>
+      <version>${spring.ldap.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aop</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-asm</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-context</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-core</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-expression</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-instrument</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-jdbc</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-tx</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <version>${postgres.jdbc.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>openstack-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>keystone-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>glance-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>quantum-client</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>quantum-model</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.woorea</groupId>
+      <artifactId>resteasy-connector</artifactId>
+      <version>${openstack-client.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.tukaani</groupId>
+      <artifactId>xz</artifactId>
+      <version>${tukaani-xz.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>c3p0</groupId>
+      <artifactId>c3p0</artifactId>
+      <version>${c3p0.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>aopalliance</groupId>
+      <artifactId>aopalliance</artifactId>
+      <version>${aopalliance.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.snmp4j</groupId>
+      <artifactId>snmp4j</artifactId>
+      <version>${snmp4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>fop</artifactId>
+      <version>${fop.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.avalon.framework</groupId>
+      <artifactId>avalon-framework-api</artifactId>
+      <version>${avalon.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.avalon.framework</groupId>
+      <artifactId>avalon-framework-impl</artifactId>
+      <version>${avalon.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>xmlgraphics-commons</artifactId>
+      <version>${xmlgraphics-commons.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-util</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-svg-dom</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-bridge</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-awt-util</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-gvt</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-transcoder</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-extension</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-ext</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.xmlgraphics</groupId>
+      <artifactId>batik-css</artifactId>
+      <version>${batik.version}</version>
+    </dependency>
+
+    <!-- This version of the JAXB implementation replaces the default
+         version 2.2.4 provided by JBoss AS 7.1.1, and is needed to avoid
+         the following bug:
+
+         https://java.net/jira/browse/JAXB-860
+
+         It can be removed once we update to WildFly 8, as it uses
+         version 2.2.5, where the bug is fixed. -->
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-core</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-impl</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>com.sun.xml.bind</groupId>
+      <artifactId>jaxb-xjc</artifactId>
+      <version>${jaxb-impl.version}</version>
+    </dependency>
+
+    <dependency>
+       <groupId>org.antlr</groupId>
+       <artifactId>antlr4-runtime</artifactId>
+    </dependency>
+  </dependencies>
+
+  <build>
+
+    <plugins>
+
+        <plugin>
+          <groupId>org.ovirt.engine</groupId>
+          <artifactId>jboss-modules-maven-plugin</artifactId>
+          <configuration>
+            <generateIndex>false</generateIndex>
+            <modules>
+
+              <module>
+                <groupId>commons-configuration</groupId>
+                <artifactId>commons-configuration</artifactId>
+                <moduleName>org.apache.commons.configuration</moduleName>
+              </module>
+
+              <module>
+                <groupId>commons-httpclient</groupId>
+                <artifactId>commons-httpclient</artifactId>
+                <moduleName>org.apache.commons.httpclient</moduleName>
+              </module>
+
+              <module>
+                <groupId>commons-jxpath</groupId>
+                <artifactId>commons-jxpath</artifactId>
+                <moduleName>org.apache.commons.jxpath</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.commons</groupId>
+                <artifactId>commons-compress</artifactId>
+                <moduleName>org.apache.commons.compress</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.sshd</groupId>
+                <artifactId>sshd-core</artifactId>
+                <moduleName>org.apache.sshd</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.ws.commons.util</groupId>
+                <artifactId>ws-commons-util</artifactId>
+                <moduleName>org.apache.ws.commons</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-client</artifactId>
+                <moduleName>org.apache.xmlrpc</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlrpc</groupId>
+                <artifactId>xmlrpc-common</artifactId>
+                <moduleName>org.apache.xmlrpc</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.otopi</groupId>
+                <artifactId>otopi</artifactId>
+                <moduleName>org.ovirt.otopi</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.engine.api</groupId>
+                <artifactId>ovirt-engine-extensions-api</artifactId>
+                <moduleName>org.ovirt.engine.api.ovirt-engine-extensions-api</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.ovirt-host-deploy</groupId>
+                <artifactId>ovirt-host-deploy</artifactId>
+                <moduleName>org.ovirt.ovirt-host-deploy</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.ovirt.vdsm-jsonrpc-java</groupId>
+                <artifactId>vdsm-jsonrpc-java-client</artifactId>
+                <moduleName>org.ovirt.vdsm-jsonrpc-java</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.quartz-scheduler</groupId>
+                <artifactId>quartz</artifactId>
+                <moduleName>org.quartz</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework.ldap</groupId>
+                <artifactId>spring-ldap-core</artifactId>
+                <moduleName>org.springframework.ldap</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-aop</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-asm</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-beans</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-context</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-core</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-expression</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-instrument</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-jdbc</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.springframework</groupId>
+                <artifactId>spring-tx</artifactId>
+                <moduleName>org.springframework</moduleName>
+              </module>
+
+              <module>
+                <groupId>postgresql</groupId>
+                <artifactId>postgresql</artifactId>
+                <moduleName>org.postgresql</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>openstack-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>keystone-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>keystone-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>glance-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>glance-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>quantum-client</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>quantum-model</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.woorea</groupId>
+                <artifactId>resteasy-connector</artifactId>
+                <moduleName>com.woorea.openstack.sdk</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.tukaani</groupId>
+                <artifactId>xz</artifactId>
+                <moduleName>org.tukaani.xz</moduleName>
+              </module>
+
+              <module>
+                <groupId>c3p0</groupId>
+                <artifactId>c3p0</artifactId>
+                <moduleName>com.mchange.c3p0</moduleName>
+              </module>
+
+              <module>
+                <groupId>aopalliance</groupId>
+                <artifactId>aopalliance</artifactId>
+                <moduleName>org.aopalliance</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.snmp4j</groupId>
+                <artifactId>snmp4j</artifactId>
+                <moduleName>org.snmp4j</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>fop</artifactId>
+                <moduleName>org.apache.xmlgraphics.fop</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>xmlgraphics-commons</artifactId>
+                <moduleName>org.apache.xmlgraphics.commons</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.avalon.framework</groupId>
+                <artifactId>avalon-framework-api</artifactId>
+                <moduleName>org.apache.avalon.framework</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.avalon.framework</groupId>
+                <artifactId>avalon-framework-impl</artifactId>
+                <moduleName>org.apache.avalon.framework</moduleName>
+              </module>
+
+              <module>
+                <groupId>commons-io</groupId>
+                <artifactId>commons-io</artifactId>
+                <moduleName>org.apache.commons.io</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-svg-dom</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-bridge</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-awt-util</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-gvt</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-transcoder</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-extension</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-ext</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-util</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.apache.xmlgraphics</groupId>
+                <artifactId>batik-css</artifactId>
+                <moduleName>org.apache.xmlgraphics.batik</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-core</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-impl</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>com.sun.xml.bind</groupId>
+                <artifactId>jaxb-xjc</artifactId>
+                <moduleName>com.sun.xml.bind</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.antlr</groupId>
+                <artifactId>antlr4-runtime</artifactId>
+                <moduleName>org.antlr.antlr4-runtime</moduleName>
+              </module>
+
+            </modules>
+          </configuration>
+        </plugin>
+
+    </plugins>
+
+  </build>
+
+</project>
