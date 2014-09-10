@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 
 public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand {
     private boolean populateGroups;
+    private boolean populateGroupsRecursively;
 
     protected LdapQueryData getLdapQueryData() {
         return ((LdapSearchByQueryParameters) getParameters()).getLdapQueryData();
@@ -15,6 +16,7 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
     public LdapSearchUserByQueryCommand(LdapSearchByQueryParameters parameters) {
         super(parameters);
         populateGroups = parameters.isPopulateGroups();
+        populateGroupsRecursively = parameters.isPopulateGroupsRecursively();
     }
 
     @Override
@@ -26,7 +28,7 @@ public class LdapSearchUserByQueryCommand extends LdapSearchGroupsByQueryCommand
         for (final LdapUser searchResult : usersList) {
             {
                 LdapUser user =
-                        populateUserData(searchResult, getLdapQueryData().getDomain(), populateGroups);
+                        populateUserData(searchResult, getLdapQueryData().getDomain(), populateGroups, populateGroupsRecursively);
                 userList.add(user);
             }
         }
