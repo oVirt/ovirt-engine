@@ -210,7 +210,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     public String path;
     public StorageDomainType domainType = StorageDomainType.values()[0];
     public StorageType storageType;
-    public Boolean activateDomain;
     public boolean removeConnection;
 
     @Override
@@ -1320,7 +1319,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                 StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1432,7 +1431,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 StorageModel storageModel = (StorageModel) storageListModel.getWindow();
                 StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1629,7 +1628,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 StoragePool dataCenter = storageModel.getDataCenter().getSelectedItem();
                 if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId))
                 {
-                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId());
+                    storageListModel.attachStorageToDataCenter(storageListModel.storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                 }
 
                 storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1687,7 +1686,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
                             VdcReturnValueBase returnValue = result.getReturnValue();
                             Guid storageId = (Guid) returnValue.getActionReturnValue();
-                            storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId());
+                            storageListModel.attachStorageToDataCenter(storageId, dataCenter.getId(), storageModel.getActivateDomain().getEntity());
                         }
 
                     storageListModel.onFinish(storageListModel.context, true, storageListModel.storageModel);
@@ -1899,10 +1898,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         }
     }
 
-    private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId) {
-        attachStorageToDataCenter(storageId, dataCenterId, activateDomain);
-    }
-
     private void attachStorageToDataCenter(Guid storageId, Guid dataCenterId, Boolean activateDomain)
     {
         AttachStorageDomainToPoolParameters params = new AttachStorageDomainToPoolParameters(storageId, dataCenterId);
@@ -1924,7 +1919,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         path = (String) data.get(2);
         domainType = (StorageDomainType) data.get(3);
         storageType = (StorageType) data.get(4);
-        activateDomain = (Boolean) data.get(5);
 
         importFileStorageInit();
     }
@@ -1938,7 +1932,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         storageModel = model.getSelectedItem();
         hostId = (Guid) data.get(1);
-        activateDomain = (Boolean) data.get(2);
 
         ImportSanStorageModel importSanStorageModel = (ImportSanStorageModel) storageModel;
         final List<StorageDomain> storageDomains = importSanStorageModel.getStorageDomains().getSelectedItems();
@@ -1962,7 +1955,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                         StorageModel model = (StorageModel) getWindow();
                         StoragePool dataCenter = model.getDataCenter().getSelectedItem();
                         if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                            attachStorageToDataCenter(storageDomain.getId(), dataCenter.getId(), activateDomain);
+                            attachStorageToDataCenter(storageDomain.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
                         }
 
                         boolean isLastDomain = storageDomain == storageDomains.get(storageDomains.size() - 1);
@@ -2132,7 +2125,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     StorageModel model = (StorageModel) storageListModel.getWindow();
                     StoragePool dataCenter = model.getDataCenter().getSelectedItem();
                     if (!dataCenter.getId().equals(StorageModel.UnassignedDataCenterId)) {
-                        storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId(), activateDomain);
+                        storageListModel.attachStorageToDataCenter(sdToAdd1.getId(), dataCenter.getId(), model.getActivateDomain().getEntity());
                         onFinish(storageListModel.context, true, storageListModel.storageModel, null);
                     } else {
                         postImportFileStorage(storageListModel.context, true, storageListModel.storageModel, null);
