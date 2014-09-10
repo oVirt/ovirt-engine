@@ -414,7 +414,7 @@ public class BackendHostNicsResourceTest
         assertEquals(SLAVE_NAME, model.getName());
         assertNotNull(model.getNetwork());
         assertEquals(NETWORK_NAME, model.getNetwork().getName());
-        assertEquals(3, model.getLinks().size());
+        assertEquals(4, model.getLinks().size());
         assertTrue("master".equals(model.getLinks().get(0).getRel()) ||
                    "master".equals(model.getLinks().get(1).getRel()));
         assertNotNull(model.getLinks().get(0).getHref());

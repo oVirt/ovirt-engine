@@ -78,6 +78,7 @@ import org.ovirt.engine.api.model.LinkCapabilities;
 import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
+import org.ovirt.engine.api.model.NetworkAttachment;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
@@ -183,6 +184,8 @@ import org.ovirt.engine.api.resource.LabelsResource;
 import org.ovirt.engine.api.resource.MacPoolResource;
 import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
+import org.ovirt.engine.api.resource.NetworkAttachmentResource;
+import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
 import org.ovirt.engine.api.resource.OperatingSystemResource;
@@ -535,6 +538,10 @@ public class LinkHelper {
         map.add(LabelResource.class, LabelsResource.class, Network.class);
         map.add(LabelResource.class, LabelsResource.class, HostNIC.class);
         TYPES.put(Label.class, map);
+
+        map = new ParentToCollectionMap(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, Host.class);
+        map.add(NetworkAttachmentResource.class, NetworkAttachmentsResource.class, HostNIC.class);
+        TYPES.put(NetworkAttachment.class, map);
 
         map = new ParentToCollectionMap(AffinityGroupResource.class, AffinityGroupsResource.class, Cluster.class);
         TYPES.put(AffinityGroup.class, map);

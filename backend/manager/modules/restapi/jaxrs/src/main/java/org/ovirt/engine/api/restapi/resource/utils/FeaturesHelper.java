@@ -100,6 +100,7 @@ public class FeaturesHelper {
             addGuestMemoryBufferedCached(features);
             addOpenStackVolumeProvidersFeature(features);
             addRefreshLunSize(features);
+            addNetworkAttachmentsFeature(features);
         }
         return features;
     }
@@ -539,6 +540,12 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("OpenStack Image Providers");
         feature.setDescription("Add/modify/remove OpenStack image providers.");
+    }
+
+    private void addNetworkAttachmentsFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("Network Attachments");
+        feature.setDescription("Abilitiy to provision networks on hosts by network attachment.");
         features.getFeature().add(feature);
     }
 

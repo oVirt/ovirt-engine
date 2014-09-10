@@ -54,4 +54,7 @@ public interface HostNicResource extends UpdatableResource<HostNIC>, MeasurableR
 
     @Path("labels")
     LabelsResource getLabelsResource();
+
+    @Path("networkattachments")
+    NetworkAttachmentsResource getNetworkAttachmentsResource();
 }

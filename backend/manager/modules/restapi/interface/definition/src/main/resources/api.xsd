@@ -4228,6 +4228,61 @@
     </xs:sequence>
   </xs:complexType>
 
+  <!-- Host Network Attachments -->
+
+  <xs:element name="network_attachment" type="NetworkAttachment"/>
+
+  <xs:complexType name="NetworkAttachment">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="network" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host_nic" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="ip_address_assignments" type="IpAddressAssignments" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="host" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="network_attachments" type="NetworkAttachments"/>
+
+  <xs:complexType name="NetworkAttachments">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="network_attachment" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="NetworkAttachments"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="IpAddressAssignments">
+    <xs:sequence>
+      <xs:element name="ip_address_assignment" type="IpAddressAssignment" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="IpAddressAssignments"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="IpAddressAssignment">
+    <xs:sequence>
+      <xs:element ref="ip" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="assignment_method" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Host Storage -->
 
   <xs:element name="host_storage" type="HostStorage"/>

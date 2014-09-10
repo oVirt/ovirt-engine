@@ -43,7 +43,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
     private static final Logger log = LoggerFactory.getLogger(BackendHostsResource.class);
     private static final String DEFAULT_NAME = "Default";
     static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics",
-            "hooks", "fenceagents", "katelloerrata", "devices" };
+        "hooks", "fenceagents", "katelloerrata", "devices", "networkattachments" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
 
     public BackendHostsResource() {
@@ -100,14 +100,14 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             addParams.setRebootAfterInstallation(host.isRebootAfterInstallation());
         }
         if (host.isSetPowerManagement() && host.getPowerManagement().isSetAgents()) {
-            List<FenceAgent> agents = new LinkedList<FenceAgent>();
+            List<FenceAgent> agents = new LinkedList<>();
             for (Agent agent : host.getPowerManagement().getAgents().getAgents()) {
                 agents.add(FenceAgentMapper.map(agent, null));
             }
             addParams.setFenceAgents(agents);
         }
         addParams = (AddVdsActionParameters) getMapper
-                (Host.class, VdsOperationActionParameters.class).map(host, (VdsOperationActionParameters) addParams);
+            (Host.class, VdsOperationActionParameters.class).map(host, addParams);
         return performCreate(VdcActionType.AddVds,
                                addParams,
                                new QueryIdResolver<Guid>(VdcQueryType.GetVdsByVdsId, IdQueryParameters.class));

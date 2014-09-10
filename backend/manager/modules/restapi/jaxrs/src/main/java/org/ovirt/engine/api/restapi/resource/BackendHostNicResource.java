@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.Option;
 import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.LabelsResource;
+import org.ovirt.engine.api.resource.NetworkAttachmentsResource;
 import org.ovirt.engine.api.resource.StatisticsResource;
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsParameters;
 import org.ovirt.engine.core.common.action.RemoveBondParameters;
@@ -212,5 +213,10 @@ public class BackendHostNicResource
         Guid hostId = asGuid(parent.getHostId());
         String nicName = parent.lookupInterface(id).getName();
         return performAction(VdcActionType.RemoveBond, new RemoveBondParameters(hostId, nicName));
+    }
+
+    @Override
+    public NetworkAttachmentsResource getNetworkAttachmentsResource() {
+        return inject(new BackendHostNicNetworkAttachmentsResource(asGuid(id), asGuid(parent.getHostId())));
     }
 }

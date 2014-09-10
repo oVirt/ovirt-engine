@@ -39,7 +39,7 @@ public class BackendHostNicsResource
     extends AbstractBackendCollectionResource<HostNIC, VdsNetworkInterface>
         implements HostNicsResource {
 
-    static final String[] SUB_COLLECTIONS = { "statistics", "labels" };
+    static final String[] SUB_COLLECTIONS = { "statistics", "labels", "networkattachments" };
 
     private String hostId;
 
@@ -57,7 +57,7 @@ public class BackendHostNicsResource
         HostNics ret = new HostNics();
         List<VdsNetworkInterface> ifaces = getCollection();
         List<org.ovirt.engine.core.common.businessentities.network.Network> clusterNetworks = getClusterNetworks();
-        Map<String, String> networkIds = new HashMap<String, String>();
+        Map<String, String> networkIds = new HashMap<>();
         for(org.ovirt.engine.core.common.businessentities.network.Network nwk : clusterNetworks) {
             networkIds.put(nwk.getName(), nwk.getId().toString());
         }
@@ -266,7 +266,7 @@ public class BackendHostNicsResource
     }
 
     protected String[] lookupSlaves(HostNIC nic) {
-        List<String> slaves = new ArrayList<String>();
+        List<String> slaves = new ArrayList<>();
 
         for (HostNIC slave : nic.getBonding().getSlaves().getSlaves()) {
             if (slave.isSetId()) {
@@ -360,7 +360,7 @@ public class BackendHostNicsResource
     }
 
     private List<VdsNetworkInterface> nicsToInterfaces(List<HostNIC> hostNics) {
-        List<VdsNetworkInterface> ifaces = new ArrayList<VdsNetworkInterface>(hostNics.size());
+        List<VdsNetworkInterface> ifaces = new ArrayList<>(hostNics.size());
         List<VdsNetworkInterface> existingNics = getCollection();
         Map<String, VdsNetworkInterface> nicsByName = Entities.entitiesByName(existingNics);
         Map<Guid, VdsNetworkInterface> nicsById = Entities.businessEntitiesById(existingNics);
@@ -391,7 +391,7 @@ public class BackendHostNicsResource
     }
 
     private List<String> nicsToNetworksToSync(List<HostNIC> hostNics) {
-        List<String> networks = new ArrayList<String>();
+        List<String> networks = new ArrayList<>();
         for (HostNIC nic : hostNics) {
             if (nic.isSetOverrideConfiguration() && nic.isOverrideConfiguration() && nic.isSetNetwork()) {
                 org.ovirt.engine.core.common.businessentities.network.Network net = lookupNetwork(nic.getNetwork());
@@ -406,5 +406,4 @@ public class BackendHostNicsResource
     public ActionResource getActionSubresource(String action) {
         return inject(new BackendActionResource(action, ""));
     }
-
 }

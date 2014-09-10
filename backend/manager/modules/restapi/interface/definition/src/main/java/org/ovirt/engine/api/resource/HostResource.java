@@ -107,6 +107,9 @@ public interface HostResource extends UpdatableResource<Host>, MeasurableResourc
     @Path("nics")
     HostNicsResource getHostNicsResource();
 
+    @Path("networkattachments")
+    public NetworkAttachmentsResource getNetworkAttachmentsResource();
+
     @Path("storage")
     HostStorageResource getHostStorageResource();
 
