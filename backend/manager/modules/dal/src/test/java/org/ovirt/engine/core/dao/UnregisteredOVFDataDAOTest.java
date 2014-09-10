@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dao;
 
+import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
@@ -61,6 +62,22 @@ public class UnregisteredOVFDataDAOTest extends BaseDAOTestCase {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOAMIN_NFS2_2, VmEntityType.VM);
         assertTrue("No VM should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
+    }
+
+    @Test
+    public void testGetAllEntitiesForStorageDomain() {
+        List<OvfEntityData> ovfEntityDataList =
+                dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOAMIN_NFS2_1, null);
+        assertEquals("A Template and a VM should be fetched for the specified storage domain",
+                2,
+                ovfEntityDataList.size());
+    }
+
+    @Test
+    public void testGetAllEntitiesForStorageDomainWithNoUnregisteredEntities() {
+        List<OvfEntityData> ovfEntityDataList =
+                dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOAMIN_NFS2_2, null);
+        assertTrue("No entities should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
     }
 
     @Test

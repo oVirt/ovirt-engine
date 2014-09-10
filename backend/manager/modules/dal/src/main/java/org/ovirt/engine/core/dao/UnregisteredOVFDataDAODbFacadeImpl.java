@@ -19,7 +19,7 @@ public class UnregisteredOVFDataDAODbFacadeImpl extends BaseDAODbFacade implemen
                 OvfEntityDataRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_domain_id", storageDomainId)
-                        .addValue("entity_type", entityType.name()));
+                        .addValue("entity_type", entityType != null ? entityType.name() : null));
     }
 
     @Override
