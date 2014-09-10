@@ -8,9 +8,11 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -24,6 +26,7 @@ import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
@@ -158,6 +161,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
 
     private byte[] buildOvfInfoFileByteArray(List<Guid> vmAndTemplatesIds) {
         ByteArrayOutputStream bufferedOutputStream = new ByteArrayOutputStream();
+        Set<Guid> processedIds = new HashSet<>();
 
         try (InMemoryTar inMemoryTar = new InMemoryTar(bufferedOutputStream)) {
             inMemoryTar.addTarEntry(generateInfoFileData().getBytes(),
@@ -172,15 +176,32 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
                 List<Pair<Guid, String>> ovfs =
                         getVmAndTemplatesGenerationsDao().loadOvfDataForIds(idsToProcess);
                 if (!ovfs.isEmpty()) {
-                    buildFilesForOvfs(ovfs, inMemoryTar);
+                    processedIds.addAll(buildFilesForOvfs(ovfs, inMemoryTar));
                 }
             }
+
+            List<Pair<Guid, String>> unprocessedOvfData = retrieveUnprocessedUnregisteredOvfData(processedIds);
+            buildFilesForOvfs(unprocessedOvfData, inMemoryTar);
         } catch (Exception e) {
             throw new RuntimeException(String.format("Exception while building in memory tar of the OVFs of domain %s",
                     getParameters().getStorageDomainId()), e);
         }
 
         return bufferedOutputStream.toByteArray();
+    }
+
+    private List<Pair<Guid, String>> retrieveUnprocessedUnregisteredOvfData(Set<Guid> processedIds) {
+        List<OvfEntityData> ovfList = getUnregisteredOVFDataDao().getAllForStorageDomainByEntityType(
+                getParameters().getStorageDomainId(), null);
+        List<Pair<Guid, String>> ovfData = new LinkedList<>();
+        for (OvfEntityData ovfEntityData : ovfList) {
+            if (!processedIds.contains(ovfEntityData.getEntityId())) {
+                Pair<Guid, String> data = new Pair<>(ovfEntityData.getEntityId(), ovfEntityData.getOvfData());
+                ovfData.add(data);
+            }
+        }
+
+        return ovfData;
     }
 
     protected void updateOvfStoreContent() {
@@ -315,12 +336,15 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
         setSucceeded(true);
     }
 
-    protected void buildFilesForOvfs(List<Pair<Guid, String>> ovfs, InMemoryTar inMemoryTar) throws Exception {
+    protected Set<Guid> buildFilesForOvfs(List<Pair<Guid, String>> ovfs, InMemoryTar inMemoryTar) throws Exception {
+        Set<Guid> addedOvfIds = new HashSet<>();
         for (Pair<Guid, String> pair : ovfs) {
             if (pair.getSecond() != null) {
                 inMemoryTar.addTarEntry(pair.getSecond().getBytes(), pair.getFirst() + ".ovf");
+                addedOvfIds.add(pair.getFirst());
             }
         }
+        return addedOvfIds;
     }
 
     protected VmAndTemplatesGenerationsDAO getVmAndTemplatesGenerationsDao() {
