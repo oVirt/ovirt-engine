@@ -93,6 +93,7 @@ public class KerberosLdapAuthz implements Extension {
                         null,
                         getDirectoryName(),
                         queryData,
+                        false,
                         false)
                 );
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
@@ -115,7 +116,9 @@ public class KerberosLdapAuthz implements Extension {
                         null,
                         getDirectoryName(),
                         queryData,
+                                (input.<Integer> get(Authz.InvokeKeys.QUERY_FLAGS, 0) & Authz.QueryFlags.RESOLVE_GROUPS) != 0,
                                 (input.<Integer> get(Authz.InvokeKeys.QUERY_FLAGS, 0) & Authz.QueryFlags.RESOLVE_GROUPS_RECURSIVE) != 0
+
                 )
         );
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();

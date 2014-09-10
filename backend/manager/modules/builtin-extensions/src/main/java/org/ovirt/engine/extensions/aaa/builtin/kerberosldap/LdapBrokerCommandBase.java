@@ -128,10 +128,13 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     protected abstract void executeQuery(DirectorySearcher directorySearcher);
 
     protected LdapUser populateUserData(LdapUser user, String domain) {
-        return populateUserData(user, domain, true);
+        return populateUserData(user, domain, true, true);
     }
 
-    protected LdapUser populateUserData(LdapUser user, String domain, boolean populateGroups) {
+    protected LdapUser populateUserData(LdapUser user,
+            String domain,
+            boolean populateGroups,
+            boolean populateGroupsRecursively) {
         if (user == null) {
             return null;
         }
@@ -147,7 +150,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
             user.setUserName(user.getUserName() + "@" + user.getDomainControler());
         }
 
-        if (populateGroups) {
+        if (populateGroupsRecursively || populateGroups) {
             if (generator.getHasValues()) {
                 List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
                 for (LdapQueryData currQueryData : partialQueries) {
@@ -155,7 +158,9 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                             getAuthenticationDomain(),
                             groupsDict,
                             getLoginName(),
-                            getPassword());
+                            getPassword(),
+                            populateGroupsRecursively
+                            );
                 }
             }
         }
@@ -167,7 +172,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                                  String domain,
                                  Map<String, LdapGroup> groupsDict,
                                  String loginName,
-                                 String password) {
+                                 String password, boolean populateGroupsRecursively) {
         try {
             GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator();
             List<GroupSearchResult> searchResultCollection =
@@ -178,10 +183,10 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                 }
             }
             // If generator has results, it means there are parent groups
-            if (generator.getHasValues()) {
+            if (generator.getHasValues() && populateGroupsRecursively) {
                 List<LdapQueryData> partialQueries = generator.getLdapQueriesData();
                 for (LdapQueryData partialQuery : partialQueries) {
-                    populateGroup(partialQuery, domain, groupsDict, loginName, password);
+                    populateGroup(partialQuery, domain, groupsDict, loginName, password, populateGroupsRecursively);
                 }
             }
         } catch (RuntimeException e) {
