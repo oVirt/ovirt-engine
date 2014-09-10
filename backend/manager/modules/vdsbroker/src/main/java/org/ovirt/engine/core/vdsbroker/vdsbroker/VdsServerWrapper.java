@@ -22,6 +22,7 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.FileStatsReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.OneUuidReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class VdsServerWrapper implements IVdsServer {
@@ -1431,5 +1432,10 @@ public class VdsServerWrapper implements IVdsServer {
         Map<String, Object> xmlRpcReturnValue = vdsServer.getStoragePoolInfo(spUUID);
         StoragePoolInfoReturnForXmlRpc wrapper = new StoragePoolInfoReturnForXmlRpc(xmlRpcReturnValue);
         return wrapper;
+    }
+
+    @Override
+    public void close() {
+        XmlRpcUtils.shutDownConnection(this.httpClient);
     }
 }

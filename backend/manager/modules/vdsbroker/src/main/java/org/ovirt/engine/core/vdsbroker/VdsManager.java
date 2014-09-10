@@ -56,15 +56,12 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcVdsServer;
 import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CollectVdsNetworkDataVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetCapabilitiesVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerWrapper;
-import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 
 public class VdsManager {
     private VDS _vds;
@@ -718,11 +715,7 @@ public class VdsManager {
     public void dispose() {
         log.info("vdsManager::disposing");
         SchedulerUtilQuartzImpl.getInstance().deleteJob(onTimerJobId);
-        if (VdsServerWrapper.class.isInstance(_vdsProxy)) {
-            XmlRpcUtils.shutDownConnection(((VdsServerWrapper) _vdsProxy).getHttpClient());
-        } else {
-            ((JsonRpcVdsServer) _vdsProxy).close();
-        }
+        _vdsProxy.close();
     }
 
     /**

@@ -23,6 +23,8 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.StoragePoolInfoReturnForXmlRpc;
 
 
 public interface IVdsServer {
+    void close();
+
     HttpClient getHttpClient();
 
     OneVmReturnForXmlRpc create(Map createInfo);

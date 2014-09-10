@@ -49,6 +49,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VGListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMInfoListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VMListReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.RequestBuilder;
@@ -72,7 +73,9 @@ public class JsonRpcVdsServer implements IVdsServer {
         this.httpClient = httpClient;
     }
 
+    @Override
     public void close() {
+        XmlRpcUtils.shutDownConnection(this.httpClient);
         this.client.close();
     }
 
