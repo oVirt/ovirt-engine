@@ -204,7 +204,7 @@ public class LoginModel extends Model
 
             }
         };
-        AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery);
+        AsyncDataProvider.getInstance().getAAAProfilesListViaPublic(_asyncQuery, true);
     }
 
     public void login()

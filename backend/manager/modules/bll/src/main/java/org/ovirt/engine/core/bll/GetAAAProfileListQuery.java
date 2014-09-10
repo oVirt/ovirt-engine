@@ -22,7 +22,8 @@ public class GetAAAProfileListQuery<P extends VdcQueryParametersBase> extends Qu
         List<AuthenticationProfile> profiles = AuthenticationProfileRepository.getInstance().getProfiles();
         List<ProfileEntry> names = new ArrayList<>(profiles.size());
         for (AuthenticationProfile profile : profiles) {
-            names.add(new ProfileEntry(profile.getName(), AuthzUtils.getName(profile.getAuthz())));
+            names.add(new ProfileEntry(profile.getName(), AuthzUtils.getName(profile.getAuthz()),
+                    AuthzUtils.supportsPasswordAuthentication(profile.getAuthn())));
         }
         Collections.sort(names, new Comparator<ProfileEntry>() {
 
