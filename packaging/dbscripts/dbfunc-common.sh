@@ -145,6 +145,9 @@ _dbfunc_common_schema_create() {
 	#set database min error level
 	dbfunc_psql_die --command="ALTER DATABASE \"${DBFUNC_DB_DATABASE}\" SET client_min_messages=ERROR;" > /dev/null
 
+	echo "Creating sequences..."
+	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_sequences.sql" > /dev/null
+
 	echo "Creating tables..."
 	dbfunc_psql_die --file="${DBFUNC_COMMON_DBSCRIPTS_DIR}/create_tables.sql" > /dev/null
 

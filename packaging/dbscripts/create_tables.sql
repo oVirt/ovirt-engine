@@ -58,8 +58,6 @@ CREATE TABLE async_tasks_entities (
 -- Name: audit_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
 
-CREATE SEQUENCE audit_log_seq INCREMENT BY 1 START WITH 1;
-
 CREATE TABLE audit_log (
     audit_log_id bigint DEFAULT nextval('audit_log_seq'::regclass) NOT NULL,
     user_id uuid,
@@ -144,8 +142,6 @@ CREATE TABLE business_entity_snapshot (
 --
 -- Name: custom_actions; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
-
-CREATE SEQUENCE custom_actions_seq INCREMENT BY 1 START WITH 1;
 
 CREATE TABLE custom_actions (
     action_id integer DEFAULT nextval('custom_actions_seq'::regclass) NOT NULL,
@@ -576,8 +572,6 @@ CREATE TABLE roles_relations (
 -- Name: schema_version; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
 
-CREATE SEQUENCE schema_version_seq INCREMENT BY 1 START WITH 1;
-
 CREATE TABLE schema_version (
     id integer DEFAULT nextval('schema_version_seq'::regclass) NOT NULL,
     version character varying(10) NOT NULL,
@@ -813,8 +807,6 @@ CREATE TABLE users (
 -- Name: vdc_db_log; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
 
-CREATE SEQUENCE vdc_db_log_seq INCREMENT BY 1 START WITH 1;
-
 CREATE TABLE vdc_db_log (
     error_id bigint DEFAULT nextval('vdc_db_log_seq'::regclass) NOT NULL,
     occured_at timestamp with time zone DEFAULT ('now'::text)::timestamp without time zone NOT NULL,
@@ -828,8 +820,6 @@ CREATE TABLE vdc_db_log (
 --
 -- Name: vdc_options; Type: TABLE; Schema: public; Owner: engine; Tablespace:
 --
-
-CREATE SEQUENCE vdc_options_seq INCREMENT BY 1 START WITH 1;
 
 CREATE TABLE vdc_options (
     option_id integer DEFAULT nextval('vdc_options_seq'::regclass) NOT NULL,
