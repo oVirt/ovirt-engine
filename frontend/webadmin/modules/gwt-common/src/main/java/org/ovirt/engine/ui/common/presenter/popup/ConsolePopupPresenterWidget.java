@@ -115,7 +115,7 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
     }
 
     private final ConsoleUtils consoleUtils;
-    private IEventListener viewUpdatingListener;
+    private IEventListener<EventArgs> viewUpdatingListener;
     private boolean wanOptionsAvailable = false;
     private ConsolePopupModel model;
     private final CommonApplicationConstants constants;
@@ -159,9 +159,9 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             return;
         }
 
-        viewUpdatingListener = new IEventListener() {
+        viewUpdatingListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().edit(model);
             }
         };

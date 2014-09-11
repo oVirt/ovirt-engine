@@ -34,13 +34,13 @@ public class NfsStorageModel extends Model implements IStorageModel {
     private final static short TIMEOUT_MAX = 6000;
 
     public static final EventDefinition pathChangedEventDefinition;
-    private Event pathChangedEvent;
+    private Event<EventArgs> pathChangedEvent;
 
-    public Event getPathChangedEvent() {
+    public Event<EventArgs> getPathChangedEvent() {
         return pathChangedEvent;
     }
 
-    private void setPathChangedEvent(Event value) {
+    private void setPathChangedEvent(Event<EventArgs> value) {
         pathChangedEvent = value;
     }
 
@@ -149,7 +149,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
 
     public NfsStorageModel() {
 
-        setPathChangedEvent(new Event(pathChangedEventDefinition));
+        setPathChangedEvent(new Event<EventArgs>(pathChangedEventDefinition));
 
         setUpdateCommand(new UICommand("Update", this)); //$NON-NLS-1$
 
@@ -190,7 +190,7 @@ public class NfsStorageModel extends Model implements IStorageModel {
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
         if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition) && sender == getPath()) {
             // Notify about path change.
@@ -239,9 +239,9 @@ public class NfsStorageModel extends Model implements IStorageModel {
         }
 
         ListModel<StoragePool> dataCenter = getContainer().getDataCenter();
-        dataCenter.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        dataCenter.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 containerDataCenterChanged();
             }

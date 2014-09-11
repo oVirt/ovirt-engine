@@ -161,9 +161,9 @@ public class ProviderModel extends Model {
         this.action = action;
         this.provider = provider;
 
-        getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener() {
+        getRequiresAuthentication().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean authenticationRequired = requiresAuthentication.getEntity();
                 getUsername().setIsChangable(authenticationRequired);
                 getPassword().setIsChangable(authenticationRequired);
@@ -184,9 +184,9 @@ public class ProviderModel extends Model {
                 }
             }
         });
-        getType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isTenant = isTypeTenantAware();
                 getTenantName().setIsAvailable(isTenant);
                 if (isTenant) {

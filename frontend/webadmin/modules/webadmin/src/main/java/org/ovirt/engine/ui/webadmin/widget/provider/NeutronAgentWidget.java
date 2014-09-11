@@ -101,10 +101,10 @@ public class NeutronAgentWidget extends AbstractModelBoundPopupWidget<NeutronAge
     public void edit(final NeutronAgentModel model) {
         driver.edit(model);
         mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation().getEntity()));
-        model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getInterfaceMappingsExplanation().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 mappings.setExplanation(templates.italicText(model.getInterfaceMappingsExplanation()
                         .getEntity()));
             }

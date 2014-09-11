@@ -4,16 +4,16 @@ package org.ovirt.engine.ui.uicompat;
 public class PreparingEnlistment extends Enlistment {
 
     public static final EventDefinition preparedEventDefinition;
-    private Event preparedEvent;
+    private Event<EventArgs> preparedEvent;
 
-    protected Event getPreparedEvent() {
+    protected Event<EventArgs> getPreparedEvent() {
         return preparedEvent;
     }
 
     public static final EventDefinition rollbackEventDefinition;
-    private Event rollbackEvent;
+    private Event<EventArgs> rollbackEvent;
 
-    protected Event getRollbackEvent() {
+    protected Event<EventArgs> getRollbackEvent() {
         return rollbackEvent;
     }
 
@@ -27,8 +27,8 @@ public class PreparingEnlistment extends Enlistment {
     public PreparingEnlistment(Object context) {
         super(context);
 
-        preparedEvent = new Event(preparedEventDefinition);
-        rollbackEvent = new Event(rollbackEventDefinition);
+        preparedEvent = new Event<EventArgs>(preparedEventDefinition);
+        rollbackEvent = new Event<EventArgs>(rollbackEventDefinition);
     }
 
     public void prepared() {

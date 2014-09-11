@@ -31,10 +31,10 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolModel> {
 
-    private final Event poolModelBehaviorInitializedEvent = new Event("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
+    private final Event<EventArgs> poolModelBehaviorInitializedEvent = new Event<EventArgs>("PoolModelBehaviorInitializedEvent", //$NON-NLS-1$
             NewPoolModelBehavior.class);
 
-    public Event getPoolModelBehaviorInitializedEvent()
+    public Event<EventArgs> getPoolModelBehaviorInitializedEvent()
     {
         return poolModelBehaviorInitializedEvent;
     }
@@ -76,9 +76,9 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
         getModel().getSpiceProxyEnabled().setEntity(false);
         getModel().getSpiceProxy().setIsChangable(false);
 
-        getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        getModel().getSpiceProxyEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getModel().getSpiceProxy().setIsChangable(getModel().getSpiceProxyEnabled().getEntity());
             }
         });

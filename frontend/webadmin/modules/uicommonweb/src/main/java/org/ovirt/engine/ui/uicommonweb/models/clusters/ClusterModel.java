@@ -832,9 +832,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         setFencingEnabledModel(new EntityModel<Boolean>());
         getFencingEnabledModel().setEntity(true);
-        getFencingEnabledModel().getEntityChangedEvent().addListener(new IEventListener() {
+        getFencingEnabledModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                  updateFencingPolicyContent(getVersion() == null ? null : getVersion().getSelectedItem());
             }
         });
@@ -845,14 +845,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setSkipFencingIfConnectivityBrokenEnabled(new EntityModel<Boolean>());
         getSkipFencingIfConnectivityBrokenEnabled().setEntity(true);
 
-        setEnableOvirtService(new EntityModel());
-        setEnableGlusterService(new EntityModel());
+        setEnableOvirtService(new EntityModel<Boolean>());
+        setEnableGlusterService(new EntityModel<Boolean>());
 
         setSerialNumberPolicy(new SerialNumberPolicyModel());
 
-        getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener() {
+        getEnableOvirtService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableOvirtService().getEntity()) {
                     getEnableGlusterService().setEntity(Boolean.FALSE);
                 }
@@ -887,10 +887,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
         initImportCluster(isEdit);
 
-        getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
+        getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!getAllowClusterWithVirtGlusterEnabled() && getEnableGlusterService().getEntity()) {
                     getEnableOvirtService().setEntity(Boolean.FALSE);
                 }
@@ -936,9 +936,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             }
        });
 
-        getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener() {
+        getEnableTrustedService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getEnableTrustedService().getEntity() != null
                         && getEnableTrustedService().getEntity())
                 {
@@ -961,33 +961,33 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setOptimizationForDesktop(new EntityModel<Integer>());
         setOptimizationCustom(new EntityModel<Integer>());
 
-        EntityModel tempVar = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar = new EntityModel<Boolean>();
         tempVar.setEntity(false);
         setOptimizationNone_IsSelected(tempVar);
         getOptimizationNone_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar2 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar2 = new EntityModel<Boolean>();
         tempVar2.setEntity(false);
         setOptimizationForServer_IsSelected(tempVar2);
         getOptimizationForServer_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar3 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar3 = new EntityModel<Boolean>();
         tempVar3.setEntity(false);
         setOptimizationForDesktop_IsSelected(tempVar3);
         getOptimizationForDesktop_IsSelected().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar4 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar4 = new EntityModel<Boolean>();
         tempVar4.setEntity(false);
         tempVar4.setIsAvailable(false);
         setOptimizationCustom_IsSelected(tempVar4);
         getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(this);
 
-        EntityModel tempVar5 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar5 = new EntityModel<Boolean>();
         tempVar5.setEntity(false);
         setMigrateOnErrorOption_YES(tempVar5);
         getMigrateOnErrorOption_YES().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar6 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar6 = new EntityModel<Boolean>();
         tempVar6.setEntity(false);
         setMigrateOnErrorOption_NO(tempVar6);
         getMigrateOnErrorOption_NO().getEntityChangedEvent().addListener(this);
-        EntityModel tempVar7 = new EntityModel<Boolean>();
+        EntityModel<Boolean> tempVar7 = new EntityModel<Boolean>();
         tempVar7.setEntity(false);
         setMigrateOnErrorOption_HA_ONLY(tempVar7);
         getMigrateOnErrorOption_HA_ONLY().getEntityChangedEvent().addListener(this);
@@ -999,7 +999,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         // default value =100;
         setDefaultMemoryOvercommit(AsyncDataProvider.getInstance().getClusterDefaultMemoryOverCommit());
 
-        setCountThreadsAsCores(new EntityModel(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
+        setCountThreadsAsCores(new EntityModel<Boolean>(AsyncDataProvider.getInstance().getClusterDefaultCountThreadsAsCores()));
 
         setVersionSupportsCpuThreads(new EntityModel<Boolean>(true));
 
@@ -1020,9 +1020,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         boolean overbookingSupported = AsyncDataProvider.getInstance().getScheudulingAllowOverbookingSupported();
         getAllowOverbooking().setIsAvailable(overbookingSupported);
         if (overbookingSupported) {
-            getOptimizeForSpeed().getEntityChangedEvent().addListener(new IEventListener() {
+            getOptimizeForSpeed().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     Boolean entity = getOptimizeForSpeed().getEntity();
                     if (entity) {
                         getGuarantyResources().setEntity(true);
@@ -1030,9 +1030,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                     getAllowOverbooking().setIsChangable(!entity);
                 }
             });
-            getAllowOverbooking().getEntityChangedEvent().addListener(new IEventListener() {
+            getAllowOverbooking().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     Boolean entity = getAllowOverbooking().getEntity();
                     if (entity) {
                         getOptimizeForUtilization().setEntity(true);
@@ -1184,9 +1184,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     private void initImportCluster(boolean isEdit)
     {
         setGlusterHostAddress(new EntityModel<String>());
-        getGlusterHostAddress().getEntityChangedEvent().addListener(new IEventListener() {
+        getGlusterHostAddress().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 setIsFingerprintVerified(false);
                 if (getGlusterHostAddress().getEntity() == null
                         || (getGlusterHostAddress().getEntity()).trim().length() == 0) {
@@ -1203,10 +1203,10 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         setGlusterHostPassword(new EntityModel<String>());
 
         setIsImportGlusterConfiguration(new EntityModel<Boolean>());
-        getIsImportGlusterConfiguration().getEntityChangedEvent().addListener(new IEventListener() {
+        getIsImportGlusterConfiguration().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getIsImportGlusterConfiguration().getEntity() != null
                         && getIsImportGlusterConfiguration().getEntity())
                 {
@@ -1303,7 +1303,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 
@@ -1603,7 +1603,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
     }
 
     private void initHostsWithBrokenConnectivityThreshold() {
-        ArrayList values = new ArrayList<Integer>();
+        ArrayList<Integer> values = new ArrayList<Integer>();
         // populating threshold values with {25, 50, 75, 100}
         for (int i = 25; i <= 100; i += 25) {
             values.add(i);

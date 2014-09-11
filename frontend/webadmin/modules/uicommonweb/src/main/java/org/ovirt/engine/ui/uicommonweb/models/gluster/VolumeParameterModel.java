@@ -28,18 +28,18 @@ public class VolumeParameterModel extends EntityModel {
 
         setIsNew(true);
 
-        getKeyList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getKeyList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 keyItemChanged();
             }
         });
 
-        getSelectedKey().getEntityChangedEvent().addListener(new IEventListener() {
+        getSelectedKey().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 selectedKeyChanged();
             }
         });

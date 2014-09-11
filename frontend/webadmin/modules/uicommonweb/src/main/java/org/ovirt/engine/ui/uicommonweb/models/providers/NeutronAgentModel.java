@@ -77,9 +77,9 @@ public class NeutronAgentModel extends EntityModel {
     }
 
     public NeutronAgentModel() {
-        getPluginType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getPluginType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 String displayString = getPluginType().getSelectedItem();
                 isPluginConfigurationAvailable().setEntity(!NeutronPluginTranslator.isDisplayStringCustom(displayString));
                 if (!NeutronPluginTranslator.isDisplayStringCustom(displayString)) {
@@ -104,11 +104,11 @@ public class NeutronAgentModel extends EntityModel {
                 }
             }
         });
-        getPropertyChangedEvent().addListener(new IEventListener() {
+        getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     boolean value = getIsAvailable();
                     getPluginType().setIsAvailable(value);
                     isPluginConfigurationAvailable().setEntity(value

@@ -4,7 +4,6 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 public class AsyncIterator<T> {
@@ -72,20 +71,18 @@ public class AsyncIterator<T> {
                 break;
             }
 
-            AsyncIteratorCallback callback = new AsyncIteratorCallback(frontendContext);
+            AsyncIteratorCallback<T> callback = new AsyncIteratorCallback<T>(frontendContext);
 
             callback.getNotifyEvent().addListener(
-                    new IEventListener() {
+                    new IEventListener<ValueEventArgs<T>>() {
                         @Override
-                        public void eventRaised(Event ev, Object sender, EventArgs args) {
-
-                            ValueEventArgs e = (ValueEventArgs) args;
+                        public void eventRaised(Event<? extends ValueEventArgs<T>> ev, Object sender, ValueEventArgs<T> args) {
 
                             CallbackContext<T> context = (CallbackContext<T>) ev.getContext();
                             AsyncIterator<T> iterator = context.getIterator();
                             AsyncIteratorPredicate<T> action = context.getAction();
                             T item = context.getItem();
-                            Object value = e.getValue();
+                            Object value = args.getValue();
 
                             boolean callComplete = false;
 

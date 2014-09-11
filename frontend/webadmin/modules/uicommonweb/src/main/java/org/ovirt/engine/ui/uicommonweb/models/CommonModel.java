@@ -53,12 +53,12 @@ import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class CommonModel extends ListModel
+public class CommonModel extends ListModel<SearchableListModel>
 {
 
     // TODO: "SingedOut" is misspelled.
     public static final EventDefinition signedOutEventDefinition = new EventDefinition("SingedOut", CommonModel.class); //$NON-NLS-1$
-    private Event privateSignedOutEvent;
+    private Event<EventArgs> privateSignedOutEvent;
     private UICommand privateSearchCommand;
     private UICommand privateConfigureCommand;
     private UICommand privateSignOutCommand;
@@ -116,7 +116,7 @@ public class CommonModel extends ListModel
 
     private CommonModel()
     {
-        setSignedOutEvent(new Event(signedOutEventDefinition));
+        setSignedOutEvent(new Event<EventArgs>(signedOutEventDefinition));
 
         UICommand tempVar = new UICommand("Search", this); //$NON-NLS-1$
         tempVar.setIsDefault(true);
@@ -569,7 +569,7 @@ public class CommonModel extends ListModel
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 
@@ -588,18 +588,16 @@ public class CommonModel extends ListModel
     }
 
     @Override
-    protected void onSelectedItemChanging(Object newValue, Object oldValue)
+    protected void onSelectedItemChanging(SearchableListModel newValue, SearchableListModel oldValue)
     {
         super.onSelectedItemChanging(newValue, oldValue);
-
-        SearchableListModel oldModel = (SearchableListModel) oldValue;
 
         if (oldValue != null)
         {
             // clear the IsEmpty flag, that in the next search the flag will be initialized.
-            oldModel.setIsEmpty(false);
+            oldValue.setIsEmpty(false);
 
-            oldModel.setItems(null);
+            oldValue.setItems(null);
 
             ListWithDetailsModel listWithDetails =
                     (ListWithDetailsModel) ((oldValue instanceof ListWithDetailsModel) ? oldValue : null);
@@ -608,7 +606,7 @@ public class CommonModel extends ListModel
                 listWithDetails.setActiveDetailModel(null);
             }
 
-            oldModel.stopRefresh();
+            oldValue.stopRefresh();
         }
     }
 
@@ -1051,12 +1049,12 @@ public class CommonModel extends ListModel
         return sharedMacPoolListModel;
     }
 
-    public Event getSignedOutEvent()
+    public Event<EventArgs> getSignedOutEvent()
     {
         return privateSignedOutEvent;
     }
 
-    private void setSignedOutEvent(Event value)
+    private void setSignedOutEvent(Event<EventArgs> value)
     {
         privateSignedOutEvent = value;
     }

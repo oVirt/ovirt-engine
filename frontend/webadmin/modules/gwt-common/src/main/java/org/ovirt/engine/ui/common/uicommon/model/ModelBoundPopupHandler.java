@@ -9,7 +9,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -51,10 +50,10 @@ public class ModelBoundPopupHandler<M extends Model> {
      */
     public void addDialogModelListener(final M source) {
         hideAndClearAllPopups();
-        source.getPropertyChangedEvent().addListener(new IEventListener() {
+        source.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
 
                 if (windowPropertyNames.contains(propName)) {
                     handleWindowModelChange(source, windowPopup, false, propName);
@@ -127,12 +126,10 @@ public class ModelBoundPopupHandler<M extends Model> {
         popup.init(model);
 
         // Add "PROGRESS" property change handler to Window model
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-
-                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) { //$NON-NLS-1$
                     updatePopupProgress(model, popup);
                 }
             }

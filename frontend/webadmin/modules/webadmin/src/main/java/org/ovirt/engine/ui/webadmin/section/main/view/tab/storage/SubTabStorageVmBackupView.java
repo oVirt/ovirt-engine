@@ -199,10 +199,10 @@ public class SubTabStorageVmBackupView extends AbstractSubTabTableView<StorageDo
         applicationsTable.setWidth("100%"); //$NON-NLS-1$
         applicationsTable.setRowData(new ArrayList<String>());
 
-        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getDetailModel().getAppListModel().getItems() != null) {
                     applicationsTable.setRowData(Linq.toList(getDetailModel().getAppListModel().getItems()));
                 } else {

@@ -209,17 +209,17 @@ public class StoragePopupView extends AbstractModelBoundPopupView<StorageModel>
         driver.edit(object);
 
         final StorageModel storageModel = object;
-        storageModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        storageModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // Reveal the appropriate storage view according to the selected storage type
                 revealStorageView(storageModel);
             }
         });
 
-        storageModel.getDataCenterAlert().getEntityChangedEvent().addListener(new IEventListener() {
+        storageModel.getDataCenterAlert().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 datacenterAlertIcon.setVisible(storageModel.getDataCenterAlert().getIsAvailable());
                 datacenterAlertIcon.setTitle(storageModel.getDataCenterAlert().getEntity());
             }

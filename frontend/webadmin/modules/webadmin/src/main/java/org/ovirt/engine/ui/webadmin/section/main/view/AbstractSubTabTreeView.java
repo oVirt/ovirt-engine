@@ -93,10 +93,10 @@ public abstract class AbstractSubTabTreeView<E extends AbstractSubTabTree, I, T,
         updateStyles();
     }
 
-    private final IEventListener itemsChangedListener = new IEventListener() {
+    private final IEventListener<EventArgs> itemsChangedListener = new IEventListener<EventArgs>() {
         @SuppressWarnings("unchecked")
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             table.setRowData(new ArrayList<EntityModel>());
             // Since tree views don't have an 'emptyTreeWidget to display, we will
             // use the fact that we are using a table to display the 'header' to have

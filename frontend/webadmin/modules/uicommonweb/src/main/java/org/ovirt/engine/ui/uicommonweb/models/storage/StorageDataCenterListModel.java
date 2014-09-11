@@ -2,7 +2,6 @@ package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -38,7 +37,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageDataCenterListModel extends SearchableListModel
+public class StorageDataCenterListModel extends SearchableListModel<StorageDomain>
 {
 
     private UICommand privateAttachCommand;
@@ -92,7 +91,7 @@ public class StorageDataCenterListModel extends SearchableListModel
     @Override
     public StorageDomain getEntity()
     {
-        return (StorageDomain) super.getEntity();
+        return super.getEntity();
     }
 
     public void setEntity(StorageDomain value)
@@ -211,15 +210,14 @@ public class StorageDataCenterListModel extends SearchableListModel
             @Override
             public void onSuccess(Object model, Object ReturnValue)
             {
-                SearchableListModel searchableListModel = (SearchableListModel) model;
                 ArrayList<StorageDomain> domains =
-                        (ArrayList<StorageDomain>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                        ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 for (StorageDomain domain : domains) {
                     domain.setId(domain.getStoragePoolId());
                 }
                 Collections.sort(domains, new Linq.StorageDomainByPoolNameComparator());
-                searchableListModel.setItems(domains);
-                setIsEmpty(((List) searchableListModel.getItems()).size() == 0);
+                setItems(domains);
+                setIsEmpty(getItems().size() == 0);
             }
         };
 

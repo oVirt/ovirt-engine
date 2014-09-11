@@ -61,26 +61,26 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
     private CommonApplicationResources resources = GWT.create(CommonApplicationResources.class);
 
     private final List<Pair<T, V>> items;
-    private final IEventListener itemsChangedListener;
-    private final IEventListener propertyChangedListener;
+    private final IEventListener<EventArgs> itemsChangedListener;
+    private final IEventListener<PropertyChangedEventArgs> propertyChangedListener;
     private M model;
     private Collection<T> modelItems;
     private boolean enabled;
 
     public AddRemoveRowWidget() {
         items = new LinkedList<Pair<T, V>>();
-        itemsChangedListener = new IEventListener() {
+        itemsChangedListener = new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 init(model);
             }
         };
-        propertyChangedListener = new IEventListener() {
+        propertyChangedListener = new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsChangable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsChangable".equals(args.propertyName)) { //$NON-NLS-1$
                     enabled = model.getIsChangable();
                     updateEnabled();
                 }
@@ -100,7 +100,7 @@ public abstract class AddRemoveRowWidget<M extends ListModel<T>, T, V extends Wi
         items.clear();
         contentPanel.clear();
 
-        modelItems = (Collection<T>) model.getItems();
+        modelItems = model.getItems();
         if (modelItems == null) {
             modelItems = new LinkedList<T>();
             model.setItems(modelItems); // this will invoke init() again with the empty list as values instead of null

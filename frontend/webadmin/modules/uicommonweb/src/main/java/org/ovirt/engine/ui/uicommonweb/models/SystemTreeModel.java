@@ -39,25 +39,25 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
 
     public static final EventDefinition resetRequestedEventDefinition;
     public static final EventDefinition beforeItemsChangedEventDefinition;
-    private Event privateResetRequestedEvent;
-    private Event privateBeforeItemsChangedEvent;
+    private Event<EventArgs> privateResetRequestedEvent;
+    private Event<EventArgs> privateBeforeItemsChangedEvent;
 
-    public Event getResetRequestedEvent()
+    public Event<EventArgs> getResetRequestedEvent()
     {
         return privateResetRequestedEvent;
     }
 
-    private void setResetRequestedEvent(Event value)
+    private void setResetRequestedEvent(Event<EventArgs> value)
     {
         privateResetRequestedEvent = value;
     }
 
-    public Event getBeforeItemsChangedEvent()
+    public Event<EventArgs> getBeforeItemsChangedEvent()
     {
         return privateBeforeItemsChangedEvent;
     }
 
-    private void setBeforeItemsChangedEvent(Event value)
+    private void setBeforeItemsChangedEvent(Event<EventArgs> value)
     {
         privateBeforeItemsChangedEvent = value;
     }
@@ -205,8 +205,8 @@ public class SystemTreeModel extends SearchableListModel<SystemTreeItemModel> im
 
     public SystemTreeModel()
     {
-        setResetRequestedEvent(new Event(resetRequestedEventDefinition));
-        setBeforeItemsChangedEvent(new Event(beforeItemsChangedEventDefinition));
+        setResetRequestedEvent(new Event<EventArgs>(resetRequestedEventDefinition));
+        setBeforeItemsChangedEvent(new Event<EventArgs>(beforeItemsChangedEventDefinition));
 
         setResetCommand(new UICommand("Reset", this)); //$NON-NLS-1$
         setExpandAllCommand(new UICommand("ExpandAll", this)); //$NON-NLS-1$

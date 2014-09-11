@@ -1419,9 +1419,9 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         getBaseTemplate().getSelectedItemChangedEvent().addListener(this);
 
         setCdAttached(new NotChangableForVmInPoolEntityModel<Boolean>());
-        getCdAttached().getEntityChangedEvent().addListener(new IEventListener() {
+        getCdAttached().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 getCdImage().setIsChangable(getCdAttached().getEntity());
             }
@@ -1656,7 +1656,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 

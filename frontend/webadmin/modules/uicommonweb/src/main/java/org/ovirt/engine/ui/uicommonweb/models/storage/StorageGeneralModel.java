@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class StorageGeneralModel extends EntityModel
+public class StorageGeneralModel extends EntityModel<StorageDomain>
 {
 
     private boolean isNfs;

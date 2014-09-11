@@ -10,10 +10,10 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
  * occurred.
  */
 public class UiCommonListenerMap {
-    private final Map<String, IEventListener> listenerMap;
+    private final Map<String, IEventListener<?>> listenerMap;
 
     public UiCommonListenerMap() {
-        listenerMap = new HashMap<String, IEventListener>();
+        listenerMap = new HashMap<String, IEventListener<?>>();
     }
 
     /**

@@ -28,10 +28,10 @@ public class DataCenterPopupPresenterWidget extends AbstractModelBoundPopupPrese
     @Override
     public void init(final DataCenterModel model) {
         super.init(model);
-        model.getMacPoolModel().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getMacPoolModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().updateMacPool(model.getMacPoolModel());
             }
         });

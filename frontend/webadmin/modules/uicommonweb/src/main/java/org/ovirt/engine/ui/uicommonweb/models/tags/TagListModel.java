@@ -31,18 +31,18 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 @SuppressWarnings("unused")
-public class TagListModel extends SearchableListModel
+public class TagListModel extends SearchableListModel<TagModel>
 {
 
     public static final EventDefinition resetRequestedEventDefinition;
-    private Event privateResetRequestedEvent;
+    private Event<EventArgs> privateResetRequestedEvent;
 
-    public Event getResetRequestedEvent()
+    public Event<EventArgs> getResetRequestedEvent()
     {
         return privateResetRequestedEvent;
     }
 
-    private void setResetRequestedEvent(Event value)
+    private void setResetRequestedEvent(Event<EventArgs> value)
     {
         privateResetRequestedEvent = value;
     }
@@ -166,7 +166,7 @@ public class TagListModel extends SearchableListModel
 
     public TagListModel()
     {
-        setResetRequestedEvent(new Event(resetRequestedEventDefinition));
+        setResetRequestedEvent(new Event<EventArgs>(resetRequestedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -343,7 +343,7 @@ public class TagListModel extends SearchableListModel
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 

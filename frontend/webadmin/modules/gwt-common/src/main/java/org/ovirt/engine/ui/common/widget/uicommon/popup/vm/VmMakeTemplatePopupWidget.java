@@ -25,7 +25,6 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.editor.client.Editor.Path;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
@@ -237,17 +236,17 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
     public void edit(final UnitVmModel model) {
         driver.edit(model);
 
-        model.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
+        model.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 addDiskAllocation(model);
             }
         });
 
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("Message".equals(propName)) { //$NON-NLS-1$
                     appendMessage(model.getMessage());
                 }
@@ -255,9 +254,9 @@ public class VmMakeTemplatePopupWidget extends AbstractModelBoundPopupWidget<Uni
         });
 
         subTemplateExpanderContent.setVisible(false);
-        model.getIsSubTemplate().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getIsSubTemplate().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 subTemplateExpanderContent.setVisible(model.getIsSubTemplate().getEntity());
             }
         });

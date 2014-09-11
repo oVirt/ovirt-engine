@@ -38,10 +38,10 @@ public class NicLabelEditor extends AbstractModelBoundPopupWidget<ListModel<Stri
     @Override
     public void edit(final ListModel<String> model) {
         driver.edit(model);
-        model.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ValueChangeEvent.fire(NicLabelEditor.this, model);
             }
         });

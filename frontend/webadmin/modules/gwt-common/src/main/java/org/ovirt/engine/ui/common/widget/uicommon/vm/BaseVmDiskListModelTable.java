@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon.vm;
 
 import org.ovirt.engine.core.common.businessentities.Disk;
-import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
@@ -71,10 +70,10 @@ public class BaseVmDiskListModelTable<T extends VmDiskListModelBase> extends Abs
         initTableOverhead();
         handleRadioButtonClick(null);
 
-        getModel().getItemsChangedEvent().addListener(new IEventListener() {
+        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                disksViewRadioGroup.setDiskStorageType((DiskStorageType) getModel().getDiskViewType().getEntity());
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                disksViewRadioGroup.setDiskStorageType(getModel().getDiskViewType().getEntity());
             }
         });
     }

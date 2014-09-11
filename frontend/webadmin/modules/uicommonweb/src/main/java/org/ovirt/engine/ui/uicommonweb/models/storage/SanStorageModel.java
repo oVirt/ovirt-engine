@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -446,10 +445,10 @@ public abstract class SanStorageModel extends SanStorageModelBase
         }
     }
 
-    final IEventListener lunModelEventListener = new IEventListener() {
+    final IEventListener<PropertyChangedEventArgs> lunModelEventListener = new IEventListener<PropertyChangedEventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
-            String propName = ((PropertyChangedEventArgs) args).propertyName;
+        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            String propName = args.propertyName;
             if (propName.equals("IsSelected")) { //$NON-NLS-1$
                 LunModel selectedLunModel = (LunModel) sender;
 

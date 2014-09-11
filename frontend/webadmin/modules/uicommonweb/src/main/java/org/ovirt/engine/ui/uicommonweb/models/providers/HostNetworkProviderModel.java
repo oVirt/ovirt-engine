@@ -41,10 +41,10 @@ public class HostNetworkProviderModel extends EntityModel {
     }
 
     public HostNetworkProviderModel() {
-        getNetworkProviders().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getNetworkProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Provider<OpenstackNetworkProviderProperties> provider = getNetworkProviders().getSelectedItem();
                 getNetworkProviderType().setIsAvailable(provider != null);
                 getNetworkProviderType().setSelectedItem(provider == null ? null : provider.getType());

@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public abstract class ConsoleModel extends EntityModel {
+public abstract class ConsoleModel extends EntityModel<VM> {
     public static final String GET_ATTACHMENT_SERVLET_URL = BaseContextPathData.getInstance().getPath()
             + "services/attachment/"; //$NON-NLS-1$
 
@@ -46,14 +46,14 @@ public abstract class ConsoleModel extends EntityModel {
     }
 
     public static final EventDefinition errorEventDefinition;
-    private Event privateErrorEvent;
+    private Event<ErrorCodeEventArgs> privateErrorEvent;
 
-    public Event getErrorEvent()
+    public Event<ErrorCodeEventArgs> getErrorEvent()
     {
         return privateErrorEvent;
     }
 
-    private void setErrorEvent(Event value)
+    private void setErrorEvent(Event<ErrorCodeEventArgs> value)
     {
         privateErrorEvent = value;
     }
@@ -127,7 +127,7 @@ public abstract class ConsoleModel extends EntityModel {
         this.parentModel = parentModel;
         setEntity(myVm);
 
-        setErrorEvent(new Event(errorEventDefinition));
+        setErrorEvent(new Event<ErrorCodeEventArgs>(errorEventDefinition));
 
         setConnectCommand(new UICommand("Connect", this)); //$NON-NLS-1$
     }

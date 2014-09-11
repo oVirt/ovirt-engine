@@ -257,8 +257,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         if (model.supportsServerSideSorting()) {
             model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
                 @Override
-                public void eventRaised(org.ovirt.engine.ui.uicompat.Event<PropertyChangedEventArgs> ev, Object sender,
-                        PropertyChangedEventArgs args) {
+                public void eventRaised(org.ovirt.engine.ui.uicompat.Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                     if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                         if (!model.isSearchValidForServerSideSorting()) {
                             model.clearSortOptions();

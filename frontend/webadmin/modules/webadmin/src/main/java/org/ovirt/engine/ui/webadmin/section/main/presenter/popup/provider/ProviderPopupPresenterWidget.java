@@ -36,21 +36,21 @@ public class ProviderPopupPresenterWidget extends AbstractModelBoundPopupPresent
             }
         }));
 
-        model.getTestResult().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getTestResult().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getView().setTestResultImage((String) model.getTestResult().getEntity());
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                getView().setTestResultImage(model.getTestResult().getEntity());
             }
         });
         model.getNeutronAgentModel()
                 .isPluginConfigurationAvailable()
                 .getEntityChangedEvent()
-                .addListener(new IEventListener() {
+                .addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                getView().setAgentTabVisibility((Boolean) model.getNeutronAgentModel()
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                getView().setAgentTabVisibility(model.getNeutronAgentModel()
                         .isPluginConfigurationAvailable()
                         .getEntity());
             }

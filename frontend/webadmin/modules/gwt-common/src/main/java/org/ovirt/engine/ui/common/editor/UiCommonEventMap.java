@@ -4,16 +4,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 /**
  * A Map of {@link Event}s - used by the Editor Driver to be updated when a change in the Model occurs
  */
 public class UiCommonEventMap {
-    private final Map<String, Event> eventMap;
+    private final Map<String, Event<?>> eventMap;
 
     public UiCommonEventMap() {
-        eventMap = new HashMap<String, Event>();
+        eventMap = new HashMap<String, Event<?>>();
     }
 
     /**
@@ -40,10 +41,10 @@ public class UiCommonEventMap {
      * @param listener
      *            The Listener to add
      */
-    public void registerListener(String path, String type, IEventListener listener) {
+    public void registerListener(String path, String type, IEventListener<? extends EventArgs> listener) {
         String key = getKey(path, type);
         if (eventMap.containsKey(key)) {
-            eventMap.get(key).addListener(listener);
+            eventMap.get(key).addListener((IEventListener) listener);
         }
     }
 

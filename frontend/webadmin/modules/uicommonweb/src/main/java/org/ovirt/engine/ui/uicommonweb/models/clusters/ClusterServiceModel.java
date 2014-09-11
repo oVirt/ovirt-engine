@@ -19,35 +19,35 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class ClusterServiceModel extends EntityModel {
+public class ClusterServiceModel extends EntityModel<VDSGroup> {
 
-    private ListModel hostList;
+    private ListModel<VDS> hostList;
 
-    public ListModel getHostList() {
+    public ListModel<VDS> getHostList() {
         return hostList;
     }
 
-    public void setHostList(ListModel hostList) {
+    public void setHostList(ListModel<VDS> hostList) {
         this.hostList = hostList;
     }
 
-    private ListModel serviceTypeList;
+    private ListModel<ServiceType> serviceTypeList;
 
-    public ListModel getServiceTypeList() {
+    public ListModel<ServiceType> getServiceTypeList() {
         return serviceTypeList;
     }
 
-    public void setServiceTypeList(ListModel serviceTypeList) {
+    public void setServiceTypeList(ListModel<ServiceType> serviceTypeList) {
         this.serviceTypeList = serviceTypeList;
     }
 
-    private ListModel serviceList;
+    private ListModel<EntityModel<GlusterServerService>> serviceList;
 
-    public ListModel getServiceList() {
+    public ListModel<EntityModel<GlusterServerService>> getServiceList() {
         return serviceList;
     }
 
-    public void setServiceList(ListModel serviceList) {
+    public void setServiceList(ListModel<EntityModel<GlusterServerService>> serviceList) {
         this.serviceList = serviceList;
     }
 
@@ -81,20 +81,15 @@ public class ClusterServiceModel extends EntityModel {
         clearFilterServicesCommand = value;
     }
 
-    @Override
-    public VDSGroup getEntity() {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-    }
-
     public ClusterServiceModel() {
         setTitle(ConstantsManager.getInstance().getConstants().servicesTitle());
         setHelpTag(HelpTag.services);
         setHashName("services"); //$NON-NLS-1$
 
         setActualServiceList(new ArrayList<GlusterServerService>());
-        setServiceList(new ListModel());
-        setHostList(new ListModel());
-        setServiceTypeList(new ListModel());
+        setServiceList(new ListModel<EntityModel<GlusterServerService>>());
+        setHostList(new ListModel<VDS>());
+        setServiceTypeList(new ListModel<ServiceType>());
         updateServiceTypeList();
         setFilterServicesCommand(new UICommand("FilterServices", this)); //$NON-NLS-1$
         setClearFilterServicesCommand(new UICommand("ClearFilterServices", this)); //$NON-NLS-1$
@@ -173,9 +168,9 @@ public class ClusterServiceModel extends EntityModel {
     }
 
     private void filterServices() {
-        VDS selectedVds = (VDS) hostList.getSelectedItem();
-        ServiceType serviceType = (ServiceType) serviceTypeList.getSelectedItem();
-        ArrayList<EntityModel> list = new ArrayList<EntityModel>();
+        VDS selectedVds = hostList.getSelectedItem();
+        ServiceType serviceType = serviceTypeList.getSelectedItem();
+        ArrayList<EntityModel<GlusterServerService>> list = new ArrayList<EntityModel<GlusterServerService>>();
         List<GlusterServerService> serviceList = new ArrayList<GlusterServerService>(getActualServiceList());
         Collections.sort(serviceList, new Comparator<GlusterServerService>() {
             @Override
@@ -190,7 +185,7 @@ public class ClusterServiceModel extends EntityModel {
         for (GlusterServerService service : serviceList) {
             if ((selectedVds == null || service.getHostName().equals(selectedVds.getHostName()))
                     && (serviceType == null || service.getServiceType() == serviceType)) {
-                list.add(new EntityModel(service));
+                list.add(new EntityModel<GlusterServerService>(service));
             }
         }
         getServiceList().setItems(list);

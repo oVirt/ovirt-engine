@@ -73,9 +73,9 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     public void activateItemsUpdate() {
         disableItemsUpdate();
 
-        model.getItemsChangedEvent().addListener(new IEventListener() {
+        model.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateItems();
             }
         });
@@ -128,8 +128,8 @@ public abstract class AbstractSanStorageList<M extends EntityModel, L extends Li
     }
 
     protected void grayOutItem(ArrayList<String> grayOutReasons,
-            EntityModel model,
-            EntityModelCellTable<ListModel> table) {
+            LunModel model,
+            EntityModelCellTable<ListModel<LunModel>> table) {
         for (int row = 0; row < table.getRowCount(); row++) {
             if (table.getVisibleItem(row).equals(model)) {
                 TableRowElement tableRowElement = table.getRowElement(row);

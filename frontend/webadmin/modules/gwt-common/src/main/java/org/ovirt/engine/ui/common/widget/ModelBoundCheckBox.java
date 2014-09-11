@@ -48,9 +48,9 @@ public class ModelBoundCheckBox extends CheckBox {
     }
 
     private void registerModelPropertyChangeListener() {
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isSelected = model.getIsSelected();
                 ModelBoundCheckBox.super.setValue(isSelected, true);
             }

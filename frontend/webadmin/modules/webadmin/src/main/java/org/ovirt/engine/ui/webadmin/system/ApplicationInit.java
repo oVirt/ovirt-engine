@@ -97,9 +97,9 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         ReportInit.getInstance().init();
 
         // Update Reports availability after reports xml has been retrieved
-        ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener() {
+        ReportInit.getInstance().getReportsInitEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateReportsAvailability();
             }
         });

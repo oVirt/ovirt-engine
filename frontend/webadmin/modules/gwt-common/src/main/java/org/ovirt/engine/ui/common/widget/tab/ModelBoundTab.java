@@ -27,11 +27,9 @@ public class ModelBoundTab extends SimpleTab implements HasHandlers {
     void registerModelEventListeners(final ModelProvider<? extends EntityModel> modelProvider) {
         modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                PropertyChangedEventArgs pcArgs = args;
-
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 // Update tab accessibility when 'IsAvailable' property changes
-                if ("IsAvailable".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     boolean isAvailable = modelProvider.getModel().getIsAvailable();
                     setAccessible(isAvailable);
                 }

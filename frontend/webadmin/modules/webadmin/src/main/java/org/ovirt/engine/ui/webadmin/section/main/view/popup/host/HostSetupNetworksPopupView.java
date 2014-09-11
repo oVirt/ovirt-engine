@@ -131,7 +131,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
         driver.edit(uicommonModel);
         uicommonModel.getNicsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // this is called after both networks and nics were retrieved
                 HostSetupNetworksModel model = (HostSetupNetworksModel) sender;
                 List<LogicalNetworkModel> networks = model.getNetworks();
@@ -149,7 +149,7 @@ public class HostSetupNetworksPopupView extends AbstractModelBoundPopupView<Host
 
         uicommonModel.getOperationCandidateEvent().addListener(new IEventListener<OperationCandidateEventArgs>() {
             @Override
-            public void eventRaised(Event<OperationCandidateEventArgs> ev,
+            public void eventRaised(Event<? extends OperationCandidateEventArgs> ev,
                     Object sender,
                     OperationCandidateEventArgs args) {
 

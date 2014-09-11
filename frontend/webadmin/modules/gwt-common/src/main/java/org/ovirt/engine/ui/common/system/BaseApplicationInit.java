@@ -92,17 +92,17 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         final T loginModel = getLoginModel();
 
         // Add model login event handler
-        loginModel.getLoggedInEvent().addListener(new IEventListener() {
+        loginModel.getLoggedInEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onLogin(loginModel);
             }
         });
 
         loginModel.getCreateInstanceOnly().getEntityChangedEvent().addListener(
-                new IEventListener() {
+                new IEventListener<EventArgs>() {
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                         currentUserRole.setCreateInstanceOnly(loginModel.getCreateInstanceOnly().getEntity() );
                     }
                 }
@@ -166,9 +166,9 @@ public abstract class BaseApplicationInit<T extends LoginModel> implements Boots
         frontend.setEventsHandler(frontendEventsHandler);
         frontend.getFrontendFailureEvent().addListener(frontendFailureEventListener);
 
-        frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener() {
+        frontend.getFrontendNotLoggedInEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 user.logout();
             }
         });

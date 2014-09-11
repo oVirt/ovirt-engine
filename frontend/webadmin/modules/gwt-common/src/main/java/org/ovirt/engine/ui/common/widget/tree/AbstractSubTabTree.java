@@ -107,9 +107,9 @@ public abstract class AbstractSubTabTree<M extends SearchableListModel, R, N> ex
         selectedItems.clear();
     }
 
-    private IEventListener itemsChangedEventListener = new IEventListener() {
+    private IEventListener<EventArgs> itemsChangedEventListener = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             refreshTree();
         }
     };

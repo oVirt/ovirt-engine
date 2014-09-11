@@ -21,7 +21,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConsoleModelsCache;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
-import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -36,28 +35,28 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 public class UserPortalBasicListModel extends AbstractUserPortalListModel {
 
     public static final EventDefinition searchCompletedEventDefinition;
-    private Event privateSearchCompletedEvent;
+    private Event<EventArgs> privateSearchCompletedEvent;
 
-    public Event getSearchCompletedEvent()
+    public Event<EventArgs> getSearchCompletedEvent()
     {
         return privateSearchCompletedEvent;
     }
 
-    private void setSearchCompletedEvent(Event value)
+    private void setSearchCompletedEvent(Event<EventArgs> value)
     {
         privateSearchCompletedEvent = value;
     }
 
-    private SearchableListModel privatevmBasicDiskListModel;
+    private VmBasicDiskListModel vmBasicDiskListModel;
 
-    public SearchableListModel getvmBasicDiskListModel()
+    public VmBasicDiskListModel getVmBasicDiskListModel()
     {
-        return privatevmBasicDiskListModel;
+        return vmBasicDiskListModel;
     }
 
-    private void setvmBasicDiskListModel(SearchableListModel value)
+    private void setVmBasicDiskListModel(VmBasicDiskListModel value)
     {
-        privatevmBasicDiskListModel = value;
+        vmBasicDiskListModel = value;
     }
 
     private ArrayList<VM> privatevms;
@@ -84,26 +83,26 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
         privatepools = value;
     }
 
-    private EntityModel privateSelectedItemDefinedMemory;
+    private EntityModel<String> privateSelectedItemDefinedMemory;
 
-    public EntityModel getSelectedItemDefinedMemory()
+    public EntityModel<String> getSelectedItemDefinedMemory()
     {
         return privateSelectedItemDefinedMemory;
     }
 
-    private void setSelectedItemDefinedMemory(EntityModel value)
+    private void setSelectedItemDefinedMemory(EntityModel<String> value)
     {
         privateSelectedItemDefinedMemory = value;
     }
 
-    private EntityModel privateSelectedItemNumOfCpuCores;
+    private EntityModel<String> privateSelectedItemNumOfCpuCores;
 
-    public EntityModel getSelectedItemNumOfCpuCores()
+    public EntityModel<String> getSelectedItemNumOfCpuCores()
     {
         return privateSelectedItemNumOfCpuCores;
     }
 
-    private void setSelectedItemNumOfCpuCores(EntityModel value)
+    private void setSelectedItemNumOfCpuCores(EntityModel<String> value)
     {
         privateSelectedItemNumOfCpuCores = value;
     }
@@ -113,10 +112,10 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     }
 
     public UserPortalBasicListModel() {
-        setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
 
-        setSelectedItemDefinedMemory(new EntityModel());
-        setSelectedItemNumOfCpuCores(new EntityModel());
+        setSelectedItemDefinedMemory(new EntityModel<String>());
+        setSelectedItemNumOfCpuCores(new EntityModel<String>());
 
         consoleModelsCache = new ConsoleModelsCache(ConsoleContext.UP_BASIC, this);
     }
@@ -171,7 +170,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     @Override
     public void forceRefresh() {
         super.forceRefresh();
-        getvmBasicDiskListModel().forceRefresh();
+        getVmBasicDiskListModel().forceRefresh();
     }
 
     @Override
@@ -179,13 +178,13 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
     {
         super.initDetailModels();
 
-        setvmBasicDiskListModel(new VmBasicDiskListModel());
+        setVmBasicDiskListModel(new VmBasicDiskListModel());
 
         ObservableCollection<EntityModel> list = new ObservableCollection<EntityModel>();
-        list.add(getvmBasicDiskListModel());
+        list.add(getVmBasicDiskListModel());
 
         setDetailModels(list);
-        setActiveDetailModel(getvmBasicDiskListModel());
+        setActiveDetailModel(getVmBasicDiskListModel());
     }
 
     @Override
@@ -225,7 +224,7 @@ public class UserPortalBasicListModel extends AbstractUserPortalListModel {
             return;
         }
 
-        Object entity = ((EntityModel) getSelectedItem()).getEntity();
+        Object entity = getSelectedItem().getEntity();
         if (entity instanceof VM)
         {
             VM vm = (VM) entity;

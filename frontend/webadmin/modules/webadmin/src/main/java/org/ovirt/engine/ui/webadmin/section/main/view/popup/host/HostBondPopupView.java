@@ -191,11 +191,11 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
         bootProtocol.setEnabled(NetworkBootProtocol.NONE, object.getNoneBootProtocolAvailable());
         updateBondOptions(object.getBondingOptions());
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 HostBondInterfaceModel model = (HostBondInterfaceModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                String propertyName = args.propertyName;
                 if ("NoneBootProtocolAvailable".equals(propertyName)) { //$NON-NLS-1$
                     bootProtocol.setEnabled(NetworkBootProtocol.NONE, model.getNoneBootProtocolAvailable());
                 }
@@ -205,9 +205,9 @@ public class HostBondPopupView extends AbstractModelBoundPopupView<HostBondInter
             }
         });
 
-        object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ListModel<Map.Entry<String, EntityModel<String>>> list = (ListModel<Map.Entry<String, EntityModel<String>>>) sender;
                 updateBondOptions(list);
             }

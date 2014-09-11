@@ -106,39 +106,39 @@ public abstract class RegisterEntityPopupView extends AbstractModelBoundPopupVie
         registerEntityModel = model;
         driver.edit(model);
 
-        model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getEntities().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ListModel<ImportEntityData> entities = (ListModel<ImportEntityData>) sender;
                 ImportEntityData importEntityData = entities.getSelectedItem();
                 registerEntityInfoPanel.updateTabsData(importEntityData);
             }
         });
 
-        model.getCluster().getItemsChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 createTables(model);
             }
         });
 
-        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 refreshEntityTable();
             }
         });
 
-        model.getClusterQuotasMap().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getClusterQuotasMap().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 refreshEntityTable();
             }
         });
 
-        model.getStorageQuota().getItemsChangedEvent().addListener(new IEventListener() {
+        model.getStorageQuota().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 refreshEntityTable();
             }
         });

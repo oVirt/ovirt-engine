@@ -13,14 +13,14 @@ public class ChangeCDModel extends Model
     // public event EventHandler Executed = delegate { };
 
     public static final EventDefinition executedEventDefinition;
-    private Event privateExecutedEvent;
+    private Event<EventArgs> privateExecutedEvent;
 
-    public Event getExecutedEvent()
+    public Event<EventArgs> getExecutedEvent()
     {
         return privateExecutedEvent;
     }
 
-    private void setExecutedEvent(Event value)
+    private void setExecutedEvent(Event<EventArgs> value)
     {
         privateExecutedEvent = value;
     }
@@ -44,7 +44,7 @@ public class ChangeCDModel extends Model
 
     public ChangeCDModel()
     {
-        setExecutedEvent(new Event(executedEventDefinition));
+        setExecutedEvent(new Event<EventArgs>(executedEventDefinition));
 
         setDoCommand(new UICommand("Do", this)); //$NON-NLS-1$
     }

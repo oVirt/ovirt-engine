@@ -80,15 +80,15 @@ public class TagList extends AbstractActionStackPanelItem<TagModelProvider, TagL
     }
 
     private void addModelListeners(final TagModelProvider modelProvider) {
-        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 expandTree(getDataDisplayWidget().getRootTreeNode());
             }
         });
-        modelProvider.getModel().getResetRequestedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 expandTree(getDataDisplayWidget().getRootTreeNode());
             }
         });

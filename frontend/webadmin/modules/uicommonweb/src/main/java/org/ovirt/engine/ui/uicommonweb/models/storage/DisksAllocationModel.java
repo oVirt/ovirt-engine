@@ -42,9 +42,9 @@ public class DisksAllocationModel extends EntityModel
     protected static final UIConstants constants = ConstantsManager.getInstance().getConstants();
     protected static final UIMessages messages = ConstantsManager.getInstance().getMessages();
 
-    private final IEventListener storageDomainEventListener = new IEventListener() {
+    private final IEventListener<EventArgs> storageDomainEventListener = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             updateDisks(sender);
         }
     };
@@ -69,9 +69,9 @@ public class DisksAllocationModel extends EntityModel
         for (final DiskModel diskModel : disks) {
             diskModel.getStorageDomain().getSelectedItemChangedEvent().removeListener(storageDomainEventListener);
             diskModel.getStorageDomain().getSelectedItemChangedEvent().addListener(storageDomainEventListener);
-            diskModel.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener() {
+            diskModel.getStorageDomain().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     DiskImage disk = (DiskImage) diskModel.getDisk();
                     if (diskModel.getStorageDomain().getItems() != null && disk.getStorageIds() != null
                             && !disk.getStorageIds().isEmpty()) {

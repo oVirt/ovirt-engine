@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter;
 import org.ovirt.engine.ui.common.uicommon.model.CommonModelManager;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -65,27 +64,25 @@ public class SearchPanelPresenterWidget extends PresenterWidget<SearchPanelPrese
     }
 
     void addCommonModelListeners() {
-        commonModel.getPropertyChangedEvent().addListener(new IEventListener() {
+        commonModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 // Update search string when 'SearchString' property changes
-                if ("SearchString".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                     updateViewSearchString();
                 }
 
                 // Update search string prefix when 'SearchStringPrefix' property changes
-                else if ("SearchStringPrefix".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                else if ("SearchStringPrefix".equals(args.propertyName)) { //$NON-NLS-1$
                     updateViewSearchStringPrefix();
                 }
 
                 // Update search string prefix visibility when 'HasSearchStringPrefix' property changes
-                else if ("HasSearchStringPrefix".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                else if ("HasSearchStringPrefix".equals(args.propertyName)) { //$NON-NLS-1$
                     updateViewHasSearchStringPrefix();
                 }
 
-                else if ("HasSelectedTags".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                else if ("HasSelectedTags".equals(args.propertyName)) { //$NON-NLS-1$
                     updateViewHasSelectedTags();
                 }
             }

@@ -85,16 +85,16 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
             }
         };
 
-        loginModel.getLoggedInEvent().addListener(new IEventListener() {
+        loginModel.getLoggedInEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onLoggedInEvent(loginModel);
             }
         });
 
-        loginModel.getLoginFailedEvent().addListener(new IEventListener() {
+        loginModel.getLoginFailedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 lockInteractionManager.hideLoadingIndicator();
                 formatAndSetErrorMessage(loginModel.getMessage());
                 logger.warning("Login failed for user [" + loginModel.getUserName().getEntity() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
@@ -120,12 +120,11 @@ public abstract class AbstractLoginPresenterWidget<T extends LoginModel, V exten
         }));
 
         // Update selected domain after domain items have been set
-        loginModel.getProfile().getPropertyChangedEvent().addListener(new IEventListener() {
+        loginModel.getProfile().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (args instanceof PropertyChangedEventArgs &&
-                        !"Items".equals(((PropertyChangedEventArgs) args).propertyName)) {//$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (!"Items".equals(args.propertyName)) {//$NON-NLS-1$
                     return;
                 }
 

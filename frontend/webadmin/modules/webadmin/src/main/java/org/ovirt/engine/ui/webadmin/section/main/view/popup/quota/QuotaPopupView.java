@@ -454,10 +454,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
     }
 
     private void registerHandlers() {
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
                 if ("Window".equals(propName) && model.getWindow() == null) { //$NON-NLS-1$
                     if (model.getSpecificClusterQuota().getEntity()) {
@@ -479,10 +479,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         model.getSpecificStorageQuota().getEntityChangedEvent().addListener(storageListener);
     }
 
-    final IEventListener clusterListener = new IEventListener() {
+    final IEventListener<EventArgs> clusterListener = new IEventListener<EventArgs>() {
 
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (model.getSpecificClusterQuota().getEntity()) {
                 quotaClusterTable.insertColumn(0, isClusterInQuotaColumn);
                 quotaClusterTable.setColumnWidth(isClusterInQuotaColumn, "30px"); //$NON-NLS-1$
@@ -494,10 +494,10 @@ public class QuotaPopupView extends AbstractModelBoundPopupView<QuotaModel> impl
         }
     };
 
-    final IEventListener storageListener = new IEventListener() {
+    final IEventListener<EventArgs> storageListener = new IEventListener<EventArgs>() {
 
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (model.getSpecificStorageQuota().getEntity()) {
                 quotaStorageTable.insertColumn(0, isStorageInQuotaColumn);
                 quotaStorageTable.setColumnWidth(isStorageInQuotaColumn, "30px"); //$NON-NLS-1$

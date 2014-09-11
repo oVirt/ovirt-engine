@@ -85,9 +85,9 @@ public class KeyValueLineWidget extends Composite implements HasValueChangeHandl
     @Override
     public void edit(final KeyValueLineModel object) {
         updateKeyTitle(object);
-        object.getKeys().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getKeys().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ValueChangeEvent.fire(KeyValueLineWidget.this, object);
                 updateKeyTitle(object);
             }

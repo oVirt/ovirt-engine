@@ -131,10 +131,10 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
 
         editDisksTable(model);
 
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("Message".equals(propName)) { //$NON-NLS-1$
                     appendMessage(model.getMessage());
                 } else if ("VM".equals(propName)) { //$NON-NLS-1$
@@ -159,9 +159,9 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
             }
         });
 
-        model.getMemory().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getMemory().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateMemoryWarning(model);
             }
         });
@@ -169,16 +169,16 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
 
     private void editDisksTable(final SnapshotModel model) {
         disksTable.asEditor().edit(model.getSnapshotDisks());
-        model.getSnapshotDisks().getItemsChangedEvent().addListener(new IEventListener() {
+        model.getSnapshotDisks().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 disksTable.selectAll();
             }
         });
 
-        model.getSnapshotDisks().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        model.getSnapshotDisks().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateMemoryWarning(model);
             }
         });
@@ -189,7 +189,7 @@ public class VmSnapshotCreatePopupWidget extends AbstractModelBoundPopupWidget<S
         ArrayList<DiskImage> selectedDiskImages = (ArrayList<DiskImage>) model.getSnapshotDisks().getSelectedItems();
 
         boolean partialDisksSelection = selectedDiskImages != null && diskImages.size() != selectedDiskImages.size();
-        boolean isIncludeMemory = (Boolean) model.getMemory().getEntity();
+        boolean isIncludeMemory = model.getMemory().getEntity();
 
         SafeHtml warningImage = SafeHtmlUtils.fromTrustedString(AbstractImagePrototype.create(
                 resources.logWarningImage()).getHTML());

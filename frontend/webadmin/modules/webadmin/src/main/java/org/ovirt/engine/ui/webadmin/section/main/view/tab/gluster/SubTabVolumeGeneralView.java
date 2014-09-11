@@ -15,7 +15,6 @@ import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
@@ -80,11 +79,11 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
         formBuilder.addFormItem(new FormItem(constants.numberOfBricksVolume(), numOfBricks, 5, 0));
         formBuilder.addFormItem(new FormItem(constants.transportTypesVolume(), transportTypes, 6, 0));
 
-        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getDetailModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 VolumeGeneralModel model = (VolumeGeneralModel) sender;
-                if ("VolumeType".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                if ("VolumeType".equals(args.propertyName)) { //$NON-NLS-1$
                     translateVolumeType((GlusterVolumeEntity) model.getEntity());
                 }
             }

@@ -25,9 +25,9 @@ public class NewClusterNetworkPopupPresenterWidget extends NewNetworkPopupPresen
         // Let the parent do its work
         super.init(model);
 
-        model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ((ViewDef) getView()).setDataCenterName((model.getDataCenters().getSelectedItem()).getName());
             }
         });

@@ -6,7 +6,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresent
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
@@ -36,11 +35,11 @@ public class ClusterPopupPresenterWidget extends AbstractTabbedModelBoundPopupPr
     public void init(final ClusterModel model) {
         super.init(model);
 
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("AllowClusterWithVirtGlusterEnabled".equals(propName)) { //$NON-NLS-1$
                     getView().allowClusterWithVirtGlusterEnabled(model.getAllowClusterWithVirtGlusterEnabled());
                 }

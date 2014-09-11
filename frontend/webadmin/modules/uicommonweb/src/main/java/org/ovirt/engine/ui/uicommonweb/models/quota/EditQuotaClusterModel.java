@@ -73,10 +73,10 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
         setUnlimitedMem(new EntityModel<Boolean>());
         getUnlimitedMem().setEntity(false);
         setSpecificMemValue(new EntityModel<Long>());
-        getUnlimitedMem().getEntityChangedEvent().addListener(new IEventListener() {
+        getUnlimitedMem().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getUnlimitedMem().getEntity()) {
                     getSpecificMem().setEntity(false);
                     getSpecificMemValue().setIsChangable(false);
@@ -84,10 +84,10 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             }
         });
 
-        getSpecificMem().getEntityChangedEvent().addListener(new IEventListener() {
+        getSpecificMem().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificMem().getEntity()) {
                     getUnlimitedMem().setEntity(false);
                     getSpecificMemValue().setIsChangable(true);
@@ -98,10 +98,10 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
         setSpecificCpu(new EntityModel<Boolean>());
         setUnlimitedCpu(new EntityModel<Boolean>());
         setSpecificCpuValue(new EntityModel<Integer>());
-        getUnlimitedCpu().getEntityChangedEvent().addListener(new IEventListener() {
+        getUnlimitedCpu().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getUnlimitedCpu().getEntity()) {
                     getSpecificCpu().setEntity(false);
                     getSpecificCpuValue().setIsChangable(false);
@@ -109,10 +109,10 @@ public class EditQuotaClusterModel extends EntityModel<QuotaVdsGroup> {
             }
         });
 
-        getSpecificCpu().getEntityChangedEvent().addListener(new IEventListener() {
+        getSpecificCpu().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificCpu().getEntity()) {
                     getUnlimitedCpu().setEntity(false);
                     getSpecificCpuValue().setIsChangable(true);

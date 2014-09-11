@@ -28,10 +28,10 @@ public class VnicProfilesEditor extends ScrollableAddRemoveRowWidget<NetworkProf
     @Override
     public void edit(final NetworkProfilesModel model) {
         super.edit(model);
-        model.getDcId().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getDcId().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 dcId = model.getDcId().getEntity();
             }
         });

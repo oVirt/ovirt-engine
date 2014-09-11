@@ -659,9 +659,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }));
 
         // Make sure not to set override IP tables flag back true when it was set false once.
-        hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener() {
+        hostModel.getOverrideIpTables().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 if (!clusterChanging) {
                     updateOverrideIpTables = hostModel.getOverrideIpTables().getEntity();
@@ -670,9 +670,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         });
 
         // Set override IP tables flag true for v3.0 clusters.
-        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 clusterChanging = true;
                 ListModel clusterModel = hostModel.getCluster();
@@ -692,10 +692,10 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             }
         });
 
-        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        hostModel.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ListModel<VDSGroup> clusterModel = hostModel.getCluster();
                 if (clusterModel.getSelectedItem() != null) {
                     VDSGroup cluster = clusterModel.getSelectedItem();
@@ -1802,9 +1802,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
         ReversibleFlow flow = new ReversibleFlow();
         flow.getCompleteEvent().addListener(
-                new IEventListener() {
+                new IEventListener<EventArgs>() {
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                         ConfigureLocalStorageModel model = (ConfigureLocalStorageModel) ev.getContext();
 

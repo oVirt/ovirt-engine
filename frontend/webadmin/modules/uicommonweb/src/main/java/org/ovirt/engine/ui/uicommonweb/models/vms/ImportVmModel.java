@@ -136,10 +136,10 @@ public class ImportVmModel extends ListWithDetailsModel {
         return closeCommand;
     }
 
-    private final IEventListener quotaClusterListener = new IEventListener() {
+    private final IEventListener<EventArgs> quotaClusterListener = new IEventListener<EventArgs>() {
 
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
                     new AsyncQuery(ImportVmModel.this,
@@ -148,8 +148,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 @Override
                                 public void onSuccess(Object model, Object returnValue) {
                                     ImportVmModel importVmModel = (ImportVmModel) model;
-                                    ArrayList<Quota> quotaList =
-                                            (ArrayList<Quota>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                    ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                     importVmModel.getClusterQuota().setItems(quotaList);
                                     if (quotaList.isEmpty()
                                             && QuotaEnforcementTypeEnum.HARD_ENFORCEMENT.equals(storagePool.getQuotaEnforcementType())) {
@@ -501,9 +500,9 @@ public class ImportVmModel extends ListWithDetailsModel {
 
         checkDestFormatCompatibility();
         stopProgress();
-        getStorage().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getStorage().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onDataLoad();
             }
         });

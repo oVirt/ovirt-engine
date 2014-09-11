@@ -146,16 +146,16 @@ public class GlusterHookResolveConflictsModel extends Model {
         setResolveMissingConflictCopy(new EntityModel<Boolean>());
         setResolveMissingConflictRemove(new EntityModel<Boolean>());
 
-        getHookSources().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getHookSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onSelectedHookSourceChanged();
             }
         });
 
-        getResolveContentConflict().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveContentConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if(getResolveContentConflict().getEntity() == null) {
                     getServerHooksList().setIsChangable(false);
                 }
@@ -165,9 +165,9 @@ public class GlusterHookResolveConflictsModel extends Model {
             }
         });
 
-        getResolveStatusConflict().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveStatusConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveStatusConflict().getEntity() == null) {
                     getResolveStatusConflictEnable().setIsChangable(false);
                     getResolveStatusConflictDisable().setIsChangable(false);
@@ -179,27 +179,27 @@ public class GlusterHookResolveConflictsModel extends Model {
             }
         });
 
-        getResolveStatusConflictEnable().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveStatusConflictEnable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveStatusConflictEnable().getEntity()) {
                     getResolveStatusConflictDisable().setEntity(Boolean.FALSE);
                 }
             }
         });
 
-        getResolveStatusConflictDisable().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveStatusConflictDisable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveStatusConflictDisable().getEntity()) {
                     getResolveStatusConflictEnable().setEntity(Boolean.FALSE);
                 }
             }
         });
 
-        getResolveMissingConflict().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveMissingConflict().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveMissingConflict().getEntity() == null) {
                     getResolveMissingConflictCopy().setIsChangable(false);
                     getResolveMissingConflictRemove().setIsChangable(false);
@@ -211,18 +211,18 @@ public class GlusterHookResolveConflictsModel extends Model {
             }
         });
 
-        getResolveMissingConflictCopy().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveMissingConflictCopy().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveMissingConflictCopy().getEntity()) {
                     getResolveMissingConflictRemove().setEntity(Boolean.FALSE);
                 }
             }
         });
 
-        getResolveMissingConflictRemove().getEntityChangedEvent().addListener(new IEventListener() {
+        getResolveMissingConflictRemove().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getResolveMissingConflictRemove().getEntity()) {
                     getResolveMissingConflictCopy().setEntity(Boolean.FALSE);
                 }

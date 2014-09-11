@@ -29,9 +29,9 @@ public class InstanceTypeModelBehaviorBase extends VmModelBehaviorBase<UnitVmMod
     }
 
     protected void initDisplayTypes(DisplayType selected) {
-        getModel().getDisplayProtocol().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getModel().getDisplayProtocol().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 EntityModel<DisplayType> displayType = getModel().getDisplayProtocol().getSelectedItem();
                 enableSinglePCI(displayType.getEntity() == DisplayType.qxl);
             }

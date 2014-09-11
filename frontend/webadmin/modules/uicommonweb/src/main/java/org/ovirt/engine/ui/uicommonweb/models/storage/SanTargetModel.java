@@ -17,14 +17,14 @@ public class SanTargetModel extends EntityModel<StorageServerConnections>
 {
 
     public static final EventDefinition loggedInEventDefinition;
-    private Event privateLoggedInEvent;
+    private Event<EventArgs> privateLoggedInEvent;
 
-    public Event getLoggedInEvent()
+    public Event<EventArgs> getLoggedInEvent()
     {
         return privateLoggedInEvent;
     }
 
-    private void setLoggedInEvent(Event value)
+    private void setLoggedInEvent(Event<EventArgs> value)
     {
         privateLoggedInEvent = value;
     }
@@ -122,14 +122,14 @@ public class SanTargetModel extends EntityModel<StorageServerConnections>
         }
     }
 
-    private ListModel lunsList;
+    private ListModel<LunModel> lunsList;
 
-    public ListModel getLunsList()
+    public ListModel<LunModel> getLunsList()
     {
         return lunsList;
     }
 
-    public void setLunsList(ListModel value)
+    public void setLunsList(ListModel<LunModel> value)
     {
         if (lunsList != value)
         {
@@ -145,9 +145,9 @@ public class SanTargetModel extends EntityModel<StorageServerConnections>
 
     public SanTargetModel()
     {
-        setLoggedInEvent(new Event(loggedInEventDefinition));
+        setLoggedInEvent(new Event<EventArgs>(loggedInEventDefinition));
         setLoginCommand(new UICommand("", this)); //$NON-NLS-1$
-        setLunsList(new ListModel());
+        setLunsList(new ListModel<LunModel>());
     }
 
     private void login()

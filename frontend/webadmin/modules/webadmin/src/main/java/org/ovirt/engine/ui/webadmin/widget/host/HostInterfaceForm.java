@@ -39,19 +39,19 @@ public class HostInterfaceForm extends Composite {
             showModels(interfaceLineModels);
         }
 
-        listModel.getItemsChangedEvent().addListener(new IEventListener() {
+        listModel.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 HostInterfaceListModel model = (HostInterfaceListModel) sender;
                 List<HostInterfaceLineModel> interfaceLineModels = (List<HostInterfaceLineModel>) model.getItems();
                 showModels(interfaceLineModels);
             }
         });
 
-        listModel.getPropertyChangedEvent().addListener(new IEventListener() {
+        listModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("isSelectionAvailable".equals(propName)) { //$NON-NLS-1$
                     isSelectionAvailable = listModel.getIsSelectionAvailable();
 

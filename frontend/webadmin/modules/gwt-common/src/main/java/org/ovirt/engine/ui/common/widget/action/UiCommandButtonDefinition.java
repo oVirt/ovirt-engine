@@ -4,11 +4,11 @@ import java.util.List;
 
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.logical.shared.InitializeEvent;
 import com.google.gwt.event.shared.EventBus;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 /**
  * Button definition that adapts to UiCommon {@linkplain UICommand commands}.
@@ -28,7 +28,7 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     };
 
     private UICommand command;
-    private IEventListener propertyChangeListener;
+    private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
 
     public UiCommandButtonDefinition(EventBus eventBus, String title,
             CommandLocation commandLocation, boolean subTitledAction,
@@ -72,9 +72,9 @@ public abstract class UiCommandButtonDefinition<T> extends AbstractButtonDefinit
     }
 
     void addPropertyChangeEventHandler() {
-        propertyChangeListener = new IEventListener() {
+        propertyChangeListener = new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 InitializeEvent.fire(UiCommandButtonDefinition.this);
             }
         };

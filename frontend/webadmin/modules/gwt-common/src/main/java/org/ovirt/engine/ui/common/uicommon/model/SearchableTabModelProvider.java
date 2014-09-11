@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.events.EventListModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -31,13 +30,11 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
         super.initializeModelHandlers();
 
         // Add necessary property change handlers
-        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs pcArgs = (PropertyChangedEventArgs) args;
-
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 // For EventListModel classes: update data whenever the last event changes
-                if (getModel() instanceof EventListModel && "LastEvent".equals(pcArgs.propertyName)) { //$NON-NLS-1$
+                if (getModel() instanceof EventListModel && "LastEvent".equals(args.propertyName)) { //$NON-NLS-1$
                     EventListModel model = (EventListModel) getModel();
 
                     if (model.getLastEvent() == null && model.isRequestingData()) {
@@ -48,7 +45,7 @@ public abstract class SearchableTabModelProvider<T, M extends SearchableListMode
                         updateData();
                     }
                 }
-                if (PropertyChangedEventArgs.PROGRESS.equals(pcArgs.propertyName)) {
+                if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
                     clearData();
                 }
             }

@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -662,16 +661,14 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
         addStorageDomainsColumn();
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (args instanceof PropertyChangedEventArgs
-                        && ((PropertyChangedEventArgs) args).propertyName.equals(object.ON_DISK_LOAD)) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName.equals(object.ON_DISK_LOAD)) {
                     addStorageQuotaColumn();
                     table.redraw();
                     diskTable.asEditor().edit(object.getImportDiskListModel());
-                } else if (args instanceof PropertyChangedEventArgs
-                        && ((PropertyChangedEventArgs) args).propertyName.equals("Message")) { ////$NON-NLS-1$
+                } else if (args.propertyName.equals("Message")) { ////$NON-NLS-1$
                     message.setText(object.getMessage());
                 }
             }

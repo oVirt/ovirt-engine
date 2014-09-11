@@ -99,26 +99,26 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
     }
 
     private void initListeners(final UnitVmModel model) {
-        model.getAdvancedMode().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getAdvancedMode().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 storeAdvancedModeToLocalStorage(model);
                 swithAccordingToMode(model);
             }
 
         });
 
-        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getAttachedToInstanceType().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 swithAttachToInstanceType(model);
             }
         });
 
-        model.getValid().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getValid().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 switchToAdvancedIfNeeded(model);
             }
 

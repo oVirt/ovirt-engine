@@ -36,7 +36,7 @@ import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class SnapshotModel extends EntityModel
+public class SnapshotModel extends EntityModel<Snapshot>
 {
     private VM vm;
 

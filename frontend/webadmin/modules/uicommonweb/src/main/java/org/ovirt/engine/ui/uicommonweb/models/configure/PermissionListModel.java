@@ -237,7 +237,7 @@ public class PermissionListModel extends SearchableListModel
             }
         }
 
-        Role role = (Role) model.getRole().getSelectedItem();
+        Role role = model.getRole().getSelectedItem();
         // adGroup/user
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();

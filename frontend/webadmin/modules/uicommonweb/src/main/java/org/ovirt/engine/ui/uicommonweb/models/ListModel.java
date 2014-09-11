@@ -189,7 +189,7 @@ public class ListModel<T> extends EntityModel<T>
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 

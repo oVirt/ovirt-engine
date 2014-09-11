@@ -144,13 +144,13 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         privateCopyCommand = value;
     }
 
-    private EntityModel diskViewType;
+    private EntityModel<DiskStorageType> diskViewType;
 
-    public EntityModel getDiskViewType() {
+    public EntityModel<DiskStorageType> getDiskViewType() {
         return diskViewType;
     }
 
-    public void setDiskViewType(EntityModel diskViewType) {
+    public void setDiskViewType(EntityModel<DiskStorageType> diskViewType) {
         this.diskViewType = diskViewType;
     }
 
@@ -196,7 +196,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         getSearchNextPageCommand().setIsAvailable(true);
         getSearchPreviousPageCommand().setIsAvailable(true);
 
-        setDiskViewType(new EntityModel());
+        setDiskViewType(new EntityModel<DiskStorageType>());
     }
 
     @Override
@@ -397,9 +397,9 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         ChangeQuotaModel model = (ChangeQuotaModel) getWindow();
         ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
 
-        for (Object item : model.getItems())
+        for (ChangeQuotaItemModel item : model.getItems())
         {
-            ChangeQuotaItemModel itemModel = (ChangeQuotaItemModel) item;
+            ChangeQuotaItemModel itemModel = item;
             DiskImage disk = (DiskImage) itemModel.getEntity();
             VdcActionParametersBase parameters =
                     new ChangeQuotaParameters(((Quota) itemModel.getQuota().getSelectedItem()).getId(),

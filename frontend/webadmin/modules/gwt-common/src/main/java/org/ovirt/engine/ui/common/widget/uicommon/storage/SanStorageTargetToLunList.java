@@ -186,8 +186,8 @@ public class SanStorageTargetToLunList extends AbstractSanStorageList<SanTargetM
             return item;
         }
 
-        final EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(multiSelection,
+        final EntityModelCellTable<ListModel<LunModel>> table =
+                new EntityModelCellTable<ListModel<LunModel>>(multiSelection,
                         (Resources) GWT.create(SanStorageListLunTableResources.class));
 
         LunSelectionColumn lunSelectionColumn = new LunSelectionColumn(multiSelection) {

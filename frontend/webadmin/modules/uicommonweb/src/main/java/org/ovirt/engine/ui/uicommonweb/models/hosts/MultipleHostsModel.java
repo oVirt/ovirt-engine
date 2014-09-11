@@ -32,9 +32,9 @@ public class MultipleHostsModel extends Model {
         setApplyPasswordCommand(new UICommand("ApplyPassword", this)); //$NON-NLS-1$
         setConfigureFirewall(true);
 
-        getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener() {
+        getUseCommonPassword().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getCommonPassword().setIsChangable(getUseCommonPassword().getEntity());
                 getApplyPasswordCommand().setIsExecutionAllowed(getUseCommonPassword().getEntity());
             }

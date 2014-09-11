@@ -50,16 +50,16 @@ public class VmSnapshotListModelTable<L extends VmSnapshotListModel> extends Abs
     private final CommonApplicationMessages messages;
     private final CommonApplicationConstants constants;
 
-    private final IEventListener entityChangedEvent = new IEventListener() {
+    private final IEventListener<EventArgs> entityChangedEvent = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             updateMemoryColumnVisibility();
         }
     };
 
-    private final IEventListener selectedItemChangedEvent = new IEventListener() {
+    private final IEventListener<EventArgs> selectedItemChangedEvent = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             updateSnapshotInfo();
         }
     };

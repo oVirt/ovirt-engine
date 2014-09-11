@@ -107,10 +107,10 @@ public class HostNetworkProviderWidget extends AbstractModelBoundPopupWidget<Hos
         final NeutronAgentModel neutronAgentModel = model.getNeutronAgentModel();
         neutronAgentWidget.edit(neutronAgentModel);
         neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
-        neutronAgentModel.isPluginConfigurationAvailable().getEntityChangedEvent().addListener(new IEventListener() {
+        neutronAgentModel.isPluginConfigurationAvailable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 neutronAgentPanel.setVisible(neutronAgentModel.isPluginConfigurationAvailable().getEntity());
             }
         });

@@ -301,9 +301,9 @@ public class VmBackupModel extends ManageBackupModel {
 
     private void onClone() {
         ImportCloneModel cloneModel = (ImportCloneModel) getConfirmWindow();
-        if ((Boolean) cloneModel.getApplyToAll().getEntity()) {
-            if (!(Boolean) cloneModel.getNoClone().getEntity()) {
-                String suffix = (String) cloneModel.getSuffix().getEntity();
+        if (cloneModel.getApplyToAll().getEntity()) {
+            if (!cloneModel.getNoClone().getEntity()) {
+                String suffix = cloneModel.getSuffix().getEntity();
                 if (!validateSuffix(suffix, cloneModel.getSuffix())) {
                     return;
                 }
@@ -316,8 +316,8 @@ public class VmBackupModel extends ManageBackupModel {
             objectsToClone.clear();
         } else {
             Object object = cloneModel.getEntity();
-            if (!(Boolean) cloneModel.getNoClone().getEntity()) {
-                String vmName = (String) cloneModel.getName().getEntity();
+            if (!cloneModel.getNoClone().getEntity()) {
+                String vmName = cloneModel.getName().getEntity();
                 if (!validateName(vmName, cloneModel.getName(), getClonedNameValidators(object))) {
                     return;
                 }

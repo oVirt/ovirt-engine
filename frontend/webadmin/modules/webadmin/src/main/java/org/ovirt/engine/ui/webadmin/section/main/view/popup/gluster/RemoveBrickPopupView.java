@@ -102,9 +102,9 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
     public void edit(final RemoveBrickModel object) {
         driver.edit(object);
 
-        object.getItemsChangedEvent().addListener(new IEventListener() {
+        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ArrayList<String> items = (ArrayList<String>) object.getItems();
 
                 for (String item : items) {
@@ -113,10 +113,10 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
             }
         });
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
 
                 if ("IsMigrationSupported".equals(propName)) { //$NON-NLS-1$
                     migratePanel.setVisible(object.isMigrationSupported());
@@ -124,10 +124,10 @@ public class RemoveBrickPopupView extends AbstractModelBoundPopupView<RemoveBric
             }
         });
 
-        object.getMigrateData().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getMigrateData().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                warningLabel.setVisible(!(Boolean) object.getMigrateData().getEntity());
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                warningLabel.setVisible(!object.getMigrateData().getEntity());
             }
         });
     }

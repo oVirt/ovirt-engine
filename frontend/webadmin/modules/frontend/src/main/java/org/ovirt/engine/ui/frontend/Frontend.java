@@ -124,7 +124,7 @@ public class Frontend implements HasHandlers {
     /**
      * The query start event.
      */
-    Event queryStartedEvent = new Event(queryStartedEventDefinition);
+    Event<EventArgs> queryStartedEvent = new Event<EventArgs>(queryStartedEventDefinition);
 
     /**
      * The query complete event definition.
@@ -134,17 +134,17 @@ public class Frontend implements HasHandlers {
     /**
      * The query complete event.
      */
-    Event queryCompleteEvent = new Event(queryCompleteEventDefinition);
+    Event<EventArgs> queryCompleteEvent = new Event<EventArgs>(queryCompleteEventDefinition);
 
     /**
      * The {@code frontendFailureEvent} event.
      */
-    Event frontendFailureEvent = new Event("FrontendFailure", Frontend.class); //$NON-NLS-1$
+    Event<FrontendFailureEventArgs> frontendFailureEvent = new Event<FrontendFailureEventArgs>("FrontendFailure", Frontend.class); //$NON-NLS-1$
 
     /**
      * The {@code frontendNotLoggedInEvent} event.
      */
-    Event frontendNotLoggedInEvent = new Event("NotLoggedIn", Frontend.class); //$NON-NLS-1$
+    Event<EventArgs> frontendNotLoggedInEvent = new Event<EventArgs>("NotLoggedIn", Frontend.class); //$NON-NLS-1$
 
     /**
      * The context the current operation is run against.
@@ -1098,17 +1098,17 @@ public class Frontend implements HasHandlers {
 
     /**
      * Getter for the query started event.
-     * @return An {@code Event} defining the query started event.
+     * @return An {@code Event<EventArgs>} defining the query started event.
      */
-    public Event getQueryStartedEvent() {
+    public Event<EventArgs> getQueryStartedEvent() {
         return queryStartedEvent;
     }
 
     /**
      * Getter for the query completed event.
-     * @return An {@code Event} defining the query complete event.
+     * @return An {@code Event<EventArgs>} defining the query complete event.
      */
-    public Event getQueryCompleteEvent() {
+    public Event<EventArgs> getQueryCompleteEvent() {
         return queryCompleteEvent;
     }
 
@@ -1146,7 +1146,7 @@ public class Frontend implements HasHandlers {
      * Getter for the frontend failure event.
      * @return an {@code Event} for the frontend failure.
      */
-    public Event getFrontendFailureEvent() {
+    public Event<FrontendFailureEventArgs> getFrontendFailureEvent() {
         return frontendFailureEvent;
     }
 
@@ -1154,7 +1154,7 @@ public class Frontend implements HasHandlers {
      * Getter for the frontend not logged in event.
      * @return an {@code Event} for the not logged in event.
      */
-    public Event getFrontendNotLoggedInEvent() {
+    public Event<EventArgs> getFrontendNotLoggedInEvent() {
         return frontendNotLoggedInEvent;
     }
 

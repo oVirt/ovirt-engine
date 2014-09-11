@@ -42,11 +42,11 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
         super.init(model);
 
         // Listen to Properties
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 NetworkModel model = (NetworkModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                String propertyName = args.propertyName;
 
                 if ("Message".equals(propertyName)) { //$NON-NLS-1$
                     getView().setMessageLabel(model.getMessage());
@@ -55,18 +55,18 @@ public class AbstractNetworkPopupPresenterWidget<T extends NetworkModel & HasVal
         });
 
         getView().toggleSubnetVisibility(model.getExport().getEntity());
-        model.getExport().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getExport().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().toggleSubnetVisibility(model.getExport().getEntity());
             }
         });
 
         getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
-        model.getProfiles().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getProfiles().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     getView().toggleProfilesVisibility(model.getProfiles().getIsAvailable());
                 }
             }

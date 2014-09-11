@@ -4,9 +4,9 @@ package org.ovirt.engine.ui.uicompat;
 public class Enlistment {
 
     public static final EventDefinition doneEventDefinition;
-    private Event doneEvent;
+    private Event<EventArgs> doneEvent;
 
-    protected Event getDoneEvent() {
+    protected Event<EventArgs> getDoneEvent() {
         return doneEvent;
     }
 
@@ -23,7 +23,7 @@ public class Enlistment {
 
     public Enlistment(Object context) {
 
-        doneEvent = new Event(doneEventDefinition);
+        doneEvent = new Event<EventArgs>(doneEventDefinition);
         this.context = context;
     }
 

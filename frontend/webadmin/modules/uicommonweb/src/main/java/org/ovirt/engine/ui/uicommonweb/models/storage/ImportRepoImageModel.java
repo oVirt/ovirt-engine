@@ -31,9 +31,9 @@ public class ImportRepoImageModel extends ImportExportRepoImageBaseModel {
         this.sourceStorageDomain = sourceStorageDomain;
         setRepoImages(repoImages);
         updateDataCenters();
-        IEventListener importAsTemplateListener = new IEventListener() {
+        IEventListener<EventArgs> importAsTemplateListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateClusterEnabled();
             }
         };

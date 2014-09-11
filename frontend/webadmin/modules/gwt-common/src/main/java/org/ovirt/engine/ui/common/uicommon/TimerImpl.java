@@ -11,7 +11,7 @@ import com.google.gwt.user.client.Timer;
 
 public class TimerImpl implements ITimer {
 
-    private final Event tickEvent;
+    private final Event<EventArgs> tickEvent;
     private static final Logger logger = Logger.getLogger(TimerImpl.class.getName());
     private int interval;
 
@@ -24,7 +24,7 @@ public class TimerImpl implements ITimer {
     });
 
     public TimerImpl() {
-        tickEvent = new Event(ProvideTickEvent.definition);
+        tickEvent = new Event<EventArgs>(ProvideTickEvent.definition);
     }
 
     @Override
@@ -51,7 +51,7 @@ public class TimerImpl implements ITimer {
     }
 
     @Override
-    public Event getTickEvent() {
+    public Event<EventArgs> getTickEvent() {
         return tickEvent;
     }
 

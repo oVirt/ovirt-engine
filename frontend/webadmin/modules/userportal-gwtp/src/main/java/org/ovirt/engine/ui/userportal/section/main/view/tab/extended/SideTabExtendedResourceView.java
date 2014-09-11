@@ -172,9 +172,9 @@ public class SideTabExtendedResourceView extends AbstractView implements SideTab
         ViewIdHandler.idHandler.generateAndSetIds(this);
         localize();
 
-        modelProvider.getModel().getUsedQuotaPercentage().getEntityChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getUsedQuotaPercentage().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 initQuotaList(model);
             }
         });

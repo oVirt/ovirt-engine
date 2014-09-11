@@ -19,7 +19,6 @@ import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.InstallModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -171,12 +170,12 @@ public class HostInstallPopupView extends AbstractModelBoundPopupView<InstallMod
     @Override
     public void edit(final InstallModel model) {
         driver.edit(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 InstallModel installModel = (InstallModel) sender;
 
-                if ("ValidationFailed".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                if ("ValidationFailed".equals(args.propertyName)) { //$NON-NLS-1$
                     if (installModel.getValidationFailed().getEntity() != null &&
                             installModel.getValidationFailed().getEntity()) {
                         tabPanel.switchTab(hostPopupGeneralTab);

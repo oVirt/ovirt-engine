@@ -43,15 +43,15 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     public interface ViewDef extends AbstractMainTabWithDetailsPresenter.ViewDef<Disk> {
 
-        IEventListener getDiskTypeChangedEventListener();
+        IEventListener<EventArgs> getDiskTypeChangedEventListener();
 
         void handleQuotaColumnVisibility();
 
     }
 
-    final IEventListener systemTreeListener = new IEventListener() {
+    final IEventListener<EventArgs> systemTreeListener = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             getView().handleQuotaColumnVisibility();
         }
     };
@@ -80,12 +80,12 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
 
     @Override
     protected void onReveal() {
-        Event entityChangedEvent = getModel().getDiskViewType().getEntityChangedEvent();
+        Event<EventArgs> entityChangedEvent = getModel().getDiskViewType().getEntityChangedEvent();
         if (!entityChangedEvent.getListeners().contains(getView().getDiskTypeChangedEventListener())) {
             entityChangedEvent.addListener(getView().getDiskTypeChangedEventListener());
         }
 
-        Event systemTreeSelectedItemChangedEvent =
+        Event<EventArgs> systemTreeSelectedItemChangedEvent =
                 CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
         systemTreeSelectedItemChangedEvent.addListener(systemTreeListener);
 
@@ -96,7 +96,7 @@ public class MainTabDiskPresenter extends AbstractMainTabWithDetailsPresenter<Di
     @Override
     protected void onHide() {
         super.onHide();
-        Event systemTreeSelectedItemChangedEvent =
+        Event<EventArgs> systemTreeSelectedItemChangedEvent =
                 CommonModel.getInstance().getSystemTree().getSelectedItemChangedEvent();
         systemTreeSelectedItemChangedEvent.removeListener(systemTreeListener);
     }

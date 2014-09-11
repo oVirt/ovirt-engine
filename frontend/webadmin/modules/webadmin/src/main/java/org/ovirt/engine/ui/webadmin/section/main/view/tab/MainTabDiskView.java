@@ -82,9 +82,9 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
         }
     };
 
-    final IEventListener diskTypeChangedEventListener = new IEventListener() {
+    final IEventListener<EventArgs> diskTypeChangedEventListener = new IEventListener<EventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             EntityModel diskViewType = (EntityModel) sender;
             disksViewRadioGroup.setDiskStorageType((DiskStorageType) diskViewType.getEntity());
             if (CommonModelManager.instance().getSelectedItem() instanceof DiskListModel) {
@@ -94,7 +94,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     };
 
     @Override
-    public IEventListener getDiskTypeChangedEventListener() {
+    public IEventListener<EventArgs> getDiskTypeChangedEventListener() {
         return diskTypeChangedEventListener;
     }
 

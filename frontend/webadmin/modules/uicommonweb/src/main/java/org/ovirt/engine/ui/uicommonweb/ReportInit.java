@@ -8,6 +8,7 @@ import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent.SSOTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
@@ -36,7 +37,7 @@ public class ReportInit {
     private boolean reportsEnabled;
     private boolean xmlInitialized;
     private boolean initEventRaised;
-    private Event reportsInitEvent;
+    private Event<EventArgs> reportsInitEvent;
     private String reportBaseUrl;
     private String reportRightClickUrl;
     private String ssoToken;
@@ -75,14 +76,14 @@ public class ReportInit {
         isCommunityEdition = false;
         resourceMap = new HashMap<String, Resource>();
         dashboardMap = new HashMap<String, Dashboard>();
-        reportsInitEvent = new Event("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
+        reportsInitEvent = new Event<EventArgs>("ReportsInitialize", ReportInit.class); //$NON-NLS-1$
         retryCount = 0;
     }
 
     private ReportInit() {
     }
 
-    public Event getReportsInitEvent() {
+    public Event<EventArgs> getReportsInitEvent() {
         return reportsInitEvent;
     }
 

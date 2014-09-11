@@ -289,9 +289,9 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
 
         forceWarningLabel.setVisible(object.getForce().getEntity());
 
-        object.getForce().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getForce().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 forceWarningLabel.setVisible(object.getForce().getEntity());
             }
         });

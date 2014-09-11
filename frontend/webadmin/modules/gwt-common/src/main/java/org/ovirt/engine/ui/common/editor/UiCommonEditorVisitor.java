@@ -101,11 +101,11 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
 
             if (functionalEditor != null) {
                 // Register a property change listener on the owner entity model
-                ownerModel.getPropertyChangedEvent().addListener(new IEventListener() {
+                ownerModel.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                         EntityModel ownerModel = (EntityModel) sender;
-                        String propName = ((PropertyChangedEventArgs) args).propertyName;
+                        String propName = args.propertyName;
 
                         // IsValid
                         if ("IsValid".equals(propName)) { //$NON-NLS-1$

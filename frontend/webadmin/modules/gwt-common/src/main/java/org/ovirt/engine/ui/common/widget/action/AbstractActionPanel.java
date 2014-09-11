@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.common.widget.FeatureNotImplementedYetPopup;
 import org.ovirt.engine.ui.common.widget.MenuBar;
 import org.ovirt.engine.ui.common.widget.PopupPanel;
 import org.ovirt.engine.ui.common.widget.TitleMenuItemSeparator;
+import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
@@ -481,9 +482,9 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
 
     void registerSelectionChangeHandler(final ActionButtonDefinition<T> buttonDef) {
         // Update button definition whenever list model item selection changes
-        final IEventListener itemSelectionChangeHandler = new IEventListener() {
+        final IEventListener<EventArgs> itemSelectionChangeHandler = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(org.ovirt.engine.ui.uicompat.Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // Update action button on item selection change
                 buttonDef.update();
             }
@@ -492,7 +493,7 @@ public abstract class AbstractActionPanel<T> extends Composite implements Action
         addSelectionChangeListener(itemSelectionChangeHandler);
     }
 
-    void addSelectionChangeListener(IEventListener itemSelectionChangeHandler) {
+    void addSelectionChangeListener(IEventListener<EventArgs> itemSelectionChangeHandler) {
         dataProvider.getModel().getSelectedItemChangedEvent().addListener(itemSelectionChangeHandler);
         dataProvider.getModel().getSelectedItemsChangedEvent().addListener(itemSelectionChangeHandler);
     }

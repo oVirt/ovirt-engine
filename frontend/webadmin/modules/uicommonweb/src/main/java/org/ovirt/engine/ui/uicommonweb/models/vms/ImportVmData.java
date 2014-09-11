@@ -17,11 +17,11 @@ public class ImportVmData extends ImportEntityData {
         setCollapseSnapshots(new EntityModel(true));
 
         setEntity(vm);
-        getClone().getEntityChangedEvent().addListener(new IEventListener() {
+        getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (templateExistsInSetup) {
-                    if ((Boolean) ((EntityModel) sender).getEntity()) {
+                    if (((EntityModel<Boolean>) sender).getEntity()) {
                         getCollapseSnapshots().setEntity(true);
                         getCollapseSnapshots().setChangeProhibitionReason(ConstantsManager.getInstance()
                                 .getConstants()

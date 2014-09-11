@@ -62,12 +62,7 @@ import org.ovirt.engine.ui.uicompat.UIMessages;
  * These two Lists are fetched from the backend, and cannot be changed by the User.<BR>
  * The user only changes the topology of their connections.
  */
-public class HostSetupNetworksModel extends EntityModel {
-
-    @Override
-    public VDS getEntity() {
-        return (VDS) super.getEntity();
-    }
+public class HostSetupNetworksModel extends EntityModel<VDS> {
 
     private EntityModel<Boolean> checkConnectivity;
 

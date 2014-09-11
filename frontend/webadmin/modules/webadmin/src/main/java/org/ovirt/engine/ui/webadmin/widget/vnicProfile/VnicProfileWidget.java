@@ -97,9 +97,9 @@ public class VnicProfileWidget extends AbstractModelBoundPopupWidget<VnicProfile
         driver.edit(model);
         publicInfo.setVisible(model.getPublicUse().getIsAvailable());
         nameEditor.fireValueChangeOnKeyDown();
-        model.getName().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ValueChangeEvent.fire(VnicProfileWidget.this, model);
             }
         });

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportFcpStorageModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -58,10 +57,10 @@ public class ImportFcpStorageView extends AbstractStorageView<ImportFcpStorageMo
     }
 
     private void addEventsHandlers(final ImportFcpStorageModel object) {
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if (propName.equals("IsValid")) { //$NON-NLS-1$
                     onIsValidPropertyChange(object);
                 } else if (propName.equals("Message")) { //$NON-NLS-1$

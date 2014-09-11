@@ -959,9 +959,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         setProtocol(new EntityModel());
         getProtocol().setEntity(false);
 
-        IEventListener pmListener = new IEventListener() {
+        IEventListener<EventArgs> pmListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updatePmModels();
             }
         };
@@ -1029,9 +1029,9 @@ public abstract class HostModel extends Model implements HasValidatedTabs
         getPmVariants().setSelectedItem(pmVariants.get(0));
 
         setPmProxyPreferencesList(new ListModel<String>());
-        getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                updatePmModels();
             }
         });
@@ -1240,7 +1240,7 @@ public abstract class HostModel extends Model implements HasValidatedTabs
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 

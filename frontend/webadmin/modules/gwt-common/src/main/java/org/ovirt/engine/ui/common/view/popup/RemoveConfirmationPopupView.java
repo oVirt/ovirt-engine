@@ -13,7 +13,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEdito
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -139,11 +138,11 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         driver.edit(object);
 
         // Bind "Latch.IsAvailable"
-        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -158,10 +157,10 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
         force.asCheckBox().setValue(object.getForce().getEntity());
         // Bind "Force.Label"
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("ForceLabel".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("ForceLabel".equals(args.propertyName)) { //$NON-NLS-1$
                     ConfirmationModel entity = (ConfirmationModel) sender;
                     force.setLabel(entity.getForceLabel());
                 }
@@ -170,10 +169,10 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
 
         setNote(object.getNote());
         // Bind "Note"
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("Note".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("Note".equals(args.propertyName)) { //$NON-NLS-1$
                     ConfirmationModel entity = (ConfirmationModel) sender;
                     setNote(entity.getNote());
                 }
@@ -181,10 +180,10 @@ public class RemoveConfirmationPopupView extends AbstractConfirmationPopupView i
         });
 
         // Bind "ReasonVisible"
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("ReasonVisible".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("ReasonVisible".equals(args.propertyName)) { //$NON-NLS-1$
                     updateReasonVisibility((ConfirmationModel) sender);
                 }
             }

@@ -129,16 +129,16 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
         });
 
         // Add selection listener
-        getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updatePermissionPanel();
             }
         });
 
-        getModel().getItemsChangedEvent().addListener(new IEventListener() {
+        getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updatePermissionPanel();
             }
         });

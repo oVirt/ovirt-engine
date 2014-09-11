@@ -215,19 +215,19 @@ public class QuotaModel extends EntityModel {
         setSpecificClusterQuota(new EntityModel<Boolean>());
         getGlobalClusterQuota().setEntity(true);
         getSpecificClusterQuota().setEntity(false);
-        getGlobalClusterQuota().getEntityChangedEvent().addListener(new IEventListener() {
+        getGlobalClusterQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getGlobalClusterQuota().getEntity() == true) {
                     getSpecificClusterQuota().setEntity(false);
                 }
             }
         });
-        getSpecificClusterQuota().getEntityChangedEvent().addListener(new IEventListener() {
+        getSpecificClusterQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificClusterQuota().getEntity() == true) {
                     getGlobalClusterQuota().setEntity(false);
                 }
@@ -238,19 +238,19 @@ public class QuotaModel extends EntityModel {
         setSpecificStorageQuota(new EntityModel<Boolean>());
         getGlobalStorageQuota().setEntity(true);
         getSpecificStorageQuota().setEntity(false);
-        getGlobalStorageQuota().getEntityChangedEvent().addListener(new IEventListener() {
+        getGlobalStorageQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getGlobalStorageQuota().getEntity() == true) {
                     getSpecificStorageQuota().setEntity(false);
                 }
             }
         });
-        getSpecificStorageQuota().getEntityChangedEvent().addListener(new IEventListener() {
+        getSpecificStorageQuota().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getSpecificStorageQuota().getEntity() == true) {
                     getGlobalStorageQuota().setEntity(false);
                 }

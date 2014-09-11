@@ -154,10 +154,10 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         updateMessage(model);
         updateItems(model);
         updateHashName(model);
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
 
                 if ("Title".equals(propName)) { //$NON-NLS-1$
                     updateTitle(model);
@@ -177,9 +177,9 @@ public abstract class AbstractModelBoundPopupPresenterWidget<T extends Model, V 
         addFooterButtons(model);
         if (model.getCommands() instanceof ObservableCollection) {
             ObservableCollection<UICommand> commands = (ObservableCollection<UICommand>) model.getCommands();
-            commands.getCollectionChangedEvent().addListener(new IEventListener() {
+            commands.getCollectionChangedEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     getView().removeButtons();
                     addFooterButtons(model);
                     getView().updateTabIndexes();

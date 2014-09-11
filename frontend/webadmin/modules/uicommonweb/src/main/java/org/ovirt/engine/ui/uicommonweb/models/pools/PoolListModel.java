@@ -239,9 +239,9 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         final VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
 
                         final ExistingPoolModelBehavior behavior = new ExistingPoolModelBehavior(vm);
-                        behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener() {
+                        behavior.getPoolModelBehaviorInitializedEvent().addListener(new IEventListener<EventArgs>() {
                             @Override
-                            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                                 final PoolModel model = behavior.getModel();
 
                                 for (EntityModel<VmPoolType> item : model.getPoolType().getItems())

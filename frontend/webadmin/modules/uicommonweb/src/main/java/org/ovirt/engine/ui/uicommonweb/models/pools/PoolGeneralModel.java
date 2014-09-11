@@ -31,16 +31,16 @@ public class PoolGeneralModel extends EntityModel
 {
 
     public static final EventDefinition updateCompleteEventDefinition;
-    private Event privateUpdateCompleteEvent;
+    private Event<EventArgs> privateUpdateCompleteEvent;
 
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
-    public Event getUpdateCompleteEvent()
+    public Event<EventArgs> getUpdateCompleteEvent()
     {
         return privateUpdateCompleteEvent;
     }
 
-    private void setUpdateCompleteEvent(Event value)
+    private void setUpdateCompleteEvent(Event<EventArgs> value)
     {
         privateUpdateCompleteEvent = value;
     }
@@ -381,7 +381,7 @@ public class PoolGeneralModel extends EntityModel
 
     public PoolGeneralModel()
     {
-        setUpdateCompleteEvent(new Event(updateCompleteEventDefinition));
+        setUpdateCompleteEvent(new Event<EventArgs>(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);

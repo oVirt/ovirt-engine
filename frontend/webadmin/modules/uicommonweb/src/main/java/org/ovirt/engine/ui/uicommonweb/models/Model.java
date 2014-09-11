@@ -27,7 +27,7 @@ import com.google.gwt.event.shared.GwtEvent;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.event.shared.HasHandlers;
 
-public class Model implements IEventListener, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers
+public class Model implements IEventListener<EventArgs>, ICommandTarget, IProvidePropertyChangedEvent, HasHandlers
 {
     /**
      * The GWT event bus.
@@ -482,7 +482,7 @@ public class Model implements IEventListener, ICommandTarget, IProvidePropertyCh
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
     }
 

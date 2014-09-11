@@ -27,9 +27,9 @@ public abstract class BasePoolPopupPresenterWidget<V extends AbstractVmBasedPopu
     public void init(final UnitVmModel model) {
         super.init(model);
 
-        model.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getDataCenterWithClustersList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (model.getSelectedCluster() != null) {
                     setSpiceProxyOverrideExplanation(model.getSelectedCluster());
                 }

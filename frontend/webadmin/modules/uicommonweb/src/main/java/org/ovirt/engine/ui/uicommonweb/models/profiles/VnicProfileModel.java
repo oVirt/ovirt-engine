@@ -138,9 +138,9 @@ public abstract class VnicProfileModel extends Model {
         setPublicUse(publicUse);
         setDescription(new EntityModel<String>());
 
-        getNetwork().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getNetwork().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Network network = getNetwork().getSelectedItem();
                 boolean portMirroringAllowed = (network == null || !network.isExternal());
                 if (!portMirroringAllowed) {

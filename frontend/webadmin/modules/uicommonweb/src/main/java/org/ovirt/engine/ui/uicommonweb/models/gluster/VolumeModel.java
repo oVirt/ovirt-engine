@@ -86,20 +86,20 @@ public class VolumeModel extends Model {
         getAddBricksCommand().setTitle(ConstantsManager.getInstance().getConstants().addBricksVolume());
 
         setDataCenter(new ListModel<StoragePool>());
-        getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 dataCenter_SelectedItemChanged();
             }
         });
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         setCluster(new ListModel<VDSGroup>());
-        getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getCluster().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clusterSelectedItemChanged();
             }
         });
@@ -132,10 +132,10 @@ public class VolumeModel extends Model {
 
         setBricks(new ListModel<EntityModel<GlusterBrickEntity>>());
 
-        getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getTypeList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 getReplicaCount().setIsAvailable(getTypeList().getSelectedItem().isReplicatedType());
                 getStripeCount().setIsAvailable(getTypeList().getSelectedItem().isStripedType());

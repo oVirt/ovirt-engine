@@ -237,11 +237,11 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
         driver.edit(object);
         qosWidget.edit(object.getQosModel());
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 HostInterfaceModel model = (HostInterfaceModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                String propertyName = args.propertyName;
                 if ("BootProtocolsAvailable".equals(propertyName)) { //$NON-NLS-1$
                     enableDisableByBootProtocol(model);
                     checkConnectivity.setEnabled(model.getBootProtocolsAvailable());
@@ -255,9 +255,9 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             }
         });
 
-        object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getBondingOptions().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 @SuppressWarnings("unchecked")
                 ListModel<Map.Entry<String, EntityModel<String>>> list =
                         (ListModel<Map.Entry<String, EntityModel<String>>>) sender;

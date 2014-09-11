@@ -75,9 +75,9 @@ public class StorageForceCreatePopupView extends AbstractConfirmationPopupView
         driver.edit(object);
         object.getLatch().setIsAvailable(true);
 
-        object.getItemsChangedEvent().addListener(new IEventListener() {
+        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateDescription(object);
             }
         });

@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
-import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -572,9 +571,9 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         boolean isStorageEditable = storageModel.isStorageActive() || storageModel.isNewStorage();
 
         if (isStorageEditable) {
-            storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener() {
+            storageModel.getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     postPrepareSanStorageForEdit(model, true);
                 }
             });
@@ -821,7 +820,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
-            tempVar.setDoFormat((Boolean) model.getFormat().getEntity());
+            tempVar.setDoFormat(model.getFormat().getEntity());
 
             Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
         }
@@ -1853,7 +1852,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         storageDomain.setStorageDomainType(isNew ? sanModel.getRole() : storageDomain.getStorageDomainType());
 
-        storageDomain.setStorageFormat(isNew ? (StorageFormatType) sanModel.getContainer()
+        storageDomain.setStorageFormat(isNew ? sanModel.getContainer()
                 .getFormat()
                 .getSelectedItem() : storageDomain.getStorageFormat());
 

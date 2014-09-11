@@ -69,10 +69,10 @@ public class TagModelProvider extends DataBoundTabModelProvider<TagModel, TagLis
         super.initializeModelHandlers();
 
         // Add model reset handler
-        getModel().getResetRequestedEvent().addListener(new IEventListener() {
+        getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Iterator<TagModel> iterator = getModel().getItems().iterator();
                 if (iterator.hasNext()) {
                     TagModel root = getModel().cloneTagModel(iterator.next());

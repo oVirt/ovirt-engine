@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.common.widget.table.column.EntityModelTextColumn;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.gluster.VolumeProfileStatisticsModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -285,29 +284,28 @@ public class VolumeProfileStatisticsPopupView extends AbstractModelBoundPopupVie
 
         nfsRefreshIcon.setRefreshIconClickListener(nfsTabClickHandler);
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.propertyName.equals("brickProfileRunTimeChanged")) {//$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName.equals("brickProfileRunTimeChanged")) {//$NON-NLS-1$
                     profileRunTime.setText(object.getProfileRunTime());
                 }
-                if (e.propertyName.equals("brickProfileDataRead")) {//$NON-NLS-1$
+                if (args.propertyName.equals("brickProfileDataRead")) {//$NON-NLS-1$
                     bytesRead.setText(object.getBytesRead());
                 }
-                if (e.propertyName.equals("brickProfileDataWritten")) {//$NON-NLS-1$
+                if (args.propertyName.equals("brickProfileDataWritten")) {//$NON-NLS-1$
                     bytesWritten.setText(object.getBytesWritten());
                 }
-                if (e.propertyName.equals("nfsProfileRunTimeChanged")) {//$NON-NLS-1$
+                if (args.propertyName.equals("nfsProfileRunTimeChanged")) {//$NON-NLS-1$
                     nfsProfileRunTime.setText(object.getNfsProfileRunTime());
                 }
-                if (e.propertyName.equals("nfsProfileDataRead")) {//$NON-NLS-1$
+                if (args.propertyName.equals("nfsProfileDataRead")) {//$NON-NLS-1$
                     nfsBytesRead.setText(object.getNfsBytesRead());
                 }
-                if (e.propertyName.equals("nfsProfileDataWritten")) {//$NON-NLS-1$
+                if (args.propertyName.equals("nfsProfileDataWritten")) {//$NON-NLS-1$
                     nfsBytesWritten.setText(object.getNfsBytesWritten());
                 }
-                if(e.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
+                if(args.propertyName.equals("statusOfFetchingProfileStats")) {//$NON-NLS-1$
                     boolean disableErrorLabels = !(object.isSuccessfulProfileStatsFetch());
                     if(!disableErrorLabels) {
                         String url = object.getProfileExportUrl();

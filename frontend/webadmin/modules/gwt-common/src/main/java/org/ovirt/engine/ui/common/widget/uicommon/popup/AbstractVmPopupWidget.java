@@ -683,7 +683,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @UiField(provided = true)
     @Ignore
     @WithElementId("priority")
-    public EntityModelCellTable<ListModel> priorityEditor;
+    public EntityModelCellTable<ListModel<EntityModel<Integer>>> priorityEditor;
 
     @UiField
     @Ignore
@@ -924,7 +924,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                         resources);
         final Integer defaultMaximumMigrationDowntime = (Integer) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultMaximumMigrationDowntime);
         migrationDowntimeInfoIcon = new InfoIcon(applicationTemplates.italicText(messages.migrationDowntimeInfo(defaultMaximumMigrationDowntime)), resources);
-        priorityEditor = new EntityModelCellTable<ListModel>(
+        priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
         serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, applicationTemplates, messages, resources, new ModeSwitchingVisibilityRenderer());
@@ -1184,7 +1184,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+        vmTypeEditor = new ListModelListBoxEditor<VmType>(new EnumRenderer<VmType>(), new ModeSwitchingVisibilityRenderer());
 
         instanceTypesEditor = new ListModelTypeAheadListBoxEditor<InstanceType>(
                 new ListModelTypeAheadListBoxEditor.NullSafeSuggestBoxRenderer<InstanceType>() {
@@ -1243,7 +1243,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         usbSupportEditor =
-                new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
         numOfMonitorsEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
@@ -1265,7 +1265,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         }, new ModeSwitchingVisibilityRenderer());
 
         migrationModeEditor =
-                new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxEditor<MigrationSupport>(new EnumRenderer<MigrationSupport>(), new ModeSwitchingVisibilityRenderer());
 
         overrideMigrationDowntimeEditor = new EntityModelCheckBoxOnlyEditor(new ModeSwitchingVisibilityRenderer(), false);
         migrationDowntimeEditor = new IntegerEntityModelTextBoxOnlyEditor(new ModeSwitchingVisibilityRenderer());
@@ -1298,7 +1298,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, new ModeSwitchingVisibilityRenderer());
 
-        cpuProfilesEditor = new ListModelListBoxEditor(new NullSafeRenderer<CpuProfile>() {
+        cpuProfilesEditor = new ListModelListBoxEditor<CpuProfile>(new NullSafeRenderer<CpuProfile>() {
             @Override
             protected String renderNullSafe(CpuProfile object) {
                 return object.getName();
@@ -1306,7 +1306,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         cpuSharesAmountSelectionEditor =
-                new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+                new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer<UnitVmModel.CpuSharesAmount>(), new ModeSwitchingVisibilityRenderer());
 
         numaTuneMode = new ListModelListBoxEditor<NumaTuneMode>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
     }
@@ -1469,7 +1469,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         enableNumaFields(false);
         model.getNumaEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 numaPanel.setVisible(true);
                 enableNumaFields(model.getNumaEnabled().getEntity());
                 setNumaInfoMsg(model.getNumaEnabled().getMessage());
@@ -1501,14 +1501,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     protected void initListeners(final UnitVmModel object) {
         // TODO should be handled by the core framework
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(args instanceof PropertyChangedEventArgs)) {
-                    return;
-                }
-
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("IsCustomPropertiesTabAvailable".equals(propName)) { //$NON-NLS-1$
                     setupCustomPropertiesAvailability(object);
                 } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
@@ -1517,9 +1513,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getIsAutoAssign().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getIsAutoAssign().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isAutoAssign = object.getIsAutoAssign().getEntity();
                 defaultHostEditor.setEnabled(!isAutoAssign);
 
@@ -1528,9 +1524,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getProvisioning().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isProvisioningChangable = object.getProvisioning().getIsChangable();
                 provisioningThinEditor.setEnabled(isProvisioningChangable);
                 provisioningCloneEditor.setEnabled(isProvisioningChangable);
@@ -1546,29 +1542,21 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getIsVirtioScsiEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-
-                if (e.propertyName == "IsAvailable") { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName == "IsAvailable") { //$NON-NLS-1$
                     isVirtioScsiEnabledInfoIcon.setVisible(object.getIsVirtioScsiEnabled().getIsAvailable());
                 }
             }
         });
 
-        object.getUsbPolicy().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getUsbPolicy().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(args instanceof PropertyChangedEventArgs)) {
-                    return;
-                }
-
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-
-                if (e.propertyName == "SelectedItem") { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName == "SelectedItem") { //$NON-NLS-1$
                     updateUsbNativeMessageVisibility(object);
                 }
             }
@@ -1576,9 +1564,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         updateUsbNativeMessageVisibility(object);
 
-        object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getEditingEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Boolean enabled = object.getEditingEnabled().getEntity();
                 if (Boolean.FALSE.equals(enabled)) {
                     disableAllTabs();
@@ -1587,40 +1575,36 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getCpuSharesAmountSelection().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(args instanceof PropertyChangedEventArgs)) {
-                    return;
-                }
-
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(cpuSharesEditor, object.getCpuSharesAmountSelection().getIsAvailable());
                 }
             }
         });
 
-        object.getCloudInitEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getCloudInitEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (object.getCloudInitEnabled().getEntity() != null) {
                     vmInitEditor.setCloudInitContentVisible(object.getCloudInitEnabled().getEntity());
                 }
             }
         });
 
-        object.getSysprepEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getSysprepEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (object.getSysprepEnabled().getEntity() != null) {
                     vmInitEditor.setSyspepContentVisible(object.getSysprepEnabled().getEntity());
                 }
             }
         });
 
-        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getDataCenterWithClustersList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 VDSGroup vdsGroup = object.getSelectedCluster();
                 if (vdsGroup != null && vdsGroup.getcompatibility_version() != null) {
                     boolean enabled = AsyncDataProvider.getInstance().isSerialNumberPolicySupported(vdsGroup.getcompatibility_version().getValue());
@@ -1629,9 +1613,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         });
 
-        object.getIsRngEnabled().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getIsRngEnabled().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 rngPanel.setVisible(object.getIsRngEnabled().getEntity());
             }
         });
@@ -1670,10 +1654,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void initTabAvailabilityListeners(final UnitVmModel vm) {
         // TODO should be handled by the core framework
-        vm.getPropertyChangedEvent().addListener(new IEventListener() {
+        vm.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("IsHighlyAvailable".equals(propName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(highAvailabilityTab, vm.getIsHighlyAvailable().getEntity());
                 } else if ("IsDisksAvailable".equals(propName)) { //$NON-NLS-1$
@@ -1700,14 +1684,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         });
 
         // TODO: Move to a more appropriate method
-        vm.getPropertyChangedEvent().addListener(new IEventListener() {
+        vm.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(args instanceof PropertyChangedEventArgs)) {
-                    return;
-                }
-
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("IsLinuxOS".equals(propName)) { //$NON-NLS-1$
                     changeApplicationLevelVisibility(linuxBootOptionsPanel, vm.getIsLinuxOS());
                 }
@@ -1747,10 +1727,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
             }
         }, ClickEvent.getType());
 
-        vm.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener() {
+        vm.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!isAutoAssignEditor.asRadioButton().getValue())
                     specificHost.setValue(true, true);
             }

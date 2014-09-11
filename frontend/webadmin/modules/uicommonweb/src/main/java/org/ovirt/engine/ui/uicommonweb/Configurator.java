@@ -333,7 +333,7 @@ public abstract class Configurator {
         return new Version(versionStr.replace(',', '.').replace("\n", "")); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
-    protected abstract Event getSpiceVersionFileFetchedEvent();
+    protected abstract Event<FileFetchEventArgs> getSpiceVersionFileFetchedEvent();
 
     protected abstract String clientOsType();
 

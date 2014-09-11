@@ -50,10 +50,10 @@ public class DefaultConfirmationPopupView extends AbstractConfirmationPopupView 
     public void edit(final ConfirmationModel object) {
         driver.edit(object);
 
-        object.getItemsChangedEvent().addListener(new IEventListener() {
+        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @SuppressWarnings("unchecked")
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ArrayList<String> items = (ArrayList<String>) object.getItems();
 
                 for (String item : items) {

@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.LunModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModelBase;
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanTargetModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -56,7 +55,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     @Override
     protected void createHeaderWidget() {
-        EntityModelCellTable<ListModel> table = new EntityModelCellTable<ListModel>(false,
+        EntityModelCellTable<ListModel<LunModel>> table = new EntityModelCellTable<ListModel<LunModel>>(false,
                 (Resources) GWT.create(SanStorageListHeaderResources.class),
                 true);
 
@@ -92,7 +91,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         treeHeader.add(table);
     }
 
-    private void addSelectAllButton(EntityModelCellTable<ListModel> table) {
+    private void addSelectAllButton(EntityModelCellTable<ListModel<LunModel>> table) {
         // Create 'Select All' check-box
         Header<Boolean> selectAllHeader = new Header<Boolean>(new CheckboxCell(true, false)) {
             @Override
@@ -116,10 +115,10 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         }, multiSelection ? selectAllHeader : null, "27px"); //$NON-NLS-1$
     }
 
-    final IEventListener lunModelSelectedItemListener = new IEventListener() {
+    final IEventListener<PropertyChangedEventArgs> lunModelSelectedItemListener = new IEventListener<PropertyChangedEventArgs>() {
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
-            String propName = ((PropertyChangedEventArgs) args).propertyName;
+        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            String propName = args.propertyName;
             EntityModelCellTable<ListModel> table = (EntityModelCellTable<ListModel>) ev.getContext();
 
             if (propName.equals("IsSelected")) { //$NON-NLS-1$
@@ -135,8 +134,8 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
 
     @Override
     protected TreeItem createRootNode(LunModel rootModel) {
-        final EntityModelCellTable<ListModel> table =
-                new EntityModelCellTable<ListModel>(multiSelection,
+        final EntityModelCellTable<ListModel<LunModel>> table =
+                new EntityModelCellTable<ListModel<LunModel>>(multiSelection,
                         (Resources) GWT.create(SanStorageListLunRootResources.class));
 
         // Create table
@@ -154,7 +153,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         // Add items
         List<LunModel> items = new ArrayList<LunModel>();
         items.add(rootModel);
-        ListModel listModel = new ListModel();
+        ListModel<LunModel> listModel = new ListModel<LunModel>();
         listModel.setItems(items);
 
         // Update table
@@ -198,7 +197,7 @@ public class SanStorageLunToTargetList extends AbstractSanStorageList<LunModel, 
         return item;
     }
 
-    private void initRootNodeTable(EntityModelCellTable<ListModel> table) {
+    private void initRootNodeTable(EntityModelCellTable<ListModel<LunModel>> table) {
 
         table.addColumn(new LunTextColumn() {
             @Override

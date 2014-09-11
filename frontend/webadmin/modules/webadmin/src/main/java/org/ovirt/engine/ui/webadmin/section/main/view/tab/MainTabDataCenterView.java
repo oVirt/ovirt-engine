@@ -130,9 +130,9 @@ public class MainTabDataCenterView extends AbstractMainTabWithDetailsTableView<S
         if (ReportInit.getInstance().isReportsEnabled()) {
             updateReportsAvailability(constants);
         } else {
-            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener() {
+            getMainModel().getReportsAvailabilityEvent().addListener(new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     updateReportsAvailability(constants);
                 }
             });

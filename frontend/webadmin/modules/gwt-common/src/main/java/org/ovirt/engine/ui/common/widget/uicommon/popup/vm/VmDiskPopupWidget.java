@@ -305,15 +305,15 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
         disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
-                boolean isDirectLunDiskAvaialable = (Boolean) ((EntityModel) sender).getEntity();
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                boolean isDirectLunDiskAvaialable = ((EntityModel<Boolean>) sender).getEntity();
                 externalDiskPanel.setVisible(isDirectLunDiskAvaialable);
             }
         });
 
         disk.getIsVirtioScsiEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (disk.getVm() == null) {
                     // not relevant for floating disks
                     return;
@@ -383,14 +383,14 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         // SelectedItemChangedEvent handlers
         disk.getStorageType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 revealStorageView(disk);
             }
         });
 
         disk.getHost().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 revealStorageView(disk);
             }
         });
@@ -439,7 +439,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     final IEventListener<PropertyChangedEventArgs> progressEventHandler = new IEventListener<PropertyChangedEventArgs>() {
         @Override
-        public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+        public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
             if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
                 externalDiskPanel.clear();
                 if (sanStorageModel.getProgress() != null) {

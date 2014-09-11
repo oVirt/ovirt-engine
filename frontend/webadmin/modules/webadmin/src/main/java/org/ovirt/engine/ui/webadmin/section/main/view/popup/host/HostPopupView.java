@@ -692,33 +692,32 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         driver.edit(object);
         setTabIndexes(0);
 
-        object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 fetchResult.setText(object.getFetchResult().getEntity());
             }
         });
 
-        object.getPkSection().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPkSection().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.propertyName == "IsAvailable") { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName == "IsAvailable") { //$NON-NLS-1$
                     setPkPasswordSectionVisiblity(false);
                 }
             }
         });
 
-        object.getProviders().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getProviders().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 object.updateHosts();
             }
         });
 
-        object.getExternalHostProviderEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getExternalHostProviderEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean showForemanProviders = object.getExternalHostProviderEnabled().getEntity();
                 providersEditor.setVisible(showForemanProviders);
                 provisionedHostSection.setVisible(showForemanProviders);
@@ -733,9 +732,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsDiscoveredHosts().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (Boolean.TRUE.equals(object.getIsDiscoveredHosts().getEntity())) {
                     rbDiscoveredHost.setValue(true);
                     showDiscoveredHostsWidgets(true);
@@ -791,9 +790,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         updateHostsButton.setResource(resources.searchButtonImage());
 
         // Bind proxy list.
-        object.getPmProxyPreferencesList().getItemsChangedEvent().addListener(new IEventListener() {
+        object.getPmProxyPreferencesList().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 proxyListBox.clear();
 
                 for (Object item : object.getPmProxyPreferencesList().getItems()) {
@@ -802,9 +801,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        object.getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getPmProxyPreferencesList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 List items = (List) object.getPmProxyPreferencesList().getItems();
                 int selectedItemIndex = items.indexOf(object.getPmProxyPreferencesList().getSelectedItem());
@@ -813,11 +812,10 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
             }
         });
 
-        object.getPmProxyPreferencesList().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPmProxyPreferencesList().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs e = (PropertyChangedEventArgs) args;
-                if (e.propertyName == "IsChangable") { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if (args.propertyName == "IsChangable") { //$NON-NLS-1$
                     proxyListBox.setEnabled(object.getPmProxyPreferencesList().getIsChangable());
                 }
             }
@@ -838,9 +836,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         });
 
         // Create SPM related controls.
-        IEventListener spmListener = new IEventListener() {
+        IEventListener<EventArgs> spmListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 createSpmControls(object);
             }
@@ -852,9 +850,9 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         createSpmControls(object);
 
         // Wire events on power management related controls.
-        object.getPmVariants().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getPmVariants().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 ListModel model = (ListModel) sender;
                 List items = (List) model.getItems();

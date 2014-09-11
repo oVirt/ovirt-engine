@@ -21,6 +21,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.EnumTranslator;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.uicompat.Translator;
@@ -33,14 +34,14 @@ public class VmGeneralModel extends EntityModel
     private static final VmTemplateNameRenderer vmTemplateNameRenderer = new VmTemplateNameRenderer();
 
     public static final EventDefinition updateCompleteEventDefinition;
-    private Event privateUpdateCompleteEvent;
+    private Event<EventArgs> privateUpdateCompleteEvent;
 
-    public Event getUpdateCompleteEvent()
+    public Event<EventArgs> getUpdateCompleteEvent()
     {
         return privateUpdateCompleteEvent;
     }
 
-    private void setUpdateCompleteEvent(Event value)
+    private void setUpdateCompleteEvent(Event<EventArgs> value)
     {
         privateUpdateCompleteEvent = value;
     }
@@ -518,7 +519,7 @@ public class VmGeneralModel extends EntityModel
 
     public VmGeneralModel()
     {
-        setUpdateCompleteEvent(new Event(updateCompleteEventDefinition));
+        setUpdateCompleteEvent(new Event<EventArgs>(updateCompleteEventDefinition));
 
         setTitle(ConstantsManager.getInstance().getConstants().generalTitle());
         setHelpTag(HelpTag.general);
@@ -623,8 +624,7 @@ public class VmGeneralModel extends EntityModel
                             {
                                 return;
                             }
-                            ArrayList<VDS> hosts =
-                                    (ArrayList<VDS>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                            ArrayList<VDS> hosts = ((VdcQueryReturnValue) returnValue).getReturnValue();
                             for (VDS host : hosts)
                             {
                                 if (localVm.getDedicatedVmForVds() != null

@@ -157,7 +157,7 @@ public class SystemPermissionListModel extends SearchableListModel
             }
         }
 
-        Role role = (Role) model.getRole().getSelectedItem();
+        Role role = model.getRole().getSelectedItem();
 
         ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
         for (DbUser user : items)

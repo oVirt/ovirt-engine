@@ -269,10 +269,10 @@ public class ClusterPolicyListModel extends ListWithDetailsModel {
 
         policyUnitModel.setPolicyUnits(new ListModel());
         policyUnitModel.getPolicyUnits().setItems(sort(policyUnits));
-        policyUnitModel.getRefreshPolicyUnitsEvent().addListener(new IEventListener() {
+        policyUnitModel.getRefreshPolicyUnitsEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 setIsQueryFirstTime(true);
                 syncSearch();
             }

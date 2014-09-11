@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.webadmin.section.main.view.popup.host;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -33,10 +32,10 @@ public class SetupNetworksManagementPopupView extends SetupNetworksInterfacePopu
 
         super.edit(object);
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("Entity".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("Entity".equals(args.propertyName)) { //$NON-NLS-1$
                     nameEditor.asEditor().getSubEditor().setValue(object.getEntity().getName());
                 }
             }

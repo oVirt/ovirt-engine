@@ -314,23 +314,23 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
         optimizationForDesktopFormatter(model);
         optimizationCustomFormatter(model);
 
-        model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 optimizationForServerFormatter(model);
             }
         });
 
-        model.getCluster().getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 optimizationForDesktopFormatter(model);
             }
         });
 
-        model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (model.getCluster().getOptimizationCustom_IsSelected().getEntity()) {
                     optimizationCustomFormatter(model);
                     optimizationCustomEditor.setVisible(true);
@@ -338,9 +338,9 @@ public class HostConfigureLocalStoragePopupView extends AbstractTabbedModelBound
             }
         });
 
-        model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getCluster().getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 cpuThreadsPanel.setVisible(model.getCluster().getVersionSupportsCpuThreads().getEntity());
             }
         });

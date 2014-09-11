@@ -31,7 +31,6 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.ImportExportRepoImageBaseModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -176,20 +175,14 @@ public class ImportExportImagePopupView extends AbstractModelBoundPopupView<Impo
         importAsTemplateEditor.setVisible(model.showImportAsTemplateOptions());
         clusterEditor.setVisible(model.showImportAsTemplateOptions());
 
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (!(args instanceof PropertyChangedEventArgs)) {
-                    return;
-                }
-
-                PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-
-                if ("ImportExportEntities".equals(changedArgs.propertyName) //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("ImportExportEntities".equals(args.propertyName) //$NON-NLS-1$
                         && model.getEntities() != null) {
                     imageList.setRowData(model.getEntities());
                 }
-                }
+            }
         });
     }
 

@@ -91,13 +91,13 @@ public class HorizontalSplitTable<T> extends Composite {
 
         topItemsChangedListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 topSelectionModel.clear();
             }
         };
         bottomItemsChangedListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 bottomSelectionModel.clear();
             }
         };

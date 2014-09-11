@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmPool;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmType;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -95,7 +96,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
     public static final EventDefinition searchCompletedEventDefinition;
-    private Event privateSearchCompletedEvent;
+    private Event<EventArgs> privateSearchCompletedEvent;
 
     /** The edited VM could be different than the selected VM in the grid
      *  when the VM has next-run configuration */
@@ -118,12 +119,12 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         }
     });
 
-    public Event getSearchCompletedEvent()
+    public Event<EventArgs> getSearchCompletedEvent()
     {
         return privateSearchCompletedEvent;
     }
 
-    private void setSearchCompletedEvent(Event value)
+    private void setSearchCompletedEvent(Event<EventArgs> value)
     {
         privateSearchCompletedEvent = value;
     }
@@ -290,7 +291,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
     public UserPortalListModel()
     {
-        setSearchCompletedEvent(new Event(searchCompletedEventDefinition));
+        setSearchCompletedEvent(new Event<EventArgs>(searchCompletedEventDefinition));
 
         setNewVmCommand(new UICommand("NewVm", this)); //$NON-NLS-1$
         setCloneVmCommand(new UICommand("CloneVm", this)); //$NON-NLS-1$
@@ -699,7 +700,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         VM tempVar = new VM();
         tempVar.setId(vm.getId());
 
-        BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, tempVar.getStaticData(), new CommonUnitToVmBaseBuilder<VmStatic>());
         BuilderExecutor.build(vm.getStaticData(), tempVar.getStaticData(),
                               new KernelParamsVmBaseToVmBaseBuilder(),
                               new UsbPolicyVmBaseToVmBaseBuilder());
@@ -1233,7 +1234,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     protected static void buildVmOnSave(UnitVmModel model, VM vm) {
-        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder());
+        BuilderExecutor.build(model, vm.getStaticData(), new FullUnitToVmBaseBuilder<VmStatic>());
         BuilderExecutor.build(model, vm, new VmSpecificUnitToVmBuilder());
     }
 

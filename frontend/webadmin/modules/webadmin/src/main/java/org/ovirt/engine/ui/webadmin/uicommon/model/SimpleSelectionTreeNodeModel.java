@@ -6,7 +6,6 @@ import java.util.List;
 import org.ovirt.engine.ui.common.uicommon.model.TreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.gin.ClientGinjectorProvider;
@@ -59,10 +58,10 @@ public class SimpleSelectionTreeNodeModel implements TreeNodeModel<SelectionTree
         }
 
         // Add selection listener
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsSelectedNullable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsSelectedNullable".equals(args.propertyName)) { //$NON-NLS-1$
                     SelectionEvent.fire(SimpleSelectionTreeNodeModel.this, SimpleSelectionTreeNodeModel.this);
                 }
             }

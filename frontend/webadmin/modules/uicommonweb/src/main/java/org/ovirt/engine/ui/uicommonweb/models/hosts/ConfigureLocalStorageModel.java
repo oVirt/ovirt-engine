@@ -149,7 +149,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter().getVersion()) {
@@ -421,7 +421,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(StoragePool item, AsyncIteratorCallback callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback<StoragePool> callback) {
 
                         AsyncDataProvider.getInstance().getClusterList(callback.getAsyncQuery(), item.getId());
                     }
@@ -458,7 +458,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
         iterator.iterate(
                 new AsyncIteratorFunc<StoragePool>() {
                     @Override
-                    public void run(StoragePool item, AsyncIteratorCallback callback) {
+                    public void run(StoragePool item, AsyncIteratorCallback<StoragePool> callback) {
 
                         AsyncDataProvider.getInstance().getLocalStorageHost(callback.getAsyncQuery(), item.getName());
                     }

@@ -17,7 +17,6 @@ import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -181,11 +180,11 @@ public class NetworkInterfacePopupWidget extends AbstractModelBoundPopupWidget<V
         driver.edit(iface);
 
         hideMacWhenNotEnabled(iface);
-        iface.getMAC().getPropertyChangedEvent().addListener(new IEventListener() {
+        iface.getMAC().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     hideMacWhenNotEnabled(iface);
                 }
             }

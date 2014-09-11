@@ -7,11 +7,12 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ManagePolicyUnitModel extends Model {
-    private final Event refreshPolicyUnitsEvent = new Event("RefreshPolicyUnitsEvent", ManagePolicyUnitModel.class); //$NON-NLS-1$
+    private final Event<EventArgs> refreshPolicyUnitsEvent = new Event<EventArgs>("RefreshPolicyUnitsEvent", ManagePolicyUnitModel.class); //$NON-NLS-1$
     private ListModel PolicyUnits;
 
     public ListModel getPolicyUnits() {
@@ -22,7 +23,7 @@ public class ManagePolicyUnitModel extends Model {
         PolicyUnits = policyUnits;
     }
 
-    public Event getRefreshPolicyUnitsEvent() {
+    public Event<EventArgs> getRefreshPolicyUnitsEvent() {
         return refreshPolicyUnitsEvent;
     }
 

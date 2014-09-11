@@ -78,19 +78,19 @@ public class VolumeBrickModel extends Model {
         getMoveBricksUpCommand().setIsExecutionAllowed(false);
         getMoveBricksDownCommand().setIsExecutionAllowed(false);
 
-        getBricks().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        getBricks().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateSelectedBricksActions();
             }
         });
 
 
-        getBricks().getItemsChangedEvent().addListener(new IEventListener() {
+        getBricks().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (bricks.getItems() != null && bricks.getItems().iterator().hasNext())
                 {
                     getRemoveAllBricksCommand().setIsExecutionAllowed(true);

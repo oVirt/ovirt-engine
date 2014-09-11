@@ -35,9 +35,9 @@ public class HasDataListModelEditorAdapter<M extends ListModel, T> implements Ha
         this.listModel = object;
 
         // Update row data when ListModel items change
-        object.getItemsChangedEvent().addListener(new IEventListener() {
+        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 M list = (M) sender;
                 List<T> items = (List<T>) list.getItems();
                 hasDataWidget.setRowData(items == null ? new ArrayList<T>() : items);
@@ -45,16 +45,16 @@ public class HasDataListModelEditorAdapter<M extends ListModel, T> implements Ha
         });
 
         // Update selection model when ListModel selection changes
-        object.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 M list = (M) sender;
                 hasDataWidget.getSelectionModel().setSelected((T) list.getSelectedItem(), true);
             }
         });
-        object.getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        object.getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 M list = (M) sender;
                 if (list.getSelectedItems() != null) {
                     for (Object item : list.getSelectedItems()) {

@@ -141,15 +141,15 @@ public class VolumeProfileStatisticsModel extends Model {
         setBricks(new ListModel<BrickProfileDetails>());
         setNfsServers(new ListModel<GlusterVolumeProfileStats>());
         final UIMessages messages = ConstantsManager.getInstance().getMessages();
-        getBricks().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getBricks().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onBrickSelectionChange(messages);
             }
         });
-        getNfsServers().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getNfsServers().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onNfsServerSelectionChange(messages);
             }
         });

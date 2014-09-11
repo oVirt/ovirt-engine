@@ -199,9 +199,9 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
 
     public void initializeHandlers() {
         // Notify view when the entity of the detail model changes
-        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 Object entity = modelProvider.getModel().getEntity();
                 if (entity != null) {
                     onDetailModelEntityChange(entity);
@@ -212,7 +212,7 @@ public abstract class AbstractSubTabPresenter<T, M extends ListWithDetailsModel,
         // Notify view when the detail model indicates progress
         modelProvider.getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (PropertyChangedEventArgs.PROGRESS.equals(args.propertyName)) {
                     if (modelProvider.getModel().getProgress() != null) {
                         Scheduler.get().scheduleDeferred(new ScheduledCommand() {

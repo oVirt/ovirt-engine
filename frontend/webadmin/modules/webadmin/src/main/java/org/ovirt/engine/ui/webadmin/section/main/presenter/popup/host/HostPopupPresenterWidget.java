@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.presenter.AbstractTabbedModelBoundPopupPresent
 import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -73,10 +72,10 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     @SuppressWarnings("unchecked")
     private void addPowerManagementListener(final HostModel model) {
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if (!"IsPowerManagementTabSelected".equals(propName)) { //$NON-NLS-1$
                     return;
                 }
@@ -89,10 +88,10 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     @SuppressWarnings("unchecked")
     private void addCiscoUcsPmTypeListener(final HostModel model) {
-        model.getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("IsCiscoUcsPrimaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
                     getView().updatePrimaryPmSlotLabelText(model.isCiscoUcsPrimaryPmTypeSelected());
                 } else if ("IsCiscoUcsSecondaryPmTypeSelected".equals(propName)) { //$NON-NLS-1$
@@ -123,10 +122,10 @@ public class HostPopupPresenterWidget extends AbstractTabbedModelBoundPopupPrese
 
     @SuppressWarnings("unchecked")
     private void addHostProviderListener(final HostModel model) {
-        model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getProviderSearchFilter().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     getView().setHostProviderVisibility(model.getProviderSearchFilter().getIsAvailable());
                 }
             }

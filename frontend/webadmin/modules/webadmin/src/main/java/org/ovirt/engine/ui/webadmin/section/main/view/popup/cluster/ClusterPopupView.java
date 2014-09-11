@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationMessages;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
@@ -658,23 +659,23 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         optimizationForDesktopFormatter(object);
         optimizationCustomFormatter(object);
 
-        object.getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getOptimizationForServer().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 optimizationForServerFormatter(object);
             }
         });
 
-        object.getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getOptimizationForDesktop().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 optimizationForDesktopFormatter(object);
             }
         });
 
-        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getOptimizationCustom_IsSelected().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (object.getOptimizationCustom_IsSelected().getEntity()) {
                     optimizationCustomFormatter(object);
                     optimizationCustomEditor.setVisible(true);
@@ -682,17 +683,17 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
             }
         });
 
-        object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 resiliencePolicyTab.setVisible(object.getisResiliencePolicyTabAvailable());
                 applyModeCustomizations();
             }
         });
 
-        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getEnableGlusterService().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                         && object.getIsNew());
             }
@@ -700,17 +701,17 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
 
-        object.getCPU().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        object.getCPU().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean isCpuNameBlank = object.getCPU().getSelectedItem() == null;
                 architectureEditor.setVisible(isCpuNameBlank && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
             }
         });
 
-        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 cpuThreadsPanel.setVisible(object.getVersionSupportsCpuThreads().getEntity());
             }
         });
@@ -725,9 +726,9 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
                         .replaceAll("(\r\n|\n)", "<br />"))); //$NON-NLS-1$ //$NON-NLS-2$
         allowOverbookingPanel.setVisible(allowOverbookingEditor.isVisible());
 
-        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getVersion().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (object.getVersion().getSelectedItem() != null) {
                     String clusterVersion = object.getVersion().getSelectedItem().getValue();
                     serialNumberPolicyEditor.setVisible(AsyncDataProvider.getInstance().isSerialNumberPolicySupported(clusterVersion));

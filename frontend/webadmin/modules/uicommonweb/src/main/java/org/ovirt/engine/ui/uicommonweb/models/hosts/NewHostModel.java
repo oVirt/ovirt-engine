@@ -26,17 +26,17 @@ public class NewHostModel extends HostModel {
     public static final int NewHostDefaultPort = 54321;
     public NewHostModel() {
         super();
-        getExternalHostName().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getExternalHostName().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 hostName_SelectedItemChanged();
             }
         });
 
         getExternalHostName().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        getExternalDiscoveredHosts().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getExternalDiscoveredHosts().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 discoverHostName_SelectedItemChanged();
             }
         });
@@ -44,9 +44,9 @@ public class NewHostModel extends HostModel {
         getExternalDiscoveredHosts().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
         getExternalHostProviderEnabled().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
-        getProviders().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getProviders().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // While load don't let user to change provider
                 getProviders().setIsChangable(false);
                 providers_SelectedItemChanged();

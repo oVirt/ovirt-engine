@@ -167,20 +167,20 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
         final EntityModel<Boolean> adminRole = object.getIsAdminRole();
 
         // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 RoleModel model = (RoleModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                String propertyName = args.propertyName;
                 if ("PermissionGroupModels".equals(propertyName)) { //$NON-NLS-1$
                     updateTree(model);
                 }
             }
         });
 
-        object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsAdminRole().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (adminRole.getEntity() == true) {
                     adminRadioButtonEditor.setValue(true);
                 } else {
@@ -190,9 +190,9 @@ public class RolePopupView extends AbstractModelBoundPopupView<RoleModel> implem
             }
         });
 
-        object.getIsAdminRole().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getIsAdminRole().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (!adminRole.getIsChangable()) {
                     adminRadioButtonEditor.setEnabled(false);
                     userRadioButtonEditor.setEnabled(false);

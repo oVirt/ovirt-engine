@@ -16,17 +16,17 @@ import org.ovirt.engine.ui.uicompat.EventArgs;
 
 public abstract class AbstractSpice {
 
-    protected Event disconnectedEvent = new Event(
+    protected Event<EventArgs> disconnectedEvent = new Event<EventArgs>(
             SpiceConsoleModel.spiceDisconnectedEventDefinition);
-    protected Event connectedEvent = new Event(
+    protected Event<EventArgs> connectedEvent = new Event<EventArgs>(
             SpiceConsoleModel.spiceConnectedEventDefinition);
-    protected Event menuItemSelectedEvent = new Event(
+    protected Event<EventArgs> menuItemSelectedEvent = new Event<EventArgs>(
             SpiceConsoleModel.spiceMenuItemSelectedEventDefinition);
-    protected Event usbAutoShareChangedEvent = new Event(
+    protected Event<EventArgs> usbAutoShareChangedEvent = new Event<EventArgs>(
             SpiceConsoleModel.usbAutoShareChangedEventDefinition);
-    protected final Event wanColorDepthChangedEvent = new Event(
+    protected final Event<EventArgs> wanColorDepthChangedEvent = new Event<EventArgs>(
             SpiceConsoleModel.wanColorDepthChangedEventDefinition);
-    protected final Event wanDisableEffectsChangeEvent = new Event(
+    protected final Event<EventArgs> wanDisableEffectsChangeEvent = new Event<EventArgs>(
             SpiceConsoleModel.wanDisableEffectsChangeEventDefinition);
 
     protected Version currentVersion = new Version(4, 4);
@@ -98,43 +98,43 @@ public abstract class AbstractSpice {
         return wanColorDepth;
     }
 
-    public Event getWANDisableEffectsChangeEvent() {
+    public Event<EventArgs> getWANDisableEffectsChangeEvent() {
         return wanDisableEffectsChangeEvent;
     }
 
-    public Event getWANColorDepthChangedEvent() {
+    public Event<EventArgs> getWANColorDepthChangedEvent() {
         return wanColorDepthChangedEvent;
     }
 
-    public Event getDisconnectedEvent() {
+    public Event<EventArgs> getDisconnectedEvent() {
         return disconnectedEvent;
     }
 
-    public void setDisconnectedEvent(Event disconnectedEvent) {
+    public void setDisconnectedEvent(Event<EventArgs> disconnectedEvent) {
         this.disconnectedEvent = disconnectedEvent;
     }
 
-    public Event getConnectedEvent() {
+    public Event<EventArgs> getConnectedEvent() {
         return connectedEvent;
     }
 
-    public void setConnectedEvent(Event connectedEvent) {
+    public void setConnectedEvent(Event<EventArgs> connectedEvent) {
         this.connectedEvent = connectedEvent;
     }
 
-    public Event getMenuItemSelectedEvent() {
+    public Event<EventArgs> getMenuItemSelectedEvent() {
         return menuItemSelectedEvent;
     }
 
-    public void setMenuItemSelectedEvent(Event menuItemSelectedEvent) {
+    public void setMenuItemSelectedEvent(Event<EventArgs> menuItemSelectedEvent) {
         this.menuItemSelectedEvent = menuItemSelectedEvent;
     }
 
-    public void setUsbAutoShareChangedEvent(Event usbAutoShareChangedEvent) {
+    public void setUsbAutoShareChangedEvent(Event<EventArgs> usbAutoShareChangedEvent) {
         this.usbAutoShareChangedEvent = usbAutoShareChangedEvent;
     }
 
-    public Event getUsbAutoShareChangedEvent() {
+    public Event<EventArgs> getUsbAutoShareChangedEvent() {
         return usbAutoShareChangedEvent;
     }
 

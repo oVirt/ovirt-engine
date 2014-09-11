@@ -5,7 +5,6 @@ import java.util.Map;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -25,7 +24,7 @@ import com.google.gwt.editor.client.impl.BaseEditorDriver;
 public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E extends Editor<T>>
         extends BaseEditorDriver<T, E> implements SimpleBeanEditorDriver<T, E> {
 
-    private IEventListener propertyChangeListener;
+    private IEventListener<PropertyChangedEventArgs> propertyChangeListener;
     private EditorVisitor visitor;
 
     /**
@@ -42,10 +41,10 @@ public abstract class AbstractUiCommonModelEditorDriver<T extends Model, E exten
 
         final UiCommonListenerMap listenerMap = getListenerMap();
 
-        propertyChangeListener = new IEventListener() {
+        propertyChangeListener = new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 listenerMap.callListener(propName, "PropertyChanged"); //$NON-NLS-1$
             }
         };

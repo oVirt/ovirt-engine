@@ -11,13 +11,13 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 public class VmDiskListModelBase extends SearchableListModel
 {
-    private EntityModel diskViewType;
+    private EntityModel<DiskStorageType> diskViewType;
 
-    public EntityModel getDiskViewType() {
+    public EntityModel<DiskStorageType> getDiskViewType() {
         return diskViewType;
     }
 
-    public void setDiskViewType(EntityModel diskViewType) {
+    public void setDiskViewType(EntityModel<DiskStorageType> diskViewType) {
         this.diskViewType = diskViewType;
     }
 
@@ -27,7 +27,7 @@ public class VmDiskListModelBase extends SearchableListModel
     }
 
     public VmDiskListModelBase() {
-        setDiskViewType(new EntityModel());
+        setDiskViewType(new EntityModel<DiskStorageType>());
     }
 
     @SuppressWarnings("rawtypes")
@@ -36,7 +36,7 @@ public class VmDiskListModelBase extends SearchableListModel
     {
         ArrayList<Disk> disks = value != null ? Linq.<Disk> cast(value) : new ArrayList<Disk>();
         ArrayList<Disk> filteredDisks = new ArrayList<Disk>();
-        DiskStorageType diskStorageType = (DiskStorageType) getDiskViewType().getEntity();
+        DiskStorageType diskStorageType = getDiskViewType().getEntity();
 
         for (Disk disk : disks) {
             if (diskStorageType == null || diskStorageType == disk.getDiskStorageType()) {

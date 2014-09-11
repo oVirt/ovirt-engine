@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 
 /**
  * Represents an implementor of a Spice. That way we have a bridge between Console model and concrete Spice accessor. In
@@ -12,17 +13,17 @@ import org.ovirt.engine.ui.uicompat.Event;
  */
 public interface ISpice {
 
-    Event getDisconnectedEvent();
+    Event<EventArgs> getDisconnectedEvent();
 
-    Event getConnectedEvent();
+    Event<EventArgs> getConnectedEvent();
 
-    Event getMenuItemSelectedEvent();
+    Event<EventArgs> getMenuItemSelectedEvent();
 
-    Event getUsbAutoShareChangedEvent();
+    Event<EventArgs> getUsbAutoShareChangedEvent();
 
-    Event getWANDisableEffectsChangeEvent();
+    Event<EventArgs> getWANDisableEffectsChangeEvent();
 
-    Event getWANColorDepthChangedEvent();
+    Event<EventArgs> getWANColorDepthChangedEvent();
 
     Version getCurrentVersion();
 

@@ -8,14 +8,13 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 /**
  * Listens to error events of the ConsoleModel. If one catched, translates the error code to human readable message and
  * displays a popup.
  */
-public class ConsoleModelErrorEventListener implements IEventListener, ICommandTarget {
+public class ConsoleModelErrorEventListener implements IEventListener<ErrorCodeEventArgs>, ICommandTarget {
 
     private ConsoleErrorTranslator consoleErrorCodeTranslator = new ConsoleErrorTranslator();
 
@@ -27,10 +26,10 @@ public class ConsoleModelErrorEventListener implements IEventListener, ICommandT
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends ErrorCodeEventArgs> ev, Object sender, ErrorCodeEventArgs args) {
         if (ev.matchesDefinition(ConsoleModel.errorEventDefinition)
                 && ((sender instanceof SpiceConsoleModel) || (sender instanceof RdpConsoleModel))) {
-            consoleModelError(sender, getConsoleModelErrorMessage(sender, (ErrorCodeEventArgs) args));
+            consoleModelError(sender, getConsoleModelErrorMessage(sender, args));
         }
     }
 

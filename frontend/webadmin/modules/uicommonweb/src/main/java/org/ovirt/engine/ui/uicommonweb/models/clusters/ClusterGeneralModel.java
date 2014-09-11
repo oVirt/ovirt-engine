@@ -42,7 +42,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ClusterGeneralModel extends EntityModel {
+public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
     private Integer noOfVolumesTotal;
     private Integer noOfVolumesUp;
@@ -185,17 +185,6 @@ public class ClusterGeneralModel extends EntityModel {
 
     public Boolean isConsoleAddressPartiallyOverridden() {
         return consoleAddressPartiallyOverridden == null ? Boolean.FALSE : consoleAddressPartiallyOverridden;
-    }
-
-    @Override
-    public VDSGroup getEntity()
-    {
-        return (VDSGroup) ((super.getEntity() instanceof VDSGroup) ? super.getEntity() : null);
-    }
-
-    public void setEntity(VDSGroup value)
-    {
-        super.setEntity(value);
     }
 
     public ClusterGeneralModel()

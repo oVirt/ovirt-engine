@@ -52,14 +52,14 @@ public class BookmarkListModel extends SearchableListModel
 
     public static final EventDefinition savedEventDefinition;
 
-    private Event privateNavigatedEvent;
+    private Event<EventArgs> privateNavigatedEvent;
 
-    public Event getNavigatedEvent()
+    public Event<EventArgs> getNavigatedEvent()
     {
         return privateNavigatedEvent;
     }
 
-    private void setNavigatedEvent(Event value)
+    private void setNavigatedEvent(Event<EventArgs> value)
     {
         privateNavigatedEvent = value;
     }
@@ -113,14 +113,14 @@ public class BookmarkListModel extends SearchableListModel
         privateIsBookmarkInitiated = value;
     }
 
-    private Event privateItemSavedEvent;
+    private Event<EventArgs> privateItemSavedEvent;
 
-    public Event getItemSavedEvent()
+    public Event<EventArgs> getItemSavedEvent()
     {
         return privateItemSavedEvent;
     }
 
-    private void setItemSavedEvent(Event value)
+    private void setItemSavedEvent(Event<EventArgs> value)
     {
         privateItemSavedEvent = value;
     }
@@ -133,8 +133,8 @@ public class BookmarkListModel extends SearchableListModel
 
     public BookmarkListModel()
     {
-        setNavigatedEvent(new Event(navigatedEventDefinition));
-        setItemSavedEvent(new Event(savedEventDefinition));
+        setNavigatedEvent(new Event<EventArgs>(navigatedEventDefinition));
+        setItemSavedEvent(new Event<EventArgs>(savedEventDefinition));
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
@@ -163,7 +163,7 @@ public class BookmarkListModel extends SearchableListModel
             public void onSuccess(Object model, Object ReturnValue)
             {
                 SearchableListModel bookmarkListModel = (BookmarkListModel) model;
-                List<Bookmark> resultList = (List<Bookmark>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                List<Bookmark> resultList = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                 if (resultList != null) {
                     Collections.sort(resultList, COMPARATOR);
                 }
@@ -300,8 +300,8 @@ public class BookmarkListModel extends SearchableListModel
                 new org.ovirt.engine.core.common.businessentities.Bookmark();
         tempVar.setbookmark_id(model.getIsNew() ? Guid.Empty
                 : ((org.ovirt.engine.core.common.businessentities.Bookmark) getSelectedItem()).getbookmark_id());
-        tempVar.setbookmark_name((String) model.getName().getEntity());
-        tempVar.setbookmark_value((String) model.getSearchString().getEntity());
+        tempVar.setbookmark_name(model.getName().getEntity());
+        tempVar.setbookmark_value(model.getSearchString().getEntity());
         org.ovirt.engine.core.common.businessentities.Bookmark bookmark = tempVar;
 
         model.startProgress(null);

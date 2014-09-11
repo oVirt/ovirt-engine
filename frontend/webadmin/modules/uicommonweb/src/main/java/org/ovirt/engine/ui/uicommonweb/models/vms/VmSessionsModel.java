@@ -6,7 +6,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class VmSessionsModel extends EntityModel {
+public class VmSessionsModel extends EntityModel<VM> {
 
     String guestUserName;
     String consoleUserName;
@@ -38,7 +38,7 @@ public class VmSessionsModel extends EntityModel {
     }
 
     private void updateProperties() {
-        VM vm = (VM) getEntity();
+        VM vm = getEntity();
 
         this.consoleUserName = vm.getConsoleCurentUserName();
         this.guestUserName = vm.getGuestCurentUserName();

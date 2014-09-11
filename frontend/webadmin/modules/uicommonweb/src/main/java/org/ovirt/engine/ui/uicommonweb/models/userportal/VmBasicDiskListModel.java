@@ -48,8 +48,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                 @Override
                 public void onSuccess(Object model, Object ReturnValue)
                 {
-                    List<DiskImage> disks =
-                            (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                    List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                     Collections.sort(disks, new Linq.DiskByAliasComparer());
 
                     SearchableListModel searchableListModel = (SearchableListModel) model;
@@ -72,7 +71,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                 {
                     if (result != null)
                     {
-                        VM vm = (VM) ((VdcQueryReturnValue) result).getReturnValue();
+                        VM vm = ((VdcQueryReturnValue) result).getReturnValue();
                         if (vm == null) {
                             return;
                         }
@@ -84,8 +83,7 @@ public class VmBasicDiskListModel extends SearchableListModel
                             @Override
                             public void onSuccess(Object model1, Object ReturnValue)
                             {
-                                List<DiskImage> disks =
-                                        (List<DiskImage>) ((VdcQueryReturnValue) ReturnValue).getReturnValue();
+                                List<DiskImage> disks = ((VdcQueryReturnValue) ReturnValue).getReturnValue();
                                 Collections.sort(disks, new Linq.DiskByAliasComparer());
 
                                 SearchableListModel searchableListModel = (SearchableListModel) model1;

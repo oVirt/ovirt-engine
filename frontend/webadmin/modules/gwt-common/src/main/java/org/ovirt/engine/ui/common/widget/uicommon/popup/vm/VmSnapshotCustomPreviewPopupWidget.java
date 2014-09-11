@@ -350,9 +350,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         previewTable.asEditor().edit(previewSnapshotModel.getSnapshots());
 
         // Add selection listener
-        model.getSnapshots().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getSnapshots().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ListModel snapshots = (ListModel) sender;
                 SnapshotModel snapshotModel = (SnapshotModel) snapshots.getSelectedItem();
                 if (snapshotModel != null) {
@@ -360,9 +360,9 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 }
             }
         });
-        model.getSnapshots().getItemsChangedEvent().addListener(new IEventListener() {
+        model.getSnapshots().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 createPreviewTable();
             }
         });

@@ -70,7 +70,7 @@ public abstract class TabModelProvider<M extends EntityModel> implements ModelPr
         // Register WidgetModel property change listener
         getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
 
                 if ("WidgetModel".equals(propName)) { //$NON-NLS-1$

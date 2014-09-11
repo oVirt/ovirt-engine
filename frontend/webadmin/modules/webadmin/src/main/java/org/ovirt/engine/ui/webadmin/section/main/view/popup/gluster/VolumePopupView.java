@@ -235,12 +235,12 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         driver.edit(object);
         addBricksButton.setCommand(object.getAddBricksCommand());
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 VolumeModel model = (VolumeModel) sender;
-                if ("Bricks".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+                if ("Bricks".equals(args.propertyName)) { //$NON-NLS-1$
                     bricksCountEditor.setText(ConstantsManager.getInstance()
                             .getMessages()
                             .noOfBricksSelected(model.getBricks().getSelectedItems() == null ? 0 : model.getBricks()
@@ -251,13 +251,13 @@ public class VolumePopupView extends AbstractModelBoundPopupView<VolumeModel> im
         });
         object.getOptimizeForVirtStore().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
             }
         });
         object.getReplicaCount().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 virtStoreOptimiseWarningLabel.setVisible(object.getOptimizeForVirtStore().getEntity() && object.getReplicaCount().getEntity() != 3);
             }
         });

@@ -97,11 +97,11 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
         driver.edit(object);
 
         // Bind "Latch.IsAvailable"
-        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getLatch().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     EntityModel entity = (EntityModel) sender;
                     if (entity.getIsAvailable()) {
                         latch.setVisible(true);
@@ -110,10 +110,10 @@ public class RecoveryStorageConfirmationPopupView extends AbstractModelBoundPopu
             }
         });
 
-        object.getItemsChangedEvent().addListener(new IEventListener() {
+        object.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
                 // Message
                 messageLabel.setHTML(applicationConstants.dataCenterRecoveryStoragePopupMessageLabel());

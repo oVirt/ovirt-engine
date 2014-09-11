@@ -21,7 +21,7 @@ import java.util.Map;
  * If detects a change in such a field it deciedes, if the VM should be detached from the current instance type
  * or attached back to the original one if the fields has been changed back.
  */
-public class InstanceTypeAttachDetachManager implements IEventListener {
+public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs> {
 
     private UnitVmModel model;
 
@@ -67,15 +67,15 @@ public class InstanceTypeAttachDetachManager implements IEventListener {
     private void listenToDetachableFields(List<Model> models) {
         for (Model model : models) {
             if (model instanceof ListModel) {
-                ((ListModel) model).getSelectedItemChangedEvent().addListener(this);
+                ((ListModel<?>) model).getSelectedItemChangedEvent().addListener(this);
             } else if (model instanceof EntityModel) {
-                ((EntityModel) model).getEntityChangedEvent().addListener(this);
+                ((EntityModel<?>) model).getEntityChangedEvent().addListener(this);
             }
         }
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         if (!instanceTypeManager.isActive()) {
             return;
         }

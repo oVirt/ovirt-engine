@@ -103,7 +103,7 @@ public class ConfirmationModel extends ListModel
         getForce().setEntity(false);
         getForce().setIsAvailable(false);
 
-        setReason(new EntityModel());
+        setReason(new EntityModel<String>());
         setReasonVisible(false);
     }
 

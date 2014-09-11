@@ -72,9 +72,9 @@ public class SystemTreeModelProvider extends DataBoundTabModelProvider<SystemTre
         super.initializeModelHandlers();
 
         // Add model reset handler
-        getModel().getResetRequestedEvent().addListener(new IEventListener() {
+        getModel().getResetRequestedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 ArrayList<SystemTreeItemModel> items = getModel().getItems();
                 if (items != null && !items.isEmpty()) {
                     // Select first (root) tree item

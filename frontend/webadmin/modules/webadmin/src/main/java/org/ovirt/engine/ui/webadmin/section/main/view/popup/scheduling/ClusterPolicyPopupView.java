@@ -185,18 +185,18 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
         driver.edit(model);
         setPanelModel(model);
         updateFilters(model);
-        model.getFiltersChangedEvent().addListener(new IEventListener() {
+        model.getFiltersChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateFilters(model);
                 clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
         });
         updateFunctions(model);
-        model.getFunctionsChangedEvent().addListener(new IEventListener() {
+        model.getFunctionsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateFunctions(model);
                 clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }
@@ -205,9 +205,9 @@ public class ClusterPolicyPopupView extends AbstractModelBoundPopupView<NewClust
 
         clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
         updateTooltips(model);
-        model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateTooltips(model);
                 clusterPolicyPropertiesZone.setVisible(showClusterPolicyPropertiesZone(model));
             }

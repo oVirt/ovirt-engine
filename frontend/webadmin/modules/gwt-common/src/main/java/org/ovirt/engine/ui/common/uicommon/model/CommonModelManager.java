@@ -21,9 +21,9 @@ public class CommonModelManager {
      */
     public static void init(final EventBus eventBus) {
         commonModel = CommonModel.newInstance();
-        commonModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        commonModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 MainModelSelectionChangeEvent.fire(eventBus, commonModel.getSelectedItem());
             }
         });

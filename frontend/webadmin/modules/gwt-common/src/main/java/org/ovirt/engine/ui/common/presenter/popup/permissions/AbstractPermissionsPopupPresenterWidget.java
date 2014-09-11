@@ -25,6 +25,7 @@ import com.google.gwt.event.dom.client.KeyPressHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HasHandlers;
 import com.google.gwt.user.client.ui.HasValue;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 public abstract class AbstractPermissionsPopupPresenterWidget<V extends AbstractPermissionsPopupPresenterWidget.ViewDef<M>, M extends AdElementListModel>
         extends AbstractModelBoundPopupPresenterWidget<M, V> {
@@ -71,9 +72,9 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
             }
         }));
 
-        model.getSearchInProgress().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getSearchInProgress().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().getSearchButton()
                         .getCommand()
                         .setIsExecutionAllowed(!(Boolean) model.getSearchInProgress().getEntity());
@@ -110,7 +111,7 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         model.getProfile().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 model.populateNamespaces();
             }
         });
@@ -118,26 +119,26 @@ public abstract class AbstractPermissionsPopupPresenterWidget<V extends Abstract
         model.getNamespace().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 getView().getSearchButton()
                 .getCommand()
                 .setIsExecutionAllowed(model.availableNamespaces());
             }
         });
 
-        model.getIsRoleListHiddenModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getIsRoleListHiddenModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 getView().hideRoleSelection(Boolean.parseBoolean(model.getIsRoleListHiddenModel()
                         .getEntity().toString()));
             }
         });
 
-        getView().hideEveryoneSelection((Boolean) model.getIsEveryoneSelectionHidden().getEntity());
+        getView().hideEveryoneSelection(model.getIsEveryoneSelectionHidden().getEntity());
 
-        model.getIsEveryoneSelectionHidden().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getIsEveryoneSelectionHidden().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 getView().hideEveryoneSelection(Boolean.parseBoolean(model.getIsRoleListHiddenModel()
                         .getEntity().toString()));
             }

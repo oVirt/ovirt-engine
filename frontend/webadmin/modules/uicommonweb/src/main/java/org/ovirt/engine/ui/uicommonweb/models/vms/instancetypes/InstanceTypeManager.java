@@ -178,9 +178,9 @@ public abstract class InstanceTypeManager {
         model.getInstanceTypes().getSelectedItemChangedEvent().addListener(managedFieldsManager);
         model.getTemplate().getSelectedItemChangedEvent().addListener(managedFieldsManager);
 
-        model.getOSType().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getOSType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
 
             }
         });
@@ -220,10 +220,10 @@ public abstract class InstanceTypeManager {
         return model;
     }
 
-    class ManagedFieldsManager implements IEventListener {
+    class ManagedFieldsManager implements IEventListener<EventArgs> {
 
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (!isActive()) {
                 return;
             }

@@ -192,10 +192,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             }));
         }
 
-        qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 StoragePool selectedDataCenter = qModel.getDataCenter().getSelectedItem();
                 if (selectedDataCenter == null) {
                     return;
@@ -440,10 +440,10 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
                 setWindow(qModel);
                 qModel.startProgress(null);
 
-                qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener() {
+                qModel.getDataCenter().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                         StoragePool selectedDataCenter = qModel.getDataCenter().getSelectedItem();
                         AsyncDataProvider.getInstance().getClusterList(new AsyncQuery(this, new INewAsyncCallback() {
 

@@ -72,7 +72,7 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
         this.unassignedVNumaNodesPanelPresenterWidget.setModel(model);
         supportModel.getModelReady().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 modelReady();
             }
         });

@@ -76,7 +76,7 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
 
     private UserPortalBasicListModel listModel;
 
-    private IEventListener selectedItemChangeListener;
+    private IEventListener<EventArgs> selectedItemChangeListener;
 
     @Inject
     public MainTabBasicListItemPresenterWidget(EventBus eventBus, ViewDef view, final UserPortalBasicListProvider listModelProvider) {
@@ -94,9 +94,9 @@ public class MainTabBasicListItemPresenterWidget extends PresenterWidget<MainTab
     }
 
     void addSelectedItemChangeHandler() {
-        selectedItemChangeListener = new IEventListener() {
+        selectedItemChangeListener = new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!sameEntity(listModel.getSelectedItem(), model)) {
                     getView().setNotSelected(model.isVmUp());
                 } else {

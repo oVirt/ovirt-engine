@@ -32,41 +32,41 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class AdElementListModel extends SearchableListModel
+public class AdElementListModel extends SearchableListModel<EntityModel<DbUser>>
 {
 
-    private EntityModel searchInProgress;
+    private EntityModel<Boolean> searchInProgress;
 
-    public EntityModel getSearchInProgress() {
+    public EntityModel<Boolean> getSearchInProgress() {
         return searchInProgress;
     }
 
-    public void setSearchInProgress(EntityModel searchInProgress) {
+    public void setSearchInProgress(EntityModel<Boolean> searchInProgress) {
         this.searchInProgress = searchInProgress;
     }
 
-    private Iterable privateExcludeItems;
+    private Iterable<DbUser> privateExcludeItems;
 
     private HashMap<String, List<String>> namespacesMap = new HashMap<String, List<String>>();
 
-    public Iterable getExcludeItems()
+    public Iterable<DbUser> getExcludeItems()
     {
         return privateExcludeItems;
     }
 
-    public void setExcludeItems(Iterable value)
+    public void setExcludeItems(Iterable<DbUser> value)
     {
         privateExcludeItems = value;
     }
 
-    private ListModel privateProfile;
+    private ListModel<ProfileEntry> privateProfile;
 
-    public ListModel getProfile()
+    public ListModel<ProfileEntry> getProfile()
     {
         return privateProfile;
     }
 
-    private void setProfile(ListModel value)
+    private void setProfile(ListModel<ProfileEntry> value)
     {
         privateProfile = value;
     }
@@ -81,51 +81,51 @@ public class AdElementListModel extends SearchableListModel
         return privateNamespace;
     }
 
-    private ListModel privateRole;
+    private ListModel<Role> privateRole;
 
-    public ListModel getRole()
+    public ListModel<Role> getRole()
     {
         return privateRole;
     }
 
-    private void setRole(ListModel value)
+    private void setRole(ListModel<Role> value)
     {
         privateRole = value;
     }
 
-    private EntityModel privateSelectAll;
+    private EntityModel<Boolean> privateSelectAll;
 
-    public EntityModel getSelectAll()
+    public EntityModel<Boolean> getSelectAll()
     {
         return privateSelectAll;
     }
 
-    public void setSelectAll(EntityModel value)
+    public void setSelectAll(EntityModel<Boolean> value)
     {
         privateSelectAll = value;
     }
 
     // This is required for the webadmin.
-    private EntityModel privateIsRoleListHiddenModel;
+    private EntityModel<Boolean> privateIsRoleListHiddenModel;
 
-    public EntityModel getIsRoleListHiddenModel()
+    public EntityModel<Boolean> getIsRoleListHiddenModel()
     {
         return privateIsRoleListHiddenModel;
     }
 
-    private void setIsRoleListHiddenModel(EntityModel value)
+    private void setIsRoleListHiddenModel(EntityModel<Boolean> value)
     {
         privateIsRoleListHiddenModel = value;
     }
 
-    private EntityModel privateIsEveryoneSelectionHidden;
+    private EntityModel<Boolean> privateIsEveryoneSelectionHidden;
 
-    public EntityModel getIsEveryoneSelectionHidden()
+    public EntityModel<Boolean> getIsEveryoneSelectionHidden()
     {
         return privateIsEveryoneSelectionHidden;
     }
 
-    private void setIsEveryoneSelectionHidden(EntityModel value)
+    private void setIsEveryoneSelectionHidden(EntityModel<Boolean> value)
     {
         privateIsEveryoneSelectionHidden = value;
     }
@@ -170,21 +170,21 @@ public class AdElementListModel extends SearchableListModel
 
     public AdElementListModel()
     {
-        setRole(new ListModel());
-        setProfile(new ListModel());
-        setNamespace(new ListModel());
+        setRole(new ListModel<Role>());
+        setProfile(new ListModel<ProfileEntry>());
+        setNamespace(new ListModel<String>());
 
-        setSelectAll(new EntityModel());
+        setSelectAll(new EntityModel<Boolean>());
         getSelectAll().setEntity(false);
         getSelectAll().getEntityChangedEvent().addListener(this);
 
-        setIsRoleListHiddenModel(new EntityModel());
+        setIsRoleListHiddenModel(new EntityModel<Boolean>());
         getIsRoleListHiddenModel().setEntity(false);
 
-        setIsEveryoneSelectionHidden(new EntityModel());
+        setIsEveryoneSelectionHidden(new EntityModel<Boolean>());
         getIsEveryoneSelectionHidden().setEntity(false);
 
-        setSearchInProgress(new EntityModel());
+        setSearchInProgress(new EntityModel<Boolean>());
         getSearchInProgress().setEntity(false);
 
         setIsTimerDisabled(true);
@@ -274,7 +274,7 @@ public class AdElementListModel extends SearchableListModel
     protected void syncSearch()
     {
         // allow only a single user lookup at a time
-        if ((Boolean) getSearchInProgress().getEntity()) {
+        if (getSearchInProgress().getEntity()) {
             return;
         }
         getSearchInProgress().setEntity(true);
@@ -295,7 +295,7 @@ public class AdElementListModel extends SearchableListModel
                     return;
                 }
 
-                setusers(new ArrayList<EntityModel>());
+                setusers(new ArrayList<EntityModel<DbUser>>());
                 addUsersToModel(queryReturnValue, getExcludeUsers());
                 onUserAndAdGroupsLoaded(adElementListModel);
             }
@@ -319,16 +319,12 @@ public class AdElementListModel extends SearchableListModel
                 }
 
                 HashSet<String> excludeUsers = new HashSet<String>();
-                if (adElementListModel.getExcludeItems() != null)
-                {
-                    for (Object item : adElementListModel.getExcludeItems())
-                    {
-                        DbUser a = (DbUser) item;
-
-                        excludeUsers.add(a.getExternalId());
+                if (adElementListModel.getExcludeItems() != null) {
+                    for (DbUser item : adElementListModel.getExcludeItems()) {
+                        excludeUsers.add(item.getExternalId());
                     }
                 }
-                adElementListModel.setgroups(new ArrayList<EntityModel>());
+                adElementListModel.setgroups(new ArrayList<EntityModel<DbUser>>());
                 addGroupsToModel(queryReturnValue, excludeUsers);
                 onUserAndAdGroupsLoaded(adElementListModel);
             }
@@ -342,7 +338,7 @@ public class AdElementListModel extends SearchableListModel
         for (IVdcQueryable item : (List<IVdcQueryable>) returnValue.getReturnValue()) {
             DirectoryUser a = (DirectoryUser) item;
             if (!excludeUsers.contains(a.getId())) {
-                EntityModel tempVar2 = new EntityModel();
+                EntityModel<DbUser> tempVar2 = new EntityModel<DbUser>();
                 tempVar2.setEntity(new DbUser(a));
                 getusers().add(tempVar2);
             }
@@ -365,7 +361,7 @@ public class AdElementListModel extends SearchableListModel
                 tempVar3.setNamespace(a.getNamespace());
                 DbUser user = tempVar3;
 
-                EntityModel tempVar4 = new EntityModel();
+                EntityModel<DbUser> tempVar4 = new EntityModel<DbUser>();
                 tempVar4.setEntity(user);
                 getgroups().add(tempVar4);
             }
@@ -374,9 +370,8 @@ public class AdElementListModel extends SearchableListModel
     protected Set<String> getExcludeUsers() {
         Set<String> excludeUsers = new HashSet<String>();
         if (getExcludeItems() != null) {
-            for (Object item : getExcludeItems()) {
-                DbUser a = (DbUser) item;
-                excludeUsers.add(a.getExternalId());
+            for (DbUser item : getExcludeItems()) {
+                excludeUsers.add(item.getExternalId());
             }
         }
         return excludeUsers;
@@ -385,13 +380,13 @@ public class AdElementListModel extends SearchableListModel
     protected void findGroups(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADGROUP@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        new SearchParameters("ADGROUP@" + (getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryGroup), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void findUsers(String searchString, AsyncQuery query) {
         Frontend.getInstance()
                 .runQuery(VdcQueryType.Search,
-                        new SearchParameters("ADUSER@" + ((ProfileEntry) getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+                        new SearchParameters("ADUSER@" + (getProfile().getSelectedItem()).getAuthz() + ":" + getNamespace().getSelectedItem() + ": " + searchString, SearchType.DirectoryUser), query); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
     }
 
     protected void onUserAndAdGroupsLoaded(AdElementListModel adElementListModel)
@@ -400,7 +395,7 @@ public class AdElementListModel extends SearchableListModel
         {
             getSearchInProgress().setEntity(false);
 
-            ArrayList<EntityModel> items = new ArrayList<EntityModel>();
+            ArrayList<EntityModel<DbUser>> items = new ArrayList<EntityModel<DbUser>>();
             items.addAll(getusers());
             items.addAll(getgroups());
             adElementListModel.getSelectAll().setEntity(false);
@@ -412,32 +407,32 @@ public class AdElementListModel extends SearchableListModel
         }
     }
 
-    private ArrayList<EntityModel> privateusers;
+    private ArrayList<EntityModel<DbUser>> privateusers;
 
-    public ArrayList<EntityModel> getusers()
+    public ArrayList<EntityModel<DbUser>> getusers()
     {
         return privateusers;
     }
 
-    public void setusers(ArrayList<EntityModel> value)
+    public void setusers(ArrayList<EntityModel<DbUser>> value)
     {
         privateusers = value;
     }
 
-    private ArrayList<EntityModel> privategroups;
+    private ArrayList<EntityModel<DbUser>> privategroups;
 
-    public ArrayList<EntityModel> getgroups()
+    public ArrayList<EntityModel<DbUser>> getgroups()
     {
         return privategroups;
     }
 
-    public void setgroups(ArrayList<EntityModel> value)
+    public void setgroups(ArrayList<EntityModel<DbUser>> value)
     {
         privategroups = value;
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args)
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args)
     {
         super.eventRaised(ev, sender, args);
 
@@ -447,12 +442,10 @@ public class AdElementListModel extends SearchableListModel
             {
                 return;
             }
-            boolean selectAll = (Boolean) getSelectAll().getEntity();
-            EntityModel entityModel;
-            for (Object item : getItems())
+            boolean selectAll = getSelectAll().getEntity();
+            for (EntityModel<DbUser> item : getItems())
             {
-                entityModel = (EntityModel) item;
-                entityModel.setIsSelected(selectAll);
+                item.setIsSelected(selectAll);
             }
         }
     }
@@ -486,7 +479,7 @@ public class AdElementListModel extends SearchableListModel
     }
 
     private List<String> getAuthzNamespaces() {
-        ProfileEntry profileEntry = (ProfileEntry) getProfile().getSelectedItem();
+        ProfileEntry profileEntry = getProfile().getSelectedItem();
         return profileEntry != null ? namespacesMap.get(profileEntry.getAuthz()) : Collections.<String> emptyList();
     }
 

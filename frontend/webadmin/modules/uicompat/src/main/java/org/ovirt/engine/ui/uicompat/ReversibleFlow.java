@@ -13,9 +13,9 @@ public class ReversibleFlow {
     Object context;
 
     public static final EventDefinition completeEventDefinition;
-    private Event completeEvent;
+    private Event<EventArgs> completeEvent;
 
-    public Event getCompleteEvent() {
+    public Event<EventArgs> getCompleteEvent() {
         return completeEvent;
     }
 
@@ -27,7 +27,7 @@ public class ReversibleFlow {
 
     public ReversibleFlow() {
 
-        completeEvent = new Event(completeEventDefinition);
+        completeEvent = new Event<EventArgs>(completeEventDefinition);
         notifications = new ArrayList<IEnlistmentNotification>();
     }
 
@@ -61,25 +61,25 @@ public class ReversibleFlow {
         PreparingEnlistment enlistment = new PreparingEnlistment(context);
 
         enlistment.getPreparedEvent().addListener(
-            new IEventListener() {
+            new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     preparedHandler();
                 }
             });
 
         enlistment.getRollbackEvent().addListener(
-            new IEventListener() {
+            new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     rollbackHandler();
                 }
             });
 
         enlistment.getDoneEvent().addListener(
-            new IEventListener() {
+            new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     doneOnPrepareHandler();
                 }
             });
@@ -93,9 +93,9 @@ public class ReversibleFlow {
         Enlistment enlistment = new Enlistment(context);
 
         enlistment.getDoneEvent().addListener(
-            new IEventListener() {
+            new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     doneOnCommitHandler();
                 }
             });
@@ -109,9 +109,9 @@ public class ReversibleFlow {
         Enlistment enlistment = new Enlistment(context);
 
         enlistment.getDoneEvent().addListener(
-            new IEventListener() {
+            new IEventListener<EventArgs>() {
                 @Override
-                public void eventRaised(Event ev, Object sender, EventArgs args) {
+                public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                     doneOnRollbackHandler();
                 }
             });

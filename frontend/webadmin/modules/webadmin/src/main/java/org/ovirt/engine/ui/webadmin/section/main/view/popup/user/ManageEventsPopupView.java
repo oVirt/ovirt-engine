@@ -11,7 +11,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.uicommonweb.models.common.SelectionTreeNodeModel;
 import org.ovirt.engine.ui.uicommonweb.models.users.EventNotificationModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -125,11 +124,11 @@ public class ManageEventsPopupView extends AbstractModelBoundPopupView<EventNoti
         driver.edit(object);
 
         // Listen to Properties
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 EventNotificationModel model = (EventNotificationModel) sender;
-                String propertyName = ((PropertyChangedEventArgs) args).propertyName;
+                String propertyName = args.propertyName;
                 if ("EventGroupModels".equals(propertyName)) { //$NON-NLS-1$
                     updateTree(model);
                 }

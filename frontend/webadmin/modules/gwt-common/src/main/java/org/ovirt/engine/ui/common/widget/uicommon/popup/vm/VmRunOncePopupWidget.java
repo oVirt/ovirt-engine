@@ -412,40 +412,40 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         runOnceModel = object;
 
         // Update Linux options panel
-        final EntityModel isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();
-        object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener(new IEventListener() {
+        final EntityModel<Boolean> isLinuxOptionsAvailable = object.getIsLinuxOptionsAvailable();
+        object.getIsLinuxOptionsAvailable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                boolean isLinux = (Boolean) isLinuxOptionsAvailable.getEntity();
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                boolean isLinux = isLinuxOptionsAvailable.getEntity();
                 linuxBootOptionsPanel.setVisible(isLinux);
             }
         });
 
-        object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsSysprepEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateSysprepVisibility(object);
             }
         });
 
-        object.getIsCloudInitPossible().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsCloudInitPossible().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateCloudInitVisibility(object);
                 updateInitialRunTabVisibility(object);
             }
         });
 
-        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsCloudInitEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateCloudInitVisibility(object);
             }
         });
 
-        object.getIsSysprepPossible().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsSysprepPossible().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateSysprepVisibility(object);
                 updateInitialRunTabVisibility(object);
             }
@@ -453,9 +453,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
 
         // Update Host combo
         object.getIsAutoAssign().getPropertyChangedEvent()
-                .addListener(new IEventListener() {
+                .addListener(new IEventListener<PropertyChangedEventArgs>() {
                     @Override
-                    public void eventRaised(Event ev, Object sender, EventArgs args) {
+                    public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                         boolean isAutoAssign = object.getIsAutoAssign().getEntity();
                         defaultHostEditor.setEnabled(!isAutoAssign);
                         // only this is not bind tloudInitSubo the model, so needs to
@@ -479,18 +479,18 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
             }
         }, ClickEvent.getType());
 
-        object.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener() {
+        object.getIsAutoAssign().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!isAutoAssignEditor.asRadioButton().getValue())
                     specificHost.setValue(true, true);
             }
         });
 
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if ("IsHostTabVisible".equals(propName)) { //$NON-NLS-1$
                     hostPanel.setVisible(object.getIsHostTabVisible());
                 } else if ("IsCustomPropertiesSheetVisible".equals(propName)) { //$NON-NLS-1$
@@ -557,9 +557,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         updateBootSequenceItems();
 
         // Items change handling
-        bootSequenceModel.getItems().getCollectionChangedEvent().addListener(new IEventListener() {
+        bootSequenceModel.getItems().getCollectionChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateBootSequenceItems();
 
                 // Update selected item
@@ -568,9 +568,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         });
 
         // Attach CD change handling
-        bootSequenceModel.getCdromOption().getPropertyChangedEvent().addListener(new IEventListener() {
+        bootSequenceModel.getCdromOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 boolean isEnabled = bootSequenceModel.getCdromOption().getIsChangable();
                 String itemName = bootSequenceModel.getCdromOption().getTitle();
                 updateItemAvailability(itemName, isEnabled);
@@ -578,9 +578,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         });
 
         // NIC change handling
-        bootSequenceModel.getNetworkOption().getPropertyChangedEvent().addListener(new IEventListener() {
+        bootSequenceModel.getNetworkOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 boolean isEnabled = bootSequenceModel.getNetworkOption().getIsChangable();
                 String itemName = bootSequenceModel.getNetworkOption().getTitle();
                 updateItemAvailability(itemName, isEnabled);
@@ -588,9 +588,9 @@ public class VmRunOncePopupWidget extends AbstractModelBoundPopupWidget<RunOnceM
         });
 
         // Hard disk change handling
-        bootSequenceModel.getHardDiskOption().getPropertyChangedEvent().addListener(new IEventListener() {
+        bootSequenceModel.getHardDiskOption().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 boolean isEnabled = bootSequenceModel.getHardDiskOption().getIsChangable();
                 String itemName = bootSequenceModel.getHardDiskOption().getTitle();
                 updateItemAvailability(itemName, isEnabled);

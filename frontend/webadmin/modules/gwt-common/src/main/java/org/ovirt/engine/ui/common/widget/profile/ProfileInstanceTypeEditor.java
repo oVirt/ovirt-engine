@@ -75,10 +75,10 @@ public class ProfileInstanceTypeEditor extends AbstractModelBoundPopupWidget<Vni
         profileEditor.addContentWidgetStyleName(style.contentStyle());
         profileEditor.setElementId(ElementIdUtils.createElementId(elementId, model.getNetworkInterface().getName()));
         syncSelectedItemWithNetworkInterface(model);
-        model.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 syncSelectedItemWithNetworkInterface(model);
                 ValueChangeEvent.fire(ProfileInstanceTypeEditor.this, model);
             }

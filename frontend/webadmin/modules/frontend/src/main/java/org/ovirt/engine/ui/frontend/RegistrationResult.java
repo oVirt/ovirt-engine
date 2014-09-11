@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.frontend;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
@@ -11,13 +12,13 @@ public final class RegistrationResult {
      Raised once when a first result retrievement occurs.
 
     */
-    private Event privateRetrievedEvent;
+    private Event<EventArgs> privateRetrievedEvent;
 
-    public Event getRetrievedEvent() {
+    public Event<EventArgs> getRetrievedEvent() {
         return privateRetrievedEvent;
     }
 
-    private void setRetrievedEvent(Event value) {
+    private void setRetrievedEvent(Event<EventArgs> value) {
         privateRetrievedEvent = value;
     }
 
@@ -59,7 +60,7 @@ public final class RegistrationResult {
 
     public RegistrationResult(Guid id, ObservableCollection<IVdcQueryable> data)
     {
-        setRetrievedEvent(new Event(RetrievedEventDefinition));
+        setRetrievedEvent(new Event<EventArgs>(RetrievedEventDefinition));
 
         setId(id);
         setData(data);

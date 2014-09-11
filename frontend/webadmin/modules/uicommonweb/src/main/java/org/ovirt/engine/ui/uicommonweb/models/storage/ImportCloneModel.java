@@ -66,10 +66,10 @@ public class ImportCloneModel extends ConfirmationModel {
         setSuffix(new EntityModel<String>());
         getSuffix().setIsChangable(false);
         getSuffix().setEntity("_Copy"); //$NON-NLS-1$
-        getClone().getEntityChangedEvent().addListener(new IEventListener() {
+        getClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean value = getClone().getEntity();
                 if (value) {
                     getNoClone().setEntity(false);
@@ -81,10 +81,10 @@ public class ImportCloneModel extends ConfirmationModel {
                 }
             }
         });
-        getNoClone().getEntityChangedEvent().addListener(new IEventListener() {
+        getNoClone().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean value = getNoClone().getEntity();
                 if (value) {
                     getClone().setEntity(false);
@@ -93,10 +93,10 @@ public class ImportCloneModel extends ConfirmationModel {
                 }
             }
         });
-        getApplyToAll().getEntityChangedEvent().addListener(new IEventListener() {
+        getApplyToAll().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!getNoClone().getEntity()) {
                     Boolean value = getApplyToAll().getEntity();
                     getSuffix().setIsChangable(value);

@@ -72,13 +72,13 @@ public class FrontendTest {
     @Mock
     ErrorTranslator mockCanDoActionErrorsTranslator;
     @Mock
-    Event queryCompleteEvent;
+    Event<EventArgs> queryCompleteEvent;
     @Mock
-    Event queryStartEvent;
+    Event<EventArgs> queryStartEvent;
     @Mock
-    Event mockFrontendNotLoggedInEvent;
+    Event<EventArgs> mockFrontendNotLoggedInEvent;
     @Mock
-    Event mockFrontendFailureEvent;
+    Event<FrontendFailureEventArgs> mockFrontendFailureEvent;
     @Mock
     IFrontendEventsHandler mockEventsHandler;
     @Mock

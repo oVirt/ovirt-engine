@@ -77,9 +77,9 @@ public class AbstractSubTabTreeWidgetView<I, T, M extends ListWithDetailsModel, 
         headerTableContainer.add(table);
         treeContainer.add(tree);
 
-        modelBoundTreeWidget.getModel().getItemsChangedEvent().addListener(new IEventListener() {
+        modelBoundTreeWidget.getModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 table.setRowData(new ArrayList<EntityModel>());
             }
         });

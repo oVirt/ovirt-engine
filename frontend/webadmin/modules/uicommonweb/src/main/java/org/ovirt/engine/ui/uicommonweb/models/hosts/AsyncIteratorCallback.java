@@ -5,20 +5,20 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 
-public class AsyncIteratorCallback {
+public class AsyncIteratorCallback<T> {
 
     public static final EventDefinition notifyEventDefinition;
 
-    private Event notifyEvent;
+    private Event<ValueEventArgs<T>> notifyEvent;
 
     /**
      * Notifies iterator about item retrieval completion.
      */
-    public Event getNotifyEvent() {
+    public Event<ValueEventArgs<T>> getNotifyEvent() {
         return notifyEvent;
     }
 
-    private void setNotifyEvent(Event value) {
+    private void setNotifyEvent(Event<ValueEventArgs<T>> value) {
         notifyEvent = value;
     }
 
@@ -41,18 +41,14 @@ public class AsyncIteratorCallback {
 
     public AsyncIteratorCallback(String frontendContext) {
 
-        setNotifyEvent(new Event(notifyEventDefinition));
+        setNotifyEvent(new Event<ValueEventArgs<T>>(notifyEventDefinition));
 
         // Set a stub method calling notify event on AsyncQuery complete.
         setAsyncQuery(new AsyncQuery(this,
                 new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object target, Object returnValue) {
-
-                        AsyncIteratorCallback callback = (AsyncIteratorCallback) target;
-                        Event notifyEvent = callback.getNotifyEvent();
-
-                        notifyEvent.raise(this, new ValueEventArgs(returnValue));
+                        notifyEvent.raise(this, new ValueEventArgs<T>((T) returnValue));
                     }
                 },
                 frontendContext));

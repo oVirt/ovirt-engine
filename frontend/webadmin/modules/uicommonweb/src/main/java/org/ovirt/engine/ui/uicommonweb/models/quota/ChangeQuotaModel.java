@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
-public class ChangeQuotaModel extends ListModel {
+public class ChangeQuotaModel extends ListModel<ChangeQuotaItemModel> {
 
     public void init(final ArrayList<DiskImage> disks) {
         ArrayList<VdcQueryType> queryTypeList = new ArrayList<VdcQueryType>();
@@ -65,7 +65,7 @@ public class ChangeQuotaModel extends ListModel {
                         itemModel.setStorageDomainId(storageDomainId);
                         itemModel.setStorageDomainName(diskImage.getStoragesNames().get(i));
                         itemModel.getQuota().setItems(storageDomainIdMap.get(storageDomainId));
-                        for (Quota quota : (ArrayList<Quota>) itemModel.getQuota().getItems()) {
+                        for (Quota quota : itemModel.getQuota().getItems()) {
                             if (!quota.getId().equals(diskImage.getQuotaId())) {
                                 itemModel.getQuota().setSelectedItem(quota);
                                 break;

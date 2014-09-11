@@ -9,24 +9,23 @@ import org.ovirt.engine.ui.uicommonweb.Configurator;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ISpice;
 import org.ovirt.engine.ui.uicommonweb.models.vms.WANDisableEffects;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class WebAdminConfigurator extends Configurator implements IEventListener {
+public class WebAdminConfigurator extends Configurator implements IEventListener<Configurator.FileFetchEventArgs> {
 
     public static final String DOCUMENTATION_GUIDE_PATH = "Administration_Guide/index.html"; //$NON-NLS-1$
 
     public EventDefinition spiceVersionFileFetchedEvent_Definition =
             new EventDefinition("spiceVersionFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
-    public Event spiceVersionFileFetchedEvent = new Event(spiceVersionFileFetchedEvent_Definition);
+    public Event<FileFetchEventArgs> spiceVersionFileFetchedEvent = new Event<FileFetchEventArgs>(spiceVersionFileFetchedEvent_Definition);
 
     public EventDefinition documentationFileFetchedEvent_Definition =
         new EventDefinition("documentationFileFetched", WebAdminConfigurator.class); //$NON-NLS-1$
-    public Event documentationFileFetchedEvent = new Event(documentationFileFetchedEvent_Definition);
+    public Event<FileFetchEventArgs> documentationFileFetchedEvent = new Event<FileFetchEventArgs>(documentationFileFetchedEvent_Definition);
 
     private final ClientAgentType clientAgentType;
 
@@ -49,12 +48,12 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends FileFetchEventArgs> ev, Object sender, FileFetchEventArgs args) {
         if (ev.matchesDefinition(spiceVersionFileFetchedEvent_Definition)) {
-            Version spiceVersion = parseVersion(((FileFetchEventArgs) args).getFileContent());
+            Version spiceVersion = parseVersion(args.getFileContent());
             setSpiceVersion(spiceVersion);
         } else if (ev.matchesDefinition(documentationFileFetchedEvent_Definition)) {
-            String documentationPathFileContent = ((FileFetchEventArgs) args).getFileContent();
+            String documentationPathFileContent = args.getFileContent();
             DocumentationPathTranslator.init(documentationPathFileContent);
         }
     }
@@ -67,7 +66,7 @@ public class WebAdminConfigurator extends Configurator implements IEventListener
     }
 
     @Override
-    protected Event getSpiceVersionFileFetchedEvent() {
+    protected Event<FileFetchEventArgs> getSpiceVersionFileFetchedEvent() {
         return spiceVersionFileFetchedEvent;
     }
 

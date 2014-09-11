@@ -63,7 +63,7 @@ public class ConnectAutomaticallyManager {
         listener.register();
     }
 
-    class EventChangeListener implements IEventListener {
+    class EventChangeListener implements IEventListener<EventArgs> {
 
         private final AbstractUserPortalListModel model;
 
@@ -80,7 +80,7 @@ public class ConnectAutomaticallyManager {
         }
 
         @Override
-        public void eventRaised(Event ev, Object sender, EventArgs args) {
+        public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             if (connectAutomatically.readConnectAutomatically() && model.getCanConnectAutomatically() && !alreadyOpened) {
                 try {
                     model.getAutoConnectableConsoles().get(0).connect();

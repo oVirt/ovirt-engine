@@ -390,7 +390,7 @@ public class VmDiskAttachPopupWidget extends AbstractModelBoundPopupWidget<Attac
         // Add event handlers
         disk.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 String propName = args.propertyName;
                 if (propName.equals("IsValid")) { //$NON-NLS-1$
                     if (disk.getIsValid()) {

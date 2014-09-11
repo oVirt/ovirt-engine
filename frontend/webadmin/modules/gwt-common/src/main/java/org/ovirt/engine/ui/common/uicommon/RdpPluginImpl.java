@@ -10,19 +10,18 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.IRdpPlugin;
 import org.ovirt.engine.ui.uicommonweb.models.vms.RdpConsoleModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.EventDefinition;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.user.client.Window;
 
-public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventListener {
+public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventListener<ErrorCodeEventArgs> {
 
     private static final Logger logger = Logger.getLogger(RdpPluginImpl.class.getName());
 
     private static EventDefinition RdpDisconnectedEventDefinition = new EventDefinition("RdpDisconnected", RdpConsoleModel.class); //$NON-NLS-1$
-    private final Event disconnectedEvent = new Event(RdpDisconnectedEventDefinition);
+    private final Event<ErrorCodeEventArgs> disconnectedEvent = new Event<ErrorCodeEventArgs>(RdpDisconnectedEventDefinition);
     private RdpConsoleModel parentModel;
 
     private final ConsoleUtils consoleUtils;
@@ -53,9 +52,9 @@ public class RdpPluginImpl extends AbstractRdp implements IRdpPlugin, IEventList
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends ErrorCodeEventArgs> ev, Object sender, ErrorCodeEventArgs args) {
         if (disconnectedEvent.equals(ev)) {
-            rdpDisconnected(sender, (ErrorCodeEventArgs) args);
+            rdpDisconnected(sender, args);
         }
     }
 

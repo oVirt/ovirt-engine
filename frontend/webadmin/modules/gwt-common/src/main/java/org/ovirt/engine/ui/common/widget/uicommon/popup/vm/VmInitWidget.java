@@ -591,9 +591,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        model.getNetworkList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getNetworkList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 // Can't use ListModel.isEmpty() because ListModel.SetItems(<empty list>)) will
                 // cause the ItemsChanged and SelectedItemChanged events to be fired before we
                 // can update the isEmpty() flag, causing erroneous readings upon item removal.
@@ -601,40 +601,36 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
             }
         });
 
-        model.getNetworkBootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        model.getNetworkBootProtocolList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 setNetworkStaticDetailsStyle(model.getNetworkBootProtocolList().getSelectedItem() != null
                         && model.getNetworkBootProtocolList().getSelectedItem() == NetworkBootProtocol.STATIC_IP);
             }
         });
 
-        model.getCloudInitPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getCloudInitPasswordSet().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (args != null && args instanceof PropertyChangedEventArgs) {
-                    String propName = ((PropertyChangedEventArgs) args).propertyName;
-                    if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                        cloudInitPasswordSetEditor.setTitle(
-                                model.getCloudInitPasswordSet().getIsChangable() ?
-                                constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
-                        );
-                    }
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
+                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                    cloudInitPasswordSetEditor.setTitle(
+                            model.getCloudInitPasswordSet().getIsChangable() ?
+                            constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
+                    );
                 }
             }
         });
 
-        model.getSysprepPasswordSet().getPropertyChangedEvent().addListener(new IEventListener() {
+        model.getSysprepPasswordSet().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if (args != null && args instanceof PropertyChangedEventArgs) {
-                    String propName = ((PropertyChangedEventArgs) args).propertyName;
-                    if ("IsChangable".equals(propName)) { //$NON-NLS-1$
-                        sysprepPasswordSetEditor.setTitle(
-                                model.getSysprepPasswordSet().getIsChangable() ?
-                                constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
-                        );
-                    }
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
+                if ("IsChangable".equals(propName)) { //$NON-NLS-1$
+                    sysprepPasswordSetEditor.setTitle(
+                            model.getSysprepPasswordSet().getIsChangable() ?
+                            constants.vmInitPasswordSetToolTip() : constants.vmInitPasswordNotSetToolTip()
+                    );
                 }
             }
         });
@@ -649,9 +645,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         if (model.getTimeZoneEnabled().getEntity() != null) {
             timeZoneEnabledEditor.setEnabled(model.getTimeZoneEnabled().getEntity());
         }
-        model.getWindowsSysprepTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getWindowsSysprepTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 windowsSysprepTimeZoneEditor.setEnabled(model.getWindowsSysprepTimeZoneEnabled().getEntity());
             }
         });
@@ -659,9 +655,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         if (model.getWindowsSysprepTimeZoneEnabled().getEntity() != null) {
             windowsSysprepTimeZoneEditor.setEnabled(model.getWindowsSysprepTimeZoneEnabled().getEntity());
         }
-        model.getTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getTimeZoneEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 timeZoneEditor.setEnabled(model.getTimeZoneEnabled().getEntity());
             }
         });
@@ -669,9 +665,9 @@ public abstract class VmInitWidget extends AbstractModelBoundPopupWidget<VmInitM
         if (model.getNetworkEnabled().getEntity() != null) {
             networkEnabledEditor.setEnabled(model.getNetworkEnabled().getEntity());
         }
-        model.getNetworkEnabled().getEntityChangedEvent().addListener(new IEventListener() {
+        model.getNetworkEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 boolean enabled = model.getNetworkEnabled().getEntity();
                 networkAddButton.setEnabled(enabled);
                 setLabelEnabled(networkAddLabel, enabled);

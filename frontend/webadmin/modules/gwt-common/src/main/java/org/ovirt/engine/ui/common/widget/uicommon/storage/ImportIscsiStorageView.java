@@ -85,18 +85,18 @@ public class ImportIscsiStorageView extends AbstractStorageView<ImportIscsiStora
     }
 
     private void addEventsHandlers(final ImportIscsiStorageModel object) {
-        object.getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
                 if (propName.equals("IsValid")) { //$NON-NLS-1$
                     onIsValidPropertyChange(object);
                 }
             }
         });
-        object.getTargets().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        object.getTargets().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (object.getTargets().getSelectedItems() != null && object.getTargets().getSelectedItems().isEmpty()) {
                     // Clear items selection
                     ((MultiSelectionModel) targetsTable.getSelectionModel()).clear();

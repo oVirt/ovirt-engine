@@ -80,7 +80,7 @@ public class SerialNumberPolicyModel extends Model {
     }
 
     @Override
-    public void eventRaised(Event ev, Object sender, EventArgs args) {
+    public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
         if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
             if (sender == getOverrideSerialNumberPolicy()) {
                 overrideSerialNumberPolicyChanged();

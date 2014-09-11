@@ -37,7 +37,6 @@ import org.ovirt.engine.ui.frontend.communication.VdcOperationManager;
 import org.ovirt.engine.ui.frontend.communication.XsrfRpcRequestBuilder;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTServiceAsync;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
@@ -83,7 +82,7 @@ public class FrontendActionTest {
     @Mock
     IFrontendEventsHandler mockEventsHandler;
     @Mock
-    Event mockFrontendFailureEvent;
+    Event<FrontendFailureEventArgs> mockFrontendFailureEvent;
     @Mock
     FrontendLoginHandler mockLoginHandler;
     @Mock
@@ -726,7 +725,7 @@ public class FrontendActionTest {
                 callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockEventsHandler, never()).runQueryFailed(null);
         verify(mockAsyncQuery, never()).isHandleFailure();
     }
@@ -752,7 +751,7 @@ public class FrontendActionTest {
                 callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockEventsHandler, never()).runQueryFailed(null);
         verify(mockAsyncQuery, never()).isHandleFailure();
     }
@@ -781,7 +780,7 @@ public class FrontendActionTest {
                 "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
         verify(mockEventsHandler).runQueryFailed(null);
-        verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         assertNull("Logged in user should be null", frontend.getLoggedInUser()); //$NON-NLS-1$
         verify(mockAsyncCallback).onSuccess(any(), any());
     }
@@ -813,7 +812,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
         verify(mockLoginHandler).onLoginSuccess(testUser, testPassword, testProfile);
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
     }
 
     /**
@@ -843,7 +842,7 @@ public class FrontendActionTest {
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
         verify(mockLoginHandler, never()).onLoginSuccess(testUser, testPassword, testProfile);
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
     }
 
     /**
@@ -866,7 +865,7 @@ public class FrontendActionTest {
         verify(mockService).logOff(eq(testUser), callbackAction.capture());
         StatusCodeException exception = new StatusCodeException(0, "0 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
-        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockEventsHandler, never()).runQueryFailed(null);
         verify(mockAsyncCallback, never()).onSuccess(model, null);
     }
@@ -892,7 +891,7 @@ public class FrontendActionTest {
         StatusCodeException exception = new StatusCodeException(HttpServletResponse.SC_NOT_FOUND,
                 "404 status code"); //$NON-NLS-1$
         callbackAction.getValue().onFailure(exception);
-        verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (EventArgs) any());
+        verify(mockFrontendFailureEvent).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
         verify(mockEventsHandler).runQueryFailed(null);
         verify(mockAsyncCallback).onSuccess(model, null);
     }

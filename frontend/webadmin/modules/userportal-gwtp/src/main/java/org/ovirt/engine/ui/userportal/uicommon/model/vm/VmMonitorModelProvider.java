@@ -4,7 +4,6 @@ import org.ovirt.engine.ui.common.presenter.popup.DefaultConfirmationPopupPresen
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
@@ -28,10 +27,10 @@ public class VmMonitorModelProvider extends UserPortalDetailModelProvider<UserPo
     protected void initializeModelHandlers() {
         super.initializeModelHandlers();
 
-        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                String propName = ((PropertyChangedEventArgs) args).propertyName;
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
 
                 if ("CpuUsage".equals(propName) || "MemoryUsage".equals(propName) || "NetworkUsage".equals(propName)) { //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
                     VmMonitorValueChangeEvent.fire(getEventBus());

@@ -40,10 +40,10 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
         okCommand.setIsDefault(true);
         getCommands().add(0, okCommand);
 
-        getItemsChangedEvent().addListener(new IEventListener() {
+        getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 for (ClusterNetworkModel model : getItems()) {
                     if (model.isManagement()) {
                         managementNetwork = model;

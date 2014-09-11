@@ -100,7 +100,7 @@ public class NewClusterPolicyModel extends Model {
             }
         }
 
-        PolicyUnit selectedItem = (PolicyUnit) loadBalanceList.getSelectedItem();
+        PolicyUnit selectedItem = loadBalanceList.getSelectedItem();
         allPolicyUnits.put(selectedItem.getId(), selectedItem);
         for (PolicyUnit policyUnit : allPolicyUnits.values()) {
             if (policyUnit.getParameterRegExMap() != null) {
@@ -168,12 +168,12 @@ public class NewClusterPolicyModel extends Model {
         }
         getLoadBalanceList().setIsChangable(!clusterPolicy.isLocked());
         getLoadBalanceList().setSelectedItem(currentLoadBalance);
-        getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getLoadBalanceList().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 refreshCustomProperties(currentLoadBalance, false);
-                currentLoadBalance = (PolicyUnit) getLoadBalanceList().getSelectedItem();
+                currentLoadBalance = getLoadBalanceList().getSelectedItem();
             }
         });
     }
@@ -257,8 +257,8 @@ public class NewClusterPolicyModel extends Model {
     }
 
     private boolean customPropertiesInitialized = false;
-    private Event filtersChangedEvent;
-    private Event functionsChangedEvent;
+    private Event<EventArgs> filtersChangedEvent;
+    private Event<EventArgs> functionsChangedEvent;
     private final EntityModel sourceModel;
     private final ClusterPolicy clusterPolicy;
     private final CommandType commandType;
@@ -301,8 +301,8 @@ public class NewClusterPolicyModel extends Model {
         setFilterList(new ListModel());
         setFunctionList(new ListModel());
         setLoadBalanceList(new ListModel<PolicyUnit>());
-        setFiltersChangedEvent(new Event(FILTERS_CHANGED_EVENT_DEFINITION));
-        setFunctionsChangedEvent(new Event(FUNCTIONS_CHANGED_EVENT_DEFINITION));
+        setFiltersChangedEvent(new Event<EventArgs>(FILTERS_CHANGED_EVENT_DEFINITION));
+        setFunctionsChangedEvent(new Event<EventArgs>(FUNCTIONS_CHANGED_EVENT_DEFINITION));
     }
 
     public EntityModel<String> getName() {
@@ -381,11 +381,11 @@ public class NewClusterPolicyModel extends Model {
         return filterPositionMap;
     }
 
-    public Event getFiltersChangedEvent() {
+    public Event<EventArgs> getFiltersChangedEvent() {
         return filtersChangedEvent;
     }
 
-    public void setFiltersChangedEvent(Event filtersChangedEvent) {
+    public void setFiltersChangedEvent(Event<EventArgs> filtersChangedEvent) {
         this.filtersChangedEvent = filtersChangedEvent;
     }
 
@@ -401,11 +401,11 @@ public class NewClusterPolicyModel extends Model {
         return customProperties;
     }
 
-    public Event getFunctionsChangedEvent() {
+    public Event<EventArgs> getFunctionsChangedEvent() {
         return functionsChangedEvent;
     }
 
-    public void setFunctionsChangedEvent(Event functionsChangedEvent) {
+    public void setFunctionsChangedEvent(Event<EventArgs> functionsChangedEvent) {
         this.functionsChangedEvent = functionsChangedEvent;
     }
 
@@ -508,8 +508,8 @@ public class NewClusterPolicyModel extends Model {
         startProgress(null);
         ClusterPolicy policy = new ClusterPolicy();
         policy.setId(clusterPolicy.getId());
-        policy.setName((String) getName().getEntity());
-        policy.setDescription((String) getDescription().getEntity());
+        policy.setName(getName().getEntity());
+        policy.setDescription(getDescription().getEntity());
         ArrayList<Guid> keys = new ArrayList<Guid>();
         for (PolicyUnit clusterPolicy : getUsedFilters()) {
             keys.add(clusterPolicy.getId());
@@ -521,7 +521,7 @@ public class NewClusterPolicyModel extends Model {
             pairs.add(new Pair<Guid, Integer>(pair.getFirst().getId(), pair.getSecond()));
         }
         policy.setFunctions(pairs);
-        policy.setBalance(((PolicyUnit) getLoadBalanceList().getSelectedItem()).getId());
+        policy.setBalance(getLoadBalanceList().getSelectedItem().getId());
         policy.setParameterMap(KeyValueModel.convertProperties(getCustomPropertySheet().serialize()));
         Frontend.getInstance().runAction(commandType == CommandType.Edit ? VdcActionType.EditClusterPolicy
                 : VdcActionType.AddClusterPolicy,

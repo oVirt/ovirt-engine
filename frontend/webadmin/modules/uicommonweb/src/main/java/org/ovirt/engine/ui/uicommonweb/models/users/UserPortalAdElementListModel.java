@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.users;
 import java.util.ArrayList;
 import java.util.Set;
 
-import org.ovirt.engine.core.aaa.ProfileEntry;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -43,7 +42,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
     private DbUser getTargetDbUser() {
         DbUser dbUser = new DbUser();
         dbUser.setLoginName(getSearchString());
-        dbUser.setDomain(((ProfileEntry) getProfile().getSelectedItem()).getAuthz());
+        dbUser.setDomain((getProfile().getSelectedItem()).getAuthz());
         return dbUser;
     }
 
@@ -74,7 +73,7 @@ public class UserPortalAdElementListModel extends AdElementListModel {
     private DbGroup getTargetDbGroup() {
         DbGroup dbGroup = new DbGroup();
         dbGroup.setName(getSearchString());
-        dbGroup.setDomain(((ProfileEntry) getProfile().getSelectedItem()).getAuthz());
+        dbGroup.setDomain((getProfile().getSelectedItem()).getAuthz());
         return dbGroup;
     }
 

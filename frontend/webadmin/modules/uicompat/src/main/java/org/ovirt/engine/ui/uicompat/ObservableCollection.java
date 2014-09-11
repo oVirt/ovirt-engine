@@ -6,10 +6,10 @@ import java.util.Collection;
 
 public class ObservableCollection<T> extends ArrayList<T> implements IProvideCollectionChangedEvent {
 
-    private Event collectionChangedEvent;
+    private Event<EventArgs> collectionChangedEvent;
 
     public ObservableCollection() {
-        setCollectionChangedEvent(new Event(ProvideCollectionChangedEvent.Definition));
+        setCollectionChangedEvent(new Event<EventArgs>(ProvideCollectionChangedEvent.Definition));
     }
 
     /** Moves a collection element from the index sourceIndex to the index destIndex
@@ -35,11 +35,11 @@ public class ObservableCollection<T> extends ArrayList<T> implements IProvideCol
     }
 
     @Override
-    public Event getCollectionChangedEvent() {
+    public Event<EventArgs> getCollectionChangedEvent() {
         return collectionChangedEvent;
     }
 
-    private void setCollectionChangedEvent(Event collectionChangedEvent) {
+    private void setCollectionChangedEvent(Event<EventArgs> collectionChangedEvent) {
         this.collectionChangedEvent = collectionChangedEvent;
     }
 

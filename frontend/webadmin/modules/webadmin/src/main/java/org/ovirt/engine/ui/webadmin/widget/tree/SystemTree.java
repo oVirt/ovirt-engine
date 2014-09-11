@@ -103,9 +103,9 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
 
     private void addModelListeners(final SystemTreeModelProvider modelProvider) {
         final SystemTreeModel treeModel = modelProvider.getModel();
-        treeModel.getItemsChangedEvent().addListener(new IEventListener() {
+        treeModel.getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (modelProvider.getModel().getSelectedItem() == null) {
                     expandTree(getDataDisplayWidget().getRootTreeNode(), ITEM_LEVEL);
                 } else {
@@ -113,15 +113,15 @@ public class SystemTree extends AbstractActionStackPanelItem<SystemTreeModelProv
                 }
             }
         });
-        treeModel.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        treeModel.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 expandPath(modelProvider.getSelectionModel().getSelectedObject());
             }
         });
-        treeModel.getBeforeItemsChangedEvent().addListener(new IEventListener() {
+        treeModel.getBeforeItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 //Empty the state map so we can capture the new state.
                 nodeStateMap.clear();
                 getNodeOpenMap(getDataDisplayWidget().getRootTreeNode(), nodeStateMap );

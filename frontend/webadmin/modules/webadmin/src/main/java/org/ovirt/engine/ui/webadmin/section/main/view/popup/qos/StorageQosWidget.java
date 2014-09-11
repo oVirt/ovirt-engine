@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBo
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParametersModel;
 import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -86,7 +85,7 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
     IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
     private StorageQosParametersModel model;
-    private final IEventListener availabilityListener;
+    private final IEventListener<PropertyChangedEventArgs> availabilityListener;
 
     public StorageQosWidget(ApplicationConstants constants) {
         throughputEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -98,11 +97,11 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
         localize(constants);
         driver.initialize(this);
 
-        availabilityListener = new IEventListener() {
+        availabilityListener = new IEventListener<PropertyChangedEventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("IsAvailable".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     toggleVisibility();
                 }
             }

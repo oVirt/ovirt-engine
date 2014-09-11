@@ -96,18 +96,18 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         setDescription(new EntityModel<String>());
         setComment(new EntityModel<String>());
         setDataCenters(new ListModel<StoragePool>());
-        getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getDataCenters().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 syncWithBackend();
             }
         });
         setExport(new EntityModel<Boolean>(false));
-        getExport().getEntityChangedEvent().addListener(new IEventListener() {
+        getExport().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 onExportChanged();
             }
         });
@@ -125,9 +125,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         EntityModel<Boolean> hasVlanTag = new EntityModel<Boolean>();
         hasVlanTag.setEntity(false);
         setHasVLanTag(hasVlanTag);
-        getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener() {
+        getHasVLanTag().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateVlanTagChangeability();
             }
         });
@@ -135,10 +135,10 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         ListModel<MtuSelector> mtuSelector = new ListModel<MtuSelector>();
         mtuSelector.setItems(Arrays.asList(MtuSelector.values()));
         setMtuSelector(mtuSelector);
-        mtuSelector.getSelectedItemChangedEvent().addListener(new IEventListener() {
+        mtuSelector.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateMtuSelectorsChangeability();
             }
         });
@@ -148,9 +148,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         EntityModel<Boolean> isVmNetwork = new EntityModel<Boolean>();
         isVmNetwork.setEntity(true);
         setIsVmNetwork(isVmNetwork);
-        isVmNetwork.getEntityChangedEvent().addListener(new IEventListener() {
+        isVmNetwork.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 toggleProfilesAvailability();
             }
         });
@@ -167,9 +167,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 
         EntityModel<Boolean> createSubnet = new EntityModel<Boolean>(false);
         setCreateSubnet(createSubnet);
-        createSubnet.getEntityChangedEvent().addListener(new IEventListener() {
+        createSubnet.getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 updateSubnetChangeability();
             }
         });
@@ -189,20 +189,20 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 
         // make sure default profile's name is in sync with network's name
         defaultProfile.getName().setEntity(getName().getEntity());
-        final IEventListener networkNameListener = new IEventListener() {
+        final IEventListener<EventArgs> networkNameListener = new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 defaultProfile.getName().setEntity(getName().getEntity());
             }
         };
         getName().getEntityChangedEvent().addListener(networkNameListener);
 
         // if user overrides default name, stop tracking network's name
-        defaultProfile.getName().getEntityChangedEvent().addListener(new IEventListener() {
+        defaultProfile.getName().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (!defaultProfile.getName().getEntity().equals(getName().getEntity())) {
                     getName().getEntityChangedEvent().removeListener(networkNameListener);
                     defaultProfile.getName().getEntityChangedEvent().removeListener(this);

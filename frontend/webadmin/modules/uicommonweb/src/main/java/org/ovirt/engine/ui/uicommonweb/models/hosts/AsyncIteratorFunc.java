@@ -7,5 +7,5 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
  */
 public interface AsyncIteratorFunc<T> {
 
-    public void run(T item, AsyncIteratorCallback callback);
+    public void run(T item, AsyncIteratorCallback<T> callback);
 }

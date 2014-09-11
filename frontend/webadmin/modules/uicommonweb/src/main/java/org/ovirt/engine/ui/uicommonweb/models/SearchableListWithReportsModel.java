@@ -6,10 +6,10 @@ import org.ovirt.engine.ui.uicompat.EventDefinition;
 
 public abstract class SearchableListWithReportsModel<T> extends SearchableListModel<T> {
 
-    private final Event reportsAvailabilityEvent = new Event(new EventDefinition("ReportsAvailabilityEvent", //$NON-NLS-1$
+    private final Event<EventArgs> reportsAvailabilityEvent = new Event<EventArgs>(new EventDefinition("ReportsAvailabilityEvent", //$NON-NLS-1$
             SearchableListWithReportsModel.class));
 
-    public Event getReportsAvailabilityEvent() {
+    public Event<EventArgs> getReportsAvailabilityEvent() {
         return reportsAvailabilityEvent;
     }
 

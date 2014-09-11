@@ -87,9 +87,9 @@ public class DisksAllocationPopupView extends AbstractModelBoundPopupView<DisksA
         disksAllocationView.edit(object);
         disksAllocationModel = object;
 
-        object.getDynamicWarning().getPropertyChangedEvent().addListener(new IEventListener() {
+        object.getDynamicWarning().getPropertyChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 EntityModel ownerModel = (EntityModel) sender;
                 String propName = ((PropertyChangedEventArgs) args).propertyName;
 

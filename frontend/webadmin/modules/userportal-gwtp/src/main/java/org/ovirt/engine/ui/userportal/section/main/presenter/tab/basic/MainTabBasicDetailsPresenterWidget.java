@@ -141,10 +141,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private void listenOnDiskModelChangeEvent(final UserPortalBasicListProvider modelProvider) {
-        modelProvider.getModel().getvmBasicDiskListModel().getItemsChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getVmBasicDiskListModel().getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (modelProvider.getModel().getSelectedItem() == null) {
                     return;
                 }
@@ -154,10 +154,10 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
     }
 
     private void listenOnSelectedItemEvent(final UserPortalBasicListProvider modelProvider) {
-        modelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        modelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
 
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (modelProvider.getModel().getSelectedItem() == null) {
                     getView().clear();
                     return;
@@ -186,7 +186,7 @@ public class MainTabBasicDetailsPresenterWidget extends PresenterWidget<MainTabB
 
     private void setupDisks(final UserPortalBasicListProvider modelProvider) {
         @SuppressWarnings("unchecked")
-        Iterable<DiskImage> diskImages = modelProvider.getModel().getvmBasicDiskListModel().getItems();
+        Iterable<DiskImage> diskImages = modelProvider.getModel().getVmBasicDiskListModel().getItems();
         if (diskImages != null) {
             getView().editDistItems(diskImages);
         }

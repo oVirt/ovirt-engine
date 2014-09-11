@@ -190,7 +190,7 @@ public class NfsStorageView extends AbstractStorageView<NfsStorageModel> {
 
         object.getMountOptions().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
                 if (args.propertyName.equals("Title")) { //$NON-NLS-1$
                     mountOptionsEditor.setTitle(object.getMountOptions().getTitle());
                 }

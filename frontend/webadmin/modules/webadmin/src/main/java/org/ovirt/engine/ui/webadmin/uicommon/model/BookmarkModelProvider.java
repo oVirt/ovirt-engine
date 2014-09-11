@@ -68,9 +68,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         super.initializeModelHandlers();
 
         // Clear selection when a system tree node is selected
-        treeModelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        treeModelProvider.getModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (treeModelProvider.getModel().getSelectedItem() != null) {
                     clearSelection();
                 }
@@ -78,9 +78,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         });
 
         // Clear selection when a tag tree node is pinned
-        tagModelProvider.getModel().getSelectedItemsChangedEvent().addListener(new IEventListener() {
+        tagModelProvider.getModel().getSelectedItemsChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (tagModelProvider.getModel().getSelectedItems() != null
                         && !tagModelProvider.getModel().getSelectedItems().isEmpty()) {
                     clearSelection();
@@ -89,9 +89,9 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         });
 
         // Clear selection when a new tab is selected
-        getCommonModel().getSelectedItemChangedEvent().addListener(new IEventListener() {
+        getCommonModel().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 if (getCommonModel().getSelectedItem() != null) {
                     clearSelection();
                 }
@@ -99,19 +99,19 @@ public class BookmarkModelProvider extends DataBoundTabModelProvider<Bookmark, B
         });
 
         // Clear selection when the search string is updated
-        getCommonModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getCommonModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                if ("SearchString".equals(((PropertyChangedEventArgs) args).propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("SearchString".equals(args.propertyName)) { //$NON-NLS-1$
                     clearSelection();
                 }
             }
         });
 
         // Clear tag selection when a tag is saved/edited/deleted
-        getModel().getItemSavedEvent().addListener(new IEventListener() {
+        getModel().getItemSavedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
                 clearSelection();
             }
         });
