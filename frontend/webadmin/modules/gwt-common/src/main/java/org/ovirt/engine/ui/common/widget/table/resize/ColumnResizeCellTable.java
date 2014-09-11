@@ -222,21 +222,21 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      * Ensures that the given column is added (or removed), unless it's already present (or absent).
      * <p>
      * This method also sets the column width in case the column needs to be added.
+     * @param column The column to ensure is there.
+     * @param headerText The header text associated with the column.
+     * @param present If true make sure the column is there, if false make sure it is not.
+     * @param width The width of the column.
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        if (present) {
-            // Remove the column first
-            if (getColumnIndex(column) != -1) {
-                removeColumn(column);
-            }
-
-            // Re-add the column
+        boolean columnPresent = getColumnIndex(column) != -1;
+        if (present && !columnPresent) {
+            // Add the column
             if (width == null) {
                 addColumnWithHtmlHeader(column, headerText);
             } else {
                 addColumnWithHtmlHeader(column, headerText, width);
             }
-        } else if (!present && getColumnIndex(column) != -1) {
+        } else if (!present && columnPresent) {
             // Remove the column
             removeColumn(column);
         }
