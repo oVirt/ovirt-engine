@@ -18,8 +18,8 @@ import javax.naming.directory.Attributes;
 import javax.naming.directory.DirContext;
 import javax.naming.spi.NamingManager;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility class to query DNS SRV records, and return results according to the priority/weights algorithm as specified
@@ -27,6 +27,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  *
  */
 public class DnsSRVLocator {
+    private static final Logger log = LoggerFactory.getLogger(DnsSRVLocator.class);
 
     private static final String DNS_QUERY_PREFIX = "dns:///";
     private static final String SRV_RECORD = "SRV";
@@ -215,7 +216,7 @@ public class DnsSRVLocator {
         try {
             return getService(domain, dnsQuery.toString());
         } catch (Exception ex) {
-            log.errorFormat("Error: could not find DNS SRV record name: {0}.{1}.{2}.\nException message is: {3}\n" +
+            log.error("Error: could not find DNS SRV record name: {}.{}.{}.\nException message is: {}\n" +
                     "Possible causes: missing DNS entries in the DNS server or DNS resolving" +
                     " issues from engine-core machine.\nPlease Ensure correct DNS entries exist in the DNS server" +
                     " and ensure the DNS server is reachable from the engine-core machine.",
@@ -381,7 +382,7 @@ public class DnsSRVLocator {
             sb.append(":").append(port);
             return new SrvRecord(priority, weight, sb.toString());
         } catch (InputMismatchException ex) {
-            log.errorFormat("the record {0} has invalid format", recordStr);
+            log.error("the record {} has invalid format", recordStr);
 
             // In case there is a parsing error, the invalid record constant is
             // returned
@@ -418,7 +419,4 @@ public class DnsSRVLocator {
         uriSB.append("://").append(hostname).append(":").append(port);
         return new URI(uriSB.toString());
     }
-
-    private static final Log log = LogFactory.getLog(DnsSRVLocator.class);
-
 }
