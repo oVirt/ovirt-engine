@@ -16,8 +16,9 @@ import java.util.Map;
 import java.util.Scanner;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator.DnsSRVResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A tool to create a krb5.conf file from a template using the supplied domain list. For each domain an SRV DNS request
@@ -38,7 +39,7 @@ public class KrbConfCreator {
     private Map<String, List<String>> ldapServersPerGSSAPIDomains;
     private String domainRealmMappingFile;
 
-    private final static Logger log = Logger.getLogger(KrbConfCreator.class);
+    private final static Logger log = LoggerFactory.getLogger(KrbConfCreator.class);
 
     public KrbConfCreator(String domains,
             boolean useDnsLookup,
@@ -57,7 +58,7 @@ public class KrbConfCreator {
         if (sourceFile == null) {
             throw new FileNotFoundException(template + " was not found");
         }
-        log.debug("loaded template kr5.conf file " + template);
+        log.debug("loaded template kr5.conf file {}", template);
     }
 
     public StringBuffer parse(String mixedMode) throws AuthenticationException {

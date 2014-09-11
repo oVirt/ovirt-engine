@@ -1,7 +1,8 @@
 package org.ovirt.engine.extensions.aaa.builtin.tools;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * Exception during configure domains. If this exception occurred its probably because
@@ -12,7 +13,7 @@ public class ManageDomainsResult extends Exception {
     private ManageDomainsResultEnum enumResult;
     private int exitCode;
     private String detailedMessage;
-    private final static Logger log = Logger.getLogger(ManageDomainsResult.class);
+    private final static Logger log = LoggerFactory.getLogger(ManageDomainsResult.class);
 
     /**
      * This constructor is present exception without additional params. we use this one without additional info, only

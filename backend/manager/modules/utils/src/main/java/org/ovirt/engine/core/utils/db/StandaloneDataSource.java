@@ -13,12 +13,13 @@ import java.sql.Statement;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StandaloneDataSource implements DataSource {
     // The log:
-    private final static Logger log = Logger.getLogger(StandaloneDataSource.class);
+    private final static Logger log = LoggerFactory.getLogger(StandaloneDataSource.class);
 
     // Names of the properties expected in the engine configuration file:
     private static final String ENGINE_DB_DRIVER = "ENGINE_DB_DRIVER";

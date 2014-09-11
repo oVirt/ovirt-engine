@@ -14,8 +14,9 @@ import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Utility to verify Kerberos installation
@@ -25,7 +26,7 @@ public class KerberosConfigCheck {
     private LoginContext lc;
     private final List<String> ldapServers;
     private String defaultLdapServerPort;
-    private final static Logger log = Logger.getLogger(KerberosConfigCheck.class);
+    private final static Logger log = LoggerFactory.getLogger(KerberosConfigCheck.class);
 
     public enum Arguments {
         domains,

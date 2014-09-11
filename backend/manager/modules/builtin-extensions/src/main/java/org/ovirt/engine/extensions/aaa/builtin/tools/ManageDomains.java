@@ -50,7 +50,6 @@ import java.util.Scanner;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.dns.DnsSRVLocator;
@@ -62,6 +61,8 @@ import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.Kerbe
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KrbConfCreator;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapSRVLocator;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageDomains {
 
@@ -92,7 +93,7 @@ public class ManageDomains {
     private ManageDomainsDAOImpl daoImpl;
     private boolean useDnsLookup;
 
-    private final static Logger log = Logger.getLogger(ManageDomains.class);
+    private final static Logger log = LoggerFactory.getLogger(ManageDomains.class);
 
     private final ManageDomainsArguments args;
 
@@ -267,7 +268,7 @@ public class ManageDomains {
                 && (changePasswordMsgStr.indexOf("http") == 0 || changePasswordMsgStr.indexOf("https") == 0)) {
             try {
                 URL url = new URL(changePasswordMsgStr);
-                log.debug("Validated that " + url + " is in correct format");
+                log.debug("Validated that {} is in correct format", url);
             } catch (MalformedURLException ex) {
                 throw new ManageDomainsResult(ManageDomainsResultEnum.INVALID_ARGUMENT_VALUE,
                         "The provided value begins with a URL prefix of either http or https. However this is not a valid URL");
@@ -432,10 +433,9 @@ public class ManageDomains {
                 try {
                     for (InetAddress ip : InetAddress.getAllByName(server)) {
                         ip.getCanonicalHostName();
-                        log.debug(String.format(
-                                "Successfuly resolved IP '%s' for server '%s'",
+                        log.debug("Successfuly resolved IP '{}' for server '{}'",
                                 ip.getHostAddress(),
-                                server));
+                                server);
                     }
                 } catch (Exception ex) {
                     String msg = String.format(
@@ -699,7 +699,7 @@ public class ManageDomains {
 
             KrbConfCreator krbConfCreator;
             try {
-                log.info("Creating kerberos configuration for domain(s): " + gssapiDomainsString);
+                log.info("Creating kerberos configuration for domain(s): {}", gssapiDomainsString);
                 useDnsLookup = utilityConfiguration.getUseDnsLookup();
                 String domainRealmMappingFile = utilityConfiguration.getDomainRealmMappingFile();
                 if (shouldResolveKdc()) {
@@ -714,7 +714,7 @@ public class ManageDomains {
                 StringBuffer buffer = null;
                 buffer = krbConfCreator.parse("y");
                 krbConfCreator.toFile(utilityConfiguration.getkrb5confFilePath() + TESTING_KRB5_CONF_SUFFIX, buffer);
-                log.info("Successfully created kerberos configuration for domain(s): " + gssapiDomainsString);
+                log.info("Successfully created kerberos configuration for domain(s): {}", gssapiDomainsString);
 
             } catch (Exception ex) {
                 ManageDomainsResult result =
@@ -746,7 +746,7 @@ public class ManageDomains {
             String currUserName = users.getValueForDomain(domain);
             users.setValueForDomain(domain, constructUPN(currUserName, domain));
             try {
-                log.info("Testing kerberos configuration for domain: " + domain);
+                log.info("Testing kerberos configuration for domain: {}", domain);
                 List<String> ldapServersPerDomain = ldapServersPerDomainMap.get(domain);
                 KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapServersPerDomain, ldapServerPort);
                 StringBuffer userGuid = new StringBuffer();
@@ -762,7 +762,7 @@ public class ManageDomains {
                     System.out.println("Domain " + domain + " is valid.");
                     System.out.println("The configured user for domain " + domain + " is " + currUserName + "\n");
                 }
-                log.info("Successfully tested kerberos configuration for domain: " + domain);
+                log.info("Successfully tested kerberos configuration for domain: {}", domain);
             } catch (Exception e) {
                 ManageDomainsResult result =
                         new ManageDomainsResult(ManageDomainsResultEnum.FAILURE_WHILE_TESTING_DOMAIN,
@@ -783,7 +783,7 @@ public class ManageDomains {
             if (new File(utilityConfiguration.getkrb5confFilePath()).exists()) {
                 SimpleDateFormat ft = new SimpleDateFormat("yyyyMMddhhmmsszzz");
                 String destFileName = utilityConfiguration.getkrb5confFilePath() + ".backup_" + ft.format(new Date());
-                log.info("Performing backup of kerberos configuration file to " + destFileName);
+                log.info("Performing backup of kerberos configuration file to {}", destFileName);
                 copyFile(utilityConfiguration.getkrb5confFilePath(), destFileName);
             }
 
@@ -801,7 +801,7 @@ public class ManageDomains {
             String userName,
             String password,
             StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers) {
-        log.info("Testing domain " + domain);
+        log.info("Testing domain {}", domain);
         SimpleAuthenticationCheck simpleAuthenticationCheck = new SimpleAuthenticationCheck();
         Pair<ReturnStatus, String> simpleCheckResult =
                 simpleAuthenticationCheck.printUserGuid(domain, userName, password, userGuid, ldapProviderType, ldapServers);
@@ -818,7 +818,7 @@ public class ManageDomains {
         } else {
             result = OK_RESULT;
         }
-        log.info("Successfully tested domain " + domain);
+        log.info("Successfully tested domain {}", domain);
         return result;
     }
 
@@ -1074,7 +1074,7 @@ public class ManageDomains {
         File file = new File(filePath);
         if (file.exists()) {
             if (!file.delete()) {
-                log.info("Failed deleting file " + file.getAbsolutePath() + ". Continuing anyway.");
+                log.info("Failed deleting file {}. Continuing anyway.", file.getAbsolutePath());
             }
         }
     }

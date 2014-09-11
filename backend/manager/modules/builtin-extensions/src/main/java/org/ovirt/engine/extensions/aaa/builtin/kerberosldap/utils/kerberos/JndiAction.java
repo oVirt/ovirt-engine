@@ -16,12 +16,13 @@ import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 import javax.security.sasl.SaslException;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ipa.RHDSUserContextMapper;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapSRVLocator;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.RootDSEData;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * JAAS Privileged action to be run when KerbersUtil successfully authenticates. This action performs ldap query to
@@ -35,7 +36,7 @@ public class JndiAction implements PrivilegedAction {
     private final StringBuffer userGuid;
     private List<String> ldapServers;
     private final String defaultLdapServerPort;
-    private final static Logger log = Logger.getLogger(JndiAction.class);
+    private final static Logger log = LoggerFactory.getLogger(JndiAction.class);
 
     public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers, String defaultLdapServerPort) {
         this.userName = userName;
@@ -164,7 +165,7 @@ public class JndiAction implements PrivilegedAction {
             SaslException saslException = (SaslException)ex.getRootCause();
             krbLoginModuleErrorMsg = saslException.getMessage();
         }
-        log.error("Error during login to kerberos. Detailed information is: " + krbLoginModuleErrorMsg);
+        log.error("Error during login to kerberos. Detailed information is: {}", krbLoginModuleErrorMsg);
         log.debug("Error during login to kerberos. Detailed information is: ", ex);
     }
 
@@ -260,8 +261,8 @@ public class JndiAction implements PrivilegedAction {
 
     private void logQueryContext(String actualUserGuid, String actualUri, String actualCurrentLdapServer) {
         // Log all information about query used for authentication
-        log.debug("User guid is: " + actualUserGuid);
-        log.debug("URI is: " + actualUri);
-        log.debug("Complete query path is: " + actualCurrentLdapServer);
+        log.debug("User guid is: {}", actualUserGuid);
+        log.debug("URI is: {}", actualUri);
+        log.debug("Complete query path is: {}", actualCurrentLdapServer);
     }
 }

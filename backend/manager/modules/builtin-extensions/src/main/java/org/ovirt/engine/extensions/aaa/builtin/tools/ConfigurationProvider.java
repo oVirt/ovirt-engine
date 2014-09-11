@@ -16,15 +16,16 @@ import java.io.FileWriter;
 import java.io.IOException;
 import java.util.EnumMap;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConfigurationProvider {
 
     private EnumMap<ConfigValues, String> configVals = new EnumMap<ConfigValues, String>(ConfigValues.class);
     private String engineConfigExecutable;
     private String engineConfigProperties;
-    private final static Logger log = Logger.getLogger(ManageDomainsDAOImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(ManageDomainsDAOImpl.class);
 
     public ConfigurationProvider(String adUserName,
             String adUserPassword,
@@ -94,7 +95,7 @@ public class ConfigurationProvider {
     public void setConfigValue(ConfigValues enumValue, DomainsConfigurationEntry entry, boolean passedAsValue)
             throws ManageDomainsResult {
 
-        log.info("Setting value for " + enumValue.toString() + " to " + entry.getDomainsLoggingEntry());
+        log.info("Setting value for {} to {}", enumValue.toString(), entry.getDomainsLoggingEntry());
         File passFile = null;
 
         try {
@@ -126,7 +127,7 @@ public class ConfigurationProvider {
         if (file != null) {
             if (file.exists()) {
                 if (!file.delete()) {
-                    log.info("Failed deleting file " + file.getAbsolutePath() + ". Continuing anyway.");
+                    log.info("Failed deleting file {}. Continuing anyway.", file.getAbsolutePath());
                 }
             }
         }

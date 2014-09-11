@@ -7,8 +7,9 @@ import java.sql.SQLException;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ManageDomainsDAOImpl implements ManageDomainsDAO {
 
@@ -16,7 +17,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
     private DataSource ds;
     private String actionQuery = "select attach_user_to_role(?,?,?,?)";
     private String selectQuery = "select get_user_permissions_for_domain(?,?)";
-    private final static Logger log = Logger.getLogger(ManageDomainsDAOImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(ManageDomainsDAOImpl.class);
 
     public ManageDomainsDAOImpl() throws SQLException {
         ds = new StandaloneDataSource();
@@ -28,7 +29,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
         try (Connection connection = ds.getConnection();
                 PreparedStatement prepareStatement = connection.prepareStatement(actionQuery);
             ) {
-            log.info("uuid: " + userId + " username: " + userName + " domain: " + domain);
+            log.info("uuid: {} username: {} domain: {}", userId, userName, domain);
             prepareStatement.setString(1, userId);
             prepareStatement.setString(2, userName);
             prepareStatement.setString(3, domain);
@@ -43,7 +44,7 @@ public class ManageDomainsDAOImpl implements ManageDomainsDAO {
         boolean result = false;
         try (Connection connection = ds.getConnection();
                 PreparedStatement prepareStatement = connection.prepareStatement(selectQuery);) {
-            log.info("getPermissionsForUser  username: " + userName + " domain: " + domain);
+            log.info("getPermissionsForUser  username: {} domain: {}", userName, domain);
             prepareStatement.setString(1, userName);
             prepareStatement.setString(2, domain);
 
