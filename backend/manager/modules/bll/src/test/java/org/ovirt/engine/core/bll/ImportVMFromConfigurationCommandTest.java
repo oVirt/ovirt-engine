@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
@@ -27,6 +28,7 @@ import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.UnregisteredOVFDataDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
@@ -46,6 +49,7 @@ public class ImportVMFromConfigurationCommandTest {
     private static final String VM_OVF_XML_DATA = "src/test/resources/vmOvfData.xml";
     private String xmlOvfData;
     private VDSGroup vdsGroup;
+    private StoragePool storagePool;
 
     private ImportVmFromConfigurationCommand<ImportVmParameters> cmd;
 
@@ -63,7 +67,7 @@ public class ImportVMFromConfigurationCommandTest {
     @Before
     public void setUp() throws IOException {
         vmId = Guid.newGuid();
-        storageDomainId = Guid.newGuid();
+        storageDomainId = Guid.createGuidFromString("7e2a7eac-3b76-4d45-a7dd-caae8fe0f588");
         storagePoolId = Guid.newGuid();
         clusterId = Guid.newGuid();
 
@@ -85,7 +89,10 @@ public class ImportVMFromConfigurationCommandTest {
     @Test
     public void testPositiveImportVmFromConfiguration() {
         initCommand(getOvfEntityData());
-        doReturn(createStorageDomain()).when(cmd).getStorageDomain();
+        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
+        doReturn(dao).when(cmd).getStorageDomainDAO();
+        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(createStorageDomain());
+        doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).canDoActionAfterCloneVm(anyMap());
         doReturn(Boolean.TRUE).when(cmd).canDoActionBeforeCloneVm(anyMap());
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
@@ -96,6 +103,12 @@ public class ImportVMFromConfigurationCommandTest {
         initCommand(getOvfEntityData());
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Maintenance);
+
+        // Mock Storage Domain.
+        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
+        doReturn(dao).when(cmd).getStorageDomainDAO();
+        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
+
         doReturn(storageDomain).when(cmd).getStorageDomain();
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
@@ -106,7 +119,12 @@ public class ImportVMFromConfigurationCommandTest {
         initCommand(getOvfEntityData());
         StorageDomain storageDomain = createStorageDomain();
         storageDomain.setStatus(StorageDomainStatus.Inactive);
-        doReturn(storageDomain).when(cmd).getStorageDomain();
+
+        // Mock Storage Domain.
+        final StorageDomainDAO dao = mock(StorageDomainDAO.class);
+        doReturn(dao).when(cmd).getStorageDomainDAO();
+        when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
+
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
@@ -151,6 +169,8 @@ public class ImportVMFromConfigurationCommandTest {
                 return vdsGroup;
             }
         });
+        mockStoragePool();
+        doReturn(storagePool).when(cmd).getStoragePool();
     }
 
     private void initUnregisteredOVFData(OvfEntityData resultOvfEntityData) {
@@ -169,6 +189,11 @@ public class ImportVMFromConfigurationCommandTest {
         vdsGroup = new VDSGroup();
         vdsGroup.setId(clusterId);
         vdsGroup.setStoragePoolId(storagePoolId);
+    }
+
+    private void mockStoragePool() {
+        storagePool = new StoragePool();
+        storagePool.setId(storagePoolId);
     }
 
     protected StorageDomain createStorageDomain() {
