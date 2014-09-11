@@ -205,6 +205,11 @@ public class NetworkValidator {
                 .when(NetworkUtils.isLabeled(network));
     }
 
+    public ValidationResult notExternalNetwork() {
+        return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK)
+                .when(network.isExternal());
+    }
+
     protected List<VM> getVms() {
         if (vms == null) {
             vms = getDbFacade().getVmDao().getAllForNetwork(network.getId());

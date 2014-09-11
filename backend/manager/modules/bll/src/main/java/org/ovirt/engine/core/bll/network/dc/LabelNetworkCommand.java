@@ -49,7 +49,8 @@ public class LabelNetworkCommand<T extends LabelNetworkParameters> extends Comma
     protected boolean canDoAction() {
         NetworkValidator validator = new NetworkValidator(getNetwork());
         return validate(validator.networkIsSet())
-                && validate(validator.notLabeled());
+                && validate(validator.notLabeled())
+                && validate(validator.notExternalNetwork());
     }
 
     @Override

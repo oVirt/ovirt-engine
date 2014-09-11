@@ -3394,4 +3394,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The guest OS doesn't support the following CPUs: ${unsupportedCpus}. Its possible to change the cluster cpu or set a different one per VM")
     String CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. This operation is not supported for external networks.")
+    String ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK();
 }

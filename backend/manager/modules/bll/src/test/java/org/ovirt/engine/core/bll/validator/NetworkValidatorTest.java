@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -398,4 +399,17 @@ public class NetworkValidatorTest {
         when(network.getLabel()).thenReturn(RandomUtils.instance().nextPropertyString(10));
         assertThat(validator.notLabeled(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_ALREADY_LABELED));
     }
+
+    @Test
+    public void testNotExternalNetworkFailsForExternalNetwork() throws Exception {
+        when(network.isExternal()).thenReturn(true);
+        assertThat(validator.notExternalNetwork(), failsWith(VdcBllMessages.ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK));
+    }
+
+    @Test
+    public void testNotExternalNetworkSucceedsForNonExternalNetwork() throws Exception {
+        when(network.isExternal()).thenReturn(false);
+        assertThat(validator.notExternalNetwork(), is(ValidationResult.VALID));
+    }
+
 }
