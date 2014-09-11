@@ -10,9 +10,9 @@ import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplateGeneralSubTabView;
 
 import com.google.gwt.user.client.ui.ScrollPanel;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplateGeneralSubTabView;
 
 public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel {
 
@@ -57,6 +57,10 @@ public class RegisterTemplateInfoPanel extends RegisterEntityInfoPanel {
 
                 @Override
                 public void onSubTabSelected() {
+                }
+
+                @Override
+                public void onSubTabDeselected() {
                 }
             };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider, constants);

@@ -148,6 +148,10 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
                     @Override
                     public void onSubTabSelected() {
                     }
+
+                    @Override
+                    public void onSubTabDeselected() {
+                    }
                 };
         generalView = new ImportTemplateGeneralSubTabView(modelProvider, constants);
         generalPanel.add(generalView);

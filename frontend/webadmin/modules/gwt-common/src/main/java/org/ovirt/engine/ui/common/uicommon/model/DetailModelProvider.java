@@ -20,4 +20,9 @@ public interface DetailModelProvider<M extends ListWithDetailsModel, D extends E
      */
     void onSubTabSelected();
 
+    /**
+     * Notifies main model that the corresponding sub tab has been un-selected.
+     */
+    void onSubTabDeselected();
+
 }

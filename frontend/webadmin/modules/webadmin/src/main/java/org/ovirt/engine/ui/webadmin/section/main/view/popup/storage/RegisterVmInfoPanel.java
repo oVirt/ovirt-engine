@@ -1,6 +1,9 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.storage;
 
-import com.google.gwt.user.client.ui.ScrollPanel;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
@@ -10,9 +13,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmGeneralSubTabView;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
+import com.google.gwt.user.client.ui.ScrollPanel;
 
 public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
 
@@ -61,6 +62,10 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel {
 
                 @Override
                 public void onSubTabSelected() {
+                }
+
+                @Override
+                public void onSubTabDeselected() {
                 }
             };
         generalView = new ImportVmGeneralSubTabView(modelProvider, constants);

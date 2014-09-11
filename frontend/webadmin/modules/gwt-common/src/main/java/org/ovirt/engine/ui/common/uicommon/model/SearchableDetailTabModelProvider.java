@@ -44,4 +44,8 @@ public class SearchableDetailTabModelProvider<T, M extends ListWithDetailsModel,
         getMainModel().setActiveDetailModel(getModel());
     }
 
+    @Override
+    public void onSubTabDeselected() {
+        getMainModel().setActiveDetailModel(null);
+    }
 }

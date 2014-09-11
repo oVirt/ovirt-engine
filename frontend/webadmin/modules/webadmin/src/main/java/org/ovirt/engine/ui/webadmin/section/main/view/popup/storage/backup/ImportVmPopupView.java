@@ -17,8 +17,8 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
-import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.ListModelObjectCellTable;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
@@ -202,6 +202,10 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
                     @Override
                     public void onSubTabSelected() {
+                    }
+
+                    @Override
+                    public void onSubTabDeselected() {
                     }
                 };
         generalView = new ImportVmGeneralSubTabView(modelProvider, constants);

@@ -53,4 +53,9 @@ public abstract class UserPortalSearchableDetailModelProvider<T, M extends ListW
         getParentModel().setActiveDetailModel(getModel());
     }
 
+    @Override
+    public void onSubTabDeselected() {
+        getParentModel().setActiveDetailModel(null);
+    }
+
 }

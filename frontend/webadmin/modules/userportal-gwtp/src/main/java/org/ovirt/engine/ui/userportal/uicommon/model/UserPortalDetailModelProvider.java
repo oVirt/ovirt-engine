@@ -49,4 +49,9 @@ public class UserPortalDetailModelProvider<M extends ListWithDetailsModel, D ext
         getParentModel().setActiveDetailModel(getModel());
     }
 
+    @Override
+    public void onSubTabDeselected() {
+        getParentModel().setActiveDetailModel(null);
+    }
+
 }
