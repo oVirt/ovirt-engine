@@ -344,11 +344,6 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         AuditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
-    private boolean isPasswordAuth(ExtensionProxy authnExtension) {
-        return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
-                Authn.Capabilities.AUTHENTICATE_PASSWORD) != 0;
-    }
-
     private boolean isCredentialsAuth(ExtensionProxy authnExtension) {
         return (authnExtension.getContext().<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() &
                 Authn.Capabilities.AUTHENTICATE_CREDENTIALS) != 0;
