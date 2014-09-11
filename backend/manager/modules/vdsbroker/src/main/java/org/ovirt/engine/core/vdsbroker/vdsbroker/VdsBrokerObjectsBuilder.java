@@ -1435,11 +1435,11 @@ public class VdsBrokerObjectsBuilder {
             iface.setSubnet((String) nic.get("netmask"));
             iface.setMacAddress((String) nic.get("hwaddr"));
             // if we get "permhwaddr", we are a part of a bond and we use that as the mac address
-            if (nic.get("permhwaddr") != null) {
+            String mac = (String) nic.get("permhwaddr");
+            if (mac != null) {
                 //TODO remove when the minimal supported vdsm version is >=3.6
                 // in older VDSM version, slave's Mac is in upper case
-                String macUpperCase = (String) nic.get("permhwaddr");
-                iface.setMacAddress(macUpperCase.toLowerCase());
+                iface.setMacAddress(mac.toLowerCase());
             }
             if (StringUtils.isNotBlank((String) nic.get(VdsProperties.MTU))) {
                 iface.setMtu(Integer.parseInt((String) nic.get(VdsProperties.MTU)));
