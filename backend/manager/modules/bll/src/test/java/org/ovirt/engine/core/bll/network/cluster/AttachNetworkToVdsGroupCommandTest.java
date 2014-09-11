@@ -39,7 +39,7 @@ public class AttachNetworkToVdsGroupCommandTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, "mgmt"));
+            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, "mgmt"));
 
     @Mock
     NetworkClusterDao networkClusterDAO;

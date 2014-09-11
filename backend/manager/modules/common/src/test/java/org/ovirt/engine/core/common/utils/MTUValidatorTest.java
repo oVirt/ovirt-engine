@@ -28,7 +28,7 @@ public class MTUValidatorTest {
         validator = ValidationUtils.getValidator();
 
         IConfigUtilsInterface confUtils = mock(IConfigUtilsInterface.class);
-        when(confUtils.getValue(ConfigValues.ManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
+        when(confUtils.getValue(ConfigValues.DefaultManagementNetwork, ConfigCommon.defaultConfigurationVersion)).thenReturn(TEST_MANAGEMENT_NETWORK);
         Config.setConfigUtils(confUtils);
     }
 

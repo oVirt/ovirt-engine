@@ -54,7 +54,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     private static final String CMD_APPROVE = "OnApprove"; //$NON-NLS-1$
     private static final String CMD_ABORT = "OnAbort"; //$NON-NLS-1$
     protected static final String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
     public final static HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
 

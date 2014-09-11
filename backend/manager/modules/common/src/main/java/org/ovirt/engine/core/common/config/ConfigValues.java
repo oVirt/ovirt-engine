@@ -944,7 +944,7 @@ public enum ConfigValues {
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("ovirtmgmt")
-    ManagementNetwork,
+    DefaultManagementNetwork,
 
     @Reloadable
     @TypeConverterAttribute(String.class)

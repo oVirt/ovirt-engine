@@ -42,7 +42,7 @@ import com.google.inject.Provider;
 public class NetworkListModel extends ListWithDetailsModel implements ISupportSystemTreeContext
 {
     private static String ENGINE_NETWORK =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
     private UICommand newCommand;
     private UICommand importCommand;

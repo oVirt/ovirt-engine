@@ -29,7 +29,7 @@ public class NetworkUtilsTest {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.ManagementNetwork, MANAGEMENT_NETWORK),
+            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, MANAGEMENT_NETWORK),
             MockConfigRule.mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
 
     @Test

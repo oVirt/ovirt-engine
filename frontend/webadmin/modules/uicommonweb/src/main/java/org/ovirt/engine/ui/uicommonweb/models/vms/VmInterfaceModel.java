@@ -78,7 +78,7 @@ public abstract class VmInterfaceModel extends Model
         this.profileBehavior = profileBehavior;
         // get management network name
         ENGINE_NETWORK_NAME =
-                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+                (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
         this.vm = vm;
         this.vmNicList = vmNicList;

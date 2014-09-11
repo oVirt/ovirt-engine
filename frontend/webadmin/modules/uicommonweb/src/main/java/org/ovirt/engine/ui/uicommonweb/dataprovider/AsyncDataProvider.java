@@ -2667,7 +2667,7 @@ public class AsyncDataProvider {
      */
     public void getManagementNetworkName(AsyncQuery aQuery) {
         getConfigFromCache(
-                new GetConfigurationValueParameters(ConfigurationValues.ManagementNetwork,
+                new GetConfigurationValueParameters(ConfigurationValues.DefaultManagementNetwork,
                         getDefaultConfigurationVersion()),
                 aQuery);
     }

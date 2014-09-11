@@ -63,7 +63,7 @@ public class SetupNetworksHelperTest {
     private static final int DEFAULT_SPEED = 1000;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultManagementNetwork,
             MANAGEMENT_NETWORK_NAME),
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3.toString(), true),
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false),

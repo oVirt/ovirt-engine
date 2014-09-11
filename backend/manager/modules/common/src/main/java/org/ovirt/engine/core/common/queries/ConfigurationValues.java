@@ -74,7 +74,7 @@ public enum ConfigurationValues {
     HotPlugCpuSupported(ConfigAuthType.User),
     NetworkLinkingSupported(ConfigAuthType.User),
     SupportBridgesReportByVDSM(ConfigAuthType.User),
-    ManagementNetwork,
+    DefaultManagementNetwork,
     ApplicationMode(ConfigAuthType.User),
     ShareableDiskEnabled(ConfigAuthType.User),
     DirectLUNDiskEnabled(ConfigAuthType.User),

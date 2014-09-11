@@ -57,7 +57,7 @@ public class HostInterfaceListModel extends SearchableListModel
 {
 
     public static final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
     private UICommand privateEditCommand;
 

@@ -79,7 +79,7 @@ public class DataCenterNetworkListModel extends SearchableListModel
     public DataCenterNetworkListModel()
     {
         // get management network name
-        ENGINE_NETWORK = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+        ENGINE_NETWORK = (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
         setTitle(ConstantsManager.getInstance().getConstants().logicalNetworksTitle());
         setHelpTag(HelpTag.logical_networks);

@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 public class NewProfileBehavior extends ProfileBehavior {
 
     public static final String ENGINE_NETWORK_NAME =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
+            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.DefaultManagementNetwork);
 
     @Override
     public void initSelectedProfile(ListModel profileList, VmNetworkInterface networkInterface) {

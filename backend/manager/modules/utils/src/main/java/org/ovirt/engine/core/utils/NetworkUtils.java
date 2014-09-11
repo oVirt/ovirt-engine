@@ -23,7 +23,7 @@ public final class NetworkUtils {
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
     public static String getEngineNetwork() {
-        return Config.<String> getValue(ConfigValues.ManagementNetwork);
+        return Config.<String> getValue(ConfigValues.DefaultManagementNetwork);
     }
 
     public static Integer getDefaultMtu() {

@@ -103,7 +103,7 @@ public class UpdateStoragePoolCommandTest {
         doReturn(true).when(sdList).isEmpty();
 
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
-        mcr.mockConfigValue(ConfigValues.ManagementNetwork, "test_mgmt");
+        mcr.mockConfigValue(ConfigValues.DefaultManagementNetwork, "test_mgmt");
         mcr.mockConfigValue(ConfigValues.NonVmNetworkSupported, false);
         mcr.mockConfigValue(ConfigValues.MTUOverrideSupported, false);
         mcr.mockConfigValue(ConfigValues.MixedDomainTypesInDataCenter, Version.v3_0, false);
@@ -426,7 +426,7 @@ public class UpdateStoragePoolCommandTest {
 
     private void addManagementNetworkToPool() {
         Network network = new Network();
-        network.setName(Config.<String> getValue(ConfigValues.ManagementNetwork));
+        network.setName(Config.<String> getValue(ConfigValues.DefaultManagementNetwork));
         List<Network> networks = new ArrayList<>();
         networks.add(network);
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
@@ -440,7 +440,7 @@ public class UpdateStoragePoolCommandTest {
 
     private void addNetworkToPool() {
         Network network = new Network();
-        network.setName(Config.<String> getValue(ConfigValues.ManagementNetwork) + "2");
+        network.setName(Config.<String> getValue(ConfigValues.DefaultManagementNetwork) + "2");
         List<Network> networks = new ArrayList<>();
         networks.add(network);
         when(networkDao.getAllForDataCenter(any(Guid.class))).thenReturn(networks);
