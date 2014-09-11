@@ -6,7 +6,6 @@ import java.util.List;
 import java.util.Map;
 import org.apache.commons.lang.NotImplementedException;
 import org.ovirt.engine.core.common.businessentities.BootSequence;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.SessionState;
@@ -102,14 +101,10 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
                 .addValue("last_start_time", vm.getLastStartTime())
                 .addValue("last_stop_time", vm.getLastStopTime())
                 .addValue("vm_pid", vm.getVmPid())
-                .addValue("display", vm.getDisplay())
                 .addValue("acpi_enable", vm.getAcpiEnable())
                 .addValue("session", vm.getSession())
-                .addValue("display_ip", vm.getDisplayIp())
-                .addValue("display_type", vm.getDisplayType())
                 .addValue("kvm_enable", vm.getKvmEnable())
                 .addValue("boot_sequence", vm.getBootSequence())
-                .addValue("display_secure_port", vm.getDisplaySecurePort())
                 .addValue("utc_diff", vm.getUtcDiff())
                 .addValue("last_vds_run_on", vm.getLastVdsRunOn())
                 .addValue("client_ip", vm.getClientIp())
@@ -163,14 +158,10 @@ public class VmDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<V
             entity.setLastStartTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_start_time")));
             entity.setLastStopTime(DbFacadeUtils.fromDate(rs.getTimestamp("last_stop_time")));
             entity.setVmPid((Integer) rs.getObject("vm_pid"));
-            entity.setDisplay((Integer) rs.getObject("display"));
             entity.setAcpiEnable((Boolean) rs.getObject("acpi_enable"));
             entity.setSession(SessionState.forValue(rs.getInt("session")));
-            entity.setDisplayIp(rs.getString("display_ip"));
-            entity.setDisplayType(DisplayType.forValue(rs.getInt("display_type")));
             entity.setKvmEnable((Boolean) rs.getObject("kvm_enable"));
             entity.setBootSequence(BootSequence.forValue(rs.getInt("boot_sequence")));
-            entity.setDisplaySecurePort((Integer) rs.getObject("display_secure_port"));
             entity.setUtcDiff((Integer) rs.getObject("utc_diff"));
             entity.setLastVdsRunOn(getGuid(rs, "last_vds_run_on"));
             entity.setClientIp(rs.getString("client_ip"));

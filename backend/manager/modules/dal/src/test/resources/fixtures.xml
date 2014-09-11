@@ -3664,13 +3664,9 @@
         <column>run_on_vds</column>
         <column>migrating_to_vds</column>
         <column>app_list</column>
-        <column>display</column>
         <column>acpi_enable</column>
         <column>session</column>
-        <column>display_ip</column>
-        <column>display_type</column>
         <column>kvm_enable</column>
-        <column>display_secure_port</column>
         <column>utc_diff</column>
         <column>last_vds_run_on</column>
         <column>client_ip</column>
@@ -3708,13 +3704,9 @@
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3753,13 +3745,9 @@
             <null />
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3774,6 +3762,11 @@
             <null/>
             <value>-1</value>
             <value>1</value>
+            <value>5900</value>
+            <value>-1</value>
+            <value>0</value>
+            <null />
+            <null />
         </row>
         <row>
             <value>77296e00-0cad-4e5a-9299-008a7b6f4355</value>
@@ -3793,13 +3786,9 @@
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3838,13 +3827,9 @@
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3883,13 +3868,9 @@
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3928,13 +3909,9 @@
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -3973,13 +3950,9 @@
             <null />
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>
@@ -4018,13 +3991,9 @@
             <null />
             <null />
             <value></value>
-            <value>5900</value>
             <value>1</value>
             <value>0</value>
-            <value>0</value>
-            <value>0</value>
             <value>1</value>
-            <value>-1</value>
             <value>0</value>
             <null />
             <value></value>

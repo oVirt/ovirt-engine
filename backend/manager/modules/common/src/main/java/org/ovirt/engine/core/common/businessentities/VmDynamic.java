@@ -36,14 +36,10 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     @UnchangeableByVdsm
     private Guid runOnVds;
     private String appList;
-    private Integer display;
     private Boolean acpiEnabled;
     private SessionState session;
-    private String displayIp;
-    private DisplayType displayType;
     private String vncKeyboardLayout;
     private Boolean kvmEnable;
-    private Integer displaySecurePort;
     private Integer utcDiff;
     @UnchangeableByVdsm
     private Guid lastVdsRunOn;
@@ -87,10 +83,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         result = prime * result + ((appList == null) ? 0 : appList.hashCode());
         result = prime * result + bootSequence.hashCode();
         result = prime * result + ((clientIp == null) ? 0 : clientIp.hashCode());
-        result = prime * result + ((display == null) ? 0 : display.hashCode());
-        result = prime * result + ((displayIp == null) ? 0 : displayIp.hashCode());
-        result = prime * result + ((displaySecurePort == null) ? 0 : displaySecurePort.hashCode());
-        result = prime * result + displayType.hashCode();
         result = prime * result + ((vncKeyboardLayout == null) ? 0 : vncKeyboardLayout.hashCode());
         result = prime * result + ((consoleCurrentUserName == null) ? 0 : consoleCurrentUserName.hashCode());
         result = prime * result + ((guestCurUserName == null) ? 0 : guestCurUserName.hashCode());
@@ -146,10 +138,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
                 && ObjectUtils.objectsEqual(appList, other.appList)
                 && bootSequence == other.bootSequence
                 && ObjectUtils.objectsEqual(clientIp, other.clientIp)
-                && ObjectUtils.objectsEqual(display, other.display)
-                && ObjectUtils.objectsEqual(displayIp, other.displayIp)
-                && ObjectUtils.objectsEqual(displaySecurePort, other.displaySecurePort)
-                && displayType == other.displayType
                 && ObjectUtils.objectsEqual(vncKeyboardLayout, other.vncKeyboardLayout)
                 && ObjectUtils.objectsEqual(consoleCurrentUserName, other.consoleCurrentUserName)
                 && ObjectUtils.objectsEqual(guestCurUserName, other.guestCurUserName)
@@ -238,7 +226,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
     public VmDynamic() {
         id = Guid.Empty;
         status = VMStatus.Down;
-        displayType = DisplayType.vga;
         pauseStatus = VmPauseStatus.NONE;
         exitStatus = VmExitStatus.Normal;
         win2kHackEnabled = false;
@@ -390,14 +377,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
         this.vmPid = value;
     }
 
-    public Integer getDisplay() {
-        return this.display;
-    }
-
-    public void setDisplay(Integer value) {
-        this.display = value;
-    }
-
     public Map<GraphicsType, GraphicsInfo> getGraphicsInfos() {
         return graphicsInfos;
     }
@@ -415,22 +394,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setAcpiEnable(Boolean value) {
         this.acpiEnabled = value;
-    }
-
-    public String getDisplayIp() {
-        return this.displayIp;
-    }
-
-    public void setDisplayIp(String value) {
-        this.displayIp = value;
-    }
-
-    public DisplayType getDisplayType() {
-        return displayType;
-    }
-
-    public void setDisplayType(DisplayType value) {
-        this.displayType = value;
     }
 
     public String getVncKeyboardLayout() {
@@ -463,14 +426,6 @@ public class VmDynamic implements BusinessEntityWithStatus<Guid, VMStatus>, Comp
 
     public void setBootSequence(BootSequence value) {
         this.bootSequence = value;
-    }
-
-    public Integer getDisplaySecurePort() {
-        return this.displaySecurePort;
-    }
-
-    public void setDisplaySecurePort(Integer value) {
-        this.displaySecurePort = value;
     }
 
     public Integer getUtcDiff() {

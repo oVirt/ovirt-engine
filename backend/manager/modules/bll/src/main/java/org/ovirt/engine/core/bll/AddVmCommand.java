@@ -1039,7 +1039,6 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         vmDynamic.setVmHost("");
         vmDynamic.setVmIp("");
         vmDynamic.setVmFQDN("");
-        vmDynamic.setDisplayType(getParameters().getVmStaticData().getDefaultDisplayType());
         vmDynamic.setLastStopTime(new Date());
         getDbFacade().getVmDynamicDao().save(vmDynamic);
         getCompensationContext().snapshotNewEntity(vmDynamic);

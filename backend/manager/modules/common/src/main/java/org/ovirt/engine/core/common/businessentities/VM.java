@@ -613,36 +613,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         this.vmDynamic.setAppList(value);
     }
 
-    public Integer getDisplay() {
-        return this.vmDynamic.getDisplay();
-    }
-
-    public void setDisplay(Integer value) {
-        this.vmDynamic.setDisplay(value);
-    }
-
     public Boolean getAcpiEnable() {
         return this.vmDynamic.getAcpiEnable();
     }
 
     public void setAcpiEnable(Boolean value) {
         this.vmDynamic.setAcpiEnable(value);
-    }
-
-    public String getDisplayIp() {
-        return this.vmDynamic.getDisplayIp();
-    }
-
-    public void setDisplayIp(String value) {
-        this.vmDynamic.setDisplayIp(value);
-    }
-
-    public DisplayType getDisplayType() {
-        return this.vmDynamic.getDisplayType();
-    }
-
-    public void setDisplayType(DisplayType value) {
-        this.vmDynamic.setDisplayType(value);
     }
 
     public Boolean getKvmEnable() {
@@ -667,14 +643,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
 
     public void setBootSequence(BootSequence value) {
         this.vmDynamic.setBootSequence(value);
-    }
-
-    public Integer getDisplaySecurePort() {
-        return this.vmDynamic.getDisplaySecurePort();
-    }
-
-    public void setDisplaySecurePort(Integer value) {
-        this.vmDynamic.setDisplaySecurePort(value);
     }
 
     public VmExitStatus getExitStatus() {
@@ -1326,8 +1294,6 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setStatus(vm.getStatus());
         setRunOnVds(vdsId);
         setRunOnVdsName(vdsName);
-        setDisplay(vm.getDisplay());
-        setDisplaySecurePort(vm.getDisplaySecurePort());
         setVmHost(vm.getVmHost());
         setVmIp(vm.getVmIp());
         setVmFQDN(vm.getVmFQDN());
@@ -1341,9 +1307,7 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
         setAppList(vm.getAppList());
         // }
         setGuestOs(vm.getGuestOs());
-        setDisplayType(vm.getDisplayType());
         getDynamicData().setVncKeyboardLayout(vm.getVncKeyboardLayout());
-        setDisplayIp(vm.getDisplayIp());
         setKvmEnable(vm.getKvmEnable());
         setAcpiEnable(vm.getAcpiEnable());
         setGuestCurrentUserName(vm.getGuestCurrentUserName());

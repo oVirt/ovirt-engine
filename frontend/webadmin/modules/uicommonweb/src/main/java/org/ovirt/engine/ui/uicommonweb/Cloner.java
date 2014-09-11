@@ -125,9 +125,6 @@ public final class Cloner
         // TODO: this is also an object, so needs to be cloned as well. while it is only accessed via VM.DiskMap, which
         // creates a dictionary
         // from it - actually the DiskImage's themselves are probably sharing the same reference...
-        vm.setDisplay(instance.getDisplay());
-        vm.setDisplayIp(instance.getDisplayIp());
-        vm.setDisplaySecurePort(instance.getDisplaySecurePort());
         vm.getGraphicsInfos().putAll(instance.getGraphicsInfos());
         vm.getDynamicData().setVncKeyboardLayout(instance.getDynamicData().getVncKeyboardLayout());
         vm.setElapsedTime(instance.getElapsedTime());

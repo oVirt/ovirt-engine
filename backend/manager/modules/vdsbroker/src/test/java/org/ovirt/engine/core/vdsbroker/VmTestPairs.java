@@ -211,7 +211,6 @@ public enum VmTestPairs {
     VmInternalData createVmInternalData() {
         VmDynamic vmDynamic = new VmDynamic();
         vmDynamic.setId(id);
-        vmDynamic.setDisplay(1);
         VmStatistics vmStatistics = new VmStatistics();
         vmStatistics.setVmBalloonInfo(new VmBalloonInfo());
         vmStatistics.setInterfaceStatistics(new ArrayList<VmNetworkInterface>());
