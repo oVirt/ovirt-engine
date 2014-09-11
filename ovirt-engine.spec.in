@@ -1080,6 +1080,7 @@ fi
 %{engine_data}/bin/engine-prolog.sh
 %{engine_data}/bin/ovirt-engine-role.sh
 %{engine_data}/conf/jaas.conf
+%{engine_data}/conf/tools-logging.properties
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
 %{engine_etc}/engine-config/engine-config.*properties

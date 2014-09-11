@@ -34,6 +34,9 @@ load_config() {
 	# clean the class path
 	# jboss module loader will not run otherwise.
 	export CLASSPATH=""
+
+	# logging configuration properties for tools
+	export OVIRT_LOGGING_PROPERTIES="${OVIRT_LOGGING_PROPERTIES:-${ENGINE_USR}/conf/tools-logging.properties}"
 }
 
 load_config
