@@ -3397,4 +3397,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. This operation is not supported for external networks.")
     String ACTION_TYPE_FAILED_NOT_SUPPORTED_FOR_EXTERNAL_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Change of Data Center ID is not allowed.")
+    String ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED();
 }

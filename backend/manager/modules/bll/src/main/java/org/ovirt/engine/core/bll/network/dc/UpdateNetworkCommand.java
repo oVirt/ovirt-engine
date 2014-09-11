@@ -130,6 +130,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.qosExistsInDc())
                 && validate(validatorOld.networkIsSet())
                 && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
+                && validate(validatorOld.notChangingDataCenterId(getNetwork().getDataCenterId()))
                 && validate(validatorNew.networkNameNotUsed())
                 && validate(validatorOld.networkNotUsedByRunningVms())
                 && validate(validatorOld.nonVmNetworkNotUsedByVms(getNetwork()))
@@ -315,6 +316,11 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                     : new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_NETWORK_DETAILS_CANNOT_BE_EDITED);
         }
 
+        public ValidationResult notChangingDataCenterId(Guid dataCenterId) {
+            final Guid oldDataCenterId = network.getDataCenterId();
+            return ValidationResult.failWith(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_ID_CANNOT_BE_CHANGED)
+                    .when(!oldDataCenterId.equals(dataCenterId));
+        }
     }
 
     @Override
