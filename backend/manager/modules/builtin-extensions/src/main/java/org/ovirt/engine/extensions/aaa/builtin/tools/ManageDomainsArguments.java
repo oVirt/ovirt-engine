@@ -99,11 +99,6 @@ public class ManageDomainsArguments {
     public static final String ARG_LOG_LEVEL = "--log-level";
 
     /**
-     * Log4j config file
-     */
-    public static final String ARG_LOG4J_CONFIG = "--log4j-config";
-
-    /**
      * Password file
      */
     public static final String ARG_PASSWORD_FILE = "--password-file";
@@ -199,11 +194,6 @@ public class ManageDomainsArguments {
 
         parser.addArg(new ArgumentBuilder()
                 .longName(ARG_LOG_LEVEL)
-                .valueRequired(true)
-                .build());
-
-        parser.addArg(new ArgumentBuilder()
-                .longName(ARG_LOG4J_CONFIG)
                 .valueRequired(true)
                 .build());
 

@@ -19,6 +19,7 @@
 #
 
 exec "${JAVA_HOME}/bin/java" \
+	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-Djboss.modules.write-indexes=false \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.extensions.builtin \
