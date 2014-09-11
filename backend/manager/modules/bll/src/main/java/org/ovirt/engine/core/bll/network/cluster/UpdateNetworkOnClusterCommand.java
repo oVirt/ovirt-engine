@@ -30,7 +30,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     private Network getManagementNetwork() {
         if (mgmtNetwork == null) {
-            mgmtNetwork = getNetworkDAO().getByNameAndCluster(NetworkUtils.getEngineNetwork(), getVdsGroupId());
+            mgmtNetwork = getNetworkDAO().getByNameAndCluster(NetworkUtils.getDefaultManagementNetworkName(), getVdsGroupId());
         }
 
         return mgmtNetwork;

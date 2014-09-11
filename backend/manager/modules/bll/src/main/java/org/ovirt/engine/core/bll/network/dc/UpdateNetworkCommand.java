@@ -290,7 +290,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         public ValidationResult notRenamingManagementNetwork(Network newNetwork) {
-            String managementNetwork = NetworkUtils.getEngineNetwork();
+            String managementNetwork = NetworkUtils.getDefaultManagementNetworkName();
             return network.getName().equals(managementNetwork) &&
                     !newNetwork.getName().equals(managementNetwork)
                     ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)

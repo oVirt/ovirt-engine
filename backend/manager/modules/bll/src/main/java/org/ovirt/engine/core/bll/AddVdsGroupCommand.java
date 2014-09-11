@@ -41,9 +41,9 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
         // add default network
         if (getParameters().getVdsGroup().getStoragePoolId() != null) {
-            final String networkName = NetworkUtils.getEngineNetwork();
-            List<Network> networks =
-                    getNetworkDAO().getAllForDataCenter(getParameters().getVdsGroup().getStoragePoolId());
+            final String networkName = NetworkUtils.getDefaultManagementNetworkName();
+            List<Network> networks = getNetworkDAO()
+                    .getAllForDataCenter(getParameters().getVdsGroup().getStoragePoolId());
 
             Network net = LinqUtils.firstOrNull(networks, new Predicate<Network>() {
                 @Override

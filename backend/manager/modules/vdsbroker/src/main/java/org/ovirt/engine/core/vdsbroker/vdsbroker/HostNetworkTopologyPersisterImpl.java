@@ -111,7 +111,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
     }
 
     private void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
-        String managementNetworkName = NetworkUtils.getEngineNetwork();
+        String managementNetworkName = NetworkUtils.getDefaultManagementNetworkName();
         for (VdsNetworkInterface iface : ifaces) {
             if (managementNetworkName.equals(iface.getNetworkName())) {
                 return;

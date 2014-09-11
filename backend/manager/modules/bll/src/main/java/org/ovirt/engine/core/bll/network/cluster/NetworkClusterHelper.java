@@ -42,7 +42,7 @@ public class NetworkClusterHelper {
             Network mgmt =
                     DbFacade.getInstance()
                             .getNetworkDao()
-                            .getByNameAndCluster(NetworkUtils.getEngineNetwork(), clusterId);
+                            .getByNameAndCluster(NetworkUtils.getDefaultManagementNetworkName(), clusterId);
             managementNetworkCluster = getNetworkClusterDao().get(new NetworkClusterId(clusterId, mgmt.getId()));
         }
 

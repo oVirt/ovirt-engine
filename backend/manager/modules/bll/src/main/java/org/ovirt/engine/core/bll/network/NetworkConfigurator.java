@@ -53,7 +53,7 @@ public class NetworkConfigurator {
     }
 
     public void createManagementNetworkIfRequired() {
-        final String managementNetwork = NetworkUtils.getEngineNetwork();
+        final String managementNetwork = NetworkUtils.getDefaultManagementNetworkName();
 
         if (host == null) {
             return;
@@ -174,7 +174,7 @@ public class NetworkConfigurator {
 
         Network managementNetwork =
                 getDbFacade().getNetworkDao()
-                        .getByNameAndDataCenter(NetworkUtils.getEngineNetwork(), host.getStoragePoolId());
+                        .getByNameAndDataCenter(NetworkUtils.getDefaultManagementNetworkName(), host.getStoragePoolId());
 
         if (managementNetwork.getName().equals(nic.getNetworkName())) {
             return null;

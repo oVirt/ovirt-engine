@@ -410,7 +410,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             else if (_isLegacyNode) {
                 _parser.cliEnvironmentSet(
                     VdsmEnv.MANAGEMENT_BRIDGE_NAME,
-                    NetworkUtils.getEngineNetwork()
+                    NetworkUtils.getDefaultManagementNetworkName()
                 );
             }
             else {

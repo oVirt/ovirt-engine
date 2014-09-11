@@ -1642,7 +1642,7 @@ public class VdsBrokerObjectsBuilder {
             iface.setNetworkName(net.getName());
 
             // set the management ip
-            if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getEngineNetwork())) {
+            if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getDefaultManagementNetworkName())) {
                 iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
             }
 
@@ -1750,7 +1750,7 @@ public class VdsBrokerObjectsBuilder {
      */
     private static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
         if (FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion())
-                || NetworkUtils.getEngineNetwork().equals(iface.getNetworkName())
+                || NetworkUtils.getDefaultManagementNetworkName().equals(iface.getNetworkName())
                 || iface.getName().equals(host.getActiveNic())) {
             iface.setGateway(gateway);
         }

@@ -215,16 +215,16 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             return false;
         }
 
-        if (StringUtils.equals(getParameters().getOldNetworkName(), NetworkUtils.getEngineNetwork())
-                && !StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getEngineNetwork())) {
+        if (StringUtils.equals(getParameters().getOldNetworkName(), NetworkUtils.getDefaultManagementNetworkName())
+                && !StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getDefaultManagementNetworkName())) {
             getReturnValue().getCanDoActionMessages()
                     .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
             getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                    NetworkUtils.getEngineNetwork()));
+                    NetworkUtils.getDefaultManagementNetworkName()));
             return false;
         }
 
-        if (!NetworkUtils.getEngineNetwork().equals(getParameters().getNetwork().getName())
+        if (!NetworkUtils.getDefaultManagementNetworkName().equals(getParameters().getNetwork().getName())
                 && StringUtils.isNotEmpty(getParameters().getGateway())) {
             if (!getParameters().getGateway().equals(ifaceGateway)) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
@@ -239,7 +239,7 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
         // check conectivity
         getParameters().setCheckConnectivity(getParameters().getCheckConnectivity());
         if (getParameters().getCheckConnectivity()) {
-            if (!StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getEngineNetwork())) {
+            if (!StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getDefaultManagementNetworkName())) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }

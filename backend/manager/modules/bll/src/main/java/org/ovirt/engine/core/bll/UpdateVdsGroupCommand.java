@@ -119,7 +119,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
             // when moving the cluster back into a DC, need to add its management network
             Network managementNetwork =
-                    getNetworkDAO().getByNameAndDataCenter(NetworkUtils.getEngineNetwork(),
+                    getNetworkDAO().getByNameAndDataCenter(NetworkUtils.getDefaultManagementNetworkName(),
                             getVdsGroup().getStoragePoolId());
             getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(),
                     managementNetwork.getId(),

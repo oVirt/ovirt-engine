@@ -22,7 +22,7 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 public final class NetworkUtils {
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
-    public static String getEngineNetwork() {
+    public static String getDefaultManagementNetworkName() {
         return Config.<String> getValue(ConfigValues.DefaultManagementNetwork);
     }
 
@@ -207,7 +207,7 @@ public final class NetworkUtils {
      * @return <code>true</code> iff the network is a management network.
      */
     public static boolean isManagementNetwork(String networkName) {
-        return getEngineNetwork().equals(networkName);
+        return getDefaultManagementNetworkName().equals(networkName);
     }
 
     /**

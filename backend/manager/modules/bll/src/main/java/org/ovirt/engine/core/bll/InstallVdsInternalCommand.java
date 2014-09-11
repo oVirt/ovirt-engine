@@ -100,7 +100,7 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             );
 
             if (configureNetworkUsingHostDeploy) {
-                installer.setManagementNetwork(NetworkUtils.getEngineNetwork());
+                installer.setManagementNetwork(NetworkUtils.getDefaultManagementNetworkName());
             }
 
             if (parameters.getNetworkProviderId() != null) {
