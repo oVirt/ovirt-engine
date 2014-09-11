@@ -38,6 +38,8 @@ from . import config as wspconfig
 class Const(object):
     WEBSOCKET_PROXY_SERVICE_NAME = 'ovirt-websocket-proxy'
     WEBSOCKET_PROXY_PACKAGE_NAME = 'ovirt-engine-websocket-proxy'
+    WEBSOCKET_PROXY_SETUP_PACKAGE_NAME = \
+        'ovirt-engine-setup-plugin-websocket-proxy'
     WEBSOCKET_PROXY_CERT_NAME = 'websocket-proxy'
 
 
@@ -138,6 +140,14 @@ class RemoveEnv(object):
     )
     def REMOVE_WSP(self):
         return 'OVESETUP_REMOVE/removeWsp'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class RPMDistroEnv(object):
+    PACKAGES = 'OVESETUP_WSP_RPMDISRO_PACKAGES'
+    PACKAGES_SETUP = 'OVESETUP_WSP_RPMDISRO_PACKAGES_SETUP'
 
 
 @util.export
