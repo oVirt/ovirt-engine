@@ -601,6 +601,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String MixedSDVersionError();
 
+    String StorageDomainTargetUnsupported();
+
     String VolumeGroupReplaceTagError();
 
     String LogicalVolumeReplaceTagError();
