@@ -85,6 +85,13 @@ class Plugin(plugin.PluginBase):
         )
 
         self._enabled = True
+        self._foundpreextnfs = False
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_PROGRAMS,
+    )
+    def _programs(self):
+        self.command.detect('exportfs')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
@@ -126,6 +133,17 @@ class Plugin(plugin.PluginBase):
         self.environment[
             oenginecons.SystemEnv.NFS_CONFIG_ENABLED_LEGACY_IN_POSTINSTALL
         ] = False
+
+        rc, stdout, stderr = self.execute(
+            (
+                self.command.get('exportfs'),
+            ),
+            raiseOnError=False,
+        )
+        if rc == 0:
+            for line in stdout:
+                if line[0] == '/':
+                    self._foundpreextnfs = True
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
@@ -199,7 +217,9 @@ class Plugin(plugin.PluginBase):
             oenginecons.Stages.SYSTEM_NFS_CONFIG_AVAILABLE,
         ),
         # must be run before firewall_manager plugin
-        condition=lambda self: self._enabled,
+        condition=lambda self: (
+            self._enabled or self._foundpreextnfs
+        ),
         # must be always enabled to create examples
     )
     def _firewall(self):
