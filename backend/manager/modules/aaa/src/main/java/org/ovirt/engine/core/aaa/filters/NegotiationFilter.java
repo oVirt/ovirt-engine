@@ -106,15 +106,13 @@ public class NegotiationFilter implements Filter {
         } else {
             findNegotiatingProfiles(httpreq);
             HttpSession session = httpreq.getSession(false);
-            Deque<String> stack = null;
+            Deque<AuthenticationProfile> stack = null;
             if (session != null) {
-                stack = (Deque<String>)session.getAttribute(STACK_ATTR);
+                stack = (Deque<AuthenticationProfile>)session.getAttribute(STACK_ATTR);
             }
             if (stack == null) {
-                stack = new ArrayDeque<String>();
-                for (AuthenticationProfile profile : profiles) {
-                    stack.push(profile.getName());
-                }
+                stack = new ArrayDeque<AuthenticationProfile>();
+                stack.addAll(profiles);
             }
             doAuth(httpreq, (HttpServletResponse) rsp, stack);
             if (!stack.isEmpty()) {
@@ -128,13 +126,12 @@ public class NegotiationFilter implements Filter {
         }
     }
 
-    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<String> stack)
+    private void doAuth(HttpServletRequest req, HttpServletResponse rsp, Deque<AuthenticationProfile> stack)
             throws IOException, ServletException {
 
         boolean stop = false;
         while (!stop && !stack.isEmpty()) {
-            AuthenticationProfile profile =
-                    AuthenticationProfileRepository.getInstance().getProfile(stack.peek());
+            AuthenticationProfile profile = stack.peek();
 
             ExtMap output = profile.getAuthn().invoke(
                 new ExtMap().mput(
