@@ -22,6 +22,12 @@ public class Authn {
         public static final String AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
         /** Optional mapping extension name. */
         public static final String MAPPING_PLUGIN = "ovirt.engine.aaa.authn.mapping.plugin";
+        /**
+         * Negotiation priority.
+         * Less is higher priority.
+         * Default: 50.
+         */
+        public static final String NEGOTIATION_PRIORITY = "ovirt.engine.aaa.authn.negotiation.priority";
     }
 
     /**

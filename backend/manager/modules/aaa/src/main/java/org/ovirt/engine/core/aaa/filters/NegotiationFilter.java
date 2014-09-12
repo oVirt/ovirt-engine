@@ -5,6 +5,7 @@ import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
 
@@ -84,11 +85,21 @@ public class NegotiationFilter implements Filter {
                         if (profile != null) {
                             ExtMap authnContext = profile.getAuthn().getContext();
                             if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) != 0) {
-                                profiles.add(0, profile);
+                                profiles.add(profile);
                                 schemes.addAll(authnContext.<Collection<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
                             }
                         }
                     }
+
+                    Collections.sort(
+                        profiles,
+                        new Comparator<AuthenticationProfile>() {
+                            @Override
+                            public int compare(AuthenticationProfile o1, AuthenticationProfile o2) {
+                                return Integer.valueOf(o1.getNegotiationPriority()).compareTo(o2.getNegotiationPriority());
+                            }
+                        }
+                    );
                 }
             }
         }

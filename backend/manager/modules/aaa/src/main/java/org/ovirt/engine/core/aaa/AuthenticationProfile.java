@@ -22,6 +22,8 @@ public class AuthenticationProfile {
 
     private ExtensionProxy mapper;
 
+    private int negotiationPriority;
+
     /**
      * Create a new authentication profile with the given name, authenticator and directory.
      *
@@ -31,11 +33,12 @@ public class AuthenticationProfile {
      *     authenticated
      */
     public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz, ExtensionProxy mapper) {
-        this.name = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION)
-                .getProperty(Authn.ConfigKeys.PROFILE_NAME);
+        Properties config = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION);
+        this.name = config.getProperty(Authn.ConfigKeys.PROFILE_NAME);
         this.authn = authn;
         this.authz = authz;
         this.mapper = mapper;
+        this.negotiationPriority = Integer.valueOf(config.getProperty(Authn.ConfigKeys.NEGOTIATION_PRIORITY, "50"));
     }
 
     /**
@@ -62,5 +65,9 @@ public class AuthenticationProfile {
 
     public ExtensionProxy getMapper() {
         return mapper;
+    }
+
+    public int getNegotiationPriority() {
+        return negotiationPriority;
     }
 }
