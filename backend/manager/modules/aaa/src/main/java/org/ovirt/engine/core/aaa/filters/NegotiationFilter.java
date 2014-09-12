@@ -8,6 +8,8 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.Deque;
 import java.util.List;
+import java.util.Observable;
+import java.util.Observer;
 
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
@@ -45,9 +47,7 @@ public class NegotiationFilter implements Filter {
      */
     private static final String STACK_ATTR = NegotiationFilter.class.getName() + ".stack";
 
-    /**
-     * The authentication profiles used to perform the authentication process.
-     */
+    private volatile Collection<String> schemes;
     private volatile List<AuthenticationProfile> profiles;
     private long caps = 0;
 
@@ -63,47 +63,43 @@ public class NegotiationFilter implements Filter {
                 }
             }
         }
+
+        AuthenticationProfileRepository.getInstance().addObserver(
+            new Observer() {
+                @Override
+                public void update(Observable o, Object arg) {
+                    cacheNegotiatingProfiles();
+                }
+            }
+        );
+        cacheNegotiatingProfiles();
     }
 
     @Override
     public void destroy() {
     }
 
-    /**
-     * Lazily find all the profiles that support negotiation and store them reversed to simplify the creation of the
-     * stacks of profiles later when processing requests.
-     */
-    private void findNegotiatingProfiles(ServletRequest req) {
-        Collection<String> schemes = new ArrayList<String>();
-        if (profiles == null) {
-            synchronized (this) {
-                if (profiles == null) {
-                    schemes = new ArrayList<>();
-                    profiles = new ArrayList<AuthenticationProfile>();
+    private synchronized void cacheNegotiatingProfiles() {
+        schemes = new ArrayList<String>();
+        profiles = new ArrayList<AuthenticationProfile>();
 
-                    for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
-                        if (profile != null) {
-                            ExtMap authnContext = profile.getAuthn().getContext();
-                            if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) != 0) {
-                                profiles.add(profile);
-                                schemes.addAll(authnContext.<Collection<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
-                            }
-                        }
-                    }
-
-                    Collections.sort(
-                        profiles,
-                        new Comparator<AuthenticationProfile>() {
-                            @Override
-                            public int compare(AuthenticationProfile o1, AuthenticationProfile o2) {
-                                return Integer.valueOf(o1.getNegotiationPriority()).compareTo(o2.getNegotiationPriority());
-                            }
-                        }
-                    );
-                }
+        for (AuthenticationProfile profile : AuthenticationProfileRepository.getInstance().getProfiles()) {
+            ExtMap authnContext = profile.getAuthn().getContext();
+            if ((authnContext.<Long> get(Authn.ContextKeys.CAPABILITIES).longValue() & caps) != 0) {
+                profiles.add(profile);
+                schemes.addAll(authnContext.<Collection<String>>get(Authn.ContextKeys.HTTP_AUTHENTICATION_SCHEME, Collections.<String>emptyList()));
             }
         }
-        ((HttpServletRequest) req).setAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY, schemes);
+
+        Collections.sort(
+            profiles,
+            new Comparator<AuthenticationProfile>() {
+                @Override
+                public int compare(AuthenticationProfile o1, AuthenticationProfile o2) {
+                    return Integer.valueOf(o1.getNegotiationPriority()).compareTo(o2.getNegotiationPriority());
+                }
+            }
+        );
     }
 
     @Override
@@ -115,7 +111,7 @@ public class NegotiationFilter implements Filter {
         if (FiltersHelper.isAuthenticated(httpreq) || httpreq.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_RECORD_KEY) != null) {
             chain.doFilter(req, rsp);
         } else {
-            findNegotiatingProfiles(httpreq);
+            ((HttpServletRequest) req).setAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY, schemes);
             HttpSession session = httpreq.getSession(false);
             Deque<AuthenticationProfile> stack = null;
             if (session != null) {

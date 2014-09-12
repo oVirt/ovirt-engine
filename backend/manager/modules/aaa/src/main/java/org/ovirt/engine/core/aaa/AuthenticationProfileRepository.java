@@ -16,7 +16,7 @@ import org.ovirt.engine.core.extensions.mgr.ConfigurationException;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
-public class AuthenticationProfileRepository implements Observer {
+public class AuthenticationProfileRepository extends Observable {
 
     private static final Logger log = LoggerFactory.getLogger(AuthenticationProfileRepository.class);
 
@@ -54,15 +54,22 @@ public class AuthenticationProfileRepository implements Observer {
     }
 
     public void registerProfile(AuthenticationProfile profile) {
-        registerProfile(profiles, profile);
+        profiles.put(profile.getName(), profile);
     }
 
     private AuthenticationProfileRepository() {
-        EngineExtensionsManager.getInstance().addObserver(this);
-        profiles = createProfiles();
+        EngineExtensionsManager.getInstance().addObserver(
+            new Observer() {
+                @Override
+                public void update(Observable o, Object arg) {
+                    createProfiles();
+                }
+            }
+        );
+        createProfiles();
     }
 
-    private Map<String, AuthenticationProfile> createProfiles() {
+    private void createProfiles() {
 
         // Get the extensions that correspond to authn (authentication) service.
         // For each extension - get the relevant authn extension.
@@ -83,16 +90,9 @@ public class AuthenticationProfileRepository implements Observer {
                 log.debug("Ignoring", e);
             }
         }
-        return results;
-    }
-
-    private void registerProfile(Map<String, AuthenticationProfile> map, AuthenticationProfile profile) {
-        map.put(profile.getName(), profile);
-    }
-
-    @Override
-    public void update(Observable o, Object arg) {
-        profiles = createProfiles();
+        profiles = results;
+        setChanged();
+        notifyObservers();
     }
 
 }
