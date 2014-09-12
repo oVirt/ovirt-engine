@@ -396,10 +396,10 @@ a.dropdown-toggle {
     }
 }
 .prevPageButton_pfly_fix {
-    margin-right: 8px !important;
+    margin-right: 11px !important;
 }
 .nextPageButton_pfly_fix {
-    margin-right: 10px !important;
+   padding-right: 25px !important;
 }
 .epv_closeButton_pfly_fix {
     line-height: 12px !important;
