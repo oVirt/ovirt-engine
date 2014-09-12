@@ -467,7 +467,7 @@ public class JsonRpcVdsServer implements IVdsServer {
             String secured,
             String options,
             Map<String, Object> fencingPolicy) {
-         RequestBuilder rb =
+        JsonRpcRequest request =
                 new RequestBuilder("Host.fenceNode").withParameter("addr", ip)
                         .withParameter("port", port)
                         .withParameter("agent", type)
@@ -475,14 +475,13 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withParameter("password", password)
                         .withParameter("action", action)
                         .withOptionalParameter("secure", secured)
-                        .withOptionalParameter("options", options);
+                        .withOptionalParameter("options", options)
+                        .withOptionalParameterAsMap("fencingPolicy", fencingPolicy)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("power").withResponseType(String.class);
 
-        if (fencingPolicy != null) {
-            // if fencing policy is null, fence proxy does not support fencing policy parameter
-            rb.withParameter("fencingPolicy", fencingPolicy);
-        }
-
-        return new FenceStatusReturnForXmlRpc(new FutureMap(this.client, rb.build()));
+        return new FenceStatusReturnForXmlRpc(response);
     }
 
     @Override
