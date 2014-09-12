@@ -369,7 +369,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
-                    log.warnFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
+                    log.infoFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
                             searchText);
                     int startPos = searchObj.getErrorStartPos();
                     int endPos = searchObj.getErrorEndPos();
