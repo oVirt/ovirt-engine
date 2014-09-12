@@ -10,7 +10,6 @@ import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.DestroyImageVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -36,14 +35,14 @@ public class DestroyImageCommand<T extends DestroyImageParameters>
 
     @Override
     protected void executeCommand() {
-        Guid taskId = persistAsyncTaskPlaceHolder(VdcActionType.DestroyImage);
+        Guid taskId = persistAsyncTaskPlaceHolder(getParameters().getParentCommand());
 
         VDSReturnValue vdsReturnValue = runVdsCommand(VDSCommandType.DestroyImage,
                 createVDSParameters());
 
         if (vdsReturnValue != null && vdsReturnValue.getCreationInfo() != null) {
             getParameters().setVdsmTaskIds(new ArrayList<Guid>());
-            Guid result = createTask(taskId, vdsReturnValue.getCreationInfo(), VdcActionType.DestroyImage,
+            Guid result = createTask(taskId, vdsReturnValue.getCreationInfo(), getParameters().getParentCommand(),
                             VdcObjectType.Storage, getParameters().getStorageDomainId());
             getReturnValue().getInternalVdsmTaskIdList().add(result);
             getReturnValue().getVdsmTaskIdList().add(result);
