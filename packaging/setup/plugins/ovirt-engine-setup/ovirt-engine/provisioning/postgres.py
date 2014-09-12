@@ -165,7 +165,6 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
         priority=plugin.Stages.PRIORITY_LAST,
         condition=lambda self: (
-            self._enabled and
             self.environment[
                 oenginecons.EngineDBEnv.HOST
             ] == 'localhost'
