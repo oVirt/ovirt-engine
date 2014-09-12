@@ -3,6 +3,7 @@ package org.ovirt.engine.core.aaa;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 
 /**
@@ -31,7 +32,7 @@ public class AuthenticationProfile {
      */
     public AuthenticationProfile(ExtensionProxy authn, ExtensionProxy authz, ExtensionProxy mapper) {
         this.name = authn.getContext().<Properties> get(Base.ContextKeys.CONFIGURATION)
-                .getProperty("ovirt.engine.aaa.authn.profile.name");
+                .getProperty(Authn.ConfigKeys.PROFILE_NAME);
         this.authn = authn;
         this.authz = authz;
         this.mapper = mapper;

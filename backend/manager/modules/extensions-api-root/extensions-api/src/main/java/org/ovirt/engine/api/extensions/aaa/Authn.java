@@ -12,6 +12,19 @@ import org.ovirt.engine.api.extensions.ExtUUID;
 public class Authn {
 
     /**
+     * Configuration keys.
+     * Configuration keys for the extension configuration.
+     */
+    public static class ConfigKeys {
+        /** Profile name. */
+        public static final String PROFILE_NAME = "ovirt.engine.aaa.authn.profile.name";
+        /** Authorization extension name. */
+        public static final String AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
+        /** Optional mapping extension name. */
+        public static final String MAPPING_PLUGIN = "ovirt.engine.aaa.authn.mapping.plugin";
+    }
+
+    /**
      * Context keys.
      */
     public static class ContextKeys {

@@ -18,10 +18,6 @@ import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public class AuthenticationProfileRepository implements Observer {
 
-    private static final String AUTHN_SERVICE = Authn.class.getName();
-    private static final String AUTHN_AUTHZ_PLUGIN = "ovirt.engine.aaa.authn.authz.plugin";
-    private static final String AUTHN_MAPPING_PLUGIN = "ovirt.engine.aaa.authn.mapping.plugin";
-
     private static final Logger log = LoggerFactory.getLogger(AuthenticationProfileRepository.class);
 
     private static volatile AuthenticationProfileRepository instance = null;
@@ -72,10 +68,10 @@ public class AuthenticationProfileRepository implements Observer {
         // For each extension - get the relevant authn extension.
 
         Map<String, AuthenticationProfile> results = new HashMap<>();
-        for (ExtensionProxy authnExtension : EngineExtensionsManager.getInstance().getExtensionsByService(AUTHN_SERVICE)) {
+        for (ExtensionProxy authnExtension : EngineExtensionsManager.getInstance().getExtensionsByService(Authn.class.getName())) {
             try {
-                String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_MAPPING_PLUGIN);
-                String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(AUTHN_AUTHZ_PLUGIN);
+                String mapperName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.MAPPING_PLUGIN);
+                String authzName = authnExtension.getContext().<Properties>get(Base.ContextKeys.CONFIGURATION).getProperty(Authn.ConfigKeys.AUTHZ_PLUGIN);
                 AuthenticationProfile profile = new AuthenticationProfile(
                         authnExtension,
                         EngineExtensionsManager.getInstance().getExtensionByName(authzName),
