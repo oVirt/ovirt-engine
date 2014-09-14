@@ -50,15 +50,16 @@ public class NetworkClusterHelper {
     }
 
     public void removeNetworkAndReassignRoles() {
+        NetworkCluster oldNetworkCluster = getNetworkClusterDao().get(networkCluster.getId());
         getNetworkClusterDao().remove(networkCluster.getClusterId(), networkCluster.getNetworkId());
         boolean updateManagementNetwork = false;
 
-        if (networkCluster.isDisplay()) {
+        if (oldNetworkCluster.isDisplay()) {
             getManagementNetworkCluster().setDisplay(true);
             updateManagementNetwork = true;
         }
 
-        if (networkCluster.isMigration()) {
+        if (oldNetworkCluster.isMigration()) {
             getManagementNetworkCluster().setMigration(true);
             updateManagementNetwork = true;
         }
