@@ -520,33 +520,35 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // in most cases it will not turn from on/off to off/on and we will need
         // to wait a full cycle for it.
         ThreadUtils.sleep(getSleep(actionType, order));
-        while (!statusReached && i <= getRerties()) {
-            log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
-            if (executor.findProxyHost()) {
-                VDSReturnValue returnValue = executor.fence(order);
-                if (returnValue != null && returnValue.getReturnValue() != null) {
-                    FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
-                    if (value.getStatus().equalsIgnoreCase("unknown")) {
-                        // No need to retry , agent definitions are corrupted
-                        log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
+
+        // get a proxy host to be used along the whole wait-for-status loop in order to prevent unnecessary delays when
+        // a potential preferred proxy host has connectivity problems and can not access the fenced host PM card
+        if (executor.findProxyHost()) {
+            while (!statusReached && i <= getRerties()) {
+                log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
+
+                    VDSReturnValue returnValue = executor.fence(order);
+                    if (returnValue != null && returnValue.getReturnValue() != null) {
+                        FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
+                        if (value.getStatus().equalsIgnoreCase("unknown")) {
+                            // No need to retry , agent definitions are corrupted
+                            log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
+                            break;
+                        }
+                        else {
+                            if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
+                                statusReached = true;
+                                log.infoFormat("vds {0} status is {1}", vdsName, FENCE_CMD);
+                            } else {
+                                i++;
+                                if (i <= getRerties())
+                                    ThreadUtils.sleep(getDelayInSeconds() * 1000);
+                            }
+                        }
+                    } else {
+                        log.errorFormat("Failed to get host {0} status.", vdsName);
                         break;
                     }
-                    else {
-                        if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
-                            statusReached = true;
-                            log.infoFormat("vds {0} status is {1}", vdsName, FENCE_CMD);
-                        } else {
-                            i++;
-                            if (i <= getRerties())
-                                ThreadUtils.sleep(getDelayInSeconds() * 1000);
-                        }
-                    }
-                } else {
-                    log.errorFormat("Failed to get host {0} status.", vdsName);
-                    break;
-                }
-            } else {
-                break;
             }
         }
         if (!statusReached) {
