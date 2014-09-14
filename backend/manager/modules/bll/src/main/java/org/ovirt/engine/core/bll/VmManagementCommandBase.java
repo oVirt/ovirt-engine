@@ -4,7 +4,6 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.Objects;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
@@ -62,29 +61,6 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
             instanceType = getVmTemplateDAO().getInstanceType(getInstanceTypeId());
         }
         return instanceType;
-    }
-
-    /**
-     * Checks that dedicated host is on the same cluster as the VM
-     *
-     * @param vm
-     *            - the VM to check
-     * @return
-     */
-    protected boolean isDedicatedVdsOnSameCluster(VmStatic vm) {
-        boolean result = true;
-        if (vm.getDedicatedVmForVds() != null) {
-            // get dedicated host id
-            Guid guid = vm.getDedicatedVmForVds();
-            // get dedicated host cluster and comparing it to VM cluster
-            VDS vds = getVdsDAO().get(guid);
-            result = vds != null && (Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId()));
-        }
-        if (!result) {
-            getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
-        }
-        return result;
     }
 
     private final static Pattern cpuPinningPattern =

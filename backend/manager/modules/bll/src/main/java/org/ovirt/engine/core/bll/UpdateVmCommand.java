@@ -43,6 +43,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
@@ -506,7 +507,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.VM_CANNOT_UPDATE_CLUSTER);
         }
 
-        if (!isDedicatedVdsOnSameCluster(vmFromParams.getStaticData())) {
+        if (!isDedicatedVdsExistOnSameCluster(vmFromParams.getStaticData(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -636,6 +637,11 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         return true;
+    }
+
+    protected boolean isDedicatedVdsExistOnSameCluster(VmBase vm,
+            ArrayList<String> canDoActionMessages) {
+        return VmHandler.validateDedicatedVdsExistOnSameCluster(vm, canDoActionMessages);
     }
 
     protected boolean isValidPciAndIdeLimit(VM vmFromParams) {

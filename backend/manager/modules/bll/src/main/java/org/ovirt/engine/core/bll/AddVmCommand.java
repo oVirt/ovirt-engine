@@ -305,7 +305,8 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                 return false;
             }
         }
-        return isDedicatedVdsOnSameCluster(vmStaticFromParams);
+        return VmHandler.validateDedicatedVdsExistOnSameCluster(vmStaticFromParams,
+                getReturnValue().getCanDoActionMessages());
     }
 
     protected boolean shouldCheckSpaceInStorageDomains() {

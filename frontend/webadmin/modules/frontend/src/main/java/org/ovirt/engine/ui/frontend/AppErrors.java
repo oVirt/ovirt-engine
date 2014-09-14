@@ -568,6 +568,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to a specific host. The host's cluster must be the same as the selected VM cluster.")
     String ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER();
 
+    @DefaultStringValue("Cannot ${action} ${type}. VM is pinned to a specific host. The required host doesn't exist.")
+    String ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST();
+
     @DefaultStringValue("Cannot ${action} ${type}. Disk configuration (${volumeFormat} ${volumeType}) is incompatible with the storage domain type.")
     String ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED();
 

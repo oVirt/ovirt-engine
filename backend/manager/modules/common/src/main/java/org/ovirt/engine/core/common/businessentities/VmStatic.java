@@ -32,7 +32,7 @@ public class VmStatic extends VmBase {
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String cpuPinning;
 
-    @EditableField
+    @EditableOnVmStatusField
     private boolean useHostCpuFlags;
 
     @EditableField

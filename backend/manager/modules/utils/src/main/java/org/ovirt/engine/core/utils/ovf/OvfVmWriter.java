@@ -86,6 +86,10 @@ public class OvfVmWriter extends OvfWriter {
             _writer.WriteEndElement();
         }
 
+        _writer.WriteStartElement(OvfProperties.USE_HOST_CPU);
+        _writer.WriteRaw(String.valueOf(_vm.getStaticData().isUseHostCpuFlags()));
+        _writer.WriteEndElement();
+
         _writer.WriteStartElement(OvfProperties.USE_LATEST_VERSION);
         _writer.WriteRaw(String.valueOf(_vm.isUseLatestVersion()));
         _writer.WriteEndElement();

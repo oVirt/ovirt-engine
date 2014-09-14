@@ -1065,6 +1065,11 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
         getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
 
+        // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
+        if (!VmHandler.validateDedicatedVdsExistOnSameCluster(getVm().getStaticData(), null)) {
+            getVm().setDedicatedVmForVds(null);
+        }
+
         if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {
             // no need to check this for blank
             VmTemplate originalTemplate = getVmTemplateDAO().get(getVm().getOriginalTemplateGuid());

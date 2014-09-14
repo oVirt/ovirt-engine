@@ -69,4 +69,7 @@ public class OvfProperties {
     final static String IS_SPICE_FILE_TRANSFER_ENABLED = "IsSpiceFileTransferEnabled";
     final static String IS_SPICE_COPY_PASTE_ENABLED = "IsSpiceCopyPasteEnabled";
     final static String COMMENT = "Comment";
+    final static String MIGRATION_SUPPORT = "MigrationSupport";
+    final static String DEDICATED_VM_FOR_VDS = "DedicatedVmForVds";
+    final static String USE_HOST_CPU = "UseHostCpu";
 }

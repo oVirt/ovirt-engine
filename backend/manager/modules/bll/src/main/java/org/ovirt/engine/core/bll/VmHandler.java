@@ -8,6 +8,7 @@ import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 
 import org.apache.commons.collections.CollectionUtils;
@@ -39,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -906,5 +908,34 @@ public class VmHandler {
         permissionList.add(new PermissionSubject(vmId, VdcObjectType.VM, ActionGroup.EDIT_VM_PROPERTIES));
         permissionList.add(new PermissionSubject(clusterId, VdcObjectType.VdsGroups, ActionGroup.CREATE_VM));
         return permissionList;
+    }
+
+    /**
+     * Checks that dedicated host exists on the same cluster as the VM
+     *
+     * @param vm                  - the VM to check
+     * @param canDoActionMessages - Action messages - used for error reporting. null value indicates that no error messages are required.
+     * @return
+     */
+    public static boolean validateDedicatedVdsExistOnSameCluster(VmBase vm, ArrayList<String> canDoActionMessages) {
+        boolean result = true;
+        if (vm.getDedicatedVmForVds() != null) {
+            // get dedicated host id
+            Guid vdsId = vm.getDedicatedVmForVds();
+            // get dedicated host, checks if exists and compare its cluster to the VM cluster
+            VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
+            if (vds == null) {
+                if (canDoActionMessages != null) {
+                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_DOES_NOT_EXIST.toString());
+                }
+                result = false;
+            } else if (!Objects.equals(vm.getVdsGroupId(), vds.getVdsGroupId())) {
+                if (canDoActionMessages != null) {
+                    canDoActionMessages.add(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER.toString());
+                }
+                result = false;
+            }
+        }
+        return result;
     }
 }
