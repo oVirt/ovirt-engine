@@ -3,6 +3,7 @@ package org.ovirt.engine.core.common.businessentities.network;
 import java.io.Serializable;
 import java.util.Map;
 import java.util.Set;
+
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Pattern;
 import javax.validation.constraints.Size;
@@ -429,6 +430,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
 
     protected ToStringBuilder appendAttributes(ToStringBuilder tsb) {
         return tsb.append("id", getId())
+                .append("name", getName())
                 .append("vdsId", getVdsId())
                 .append("networkName", getNetworkName())
                 .append("bootProtocol", getBootProtocol())
