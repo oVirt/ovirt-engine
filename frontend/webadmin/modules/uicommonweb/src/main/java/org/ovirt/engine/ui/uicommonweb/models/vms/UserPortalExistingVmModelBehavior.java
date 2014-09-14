@@ -133,4 +133,8 @@ public class UserPortalExistingVmModelBehavior extends ExistingVmModelBehavior
                 query
                 );
     }
+
+    @Override
+    protected void updateNumaEnabled() {
+    }
 }

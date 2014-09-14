@@ -11,11 +11,16 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
+import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
 import org.ovirt.engine.ui.uicommonweb.builders.vm.CommentVmBaseToUnitBuilder;
@@ -64,6 +69,19 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         if (vm.getVmPoolId() != null) {
             instanceTypeManager.setAlwaysEnabledFieldUpdate(true);
         }
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmNumaNodesByVmId,
+                new IdQueryParameters(vm.getId()),
+                new AsyncQuery(new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        List<VmNumaNode> nodes =
+                                (List<VmNumaNode>) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                        ExistingVmModelBehavior.this.getModel().setVmNumaNodes(nodes);
+                        ExistingVmModelBehavior.this.getModel().updateNodeCount(nodes.size());
+                    }
+                }));
     }
 
     private void loadDataCenter() {
@@ -253,7 +271,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         {
             double overCommitFactor = 100.0 / cluster.getmax_vds_memory_over_commit();
             getModel().getMinAllocatedMemory()
-                    .setEntity((int) ((Integer) getModel().getMemSize().getEntity() * overCommitFactor));
+                    .setEntity((int) (getModel().getMemSize().getEntity() * overCommitFactor));
         }
         else
         {
@@ -352,5 +370,26 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     @Override
     public ExistingVmInstanceTypeManager getInstanceTypeManager() {
         return (ExistingVmInstanceTypeManager) instanceTypeManager;
+    }
+
+    @Override
+    protected VM getVmWithNuma() {
+        VM dummyVm = super.getVmWithNuma();
+        dummyVm.setId(vm.getId());
+        List<VmNumaNode> vmNumaNodes = getModel().getVmNumaNodes();
+        if (vmNumaNodes != null && !vmNumaNodes.isEmpty() && vmNumaNodes.size() == dummyVm.getvNumaNodeList().size()) {
+            dummyVm.setvNumaNodeList(vmNumaNodes);
+        }
+
+        return dummyVm;
+    }
+
+    @Override
+    protected void updateNumaEnabled() {
+        super.updateNumaEnabled();
+        updateNumaEnabledHelper();
+        if (Boolean.TRUE.equals(getModel().getNumaEnabled().getEntity()) && getModel().getVmNumaNodes() != null) {
+            getModel().getNumaNodeCount().setEntity(getModel().getVmNumaNodes().size());
+        }
     }
 }

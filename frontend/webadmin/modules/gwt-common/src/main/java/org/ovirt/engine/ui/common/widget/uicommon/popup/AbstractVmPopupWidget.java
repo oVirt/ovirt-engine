@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -42,6 +43,7 @@ import org.ovirt.engine.ui.common.widget.EntityModelDetachableWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.EntityModelWidgetWithInfo;
 import org.ovirt.engine.ui.common.widget.HasDetachable;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.common.widget.UiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -565,6 +567,27 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("hostCpu")
     public EntityModelCheckBoxEditor hostCpuEditor;
 
+    @UiField
+    @Ignore
+    public FlowPanel numaPanel;
+
+    @UiField(provided = true)
+    @Ignore
+    public InfoIcon numaInfoIcon;
+
+    @UiField
+    @Path(value = "numaNodeCount.entity")
+    @WithElementId("numaNodeCount")
+    public IntegerEntityModelTextBoxEditor numaNodeCount;
+
+    @UiField(provided = true)
+    @Path(value = "numaTuneMode.selectedItem")
+    @WithElementId("numaTuneMode")
+    public ListModelListBoxEditor<NumaTuneMode> numaTuneMode;
+
+    @UiField
+    UiCommandButton numaSupportButton;
+
     @Path(value = "migrationMode.selectedItem")
     @WithElementId("migrationMode")
     public ListModelListBoxEditor<MigrationSupport> migrationModeEditor;
@@ -1043,6 +1066,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         });
 
+        numaInfoIcon = new InfoIcon(SafeHtmlUtils.fromTrustedString(""), resources); //$NON-NLS-1$
     }
 
     /**
@@ -1283,6 +1307,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         cpuSharesAmountSelectionEditor =
                 new ListModelListBoxOnlyEditor<UnitVmModel.CpuSharesAmount>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
+
+        numaTuneMode = new ListModelListBoxEditor<NumaTuneMode>(new EnumRenderer(), new ModeSwitchingVisibilityRenderer());
     }
 
     private String typeAheadNameDescriptionTemplateNullSafe(String name, String description) {
@@ -1370,6 +1396,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hostCpuEditor.setLabel(constants.useHostCpu());
         cpuPinning.setLabel(constants.cpuPinningLabel());
 
+        // numa
+        numaTuneMode.setLabel(constants.numaTunaModeLabel());
+        numaNodeCount.setLabel(constants.numaNodeCountLabel());
+        numaSupportButton.setLabel(constants.numaSupportButtonLabel());
         // High Availability Tab
         isHighlyAvailableEditor.setLabel(constants.highlyAvailableVmPopup());
 
@@ -1430,6 +1460,34 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initListeners(model);
         hideAlwaysHiddenFields();
         decorateDetachableFields();
+        enableNumaSupport(model);
+    }
+
+    private void enableNumaSupport(final UnitVmModel model) {
+        numaSupportButton.setCommand(model.getNumaSupportCommand());
+        numaPanel.setVisible(false);
+        enableNumaFields(false);
+        model.getNumaEnabled().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
+                numaPanel.setVisible(true);
+                enableNumaFields(model.getNumaEnabled().getEntity());
+                setNumaInfoMsg(model.getNumaEnabled().getMessage());
+            }
+        });
+    }
+
+    private void setNumaInfoMsg(String message) {
+        if (message == null) {
+            message = ""; //$NON-NLS-1$
+        }
+        numaInfoIcon.setText(applicationTemplates.italicText(message));
+    }
+
+    private void enableNumaFields(boolean enabled) {
+        numaNodeCount.setEnabled(enabled);
+        numaTuneMode.setEnabled(enabled);
+        numaSupportButton.setEnabled(enabled);
     }
 
     @UiHandler("refreshButton")
@@ -1843,6 +1901,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         migrationDowntimeEditor.setTabIndex(nextTabIndex++);
         hostCpuEditor.setTabIndex(nextTabIndex++);
 
+        numaNodeCount.setTabIndex(nextTabIndex++);
+        numaTuneMode.setTabIndex(nextTabIndex++);
         // ==High Availability Tab==
         nextTabIndex = highAvailabilityTab.setTabIndexes(nextTabIndex);
         isHighlyAvailableEditor.setTabIndex(nextTabIndex++);
@@ -2115,5 +2175,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Override
     public Map<TabName, DialogTab> getTabNameMapping() {
         return tabMap;
+    }
+
+    public UiCommandButton getNumaSupportButton() {
+        return numaSupportButton;
     }
 }

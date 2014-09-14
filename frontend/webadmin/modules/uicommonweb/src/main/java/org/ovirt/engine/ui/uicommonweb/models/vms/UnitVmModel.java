@@ -14,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
@@ -23,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
@@ -40,8 +42,10 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.ICommandTarget;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.TypeResolver;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -52,6 +56,8 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.key_value.KeyValueModel;
@@ -1290,6 +1296,52 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         this.cpuProfiles = cpuProfiles;
     }
 
+    private EntityModel<Boolean> numaEnabled;
+
+    private NotChangableForVmInPoolListModel<NumaTuneMode> numaTuneMode;
+
+    public ListModel<NumaTuneMode> getNumaTuneMode() {
+        return numaTuneMode;
+    }
+
+    public void setNumaTuneMode(NotChangableForVmInPoolListModel<NumaTuneMode> numaTuneMode) {
+        this.numaTuneMode = numaTuneMode;
+    }
+
+    private int initialsNumaNodeCount;
+
+    private NotChangableForVmInPoolEntityModel<Integer> numaNodeCount;
+
+    public EntityModel<Integer> getNumaNodeCount() {
+        return numaNodeCount;
+    }
+
+    public void setNumaNodeCount(NotChangableForVmInPoolEntityModel<Integer> numaNodeCount) {
+        this.numaNodeCount = numaNodeCount;
+    }
+
+    private List<VmNumaNode> vmNumaNodes;
+
+    public List<VmNumaNode> getVmNumaNodes() {
+        return vmNumaNodes;
+    }
+
+    public void setVmNumaNodes(List<VmNumaNode> vmNumaNodes) {
+        this.vmNumaNodes = vmNumaNodes;
+    }
+
+    private UICommand numaSupportCommand;
+
+    public UICommand getNumaSupportCommand() {
+        return numaSupportCommand;
+    }
+
+    private void setNumaSupportCommand(UICommand numaSupportCommand) {
+        this.numaSupportCommand = numaSupportCommand;
+    }
+
+    private boolean numaChanged = false;
+
     public UnitVmModel(VmModelBehaviorBase behavior) {
         Frontend.getInstance().getQueryStartedEvent().addListener(this);
         Frontend.getInstance().getQueryCompleteEvent().addListener(this);
@@ -1545,6 +1597,27 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setCpuProfiles(new NotChangableForVmInPoolListModel<CpuProfile>());
         getCpuProfiles().setIsAvailable(false);
+
+        setNumaTuneMode(new NotChangableForVmInPoolListModel<NumaTuneMode>());
+        getNumaTuneMode().setItems(AsyncDataProvider.getInstance().getNumaTuneModeList());
+        getNumaTuneMode().setSelectedItem(NumaTuneMode.INTERLEAVE);
+
+        setNumaNodeCount(new NotChangableForVmInPoolEntityModel<Integer>());
+        getNumaNodeCount().setEntity(0);
+        setNumaEnabled(new EntityModel<Boolean>());
+        getNumaEnabled().setMessage(ConstantsManager.getInstance().getConstants().numaDisabledInfoMessage());
+
+        setNumaSupportCommand(new UICommand("NumaSupport", new ICommandTarget() { //$NON-NLS-1$
+                    @Override
+                    public void executeCommand(UICommand command) {
+                        numaSupport();
+                    }
+
+                    @Override
+                    public void executeCommand(UICommand uiCommand, Object... parameters) {
+                        numaSupport();
+                    }
+                }));
     }
 
     public void initialize(SystemTreeItemModel SystemTreeSelectedItem)
@@ -1661,6 +1734,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
+                behavior.updateNumaEnabled();
             }
             else if (sender == getCpuSharesAmountSelection())
             {
@@ -1688,6 +1762,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                 behavior.updateUseHostCpuAvailability();
                 behavior.updateCpuPinningVisibility();
                 behavior.updateHaAvailability();
+                behavior.updateNumaEnabled();
             }
             else if (sender == getProvisioning())
             {
@@ -2891,4 +2966,46 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         return ((CurrentUserRole) TypeResolver.getInstance().resolve(CurrentUserRole.class)).isCreateInstanceOnly();
     }
 
+    private void numaSupport() {
+        setNumaChanged(true);
+        getBehavior().numaSupport();
+    }
+
+    public EntityModel<Boolean> getNumaEnabled() {
+        return numaEnabled;
+    }
+
+    public void setNumaEnabled(EntityModel<Boolean> numaEnabled) {
+        this.numaEnabled = numaEnabled;
+    }
+
+    @Override
+    public void executeCommand(UICommand command) {
+        super.executeCommand(command);
+
+        if (NumaSupportModel.SUBMIT_NUMA_SUPPORT.equals(command.getName())) {
+            onNumaSupport();
+        }
+    }
+
+    private void onNumaSupport() {
+        if (getWindow() == null) {
+            return;
+        }
+        VmNumaSupportModel model = (VmNumaSupportModel) getWindow();
+        setVmNumaNodes(model.getVm().getvNumaNodeList());
+    }
+
+    public void setNumaChanged(boolean numaChanged) {
+        this.numaChanged = numaChanged;
+    }
+
+    public boolean isNumaChanged() {
+        return numaChanged || initialsNumaNodeCount != getNumaNodeCount().getEntity();
+    }
+
+    public void updateNodeCount(int size) {
+        initialsNumaNodeCount = size;
+        getNumaNodeCount().setEntity(size);
+    }
 }

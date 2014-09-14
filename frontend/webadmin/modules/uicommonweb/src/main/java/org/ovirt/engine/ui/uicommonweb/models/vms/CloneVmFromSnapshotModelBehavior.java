@@ -59,4 +59,8 @@ public class CloneVmFromSnapshotModelBehavior extends ExistingVmModelBehavior
     {
         postInitStorageDomains();
     }
+
+    @Override
+    protected void updateNumaEnabled() {
+    }
 }

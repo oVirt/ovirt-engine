@@ -19,5 +19,6 @@ public class CommonVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMo
         model.getAllowConsoleReconnect().setEntity(vm.isAllowConsoleReconnect());
         model.getIsStateless().setEntity(vm.isStateless());
         model.getIsRunAndPause().setEntity(vm.isRunAndPause());
+        model.getNumaTuneMode().setSelectedItem(vm.getNumaTuneMode());
     }
 }

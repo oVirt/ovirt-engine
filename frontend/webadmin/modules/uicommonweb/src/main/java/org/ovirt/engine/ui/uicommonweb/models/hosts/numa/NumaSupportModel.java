@@ -38,7 +38,7 @@ public class NumaSupportModel extends Model {
     private List<VdsNumaNode> numaNodeList;
     private List<VM> vmsWithvNumaNodeList;
     private List<VNodeModel> unassignedVNodeModelList;
-    private Map<Guid, List<VNodeModel>> p2vNumaNodesMap;
+    protected Map<Guid, List<VNodeModel>> p2vNumaNodesMap;
     private List<Pair<Integer, Set<VdsNumaNode>>> firstLevelDistanceSetList;
     private final Event modelReady = new Event(new EventDefinition("ModelReady", NumaSupportModel.class)); //$NON-NLS-1$
     private Map<Integer, VdsNumaNode> indexNodeMap;
@@ -109,7 +109,7 @@ public class NumaSupportModel extends Model {
         }), hosts.getSelectedItem().getId());
     }
 
-    private void initVNumaNodes() {
+    protected void initVNumaNodes() {
         unassignedVNodeModelList = new ArrayList<VNodeModel>();
         p2vNumaNodesMap = new HashMap<Guid, List<VNodeModel>>();
 

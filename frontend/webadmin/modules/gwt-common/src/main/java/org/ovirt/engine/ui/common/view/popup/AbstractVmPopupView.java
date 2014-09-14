@@ -6,6 +6,7 @@ import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.dialog.tab.DialogTab;
@@ -88,5 +89,10 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
     @Override
     public Map<TabName, DialogTab> getTabNameMapping() {
         return ((AbstractVmPopupWidget) getContentWidget()).getTabNameMapping();
+    }
+
+    @Override
+    public HasUiCommandClickHandlers getNumaSupportButton() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getNumaSupportButton();
     }
 }

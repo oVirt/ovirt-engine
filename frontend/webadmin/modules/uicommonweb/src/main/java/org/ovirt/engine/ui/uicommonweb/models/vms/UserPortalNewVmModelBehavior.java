@@ -194,4 +194,8 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
     public InstanceTypeManager getInstanceTypeManager() {
         return instanceTypeManager;
     }
+
+    @Override
+    protected void updateNumaEnabled() {
+    }
 }

@@ -70,6 +70,8 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     private HandlerRegistration contextMenuHandlerRegistration;
     private MenuBar menuBar;
 
+    private boolean dragEnabled;
+
     @Inject
     public DraggableVirtualNumaPanel(EventBus gwtEventBus, CommonApplicationResources commonResources,
             CommonApplicationMessages messages, CommonApplicationConstants commonConstants,
@@ -86,6 +88,9 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     @Override
     public void onLoad() {
         super.onLoad();
+        if (!dragEnabled) {
+            return;
+        }
         contextMenuHandlerRegistration = numaPanel.addDomHandler(new ContextMenuHandler() {
             @Override
             public void onContextMenu(ContextMenuEvent event) {
@@ -100,6 +105,9 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     @Override
     public void onUnload() {
         super.onUnload();
+        if (!dragEnabled) {
+            return;
+        }
         contextMenuHandlerRegistration.removeHandler();
     }
 
@@ -112,18 +120,27 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
 
     @UiHandler("container")
     void handleMouseOver(MouseOverEvent event) {
+        if (!dragEnabled) {
+            return;
+        }
         container.addStyleName(style.panelOver());
         dragHandle.setVisible(true);
     }
 
     @UiHandler("container")
     void handleMouseOut(MouseOutEvent event) {
+        if (!dragEnabled) {
+            return;
+        }
         container.removeStyleName(style.panelOver());
         dragHandle.setVisible(false);
     }
 
     @UiHandler("container")
     void onDragStart(DragStartEvent event) {
+        if (!dragEnabled) {
+            return;
+        }
         event.setData("VM_GID", nodeModel.getVm().getId().toString()); //$NON-NLS-1$
         event.setData("PINNED", String.valueOf(nodeModel.isPinned())); //$NON-NLS-1$
         event.setData("INDEX", String.valueOf(nodeModel.getVmNumaNode().getIndex())); //$NON-NLS-1$
@@ -147,10 +164,13 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
 
     /**
      * Dragging is enabled by default, if you want to alter that behavior, call this method with false.
-     * @param enable Enabled or disable dragging of this panel.
+     *
+     * @param dragEnabled
+     *            Enabled or disable dragging of this panel.
      */
-    public void enableDrag(boolean enable) {
-        if (enable) {
+    public void enableDrag(boolean dragEnabled) {
+        this.dragEnabled = dragEnabled;
+        if (dragEnabled) {
             getElement().setDraggable(Element.DRAGGABLE_TRUE);
         } else {
             getElement().setDraggable(Element.DRAGGABLE_FALSE);
@@ -165,7 +185,11 @@ public class DraggableVirtualNumaPanel extends Composite implements HasHandlers 
     public void setModel(VNodeModel nodeModel, List<VdsNumaNode> numaNodeList) {
         numaPanel.setModel(nodeModel);
         this.nodeModel = nodeModel;
-        createMenu(numaNodeList, nodeModel.getVmNumaNode().getIndex());
+        if (nodeModel.isLocked()) {
+            enableDrag(false);
+        } else {
+            createMenu(numaNodeList, nodeModel.getVmNumaNode().getIndex());
+        }
     }
 
     private void createMenu(final List<VdsNumaNode> numaNodeList, int indexToSkip) {

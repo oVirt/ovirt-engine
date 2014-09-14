@@ -76,4 +76,7 @@ public class UiCommandButton extends AbstractUiCommandButton implements Focusabl
         return nextTabIndex;
     }
 
+    public void setEnabled(boolean enabled) {
+        getButtonWidget().setEnabled(enabled);
+    }
 }

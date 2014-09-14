@@ -23,7 +23,9 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmType;
@@ -46,6 +48,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.VmNumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.UIConstants;
@@ -1219,5 +1223,59 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                         }
                     }
                 }));
+    }
+
+    public void numaSupport() {
+        if (getModel().getWindow() != null) {
+            return;
+        }
+        VM vm = getVmWithNuma();
+        NumaSupportModel model =
+                new VmNumaSupportModel((List<VDS>) getModel().getDefaultHost().getItems(), getModel().getDefaultHost()
+                        .getSelectedItem(), getModel(), vm);
+
+        getModel().setWindow(model);
+    }
+
+    protected VM getVmWithNuma() {
+        VM vm = new VM();
+        String vmName = getModel().getName().getEntity();
+        if (vmName == null || vmName.isEmpty()) {
+            vmName = "new_vm"; //$NON-NLS-1$
+        }
+        vm.setName(vmName);
+        Integer nodeCount = getModel().getNumaNodeCount().getEntity();
+        vm.setvNumaNodeList(new ArrayList<VmNumaNode>());
+        for (int i = 0; i < nodeCount; i++) {
+            VmNumaNode vmNumaNode = new VmNumaNode();
+            vmNumaNode.setIndex(i);
+            vm.getvNumaNodeList().add(vmNumaNode);
+        }
+        return vm;
+    }
+
+    /**
+     * allows to enable numa models in all derived behaviors
+     * use updateNumaEnabledHelper in each behavior that requires numa
+     */
+    protected void updateNumaEnabled() {
+    }
+
+    protected final void updateNumaEnabledHelper() {
+        boolean enabled = true;
+        if (getModel().getMigrationMode().getSelectedItem() != MigrationSupport.PINNED_TO_HOST ||
+                getModel().getIsAutoAssign().getEntity() ||
+                getModel().getDefaultHost().getSelectedItem() == null ||
+                !getModel().getDefaultHost().getSelectedItem().isNumaSupport()) {
+            enabled = false;
+        }
+        if (enabled) {
+            getModel().getNumaEnabled().setMessage(constants.numaInfoMessage());
+        } else {
+            getModel().getNumaEnabled().setMessage(constants.numaDisabledInfoMessage());
+            getModel().getNumaNodeCount().setEntity(0);
+
+        }
+        getModel().getNumaEnabled().setEntity(enabled);
     }
 }
