@@ -353,6 +353,18 @@ public abstract class OvfWriter implements IOvfBuilder {
         }
         writeVmInit();
 
+        if (vmBase.getMigrationSupport() != null) {
+            _writer.WriteStartElement(OvfProperties.MIGRATION_SUPPORT);
+            _writer.WriteRaw(String.valueOf(vmBase.getMigrationSupport().getValue()));
+            _writer.WriteEndElement();
+        }
+
+        if (vmBase.getDedicatedVmForVds() != null) {
+            _writer.WriteStartElement(OvfProperties.DEDICATED_VM_FOR_VDS);
+            _writer.WriteRaw(String.valueOf(vmBase.getDedicatedVmForVds()));
+            _writer.WriteEndElement();
+        }
+
         if (vmBase.getSerialNumberPolicy() != null) {
             _writer.WriteStartElement(OvfProperties.SERIAL_NUMBER_POLICY);
             _writer.WriteRaw(String.valueOf(vmBase.getSerialNumberPolicy().getValue()));

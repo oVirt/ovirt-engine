@@ -82,8 +82,6 @@ public class GetVmChangedFieldsForNextRunQueryTest
         VM srcVm = createEmptyVm();
         VM dstVm = createEmptyVm();
         // field that should not count
-        srcVm.setUseHostCpuFlags(true);
-        dstVm.setUseHostCpuFlags(false);
         srcVm.setUseLatestVersion(false);
         dstVm.setUseLatestVersion(true);
         srcVm.setName("a");
@@ -102,6 +100,8 @@ public class GetVmChangedFieldsForNextRunQueryTest
         dstVm.setUsbPolicy(UsbPolicy.ENABLED_LEGACY);
         srcVm.setStateless(true);
         dstVm.setStateless(false);
+        srcVm.setUseHostCpuFlags(true);
+        dstVm.setUseHostCpuFlags(false);
 
         when(getQueryParameters().getOriginal()).thenReturn(srcVm);
         when(getQueryParameters().getUpdated()).thenReturn(dstVm);
@@ -116,8 +116,6 @@ public class GetVmChangedFieldsForNextRunQueryTest
         VM srcVm = createEmptyVm();
         VM dstVm = createEmptyVm();
         // field that should not count
-        srcVm.setUseHostCpuFlags(true);
-        dstVm.setUseHostCpuFlags(false);
         srcVm.setUseLatestVersion(false);
         dstVm.setUseLatestVersion(true);
         srcVm.setName("a");
@@ -136,6 +134,8 @@ public class GetVmChangedFieldsForNextRunQueryTest
         dstVm.setUsbPolicy(UsbPolicy.ENABLED_LEGACY);
         srcVm.setStateless(true);
         dstVm.setStateless(true);
+        srcVm.setUseHostCpuFlags(true);
+        dstVm.setUseHostCpuFlags(true);
 
         when(getQueryParameters().getOriginal()).thenReturn(srcVm);
         when(getQueryParameters().getUpdated()).thenReturn(dstVm);

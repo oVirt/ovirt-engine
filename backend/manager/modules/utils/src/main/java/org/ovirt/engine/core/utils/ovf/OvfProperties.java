@@ -73,4 +73,7 @@ public class OvfProperties {
     final static String IS_MIGRATE_COMPRESSED = "IsMigrateCompressed";
     final static String CUSTOM_EMULATED_MACHINE = "CustomEmulatedMachine";
     final static String CUSTOM_CPU_NAME = "CustomCpuName";
+    final static String MIGRATION_SUPPORT = "MigrationSupport";
+    final static String DEDICATED_VM_FOR_VDS = "DedicatedVmForVds";
+    final static String USE_HOST_CPU = "UseHostCpu";
 }

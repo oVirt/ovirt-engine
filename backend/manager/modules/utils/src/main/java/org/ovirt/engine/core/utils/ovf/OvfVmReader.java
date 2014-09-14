@@ -207,6 +207,11 @@ public class OvfVmReader extends OvfReader {
         if (node != null) {
             _vm.setUseLatestVersion(Boolean.parseBoolean(node.innerText));
         }
+
+        node = content.SelectSingleNode(OvfProperties.USE_HOST_CPU);
+        if (node != null) {
+            _vm.setUseHostCpuFlags(Boolean.parseBoolean(node.innerText));
+        }
     }
 
     @Override

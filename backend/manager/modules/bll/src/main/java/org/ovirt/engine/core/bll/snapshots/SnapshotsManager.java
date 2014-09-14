@@ -9,6 +9,7 @@ import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.bll.context.CompensationContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
@@ -543,7 +544,6 @@ public class SnapshotsManager {
             vm.setInterfaces(interfaces);
 
             // These fields are not saved in the OVF, so get them from the current VM.
-            vm.setDedicatedVmForVds(oldVmStatic.getDedicatedVmForVds());
             vm.setIsoPath(oldVmStatic.getIsoPath());
             vm.setVdsGroupId(oldVmStatic.getVdsGroupId());
             // The VM configuration does not hold the vds group Id.
@@ -557,6 +557,10 @@ public class SnapshotsManager {
                     vm.setVdsGroupName(vdsGroup.getName());
                     vm.setVdsGroupCpuName(vdsGroup.getcpu_name());
                 }
+            }
+            // if the required dedicated host is invalid -> use current VM dedicated host
+            if (!VmHandler.validateDedicatedVdsExistOnSameCluster(vm.getStaticData(), null)) {
+                vm.setDedicatedVmForVds(oldVmStatic.getDedicatedVmForVds());
             }
             validateQuota(vm);
             return true;

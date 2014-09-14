@@ -15,6 +15,7 @@ import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
+import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -642,6 +643,21 @@ public abstract class OvfReader implements IOvfBuilder {
         if (node != null) {
             if (StringUtils.isNotEmpty(node.innerText)) {
                 vmBase.setMigrationDowntime(Integer.parseInt(node.innerText));
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.MIGRATION_SUPPORT);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                MigrationSupport migrationSupport = MigrationSupport.forValue(Integer.parseInt(node.innerText));
+                vmBase.setMigrationSupport(migrationSupport);
+            }
+        }
+
+        node = content.SelectSingleNode(OvfProperties.DEDICATED_VM_FOR_VDS);
+        if (node != null) {
+            if (StringUtils.isNotEmpty(node.innerText)) {
+                vmBase.setDedicatedVmForVds(Guid.createGuidFromString(node.innerText));
             }
         }
 

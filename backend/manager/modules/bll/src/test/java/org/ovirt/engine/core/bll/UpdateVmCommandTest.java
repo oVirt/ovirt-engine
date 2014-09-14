@@ -42,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -215,30 +216,16 @@ public class UpdateVmCommandTest {
     }
 
     @Test
-    public void testDedicatedHostNotExist() {
+    public void testDedicatedHostNotExistOrNotSameCluster() {
         prepareVmToPassCanDoAction();
 
         // this will cause null to return when getting vds from vdsDAO
         doReturn(vdsDAO).when(command).getVdsDAO();
+        doReturn(false).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
 
         vmStatic.setDedicatedVmForVds(Guid.newGuid());
 
         assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
-    }
-
-    @Test
-    public void testDedicatedHostNotInSameCluster() {
-        prepareVmToPassCanDoAction();
-
-        VDS vds = new VDS();
-        vds.setVdsGroupId(Guid.newGuid());
-        doReturn(vdsDAO).when(command).getVdsDAO();
-        when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
-        vmStatic.setDedicatedVmForVds(Guid.newGuid());
-
-        assertFalse("canDoAction should have failed with invalid dedicated host.", command.canDoAction());
-        assertCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEDICATED_VDS_NOT_IN_SAME_CLUSTER);
     }
 
     @Test
@@ -249,6 +236,7 @@ public class UpdateVmCommandTest {
         vds.setVdsGroupId(group.getId());
         doReturn(vdsDAO).when(command).getVdsDAO();
         when(vdsDAO.get(any(Guid.class))).thenReturn(vds);
+        doReturn(true).when(command).isDedicatedVdsExistOnSameCluster(any(VmBase.class), any(ArrayList.class));
         vmStatic.setDedicatedVmForVds(Guid.newGuid());
 
         assertTrue("canDoAction should have passed.", command.canDoAction());

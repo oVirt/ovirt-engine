@@ -398,6 +398,12 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
 
     protected void addVmTemplateToDb() {
         getVmTemplate().setVdsGroupId(getParameters().getVdsGroupId());
+
+        // if "run on host" field points to a non existent vds (in the current cluster) -> remove field and continue
+        if(!VmHandler.validateDedicatedVdsExistOnSameCluster(getVmTemplate(), null)){
+            getVmTemplate().setDedicatedVmForVds(null);
+        }
+
         getVmTemplate().setStatus(VmTemplateStatus.Locked);
         getVmTemplate().setQuotaId(getParameters().getQuotaId());
         VmHandler.updateImportedVmUsbPolicy(getVmTemplate());
