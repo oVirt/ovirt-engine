@@ -152,10 +152,10 @@ SNMP_MANAGERS=
 # Default SNMP Community String.
 SNMP_COMMUNITY=public
 
-# Default TRAP Object Identifier for alerts.
+# SNMP Trap Object Identifier for outgoing notifications.
+# { iso(1) org(3) dod(6) internet(1) private(4) enterprises(1) redhat(2312) ovirt(13) engine(1) notifier(1) }
 #
-# iso.organization.DoD.Internet.private.enterprises.redhat.ovirt-engine.notifications.audit-log
-# 1.3.6.1.4.1.2312.13.1.1
+# Note: changing the default will prevent generated traps from complying with OVIRT-MIB.txt.
 SNMP_OID=1.3.6.1.4.1.2312.13.1.1
 
 #
