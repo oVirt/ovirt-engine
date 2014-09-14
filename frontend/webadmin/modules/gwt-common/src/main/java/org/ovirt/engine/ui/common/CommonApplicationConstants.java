@@ -1933,4 +1933,15 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Un pin virtual node")
     String unPinNode();
 
+    @DefaultStringValue("Tune Mode")
+    String numaTunaModeLabel();
+
+    @DefaultStringValue("NUMA Node Count")
+    String numaNodeCountLabel();
+
+    @DefaultStringValue("Configure NUMA:")
+    String numaSectionLabel();
+
+    @DefaultStringValue("NUMA Pinning")
+    String numaSupportButtonLabel();
 }

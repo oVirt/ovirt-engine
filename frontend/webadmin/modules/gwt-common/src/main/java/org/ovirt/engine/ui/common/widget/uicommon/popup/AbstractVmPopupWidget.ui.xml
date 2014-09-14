@@ -32,6 +32,12 @@
         margin-bottom: 5px;
       }
 
+      .slimSectionLabel {
+        font-weight: bold;
+        margin-top: 2px;
+        margin-bottom: 1px;
+      }
+
       .sectionComment {
         margin-top: 10px;
         margin-left: 5px;
@@ -69,7 +75,7 @@
       .migrationDowntimeLabel {
         display: inline-block;
         float: left;
-        max-width: 184px;
+        max-width: 300px;
       }
 
       .migrationDowntimeInfoIcon {
@@ -404,7 +410,9 @@
         .detachableStyle {
             display: inline-block;
         }
-
+        .button {
+            padding: 0 5px;
+        }
     </ui:style>
 
     <t:DialogTabPanel width="100%" height="100%" ui:field="mainTabPanel">
@@ -584,7 +592,7 @@
                     <g:FlowPanel>
                     <g:FlowPanel ui:field="startRunningOnPanel">
                         <d:InfoIcon ui:field="nonEditableWhileVmNotDownInfo" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>
-                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runOnVmPopup}" />
+                        <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runOnVmPopup}" />
                         <g:VerticalPanel addStyleNames="{style.runHostPanel}" verticalAlignment='ALIGN_MIDDLE'>
                             <ge:EntityModelRadioButtonEditor ui:field="isAutoAssignEditor"
                                 addStyleNames="{style.radioButton}" />
@@ -595,7 +603,7 @@
                             </g:HorizontalPanel>
                         </g:VerticalPanel>
                     </g:FlowPanel>
-                        <g:Label addStyleNames="{style.sectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
+                        <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.runMigrationOptionsVmPopup}" />
                         <g:VerticalPanel width="100%" addStyleNames="{style.hostRunMigrationOptions}">
                              <ge:EntityModelDetachableWidget ui:field="migrationModeEditorWithDetachable" addStyleNames="{style.migrationSelect}"/>
                              <g:FlowPanel addStyleNames="{style.migrationDowntimePanel}">
@@ -605,6 +613,13 @@
                                <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="migrationDowntimeEditor" addStyleNames="{style.migrationDowntime}" />
                              </g:FlowPanel>
                              <ge:EntityModelCheckBoxEditor ui:field="hostCpuEditor" addStyleNames="{style.checkbox}"/>
+                             <g:FlowPanel ui:field="numaPanel">
+                                 <d:InfoIcon ui:field="numaInfoIcon" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>
+                                 <g:Label addStyleNames="{style.slimSectionLabel}" text="{constants.numaSectionLabel}" />
+	                             <ge:IntegerEntityModelTextBoxEditor ui:field="numaNodeCount" />
+	                             <e:ListModelListBoxEditor ui:field="numaTuneMode" />
+	                             <w:UiCommandButton ui:field="numaSupportButton" />
+                             </g:FlowPanel>
                         </g:VerticalPanel>
                     </g:FlowPanel>
                 </t:content>

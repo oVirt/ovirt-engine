@@ -366,4 +366,9 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
         getModel().getIsSingleQxlEnabled().setEntity(enabled);
     }
 
+    @Override
+    protected void updateNumaEnabled() {
+        super.updateNumaEnabled();
+        updateNumaEnabledHelper();
+    }
 }

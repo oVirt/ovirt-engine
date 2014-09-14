@@ -9,6 +9,7 @@ public class VNodeModel extends Model {
     private final VM vm;
     private final VmNumaNode vmNumaNode;
     private boolean pinned;
+    private boolean locked;
 
     public VNodeModel(NumaSupportModel numaSupportModel, VM vm, VmNumaNode vmNumaNode, boolean pinned) {
         this.numaSupportModel = numaSupportModel;
@@ -39,5 +40,13 @@ public class VNodeModel extends Model {
 
     public boolean isSplitted() {
         return getVmNumaNode().getVdsNumaNodeList() != null && getVmNumaNode().getVdsNumaNodeList().size() > 1;
+    }
+
+    public void setLocked(boolean locked) {
+        this.locked = locked;
+    }
+
+    public boolean isLocked() {
+        return locked;
     }
 }

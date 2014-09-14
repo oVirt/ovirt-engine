@@ -1,5 +1,7 @@
 package org.ovirt.engine.ui.uicompat;
 
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
+
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
@@ -954,4 +956,9 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String SELinuxMode___DISABLED();
 
+    String NumaTuneMode___STRICT();
+
+    String NumaTuneMode___PREFERRED();
+
+    String NumaTuneMode___INTERLEAVE();
 }

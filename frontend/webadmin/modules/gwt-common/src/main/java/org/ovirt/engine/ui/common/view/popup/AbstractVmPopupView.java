@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.common.view.popup;
 
 import org.ovirt.engine.ui.common.CommonApplicationResources;
 import org.ovirt.engine.ui.common.widget.AbstractUiCommandButton;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
 import org.ovirt.engine.ui.common.widget.LeftAlignedUiCommandButton;
 import org.ovirt.engine.ui.common.widget.popup.AbstractVmBasedPopupPresenterWidget;
@@ -73,5 +74,10 @@ public abstract class AbstractVmPopupView extends AbstractModelBoundWidgetPopupV
         }
 
         return Collections.EMPTY_LIST;
+    }
+
+    @Override
+    public HasUiCommandClickHandlers getNumaSupportButton() {
+        return ((AbstractVmPopupWidget) getContentWidget()).getNumaSupportButton();
     }
 }

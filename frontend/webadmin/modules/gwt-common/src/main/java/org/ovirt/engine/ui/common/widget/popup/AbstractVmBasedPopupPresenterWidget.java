@@ -5,14 +5,22 @@ import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.user.client.ui.HasVisibility;
 import com.google.inject.Inject;
 import org.ovirt.engine.ui.common.presenter.AbstractModelBoundPopupPresenterWidget;
+import org.ovirt.engine.ui.common.presenter.popup.numa.NumaSupportPopupPresenterWidget;
 import org.ovirt.engine.ui.common.system.ClientStorage;
+import org.ovirt.engine.ui.common.widget.HasUiCommandClickHandlers;
 import org.ovirt.engine.ui.common.widget.HasValidation;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicommonweb.models.hosts.numa.NumaSupportModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
 import java.util.List;
+import com.google.gwt.event.dom.client.ClickEvent;
+import com.google.gwt.event.dom.client.ClickHandler;
+import com.google.inject.Provider;
 
 public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupPresenterWidget.ViewDef> extends AbstractModelBoundPopupPresenterWidget<UnitVmModel, V>  {
 
@@ -26,15 +34,27 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
         void switchAttachToInstanceType(boolean isAttached);
 
         List<HasValidation> getInvalidWidgets();
+
+        HasUiCommandClickHandlers getNumaSupportButton();
     }
 
     private ClientStorage clientStorage;
+    private Provider<NumaSupportPopupPresenterWidget> numaSupportProvider;
 
     @Inject
     public AbstractVmBasedPopupPresenterWidget(EventBus eventBus, V view, ClientStorage clientStorage) {
         super(eventBus, view);
 
         this.clientStorage = clientStorage;
+    }
+
+    public AbstractVmBasedPopupPresenterWidget(EventBus eventBus,
+            V view,
+            ClientStorage clientStorage,
+            Provider<NumaSupportPopupPresenterWidget> numaSupportProvider) {
+        this(eventBus, view, clientStorage);
+
+        this.numaSupportProvider = numaSupportProvider;
     }
 
     @Override
@@ -55,6 +75,16 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             // hide the admin-only widgets only for non-admin users
             getView().initToCreateInstanceMode();
         }
+    }
+
+    @Override
+    public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(UnitVmModel source,
+            UICommand lastExecutedCommand,
+            Model windowModel) {
+        if (numaSupportProvider != null && windowModel instanceof NumaSupportModel) {
+            return numaSupportProvider.get();
+        }
+        return super.getModelPopup(source, lastExecutedCommand, windowModel);
     }
 
     private void initListeners(final UnitVmModel model) {
@@ -82,6 +112,13 @@ public class AbstractVmBasedPopupPresenterWidget<V extends AbstractVmBasedPopupP
             }
 
         });
+
+        registerHandler(getView().getNumaSupportButton().addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                getView().getNumaSupportButton().getCommand().execute();
+            }
+        }));
     }
 
     private void switchToAdvancedIfNeeded(final UnitVmModel model) {

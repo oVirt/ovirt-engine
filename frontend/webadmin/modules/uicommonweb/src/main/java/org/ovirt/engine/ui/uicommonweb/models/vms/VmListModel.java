@@ -2119,6 +2119,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         updateVmParams.setBalloonEnabled(balloonEnabled(model));
         updateVmParams.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
         updateVmParams.setApplyChangesLater(applyCpuChangesLater);
+        updateVmParams.setUpdateNuma(model.isNumaChanged());
         setRngDeviceToParams(model, updateVmParams);
 
         return updateVmParams;

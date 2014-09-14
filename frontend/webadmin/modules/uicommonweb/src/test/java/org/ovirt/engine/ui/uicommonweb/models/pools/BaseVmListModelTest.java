@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
@@ -125,6 +126,8 @@ public class BaseVmListModelTest {
         when(model.getSpiceCopyPasteEnabled().getEntity()).thenReturn(true);
         ListModel<CpuProfile> cpuProfiles = mockCpuProfiles();
         when(model.getCpuProfiles()).thenReturn(cpuProfiles);
+        when(model.getNumaNodeCount().getEntity()).thenReturn(0);
+        when(model.getNumaTuneMode().getSelectedItem()).thenReturn(NumaTuneMode.INTERLEAVE);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -242,7 +245,7 @@ public class BaseVmListModelTest {
 
     @SuppressWarnings("unchecked")
     protected static <T> EntityModel<T> mockEntityModel(T entity) {
-        EntityModel<T> model = (EntityModel<T>) mock(EntityModel.class);
+        EntityModel<T> model = mock(EntityModel.class);
         when(model.getEntity()).thenReturn(entity);
 
         return model;
@@ -250,7 +253,7 @@ public class BaseVmListModelTest {
 
     @SuppressWarnings("unchecked")
     protected static <T> ListModel<T> mockListModel(T selectedItem) {
-        ListModel<T> model = (ListModel<T>) mock(ListModel.class);
+        ListModel<T> model = mock(ListModel.class);
         when(model.getSelectedItem()).thenReturn(selectedItem);
 
         return model;
