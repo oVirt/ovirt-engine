@@ -355,6 +355,10 @@ public class VdsManager {
      * @param vds
      */
     public void updateNumaData(final VDS vds) {
+        if (vds.getNumaNodeList() == null || vds.getNumaNodeList().isEmpty()) {
+            return;
+        }
+
         final List<VdsNumaNode> numaNodesToSave = new ArrayList<>();
         final List<VdsNumaNode> numaNodesToUpdate = new ArrayList<>();
         final List<Guid> numaNodesToRemove = new ArrayList<>();
