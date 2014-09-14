@@ -16,7 +16,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.MemoryUtils;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.network.vm.VnicProfileHelper;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -62,11 +61,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
-import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
-import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
@@ -96,8 +92,6 @@ import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
-import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -110,10 +104,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
-    private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
 
-    private final List<String> macsAdded = new ArrayList<String>();
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
     private ImportValidator importValidator;
@@ -708,37 +700,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
     }
 
     @Override
-    protected void executeCommand() {
-        try {
-            addVmToDb();
-            processImages(!isImagesAlreadyOnTarget());
-            // if there aren't tasks - we can just perform the end
-            // vm related ops
-            if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
-                endVmRelatedOps();
-            }
-            // Save Vm Init
-            VmHandler.addVmInitToDB(getVm().getStaticData());
-        } catch (RuntimeException e) {
-            getMacPool().freeMacs(macsAdded);
-            throw e;
+    protected void processImages() {
+        processImages(!isImagesAlreadyOnTarget());
+        // if there aren't tasks - we can just perform the end
+        // vm related ops
+        if (getReturnValue().getVdsmTaskIdList().isEmpty()) {
+            endVmRelatedOps();
         }
-        setSucceeded(true);
-    }
-
-    private void addVmToDb() {
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-
-            @Override
-            public Void runInTransaction() {
-                addVmStatic();
-                addVmDynamic();
-                addVmInterfaces();
-                addVmStatistics();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
     }
 
     private void processImages(final boolean useCopyImages) {
@@ -1065,146 +1033,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
                         null));
     }
 
-    protected void addVmStatic() {
-
-        logImportEvents();
-        getVm().getStaticData().setId(getVmId());
-        getVm().getStaticData().setCreationDate(new Date());
-        getVm().getStaticData().setVdsGroupId(getParameters().getVdsGroupId());
-        getVm().getStaticData().setMinAllocatedMem(computeMinAllocatedMem());
-        getVm().getStaticData().setQuotaId(getParameters().getQuotaId());
-
-        if (getVm().getOriginalTemplateGuid() != null && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getOriginalTemplateGuid())) {
-            // no need to check this for blank
-            VmTemplate originalTemplate = getVmTemplateDAO().get(getVm().getOriginalTemplateGuid());
-            if (originalTemplate != null) {
-                // in case the original template name has been changed in the meantime
-                getVm().getStaticData().setOriginalTemplateName(originalTemplate.getName());
-            }
-        }
-
-        if (getParameters().getCopyCollapse()) {
-            getVm().setVmtGuid(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
-        }
-        getVmStaticDAO().save(getVm().getStaticData());
-        getCompensationContext().snapshotNewEntity(getVm().getStaticData());
-    }
-
-    private int computeMinAllocatedMem() {
-        if (getVm().getMinAllocatedMem() > 0) {
-            return getVm().getMinAllocatedMem();
-        }
-
-        VDSGroup vdsGroup = getVdsGroup();
-        if (vdsGroup != null && vdsGroup.getmax_vds_memory_over_commit() > 0) {
-            return (getVm().getMemSizeMb() * 100) / vdsGroup.getmax_vds_memory_over_commit();
-        }
-
-        return getVm().getMemSizeMb();
-    }
-
-    private void logImportEvents() {
-        // Some values at the OVF file are used for creating events at the GUI
-        // for the sake of providing information on the content of the VM that
-        // was exported,
-        // but not setting it in the imported VM
-        VmStatic vmStaticFromOvf = getVm().getStaticData();
-
-        OvfLogEventHandler<VmStatic> handler = new VMStaticOvfLogHandler(vmStaticFromOvf);
-        Map<String, String> aliasesValuesMap = handler.getAliasesValuesMap();
-
-        for (Map.Entry<String, String> entry : aliasesValuesMap.entrySet()) {
-            String fieldName = entry.getKey();
-            String fieldValue = entry.getValue();
-            logField(vmStaticFromOvf, fieldName, fieldValue);
-        }
-
-        handler.resetDefaults(vmStaticForDefaultValues);
-
-    }
-
-    private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
-        String vmName = vmStaticFromOvf.getName();
-        AuditLogableBase logable = new AuditLogableBase();
-        logable.addCustomValue("FieldName", fieldName);
-        logable.addCustomValue("VmName", vmName);
-        logable.addCustomValue("FieldValue", fieldValue);
-        AuditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
-    }
-
-    protected void addVmInterfaces() {
-        VmInterfaceManager vmInterfaceManager = new VmInterfaceManager(getMacPool());
-
-        VnicProfileHelper vnicProfileHelper =
-                new VnicProfileHelper(getVdsGroupId(),
-                        getStoragePoolId(),
-                        getVdsGroup().getcompatibility_version(),
-                        AuditLogType.IMPORTEXPORT_IMPORT_VM_INVALID_INTERFACES);
-
-        List<VmNetworkInterface> nics = getVm().getInterfaces();
-
-        vmInterfaceManager.sortVmNics(nics, getVm().getStaticData().getManagedDeviceMap());
-
-        // If we import it as a new entity, then we allocate all MAC addresses in advance
-        if (getParameters().isImportAsNewEntity()) {
-            List<String> macAddresses = getMacPool().allocateMacAddresses(nics.size());
-            for (int i = 0; i < nics.size(); ++i) {
-                nics.get(i).setMacAddress(macAddresses.get(i));
-            }
-        }
-
-        for (VmNetworkInterface iface : getVm().getInterfaces()) {
-            initInterface(iface);
-            vnicProfileHelper.updateNicWithVnicProfileForUser(iface, getCurrentUser());
-
-            vmInterfaceManager.add(iface,
-                                   getCompensationContext(),
-                                   !getParameters().isImportAsNewEntity(),
-                                   getVm().getOs(),
-                                   getVdsGroup().getcompatibility_version());
-            macsAdded.add(iface.getMacAddress());
-        }
-
-        vnicProfileHelper.auditInvalidInterfaces(getVmName());
-    }
-
-    private void initInterface(VmNic iface) {
-        if (iface.getId() == null) {
-            iface.setId(Guid.newGuid());
-        }
-        fillMacAddressIfMissing(iface);
-        iface.setVmTemplateId(null);
-        iface.setVmId(getVmId());
-    }
-
-    private void fillMacAddressIfMissing(VmNic iface) {
-        if (StringUtils.isEmpty(iface.getMacAddress())
-                && getMacPool().getAvailableMacsCount() > 0) {
-            iface.setMacAddress(getMacPool().allocateNewMac());
-        }
-    }
-
-    private void addVmDynamic() {
-        VmDynamic tempVar = new VmDynamic();
-        tempVar.setId(getVmId());
-        tempVar.setStatus(VMStatus.ImageLocked);
-        tempVar.setVmHost("");
-        tempVar.setVmIp("");
-        tempVar.setVmFQDN("");
-        tempVar.setLastStopTime(new Date());
-        tempVar.setAppList(getParameters().getVm().getDynamicData().getAppList());
-        getVmDynamicDAO().save(tempVar);
-        getCompensationContext().snapshotNewEntity(tempVar);
-    }
-
-    private void addVmStatistics() {
-        VmStatistics stats = new VmStatistics();
-        stats.setId(getVmId());
-        getVmStatisticsDAO().save(stats);
-        getCompensationContext().snapshotNewEntity(stats);
-        getCompensationContext().stateChanged();
-    }
-
     @Override
     protected void endSuccessfully() {
         checkTrustedService();
@@ -1220,7 +1048,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
         else if (!getVm().isTrustedService() && getVdsGroup().supportsTrustedService()) {
             AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_IMPORT_VM_FROM_UNTRUSTED_TO_TRUSTED);
         }
-     }
+    }
 
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
