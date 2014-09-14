@@ -264,6 +264,17 @@ public class FixturesTool {
     public static final Guid VM_TEMPLATE_RHEL5_V2 = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b83");
 
     /**
+     * Predefined unregistered Template related to Storage Domain STORAGE_DOAMIN_NFS2_1
+     * (d9ede37f-e6c3-4bf9-a984-19174070aa31)
+     */
+    protected static final Guid UNREGISTERED_TEMPLATE = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b94");
+
+    /**
+     * Predefined unregistered VM related to Storage Domain STORAGE_DOAMIN_NFS2_1 (d9ede37f-e6c3-4bf9-a984-19174070aa31)
+     */
+    public static final Guid UNREGISTERED_VM = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4359");
+
+    /**
      * Predefined vm job for testing with the following properties :
      * <ul>
      * <li>vm_id: VM_RHEL5_POOL_57 (77296e00-0cad-4e5a-9299-008a7b6f4355)</li>

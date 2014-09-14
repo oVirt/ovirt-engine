@@ -4136,9 +4136,19 @@
         <column>ovf_data</column>
         <column>ovf_extra_data</column>
         <row>
-            <value>77296e00-0cad-4e5a-9299-008a7b6f4354</value>
-            <value>rhel5-pool-50</value>
+            <value>77296e00-0cad-4e5a-9299-008a7b6f4359</value>
+            <value>UnregisteredVM</value>
             <value>VM</value>
+            <value>1</value>
+            <value>3.4</value>
+            <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
+            <value>null</value>
+            <value>null</value>
+        </row>
+        <row>
+            <value>1b85420c-b84c-4f29-997e-0eb674b40b94</value>
+            <value>UnregisteredTemplate</value>
+            <value>TEMPLATE</value>
             <value>1</value>
             <value>3.4</value>
             <value>d9ede37f-e6c3-4bf9-a984-19174070aa31</value>
