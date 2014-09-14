@@ -24,7 +24,7 @@ public class UnregisteredOVFDataDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetWithEntityId() {
         OvfEntityData ovfEntityData =
-                dao.getByEntityIdAndStorageDomain(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.STORAGE_DOAMIN_NFS2_1);
+                dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertNotNull("VM should exists in the UnregisteredOVFData", ovfEntityData);
     }
 
@@ -38,7 +38,7 @@ public class UnregisteredOVFDataDAOTest extends BaseDAOTestCase {
     @Test
     public void testGetWithVMOnWrongStorageDomainId() {
         OvfEntityData ovfEntityData =
-                dao.getByEntityIdAndStorageDomain(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.STORAGE_DOAMIN_NFS2_2);
+                dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_2);
         assertNull("VM should not exists in the UnregisteredOVFData for the specific Storage Domain", ovfEntityData);
     }
 
@@ -50,14 +50,14 @@ public class UnregisteredOVFDataDAOTest extends BaseDAOTestCase {
     }
 
     @Test
-    public void testGetTempaltesForStorageDomain() {
+    public void testGetTemplatesForStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOAMIN_NFS2_1, VmEntityType.TEMPLATE);
-        assertTrue("A Tempalte should not be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
+        assertTrue("A Template should be fetched for the specified storage domain", !ovfEntityDataList.isEmpty());
     }
 
     @Test
-    public void testGetEntitysForNotRelatedStorageDomain() {
+    public void testGetEntitiesForNotRelatedStorageDomain() {
         List<OvfEntityData> ovfEntityDataList =
                 dao.getAllForStorageDomainByEntityType(FixturesTool.STORAGE_DOAMIN_NFS2_2, VmEntityType.VM);
         assertTrue("No VM should be fetched for the specified storage domain", ovfEntityDataList.isEmpty());
@@ -95,11 +95,11 @@ public class UnregisteredOVFDataDAOTest extends BaseDAOTestCase {
     @Test
     public void testDeleteUnregisteredEntity() {
         OvfEntityData ovfEntityData =
-                dao.getByEntityIdAndStorageDomain(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.STORAGE_DOAMIN_NFS2_1);
+                dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertNotNull(ovfEntityData);
-        dao.removeEntity(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.STORAGE_DOAMIN_NFS2_1);
+        dao.removeEntity(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         ovfEntityData =
-                dao.getByEntityIdAndStorageDomain(FixturesTool.VM_RHEL5_POOL_50, FixturesTool.STORAGE_DOAMIN_NFS2_1);
+                dao.getByEntityIdAndStorageDomain(FixturesTool.UNREGISTERED_VM, FixturesTool.STORAGE_DOAMIN_NFS2_1);
         assertNull(ovfEntityData);
     }
 }
