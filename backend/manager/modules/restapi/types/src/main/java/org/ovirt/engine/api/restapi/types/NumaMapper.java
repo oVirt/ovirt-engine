@@ -68,7 +68,9 @@ public class NumaMapper {
             for (Pair<Guid, Pair<Boolean, Integer>> pair : entity.getVdsNumaNodeList()) {
                 NumaNodePin pin = new NumaNodePin();
                 pin.setHostNumaNode(new NumaNode());
-                pin.getHostNumaNode().setId(pair.getFirst().toString());
+                if (pair.getFirst() != null) {
+                    pin.getHostNumaNode().setId(pair.getFirst().toString());
+                }
                 pin.setPinned(pair.getSecond().getFirst());
                 pin.setIndex(pair.getSecond().getSecond());
                 pins.getNumaNodePin().add(pin);
