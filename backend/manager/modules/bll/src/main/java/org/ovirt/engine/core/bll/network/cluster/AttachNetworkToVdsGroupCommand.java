@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
-import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
@@ -22,6 +21,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -32,21 +32,19 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupParameter> extends
-        VdsGroupCommandBase<T> {
-
-    private Network persistedNetwork;
+        NetworkClusterCommandBase<T> {
 
     public AttachNetworkToVdsGroupCommand(T parameters) {
         super(parameters);
-        setVdsGroupId(parameters.getVdsGroupId());
     }
 
     private Network getNetwork() {
         return getParameters().getNetwork();
     }
 
-    public String getNetworkName() {
-        return getPersistedNetwork() == null ? null : getPersistedNetwork().getName();
+    @Override
+    protected Version getClusterVersion() {
+        return getVdsGroup().getcompatibility_version();
     }
 
     @Override
@@ -104,22 +102,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 && validateAttachment();
     }
 
-    private boolean validateAttachment() {
-        NetworkClusterValidator validator =
-                new NetworkClusterValidator(getNetworkCluster(), getVdsGroup().getcompatibility_version());
-        return (!NetworkUtils.isManagementNetwork(getNetwork())
-                || validate(validator.managementNetworkAttachment(getNetworkName())))
-                && validate(validator.migrationPropertySupported(getNetworkName()))
-                && (!getPersistedNetwork().isExternal()
-                || validateExternalNetwork(validator));
-    }
-
-    private boolean validateExternalNetwork(NetworkClusterValidator validator) {
-        return validate(validator.externalNetworkSupported())
-                && validate(validator.externalNetworkNotDisplay(getNetworkName()))
-                && validate(validator.externalNetworkNotRequired(getNetworkName()));
-    }
-
     private boolean logicalNetworkExists() {
         if (getPersistedNetwork() != null) {
             return true;
@@ -127,13 +109,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         addCanDoActionMessage(VdcBllMessages.NETWORK_NOT_EXISTS);
         return false;
-    }
-
-    private Network getPersistedNetwork() {
-        if (persistedNetwork == null) {
-            persistedNetwork = getNetworkDAO().get(getNetworkCluster().getNetworkId());
-        }
-        return persistedNetwork;
     }
 
     private boolean changesAreClusterCompatible() {
@@ -169,10 +144,6 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
     private boolean vdsGroupInDb() {
         return getVdsGroup() != null;
-    }
-
-    private NetworkCluster getNetworkCluster() {
-        return getParameters().getNetworkCluster();
     }
 
     @Override

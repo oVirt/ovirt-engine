@@ -4,7 +4,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
-import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -20,23 +19,13 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDeleg
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends
-        VdsGroupCommandBase<T> {
+        NetworkClusterCommandBase<T> {
 
-    private Network network;
     private Network mgmtNetwork;
     private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters) {
         super(parameters);
-        setVdsGroupId(parameters.getVdsGroupId());
-    }
-
-    private Network getNetwork() {
-        if (network == null) {
-            network = getNetworkDAO().get(getNetworkCluster().getNetworkId());
-        }
-
-        return network;
     }
 
     private Network getManagementNetwork() {
@@ -55,12 +44,9 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return oldNetworkCluster;
     }
 
-    private NetworkCluster getNetworkCluster() {
-        return getParameters().getNetworkCluster();
-    }
-
-    public String getNetworkName() {
-        return getNetwork().getName();
+    @Override
+    protected Version getClusterVersion() {
+        return getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getcompatibility_version();
     }
 
     @Override
@@ -85,37 +71,21 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
         if (getNetworkCluster().isDisplay() != getOldNetworkCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(),
-                    getNetworkCluster().isDisplay() ? getNetwork().getId() : getManagementNetwork().getId());
+                    getNetworkCluster().isDisplay() ? getPersistedNetwork().getId() : getManagementNetwork().getId());
         }
 
         if (getNetworkCluster().isMigration() != getOldNetworkCluster().isMigration()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(),
-                    getNetworkCluster().isMigration() ? getNetwork().getId() : getManagementNetwork().getId());
+                    getNetworkCluster().isMigration() ? getPersistedNetwork().getId() : getManagementNetwork().getId());
         }
 
-        NetworkClusterHelper.setStatus(getVdsGroupId(), getNetwork());
+        NetworkClusterHelper.setStatus(getVdsGroupId(), getPersistedNetwork());
         setSucceeded(true);
     }
 
     @Override
     protected boolean canDoAction() {
         return validate(networkClusterAttachmentExists()) && validateAttachment();
-    }
-
-    private boolean validateAttachment() {
-        Version clusterVersion =
-                getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getcompatibility_version();
-        NetworkClusterValidator validator =
-                new NetworkClusterValidator(getNetworkCluster(), clusterVersion);
-        return (!NetworkUtils.isManagementNetwork(getNetwork())
-                || validate(validator.managementNetworkAttachment(getNetworkName())))
-                && validate(validator.migrationPropertySupported(getNetworkName()))
-                && (!getNetwork().isExternal() || validateExternalNetwork(validator));
-    }
-
-    private boolean validateExternalNetwork(NetworkClusterValidator validator) {
-        return validate(validator.externalNetworkNotDisplay(getNetworkName()))
-                && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 
     private ValidationResult networkClusterAttachmentExists() {
