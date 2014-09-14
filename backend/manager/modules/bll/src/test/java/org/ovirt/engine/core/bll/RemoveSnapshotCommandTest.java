@@ -23,6 +23,8 @@ import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskImageDAO;
+import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
@@ -65,6 +68,8 @@ public class RemoveSnapshotCommandTest {
     private StoragePoolDAO spDao;
 
     @Mock
+    private SnapshotDao snapshotDao;
+
     private SnapshotsValidator snapshotValidator;
 
     private VmValidator vmValidator;
@@ -87,12 +92,15 @@ public class RemoveSnapshotCommandTest {
         doReturn(vmTemplateDAO).when(cmd).getVmTemplateDAO();
         doReturn(diskImageDAO).when(cmd).getDiskImageDao();
         doReturn(sdDAO).when(cmd).getStorageDomainDAO();
-        doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
+        doReturn(snapshotDao).when(cmd).getSnapshotDao();
         mockVm();
         vmValidator = spy(new VmValidator(cmd.getVm()));
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotHavingDeviceSnapshotsAttachedToOtherVms(anyBoolean());
         doReturn(vmValidator).when(cmd).createVmValidator(any(VM.class));
         doReturn(STORAGE_POOLD_ID).when(cmd).getStoragePoolId();
+        mockSnapshot(SnapshotType.REGULAR);
+        snapshotValidator = spy(new SnapshotsValidator());
+        doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
         mockConfigSizeDefaults();
     }
 
@@ -103,6 +111,13 @@ public class RemoveSnapshotCommandTest {
         vm.setStoragePoolId(STORAGE_POOLD_ID);
         vm.setVdsGroupCompatibilityVersion(Version.v3_5);
         doReturn(vm).when(cmd).getVm();
+    }
+
+    private void mockSnapshot(SnapshotType snapshotType) {
+        Snapshot snapshot = new Snapshot();
+        snapshot.setId(cmd.getParameters().getSnapshotId());
+        snapshot.setType(snapshotType);
+        doReturn(snapshot).when(snapshotDao).get(snapshot.getId());
     }
 
     private void mockConfigSizeRequirements(int requiredSpaceBufferInGB) {
@@ -132,15 +147,15 @@ public class RemoveSnapshotCommandTest {
     }
 
     @Test
-    public void testValidateImageNotActiveTrue() {
-        when(diskImageDAO.get(mockSourceImage())).thenReturn(null);
-        assertTrue("validation should succeed", cmd.validateImageNotActive());
+    public void testValidateSnapshotNotActiveTrue() {
+        mockSnapshot(SnapshotType.REGULAR);
+        assertTrue("validation should succeed", cmd.validateSnapshotType());
     }
 
     @Test
-    public void testValidateImageNotActiveFalse() {
-        when(diskImageDAO.get(mockSourceImage())).thenReturn(new DiskImage());
-        assertFalse("validation should succeed", cmd.validateImageNotActive());
+    public void testValidateSnapshotNotActiveFalse() {
+        mockSnapshot(SnapshotType.ACTIVE);
+        assertFalse("validation should fail", cmd.validateSnapshotType());
     }
 
     @Test

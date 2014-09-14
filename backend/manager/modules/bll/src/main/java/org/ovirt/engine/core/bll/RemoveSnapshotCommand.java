@@ -305,6 +305,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                 !validateVmNotDuringSnapshot() ||
                 !validateVmNotInPreview() ||
                 !validateSnapshotExists() ||
+                !validateSnapshotType() ||
                 (FeatureSupported.liveMerge(getVm().getVdsGroupCompatibilityVersion())
                         ? (!validate(vmValidator.vmQualifiedForSnapshotMerge())
                            || !validate(vmValidator.vmHostCanLiveMerge()))
@@ -322,11 +323,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
             // check that we are not deleting the template
             if (!validateImageNotInTemplate()) {
                 return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE);
-            }
-
-            // check that we are not deleting the vm working snapshot
-            if (!validateImageNotActive()) {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE);
             }
 
             if (!validateStorageDomains()) {
@@ -397,6 +393,12 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         return validate(createSnapshotValidator().snapshotExists(getVmId(), getParameters().getSnapshotId()));
     }
 
+    protected boolean validateSnapshotType() {
+        Snapshot snapshot = getSnapshotDao().get(getParameters().getSnapshotId());
+        return validate(createSnapshotValidator().snapshotTypeSupported(snapshot,
+                Collections.singletonList(Snapshot.SnapshotType.REGULAR)));
+    }
+
     protected boolean validateImages() {
         List<DiskImage> imagesToValidate =
                 ImagesHandler.filterImageDisks(getDiskDao().getAllForVm(getVmId()), true, false, true);
@@ -408,10 +410,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     protected boolean validateImageNotInTemplate() {
         return getVmTemplateDAO().get(getRepresentativeSourceImageId()) == null;
-    }
-
-    protected boolean validateImageNotActive() {
-        return getDiskImageDao().get(getRepresentativeSourceImageId()) == null;
     }
 
     private boolean hasImages() {

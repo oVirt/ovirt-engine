@@ -646,9 +646,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Removing the Template Snapshot is not allowed.")
     String ACTION_TYPE_FAILED_CANNOT_REMOVE_IMAGE_TEMPLATE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Removing the VM active Snapshot is not allowed.")
-    String ACTION_TYPE_FAILED_CANNOT_REMOVE_ACTIVE_IMAGE();
-
     @DefaultStringValue("Cannot ${action} ${type}. Failed to get data for Import operation.\n- Check your Import Domain.")
     String ACTION_TYPE_FAILED_PROBLEM_WITH_CANDIDATE_INFO();
 
