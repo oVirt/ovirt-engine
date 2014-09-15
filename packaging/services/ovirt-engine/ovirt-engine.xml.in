@@ -174,7 +174,13 @@
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:deployment-scanner:1.1">
-      <deployment-scanner scan-interval="5000" path="$jboss_runtime/deployments" deployment-timeout="1200"/>
+      <deployment-scanner path="$jboss_runtime/deployments" deployment-timeout="1200"
+        #if $getboolean('ENGINE_DEPLOYMENT_SCANNER')
+            scan-interval="5000"
+        #else
+            scan-interval="0"
+        #end if
+      />
     </subsystem>
 
     <subsystem xmlns="urn:jboss:domain:ee:1.0"/>

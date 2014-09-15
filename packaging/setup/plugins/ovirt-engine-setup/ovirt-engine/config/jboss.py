@@ -71,8 +71,11 @@ class Plugin(plugin.PluginBase):
                 ),
             ]
             if self.environment[osetupcons.CoreEnv.DEVELOPER_MODE]:
-                content.append(
-                    'ENGINE_LOG_TO_CONSOLE=true'
+                content.extend(
+                    (
+                        'ENGINE_LOG_TO_CONSOLE=true',
+                        'ENGINE_DEPLOYMENT_SCANNER=true',
+                    )
                 )
             self.environment[otopicons.CoreEnv.MAIN_TRANSACTION].append(
                 filetransaction.FileTransaction(

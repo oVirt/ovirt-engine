@@ -77,6 +77,12 @@ ENGINE_DEBUG_ADDRESS=
 ENGINE_LOG_TO_CONSOLE=false
 
 #
+# Set this if you wish deployment mechanism to be enabled.
+# Should not be used in production.
+#
+ENGINE_DEPLOYMENT_SCANNER=false
+
+#
 # Change following to true if you want to enable garbage collection debug
 # information (will be sent to the console.log file):
 #
