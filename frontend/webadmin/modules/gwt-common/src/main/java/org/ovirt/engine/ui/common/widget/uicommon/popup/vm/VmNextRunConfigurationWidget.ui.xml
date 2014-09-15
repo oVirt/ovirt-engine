@@ -5,13 +5,24 @@
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
 	<ui:style>
+        .verticalPanel>* {
+            display: block;
+            clear: both;
+        }
         .contentWidgets {
             width: 97%;
+        }
+        .sectionPanel {
+            margin-bottom: 20px;
         }
 	</ui:style>
 
 	<g:FlowPanel>
         <g:HTML ui:field="message1" />
+        <d:AdvancedParametersExpander ui:field="changedFieldsExpander" addStyleNames="{style.verticalPanel}"/>
+        <g:FlowPanel ui:field="changedFieldsExpanderContent" addStyleNames="{style.sectionPanel}">
+            <g:HTML ui:field="changedFields" />
+        </g:FlowPanel>
         <g:FlowPanel ui:field="cpuPanel">
             <g:HTML ui:field="message2" />
             <ge:EntityModelCheckBoxEditor ui:field="applyCpuLaterEditor" addStyleNames="{style.contentWidgets}"/>

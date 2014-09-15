@@ -2020,15 +2020,17 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             getcurrentVm().setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
             if (selectedItem.isRunningOrPaused()) {
-                AsyncDataProvider.isNextRunConfigurationChanged(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
+                AsyncDataProvider.getVmChangedFieldsForNextRun(editedVm, getcurrentVm(), getUpdateVmParameters(false), new AsyncQuery(this,
                         new INewAsyncCallback() {
                     @Override
                     public void onSuccess(Object thisModel, Object returnValue) {
-                        if (((VdcQueryReturnValue)returnValue).<Boolean> getReturnValue()) {
+                        List<String> changedFields = ((VdcQueryReturnValue)returnValue).<List<String>> getReturnValue();
+                        if (!changedFields.isEmpty()) {
                             VmNextRunConfigurationModel confirmModel = new VmNextRunConfigurationModel();
                             confirmModel.setTitle(ConstantsManager.getInstance().getConstants().editNextRunConfigurationTitle());
                             confirmModel.setHelpTag(HelpTag.edit_next_run_configuration);
                             confirmModel.setHashName("edit_next_run_configuration"); //$NON-NLS-1$
+                            confirmModel.setChangedFields(changedFields);
                             confirmModel.setCpuPluggable(selectedItem.getCpuPerSocket() == getcurrentVm().getCpuPerSocket() &&
                                     selectedItem.getNumOfSockets() != getcurrentVm().getNumOfSockets());
 

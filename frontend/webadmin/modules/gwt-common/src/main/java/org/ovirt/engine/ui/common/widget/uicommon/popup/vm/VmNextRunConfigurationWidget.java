@@ -1,10 +1,12 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
@@ -19,6 +21,8 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTML;
 
 public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<VmNextRunConfigurationModel> {
+
+    private final CommonApplicationTemplates templates;
 
     interface Driver extends SimpleBeanEditorDriver<VmNextRunConfigurationModel, VmNextRunConfigurationWidget> {
     }
@@ -39,12 +43,24 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     @Ignore
     HTML message2;
 
+    @UiField
+    @Ignore
+    HTML changedFields;
+
     @UiField(provided = true)
     @Path(value = "applyCpuLater.entity")
     EntityModelCheckBoxEditor applyCpuLaterEditor;
 
     @UiField
     FlowPanel cpuPanel;
+
+    @UiField
+    @Ignore
+    AdvancedParametersExpander changedFieldsExpander;
+
+    @UiField
+    @Ignore
+    FlowPanel changedFieldsExpanderContent;
 
     private final Driver driver = GWT.create(Driver.class);
 
@@ -54,6 +70,8 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         localize(constants, messages, templates);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         driver.initialize(this);
+        changedFieldsExpander.initWithContent(changedFieldsExpanderContent.getElement());
+        this.templates = templates;
     }
 
     void initEditors() {
@@ -64,6 +82,9 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
         message1.setHTML(listItem(messages.nextRunConfigurationExists(), templates));
         message2.setHTML(listItem(messages.nextRunConfigurationCanBeAppliedImmediately(), templates));
         applyCpuLaterEditor.setLabel(constants.applyLater());
+
+        changedFieldsExpander.setTitleWhenExpended(constants.changedFieldsList());
+        changedFieldsExpander.setTitleWhenCollapsed(constants.changedFieldsList());
     }
 
     private SafeHtml listItem(String msg, CommonApplicationTemplates templates) {
@@ -74,6 +95,13 @@ public class VmNextRunConfigurationWidget extends AbstractModelBoundPopupWidget<
     public void edit(VmNextRunConfigurationModel object) {
         driver.edit(object);
         cpuPanel.setVisible(object.isCpuPluggable());
+
+        SafeHtmlBuilder changedFieldsBuilder = new SafeHtmlBuilder();
+        for (String field: object.getChangedFields()) {
+            String escapedField = SafeHtmlUtils.htmlEscape(field);
+            changedFieldsBuilder.append(listItem(escapedField, templates));
+        }
+        changedFields.setHTML(changedFieldsBuilder.toSafeHtml());
     }
 
     @Override

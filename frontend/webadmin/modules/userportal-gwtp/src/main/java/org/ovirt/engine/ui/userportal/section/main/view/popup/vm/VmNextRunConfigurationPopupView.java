@@ -24,7 +24,7 @@ implements VmNextRunConfigurationPresenterWidget.ViewDef {
     @Inject
     public VmNextRunConfigurationPopupView(EventBus eventBus, CommonApplicationResources resources,
             ApplicationConstants constants, ApplicationMessages messages, CommonApplicationTemplates templates) {
-        super(eventBus, resources, new VmNextRunConfigurationWidget(constants, messages, templates), "400px", "200px"); //$NON-NLS-1$ //$NON-NLS-2$
+        super(eventBus, resources, new VmNextRunConfigurationWidget(constants, messages, templates), "400px", "300px"); //$NON-NLS-1$ //$NON-NLS-2$
         ViewIdHandler.idHandler.generateAndSetIds(this);
     }
 }

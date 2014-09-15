@@ -1947,4 +1947,7 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("NUMA Pinning")
     String numaSupportButtonLabel();
+
+    @DefaultStringValue("Changed fields list")
+    String changedFieldsList();
 }
