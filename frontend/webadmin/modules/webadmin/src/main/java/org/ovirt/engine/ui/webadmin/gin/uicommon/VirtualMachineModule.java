@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.configure.scheduling.affinity_grou
 import org.ovirt.engine.ui.uicommonweb.models.vms.AttachDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.EditDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExternalProviderModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.NewDiskModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
@@ -56,8 +57,9 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.Affi
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAllocationPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFromExternalProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
@@ -111,6 +113,7 @@ public class VirtualMachineModule extends AbstractGinModule {
             final Provider<ImportVmsPopupPresenterWidget> importVmsProvider,
             final Provider<CloneVmPopupPresenterWidget> cloneVmProvider,
             final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmFromExportDomainPopupProvider,
+            final Provider<ImportVmFromExternalProviderPopupPresenterWidget> importVmFromExternalProviderProvider,
             final Provider<VmListModel<Void>> modelProvider,
             final Provider<CommonModel> commonModelProvider,
             final Provider<VmDiskPopupPresenterWidget> newDiskPopupProvider,
@@ -158,6 +161,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                             return importVmsProvider.get();
                         } else if (windowModel instanceof ImportVmFromExportDomainModel) {
                             return importVmFromExportDomainPopupProvider.get();
+                        } else if (windowModel instanceof ImportVmFromExternalProviderModel) {
+                            return importVmFromExternalProviderProvider.get();
                         } else {
                             return super.getModelPopup(source, lastExecutedCommand, windowModel);
                         }

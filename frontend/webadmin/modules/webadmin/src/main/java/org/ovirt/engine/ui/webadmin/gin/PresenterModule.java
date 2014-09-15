@@ -113,6 +113,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.Templa
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEventsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.ImportVmFromExternalProviderPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.PublicKeyPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.SingleSelectionVmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
@@ -379,6 +380,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInt
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.AddVmHostDevicePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.ImportVmFromExternalProviderPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.PublicKeyPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.SingleSelectionVmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
@@ -1353,6 +1355,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(ImportVmFromExportDomainPopupPresenterWidget.class,
                 ImportVmFromExportDomainPopupPresenterWidget.ViewDef.class,
                 ImportVmFromExportDomainPopupView.class);
+        bindPresenterWidget(ImportVmFromExternalProviderPopupPresenterWidget.class,
+                ImportVmFromExternalProviderPopupPresenterWidget.ViewDef.class,
+                ImportVmFromExternalProviderPopupView.class);
         bindPresenterWidget(ImportTemplatePopupPresenterWidget.class,
                 ImportTemplatePopupPresenterWidget.ViewDef.class,
                 ImportTemplatePopupView.class);

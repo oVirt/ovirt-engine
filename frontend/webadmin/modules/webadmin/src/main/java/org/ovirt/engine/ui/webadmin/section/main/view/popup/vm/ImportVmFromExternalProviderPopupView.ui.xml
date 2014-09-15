@@ -1,0 +1,100 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog"
+    xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
+    xmlns:t="urn:import:org.ovirt.engine.ui.common.widget.dialog.tab">
+    <ui:with field='resources'
+        type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
+    <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
+    <ui:style
+        type="org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.ImportVmFromExternalProviderPopupView.WidgetStyle">
+        @external .gwt-TabLayoutPanel;
+        @external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
+            .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {
+        background: #CCC;
+        }
+        @external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab;
+        .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab {
+            background-image:
+            url("images/main_tab_middle.png");
+            background-repeat: repeat-x;
+        }
+        @external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected;
+        .gwt-TabLayoutPanel .gwt-TabLayoutPanelTab-selected {
+            background-image: url("images/tab_middle_selected.png");
+            background-repeat: repeat-x;
+        }
+        @external .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent;
+        .gwt-TabLayoutPanel .gwt-TabLayoutPanelContent {
+            border-width: 0px;
+            padding: 0px;
+        }
+
+        .splitLayoutPanelStyle {
+            border: 1px solid #333;
+            padding: 5px;
+            margin: 5px;
+        }
+
+        .labelStyle {
+            color: red;
+            vertical-align: bottom;
+            height: 45px;
+            line-height: 20px;
+            margin-left: 5px;
+        }
+
+        .checkboxEditor {
+            width: 20px;
+            padding: 0px;
+        }
+
+        .collapseEditor {
+            padding: 0px;
+         }
+
+        .imageStyle {
+            vertical-align: bottom;
+            height: 30px;
+            line-height: 25px;
+            margin-left: 10px;
+        }
+
+        .cellSelectBox {
+            width: 100%;
+        }
+
+        .destStorageQuotaEditor {
+            visibility: hidden;
+        }
+
+        .listBoxEditor {
+            width: 515px;
+        }
+    </ui:style>
+    <d:SimpleDialogPanel height="575px" width="1000px">
+        <d:content>
+            <g:VerticalPanel>
+                <g:HorizontalPanel>
+                    <g:VerticalPanel>
+                        <g:HorizontalPanel>
+                            <g:VerticalPanel>
+                                <e:ListModelListBoxEditor ui:field="destStorageEditor" addStyleNames="{style.listBoxEditor}"/>
+                                <e:ListModelListBoxEditor ui:field="destClusterEditor" addStyleNames="{style.listBoxEditor}"/>
+                                <e:ListModelListBoxEditor ui:field="cpuProfileEditor" addStyleNames="{style.listBoxEditor}"/>
+                            </g:VerticalPanel>
+                            <g:VerticalPanel>
+                                <e:ListModelListBoxEditor ui:field="disksAllocationEditor" />
+                                <e:ListModelListBoxEditor ui:field="destClusterQuotaEditor" />
+                            </g:VerticalPanel>
+                        </g:HorizontalPanel>
+                    </g:VerticalPanel>
+                </g:HorizontalPanel>
+                <g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
+                <g:SplitLayoutPanel ui:field="splitLayoutPanel"
+                    height="360px" addStyleNames="{style.splitLayoutPanelStyle}" />
+            </g:VerticalPanel>
+        </d:content>
+    </d:SimpleDialogPanel>
+</ui:UiBinder>

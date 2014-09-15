@@ -2206,6 +2206,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Any Host in Cluster")
     String anyHostInCluster();
 
+    @DefaultStringValue("Any Host in Data Center")
+    String anyHostInDataCenter();
+
     @DefaultStringValue("Unsupported")
     String unsupported();
 

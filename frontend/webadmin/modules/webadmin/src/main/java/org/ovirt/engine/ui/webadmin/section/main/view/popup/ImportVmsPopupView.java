@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
@@ -9,7 +10,10 @@ import org.ovirt.engine.ui.common.widget.VerticalSplitTable;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelPasswordBoxEditor;
+import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NameRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
@@ -18,6 +22,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportSource;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmsModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -29,7 +35,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
-import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
@@ -46,17 +52,10 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
-    interface Style extends CssResource {
-        String providersStyle();
-    }
-
-    @UiField
-    Style style;
-
     @UiField(provided = true)
     @Path(value = "dataCenters.selectedItem")
     @WithElementId
-    ListModelListBoxEditor<StoragePool> DataCentersEditor;
+    ListModelListBoxEditor<StoragePool> dataCentersEditor;
 
     @UiField(provided = true)
     @Path(value = "importSources.selectedItem")
@@ -64,7 +63,12 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
     ListModelListBoxEditor<ImportSource> importSourcesEditor;
 
     @UiField(provided = true)
-    VerticalSplitTable<EntityModel<VM>> splitTable;
+    @Path(value = "proxyHosts.selectedItem")
+    @WithElementId
+    ListModelListBoxEditor<VDS> proxyHostsEditor;
+
+    @UiField(provided = true)
+    VerticalSplitTable<EntityModel<VM>> vmsTable;
 
     @Ignore
     EntityModelCellTable<ListModel<EntityModel<VM>>> externalVms;
@@ -78,6 +82,43 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @UiField
     UiCommandButton loadVmsFromExportDomainButton;
+
+    @UiField
+    UiCommandButton loadVmsFromVmwareButton;
+
+    @UiField
+    @Path(value = "vCenter.entity")
+    @WithElementId("vCenter")
+    StringEntityModelTextBoxEditor vCenterEditor;
+
+    @UiField
+    @Path(value = "esx.entity")
+    @WithElementId("esx")
+    StringEntityModelTextBoxEditor esxEditor;
+
+    @UiField
+    @Path(value = "vmwareDatacenter.entity")
+    @WithElementId("vmwareDatacenter")
+    StringEntityModelTextBoxEditor vmwareDatacenterEditor;
+
+    @UiField
+    @Path(value = "verify.entity")
+    @WithElementId("verify")
+    EntityModelCheckBoxEditor verifyEditor;
+
+    @UiField
+    @Path(value = "username.entity")
+    @WithElementId("username")
+    StringEntityModelTextBoxEditor usernameEditor;
+
+    @UiField
+    @Path(value = "password.entity")
+    @WithElementId("password")
+    StringEntityModelPasswordBoxEditor passwordEditor;
+
+    @UiField
+    @Ignore
+    FlowPanel vmwarePanel;
 
     @UiField
     @Ignore
@@ -102,7 +143,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         super(eventBus);
 
         // Initialize Editors
-        DataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
+        dataCentersEditor = new ListModelListBoxEditor<>(new NameRenderer<StoragePool>());
         importSourcesEditor = new ListModelListBoxEditor<ImportSource>(new NullSafeRenderer<ImportSource>() {
 
             @Override
@@ -110,9 +151,17 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
                 return new EnumRenderer<ImportSource>().render(is);
             }
         });
+        proxyHostsEditor = new ListModelListBoxEditor<VDS>(new AbstractRenderer<VDS>() {
+            @Override
+            public String render(VDS object) {
+                return object != null ? object.getName() :
+                    ConstantsManager.getInstance().getConstants().anyHostInDataCenter();
+            }
+        });
+
         externalVms = new EntityModelCellTable<>(true, false, true);
         importedVms = new EntityModelCellTable<>(true, false, true);
-        splitTable =
+        vmsTable =
                 new VerticalSplitTable<EntityModel<VM>>(externalVms,
                         importedVms,
                         constants.externalVms(),
@@ -120,19 +169,23 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initEntityModelCellTables();
 
-        DataCentersEditor.setLabel(constants.dataCenter());
-        DataCentersEditor.addWrapperStyleName(style.providersStyle());
+        dataCentersEditor.setLabel(constants.dataCenter());
         importSourcesEditor.setLabel(constants.hostPopupSourceText());
-        importSourcesEditor.addWrapperStyleName(style.providersStyle());
 
         exportDomainName.setLabel(constants.nameLabel());
-        exportDomainName.addWrapperStyleName(style.providersStyle());
         exportDomainPath.setLabel(constants.pathStorageGeneral());
-        exportDomainPath.addWrapperStyleName(style.providersStyle());
         exportDomainDescription.setLabel(constants.descriptionLabel());
-        exportDomainDescription.addWrapperStyleName(style.providersStyle());
+
+        vCenterEditor.setLabel(constants.vCenter());
+        esxEditor.setLabel(constants.esxi());
+        vmwareDatacenterEditor.setLabel(constants.vmwareDataCenter());
+        verifyEditor.setLabel(constants.vmwareVerifyCredentials());
+        usernameEditor.setLabel(constants.usernameProvider());
+        passwordEditor.setLabel(constants.passwordProvider());
+        proxyHostsEditor.setLabel(constants.proxyHost());
 
         loadVmsFromExportDomainButton.setLabel(constants.loadLabel());
+        loadVmsFromVmwareButton.setLabel(constants.loadLabel());
         driver.initialize(this);
     }
 
@@ -154,7 +207,7 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
 
     @Override
     public void edit(final ImportVmsModel model) {
-        splitTable.edit(
+        vmsTable.edit(
                 model.getExternalVmModels(),
                 model.getImportedVmModels(),
                 model.getAddImportCommand(),
@@ -169,12 +222,31 @@ public class ImportVmsPopupView extends AbstractModelBoundPopupView<ImportVmsMod
             };
         });
 
+        updatePanelsVisibility(model);
+        model.getImportSources().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                updatePanelsVisibility(model);
+            }
+        });
+
         loadVmsFromExportDomainButton.addClickHandler(new ClickHandler() {
             @Override
             public void onClick(ClickEvent event) {
                 model.loadVmsFromExportDomain();
             }
         });
+        loadVmsFromVmwareButton.addClickHandler(new ClickHandler() {
+            @Override
+            public void onClick(ClickEvent event) {
+                model.loadVmsFromVmware();
+            }
+        });
+    }
+
+    private void updatePanelsVisibility(ImportVmsModel model) {
+        exportPanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.EXPORT_DOMAIN);
+        vmwarePanel.setVisible(model.getImportSources().getSelectedItem() == ImportSource.VMWARE);
     }
 
     @Override

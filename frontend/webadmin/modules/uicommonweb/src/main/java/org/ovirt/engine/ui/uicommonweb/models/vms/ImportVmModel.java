@@ -22,6 +22,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasEntity;
@@ -47,8 +48,8 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     private ListModel<CpuProfile> cpuProfiles;
     private final QuotaListModel<Void> clusterQuota;
     private ArchitectureType targetArchitecture;
-    protected boolean hasQuota;
     protected StoragePool storagePool;
+    private UICommand closeCommand;
 
     public abstract void importVms(IFrontendMultipleActionAsyncCallback callback);
     public abstract boolean validate();
@@ -57,7 +58,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
         @Override
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-            if (hasQuota) {
+            if (getClusterQuota().getIsAvailable()) {
                 Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(getCluster().getSelectedItem().getId()),
                     new AsyncQuery(ImportVmModel.this,
@@ -65,7 +66,7 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
 
                                 @Override
                                 public void onSuccess(Object model, Object returnValue) {
-                                    ImportVmFromExportDomainModel importVmModel = (ImportVmFromExportDomainModel) model;
+                                    ImportVmModel importVmModel = (ImportVmModel) model;
                                     ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                     importVmModel.getClusterQuota().setItems(quotaList);
                                     if (quotaList.isEmpty()
@@ -268,5 +269,16 @@ public abstract class ImportVmModel extends ListWithDetailsModel {
     @Override
     protected Object provideDetailModelEntity(Object selectedItem) {
         return selectedItem;
+    }
+
+    protected void showCloseMessage(String message) {
+        setMessage(message);
+        getCommands().clear();
+        getCommands().add(closeCommand);
+        stopProgress();
+    }
+
+    public void setCloseCommand(UICommand closeCommand) {
+        this.closeCommand = closeCommand;
     }
 }

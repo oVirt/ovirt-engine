@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -192,8 +193,8 @@ public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupVi
 
     protected void initGeneralSubTabView() {
         ScrollPanel generalPanel = new ScrollPanel();
-        DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel> modelProvider =
-                new DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel>() {
+        DetailModelProvider<ImportVmModel, VmImportGeneralModel> modelProvider =
+                new DetailModelProvider<ImportVmModel, VmImportGeneralModel>() {
                     @Override
                     public VmImportGeneralModel getModel() {
                         return (VmImportGeneralModel) importModel.getDetailModels().get(0);

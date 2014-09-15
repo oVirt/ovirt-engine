@@ -6,25 +6,29 @@
 	xmlns:f="urn:import:org.ovirt.engine.ui.common.widget.form"
 	xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
-    <ui:with field='resources' type='org.ovirt.engine.ui.common.CommonApplicationResources' />
-
-	<ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.ImportVmsPopupView.Style">
-		.providersStyle {
-			width: 420px;
+	<ui:style>
+		.sourcePropertyStyle {
+			width: 390px;
 		}
 
-		.section {
+		.generalSectionStyle {
 			margin-top: 5px;
 			margin-bottom: 10px;
+			width: 390px;
 		}
 
-		.sourceInfoSection {
-			margin-top: 10px;
-			margin-bottom: 10px;
-			height: 135px;
+		.vmwareSectionStyle {
+			margin-top: 5px;
+			margin-bottom: 5px;
 		}
 
-        .labelStyle {
+		.exportSectionStyle {
+			margin-top: 5px;
+			margin-bottom: 5px;
+			width: 390px;
+		}
+
+        .messageStyle {
             color: red;
             vertical-align: bottom;
             height: 20px;
@@ -32,34 +36,51 @@
             margin-left: 5px;
         }
 
-		.loadButton {
+		.loadButtonStyle {
 			margin-top: 15px;
+			margin-right: 20px;
             float: right;
-            margin-right: 5px;
         }
 	</ui:style>
 
-	<d:SimpleDialogPanel ui:field="mainPanel" width="800px" height="625px">
+	<d:SimpleDialogPanel width="800px" height="630px">
 		<d:content>
 			<g:VerticalPanel width="100%">
-				<g:FlowPanel addStyleNames="{style.section}">
-					<e:ListModelListBoxEditor ui:field="DataCentersEditor" />
+				<g:FlowPanel addStyleNames="{style.generalSectionStyle}">
+					<e:ListModelListBoxEditor ui:field="dataCentersEditor" />
 					<e:ListModelListBoxEditor ui:field="importSourcesEditor" />
 				</g:FlowPanel>
 
-				<g:FlowPanel ui:field="exportPanel" addStyleNames="{style.sourceInfoSection}">
+				<g:FlowPanel ui:field="exportPanel" visible="false" height="110px" addStyleNames="{style.exportSectionStyle}">
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainName"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainPath"/>
 					<ge:StringEntityModelLabelEditor ui:field="exportDomainDescription"/>
-				    <g:FlowPanel addStyleNames="{style.providersStyle}">
-					    <g:FlowPanel addStyleNames="{style.loadButton}">
-					        <w:UiCommandButton ui:field="loadVmsFromExportDomainButton"/>
-					    </g:FlowPanel>
-				    </g:FlowPanel>
+					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
+						<w:UiCommandButton ui:field="loadVmsFromExportDomainButton"/>
+			        </g:FlowPanel>
+			    </g:FlowPanel>
+
+				<g:FlowPanel ui:field="vmwarePanel" visible="false" addStyleNames="{style.vmwareSectionStyle}">
+					<g:HorizontalPanel>
+					    <ge:StringEntityModelTextBoxEditor ui:field="vCenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <ge:StringEntityModelTextBoxEditor ui:field="esxEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					</g:HorizontalPanel>
+					<g:HorizontalPanel>
+					    <ge:StringEntityModelTextBoxEditor ui:field="vmwareDatacenterEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <ge:EntityModelCheckBoxEditor ui:field="verifyEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+				    </g:HorizontalPanel>
+				    <g:HorizontalPanel>
+					    <ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					    <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+				    </g:HorizontalPanel>
+				    <e:ListModelListBoxEditor ui:field="proxyHostsEditor" addStyleNames="{style.sourcePropertyStyle}"/>
+					<g:FlowPanel addStyleNames="{style.loadButtonStyle}">
+						<w:UiCommandButton ui:field="loadVmsFromVmwareButton"/>
+			        </g:FlowPanel>
 				</g:FlowPanel>
 
-				<g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
-				<w:VerticalSplitTable ui:field="splitTable" />
+				<g:Label ui:field="message" addStyleNames="{style.messageStyle}" />
+				<w:VerticalSplitTable ui:field="vmsTable" />
 			</g:VerticalPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

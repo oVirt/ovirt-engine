@@ -12,6 +12,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
@@ -32,6 +34,7 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
 import com.google.inject.Inject;
@@ -44,6 +47,14 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private ListModel<EntityModel<VM>> externalVmModels;
     private ListModel<EntityModel<VM>> importedVmModels;
 
+    private EntityModel<String> vCenter;
+    private EntityModel<String> esx;
+    private EntityModel<String> vmwareDatacenter;
+    private EntityModel<Boolean> verify;
+    private EntityModel<String> username;
+    private EntityModel<String> password;
+    private ListModel<VDS> proxyHosts;
+
     private StorageDomain exportDomain;
     private String exportPath;
     private String exportName;
@@ -52,43 +63,83 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
     private UICommand addImportCommand = new UICommand(null, this);
     private UICommand cancelImportCommand = new UICommand(null, this);
 
+    private Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider;
     private Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider;
-    private ImportVmFromExportDomainModel importVmFromExportDomainModel;
+
+    private ImportVmFromExternalProviderModel importFromExternalProviderModel;
+    private ImportVmFromExportDomainModel importFromExportDomainModel;
+    private ImportVmModel selectedImportVmModel;
 
     private EntityModel<Boolean> importSourceValid;
 
     @Inject
-    public ImportVmsModel(Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider) {
+    public ImportVmsModel(Provider<ImportVmFromExportDomainModel> importFromExportDomainModelProvider,
+            Provider<ImportVmFromExternalProviderModel> importFromExternalProviderModelProvider) {
         this.importFromExportDomainModelProvider = importFromExportDomainModelProvider;
+        this.importFromExternalProviderModelProvider = importFromExternalProviderModelProvider;
 
+        // General
         setDataCenters(new ListModel<StoragePool>());
         setImportSources(new ListModel<ImportSource>());
         setExternalVmModels(new ListModel<EntityModel<VM>>());
         setImportedVmModels(new ListModel<EntityModel<VM>>());
+
+        // VMWARE
+        setProxyHosts(new ListModel<VDS>());
+        setUsername(new EntityModel<String>());
+        setPassword(new EntityModel<String>());
+        setvCenter(new EntityModel<String>());
+        setEsx(new EntityModel<String>());
+        setVmwareDatacenter(new EntityModel<String>());
+        setVerify(new EntityModel<Boolean>(false));
+
         setImportSourceValid(new EntityModel<Boolean>(true));
+
+        initImportSources();
     }
 
-    public void initImportFromExportDomainModel(UICommand ... commands) {
-        importVmFromExportDomainModel = importFromExportDomainModelProvider.get();
-        importVmFromExportDomainModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
-        importVmFromExportDomainModel.setHelpTag(HelpTag.import_virtual_machine);
-        importVmFromExportDomainModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+    public void initImportModels(UICommand ... commands) {
+        importFromExportDomainModel = importFromExportDomainModelProvider.get();
+        importFromExportDomainModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        importFromExportDomainModel.setHelpTag(HelpTag.import_virtual_machine);
+        importFromExportDomainModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
         for (UICommand command : commands) {
-            importVmFromExportDomainModel.getCommands().add(command);
+            importFromExportDomainModel.getCommands().add(command);
+        }
+
+        importFromExternalProviderModel = importFromExternalProviderModelProvider.get();
+        importFromExternalProviderModel.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
+        importFromExternalProviderModel.setHelpTag(HelpTag.import_virtual_machine);
+        importFromExternalProviderModel.setHashName("import_virtual_machine"); //$NON-NLS-1$
+        for (UICommand command : commands) {
+            importFromExternalProviderModel.getCommands().add(command);
         }
     }
 
-    @SuppressWarnings("unchecked")
-    public ImportVmFromExportDomainModel getSpecificImportModel() {
-        importVmFromExportDomainModel.setEntity(null);
-        importVmFromExportDomainModel.init(getVmsToImport(), exportDomain.getId());
-        importVmFromExportDomainModel.setEntity(exportDomain.getId());
-        return importVmFromExportDomainModel;
+    public ImportVmModel getSpecificImportModel() {
+        selectedImportVmModel = null;
+        switch(importSources.getSelectedItem()) {
+        case EXPORT_DOMAIN:
+            importFromExportDomainModel.setEntity(null);
+            importFromExportDomainModel.init(getVmsToImport(), exportDomain.getId());
+            importFromExportDomainModel.setEntity(exportDomain.getId());
+            selectedImportVmModel = importFromExportDomainModel;
+            break;
+        case VMWARE:
+            importFromExternalProviderModel.init(getVmsToImport(), getDataCenters().getSelectedItem().getId());
+            importFromExternalProviderModel.setUrl(getUrl());
+            importFromExternalProviderModel.setUsername(getUsername().getEntity());
+            importFromExternalProviderModel.setPassword(getPassword().getEntity());
+            importFromExternalProviderModel.setProxyHostId(getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null);
+            selectedImportVmModel = importFromExternalProviderModel;
+            break;
+        default:
+        }
+        return selectedImportVmModel;
     }
 
     public void init() {
         startProgress(null);
-
         setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         setHelpTag(HelpTag.import_virtual_machine);
         setHashName("import_virtual_machine"); //$NON-NLS-1$
@@ -149,6 +200,30 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             }
         });
 
+        dataCenters.getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
+                AsyncQuery hostsQuery = new AsyncQuery();
+                hostsQuery.setModel(ImportVmsModel.this);
+                hostsQuery.asyncCallback = new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object model, Object returnValue) {
+                        ImportVmsModel.this.stopProgress();
+                        List<VDS> hosts = new ArrayList<VDS>();
+                        hosts.add(0, null); // Any host in the cluster
+                        for (VDS host : (List<VDS>) returnValue) {
+                            if (host.getStatus() == VDSStatus.Up) {
+                                hosts.add(host);
+                            }
+                        }
+                        proxyHosts.setItems(hosts);
+                    }
+                };
+
+                AsyncDataProvider.getInstance().getHostListByDataCenter(hostsQuery, dataCenters.getSelectedItem().getId());
+            }
+        });
+
         AsyncDataProvider.getInstance().getDataCenterList(new AsyncQuery(new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
@@ -168,7 +243,6 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
 
                 Collections.sort(dataCenters, new NameableComparator());
                 ImportVmsModel.this.dataCenters.setItems(dataCenters);
-                initImportSources();
             }
         }));
     }
@@ -210,6 +284,33 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
                         updateVms(((VdcQueryReturnValue) returnValue).<List<VM>>getReturnValue());
                     }
                 }));
+    }
+
+    public void loadVmsFromVmware() {
+        startProgress(null);
+        AsyncDataProvider.getInstance().getVmsFromExternalServer(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                updateVms((List<VM>) returnValue);
+            }
+        }),
+        getDataCenters().getSelectedItem().getId(),
+        getProxyHosts().getSelectedItem() != null ? getProxyHosts().getSelectedItem().getId() : null,
+        getUrl(),
+        getUsername().getEntity(),
+        getPassword().getEntity());
+    }
+
+    private String getUrl() {
+        return "vpx://" + //$NON-NLS-1$
+                getUsername().getEntity() +
+                "@" + //$NON-NLS-1$
+                getvCenter().getEntity() +
+                "/" + //$NON-NLS-1$
+                getVmwareDatacenter().getEntity() +
+                "/" + //$NON-NLS-1$
+                getEsx().getEntity() +
+                (getVerify().getEntity() ? "" : "?no_verify=1"); //$NON-NLS-1$ //$NON-NLS-2$
     }
 
     private void updateVms(List<VM> vms) {
@@ -286,6 +387,30 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
         this.importedVmModels = importedVmModels;
     }
 
+    public EntityModel<String> getUsername() {
+        return username;
+    }
+
+    public void setUsername(EntityModel<String> username) {
+        this.username = username;
+    }
+
+    public EntityModel<String> getPassword() {
+        return password;
+    }
+
+    public void setPassword(EntityModel<String> password) {
+        this.password = password;
+    }
+
+    public ListModel<VDS> getProxyHosts() {
+        return proxyHosts;
+    }
+
+    public void setProxyHosts(ListModel<VDS> proxyHosts) {
+        this.proxyHosts = proxyHosts;
+    }
+
     public EntityModel<Boolean> getImportSourceValid() {
         return importSourceValid;
     }
@@ -330,5 +455,49 @@ public class ImportVmsModel extends ListWithSimpleDetailsModel {
             this.exportDescription = exportDescription;
             onPropertyChanged(new PropertyChangedEventArgs("ExportDescription")); //$NON-NLS-1$
         }
+    }
+
+    public void onRestoreVms(IFrontendMultipleActionAsyncCallback callback) {
+        if (selectedImportVmModel.getProgress() != null) {
+            return;
+        }
+
+        if (!selectedImportVmModel.validate()) {
+            return;
+        }
+
+        selectedImportVmModel.importVms(callback);
+    }
+
+    public EntityModel<String> getEsx() {
+        return esx;
+    }
+
+    public void setEsx(EntityModel<String> esx) {
+        this.esx = esx;
+    }
+
+    public EntityModel<String> getVmwareDatacenter() {
+        return vmwareDatacenter;
+    }
+
+    public void setVmwareDatacenter(EntityModel<String> vmwareDatacenter) {
+        this.vmwareDatacenter = vmwareDatacenter;
+    }
+
+    public EntityModel<Boolean> getVerify() {
+        return verify;
+    }
+
+    public void setVerify(EntityModel<Boolean> verify) {
+        this.verify = verify;
+    }
+
+    public EntityModel<String> getvCenter() {
+        return vCenter;
+    }
+
+    public void setvCenter(EntityModel<String> vCenter) {
+        this.vCenter = vCenter;
     }
 }

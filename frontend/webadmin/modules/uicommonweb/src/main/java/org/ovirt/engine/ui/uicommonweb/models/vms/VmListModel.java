@@ -108,7 +108,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     public static final String CMD_CONFIGURE_VMS_TO_IMPORT = "ConfigureVmsToImport"; //$NON-NLS-1$
     public static final String CMD_CANCEL = "Cancel"; //$NON-NLS-1$
     private static final String CMD_BACK = "Back"; //$NON-NLS-1$
-    private static final String CMD_RESTORE_FROM_EXPORT_DOMAIN = "OnRestoreExportDomain"; //$NON-NLS-1$
+    private static final String CMD_IMPORT = "Import"; //$NON-NLS-1$
 
     private final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
@@ -2364,11 +2364,17 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
         .setIsCancel(true)
         );
 
-        model.initImportFromExportDomainModel(
-                new UICommand(CMD_RESTORE_FROM_EXPORT_DOMAIN, new BaseCommandTarget() {
+        model.initImportModels(
+                new UICommand(CMD_IMPORT, new BaseCommandTarget() {
                     @Override
                     public void executeCommand(UICommand uiCommand) {
-                        onRestoreFromExportDomain();
+                        model.onRestoreVms(
+                                new IFrontendMultipleActionAsyncCallback() {
+                                    @Override
+                                    public void executed(FrontendMultipleActionAsyncResult result) {
+                                        setWindow(null);
+                                    }
+                                });
                     }
                 }).setTitle(ConstantsManager.getInstance().getConstants().ok())
                   .setIsDefault(true)
@@ -2418,7 +2424,7 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
             return;
         }
 
-        ImportVmFromExportDomainModel model = importVmsModel.getSpecificImportModel();
+        final ImportVmModel model = importVmsModel.getSpecificImportModel();
         setWindow(null); // remove import-vms window first
         setWindow(model);
 
@@ -2485,26 +2491,6 @@ public class VmListModel<E> extends VmBaseListModel<E, VM> implements ISupportSy
     @Override
     protected Guid extractStoragePoolIdNullSafe(VM entity) {
         return entity.getStoragePoolId();
-    }
-
-    private void onRestoreFromExportDomain() {
-        ImportVmModel importModel = (ImportVmModel) getWindow();
-        if (importModel.getProgress() != null) {
-            return;
-        }
-
-        if (!importModel.validate()) {
-            return;
-        }
-
-        importModel.importVms(
-                new IFrontendMultipleActionAsyncCallback() {
-                    @Override
-                    public void executed(FrontendMultipleActionAsyncResult result) {
-                        getWindow().stopProgress();
-                        setWindow(null);
-                    }
-                });
     }
 
     @Override

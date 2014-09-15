@@ -127,6 +127,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
+import org.ovirt.engine.core.common.queries.GetVmsFromExternalProviderQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
@@ -2563,6 +2564,23 @@ public class AsyncDataProvider {
 
         Frontend.getInstance().runQuery(VdcQueryType.GetVmsRunningOnOrMigratingToVds,
                 new IdQueryParameters(id),
+                aQuery);
+    }
+
+    public void getVmsFromExternalServer(AsyncQuery aQuery, Guid dataCenterId, Guid vdsId,
+            String url, String username, String password) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VM>();
+                }
+                return source;
+            }
+        };
+
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmsFromExternalProvider,
+                new GetVmsFromExternalProviderQueryParameters(url, username, password, vdsId, dataCenterId),
                 aQuery);
     }
 

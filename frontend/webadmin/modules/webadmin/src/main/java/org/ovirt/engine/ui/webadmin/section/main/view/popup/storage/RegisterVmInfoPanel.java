@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.uicommonweb.models.storage.RegisterEntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -58,8 +58,8 @@ public class RegisterVmInfoPanel extends RegisterEntityInfoPanel<VM> {
     }
 
     private void initGeneralForm() {
-        DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel> modelProvider =
-            new DetailModelProvider<ImportVmFromExportDomainModel, VmImportGeneralModel>() {
+        DetailModelProvider<ImportVmModel, VmImportGeneralModel> modelProvider =
+            new DetailModelProvider<ImportVmModel, VmImportGeneralModel>() {
                 @Override
                 public VmImportGeneralModel getModel() {
                     return getVmGeneralModel();

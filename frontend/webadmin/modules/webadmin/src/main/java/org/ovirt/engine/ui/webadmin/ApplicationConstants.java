@@ -3435,6 +3435,21 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Provider URL")
     String urlProvider();
 
+    @DefaultStringValue("Proxy Host")
+    String proxyHost();
+
+    @DefaultStringValue("vCenter")
+    String vCenter();
+
+    @DefaultStringValue("ESXi")
+    String esxi();
+
+    @DefaultStringValue("Data Center")
+    String vmwareDataCenter();
+
+    @DefaultStringValue("Verify Credentials")
+    String vmwareVerifyCredentials();
+
     @DefaultStringValue("Test")
     String testProvider();
 

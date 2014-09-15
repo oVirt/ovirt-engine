@@ -35,7 +35,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
-import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
@@ -71,16 +70,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
         return storageDiskListModel;
     }
 
-    private UICommand closeCommand;
-
-    public void setCloseCommand(UICommand closeCommand) {
-        this.closeCommand = closeCommand;
-    }
-
-    public UICommand getCloseCommand() {
-        return closeCommand;
-    }
-
     @Override
     public void setSelectedItem(Object value) {
         super.setSelectedItem(value);
@@ -111,70 +100,62 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
 
                StoragePool dataCenter = pools.get(0);
                setStoragePool(dataCenter);
-               // show quota
-               if (dataCenter != null && dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED) {
-                   hasQuota = true;
-               }
-               if (hasQuota) {
-                   getClusterQuota().setIsAvailable(true);
-               }
+               getClusterQuota().setIsAvailable(dataCenter.getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED);
                getCluster().getSelectedItemChangedEvent().addListener(clusterChangedListener);
                // get cluster
-               if (dataCenter != null) {
-                   getCluster().setItems(null);
-                   AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
-                       @Override
-                       public void onSuccess(Object model, Object returnValue) {
-                           ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
+               getCluster().setItems(null);
+               AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
+                   @Override
+                   public void onSuccess(Object model, Object returnValue) {
+                       ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
-                           ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) model;
-                           ArchitectureType targetArch = importModel.getTargetArchitecture();
+                       ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) model;
+                       ArchitectureType targetArch = importModel.getTargetArchitecture();
 
-                           if (targetArch != null) {
-                               List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
-                                       targetArch);
-                               getCluster().setItems(filteredClusters);
-                               getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
-                           } else {
-                               getCluster().setItems(clusters);
-                               getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
-                           }
-
-                           getStorage().setItems(null);
-                           // get storage domains
-                           AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
-                                   new INewAsyncCallback() {
-
-                                       @Override
-                                       public void onSuccess(Object model, Object returnValue) {
-                                           ArrayList<StorageDomain> storageDomains =
-                                                   (ArrayList<StorageDomain>) returnValue;
-                                           // filter storage domains
-                                           filteredStorageDomains = new ArrayList<>();
-                                           for (StorageDomain domain : storageDomains) {
-                                               if (Linq.isDataActiveStorageDomain(domain)) {
-                                                   filteredStorageDomains.add(domain);
-                                               }
-                                           }
-
-                                           getStorage().setItems((ArrayList) filteredStorageDomains);
-                                           if (hasQuota) {
-                                               initQuotaForStorageDomains();
-                                           } else {
-                                               initDisksStorageDomainsList();
-                                           }
-                                       }
-
-                                   }),
-                                   getStoragePool().getId());
+                       if (targetArch != null) {
+                           List<VDSGroup> filteredClusters = AsyncDataProvider.getInstance().filterByArchitecture(clusters,
+                                   targetArch);
+                           getCluster().setItems(filteredClusters);
+                           getCluster().setSelectedItem(Linq.firstOrDefault(filteredClusters));
+                       } else {
+                           getCluster().setItems(clusters);
+                           getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                        }
 
-                   }),
-                   dataCenter.getId(), true, false);
-               }
+                       getStorage().setItems(null);
+                       // get storage domains
+                       AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
+                               new INewAsyncCallback() {
+
+                           @Override
+                           public void onSuccess(Object model, Object returnValue) {
+                               ArrayList<StorageDomain> storageDomains =
+                                       (ArrayList<StorageDomain>) returnValue;
+                               // filter storage domains
+                               filteredStorageDomains = new ArrayList<>();
+                               for (StorageDomain domain : storageDomains) {
+                                   if (Linq.isDataActiveStorageDomain(domain)) {
+                                       filteredStorageDomains.add(domain);
+                                   }
+                               }
+
+                               getStorage().setItems((ArrayList) filteredStorageDomains);
+                               if (getClusterQuota().getIsAvailable()) {
+                                   initQuotaForStorageDomains();
+                               } else {
+                                   initDisksStorageDomainsList();
+                               }
+                           }
+
+                       }),
+                       getStoragePool().getId());
+                   }
+
+               }),
+               dataCenter.getId(), true, false);
            }
        }),
-               storageDomainId);
+       storageDomainId);
     }
 
     private void initQuotaForStorageDomains() {
@@ -505,13 +486,6 @@ public class ImportVmFromExportDomainModel extends ImportVmModel {
     public boolean isQuotaEnabled() {
         return getStoragePool() != null
                 && getStoragePool().getQuotaEnforcementType() != QuotaEnforcementTypeEnum.DISABLED;
-    }
-
-    private void showCloseMessage(String message) {
-        setMessage(message);
-        getCommands().clear();
-        getCommands().add(getCloseCommand());
-        stopProgress();
     }
 
     public void importVms(IFrontendMultipleActionAsyncCallback callback) {
