@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.VdcActionUtils;
@@ -216,6 +217,7 @@ public class StorageDataCenterListModel extends SearchableListModel
                 for (StorageDomain domain : domains) {
                     domain.setId(domain.getStoragePoolId());
                 }
+                Collections.sort(domains, new Linq.StorageDomainByPoolNameComparator());
                 searchableListModel.setItems(domains);
                 setIsEmpty(((List) searchableListModel.getItems()).size() == 0);
             }
