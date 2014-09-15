@@ -253,6 +253,10 @@ class Const(object):
     FIREWALL_MANAGER_FIREWALLD = 'firewalld'
     ISO_DOMAIN_NFS_DEFAULT_ACL_FORMAT = '{fqdn}(rw)'
 
+    REMOTE_ENGINE_SETUP_STYLE_AUTO_SSH = 'auto_ssh'
+    REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES = 'manual_files'
+    REMOTE_ENGINE_SETUP_STYLE_MANUAL_INLINE = 'manual_inline'
+
 
 @util.export
 @util.codegen
@@ -284,6 +288,8 @@ class CoreEnv(object):
     ORIGINAL_GENERATED_BY_VERSION = 'OVESETUP_CORE/originalGeneratedByVersion'
 
     SETUP_ATTRS_MODULES = 'OVESETUP_CORE/setupAttributesModules'
+
+    REMOTE_ENGINE = 'OVESETUP_CORE/remoteEngine'
 
 
 @util.export
@@ -384,6 +390,33 @@ class ConfigEnv(object):
     VALID_FIREWALL_MANAGERS = 'OVESETUP_CONFIG/validFirewallManagers'
     FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
     FQDN_NON_LOOPBACK_VALIDATION = 'OVESETUP_CONFIG/fqdnNonLoopback'
+
+    REMOTE_ENGINE_SETUP_STYLES = 'OVESETUP_CONFIG/remoteEngineSetupStyles'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOTE_ENGINE_SETUP_STYLE(self):
+        return 'OVESETUP_CONFIG/remoteEngineSetupStyle'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOTE_ENGINE_HOST_SSH_PORT(self):
+        return 'OVESETUP_CONFIG/remoteEngineHostSshPort'
+
+    # Optional, used if supplied
+    REMOTE_ENGINE_HOST_CLIENT_KEY = 'OVESETUP_CONFIG/remoteEngineHostClientKey'
+
+    # Optional, used if supplied, currently only log if not there
+    REMOTE_ENGINE_HOST_KNOWN_HOSTS = \
+        'OVESETUP_CONFIG/remoteEngineHostKnownHosts'
+
+    @osetupattrs(
+        answerfile=True,
+    )
+    def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
+        return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
 
 
 @util.export

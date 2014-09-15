@@ -22,20 +22,16 @@
 from otopi import util
 
 
-from . import offlinepackager
-from . import misc
-from . import answerfile
-from . import uninstall
-from . import postinstall
+from . import remote_engine
+from . import remote_engine_manual_files
+from . import remote_engine_root_ssh
 
 
 @util.export
 def createPlugins(context):
-    offlinepackager.Plugin(context=context)
-    misc.Plugin(context=context)
-    answerfile.Plugin(context=context)
-    uninstall.Plugin(context=context)
-    postinstall.Plugin(context=context)
+    remote_engine.Plugin(context=context)
+    remote_engine_manual_files.Plugin(context=context)
+    remote_engine_root_ssh.Plugin(context=context)
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
