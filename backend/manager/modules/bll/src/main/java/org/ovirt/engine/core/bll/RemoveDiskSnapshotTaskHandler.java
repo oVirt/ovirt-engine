@@ -68,6 +68,7 @@ public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
         parameters.setEntityInfo(enclosingCommand.getParameters().getEntityInfo());
         parameters.setParentParameters(enclosingCommand.getParameters());
         parameters.setParentCommand(enclosingCommand.getActionType());
+        parameters.setWipeAfterDelete(dest.isWipeAfterDelete());
         parameters.setSessionId(enclosingCommand.getParameters().getSessionId());
         return parameters;
     }
