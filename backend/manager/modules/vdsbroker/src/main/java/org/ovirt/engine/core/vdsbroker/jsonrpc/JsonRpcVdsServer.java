@@ -1574,4 +1574,18 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }
+
+    @Override
+    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
+        JsonRpcRequest request =
+                new RequestBuilder("Host.getExternalVMs")
+                        .withParameter("uri", uri)
+                        .withParameter("username", username)
+                        .withParameter("password", password)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("vmList")
+                        .withResponseType(Object[].class);
+        return new VMListReturnForXmlRpc(response);
+    }
 }

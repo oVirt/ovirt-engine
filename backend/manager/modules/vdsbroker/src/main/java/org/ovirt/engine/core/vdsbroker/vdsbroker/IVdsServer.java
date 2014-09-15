@@ -332,4 +332,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
 
     StatusOnlyReturnForXmlRpc glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
+
+    VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);
 }

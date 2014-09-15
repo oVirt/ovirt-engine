@@ -166,6 +166,7 @@ public enum VDSCommandType {
     DeleteGlusterVolumeGeoRepSession("org.ovirt.engine.core.vdsbroker.gluster"),
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
     UpdateVmPolicy("org.ovirt.engine.core.vdsbroker"),
+    GetVmsFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only
     GetVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),     // get a VM with full data and statistics
     GetAllVmStats("org.ovirt.engine.core.vdsbroker.vdsbroker"),  // get a list of VMs with full data and statistics

@@ -1536,4 +1536,15 @@ public class VdsServerWrapper implements IVdsServer {
     public void close() {
         XmlRpcUtils.shutDownConnection(this.httpClient);
     }
+
+    @Override
+    public VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password) {
+        try {
+            Map<String, Object> xmlRpcReturnValue = vdsServer.getExternalVMs(uri, username, password);
+            VMListReturnForXmlRpc wrapper = new VMListReturnForXmlRpc(xmlRpcReturnValue);
+            return wrapper;
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
 }

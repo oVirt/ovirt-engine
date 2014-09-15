@@ -20,8 +20,10 @@ import java.util.concurrent.TimeUnit;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.AutoNumaBalanceStatus;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.GraphicsInfo;
@@ -34,6 +36,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSDomainsData;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VdsNumaNode;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
@@ -50,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VmJobType;
 import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
@@ -97,6 +101,70 @@ public class VdsBrokerObjectsBuilder {
         }
 
     };
+
+    public static VM buildVmsDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
+        VmStatic vmStatic = buildVmStaticDataFromExternalProvider(xmlRpcStruct);
+        if (vmStatic == null) {
+            return null;
+        }
+
+        VmDynamic vmDynamic = buildVMDynamicDataFromList(xmlRpcStruct);
+
+        VM vm = new VM(vmStatic, vmDynamic, new VmStatistics());
+        for (DiskImage image : vm.getImages()) {
+            vm.getDiskMap().put(Guid.newGuid(), image);
+        }
+        vm.setClusterArch(ArchitectureType.valueOf((String) xmlRpcStruct.get(VdsProperties.vm_arch)));
+
+        return vm;
+    }
+
+    private static VmStatic buildVmStaticDataFromExternalProvider(Map<String, Object> xmlRpcStruct) {
+        if (!xmlRpcStruct.containsKey(VdsProperties.vm_guid) || !xmlRpcStruct.containsKey(VdsProperties.vm_name)
+                || !xmlRpcStruct.containsKey(VdsProperties.mem_size_mb)
+                || !xmlRpcStruct.containsKey(VdsProperties.num_of_cpus)) {
+            return null;
+        }
+
+        VmStatic vmStatic = new VmStatic();
+        vmStatic.setId(Guid.createGuidFromString((String) xmlRpcStruct.get(VdsProperties.vm_guid)));
+        vmStatic.setName((String) xmlRpcStruct.get(VdsProperties.vm_name));
+        vmStatic.setMemSizeMb((int) xmlRpcStruct.get(VdsProperties.mem_size_mb));
+        vmStatic.setNumOfSockets((int) xmlRpcStruct.get(VdsProperties.num_of_cpus));
+
+        if (xmlRpcStruct.containsKey(VdsProperties.vm_disks)) {
+            for (Object diskMap : (Object[]) xmlRpcStruct.get(VdsProperties.vm_disks)) {
+                DiskImage image = buildDiskImageFromExternalProvider((Map<String, Object>)diskMap);
+                vmStatic.getImages().add(image);
+            }
+        }
+
+        if (xmlRpcStruct.containsKey(VdsProperties.NETWORKS)) {
+            for (Object networkMap : (Object[]) xmlRpcStruct.get(VdsProperties.NETWORKS)) {
+                vmStatic.getInterfaces().add(buildNetworkInterfaceFromExternalProvider((Map<String, Object>)networkMap));
+            }
+        }
+
+        return vmStatic;
+    }
+
+    private static DiskImage buildDiskImageFromExternalProvider(Map<String, Object> map) {
+        DiskImage image = new DiskImage();
+        image.setDiskAlias((String) map.get(VdsProperties.Alias));
+        image.setSize(Long.parseLong((String) map.get(VdsProperties.DISK_VIRTUAL_SIZE)));
+        image.setActualSize(Long.parseLong((String) map.get(VdsProperties.DISK_ALLOCATION)));
+        image.setId(Guid.newGuid());
+
+        return image;
+    }
+
+    private static VmNetworkInterface buildNetworkInterfaceFromExternalProvider(Map<String, Object> map) {
+        VmNetworkInterface nic = new VmNetworkInterface();
+        nic.setMacAddress((String) map.get(VdsProperties.MAC_ADDR));
+        nic.setName((String) map.get(VdsProperties.BRIDGE));
+
+        return nic;
+    }
 
     public static VmDynamic buildVMDynamicDataFromList(Map<String, Object> xmlRpcStruct) {
         VmDynamic vmdynamic = new VmDynamic();

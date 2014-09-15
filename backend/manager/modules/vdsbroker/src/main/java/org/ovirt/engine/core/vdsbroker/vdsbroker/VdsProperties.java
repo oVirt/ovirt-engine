@@ -226,6 +226,7 @@ public final class VdsProperties {
     public static final String vm_name = "vmName";
     public static final String vm_guid = "vmId";
     public static final String smartcardEnabled = "smartcardEnable";
+    public static final String vm_arch = "arch";
     // vm configuration (i.e. VmDynamic)
     public static final String guest_cur_user_name = "username";
     public static final String VM_IP = "guestIPs";
@@ -255,6 +256,10 @@ public final class VdsProperties {
     public static final String vm_balloon_max = "balloon_max";
     public static final String vm_balloon_min = "balloon_min";
     public static final String vm_balloon_target = "balloon_target";
+
+    // v2v
+    public static final String DISK_ALLOCATION = "allocation";
+    public static final String DISK_VIRTUAL_SIZE = "capacity";
 
     // reported by guest-agent
     public static final String GUEST_CPU_COUNT = "guestCPUCount";
