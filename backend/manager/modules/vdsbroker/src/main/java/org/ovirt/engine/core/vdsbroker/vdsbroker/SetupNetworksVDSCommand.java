@@ -24,6 +24,10 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Replaced by {@link org.ovirt.engine.core.vdsbroker.vdsbroker.HostSetupNetworksVDSCommand}
+ */
+@Deprecated
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
     protected static final String DHCP_BOOT_PROTOCOL = "dhcp";

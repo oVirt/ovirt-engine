@@ -10,6 +10,10 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.utils.ToStringBuilder;
 
+/**
+ * Replaced by {@link org.ovirt.engine.core.common.vdscommands.HostSetupNetworksVdsCommandParameters}
+ */
+@Deprecated
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
     private VDS vds;
     private List<Network> networks;
