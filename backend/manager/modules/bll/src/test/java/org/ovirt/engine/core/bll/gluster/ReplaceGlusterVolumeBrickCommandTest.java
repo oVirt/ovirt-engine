@@ -53,7 +53,7 @@ public class ReplaceGlusterVolumeBrickCommandTest {
 
     private void prepareMocks(ReplaceGlusterVolumeBrickCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
         doReturn(getVds(VDSStatus.Up)).when(command).getUpServer();
         doReturn(getDistributedVolume(volumeId1)).when(volumeDao).getById(volumeId1);
         doReturn(getDistributedVolume(volumeId2)).when(volumeDao).getById(volumeId2);

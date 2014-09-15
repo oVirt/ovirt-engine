@@ -27,7 +27,6 @@ import org.ovirt.engine.core.common.constants.gluster.GlusterConstants;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 
 /**
@@ -140,7 +139,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     }
 
     protected boolean updateBrickServerName(GlusterBrickEntity brick, boolean addCanDoActionMessage) {
-        VdsStatic server = getVdsStaticDao().get(brick.getServerId());
+        VdsStatic server = getVdsStaticDAO().get(brick.getServerId());
         if ((server == null || !server.getVdsGroupId().equals(getVdsGroupId()))) {
             if (addCanDoActionMessage) {
                 addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_INVALID_BRICK_SERVER_ID);
@@ -176,10 +175,6 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
 
     protected GlusterVolumeValidator createVolumeValidator() {
         return new GlusterVolumeValidator();
-    }
-
-    public VdsStaticDAO getVdsStaticDao() {
-        return getDbFacade().getVdsStaticDao();
     }
 
     protected GlusterBrickDao getGlusterBrickDao() {

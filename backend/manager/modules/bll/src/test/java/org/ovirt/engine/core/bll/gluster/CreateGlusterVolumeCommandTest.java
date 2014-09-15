@@ -90,7 +90,7 @@ public class CreateGlusterVolumeCommandTest {
     private void prepareMocks(CreateGlusterVolumeCommand command) {
         doReturn(vdsGroupDao).when(command).getVdsGroupDAO();
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
         doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(validator).when(command).createVolumeValidator();
 

@@ -125,7 +125,7 @@ public class AddBricksToGlusterVolumeCommandTest {
 
     private void prepareMocks(AddBricksToGlusterVolumeCommand command) {
         doReturn(volumeDao).when(command).getGlusterVolumeDao();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
         doReturn(brickDao).when(command).getGlusterBrickDao();
         doReturn(validator).when(command).createVolumeValidator();
 

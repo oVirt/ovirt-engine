@@ -120,7 +120,7 @@ public class RemoveVdsCommandTest {
         doReturn(clusterUtils).when(command).getClusterUtils();
         doReturn(backend).when(command).getBackend();
         doReturn(vdsBrokerFrontend).when(backend).getResourceManager();
-        doReturn(vdsStaticDao).when(command).getVdsStaticDao();
+        doReturn(vdsStaticDao).when(command).getVdsStaticDAO();
         doReturn(vdsStatisticsDao).when(command).getVdsStatisticsDao();
         when(clusterUtils.getUpServer(clusterId)).thenReturn(getVds(VDSStatus.Up));
     }
