@@ -232,6 +232,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumeRebalanceStart(String volumeName, Boolean fixLayoutOnly, Boolean force);
 
+    public Map<String, Object> glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
+
     public Map<String, Object> glusterVolumeRebalanceStop(String volumeName);
 
     public Map<String, Object> replaceGlusterVolumeBrickStart(String volumeName, String existingBrickDir, String newBrickDir);

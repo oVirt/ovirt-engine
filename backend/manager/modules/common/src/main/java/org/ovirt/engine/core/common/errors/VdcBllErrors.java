@@ -402,6 +402,7 @@ public enum VdcBllErrors {
     GlusterGeoRepSessionDeleteFailedException(4594),
     GlusterVolumeGeoRepStartFailedException(4595),
     GlusterVolumeGeoRepStopFailedException(4596),
+    GlusterVolumeGeoRepResumeFailed(4598),
     GlusterVolumeGeoRepStatusFailed(4599),
     GlusterVolumeGeoRepStatusDetailFailed(4600),
     GlusterVolumeGeoRepSyncFailed(4601),
