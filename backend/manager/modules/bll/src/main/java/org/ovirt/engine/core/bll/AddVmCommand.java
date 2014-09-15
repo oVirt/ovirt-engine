@@ -529,6 +529,14 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (!VmHandler.isCpuSupported(
+                vmFromParams.getVmOsId(),
+                getVdsGroup().getcompatibility_version(),
+                getVdsGroup().getcpu_name(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
+        }
+
         // Check if the display type is supported
         if (!VmHandler.isDisplayTypeSupported(getParameters().getVmStaticData().getOsId(),
                 vmFromParams.getDefaultDisplayType(),
