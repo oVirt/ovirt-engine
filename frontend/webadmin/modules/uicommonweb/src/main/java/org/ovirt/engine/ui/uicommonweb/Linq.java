@@ -1236,6 +1236,16 @@ public final class Linq
         }
     }
 
+    public final static class StorageDomainByPoolNameComparator implements Comparator<StorageDomain>, Serializable {
+        private static final long serialVersionUID = 990203400356561666L;
+        private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+
+        @Override
+        public int compare(StorageDomain domain1, StorageDomain domain2) {
+            return lexoNumeric.compare(domain1.getStoragePoolName(), domain2.getStoragePoolName());
+        }
+    }
+
     public final static class VDSGroupComparator implements Comparator<VDSGroup>, Serializable {
         private static final long serialVersionUID = 990203400356561587L;
         private LexoNumericComparator lexoNumeric = new LexoNumericComparator();
