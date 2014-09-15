@@ -339,6 +339,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_VOLUME_REBALANCE_START_FAILED();
 
+    String AuditLogType___GLUSTER_VOLUME_GEO_REP_RESUME_FAILED();
+
+    String AuditLogType___GLUSTER_VOLUME_GEO_REP_RESUME();
+
     String AuditLogType___GLUSTER_VOLUME_REBALANCE_STOP();
 
     String AuditLogType___GLUSTER_VOLUME_REBALANCE_STOP_FAILED();
