@@ -7,6 +7,8 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.CommandsFactory;
+import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -330,9 +332,24 @@ public class CoCoAsyncTaskHelper {
         AsyncTask dbAsyncTask = task.getParameters().getDbAsyncTask();
         VdcActionType actionType = getEndActionType(dbAsyncTask);
         VdcActionParametersBase parameters = dbAsyncTask.getActionParameters();
-        CommandBase<?> command = CommandsFactory.createCommand(actionType, parameters);
-        command.getContext().withExecutionContext(context);
+        CommandBase<?> command = buildCommand(actionType, parameters, context, coco.getCommandStatus(dbAsyncTask.getCommandId()));
         return new DecoratedCommand(command).endAction();
+    }
+
+    private CommandBase<?> buildCommand(VdcActionType actionType,
+                                        VdcActionParametersBase parameters,
+                                        ExecutionContext executionContext,
+                                        CommandStatus cmdStatus) {
+        CommandBase<?> command;
+        CommandContext cmdContext = new CommandContext(new EngineContext()).withExecutionContext(executionContext == null ? new ExecutionContext() : executionContext);
+        if (CommandsFactory.hasConstructor(actionType, parameters, cmdContext)) {
+            command = CommandsFactory.createCommand(actionType, parameters, cmdContext);
+        } else {
+            command = CommandsFactory.createCommand(actionType, parameters);
+            command.getContext().withExecutionContext(executionContext);
+        }
+        command.setCommandStatus(cmdStatus, false);
+        return command;
     }
 
     private VdcActionType getEndActionType(AsyncTask dbAsyncTask) {
