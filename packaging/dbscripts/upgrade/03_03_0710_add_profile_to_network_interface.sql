@@ -91,8 +91,9 @@ SET vnic_profile_id = vnic_profiles.id
        AND vm_interface.port_mirroring = vnic_profiles.port_mirroring
        AND vm_interface.network_name = network.name;
 
+-- The following drop column was commented since it is done also in 03_03_0720
 -- drop the port_mirroring column from vm_interface
-SELECT fn_db_drop_column ('port_mirroring', 'vm_interface');
+--SELECT fn_db_drop_column ('port_mirroring', 'vm_interface');
 
 -- add permissions to vnic profile (according to existing permissions on networks.
 Create or replace FUNCTION __temp_set_vnic_profiles_permissions()
