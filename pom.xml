@@ -472,6 +472,7 @@
           </configuration>
           <executions>
             <execution>
+              <id>checkstyle</id>
               <phase>compile</phase>
               <goals>
                 <goal>check</goal>

@@ -78,6 +78,13 @@
     </dependency>
     <dependency>
       <groupId>${engine.groupId}</groupId>
+      <artifactId>gwt-common</artifactId>
+      <version>${engine.version}</version>
+      <type>test-jar</type>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>${engine.groupId}</groupId>
       <artifactId>frontend</artifactId>
       <version>${engine.version}</version>
     </dependency>
@@ -153,6 +160,14 @@
         </includes>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/main/resources</directory>
+          <includes>
+            <include>**/*Messages*.properties</include>
+          </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>

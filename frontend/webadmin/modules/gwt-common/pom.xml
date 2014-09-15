@@ -84,6 +84,14 @@
         <directory>src/main/resources</directory>
       </resource>
     </resources>
+    <testResources>
+      <testResource>
+        <directory>src/main/resources</directory>
+          <includes>
+            <include>**/*Messages*.properties</include>
+          </includes>
+      </testResource>
+    </testResources>
     <plugins>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
