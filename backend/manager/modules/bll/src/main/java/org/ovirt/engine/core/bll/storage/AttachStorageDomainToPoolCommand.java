@@ -22,6 +22,8 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
+import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
+import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
@@ -193,53 +195,65 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
     }
 
     protected List<OvfEntityData> getEntitiesFromStorageOvfDisk() {
-        List<OvfEntityData> ovfEntitiesFromTar = Collections.emptyList();
-
-        // Initialize the list with all the ovfDisks in the specified Storage Domain.
-        List<DiskImage> ovfStoreDiskImages = getAllOVFDisks();
+        // Initialize a new ArrayList with all the ovfDisks in the specified Storage Domain,
+        // so the entities can be removed from the list every time we register the latest OVF disk and we can keep the
+        // ovfDisks cache list updated.
+        List<DiskImage> ovfStoreDiskImages = new ArrayList(getAllOVFDisks());
         if (!ovfStoreDiskImages.isEmpty()) {
-            Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(ovfStoreDiskImages);
-            DiskImage ovfDisk = ovfDiskAndSize.getFirst();
-            if (ovfDisk != null) {
-                try {
-                    VDSReturnValue retrievedByteData = runVdsCommand(VDSCommandType.RetrieveImageData,
-                            new ImageHttpAccessVDSCommandParameters(getVdsId(),
-                                    getParameters().getStoragePoolId(),
-                                    getParameters().getStorageDomainId(),
-                                    ovfDisk.getId(),
-                                    ovfDisk.getImage().getId(),
-                                    ovfDiskAndSize.getSecond()));
+            while (!ovfStoreDiskImages.isEmpty()) {
+                Pair<DiskImage, Long> ovfDiskAndSize = getLatestOVFDisk(ovfStoreDiskImages);
+                DiskImage ovfDisk = ovfDiskAndSize.getFirst();
+                if (ovfDisk != null) {
+                    try {
+                        VDSReturnValue retrievedByteData = runVdsCommand(VDSCommandType.RetrieveImageData,
+                                new ImageHttpAccessVDSCommandParameters(getVdsId(),
+                                        getParameters().getStoragePoolId(),
+                                        getParameters().getStorageDomainId(),
+                                        ovfDisk.getId(),
+                                        ovfDisk.getImage().getId(),
+                                        ovfDiskAndSize.getSecond()));
 
-                    if (retrievedByteData.getSucceeded()) {
-                        ovfEntitiesFromTar =
-                                OvfUtils.getOvfEntities((byte[]) retrievedByteData.getReturnValue(),
-                                        getParameters().getStorageDomainId());
-                    } else {
-                        log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}",
+                        if (retrievedByteData.getSucceeded()) {
+                            return OvfUtils.getOvfEntities((byte[]) retrievedByteData.getReturnValue(),
+                                    getParameters().getStorageDomainId());
+                        } else {
+                            log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}",
+                                    ovfDisk.getId(),
+                                    getParameters().getStorageDomainId());
+                        }
+                    } catch (RuntimeException e) {
+                        // We are catching RuntimeException, since the call for OvfUtils.getOvfEntities will throw
+                        // a RuntimeException if there is a problem to untar the file.
+                        log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}. Error: {2}",
                                 ovfDisk.getId(),
-                                getParameters().getStorageDomainId());
-                        AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
+                                getParameters().getStorageDomainId(),
+                                e);
                     }
-                } catch (RuntimeException e) {
-                    // We are catching RuntimeException, since the call for OvfUtils.getOvfEntities will throw
-                    // a RuntimeException if there is a problem to untar the file.
-                    log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}. Error: {2}",
-                            ovfDisk.getId(),
-                            getParameters().getStorageDomainId(),
-                            e);
-                    AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
+                    ovfStoreDiskImages.remove(ovfDisk);
                 }
             }
+            AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {
             log.warnFormat("There are no OVF_STORE disks on storage domain id {0}",
                     getParameters().getStorageDomainId());
         }
-        return ovfEntitiesFromTar;
+        return Collections.emptyList();
     }
 
     /**
      * Register all the OVF_STORE disks as floating disks in the engine.
      */
+    private void addOvfStoreDiskToDomain(DiskImage ovfDisk) {
+        // Setting OVF_STORE disk to be outdated so it will be updated.
+        StorageDomainOvfInfo storageDomainOvfInfo =
+                new StorageDomainOvfInfo(getStorageDomainId(),
+                        null,
+                        ovfDisk.getId(),
+                        StorageDomainOvfInfoStatus.OUTDATED,
+                        null);
+        getDbFacade().getStorageDomainOvfInfoDao().save(storageDomainOvfInfo);
+    }
+
     private void registerAllOvfDisks(List<DiskImage> ovfStoreDiskImages) {
         for (DiskImage ovfStoreDiskImage : ovfStoreDiskImages) {
             ovfStoreDiskImage.setDiskAlias(OvfInfoFileConstants.OvfStoreDescriptionLabel);
@@ -255,6 +269,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     ovfStoreDiskImage.getId(),
                     getParameters().getStorageDomainId(),
                     result);
+            addOvfStoreDiskToDomain(ovfStoreDiskImage);
         }
     }
 
