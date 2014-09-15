@@ -519,6 +519,6 @@ install-dev:	\
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/engine-manage-domains"
 	install -d "$(DESTDIR)$(PKG_LOG_DIR)/dump"
 
-	if [ -e "$(DESTDIR)$(PKG_TMP_DIR)/deployments" ]; then \
-		touch "$(DESTDIR)$(PKG_TMP_DIR)/deployments/engine.ear.deployed"; \
+	if [ -e "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments" ]; then \
+		touch "$(DESTDIR)$(PKG_STATE_DIR)/jboss_runtime/deployments/engine.ear.deployed"; \
 	fi
