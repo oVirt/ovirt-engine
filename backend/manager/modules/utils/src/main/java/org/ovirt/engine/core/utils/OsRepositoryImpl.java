@@ -413,6 +413,29 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus() {
+        Set<Version> versionsWithNull = new HashSet<Version>(Version.ALL);
+        versionsWithNull.add(null);
+
+        HashMap<Pair<Integer, Version>, Set<String>> unsupportedCpus = new HashMap<>();
+
+        for (int osId : getOsIds()) {
+            for (Version version : versionsWithNull) {
+                unsupportedCpus.put(
+                        new Pair<>(osId, version),
+                        getUnsupportedCpus(osId, version)
+                );
+            }
+        }
+        return unsupportedCpus;
+    }
+
+    @Override
+    public boolean isCpuSupported(int osId, Version version, String cpuId) {
+        return !getUnsupportedCpus(osId, version).contains(cpuId.toLowerCase());
+    }
+
+    @Override
     public int getOsIdByUniqueName(String uniqueOsName) {
         for (Map.Entry<Integer, String> entry : getUniqueOsNames().entrySet()) {
             if (entry.getValue().equals(uniqueOsName)) {
@@ -425,6 +448,16 @@ public enum OsRepositoryImpl implements OsRepository {
         }
 
         return 0;
+    }
+
+    @Override
+    public Set<String> getUnsupportedCpus(int osId, Version version) {
+        return new HashSet<>(trimElements(
+                getValueByVersion(
+                        idToUnameLookup.get(osId),
+                        "cpu.unsupported",
+                        version)
+                        .toLowerCase().split(",")));
     }
 
     private boolean getBoolean(String value, boolean defaultValue) {
