@@ -72,10 +72,12 @@ public final class CommandsFactory {
         }
         catch (InvocationTargetException ex) {
             log.error("Error in invocating CTOR of command " + action.name() + ". Exception is ", ex);
+            log.debug("", ex);
             return null;
         }
         catch (Exception ex) {
             log.error("An exception has occured while trying to create a command object for command " + action.name(), ex);
+            log.debug("", ex);
             return null;
         }
     }
