@@ -3363,4 +3363,7 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Cannot ${action} ${type}. Plugged and unlinked VM network interface with external network is not supported.")
     String PLUGGED_UNLINKED_VM_INTERFACE_WITH_EXTERNAL_NETWORK_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("The guest OS doesn't support the following CPUs: ${unsupportedCpus}. Its possible to change the cluster cpu or set a different one per VM")
+    String CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS();
 }

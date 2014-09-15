@@ -682,7 +682,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         // get what cpu flags should be passed to vdsm according to cluster
         // cpu name
         getVm().setVdsGroupCpuFlagsData(
-                CpuFlagsManagerHandler.GetVDSVerbDataByCpuName(getVm().getVdsGroupCpuName(), getVm()
+                CpuFlagsManagerHandler.getCpuId(getVm().getVdsGroupCpuName(), getVm()
                         .getVdsGroupCompatibilityVersion()));
 
         VmHandler.updateVmGuestAgentVersion(getVm());

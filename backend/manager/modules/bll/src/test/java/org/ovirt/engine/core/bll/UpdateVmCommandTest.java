@@ -3,6 +3,7 @@ package org.ovirt.engine.core.bll;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
@@ -16,6 +17,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -40,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
@@ -120,6 +123,7 @@ public class UpdateVmCommandTest {
         when(osRepository.getMaximumRam(osId, null)).thenReturn(256);
         when(osRepository.isWindows(osId)).thenReturn(false);
         when(osRepository.getArchitectureFromOS(osId)).thenReturn(ArchitectureType.x86_64);
+        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
 
         Map<Integer, Map<Version, List<DisplayType>>> displayTypeMap = new HashMap<>();
         displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
@@ -302,6 +306,24 @@ public class UpdateVmCommandTest {
         doReturn(true).when(command).areUpdatedFieldsLegal();
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
+    @Test
+    public void testUnsupportedCpus() {
+        prepareVmToPassCanDoAction();
+
+        // prepare the mock values
+        HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
+        HashSet<String> value = new HashSet<>();
+        value.add(null);
+        unsupported.put(new Pair<>(0, Version.v3_0), value);
+
+        when(osRepository.isCpuSupported(0, Version.v3_0, null)).thenReturn(false);
+        when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+                command,
+                VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
     public void testCannotUpdateOSNotSupportVirtioScsi() {

@@ -34,7 +34,7 @@ public final class CpuFlagsManagerHandler {
        log.info("Finished initializing dictionaries");
     }
 
-    public static String GetVDSVerbDataByCpuName(String name, Version ver) {
+    public static String getCpuId(String name, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.GetVDSVerbDataByCpuName(name);

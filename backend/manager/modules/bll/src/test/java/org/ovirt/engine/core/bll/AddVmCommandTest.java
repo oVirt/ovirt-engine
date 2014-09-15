@@ -20,8 +20,10 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -57,6 +59,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.interfaces.VDSBrokerFrontend;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
@@ -157,6 +160,7 @@ public class AddVmCommandTest {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
         VmHandler.init();
         when(osRepository.isWindows(0)).thenReturn(true);
+        when(osRepository.isCpuSupported(anyInt(), any(Version.class), anyString())).thenReturn(true);
     }
 
     @Test
@@ -273,6 +277,42 @@ public class AddVmCommandTest {
                when(storageDomainValidator).isDomainWithinThresholds();
         doReturn(storageDomainValidator).when(command).createStorageDomainValidator(any(StorageDomain.class));
         assertFalse(command.validateSpaceRequirements());
+    }
+
+    @Test
+    public void testUnsupportedCpus() {
+        // prepare a command to pass canDo action
+        VM vm = createVm();
+        vm.setVmOs(OsRepository.DEFAULT_X86_OS);
+        VDSGroup vdsGroup = createVdsGroup();
+
+        AddVmFromTemplateCommand<AddVmFromTemplateParameters> cmd = createVmFromTemplateCommand(vm);
+
+        mockStorageDomainDAOGetForStoragePool();
+        mockVmTemplateDAOReturnVmTemplate();
+        mockDiskImageDAOGetSnapshotById();
+        mockVerifyAddVM(cmd);
+        mockConfig();
+        mockConfigSizeDefaults();
+        mockMaxPciSlots();
+        mockStorageDomainDaoGetAllStoragesForPool(20);
+        mockDisplayTypes(vm.getOs(), vdsGroup.getcompatibility_version());
+        mockUninterestingMethods(cmd);
+        mockGetAllSnapshots(cmd);
+        when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
+
+        // prepare the mock values
+        HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
+        HashSet<String> value = new HashSet<>();
+        value.add(null);
+        unsupported.put(new Pair<>(vm.getVmOsId(), vdsGroup.getcompatibility_version()), value);
+
+        when(osRepository.isCpuSupported(vm.getVmOsId(), vdsGroup.getcompatibility_version(), null)).thenReturn(false);
+        when(osRepository.getUnsupportedCpus()).thenReturn(unsupported);
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(
+                cmd,
+                VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS);
     }
 
 
