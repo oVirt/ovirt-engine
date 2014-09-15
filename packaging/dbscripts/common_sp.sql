@@ -31,6 +31,8 @@ begin
                 v_sql := 'ALTER TABLE ' || v_table || ' DROP COLUMN ' || v_column;
                 EXECUTE v_sql;
             end;
+        else
+            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
         end if;
 end;$procedure$
 LANGUAGE plpgsql;
@@ -49,6 +51,8 @@ begin
 		v_sql := 'ALTER TABLE ' || v_table || ' ALTER COLUMN ' || v_column || ' TYPE ' || v_new_type;
 		EXECUTE v_sql;
             end;
+        else
+            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
 	end if;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -66,6 +70,8 @@ begin
 		v_sql := 'ALTER TABLE ' || v_table || ' RENAME COLUMN ' || v_column || ' TO ' || v_new_name;
 		EXECUTE v_sql;
             end;
+        else
+            RAISE EXCEPTION 'Table % or Column % does not exist.', v_table, v_column;
 	end if;
 END; $procedure$
 LANGUAGE plpgsql;
