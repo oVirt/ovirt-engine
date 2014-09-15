@@ -329,4 +329,6 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus);
 
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepResume(String volumeName, String slaveHostName, String slaveVolumeName, boolean force);
 }

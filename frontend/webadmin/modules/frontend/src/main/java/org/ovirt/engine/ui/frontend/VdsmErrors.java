@@ -721,6 +721,9 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Gluster Volume Rebalance Start Failed.")
     String GlusterVolumeRebalanceStartFailed();
 
+    @DefaultStringValue("Resume of geo-replication session failed on gluster volume")
+    String GlusterVolumeGeoRepResumeFailed();
+
     @DefaultStringValue("Gluster Volume Rebalance Stop Failed.")
     String GlusterVolumeRebalanceStopFailed();
 
