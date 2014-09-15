@@ -3,7 +3,7 @@ package org.ovirt.engine.core.common.queries;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 
-public class GetVmUpdatesOnNextRunExistsParameters extends VdcQueryParametersBase {
+public class GetVmChangedFieldsForNextRunParameters extends VdcQueryParametersBase {
 
     private VM original;
 
@@ -11,10 +11,12 @@ public class GetVmUpdatesOnNextRunExistsParameters extends VdcQueryParametersBas
 
     private VmManagementParametersBase updateVmParameters;
 
-    public GetVmUpdatesOnNextRunExistsParameters() {
+    public GetVmChangedFieldsForNextRunParameters() {
     }
 
-    public GetVmUpdatesOnNextRunExistsParameters(VM original, VM updated, VmManagementParametersBase updateVmParameters) {
+    public GetVmChangedFieldsForNextRunParameters(VM original,
+            VM updated,
+            VmManagementParametersBase updateVmParameters) {
         this.original = original;
         this.updated = updated;
         this.updateVmParameters = updateVmParameters;

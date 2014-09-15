@@ -28,7 +28,7 @@ public enum VdcQueryType implements Serializable {
     GetVirtioScsiControllers(VdcQueryAuthType.User),
     GetVmsInit(VdcQueryAuthType.User),
     GetVmNextRunConfiguration(VdcQueryAuthType.User),
-    GetVmUpdatesOnNextRunExists(VdcQueryAuthType.User),
+    GetVmChangedFieldsForNextRun(VdcQueryAuthType.User),
 
     // Vds queries
     GetVdsByVdsId,

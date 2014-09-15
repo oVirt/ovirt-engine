@@ -112,7 +112,7 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
-import org.ovirt.engine.core.common.queries.GetVmUpdatesOnNextRunExistsParameters;
+import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
@@ -682,9 +682,9 @@ public class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.GetVmNextRunConfiguration, new IdQueryParameters(vmId), aQuery);
     }
 
-    public void isNextRunConfigurationChanged(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery aQuery) {
-        Frontend.getInstance().runQuery(VdcQueryType.GetVmUpdatesOnNextRunExists,
-                new GetVmUpdatesOnNextRunExistsParameters(original, updated, updateVmParameters), aQuery);
+    public void getVmChangedFieldsForNextRun(VM original, VM updated, VmManagementParametersBase updateVmParameters, AsyncQuery aQuery) {
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmChangedFieldsForNextRun,
+                new GetVmChangedFieldsForNextRunParameters(original, updated, updateVmParameters), aQuery);
     }
 
     public void getDataCenterList(AsyncQuery aQuery) {

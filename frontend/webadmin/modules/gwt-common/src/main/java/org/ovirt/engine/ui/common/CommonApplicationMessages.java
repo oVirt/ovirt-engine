@@ -145,7 +145,7 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("Policy of assigning serial numbers to running VMs. Can be Host''s UUID, Vm''s UUID or any custom value.")
     String serialNumberInfo();
 
-    @DefaultMessage("Some of the changes will be applied after the NEXT RESTART.")
+    @DefaultMessage("Some of the changes will be applied only on the vm next start.")
     String nextRunConfigurationExists();
 
     @DefaultMessage("The following values can be applied immediately:<br/>- cpu")

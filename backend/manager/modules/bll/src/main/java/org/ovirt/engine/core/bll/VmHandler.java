@@ -145,6 +145,10 @@ public class VmHandler {
         return mUpdateVmsStatic.IsUpdateValid(source, destination, status);
     }
 
+    public static List<String> getChangedFieldsForStatus(VmStatic source, VmStatic destination, VMStatus status) {
+        return mUpdateVmsStatic.getChangedFieldsForStatus(source, destination, status);
+    }
+
     public static boolean isUpdateValid(VmStatic source, VmStatic destination, VMStatus status, boolean hotsetEnabled) {
         return mUpdateVmsStatic.IsUpdateValid(source, destination, status, hotsetEnabled);
     }
@@ -815,6 +819,10 @@ public class VmHandler {
     public static List<Pair<EditableDeviceOnVmStatusField, Boolean>> getVmDevicesFieldsToUpdateOnNextRun(
             Guid vmId, VMStatus vmStatus, Object objectWithEditableDeviceFields) {
         List<Pair<EditableDeviceOnVmStatusField, Boolean>> fieldList = new ArrayList<>();
+
+        if (objectWithEditableDeviceFields == null) {
+            return fieldList;
+        }
 
         List<Pair<EditableDeviceOnVmStatusField , Field>> pairList = BaseHandler.extractAnnotatedFields(
                 EditableDeviceOnVmStatusField.class, objectWithEditableDeviceFields.getClass());

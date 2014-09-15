@@ -15,13 +15,16 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.queries.GetVmUpdatesOnNextRunExistsParameters;
+import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Version;
 
+import java.util.List;
+
 @RunWith(MockitoJUnitRunner.class)
-public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetVmUpdatesOnNextRunExistsParameters, GetVmUpdatesOnNextRunExistsQuery<? extends GetVmUpdatesOnNextRunExistsParameters>> {
+public class GetVmChangedFieldsForNextRunQueryTest
+        extends AbstractQueryTest<GetVmChangedFieldsForNextRunParameters, GetVmChangedFieldsForNextRunQuery<? extends GetVmChangedFieldsForNextRunParameters>> {
 
     @Mock
     VmPropertiesUtils vmPropertiesUtils;
@@ -56,7 +59,7 @@ public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetV
 
         getQuery().executeQueryCommand();
 
-        assertFalse((boolean) getQuery().getQueryReturnValue().getReturnValue());
+        assertTrue(((List<String>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 
     @Test
@@ -71,7 +74,7 @@ public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetV
 
         getQuery().executeQueryCommand();
 
-        assertTrue((boolean) getQuery().getQueryReturnValue().getReturnValue());
+        assertFalse(((List<String>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 
     @Test
@@ -105,7 +108,7 @@ public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetV
 
         getQuery().executeQueryCommand();
 
-        assertTrue((boolean) getQuery().getQueryReturnValue().getReturnValue());
+        assertFalse(((List<String>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 
     @Test
@@ -139,6 +142,6 @@ public class GetVmUpdatesOnNextRunExistsQueryTest extends AbstractQueryTest<GetV
 
         getQuery().executeQueryCommand();
 
-        assertFalse((boolean) getQuery().getQueryReturnValue().getReturnValue());
+        assertTrue(((List<String>) getQuery().getQueryReturnValue().getReturnValue()).isEmpty());
     }
 }

@@ -114,7 +114,7 @@ public class ObjectIdentityChecker {
                 }
             }
             if (!returnValue) {
-                LogError(name, status);
+                log.warnFormat("Field {0} can not be updated when status is {1}", name, status);
             }
         }
         return returnValue;
@@ -180,6 +180,19 @@ public class ObjectIdentityChecker {
         return true;
     }
 
+    public final List<String> getChangedFieldsForStatus(Object source, Object destination, Enum<?> status) {
+        List<String> fields = new ArrayList<>();
+        if (source.getClass() != destination.getClass()) {
+            return fields;
+        }
+        for (String fieldName : GetChangedFields(source, destination)) {
+            if (!IsFieldUpdatable(status, fieldName, null, false)) {
+                fields.add(fieldName);
+            }
+        }
+        return fields;
+    }
+
     public final boolean IsFieldsUpdated(Object source, Object destination, Iterable<String> fields) {
         List<String> changedFields = GetChangedFields(source, destination);
         for (String field : fields) {
@@ -207,18 +220,6 @@ public class ObjectIdentityChecker {
             }
         }
         return returnValue;
-    }
-
-    /**
-     * Logs the error.
-     *
-     * @param name
-     *            The name.
-     * @param status
-     *            The status.
-     */
-    private static void LogError(String name, Enum<?> status) {
-        log.errorFormat("Field {0} can not be updated when status is {1}", name, status);
     }
 
     private static final Log log = LogFactory.getLog(ObjectIdentityChecker.class);
