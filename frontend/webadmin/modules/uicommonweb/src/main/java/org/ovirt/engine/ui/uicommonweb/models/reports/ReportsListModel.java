@@ -31,8 +31,6 @@ public class ReportsListModel extends SearchableListWithReportsModel {
         reportUrl = baseUrl;
         htmlParams.setParameter("sessionID", ssoToken); //$NON-NLS-1$
 
-        setFlowId();
-
         String currentLocale = LocaleInfo.getCurrentLocale().getLocaleName();
         htmlParams.setParameter("userLocale", (currentLocale.equals("default") ? "en_US" : currentLocale)); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
 
@@ -52,14 +50,6 @@ public class ReportsListModel extends SearchableListWithReportsModel {
 
     public String getUrl() {
         return reportUrl;
-    }
-
-    private void setFlowId() {
-        if (ReportInit.getInstance().isCommunityEdition()) {
-            htmlParams.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
-        } else {
-            htmlParams.setParameter("_flowId", "dashboardRuntimeFlow"); //$NON-NLS-1$ //$NON-NLS-2$
-        }
     }
 
     public void setPassword(String password) {
