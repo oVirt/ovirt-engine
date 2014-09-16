@@ -42,9 +42,9 @@ public class MultipleStorageDomainsValidator {
         }
     }
 
-    private Map<Guid, List<DiskImage>> getDomainsDisksMap(List<DiskImage> disksList) {
+    private Map<Guid, List<DiskImage>> getDomainsDisksMap(Collection<DiskImage> diskImages) {
         Map<Guid, List<DiskImage>> domainsDisksMap = new HashMap<>();
-        for (DiskImage disk : disksList) {
+        for (DiskImage disk : diskImages) {
             List<Guid> domainIds = disk.getStorageIds();
             for (Guid domainId : domainIds) {
                 MultiValueMapUtils.addToMap(domainId, disk, domainsDisksMap);
@@ -100,8 +100,8 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForClonedDisks(List<DiskImage> disksList) {
-        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(disksList);
+    public ValidationResult allDomainsHaveSpaceForClonedDisks(Collection<DiskImage> diskImages) {
+        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(diskImages);
 
         return validOrFirstFailure(new ValidatorPredicate() {
             @Override
@@ -117,9 +117,9 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForAllDisks(List<DiskImage> newDisksList, List<DiskImage> clonedDisksList) {
-        final Map<Guid, List<DiskImage>> domainsNewDisksMap = getDomainsDisksMap(newDisksList);
-        final Map<Guid, List<DiskImage>> domainsClonedDisksMap = getDomainsDisksMap(clonedDisksList);
+    public ValidationResult allDomainsHaveSpaceForAllDisks(List<DiskImage> newDiskImages, List<DiskImage> clonedDiskImages) {
+        final Map<Guid, List<DiskImage>> domainsNewDisksMap = getDomainsDisksMap(newDiskImages);
+        final Map<Guid, List<DiskImage>> domainsClonedDisksMap = getDomainsDisksMap(clonedDiskImages);
 
         return validOrFirstFailure(new ValidatorPredicate() {
             @Override
@@ -136,15 +136,15 @@ public class MultipleStorageDomainsValidator {
      * Validates that all the domains have enough space for the request
      * @return {@link ValidationResult#VALID} if all the domains have enough free space, or a {@link ValidationResult} with the first low-on-space domain encountered.
      */
-    public ValidationResult allDomainsHaveSpaceForDisksWithSnapshots(List<DiskImage> disksList) {
-        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(disksList);
+    public ValidationResult allDomainsHaveSpaceForDisksWithSnapshots(Collection<DiskImage> diskImages) {
+        final Map<Guid, List<DiskImage>> disksMap = getDomainsDisksMap(diskImages);
 
         return validOrFirstFailure(new ValidatorPredicate() {
             @Override
             public ValidationResult evaluate(Map.Entry<Guid, StorageDomainValidator> entry) {
                 Guid sdId = entry.getKey();
-                List<DiskImage> disksList = disksMap.get(sdId);
-                return getStorageDomainValidator(entry).hasSpaceForDisksWithSnapshots(disksList);
+                List<DiskImage> diskImages = disksMap.get(sdId);
+                return getStorageDomainValidator(entry).hasSpaceForDisksWithSnapshots(diskImages);
             }
         });
     }
