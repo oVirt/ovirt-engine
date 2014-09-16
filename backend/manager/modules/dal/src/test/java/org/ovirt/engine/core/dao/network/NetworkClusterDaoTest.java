@@ -17,7 +17,7 @@ import org.ovirt.engine.core.dao.BaseDAOTestCase;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 public class NetworkClusterDaoTest extends BaseDAOTestCase {
-    private static final int NETWORK_CLUSTER_COUNT = 3;
+    private static final int NETWORK_CLUSTER_COUNT = 4;
     private NetworkClusterDao dao;
     private VDSGroup cluster;
     private Network network;

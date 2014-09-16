@@ -174,6 +174,21 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetManagementNetworkByCluster(v_cluster_id UUID)
+RETURNS SETOF network STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY
+   SELECT network.*
+   FROM network
+   WHERE id = (SELECT network_id
+               FROM network_cluster
+               WHERE network_cluster.cluster_id = v_cluster_id
+               AND   network_cluster.management);
+
+END; $procedure$
+LANGUAGE plpgsql;
+
 
 Create or replace FUNCTION GetAllNetworkByStoragePoolId(v_id UUID, v_user_id uuid, v_is_filtered boolean)
 RETURNS SETOF network STABLE

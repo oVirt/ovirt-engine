@@ -18,13 +18,15 @@ import org.ovirt.engine.core.dao.BaseDAOTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
 
 public class NetworkDaoTest extends BaseDAOTestCase {
+    private static final Guid MANAGEMENT_NETWORK_ID = new Guid("58d5c1c6-cb15-4832-b2a4-1234567890ab");
+
     private NetworkDao dao;
     private Guid cluster;
     private Guid datacenter;
     private Network new_net;
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
-    private static final int NUM_OF_NETWORKS = 6;
+    private static final int NUM_OF_NETWORKS = 7;
     private static final String NETWORK_LABEL = "lbl1";
 
     @Override
@@ -83,6 +85,17 @@ public class NetworkDaoTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(EXISTING_NETWORK_NAME1, result.getName());
+    }
+
+    /**
+     * Ensures that retrieving the management network by cluster works as expected.
+     */
+    @Test
+    public void testGetManagementNetworkByCluster() {
+        Network result = dao.getManagementNetwork(cluster);
+
+        assertNotNull(result);
+        assertEquals(MANAGEMENT_NETWORK_ID, result.getId());
     }
 
     /**

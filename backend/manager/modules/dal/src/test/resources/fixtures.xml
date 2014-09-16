@@ -1111,6 +1111,23 @@
             <value>{"messagingConfiguration" : {"brokerTpe" : "QPID", "address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
             <value>http://keystone-server:35357/v2.0/</value>
         </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-1234567890ab</value>
+            <value>management</value>
+            <value>The Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>0</value>
+            <value>true</value>
+            <null />
+            <null />
+            <null />
+        </row>
     </table>
 
     <table name="qos">
@@ -1691,6 +1708,15 @@
             <value>0</value>
             <value>0</value>
             <value>1</value>
+            <value>0</value>
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-1234567890ab</value>
+            <value>b399944a-81ab-4ec5-8266-e19ba7c3c9d1</value>
+            <value>1</value>
+            <value>0</value>
+            <value>0</value>
+            <value>0</value>
             <value>1</value>
         </row>
         <row>

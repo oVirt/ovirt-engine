@@ -145,4 +145,14 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the networks
      */
     List<Network> getAllByLabelForCluster(String label, Guid clusterId);
+
+    /**
+     * Retrieves the management network for the given cluster.
+     *
+     * @param clusterId
+     *            the cluster the network is attached to
+     *
+     * @return the management {@link Network}
+     */
+    Network getManagementNetwork(Guid clusterId);
 }
