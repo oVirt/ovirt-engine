@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
@@ -156,9 +157,8 @@ public class NewHostModel extends HostModel {
             {
                 ArrayList<Provider> providers = (ArrayList<Provider>) result;
                 ListModel<Provider> providersListModel = getProviders();
-                providersListModel.setItems(providers);
+                providersListModel.setItems(providers, Linq.firstOrDefault(providers));
                 providersListModel.setIsChangable(true);
-                providersListModel.setSelectedItem(providers.get(0));
                 getIsDiscoveredHosts().setEntity(null);
                 getIsDiscoveredHosts().setEntity(true);
             }
