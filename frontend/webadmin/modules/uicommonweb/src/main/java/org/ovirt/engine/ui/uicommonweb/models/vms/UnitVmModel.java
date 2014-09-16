@@ -1881,6 +1881,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         }
 
         List<DisplayType> displayTypes = AsyncDataProvider.getInstance().getDisplayTypes(osType, cluster.getcompatibility_version());
+        if (displayTypes == null) {
+            Integer defaultOs = AsyncDataProvider.getInstance().getDefaultOs(cluster.getArchitecture());
+            displayTypes = AsyncDataProvider.getInstance().getDisplayTypes(defaultOs, cluster.getcompatibility_version());
+        }
         initDisplayProtocolWithTypes(displayTypes);
     }
 

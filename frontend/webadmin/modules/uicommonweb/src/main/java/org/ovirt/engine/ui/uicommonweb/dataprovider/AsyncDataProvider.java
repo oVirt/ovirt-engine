@@ -3392,11 +3392,17 @@ public class AsyncDataProvider {
     }
 
     public boolean hasSpiceSupport(int osId, Version version) {
-        return getDisplayTypes(osId, version).contains(DisplayType.qxl);
+        List<DisplayType> osDisplayTypes = getDisplayTypes(osId, version);
+        return osDisplayTypes == null
+                ? false
+                : osDisplayTypes.contains(DisplayType.qxl);
     }
 
     public List<DisplayType> getDisplayTypes(int osId, Version version) {
-        return displayTypes.get(osId).get(version);
+        Map<Version, List<DisplayType>> osDisplayTypes = displayTypes.get(osId);
+        return osDisplayTypes == null
+                ? null
+                : osDisplayTypes.get(version);
     }
 
     private void initDisplayTypes() {
