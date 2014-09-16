@@ -122,6 +122,7 @@ public class ConfigureLocalStorageModel extends Model implements HasValidatedTab
 
         setCluster(new ClusterModel());
         getCluster().init(false);
+        getCluster().setIsNew(true);
 
         setFormattedStorageName(new EntityModel<String>());
 

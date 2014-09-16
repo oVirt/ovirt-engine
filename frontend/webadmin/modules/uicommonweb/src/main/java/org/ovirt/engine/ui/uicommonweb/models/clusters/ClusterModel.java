@@ -1474,7 +1474,7 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             return;
         }
 
-        if (cpu == null) {
+        if (cpu == null || cpu.getArchitecture() == null) {
             return;
         }
 
