@@ -18,7 +18,6 @@ public class ReportModel extends EntityModel {
 
         reportUrl = baseUrl;
         paramsMap.setParameter("sessionID", ssoToken); //$NON-NLS-1$
-        paramsMap.setParameter("_flowId", "viewReportFlow"); //$NON-NLS-1$ //$NON-NLS-2$
         paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$
                "AND+delete_date+IS+NULL"); //$NON-NLS-1$
 
