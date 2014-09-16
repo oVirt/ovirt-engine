@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
@@ -162,7 +163,7 @@ public class VmInterfaceManager {
      *            the networks to check if used
      * @return A list of VM names which uses the networks
      */
-    public List<String> findActiveVmsUsingNetworks(Guid vdsId, List<String> networks) {
+    public List<String> findActiveVmsUsingNetworks(Guid vdsId, Collection<String> networks) {
         if (networks.isEmpty()) {
             return Collections.emptyList();
         }
