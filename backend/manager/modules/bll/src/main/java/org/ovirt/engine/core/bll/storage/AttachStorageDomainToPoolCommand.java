@@ -318,7 +318,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
             boolean isUpdated = Boolean.valueOf(diskDescriptionMap.get(OvfInfoFileConstants.IsUpdated).toString());
             Date date = getDateFromDiskDescription(diskDescriptionMap);
-
+            if (date == null) {
+                continue;
+            }
             if (isFoundOvfDiskUpdated && !isUpdated) {
                 continue;
             }
@@ -337,12 +339,16 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
 
     private Date getDateFromDiskDescription(Map<String, Object> map) {
         try {
-            return new SimpleDateFormat(OvfParser.formatStrFromDiskDescription).parse(map.get(OvfInfoFileConstants.LastUpdated)
-                    .toString());
+            Object lastUpdate = map.get(OvfInfoFileConstants.LastUpdated);
+            if (lastUpdate != null) {
+                return new SimpleDateFormat(OvfParser.formatStrFromDiskDescription).parse(lastUpdate.toString());
+            } else {
+                log.info("LastUpdate Date is not initialized in the OVF_STORE disk.");
+            }
         } catch (java.text.ParseException e) {
             log.errorFormat("LastUpdate Date could not be parsed from disk desscription. Exception: {0}", e);
-            return null;
         }
+        return null;
     }
 
     private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
