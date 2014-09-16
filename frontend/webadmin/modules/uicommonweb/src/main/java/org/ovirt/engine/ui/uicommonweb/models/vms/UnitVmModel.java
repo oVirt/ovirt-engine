@@ -2015,6 +2015,10 @@ public class UnitVmModel extends Model {
         }
 
         List<DisplayType> displayTypes = AsyncDataProvider.getDisplayTypes(osType, cluster.getcompatibility_version());
+        if (displayTypes == null) {
+            Integer defaultOs = AsyncDataProvider.getDefaultOs(cluster.getArchitecture());
+            displayTypes = AsyncDataProvider.getDisplayTypes(defaultOs, cluster.getcompatibility_version());
+        }
         initDisplayProtocolWithTypes(displayTypes);
     }
 
