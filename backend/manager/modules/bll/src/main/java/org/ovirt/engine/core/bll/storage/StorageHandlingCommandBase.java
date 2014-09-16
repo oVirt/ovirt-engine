@@ -225,6 +225,16 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
         removeEntitiesFromStorageDomain(vmsForStorageDomain, vmTemplatesForStorageDomain, disksForStorageDomain, storageDomain.getId());
     }
 
+    private void removeEntityLeftOver(Guid entityId, String entityName, Guid storageDomainId) {
+        OvfEntityData ovfEntityData = getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(entityId, storageDomainId);
+        if (ovfEntityData != null) {
+            log.infoFormat("Entity {0} with id {1}, already exists as unregistered entity. override it with the new entity from the engine",
+                    entityName,
+                    entityId);
+            getUnregisteredOVFDataDao().removeEntity(entityId, storageDomainId);
+        }
+    }
+
     /**
      * Remove all related entities of the Storage Domain from the DB.
      */
@@ -237,6 +247,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                 @Override
                 public Object runInTransaction() {
                     for (VM vm : vmsForStorageDomain) {
+                        removeEntityLeftOver(vm.getId(), vm.getName(), storageDomainId);
                         getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
                                 vm.getId(),
                                 vm.getName(),
@@ -249,6 +260,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
                     }
 
                     for (VmTemplate vmTemplate : vmTemplatesForStorageDomain) {
+                        removeEntityLeftOver(vmTemplate.getId(), vmTemplate.getName(), storageDomainId);
                         getUnregisteredOVFDataDao().saveOVFData(new OvfEntityData(
                                 vmTemplate.getId(),
                                 vmTemplate.getName(),
