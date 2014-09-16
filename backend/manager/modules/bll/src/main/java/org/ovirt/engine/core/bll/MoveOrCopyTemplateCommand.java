@@ -364,23 +364,23 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return dummies;
     }
 
-    protected boolean validateSpaceRequirements(List<DiskImage> disksList) {
-        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(disksList);
+    protected boolean validateSpaceRequirements(Collection<DiskImage> diskImages) {
+        MultipleStorageDomainsValidator sdValidator = createMultipleStorageDomainsValidator(diskImages);
         if (!validate(sdValidator.allDomainsExistAndActive())
                 || !validate(sdValidator.allDomainsWithinThresholds())) {
             return false;
         }
 
         if (getParameters().getCopyCollapse()) {
-            return validate(sdValidator.allDomainsHaveSpaceForClonedDisks(disksList));
+            return validate(sdValidator.allDomainsHaveSpaceForClonedDisks(diskImages));
         }
 
-        return validate(sdValidator.allDomainsHaveSpaceForDisksWithSnapshots(disksList));
+        return validate(sdValidator.allDomainsHaveSpaceForDisksWithSnapshots(diskImages));
     }
 
-    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator( List<DiskImage> disksList) {
+    protected MultipleStorageDomainsValidator createMultipleStorageDomainsValidator(Collection<DiskImage> diskImages) {
         return new MultipleStorageDomainsValidator(getStoragePoolId(),
-                ImagesHandler.getAllStorageIdsForImageIds(disksList));
+                ImagesHandler.getAllStorageIdsForImageIds(diskImages));
     }
 
     protected void ensureDomainMap(Collection<DiskImage> images, Guid defaultDomainId) {
