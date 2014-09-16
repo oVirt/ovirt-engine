@@ -32,7 +32,7 @@ public class HostedEngineHAClusterFilterPolicyUnit extends PolicyUnitImpl {
                             haScore);
                 } else {
                     log.debugFormat("Host {0} was filtered out as it doesn't have a positive score (the score is {1})", host.getName(), haScore);
-                    messages.addMessage(host.getId(), VdcBllMessages.ACTION_TYPE_FAILED_NO_HA_VDS.name());
+                    messages.addMessage(host.getId(), VdcBllMessages.VAR__DETAIL__NOT_HE_HOST.name());
                 }
             }
 
