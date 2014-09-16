@@ -482,7 +482,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                         .withOptionalParameterAsMap("fencingPolicy", fencingPolicy)
                         .build();
         Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("power").withResponseType(String.class);
+                new FutureMap(this.client, request).withIgnoreResponseKey();
 
         return new FenceStatusReturnForXmlRpc(response);
     }
