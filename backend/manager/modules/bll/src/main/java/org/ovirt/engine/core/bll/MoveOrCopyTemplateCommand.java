@@ -11,7 +11,6 @@ import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -29,10 +28,8 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
-import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -241,19 +238,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         });
     }
 
-    protected VM getVmFromSnapshot(Snapshot snapshot) {
-        String vmConfiguration = snapshot.getVmConfiguration();
-        // active snapshot
-        if (vmConfiguration == null) {
-            return getVm();
-        }
-        else {
-            VM vm = new VM();
-            new SnapshotsManager().updateVmFromConfiguration(vm, vmConfiguration);
-            return vm;
-        }
-    }
-
     @Override
     public AuditLogType getAuditLogTypeValue() {
         switch (getActionState()) {
@@ -365,7 +349,7 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
 
     /**
      * Space Validations are done using data extracted from the disks. The disks in question in this command
-     * don't have all the needed data, and in order not to contaminate the command's data structures, as alter
+     * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
      * one is created specifically fo this validation - hence dummy.
      * @param disksList
      * @return
@@ -520,5 +504,4 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
             diskImage.setStoragePoolId(storagePoolId);
         }
     }
-
 }
