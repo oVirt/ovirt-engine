@@ -1487,7 +1487,7 @@ public class ClusterModel extends EntityModel<VDSGroup>
             return;
         }
 
-        if (cpu == null) {
+        if (cpu == null || cpu.getArchitecture() == null) {
             return;
         }
 
