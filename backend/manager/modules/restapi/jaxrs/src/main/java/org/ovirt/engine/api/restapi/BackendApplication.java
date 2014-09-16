@@ -65,7 +65,6 @@ import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.security.auth.SessionProcessor;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 
 @ApplicationPath("/")
@@ -146,7 +145,6 @@ public class BackendApplication extends Application {
         addResource(new BackendSystemPermissionsResource());
         addResource(new BackendDiskProfilesResource());
         addResource(new BackendCpuProfilesResource());
-        addResource(VmHelper.getInstance());
 
         final SessionProcessor processor = new SessionProcessor();
         processor.setBackend(backend);

@@ -113,8 +113,8 @@ public class BackendInstanceTypesResource
         if (!model.isSetVirtioScsi()) {
             model.setVirtioScsi(new VirtIOSCSI());
         }
-        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
-        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(entity.getId()).isEmpty());
+        model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
+        model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
         List<VmRngDevice> rngDevices = getRngDevices(entity.getId());
         if (rngDevices != null && !rngDevices.isEmpty()) {
             model.setRngDevice(RngDeviceMapper.map(rngDevices.get(0), null));

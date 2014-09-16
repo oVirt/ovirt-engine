@@ -40,7 +40,6 @@ import org.ovirt.engine.api.model.StorageDomain;
 import org.ovirt.engine.api.model.Ticket;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.CloneVmParameters;
@@ -87,8 +86,6 @@ public class BackendVmResourceTest
     private static final String PAYLOAD_COMTENT = "payload";
     private static HashMap<Integer, String> osNames = new HashMap<>();
 
-    protected VmHelper vmHelper = VmHelper.getInstance();
-
     public BackendVmResourceTest() {
         super(new BackendVmResource(GUIDS[0].toString(), new BackendVmsResource()));
     }
@@ -102,7 +99,6 @@ public class BackendVmResourceTest
         resource.getParent().httpHeaders = httpHeaders;
         resource.getParent().messageBundle = messageBundle;
         OsTypeMockUtils.mockOsTypes();
-        initBackendResource(vmHelper);
     }
 
     @Test

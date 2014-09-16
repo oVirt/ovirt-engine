@@ -29,7 +29,6 @@ import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmPlacementPolicy;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.api.restapi.utils.OsTypeMockUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
@@ -69,8 +68,6 @@ public class BackendVmsResourceTest
     private static final String PAYLOAD_COMTENT = "payload";
     public static final String CERTIFICATE = "O=Redhat,CN=X.Y.Z.Q";
 
-    protected VmHelper vmHelper = VmHelper.getInstance();
-
     public BackendVmsResourceTest() {
         super(new BackendVmsResource(), SearchType.VM, "VMs : ");
     }
@@ -79,7 +76,6 @@ public class BackendVmsResourceTest
     public void init() {
         super.init();
         OsTypeMockUtils.mockOsTypes();
-        initBackendResource(vmHelper);
     }
 
     @Test

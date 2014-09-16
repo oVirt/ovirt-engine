@@ -318,7 +318,7 @@ public class BackendVmsResource extends
         if(vm.isSetSoundcardEnabled()) {
             params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
         } else {
-            params.setSoundDeviceEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(templateId).isEmpty());
+            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, templateId).isEmpty());
         }
 
         params.setBalloonEnabled(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning() ?
@@ -393,7 +393,7 @@ public class BackendVmsResource extends
         if(vm.isSetSoundcardEnabled()) {
             params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
         } else {
-            params.setSoundDeviceEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(templateId).isEmpty());
+            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, templateId).isEmpty());
         }
 
         if (vm.isSetRngDevice()) {
@@ -641,11 +641,11 @@ public class BackendVmsResource extends
         if (!model.isSetVirtioScsi()) {
             model.setVirtioScsi(new VirtIOSCSI());
         }
-        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(new Guid(model.getId())).isEmpty());
+        model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, new Guid(model.getId())).isEmpty());
     }
 
     protected void setSoundcard(VM model) {
-        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(new Guid(model.getId())).isEmpty());
+        model.setSoundcardEnabled(!VmHelper.getSoundDevicesForEntity(this, new Guid(model.getId())).isEmpty());
     }
 
     public void setCertificateInfo(VM model) {

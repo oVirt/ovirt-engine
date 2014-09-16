@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.resource.UpdatableResource;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.UpdateVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -21,16 +20,9 @@ public abstract class BackendTemplateBasedResourceTest<
         Q,
         S extends AbstractBackendSubResource<R, Q> & UpdatableResource<R>>
         extends AbstractBackendSubResourceTest<R, Q, S> {
-    protected VmHelper vmHelper = VmHelper.getInstance();
 
     protected BackendTemplateBasedResourceTest(S resource) {
         super(resource);
-    }
-
-    @Override
-    protected void init() {
-        super.init();
-        initBackendResource(vmHelper);
     }
 
     @Test

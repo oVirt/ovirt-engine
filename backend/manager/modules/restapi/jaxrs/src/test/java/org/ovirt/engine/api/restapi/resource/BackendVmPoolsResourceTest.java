@@ -4,7 +4,6 @@ import org.junit.Test;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Template;
 import org.ovirt.engine.api.model.VmPool;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolParametersBase;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -26,16 +25,8 @@ import static org.easymock.EasyMock.expect;
 public class BackendVmPoolsResourceTest extends
         AbstractBackendCollectionResourceTest<VmPool, org.ovirt.engine.core.common.businessentities.VmPool, BackendVmPoolsResource> {
 
-    protected VmHelper vmHelper = VmHelper.getInstance();
-
     public BackendVmPoolsResourceTest() {
         super(new BackendVmPoolsResource(), SearchType.VmPools, "Pools : ");
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        initBackendResource(vmHelper);
     }
 
     @Override

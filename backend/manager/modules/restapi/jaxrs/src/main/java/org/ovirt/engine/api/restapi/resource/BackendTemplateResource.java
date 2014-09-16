@@ -152,8 +152,8 @@ public class BackendTemplateResource
         if (!model.isSetVirtioScsi()) {
             model.setVirtioScsi(new VirtIOSCSI());
         }
-        model.getVirtioScsi().setEnabled(!VmHelper.getInstance().getVirtioScsiControllersForEntity(entity.getId()).isEmpty());
-        model.setSoundcardEnabled(!VmHelper.getInstance().getSoundDevicesForEntity(entity.getId()).isEmpty());
+        model.getVirtioScsi().setEnabled(!VmHelper.getVirtioScsiControllersForEntity(this, entity.getId()).isEmpty());
+        model.setSoundcardEnabled(VmHelper.getSoundDevicesForEntity(this, entity.getId()).isEmpty());
         setRngDevice(model);
         return model;
     }

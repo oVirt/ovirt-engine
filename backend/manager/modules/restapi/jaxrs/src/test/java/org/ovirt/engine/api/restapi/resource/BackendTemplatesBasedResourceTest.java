@@ -3,7 +3,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import org.junit.Test;
 import org.ovirt.engine.api.model.Template;
-import org.ovirt.engine.api.restapi.util.VmHelper;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmTemplateParametersBase;
@@ -25,16 +24,8 @@ import static org.easymock.EasyMock.expect;
 public abstract class BackendTemplatesBasedResourceTest<R extends Template, Q, C extends AbstractBackendCollectionResource<R, Q>>
         extends AbstractBackendCollectionResourceTest<R, Q, C> {
 
-    protected VmHelper vmHelper = VmHelper.getInstance();
-
     protected BackendTemplatesBasedResourceTest(C collection, SearchType searchType, String prefix) {
         super(collection, searchType, prefix);
-    }
-
-    @Override
-    public void init() {
-        super.init();
-        initBackendResource(vmHelper);
     }
 
     @Test
