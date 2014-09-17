@@ -401,6 +401,8 @@ public enum VdcBllErrors {
     GlfsStatvfsException(4571),
     GlfsInitException(4572),
     GlfsFiniException(4573),
+    GlusterGeoRepSessionDeleteFailedException(4594),
+    GlusterVolumeGeoRepStopFailedException(4596),
     GlusterVolumeGeoRepStatusFailed(4599),
     GlusterVolumeGeoRepStatusDetailFailed(4600),
 

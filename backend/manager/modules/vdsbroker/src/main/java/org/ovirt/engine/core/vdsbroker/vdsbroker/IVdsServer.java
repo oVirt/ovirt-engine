@@ -267,6 +267,10 @@ public interface IVdsServer {
 
     GlusterServersListReturnForXmlRpc glusterServersList();
 
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+
     StatusOnlyReturnForXmlRpc diskReplicateStart(String vmUUID, Map srcDisk, Map dstDisk);
 
     StatusOnlyReturnForXmlRpc diskReplicateFinish(String vmUUID, Map srcDisk, Map dstDisk);

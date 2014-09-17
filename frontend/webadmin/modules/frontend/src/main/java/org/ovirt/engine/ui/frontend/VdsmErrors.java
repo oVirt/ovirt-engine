@@ -821,6 +821,12 @@ public interface VdsmErrors extends ConstantsWithLookup {
     @DefaultStringValue("Command failed while unmounting gluster volume")
     String GlfsFiniException();
 
+    @DefaultStringValue("Failed to delete geo-replication session")
+    String GlusterGeoRepSessionDeleteFailedException();
+
+    @DefaultStringValue("Failed to stop geo-replication session")
+    String GlusterVolumeGeoRepStopFailedException();
+
     @DefaultStringValue("Reverting back to last known saved configuration.")
     String SETUP_NETWORKS_ROLLBACK();
 

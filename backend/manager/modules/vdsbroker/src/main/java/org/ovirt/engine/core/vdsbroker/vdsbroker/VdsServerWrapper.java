@@ -1427,6 +1427,28 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost,
+            String remoteVolumeName) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepSessionDelete(volumeName,
+                    remoteHost, remoteVolumeName));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost,
+            String remoteVolumeName, Boolean force) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.glusterVolumeGeoRepSessionStop(volumeName,
+                    remoteHost, remoteVolumeName, force));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.setNumberOfCpus(vmId, numberOfCpus));
