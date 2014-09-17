@@ -355,15 +355,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return getStorageDomainDAO().getForStoragePool(domainId, getStoragePool().getId());
     }
 
-    protected Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images) {
-        Map<DiskImage, StorageDomain> spaceMap = new HashMap<DiskImage, StorageDomain>();
-        for (DiskImage image : images) {
-            StorageDomain domain = getStorageDomain(imageToDestinationDomainMap.get(image.getId()));
-            spaceMap.put(image, domain);
-        }
-        return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
-    }
-
     /**
      * Space Validations are done using data extracted from the disks. The disks in question in this command
      * don't have all the needed data, and in order not to contaminate the command's data structures, as alter
