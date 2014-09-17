@@ -10,16 +10,22 @@ import java.util.Map;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 
 import org.junit.Before;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.mockito.Mock;
 import org.mockito.invocation.InvocationOnMock;
+import org.mockito.runners.MockitoJUnitRunner;
 import org.mockito.stubbing.Answer;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -29,9 +35,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 
+@RunWith(MockitoJUnitRunner.class)
 public class MoveOrCopyTemplateCommandTest {
 
     private Guid[] diskIds;
+
+    @Mock
+    private MultipleStorageDomainsValidator multipleSdValidator;
 
     @Before
     public void setup() {
@@ -91,6 +101,67 @@ public class MoveOrCopyTemplateCommandTest {
         verify(cmd, times(2)).runVdsCommand(any(VDSCommandType.class), any(GetImagesListVDSCommandParameters.class));
     }
 
+    @Test
+    public void sufficientStorageSpaceWithCollapse() {
+        MoveOrCopyParameters parameters = createParameters(false);
+        parameters.setCopyCollapse(true);
+        final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
+        assertTrue(command.validateSpaceRequirements(anyList()));
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void sufficientStorageSpaceWithSnapshots() {
+        MoveOrCopyParameters parameters = createParameters(false);
+        parameters.setCopyCollapse(false);
+        final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
+        assertTrue(command.validateSpaceRequirements(anyList()));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void lowThreshold() {
+        MoveOrCopyParameters parameters = createParameters(false);
+        parameters.setCopyCollapse(true);
+        final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsWithinThresholds();
+        assertFalse(command.validateSpaceRequirements(anyList()));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void insufficientStorageSpaceWithCollapse() {
+        MoveOrCopyParameters parameters = createParameters(false);
+        parameters.setCopyCollapse(true);
+        final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        assertFalse(command.validateSpaceRequirements(anyList()));
+        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
+    @Test
+    public void insufficientStorageSpaceWithSnapshots() {
+        MoveOrCopyParameters parameters = createParameters(false);
+        final MoveOrCopyTemplateCommand<MoveOrCopyParameters> command = setupSpaceTests(parameters);
+        parameters.setCopyCollapse(false);
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        assertFalse(command.validateSpaceRequirements(anyList()));
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
+        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
+    }
+
     protected MoveOrCopyParameters createParameters(boolean moveToSameStorageDomain) {
         Guid targetStorageDomainId = Guid.newGuid();
         Map<Guid, Guid> imageToDestinationDomainMap = new HashMap<>();
@@ -135,6 +206,16 @@ public class MoveOrCopyTemplateCommandTest {
 
         doReturn(storageDomain).when(cmd).getStorageDomain(any(Guid.class));
         return  cmd;
+    }
+
+    private MoveOrCopyTemplateCommand<MoveOrCopyParameters> setupSpaceTests(MoveOrCopyParameters parameters) {
+        MoveOrCopyTemplateCommand<MoveOrCopyParameters> cmd = spy(new MoveOrCopyTemplateCommand<MoveOrCopyParameters>(parameters));
+        doReturn(multipleSdValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
+        return cmd;
     }
 
     private List<DiskImage> createImageList() {

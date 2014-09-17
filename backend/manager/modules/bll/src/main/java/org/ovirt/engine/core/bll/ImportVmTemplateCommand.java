@@ -182,23 +182,11 @@ public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmT
         }
 
         if (retVal && getImages() != null && !getImages().isEmpty() && !isImagesAlreadyOnTarget()) {
-            Map<StorageDomain, Integer> domainMap = getSpaceRequirementsForStorageDomains(
-                    new ArrayList<DiskImage>(getVmTemplate().getDiskImageMap().values()));
-            if (domainMap.isEmpty()) {
-                int sz = 0;
-                if (getVmTemplate().getDiskImageMap() != null) {
-                    for (DiskImage image : getVmTemplate().getDiskImageMap().values()) {
-                        sz += image.getSize();
-                    }
-                }
-                domainMap.put(getStorageDomain(), sz);
-            }
-            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
-                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
-                    return false;
-                }
+            if (!validateSpaceRequirements(getImages())) {
+                return false;
             }
         }
+
         if (retVal) {
             retVal = validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVmTemplate().getInterfaces()));
         }

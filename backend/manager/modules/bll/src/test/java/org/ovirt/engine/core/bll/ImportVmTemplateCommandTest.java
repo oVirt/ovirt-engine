@@ -4,8 +4,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
-import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -21,7 +21,6 @@ import java.util.Set;
 
 import javax.validation.ConstraintViolation;
 
-import org.junit.Rule;
 import org.junit.Test;
 import org.mockito.Mockito;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -39,7 +38,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -50,30 +48,17 @@ import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.springframework.util.Assert;
 
 public class ImportVmTemplateCommandTest {
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule();
-
     @Test
     public void insufficientDiskSpace() {
-        final int lotsOfSpaceRequired = 1073741824;
-        final ImportVmTemplateCommand c =
-                setupDiskSpaceTest(lotsOfSpaceRequired);
-        assertFalse(c.canDoAction());
-        assertTrue(c.getReturnValue()
-                .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN.toString()));
-    }
-
-    @Test
-    public void sufficientDiskSpace() {
-        final ImportVmTemplateCommand c =
-                setupDiskSpaceTest(0);
-        assertTrue(c.canDoAction());
+        // The following is enough since the validation is mocked out anyway. Just want to make sure the flow in CDA is correct.
+        // Full test for the scenarios is done in the inherited class.
+        final ImportVmTemplateCommand command = setupVolumeFormatAndTypeTest(VolumeFormat.RAW, VolumeType.Preallocated, StorageType.NFS);
+        doReturn(false).when(command).validateSpaceRequirements(anyList());
+        assertFalse(command.canDoAction());
     }
 
     @Test
@@ -117,14 +102,14 @@ public class ImportVmTemplateCommandTest {
             VolumeType volumeType,
             StorageType storageType) {
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType, 0));
+                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType));
     }
 
     private void assertInvalidVolumeInfoCombination(VolumeFormat volumeFormat,
             VolumeType volumeType,
             StorageType storageType) {
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(
-                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType, 0),
+                setupVolumeFormatAndTypeTest(volumeFormat, volumeType, storageType),
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_CONFIGURATION_NOT_SUPPORTED);
     }
 
@@ -142,12 +127,8 @@ public class ImportVmTemplateCommandTest {
     private ImportVmTemplateCommand setupVolumeFormatAndTypeTest(
             VolumeFormat volumeFormat,
             VolumeType volumeType,
-            StorageType storageType,
-            int freeSpaceCritical) {
-        mcr.mockConfigValue(ConfigValues.FreeSpaceCriticalLowInGB, freeSpaceCritical);
-
-        ImportVmTemplateCommand command =
-                spy(new ImportVmTemplateCommand(createParameters()));
+            StorageType storageType) {
+        ImportVmTemplateCommand command = spy(new ImportVmTemplateCommand(createParameters()));
 
         Backend backend = mock(Backend.class);
         doReturn(backend).when(command).getBackend();
@@ -162,6 +143,7 @@ public class ImportVmTemplateCommandTest {
         mockStorageDomains(command);
         doReturn(true).when(command).setAndValidateDiskProfiles();
         doReturn(true).when(command).setAndValidateCpuProfile();
+        doReturn(true).when(command).validateSpaceRequirements(anyList());
 
         return command;
     }
@@ -226,13 +208,6 @@ public class ImportVmTemplateCommandTest {
         when(dao.get(any(Guid.class))).thenReturn(domain);
 
         doReturn(dao).when(command).getStorageDomainStaticDAO();
-    }
-
-    private ImportVmTemplateCommand setupDiskSpaceTest(final int extraDiskSpaceRequired) {
-        return setupVolumeFormatAndTypeTest(VolumeFormat.RAW,
-                VolumeType.Preallocated,
-                StorageType.NFS,
-                extraDiskSpaceRequired);
     }
 
     protected ImportVmTemplateParameters createParameters() {
