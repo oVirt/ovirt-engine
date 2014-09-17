@@ -46,7 +46,7 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     private int mtu;
     private boolean bridged;
     private NetworkImplementationDetails networkImplementationDetails;
-    private NetworkQoS qos;
+    private HostNetworkQos qos;
     private boolean qosOverridden;
     private Map<String, String> customProperties;
 
@@ -363,14 +363,20 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
     /**
      * Gets the QoS configured on this interface, which overrides the one possibly configured on the network.
      */
-    public NetworkQoS getQos() {
+    public HostNetworkQos getQos() {
         return qos;
     }
 
     /**
-     * Sets the QoS configured on this interface, which overrides the one possibly configured on the network.
+     * Sets the QoS configured on this interface, which overrides the one possibly configured on the network. Note that
+     * overriding QoS entities must not contain a name nor a DC ID!
      */
-    public void setQos(NetworkQoS qos) {
+    public void setQos(HostNetworkQos qos) {
+        if (qos != null) {
+            assert qos.getName() == null : "Overriding QoS entity must not be named!";
+            assert qos.getStoragePoolId() == null : "Overriding QoS entity must not be linked to a specific DC!";
+        }
+
         this.qos = qos;
     }
 

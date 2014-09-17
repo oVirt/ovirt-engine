@@ -135,7 +135,7 @@
                                         <g:Image resource="{resources.networkVm}" addStyleNames="{style.vmNetworkImage}" />
                                     </g:HorizontalPanel>
                                     <e:ListModelRadioGroupEditor ui:field="mtuSelectorEditor" addStyleNames="{style.dependentField} {style.mtuWrapper} {style.propertyWidth}" />
-                                    <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE" visible="false">
+                                    <g:HorizontalPanel verticalAlignment="ALIGN_MIDDLE">
                                         <e:ListModelListBoxEditor ui:field="qosEditor" addStyleNames="{style.dependentField} {style.propertyWidth}" />
                                         <w:UiCommandButton ui:field="addQosButton" addStyleNames="{style.qosStyle}" />
                                     </g:HorizontalPanel>

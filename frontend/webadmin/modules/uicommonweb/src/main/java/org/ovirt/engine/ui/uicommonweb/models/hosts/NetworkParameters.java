@@ -2,8 +2,8 @@ package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
 import java.util.Map;
 
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 
 public class NetworkParameters {
@@ -13,7 +13,7 @@ public class NetworkParameters {
     private String subnet;
     private String gateway;
     private boolean qosOverridden;
-    private NetworkQoS qos;
+    private HostNetworkQos qos;
     private Map<String, String> customProperties;
 
 
@@ -63,11 +63,11 @@ public class NetworkParameters {
         this.qosOverridden = qosOverridden;
     }
 
-    public NetworkQoS getQos() {
+    public HostNetworkQos getQos() {
         return qos;
     }
 
-    public void setQos(NetworkQoS qos) {
+    public void setQos(HostNetworkQos qos) {
         this.qos = qos;
     }
 

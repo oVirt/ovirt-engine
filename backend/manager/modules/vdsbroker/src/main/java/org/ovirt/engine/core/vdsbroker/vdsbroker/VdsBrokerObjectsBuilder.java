@@ -1506,8 +1506,7 @@ public class VdsBrokerObjectsBuilder {
             }
 
             if (FeatureSupported.hostNetworkQos(Collections.max(host.getSupportedClusterVersionsSet()))) {
-                NetworkQosMapper qosMapper =
-                        new NetworkQosMapper(network, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+                HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(network);
                 iface.setQos(qosMapper.deserialize());
             }
         }

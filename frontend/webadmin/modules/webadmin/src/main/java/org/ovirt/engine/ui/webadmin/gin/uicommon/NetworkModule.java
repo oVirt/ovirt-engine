@@ -26,7 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostBondInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostManagementNetworkModel;
@@ -39,7 +39,7 @@ import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkProfileListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkTemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.networks.NetworkVmListModel;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.cluster.ClusterManageNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.EditNetworkPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.NewNetworkPopupPresenterWidget;
@@ -72,7 +72,7 @@ public class NetworkModule extends AbstractGinModule {
             final Provider<ImportNetworksPopupPresenterWidget> importNetworkPopupProvider,
             final Provider<EditNetworkPopupPresenterWidget> editNetworkPopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
-            final Provider<NetworkQoSPopupPresenterWidget> addQosPopupProvider,
+            final Provider<HostNetworkQosPopupPresenterWidget> addQosPopupProvider,
             final Provider<NetworkListModel> modelProvider,
             final Provider<CommonModel> commonModelProvider) {
         MainTabModelProvider<NetworkView, NetworkListModel> result =
@@ -82,7 +82,7 @@ public class NetworkModule extends AbstractGinModule {
                     public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(NetworkListModel source,
                             UICommand lastExecutedCommand, Model windowModel) {
 
-                        if (windowModel instanceof NetworkQoSModel) {
+                        if (windowModel instanceof NewHostNetworkQosModel) {
                             return addQosPopupProvider.get();
                         }
 

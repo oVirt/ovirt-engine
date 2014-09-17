@@ -20,6 +20,7 @@ import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -434,8 +435,14 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                     }
 
                     if (networkDialogModel.getQosModel().getIsAvailable()) {
-                        entity.setQosOverridden(networkDialogModel.getQosOverridden().getEntity());
-                        entity.setQos(networkDialogModel.getQosModel().flush());
+                        boolean qosOverridden = networkDialogModel.getQosOverridden().getEntity();
+                        HostNetworkQos qos = null;
+                        entity.setQosOverridden(qosOverridden);
+                        if (qosOverridden) {
+                            qos = new HostNetworkQos();
+                            networkDialogModel.getQosModel().flush(qos);
+                        }
+                        entity.setQos(qos);
                     }
 
                     if (networkDialogModel.getCustomPropertiesModel().getIsAvailable()) {

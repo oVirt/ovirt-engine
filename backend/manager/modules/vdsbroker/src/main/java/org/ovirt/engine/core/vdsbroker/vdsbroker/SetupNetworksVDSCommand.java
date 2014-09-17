@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,7 +41,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
     private Map<String, Object> generateNetworks() {
         Map<String, Object> networks = new HashMap<String, Object>();
-        NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
+        HostNetworkQosDao qosDao = getDbFacade().getHostNetworkQosDao();
         VDS host = getParameters().getVds();
 
         boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion());
@@ -86,8 +86,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             }
 
             if (hostNetworkQosSupported && qosConfiguredOnInterface(iface, network)) {
-                NetworkQosMapper qosMapper =
-                        new NetworkQosMapper(opts, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
+                HostNetworkQosMapper qosMapper = new HostNetworkQosMapper(opts);
                 qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
             }
 

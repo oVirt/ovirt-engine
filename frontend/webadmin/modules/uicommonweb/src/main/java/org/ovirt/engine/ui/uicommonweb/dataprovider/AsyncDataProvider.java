@@ -76,12 +76,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
@@ -118,6 +120,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters;
 import org.ovirt.engine.core.common.queries.OsQueryParameters.OsRepositoryVerb;
 import org.ovirt.engine.core.common.queries.ProviderQueryParameters;
+import org.ovirt.engine.core.common.queries.QosQueryParameterBase;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.ServerParameters;
 import org.ovirt.engine.core.common.queries.StorageServerConnectionQueryParametersBase;
@@ -153,6 +156,7 @@ import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.LoginModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.GlusterStorageModel;
@@ -1319,6 +1323,22 @@ public class AsyncDataProvider {
             }
         };
         Frontend.getInstance().runQuery(VdcQueryType.GetAllNetworkQosByStoragePoolId, new IdQueryParameters(dcId), query);
+    }
+
+    public void getAllHostNetworkQos(Guid dcId, AsyncQuery query) {
+        query.converterCallback = new IAsyncConverter<List<HostNetworkQos>>() {
+
+            @Override
+            public List<HostNetworkQos> Convert(Object returnValue, AsyncQuery asyncQuery) {
+                List<HostNetworkQos> qosList =
+                        (returnValue == null) ? new ArrayList<HostNetworkQos>() : (List<HostNetworkQos>) returnValue;
+                qosList.add(0, NetworkModel.EMPTY_HOST_NETWORK_QOS);
+                return qosList;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetAllQosByStoragePoolIdAndType,
+                new QosQueryParameterBase(dcId, QosType.HOSTNETWORK),
+                query);
     }
 
     public void getDataCenterById(AsyncQuery aQuery, Guid dataCenterId) {

@@ -8,8 +8,8 @@ import static org.junit.Assert.assertTrue;
 
 import org.junit.Rule;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
@@ -180,10 +180,10 @@ public class NetworkUtilsTest {
     @Test
     public void calculateNetworkImplementationDetailsNetworkQosOutOfSync() throws Exception {
         VdsNetworkInterface iface = createNetworkDevice();
-        NetworkQoS qos = createQos();
-        qos.setOutboundAverage(30);
-        qos.setOutboundPeak(30);
-        qos.setOutboundBurst(30);
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(60);
+        qos.setOutAverageUpperlimit(60);
+        qos.setOutAverageRealtime(60);
         calculateNetworkImplementationDetailsAndAssertSync(iface,
                 false,
                 iface.getNetworkName(),
@@ -203,7 +203,7 @@ public class NetworkUtilsTest {
                 iface.isBridged(),
                 iface.getMtu(),
                 iface.getVlanId(),
-                new NetworkQoS());
+                new HostNetworkQos());
     }
 
     @Test
@@ -296,7 +296,7 @@ public class NetworkUtilsTest {
             boolean vmNet,
             int mtu,
             int vlanId,
-            NetworkQoS qos) {
+            HostNetworkQos qos) {
         Network network = createNetwork(networkName, vmNet, mtu, vlanId);
 
         NetworkImplementationDetails networkImplementationDetails =
@@ -330,11 +330,11 @@ public class NetworkUtilsTest {
         return iface;
     }
 
-    private NetworkQoS createQos() {
-        NetworkQoS qos = new NetworkQoS();
-        qos.setInboundAverage(30);
-        qos.setInboundPeak(30);
-        qos.setInboundBurst(30);
+    private HostNetworkQos createQos() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(30);
+        qos.setOutAverageUpperlimit(30);
+        qos.setOutAverageRealtime(30);
         return qos;
     }
 }

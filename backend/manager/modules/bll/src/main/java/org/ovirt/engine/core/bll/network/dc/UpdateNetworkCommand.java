@@ -458,7 +458,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             for (VdsNetworkInterface nic : nics) {
                 if (!NetworkUtils.isNetworkInSync(nic,
                         getNetwork(),
-                        getDbFacade().getNetworkQosDao().get(getNetwork().getQosId()))) {
+                        getDbFacade().getHostNetworkQosDao().get(getNetwork().getQosId()))) {
                     hostIdsToSync.add(nic.getVdsId());
                 }
             }

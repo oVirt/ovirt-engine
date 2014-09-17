@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.network.Bond;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.Nic;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
@@ -134,10 +134,10 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
     }
 
     private void persistQosChanges(VdsNetworkInterface entity) {
-        NetworkQoSDao qosDao = DbFacade.getInstance().getNetworkQosDao();
+        HostNetworkQosDao qosDao = DbFacade.getInstance().getHostNetworkQosDao();
         Guid id = entity.getId();
-        NetworkQoS oldQos = qosDao.get(id);
-        NetworkQoS qos = entity.getQos();
+        HostNetworkQos oldQos = qosDao.get(id);
+        HostNetworkQos qos = entity.getQos();
         if (qos == null) {
             if (oldQos != null) {
                 qosDao.remove(id);
@@ -318,7 +318,7 @@ public class InterfaceDaoDbFacadeImpl extends BaseDAODbFacade implements Interfa
                     entity.setBootProtocol(NetworkBootProtocol.forValue(rs.getInt("boot_protocol")));
                     entity.setMtu(rs.getInt("mtu"));
                     entity.setBridged(rs.getBoolean("bridged"));
-                    entity.setQos(DbFacade.getInstance().getNetworkQosDao().get(entity.getId()));
+                    entity.setQos(DbFacade.getInstance().getHostNetworkQosDao().get(entity.getId()));
                     entity.setQosOverridden(rs.getBoolean("qos_overridden"));
                     entity.setLabels(SerializationFactory.getDeserializer().deserialize(rs.getString("labels"),
                             HashSet.class));

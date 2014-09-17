@@ -28,7 +28,7 @@ import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.ApplicationTemplates;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostInterfacePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.networkQoS.NetworkQosWidget;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
@@ -100,7 +100,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
 
     @UiField(provided = true)
     @Ignore
-    NetworkQosWidget qosWidget;
+    HostNetworkQosWidget qosWidget;
 
     @UiField
     Panel customPropertiesPanel;
@@ -191,7 +191,7 @@ public class HostInterfacePopupView extends AbstractModelBoundPopupView<HostInte
             }
         });
         bootProtocol = new EnumRadioEditor<NetworkBootProtocol>(NetworkBootProtocol.class);
-        qosWidget = new NetworkQosWidget(constants);
+        qosWidget = new HostNetworkQosWidget(constants);
         customPropertiesWidget = new KeyValueWidget<KeyValueModel>("320px", "160px"); //$NON-NLS-1$ $NON-NLS-2$
 
         qosOverridden = new org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor(Align.RIGHT);

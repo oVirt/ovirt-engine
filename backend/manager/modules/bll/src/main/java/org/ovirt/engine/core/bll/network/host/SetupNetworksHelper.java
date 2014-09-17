@@ -15,7 +15,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
-import org.ovirt.engine.core.bll.validator.NetworkQosValidator;
+import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
@@ -29,7 +29,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -256,12 +256,12 @@ public class SetupNetworksHelper {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, iface.getNetworkName());
                 }
 
-                NetworkQosValidator qosValidator = new NetworkQosValidator(iface.getQos());
+                HostNetworkQosValidator qosValidator = new HostNetworkQosValidator(iface.getQos());
                 if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
                             iface.getNetworkName());
                 }
-                if (qosValidator.peakConsistentWithAverage() != ValidationResult.VALID) {
+                if (qosValidator.valuesConsistent() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
                             iface.getNetworkName());
                 }
@@ -397,7 +397,7 @@ public class SetupNetworksHelper {
         if (existingIfaces == null) {
             List<VdsNetworkInterface> ifaces =
                     getDbFacade().getInterfaceDao().getAllInterfacesForVds(params.getVdsId());
-            NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
+            HostNetworkQosDao qosDao = getDbFacade().getHostNetworkQosDao();
 
             for (VdsNetworkInterface iface : ifaces) {
                 Network network = getExistingClusterNetworks().get(iface.getNetworkName());

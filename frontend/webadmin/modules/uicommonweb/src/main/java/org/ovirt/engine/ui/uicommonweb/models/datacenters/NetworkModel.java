@@ -11,8 +11,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VnicProfileParameters;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,6 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.NewHostNetworkQosModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NetworkProfilesModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.NewVnicProfileModel;
 import org.ovirt.engine.ui.uicommonweb.models.profiles.VnicProfileModel;
@@ -55,6 +56,15 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     protected static final String ENGINE_NETWORK =
             (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.ManagementNetwork);
 
+    public final static HostNetworkQos EMPTY_HOST_NETWORK_QOS = createEmptyHostNetworkQos();
+
+    public static HostNetworkQos createEmptyHostNetworkQos() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setName(ConstantsManager.getInstance().getConstants().unlimitedQoSTitle());
+        qos.setId(Guid.Empty);
+        return qos;
+    }
+
     private EntityModel<String> privateName;
     private EntityModel<String> privateDescription;
     private EntityModel<Boolean> export;
@@ -68,7 +78,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     private ListModel<MtuSelector> mtuSelector;
     private EntityModel<Integer> mtu;
     private EntityModel<Boolean> privateIsVmNetwork;
-    private ListModel<NetworkQoS> qos;
+    private ListModel<HostNetworkQos> qos;
     private boolean isSupportBridgesReportByVDSM = false;
     private boolean mtuOverrideSupported = false;
     private ListModel<StoragePool> privateDataCenters;
@@ -163,7 +173,7 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         profiles.add(createDefaultProfile());
         getProfiles().setItems(profiles);
 
-        setQos(new ListModel<NetworkQoS>());
+        setQos(new ListModel<HostNetworkQos>());
 
         EntityModel<Boolean> createSubnet = new EntityModel<Boolean>(false);
         setCreateSubnet(createSubnet);
@@ -349,11 +359,11 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         privateIsVmNetwork = value;
     }
 
-    public ListModel<NetworkQoS> getQos() {
+    public ListModel<HostNetworkQos> getQos() {
         return qos;
     }
 
-    private void setQos(ListModel<NetworkQoS> qos) {
+    private void setQos(ListModel<HostNetworkQos> qos) {
         this.qos = qos;
     }
 
@@ -551,12 +561,12 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
 
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                Collection<NetworkQoS> qos = (Collection<NetworkQoS>) returnValue;
+                Collection<HostNetworkQos> qos = (Collection<HostNetworkQos>) returnValue;
                 getQos().setItems(qos);
-                getQos().setSelectedItem(Linq.findNetworkQosById(qos, getNetwork().getQosId()));
+                getQos().setSelectedItem(Linq.findHostNetworkQosById(qos, getNetwork().getQosId()));
             }
         };
-        AsyncDataProvider.getInstance().getAllNetworkQos(dc.getId(), query);
+        AsyncDataProvider.getInstance().getAllHostNetworkQos(dc.getId(), query);
 
         updateDcLabels();
 
@@ -610,8 +620,8 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         }
 
         if (getQos().getIsChangable()) {
-            NetworkQoS qos = getQos().getSelectedItem();
-            network.setQosId(qos == NetworkQoSModel.EMPTY_QOS ? null : qos.getId());
+            HostNetworkQos qos = getQos().getSelectedItem();
+            network.setQosId(qos == EMPTY_HOST_NETWORK_QOS ? null : qos.getId());
         }
     }
 
@@ -658,15 +668,16 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     private void addQos() {
-        NewNetworkQoSModel qosModel = new NewNetworkQoSModel(this, getSelectedDc()) {
+        NewHostNetworkQosModel qosModel = new NewHostNetworkQosModel(this, getSelectedDc()) {
 
             @Override
             protected void postSaveAction(boolean succeeded) {
                 if (succeeded) {
-                    List<NetworkQoS> qosItems = new ArrayList<NetworkQoS>(getQos().getItems());
-                    qosItems.add(1, networkQoS);
-                    getQos().setItems(qosItems);
-                    getQos().setSelectedItem(networkQoS);
+                    List<HostNetworkQos> qosItems =
+                            new ArrayList<HostNetworkQos>(NetworkModel.this.getQos().getItems());
+                    qosItems.add(1, getQos());
+                    NetworkModel.this.getQos().setItems(qosItems);
+                    NetworkModel.this.getQos().setSelectedItem(getQos());
                 }
                 super.postSaveAction(succeeded);
             }

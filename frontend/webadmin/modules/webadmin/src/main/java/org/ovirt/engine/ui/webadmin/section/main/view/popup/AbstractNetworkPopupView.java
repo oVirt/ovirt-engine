@@ -4,7 +4,7 @@ import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractTabbedModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -132,7 +132,7 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
 
     @UiField(provided = true)
     @Path(value = "qos.selectedItem")
-    public ListModelListBoxEditor<NetworkQoS> qosEditor;
+    public ListModelListBoxEditor<HostNetworkQos> qosEditor;
 
     @UiField
     UiCommandButton addQosButton;
@@ -204,9 +204,9 @@ public abstract class AbstractNetworkPopupView<T extends NetworkModel> extends A
                 return provider.getName();
             }
         });
-        qosEditor = new ListModelListBoxEditor<NetworkQoS>(new NullSafeRenderer<NetworkQoS>() {
+        qosEditor = new ListModelListBoxEditor<HostNetworkQos>(new NullSafeRenderer<HostNetworkQos>() {
             @Override
-            protected String renderNullSafe(NetworkQoS qos) {
+            protected String renderNullSafe(HostNetworkQos qos) {
                 return qos.getName();
             }
         });

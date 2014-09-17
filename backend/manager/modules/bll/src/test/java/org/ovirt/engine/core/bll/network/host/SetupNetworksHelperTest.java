@@ -28,9 +28,9 @@ import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -39,9 +39,9 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
@@ -51,6 +51,8 @@ public class SetupNetworksHelperTest {
     private static final String BOND_NAME = "bond0";
     private static final String MANAGEMENT_NETWORK_NAME = "management";
     private static final int DEFAULT_MTU = 1500;
+    private static final int LOW_BANDWIDTH = 500;
+    private static final int HIGH_BANDWIDTH = 2000;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
@@ -86,7 +88,7 @@ public class SetupNetworksHelperTest {
     private InterfaceDao interfaceDAO;
 
     @Mock
-    private NetworkQoSDao qosDao;
+    private HostNetworkQosDao qosDao;
 
     /* --- Tests for networks functionality --- */
 
@@ -392,19 +394,51 @@ public class SetupNetworksHelperTest {
         validateAndAssertQosOverridden(helper, iface);
     }
 
-    @Test
-    public void qosValuesModified() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+    private SetupNetworksHelper qosValuesTest(Network network, HostNetworkQos qos) {
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         iface.setQosOverridden(true);
         mockExistingIfaces(iface);
 
-        iface.setQos(createQos());
+        iface.setQos(qos);
 
-        SetupNetworksHelper helper = createHelper(createParametersForNics(iface), Version.v3_4);
+        return createHelper(createParametersForNics(iface), Version.v3_4);
+    }
 
+    private SetupNetworksHelper qosValuesTest(HostNetworkQos qos) {
+        return qosValuesTest(createNetwork(MANAGEMENT_NETWORK_NAME), qos);
+    }
+
+    @Test
+    public void qosValuesModified() {
+        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        SetupNetworksHelper helper = qosValuesTest(network, createQos());
         validateAndAssertNetworkModified(helper, network);
+    }
+
+    @Test
+    public void invalidQosMissingValues() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageUpperlimit(HIGH_BANDWIDTH);
+        qos.setOutAverageRealtime(LOW_BANDWIDTH);
+
+        SetupNetworksHelper helper = qosValuesTest(qos);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
+                MANAGEMENT_NETWORK_NAME);
+    }
+
+    @Test
+    public void invalidQosInconsistentValues() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(10);
+        qos.setOutAverageUpperlimit(LOW_BANDWIDTH);
+        qos.setOutAverageRealtime(HIGH_BANDWIDTH);
+
+        SetupNetworksHelper helper = qosValuesTest(qos);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
+                MANAGEMENT_NETWORK_NAME);
     }
 
     @Test
@@ -1891,11 +1925,11 @@ public class SetupNetworksHelperTest {
      *
      * @return the QoS entity.
      */
-    private NetworkQoS createQos() {
-        NetworkQoS qos = new NetworkQoS();
-        qos.setInboundAverage(30);
-        qos.setInboundPeak(30);
-        qos.setInboundBurst(30);
+    private HostNetworkQos createQos() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(30);
+        qos.setOutAverageUpperlimit(30);
+        qos.setOutAverageRealtime(30);
         return qos;
     }
 
@@ -1961,7 +1995,7 @@ public class SetupNetworksHelperTest {
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();
         doReturn(mock(VdsDAO.class)).when(dbFacade).getVdsDao();
         doReturn(networkDAO).when(dbFacade).getNetworkDao();
-        doReturn(qosDao).when(dbFacade).getNetworkQosDao();
+        doReturn(qosDao).when(dbFacade).getHostNetworkQosDao();
 
         return helper;
     }

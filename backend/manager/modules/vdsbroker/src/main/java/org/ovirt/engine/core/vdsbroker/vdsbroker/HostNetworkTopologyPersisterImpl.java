@@ -23,7 +23,7 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
@@ -189,7 +189,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
 
     private void logUnsynchronizedNetworks(VDS host, Map<String, Network> networks) {
         List<String> networkNames = new ArrayList<>();
-        NetworkQoSDao qosDao = DbFacade.getInstance().getNetworkQosDao();
+        HostNetworkQosDao qosDao = DbFacade.getInstance().getHostNetworkQosDao();
 
         for (VdsNetworkInterface iface : host.getInterfaces()) {
             Network network = networks.get(iface.getNetworkName());

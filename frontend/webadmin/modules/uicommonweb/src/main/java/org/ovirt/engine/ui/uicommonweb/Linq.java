@@ -40,6 +40,7 @@ import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComp
 import org.ovirt.engine.core.common.businessentities.comparators.NameableComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -57,6 +58,7 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.clusters.ClusterNetworkModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.NetworkQoSModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.providers.ExternalNetwork;
@@ -513,6 +515,15 @@ public final class Linq
             }
         }
         return NetworkQoSModel.EMPTY_QOS;
+    }
+
+    public static HostNetworkQos findHostNetworkQosById(Iterable<HostNetworkQos> items, Guid qosId) {
+        for (HostNetworkQos qos : items) {
+            if (qos.getId().equals(qosId)) {
+                return qos;
+            }
+        }
+        return NetworkModel.EMPTY_HOST_NETWORK_QOS;
     }
 
     public static ArrayList<VDS> findAllVDSByPmEnabled(ArrayList<VDS> items)

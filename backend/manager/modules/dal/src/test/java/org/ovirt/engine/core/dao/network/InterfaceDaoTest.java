@@ -14,9 +14,9 @@ import java.util.Map;
 import java.util.Set;
 
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.InterfaceStatus;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkStatistics;
 import org.ovirt.engine.core.compat.Guid;
@@ -35,7 +35,7 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
     private VdsNetworkInterface existingVdsInterface;
     private VdsNetworkInterface newVdsInterface;
     private VdsNetworkStatistics newVdsStatistics;
-    private NetworkQoS newQos;
+    private HostNetworkQos newQos;
 
     @Override
     public void setUp() throws Exception {
@@ -44,10 +44,10 @@ public class InterfaceDaoTest extends BaseDAOTestCase {
         dao = dbFacade.getInterfaceDao();
         existingVdsInterface = dao.get(FixturesTool.VDS_NETWORK_INTERFACE);
 
-        newQos = new NetworkQoS();
-        newQos.setInboundAverage(30);
-        newQos.setInboundPeak(30);
-        newQos.setInboundBurst(30);
+        newQos = new HostNetworkQos();
+        newQos.setOutAverageLinkshare(30);
+        newQos.setOutAverageUpperlimit(30);
+        newQos.setOutAverageRealtime(30);
 
         newVdsInterface = new VdsNetworkInterface();
         newVdsInterface.setStatistics(new VdsNetworkStatistics());

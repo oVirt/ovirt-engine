@@ -25,9 +25,9 @@ import org.mockito.Captor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
-import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameters;
@@ -36,8 +36,9 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
-import org.ovirt.engine.core.dao.network.NetworkQoSDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.RandomUtils;
 
 @RunWith(MockitoJUnitRunner.class)
@@ -48,7 +49,7 @@ public class SetupNetworksVDSCommandTest {
     private IVdsServer server;
 
     @Mock
-    private NetworkQoSDao qosDao;
+    private HostNetworkQosDao qosDao;
 
     @Mock
     private VDS host;
@@ -170,7 +171,7 @@ public class SetupNetworksVDSCommandTest {
 
     private void qos(Network network,
             VdsNetworkInterface iface,
-            NetworkQoS expectedQos,
+            HostNetworkQos expectedQos,
             boolean hostNetworkQosSupported) {
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, hostNetworkQosSupported);
 
@@ -186,14 +187,11 @@ public class SetupNetworksVDSCommandTest {
 
         verifyMethodPassedToHost();
         Map<String, Object> networkStruct = assertNeworkWasSent(network);
-        NetworkQosMapper qosMapper =
-                new NetworkQosMapper(networkStruct, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
-        NetworkQoS deserialize = qosMapper.deserialize();
-        assertTrue((expectedQos == null && deserialize == null)
-                || (expectedQos != null && expectedQos.equalValues(deserialize)));
+        HostNetworkQos result = new HostNetworkQosMapper(networkStruct).deserialize();
+        assertTrue(NetworkUtils.qosParametersEqual(expectedQos, result));
     }
 
-    private void qos(Network network, VdsNetworkInterface iface, NetworkQoS expectedQos) {
+    private void qos(Network network, VdsNetworkInterface iface, HostNetworkQos expectedQos) {
         qos(network, iface, expectedQos, false);
     }
 
@@ -214,7 +212,7 @@ public class SetupNetworksVDSCommandTest {
 
         Guid qosId = Guid.newGuid();
         network.setQosId(qosId);
-        NetworkQoS qos = createQos();
+        HostNetworkQos qos = createQos();
         qos.setId(qosId);
         when(qosDao.get(qosId)).thenReturn(qos);
 
@@ -226,7 +224,7 @@ public class SetupNetworksVDSCommandTest {
         Network network = createNetwork(null);
         VdsNetworkInterface iface = createNic("eth0", null, null, network.getName());
 
-        NetworkQoS qos = createQos();
+        HostNetworkQos qos = createQos();
         iface.setQos(qos);
         iface.setQosOverridden(true);
         when(qosDao.get(any(Guid.class))).thenReturn(createQos());
@@ -296,7 +294,7 @@ public class SetupNetworksVDSCommandTest {
 
         when(dbFacade.getVdsStaticDao()).thenReturn(vdsStaticDao);
         when(dbFacade.getVdsDao()).thenReturn(vdsDao);
-        when(dbFacade.getNetworkQosDao()).thenReturn(qosDao);
+        when(dbFacade.getHostNetworkQosDao()).thenReturn(qosDao);
 
         when(vdsDao.get(any(Guid.class))).thenReturn(host);
 
@@ -372,14 +370,11 @@ public class SetupNetworksVDSCommandTest {
                 true);
     }
 
-    private NetworkQoS createQos() {
-        NetworkQoS qos = new NetworkQoS();
-        qos.setInboundAverage(RandomUtils.instance().nextInt(0, 1000000));
-        qos.setInboundPeak(RandomUtils.instance().nextInt(0, 1000000));
-        qos.setInboundBurst(RandomUtils.instance().nextInt(0, 1000000));
-        qos.setOutboundAverage(RandomUtils.instance().nextInt(0, 1000000));
-        qos.setOutboundPeak(RandomUtils.instance().nextInt(0, 1000000));
-        qos.setOutboundBurst(RandomUtils.instance().nextInt(0, 1000000));
+    private HostNetworkQos createQos() {
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(RandomUtils.instance().nextInt(0, 100));
+        qos.setOutAverageUpperlimit(RandomUtils.instance().nextInt(0, 2000));
+        qos.setOutAverageRealtime(RandomUtils.instance().nextInt(0, 2000));
         return qos;
     }
 }
