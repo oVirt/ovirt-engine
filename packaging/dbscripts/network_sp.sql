@@ -240,6 +240,20 @@ LANGUAGE plpgsql;
 
 
 
+Create or replace FUNCTION GetAllNetworksByQosId(v_id UUID)
+RETURNS SETOF network STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT *
+    FROM   network
+    WHERE  qos_id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+
+
 Create or replace FUNCTION GetAllNetworksByNetworkProviderId(v_id UUID)
 RETURNS SETOF network STABLE
 AS $procedure$

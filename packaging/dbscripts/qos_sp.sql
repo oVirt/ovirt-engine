@@ -54,6 +54,22 @@ INSERT INTO qos(id, qos_type, name, description, storage_pool_id, inbound_averag
 END; $procedure$
 LANGUAGE plpgsql;
 
+Create or replace FUNCTION InsertHostNetworkQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_out_average_linkshare INTEGER,
+  v_out_average_upperlimit INTEGER,
+  v_out_average_realtime INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+INSERT INTO qos(id, qos_type, name, description, storage_pool_id, out_average_linkshare, out_average_upperlimit, out_average_realtime)
+  VALUES(v_id, v_qos_type, v_name, v_description, v_storage_pool_id, v_out_average_linkshare, v_out_average_upperlimit, v_out_average_realtime);
+END; $procedure$
+LANGUAGE plpgsql;
+
 Create or replace FUNCTION UpdateStorageQos(v_id uuid,
   v_qos_type SMALLINT,
   v_name VARCHAR(50),
@@ -110,6 +126,25 @@ BEGIN
       SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id, inbound_average = v_inbound_average, inbound_peak = v_inbound_peak, inbound_burst = v_inbound_burst,
       outbound_average = v_outbound_average, outbound_peak = v_outbound_peak, outbound_burst = v_outbound_burst, _update_date = LOCALTIMESTAMP
       WHERE id = v_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateHostNetworkQos(v_id uuid,
+  v_qos_type SMALLINT,
+  v_name VARCHAR(50),
+  v_description TEXT,
+  v_storage_pool_id uuid,
+  v_out_average_linkshare INTEGER,
+  v_out_average_upperlimit INTEGER,
+  v_out_average_realtime INTEGER)
+RETURNS VOID
+   AS $procedure$
+BEGIN
+     UPDATE qos
+     SET qos_type = v_qos_type, name = v_name, description = v_description, storage_pool_id = v_storage_pool_id,
+     out_average_linkshare = v_out_average_linkshare, out_average_upperlimit = v_out_average_upperlimit, out_average_realtime = v_out_average_realtime,
+     _update_date = LOCALTIMESTAMP
+     WHERE id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
