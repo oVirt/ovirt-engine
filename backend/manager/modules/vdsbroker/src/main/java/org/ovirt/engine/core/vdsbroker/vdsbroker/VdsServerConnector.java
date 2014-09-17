@@ -246,6 +246,10 @@ public interface VdsServerConnector {
 
     public Map<String, Object> glusterVolumesList();
 
+    public Map<String, Object> glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName);
+
+    public Map<String, Object> glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force);
+
     public Map<String, Object> ping();
 
     @FutureCall(delegeteTo = "ping")

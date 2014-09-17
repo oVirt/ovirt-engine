@@ -393,7 +393,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     static class FutureCallable implements Callable<Map<String, Object>> {
-        private Callable<Map<String, Object>> callable;
+        private final Callable<Map<String, Object>> callable;
 
         private FutureMap map;
 
@@ -1209,6 +1209,29 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StatusOnlyReturnForXmlRpc glusterHostAdd(String hostName) {
         JsonRpcRequest request = new RequestBuilder("GlusterHost.add").withParameter("hostName", hostName).build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionDelete(String volumeName, String remoteHost, String remoteVolumeName) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionDelete")
+                                        .withParameter("volumeName", volumeName)
+                                        .withParameter("remoteHost", remoteHost)
+                                        .withParameter("remoteVolumeName", remoteVolumeName)
+                                        .build();
+        Map<String, Object> response = new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
+    @Override
+    public StatusOnlyReturnForXmlRpc glusterVolumeGeoRepSessionStop(String volumeName, String remoteHost, String remoteVolumeName, Boolean force) {
+        JsonRpcRequest request = new RequestBuilder("GlusterVolume.geoRepSessionStop")
+                                        .withParameter("volumeName", volumeName)
+                                        .withParameter("remoteHost", remoteHost)
+                                        .withParameter("remoteVolumeName", remoteVolumeName)
+                                        .withParameter("force", force)
+                                        .build();
         Map<String, Object> response = new FutureMap(this.client, request);
         return new StatusOnlyReturnForXmlRpc(response);
     }

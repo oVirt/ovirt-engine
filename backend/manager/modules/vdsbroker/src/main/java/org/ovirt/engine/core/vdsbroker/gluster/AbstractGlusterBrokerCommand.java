@@ -72,6 +72,8 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlfsStatvfsException:
         case GlfsInitException:
         case GlfsFiniException:
+        case GlusterGeoRepSessionDeleteFailedException:
+        case GlusterVolumeGeoRepStopFailedException:
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));
             getVDSReturnValue().setSucceeded(false);
