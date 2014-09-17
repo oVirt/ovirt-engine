@@ -131,6 +131,7 @@ import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServerServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -985,6 +986,10 @@ public class DbFacade {
 
     public NetworkQoSDao getNetworkQosDao() {
         return getDao(NetworkQoSDao.class);
+    }
+
+    public HostNetworkQosDao getHostNetworkQosDao() {
+        return getDao(HostNetworkQosDao.class);
     }
 
     public StorageQosDao getStorageQosDao() {

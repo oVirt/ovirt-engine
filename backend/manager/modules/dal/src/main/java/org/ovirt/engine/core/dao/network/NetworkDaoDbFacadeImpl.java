@@ -108,6 +108,13 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     @Override
+    public List<Network> getAllForQos(Guid qosId) {
+        return getCallsHandler().executeReadList("GetAllNetworksByQosId",
+                NetworkRowMapper.instance,
+                createIdParameterMapper(qosId));
+    }
+
+    @Override
     public List<Network> getAllForProvider(Guid id) {
         return getCallsHandler().executeReadList("GetAllNetworksByNetworkProviderId",
                 NetworkRowMapper.instance,

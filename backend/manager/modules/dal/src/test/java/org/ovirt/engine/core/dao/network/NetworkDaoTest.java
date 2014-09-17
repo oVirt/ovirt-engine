@@ -267,6 +267,27 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     }
 
     /**
+     * Ensures that the correct networks are returned for a given QoS ID.
+     */
+    @Test
+    public void testGetAllForValidQos() {
+        List<Network> result = dao.getAllForQos(FixturesTool.HOST_NETWORK_QOS_A);
+        assertNotNull(result);
+        assertTrue(result.size() == 1);
+        assertEquals(result.get(0).getId(), FixturesTool.NETWORK_ENGINE);
+    }
+
+    /**
+     * Ensures that an empty collection is returned for a QoS that no network is using.
+     */
+    @Test
+    public void testGetAllForUnusedQos() {
+        List<Network> result = dao.getAllForQos(FixturesTool.HOST_NETWORK_QOS_B);
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    /**
      * Ensures the right set of networks are returned for the given provider.
      */
     @Test

@@ -7,6 +7,7 @@ import java.util.List;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDaoDbFacadeImpl;
 import org.ovirt.engine.core.dao.network.NetworkQoSDaoFacadeImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +53,11 @@ public class AllQosBaseDaoFacadeImpl extends QosBaseDaoFacadeImpl<QosBase> imple
                 return CpuQosDaoDbFacadeImpl.CpuDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
             case NETWORK:
                 return NetworkQoSDaoFacadeImpl.NetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
-                default:
-                    log.debug("not handled/missing qos_type '{}'", qosType);
-                    break;
+            case HOSTNETWORK:
+                return HostNetworkQosDaoDbFacadeImpl.HostNetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
+            default:
+                log.debug("not handled/missing qos_type '{}'", qosType);
+                break;
             }
 
             return null;

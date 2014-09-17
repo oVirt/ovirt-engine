@@ -1,0 +1,50 @@
+package org.ovirt.engine.core.dao.network;
+
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.core.common.businessentities.qos.QosType;
+import org.ovirt.engine.core.dao.qos.QosBaseDaoFacadeImpl;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
+
+public class HostNetworkQosDaoDbFacadeImpl extends QosBaseDaoFacadeImpl<HostNetworkQos> implements HostNetworkQosDao {
+
+    private static final String OUT_AVERAGE_LINKSHARE = "out_average_linkshare";
+    private static final String OUT_AVERAGE_UPPERLIMIT = "out_average_upperlimit";
+    private static final String OUT_AVERAGE_REALTIME = "out_average_realtime";
+
+    public HostNetworkQosDaoDbFacadeImpl() {
+        super(QosType.HOSTNETWORK);
+    }
+
+    @Override
+    protected MapSqlParameterSource createFullParametersMapper(HostNetworkQos obj) {
+        MapSqlParameterSource map = super.createFullParametersMapper(obj);
+        map.addValue(OUT_AVERAGE_LINKSHARE, obj.getOutAverageLinkshare());
+        map.addValue(OUT_AVERAGE_UPPERLIMIT, obj.getOutAverageUpperlimit());
+        map.addValue(OUT_AVERAGE_REALTIME, obj.getOutAverageRealtime());
+        return map;
+    }
+
+    @Override
+    protected RowMapper<HostNetworkQos> createEntityRowMapper() {
+        return HostNetworkQosDaoDbFacadaeImplMapper.MAPPER;
+    }
+
+    public static class HostNetworkQosDaoDbFacadaeImplMapper extends QosBaseDaoFacadaeImplMapper<HostNetworkQos> {
+
+        public static final HostNetworkQosDaoDbFacadaeImplMapper MAPPER = new HostNetworkQosDaoDbFacadaeImplMapper();
+
+        @Override
+        public HostNetworkQos createQosEntity(ResultSet rs) throws SQLException {
+            HostNetworkQos entity = new HostNetworkQos();
+            entity.setOutAverageLinkshare(getInteger(rs, OUT_AVERAGE_LINKSHARE));
+            entity.setOutAverageUpperlimit(getInteger(rs, OUT_AVERAGE_UPPERLIMIT));
+            entity.setOutAverageRealtime(getInteger(rs, OUT_AVERAGE_REALTIME));
+            return entity;
+        }
+    }
+
+}

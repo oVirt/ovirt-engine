@@ -526,6 +526,45 @@ public class FixturesTool {
 
     public static final Guid NETWORK_QOS = new Guid("de956031-6be2-43d6-bb90-5191c9253314");
 
+    /**
+     * Predefined HostNetworkQos with the following properties:
+     * <ul>
+     * <li>id: de956031-6be2-43d6-bb90-5191c9253318</li>
+     * <li>name: host_network_qos_a</li>
+     * <li>storage_pool_id: {@link #STORAGE_POOL_MIXED_TYPES}</li>
+     * <li>out_average_linkshare: 1000</li>
+     * <li>out_average_upperlimit: 2000</li>
+     * <li>out_average_realtime: 500</li>
+     * </ul>
+     */
+    public static final Guid HOST_NETWORK_QOS_A = new Guid("de956031-6be2-43d6-bb90-5191c9253318");
+
+    /**
+     * Predefined HostNetworkQos with the following properties:
+     * <ul>
+     * <li>id: de956031-6be2-43d6-bb90-5191c9253319</li>
+     * <li>name: host_network_qos_b</li>
+     * <li>storage_pool_id: {@link #STORAGE_POOL_MIXED_TYPES}</li>
+     * <li>out_average_linkshare: 1200</li>
+     * <li>out_average_upperlimit: 2400</li>
+     * <li>out_average_realtime: 500</li>
+     * </ul>
+     */
+    public static final Guid HOST_NETWORK_QOS_B = new Guid("de956031-6be2-43d6-bb90-5191c9253319");
+
+    /**
+     * Predefined HostNetworkQos with the following properties:
+     * <ul>
+     * <li>id: de956031-6be2-43d6-bb90-5191c9253320</li>
+     * <li>name: host_network_qos_c</li>
+     * <li>storage_pool_id: {@link #STORAGE_POOL_MIXED_TYPES}</li>
+     * <li>out_average_linkshare: 700</li>
+     * <li>out_average_upperlimit: 1400</li>
+     * <li>out_average_realtime: 500</li>
+     * </ul>
+     */
+    public static final Guid HOST_NETWORK_QOS_C = new Guid("de956031-6be2-43d6-bb90-5191c9253320");
+
     public static final String MAC_ADDRESS = "00:1a:4a:16:87:db";
 
     public static final int NUMBER_OF_VM_INTERFACE_VIEWS = 3;

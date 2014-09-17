@@ -1113,126 +1113,6 @@
         </row>
     </table>
 
-    <table name="network">
-        <column>id</column>
-        <column>name</column>
-        <column>description</column>
-        <column>type</column>
-        <column>addr</column>
-        <column>subnet</column>
-        <column>gateway</column>
-        <column>vlan_id</column>
-        <column>stp</column>
-        <column>storage_pool_id</column>
-        <column>mtu</column>
-        <column>vm_network</column>
-        <column>provider_network_provider_id</column>
-        <column>provider_network_external_id</column>
-        <column>label</column>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
-            <value>engine</value>
-            <value>Management Network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
-            <value>0</value>
-            <value>true</value>
-            <null />
-            <null />
-            <null />
-        </row>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
-            <value>engine2</value>
-            <value>Management Network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
-            <value>1500</value>
-            <value>true</value>
-            <null />
-            <null />
-            <value>lbl1</value>
-        </row>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
-            <value>engine3</value>
-            <value>Management Network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
-            <value>9000</value>
-            <value>true</value>
-            <null />
-            <null />
-            <value>lbl1</value>
-        </row>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607200</value>
-            <value>external</value>
-            <value>Some external network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
-            <value>0</value>
-            <value>true</value>
-            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
-            <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
-            <null/>
-        </row>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607201</value>
-            <value>external</value>
-            <value>Some external network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
-            <value>0</value>
-            <value>true</value>
-            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
-            <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
-            <null/>
-        </row>
-        <row>
-            <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
-            <value>engine4</value>
-            <value>Management Network</value>
-            <null />
-            <null />
-            <null />
-            <null />
-            <null />
-            <value>0</value>
-            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
-            <value>1500</value>
-            <value>true</value>
-            <null />
-            <null />
-           <value>lbl2</value>
-        </row>
-    </table>
-
     <table name="qos">
         <column>id</column>
         <column>qos_type</column>
@@ -1252,6 +1132,9 @@
         <column>outbound_average</column>
         <column>outbound_peak</column>
         <column>outbound_burst</column>
+        <column>out_average_linkshare</column>
+        <column>out_average_upperlimit</column>
+        <column>out_average_realtime</column>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253314</value>
             <value>1</value>
@@ -1264,6 +1147,9 @@
             <value>1000</value>
             <value>2000</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -1291,6 +1177,9 @@
             <null />
             <null />
             <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253316</value>
@@ -1304,6 +1193,9 @@
             <value>700</value>
             <value>1400</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -1331,6 +1223,9 @@
             <null />
             <null />
             <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>ae956031-6be2-43d6-bb90-5191c9253318</value>
@@ -1345,6 +1240,9 @@
             <null />
             <null />
             <value>60</value>
+            <null />
+            <null />
+            <null />
             <null />
             <null />
             <null />
@@ -1371,6 +1269,9 @@
             <null />
             <null />
             <null />
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>de956031-6be2-43d6-bb90-5191c9253314</value>
@@ -1391,6 +1292,9 @@
             <value>1000</value>
             <value>2000</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>de956031-6be2-43d6-bb90-5191c9253315</value>
@@ -1411,6 +1315,9 @@
             <value>1200</value>
             <value>2400</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>de956031-6be2-43d6-bb90-5191c9253316</value>
@@ -1431,6 +1338,9 @@
             <value>700</value>
             <value>1400</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
         </row>
         <row>
             <value>ba31682e-6ae7-4f9d-8c6f-04c93acca9db</value>
@@ -1451,6 +1361,205 @@
             <value>700</value>
             <value>1400</value>
             <value>500</value>
+            <null />
+            <null />
+            <null />
+        </row>
+        <row>
+            <value>de956031-6be2-43d6-bb90-5191c9253318</value>
+            <value>4</value>
+            <value>host_network_qos_a</value>
+            <null />
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>1000</value>
+            <value>2000</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>de956031-6be2-43d6-bb90-5191c9253319</value>
+            <value>4</value>
+            <value>host_network_qos_b</value>
+            <null />
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>1200</value>
+            <value>2400</value>
+            <value>500</value>
+        </row>
+        <row>
+            <value>de956031-6be2-43d6-bb90-5191c9253320</value>
+            <value>4</value>
+            <value>host_network_qos_c</value>
+            <null />
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>700</value>
+            <value>1400</value>
+            <value>500</value>
+        </row>
+    </table>
+
+    <table name="network">
+        <column>id</column>
+        <column>name</column>
+        <column>description</column>
+        <column>type</column>
+        <column>addr</column>
+        <column>subnet</column>
+        <column>gateway</column>
+        <column>vlan_id</column>
+        <column>stp</column>
+        <column>storage_pool_id</column>
+        <column>mtu</column>
+        <column>vm_network</column>
+        <column>provider_network_provider_id</column>
+        <column>provider_network_external_id</column>
+        <column>label</column>
+        <column>qos_id</column>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607188</value>
+            <value>engine</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>0</value>
+            <value>true</value>
+            <null />
+            <null />
+            <null />
+            <value>de956031-6be2-43d6-bb90-5191c9253318</value>
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607189</value>
+            <value>engine2</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>1500</value>
+            <value>true</value>
+            <null />
+            <null />
+            <value>lbl1</value>
+            <null />
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607190</value>
+            <value>engine3</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>9000</value>
+            <value>true</value>
+            <null />
+            <null />
+            <value>lbl1</value>
+            <null />
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607200</value>
+            <value>external</value>
+            <value>Some external network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105d</value>
+            <value>0</value>
+            <value>true</value>
+            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
+            <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
+            <null/>
+            <null />
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607201</value>
+            <value>external</value>
+            <value>Some external network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
+            <value>0</value>
+            <value>true</value>
+            <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
+            <value>52d5c1c6-cb15-4832-b2a4-023770607200</value>
+            <null/>
+            <null />
+        </row>
+        <row>
+            <value>58d5c1c6-cb15-4832-b2a4-023770607191</value>
+            <value>engine4</value>
+            <value>Management Network</value>
+            <null />
+            <null />
+            <null />
+            <null />
+            <null />
+            <value>0</value>
+            <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
+            <value>1500</value>
+            <value>true</value>
+            <null />
+            <null />
+           <value>lbl2</value>
+            <null />
         </row>
     </table>
 

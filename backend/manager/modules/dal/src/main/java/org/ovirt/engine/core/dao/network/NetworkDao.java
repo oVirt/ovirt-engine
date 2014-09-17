@@ -96,6 +96,15 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
     List<Network> getAllForCluster(Guid id, Guid userID, boolean isFiltered);
 
     /**
+     * Retrieves all networks using a given QoS entity.
+     *
+     * @param qosId
+     *            the ID of the QoS entity
+     * @return the list of networks
+     */
+    List<Network> getAllForQos(Guid qosId);
+
+    /**
      * Retrieves all networks for the given provider.
      *
      * @param id
