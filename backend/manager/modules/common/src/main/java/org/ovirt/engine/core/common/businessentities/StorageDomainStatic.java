@@ -218,4 +218,9 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
                 && sanState == other.sanState
                 && ObjectUtils.objectsEqual(description, other.description));
     }
+
+    @Override
+    public String toString() {
+        return "StorageDomainStatic[" + getName() + ", " + getId() + "]";
+    }
 }

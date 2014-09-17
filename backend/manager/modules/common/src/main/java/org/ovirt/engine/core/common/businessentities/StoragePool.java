@@ -234,4 +234,8 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
         this.quotaEnforcementType = quotaEnforcementType;
     }
 
+    @Override
+    public String toString() {
+        return "StoragePool[" + getName() + ", " + getId() + "]";
+    }
 }
