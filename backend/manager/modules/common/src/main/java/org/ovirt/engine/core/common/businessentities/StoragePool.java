@@ -243,4 +243,9 @@ public class StoragePool extends IVdcQueryable implements BusinessEntityWithStat
     public void setMacPoolId(Guid macPoolId) {
         this.macPoolId = macPoolId;
     }
+
+    @Override
+    public String toString() {
+        return "StoragePool[" + getName() + ", " + getId() + "]";
+    }
 }
