@@ -23,11 +23,12 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.api.common.invocation.CurrentManager;
 import org.ovirt.engine.api.model.API;
 import org.ovirt.engine.api.model.Link;
 import org.ovirt.engine.api.model.SpecialObjects;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
+import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
@@ -51,20 +52,18 @@ public class BackendApiResourceTest extends Assert {
 
     protected BackendLocal backend;
     protected Current current;
-    protected SessionHelper sessionHelper;
+    protected DbUser currentUser;
     protected HttpHeaders httpHeaders;
 
     protected static final String USER = "Aladdin";
-    protected static final String SECRET = "open sesame";
     protected static final String DOMAIN = "Maghreb";
-    protected static final String NAMESPACE = "*";
 
     protected static final String URI_ROOT = "http://localhost:8099";
     protected static final String SLASH = "/";
     protected static final String BASE_PATH = "/ovirt-engine/api";
     protected static final String URI_BASE = URI_ROOT + BASE_PATH;
     protected static final String BUNDLE_PATH = "org/ovirt/engine/api/restapi/logging/Messages";
-    protected static final String sessionId = Guid.newGuid().toString();
+    protected static final String SESSION_ID = Guid.newGuid().toString();
     private static String USER_FILTER_HEADER = "Filter";
 
     protected static final int MAJOR = 11;
@@ -228,12 +227,13 @@ public class BackendApiResourceTest extends Assert {
 
     @Before
     public void setUp() {
-        current = createMock(Current.class);
-
-        sessionHelper = new SessionHelper();
-        sessionHelper.setCurrent(current);
-        sessionHelper.setSessionId(sessionId);
-        resource.setSessionHelper(sessionHelper);
+        currentUser = new DbUser();
+        currentUser.setLoginName(USER);
+        currentUser.setDomain(DOMAIN);
+        current = new Current();
+        current.setUser(currentUser);
+        current.setSessionId(SESSION_ID);
+        CurrentManager.put(current);
 
         backend = createMock(BackendLocal.class);
         resource.setBackend(backend);
@@ -255,6 +255,7 @@ public class BackendApiResourceTest extends Assert {
     @After
     public void tearDown() {
         verifyAll();
+        CurrentManager.remove();
     }
 
     @Test
@@ -288,7 +289,7 @@ public class BackendApiResourceTest extends Assert {
     }
 
     private void setupExpectations(ApplicationMode appMode, String[] relationships) {
-        expect(current.get(ApplicationMode.class)).andReturn(appMode).anyTimes();
+        current.setApplicationMode(appMode);
         resource.setUriInfo(setUpUriInfo(URI_BASE + "/", relationships));
         setUpGetSystemVersionExpectations();
         setUpGetSystemStatisticsExpectations();
@@ -462,24 +463,20 @@ public class BackendApiResourceTest extends Assert {
 
     protected VdcQueryParametersBase queryProductRPMVersionParams() {
         return eqQueryParams(GetConfigurationValueParameters.class,
-                             new String[] { "SessionId"},
-                             new Object[] { getSessionId() });
+                             new String[] { "SessionId" },
+                             new Object[] { SESSION_ID });
     }
 
     protected VdcQueryParametersBase queryVdcVersionParams() {
         return eqQueryParams(GetConfigurationValueParameters.class,
-                             new String[] { "SessionId"},
-                             new Object[] { getSessionId() });
+                             new String[] { "SessionId" },
+                             new Object[] { SESSION_ID });
     }
 
     protected VdcQueryParametersBase queryParams() {
         return eqQueryParams(GetSystemStatisticsQueryParameters.class,
                              new String[] { "SessionId" },
-                             new Object[] { getSessionId() });
-    }
-
-    protected String getSessionId() {
-        return sessionHelper.getSessionId();
+                             new Object[] { SESSION_ID });
     }
 }
 

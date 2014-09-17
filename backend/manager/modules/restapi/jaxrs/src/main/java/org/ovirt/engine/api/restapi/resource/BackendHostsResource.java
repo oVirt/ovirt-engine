@@ -54,7 +54,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     public Hosts list() {
-        ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
+        ApplicationMode appMode = getCurrent().getApplicationMode();
         if (appMode == ApplicationMode.GlusterOnly) {
             return listGlusterOnly();
         }

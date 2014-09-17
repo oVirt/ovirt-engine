@@ -1,21 +1,12 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.createMock;
-import static org.easymock.EasyMock.expect;
-
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.UriInfo;
 
-import org.easymock.EasyMock;
-import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
-import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Capabilities;
@@ -36,11 +27,8 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.model.VersionCaps;
 import org.ovirt.engine.api.model.VmAffinities;
 import org.ovirt.engine.api.model.VmType;
-import org.ovirt.engine.api.restapi.logging.MessageBundle;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.utils.VersionUtils;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.GetConfigurationValueParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -352,42 +340,11 @@ public class BackendCapabilityResourceTest extends AbstractBackendResourceTest {
         return null;
     }
 
-    protected String getSessionId() {
-        return sessionHelper.getSessionId();
-    }
-
     @Override
     protected void init() {
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
-        sessionHelper.setSessionId(sessionId);
-        parent.setSessionHelper(sessionHelper);
         parent.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
-    }
-
-    @Override
-    @Before
-    public void setUp() {
-        control = EasyMock.createNiceControl();
-        current = createMock(Current.class);
-
-        sessionHelper = new SessionHelper();
-        sessionHelper.setCurrent(current);
-        parent.setSessionHelper(sessionHelper);
-
-        backend = createMock(BackendLocal.class);
-        parent.setBackend(backend);
-
-        MessageBundle messageBundle = new MessageBundle();
-        messageBundle.setPath(BUNDLE_PATH);
-        messageBundle.populate();
-        parent.setMessageBundle(messageBundle);
-
-        httpHeaders = createMock(HttpHeaders.class);
-        List<Locale> locales = new ArrayList<Locale>();
-        expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
-        parent.setHttpHeaders(httpHeaders);
-        init();
     }
 }

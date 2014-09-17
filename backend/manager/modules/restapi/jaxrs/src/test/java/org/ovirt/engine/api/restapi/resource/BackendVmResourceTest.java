@@ -98,7 +98,6 @@ public class BackendVmResourceTest
     protected void init() {
         super.init();
         resource.getParent().backend = backend;
-        resource.getParent().sessionHelper = sessionHelper;
         resource.getParent().mappingLocator = resource.mappingLocator;
         resource.getParent().httpHeaders = httpHeaders;
         resource.getParent().messageBundle = messageBundle;

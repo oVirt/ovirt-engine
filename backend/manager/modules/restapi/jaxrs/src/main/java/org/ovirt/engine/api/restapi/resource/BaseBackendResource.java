@@ -15,6 +15,7 @@ import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.api.common.invocation.CurrentManager;
 import org.ovirt.engine.api.common.util.CompletenessAssertor;
 import org.ovirt.engine.api.common.util.EnumValidator;
 import org.ovirt.engine.api.model.Fault;
@@ -22,7 +23,6 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.utils.MalformedIdException;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
@@ -32,13 +32,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BaseBackendResource {
-
     private static String USER_FILTER_HEADER = "Filter";
 
     private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
     protected BackendLocal backend;
-    protected SessionHelper sessionHelper;
     protected MessageBundle messageBundle;
     protected UriInfo uriInfo;
     protected HttpHeaders httpHeaders;
@@ -50,7 +48,6 @@ public class BaseBackendResource {
         resource.setBackend(backend);
         resource.setMappingLocator(mappingLocator);
         resource.setValidatorLocator(validatorLocator);
-        resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setUriInfo(uriInfo);
         resource.setHttpHeaders(httpHeaders);
@@ -71,14 +68,6 @@ public class BaseBackendResource {
 
     public BackendLocal getBackend() {
         return backend;
-    }
-
-    public void setSessionHelper(SessionHelper sessionHelper) {
-        this.sessionHelper = sessionHelper;
-    }
-
-    public SessionHelper getSessionHelper() {
-        return sessionHelper;
     }
 
     public void setMessageBundle(MessageBundle messageBundle) {
@@ -108,7 +97,7 @@ public class BaseBackendResource {
     }
 
     protected Current getCurrent() {
-        return sessionHelper.getCurrent();
+        return CurrentManager.get();
     }
 
     protected ValidatorLocator getValidatorLocator() {
@@ -120,11 +109,15 @@ public class BaseBackendResource {
     }
 
     protected <P extends VdcQueryParametersBase> P sessionize(P parameters) {
-        return sessionHelper.sessionize(parameters);
+        String sessionId = getCurrent().getSessionId();
+        parameters.setSessionId(sessionId);
+        return parameters;
     }
 
     protected <P extends VdcActionParametersBase> P sessionize(P parameters) {
-        return sessionHelper.sessionize(parameters);
+        String sessionId = getCurrent().getSessionId();
+        parameters.setSessionId(sessionId);
+        return parameters;
     }
 
     protected Fault fault(String reason, String detail) {

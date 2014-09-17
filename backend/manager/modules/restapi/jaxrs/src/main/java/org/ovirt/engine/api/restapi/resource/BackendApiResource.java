@@ -207,7 +207,7 @@ public class BackendApiResource
 
     @Override
     public Response head() {
-        appMode = getCurrent().get(ApplicationMode.class);
+        appMode = getCurrent().getApplicationMode();
         API api = null;
         if(appMode == ApplicationMode.GlusterOnly) {
             api = getGlusterApi();
@@ -220,7 +220,7 @@ public class BackendApiResource
 
     @Override
     public Response get() {
-        appMode = getCurrent().get(ApplicationMode.class);
+        appMode = getCurrent().getApplicationMode();
         if (QueryHelper.hasConstraint(getUriInfo(), RSDL_CONSTRAINT_PARAMETER)) {
             try {
                 RSDL rsdl = addSystemVersion(getRSDL());
@@ -276,7 +276,7 @@ public class BackendApiResource
     public synchronized RSDL getRSDL() throws ClassNotFoundException, IOException {
         if (rsdl == null) {
             rsdl = RsdlManager.loadRsdl(
-                getCurrent().get(ApplicationMode.class),
+                getCurrent().getApplicationMode(),
                 getUriInfo().getBaseUri().getPath()
             );
         }

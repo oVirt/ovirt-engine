@@ -71,12 +71,10 @@ public class RestApiSessionMgmtFilter implements Filter {
         try {
             if (FiltersHelper.isAuthenticated(req)) {
                 if ((prefer & FiltersHelper.PREFER_PERSISTENCE_AUTH) != 0) {
-                    if (!Boolean.TRUE.equals(request.getAttribute(SessionConstants.REQUEST_ASYNC_KEY))) {
-                        HttpSession session = req.getSession(false);
-                        if (session != null) {
-                            ((HttpServletResponse) response).addHeader(FiltersHelper.Constants.HEADER_JSESSIONID_COOKIE,
-                                    session.getId());
-                        }
+                    HttpSession session = req.getSession(false);
+                    if (session != null) {
+                        ((HttpServletResponse) response).addHeader(FiltersHelper.Constants.HEADER_JSESSIONID_COOKIE,
+                                session.getId());
                     }
                 } else {
                     InitialContext ctx = new InitialContext();

@@ -24,7 +24,6 @@ import javax.naming.InitialContext;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
 import org.ovirt.engine.api.restapi.resource.BackendApiResource;
@@ -67,9 +66,7 @@ import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MappingExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
-import org.ovirt.engine.api.restapi.security.auth.SessionProcessor;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -83,13 +80,12 @@ public class BackendApplication extends Application {
     private final MessageBundle messageBundle;
     private final MappingLocator mappingLocator;
     private final ValidatorLocator validatorLocator;
-    private final SessionHelper sessionHelper;
 
     // The reference to the backend bean:
     private BackendLocal backend;
 
     // The set of singletons:
-    private final Set<Object> singletons = new HashSet<Object>();
+    private final Set<Object> singletons = new HashSet<>();
 
     public BackendApplication() throws Exception {
         // Create and load the message bundle:
@@ -104,12 +100,6 @@ public class BackendApplication extends Application {
         // Create and populate the validator locator:
         validatorLocator = new ValidatorLocator();
         validatorLocator.populate();
-
-        // Create the session helper:
-        final Current current = new Current();
-        singletons.add(current);
-        sessionHelper = new SessionHelper();
-        sessionHelper.setCurrent(current);
 
         // Lookup the backend bean:
         try {
@@ -159,12 +149,6 @@ public class BackendApplication extends Application {
         addResource(new BackendOpenStackVolumeProvidersResource());
         addResource(new BackendSystemKatelloErrataResource());
 
-        final SessionProcessor processor = new SessionProcessor();
-        processor.setBackend(backend);
-        processor.setCurrent(current);
-        processor.setSessionHelper(sessionHelper);
-        singletons.add(processor);
-
         // Intercepter that maps exceptions cause by illegal guid string to 400 status (BAD_REQUEST).
         singletons.add(new MalformedIdExceptionMapper());
         singletons.add(new JsonExceptionMapper());
@@ -175,7 +159,6 @@ public class BackendApplication extends Application {
     private void addResource(final BackendResource resource) {
         resource.setMessageBundle(messageBundle);
         resource.setBackend(backend);
-        resource.setSessionHelper(sessionHelper);
         resource.setMappingLocator(mappingLocator);
         resource.setValidatorLocator(validatorLocator);
         singletons.add(resource);

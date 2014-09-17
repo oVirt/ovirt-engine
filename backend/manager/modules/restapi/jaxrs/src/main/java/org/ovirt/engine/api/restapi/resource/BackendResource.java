@@ -10,7 +10,6 @@ import java.util.Set;
 import javax.ws.rs.GET;
 import javax.ws.rs.core.Response;
 
-import org.ovirt.engine.api.common.invocation.MetaData;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.Action;
@@ -20,7 +19,6 @@ import org.ovirt.engine.api.model.Version;
 import org.ovirt.engine.api.restapi.resource.exception.UrlParamException;
 import org.ovirt.engine.api.restapi.resource.validation.Validator;
 import org.ovirt.engine.api.restapi.util.ErrorMessageHelper;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.util.ExpectationHelper;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -198,7 +196,6 @@ public class BackendResource extends BaseBackendResource {
     protected Response performAction(VdcActionType task, VdcActionParametersBase params, Action action, boolean getEntityWhenDone) {
         try {
             if (isAsync() || expectNonBlocking()) {
-                getCurrent().get(MetaData.class).set("async", true);
                 return performNonBlockingAction(task, params, action);
             } else {
                 VdcReturnValueBase actionResult = doAction(task, params);
@@ -305,19 +302,18 @@ public class BackendResource extends BaseBackendResource {
         setCorrelationId(params);
         setJobOrStepId(params);
         ThreadPoolUtil.execute(new Runnable() {
-            SessionHelper sh = getSessionHelper();
             VdcActionParametersBase sp = sessionize(params);
-            DbUser user = getCurrent().get(DbUser.class);
+            DbUser currentUser = getCurrent().getUser();
+            VdcActionParametersBase logout = currentUser != null ? sessionize(new VdcActionParametersBase()) : null;
 
             @Override
             public void run() {
                 try {
                     backend.runAction(task, sp);
                 } finally {
-                    if (user != null) {
-                        backend.logoff(sh.sessionize(new VdcActionParametersBase()));
+                    if (currentUser != null) {
+                        backend.logoff(logout);
                     }
-                    sh.clean();
                 }
             }
         });

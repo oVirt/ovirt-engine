@@ -28,6 +28,7 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.ovirt.engine.api.common.invocation.Current;
+import org.ovirt.engine.api.common.invocation.CurrentManager;
 import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.model.Link;
@@ -35,7 +36,6 @@ import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.resource.validation.ValidatorLocator;
 import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
-import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.api.restapi.utils.DirectoryEntryIdUtils;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -81,7 +81,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static final Guid NON_EXISTANT_GUID = new Guid("99999999-9999-9999-9999-999999999999");
     protected static final Guid EVERYONE = new Guid("EEE00000-0000-0000-0000-123456789EEE");
     protected static final String[] NAMES = { "sedna", "eris", "orcus" };
-    protected static final String[] BAD_NAMES = { "unknown" };
     protected static final String[] DESCRIPTIONS = { "top notch entity", "a fine example",
             "state of the art" };
     protected static final String URI_ROOT = "http://localhost:8088";
@@ -103,15 +102,12 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected static int BAD_REQUEST = 400;
 
     protected static final String USER = "Aladdin";
-    protected static final String SECRET = "open sesame";
     protected static final String DOMAIN = "Maghreb.Maghreb.Maghreb.com";
     protected static final String NAMESPACE = "*";
 
-    protected static final String sessionId = Guid.newGuid().toString();
+    protected static final String SESSION_ID = Guid.newGuid().toString();
 
     protected BackendLocal backend;
-    protected Current current;
-    protected SessionHelper sessionHelper;
     protected MappingLocator mapperLocator;
     protected ValidatorLocator validatorLocator;
     protected Locale locale;
@@ -122,8 +118,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected MessageBundle messageBundle;
     protected IMocksControl control;
 
-    protected DbUser currentUser;
-
     @Rule
     public final MockConfigRule mcr = new MockConfigRule();
 
@@ -131,19 +125,19 @@ public abstract class AbstractBackendBaseTest extends Assert {
     public void setUp() {
         control = EasyMock.createNiceControl();
         backend = control.createMock(BackendLocal.class);
-        current = control.createMock(Current.class);
 
-        currentUser = new DbUser();
+        DbUser currentUser = new DbUser();
         currentUser.setFirstName(USER);
         currentUser.setLastName(USER);
         currentUser.setDomain(DOMAIN);
         currentUser.setNamespace(NAMESPACE);
         currentUser.setId(GUIDS[0]);
-        expect(current.get(DbUser.class)).andReturn(currentUser).anyTimes();
 
-        sessionHelper = new SessionHelper();
-        sessionHelper.setCurrent(current);
-        sessionHelper.setSessionId(sessionId);
+        Current current = new Current();
+        current.setUser(currentUser);
+        current.setSessionId(SESSION_ID);
+        CurrentManager.put(current);
+
         httpHeaders = control.createMock(HttpHeaders.class);
         locales = new ArrayList<Locale>();
         expect(httpHeaders.getAcceptableLanguages()).andReturn(locales).anyTimes();
@@ -172,6 +166,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
     public void tearDown() {
         Locale.setDefault(locale);
         control.verify();
+        CurrentManager.remove();
     }
 
     protected abstract void init();
@@ -573,7 +568,7 @@ public abstract class AbstractBackendBaseTest extends Assert {
         for (int i = 0; i < values.length; i++) {
             ret[i] = values[i];
         }
-        ret[values.length] = sessionHelper.getSessionId();
+        ret[values.length] = SESSION_ID;
         return ret;
     }
 
@@ -656,7 +651,6 @@ public abstract class AbstractBackendBaseTest extends Assert {
     protected void initBackendResource(BackendResource resource) {
         resource.setBackend(backend);
         resource.setValidatorLocator(validatorLocator);
-        resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

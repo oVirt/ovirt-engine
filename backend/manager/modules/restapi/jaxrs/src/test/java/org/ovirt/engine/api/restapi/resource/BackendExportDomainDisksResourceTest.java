@@ -63,7 +63,6 @@ public class BackendExportDomainDisksResourceTest
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setValidatorLocator(validatorLocator);
-        parent.setSessionHelper(sessionHelper);
         parent.setMessageBundle(messageBundle);
         parent.setHttpHeaders(httpHeaders);
     }

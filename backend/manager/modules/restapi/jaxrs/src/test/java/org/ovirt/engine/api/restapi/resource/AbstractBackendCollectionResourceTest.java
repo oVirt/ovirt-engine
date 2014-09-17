@@ -134,7 +134,6 @@ public abstract class AbstractBackendCollectionResourceTest<R extends BaseResour
                     if (rawSubResource instanceof AbstractBackendResource) {
                         AbstractBackendResource<R, Q> subResource = (AbstractBackendResource<R, Q>)rawSubResource;
                         assertNotNull(subResource.getBackend());
-                        assertNotNull(subResource.getSessionHelper());
                         assertNotNull(subResource.getMappingLocator());
                     }
                 }

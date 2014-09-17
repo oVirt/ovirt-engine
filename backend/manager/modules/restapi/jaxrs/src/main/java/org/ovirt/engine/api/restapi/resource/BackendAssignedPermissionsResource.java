@@ -212,7 +212,7 @@ public class BackendAssignedPermissionsResource
             User user = permission.getUser();
             DbUser dbUser = UserMapper.map(user, null);
             if (dbUser.getDomain() == null) {
-                dbUser.setDomain(getCurrent().get(DbUser.class).getDomain());
+                dbUser.setDomain(getCurrent().getUser().getDomain());
             }
             return dbUser;
         }
@@ -220,7 +220,7 @@ public class BackendAssignedPermissionsResource
             Group group = permission.getGroup();
             DbGroup dbGroup = GroupMapper.map(group, null);
             if (dbGroup.getDomain() == null) {
-                dbGroup.setDomain(getCurrent().get(DbUser.class).getDomain());
+                dbGroup.setDomain(getCurrent().getUser().getDomain());
             }
             return dbGroup;
         }

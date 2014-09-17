@@ -39,7 +39,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
 
     @Override
     public Clusters list() {
-        ApplicationMode appMode = getCurrent().get(ApplicationMode.class);
+        ApplicationMode appMode = getCurrent().getApplicationMode();
 
         if (appMode == ApplicationMode.VirtOnly) {
             return listVirtOnly();

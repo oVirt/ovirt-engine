@@ -58,7 +58,6 @@ public class BackendVmApplicationResourceTest
     private void initCollection() {
         collection.setBackend(backend);
         collection.setMappingLocator(mapperLocator);
-        collection.setSessionHelper(sessionHelper);
         collection.setMessageBundle(messageBundle);
         collection.setHttpHeaders(httpHeaders);
     }

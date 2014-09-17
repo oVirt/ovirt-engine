@@ -21,7 +21,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmPoolUserParameters;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
-import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
@@ -144,7 +143,7 @@ public class BackendVmPoolResource
     @Override
     public Response allocatevm(Action action) {
         return doAction(VdcActionType.AttachUserToVmFromPoolAndRun,
-                        new VmPoolUserParameters(guid,  getCurrent().get(DbUser.class), false),
+                        new VmPoolUserParameters(guid,  getCurrent().getUser(), false),
                         action,
                         new VmQueryIdResolver(VdcQueryType.GetVmByVmId,
                                               IdQueryParameters.class));

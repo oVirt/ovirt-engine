@@ -35,7 +35,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         parent.setBackend(backend);
         parent.setMappingLocator(mapperLocator);
         parent.setValidatorLocator(validatorLocator);
-        parent.setSessionHelper(sessionHelper);
         parent.setMessageBundle(messageBundle);
         parent.setHttpHeaders(httpHeaders);
     }
@@ -90,7 +89,6 @@ public class BackendResourceTest extends AbstractBackendBaseTest {
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setValidatorLocator(validatorLocator);
-        resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

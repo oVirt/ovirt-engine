@@ -32,8 +32,6 @@ public class BackendVmApplicationsResourceTest extends AbstractBackendResourceTe
     protected void init() {
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
-        sessionHelper.setSessionId(sessionId);
-        resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }

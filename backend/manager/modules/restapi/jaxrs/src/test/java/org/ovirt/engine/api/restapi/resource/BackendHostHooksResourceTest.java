@@ -45,7 +45,6 @@ public class BackendHostHooksResourceTest extends AbstractBackendResourceTest<Ho
         resource.setBackend(backend);
         resource.setMappingLocator(mapperLocator);
         resource.setValidatorLocator(validatorLocator);
-        resource.setSessionHelper(sessionHelper);
         resource.setMessageBundle(messageBundle);
         resource.setHttpHeaders(httpHeaders);
     }
