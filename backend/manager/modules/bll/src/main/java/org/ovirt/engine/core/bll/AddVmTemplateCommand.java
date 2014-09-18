@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmWatchdogValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -120,7 +120,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         }
         if (getVm() != null) {
             updateVmDevices();
-            updateVmDisks();
+            mImages.addAll(getVmDisksFromDB());
             setStoragePoolId(getVm().getStoragePoolId());
             isVmInDb = true;
         } else if (getVdsGroup() != null && parameterMasterVm != null) {
@@ -160,10 +160,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         VmDeviceUtils.setVmDevices(getVm().getStaticData());
     }
 
-    protected void updateVmDisks() {
+    protected List<DiskImage> getVmDisksFromDB() {
         VmHandler.updateDisksFromDb(getVm());
         VmHandler.filterImageDisksForVM(getVm(), false, false, true);
-        mImages.addAll(getVm().getDiskList());
+        return getVm().getDiskList();
     }
 
     @Override
@@ -438,7 +438,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         return getParameters().getBaseTemplateId() != null;
     }
 
-    private boolean imagesRelatedChecks() {
+    protected boolean imagesRelatedChecks() {
         // images related checks
         if (!mImages.isEmpty()) {
             if (!validateVmNotDuringSnapshot()) {
@@ -457,7 +457,7 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             }
 
             MultipleStorageDomainsValidator storageDomainsValidator =
-                    new MultipleStorageDomainsValidator(getStoragePoolId(), sourceImageDomainsImageMap.keySet());
+                    getStorageDomainsValidator(getStoragePoolId(), sourceImageDomainsImageMap.keySet());
             if (!validate(storageDomainsValidator.allDomainsExistAndActive())) {
                 return false;
             }
@@ -490,26 +490,25 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 }
                 storageDomains.put(destImageDomain, storage);
             }
-            // update vm snapshots for storage free space check
-            ImagesHandler.fillImagesBySnapshots(getVm());
-
-            Map<StorageDomain, Integer> domainMap =
-                    StorageDomainValidator.getSpaceRequirementsForStorageDomains(
-                            ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true),
-                            storageDomains,
-                            diskInfoDestinationMap);
-
-            for (Map.Entry<StorageDomain, Integer> entry : domainMap.entrySet()) {
-                if (!doesStorageDomainhaveSpaceForRequest(entry.getKey(), entry.getValue())) {
-                    return false;
-                }
-            }
+            return validateSpaceRequirements();
         }
         return true;
     }
 
-    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long spaceForRequest) {
-        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(spaceForRequest));
+    protected boolean validateSpaceRequirements() {
+        // update vm snapshots for storage free space check
+        ImagesHandler.fillImagesBySnapshots(getVm());
+        List<DiskImage>  disksList =  ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), true, false, true);
+        List<DiskImage> disksListForStorageChecks = createDiskDummiesForSpaceValidations(disksList);
+        MultipleStorageDomainsValidator multipleSdValidator = getStorageDomainsValidator(
+                getVm().getStoragePoolId(), getStorageGuidSet());
+
+        return (validate(multipleSdValidator.allDomainsWithinThresholds())
+                && validate(multipleSdValidator.allDomainsHaveSpaceForClonedDisks(disksListForStorageChecks)));
+    }
+
+    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> disks) {
+        return new MultipleStorageDomainsValidator(spId, disks);
     }
 
     protected boolean validateVmNotDuringSnapshot() {
@@ -522,6 +521,23 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             destImageDomains.add(diskImage.getStorageIds().get(0));
         }
         return destImageDomains;
+    }
+
+    /**
+     * Space Validations are done using data extracted from the disks. The disks in question in this command
+     * don't have all the needed data, and in order not to contaminate the command's data structures, an alter
+     * one is created specifically for this validation - hence dummy.
+     * @param disksList
+     * @return
+     */
+    protected List<DiskImage> createDiskDummiesForSpaceValidations(Collection<DiskImage> disksList) {
+        List<DiskImage> dummies = new ArrayList<>(disksList.size());
+        for (DiskImage image : disksList) {
+            Guid targetSdId = diskInfoDestinationMap.get(image.getId()).getStorageIds().get(0);
+            DiskImage dummy = ImagesHandler.createDiskImageWithExcessData(image, targetSdId);
+            dummies.add(dummy);
+        }
+        return dummies;
     }
 
     protected void addVmTemplateToDb() {

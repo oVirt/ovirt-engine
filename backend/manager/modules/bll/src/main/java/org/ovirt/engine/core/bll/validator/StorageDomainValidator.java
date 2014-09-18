@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
@@ -262,26 +261,6 @@ public class StorageDomainValidator {
 
         return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 storageName());
-    }
-
-    /**
-     * @deprecated
-     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
-     * hasSpaceForNewDisk, according to the situation.
-     */
-    @Deprecated
-    public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Collection<DiskImage> images,
-            Map<Guid, StorageDomain> storageDomains, Map<Guid, DiskImage> imageToDestinationDomainMap) {
-        Map<DiskImage, StorageDomain> spaceMap = new HashMap<DiskImage, StorageDomain>();
-        for (DiskImage image : images) {
-            Guid storageId = imageToDestinationDomainMap.get(image.getId()).getStorageIds().get(0);
-            StorageDomain domain = storageDomains.get(storageId);
-            if (domain == null) {
-                domain = DbFacade.getInstance().getStorageDomainDao().get(storageId);
-            }
-            spaceMap.put(image, domain);
-        }
-        return StorageDomainValidator.getSpaceRequirementsForStorageDomains(spaceMap);
     }
 
     /**

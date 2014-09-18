@@ -2,10 +2,17 @@ package org.ovirt.engine.core.bll;
 
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyList;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -13,8 +20,13 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.action.AddVmTemplateParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
+import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -24,35 +36,42 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
+import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
-/** A test case for {@link AddVmTemplateCommand} */
+/**
+ * A test case for {@link AddVmTemplateCommand}
+ */
 @RunWith(MockitoJUnitRunner.class)
 public class AddVmTemplateCommandTest {
 
+    @ClassRule
+    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
     private AddVmTemplateCommand<AddVmTemplateParameters> cmd;
     private VM vm;
     private VDSGroup vdsGroup;
+    private Guid spId;
     @Mock
     private VmDAO vmDao;
-
     @Mock
     private VdsGroupDAO vdsGroupDao;
-
+    @Mock
+    private StoragePoolDAO storagePoolDao;
     @Mock
     private OsRepository osRepository;
-
-    @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.VmPriorityMaxValue, 100));
+    @Mock
+    private MultipleStorageDomainsValidator multipleSdValidator;
+    @Mock
+    private DiskImagesValidator diskImagesValidator;
 
     @Before
     public void setUp() {
         // The VM to use
         Guid vmId = Guid.newGuid();
         Guid vdsGroupId = Guid.newGuid();
-        Guid spId = Guid.newGuid();
+        spId = Guid.newGuid();
 
         vm = new VM();
         vm.setId(vmId);
@@ -77,7 +96,8 @@ public class AddVmTemplateCommandTest {
         cmd = spy(new AddVmTemplateCommand<AddVmTemplateParameters>(params) {
 
             @Override
-            protected void updateVmDisks() {
+            protected List<DiskImage> getVmDisksFromDB() {
+                return getDisksList(spId);
             }
 
             @Override
@@ -108,9 +128,31 @@ public class AddVmTemplateCommandTest {
     public void testCanDoAction() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
         vm.setStatus(VMStatus.Up);
-
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd, VdcBllMessages.VMT_CANNOT_CREATE_TEMPLATE_FROM_DOWN_VM);
     }
+
+    @Test
+    public void sufficientStorageSpace() {
+        setupForStorageTests();
+        assertTrue(cmd.imagesRelatedChecks());
+    }
+
+    @Test
+    public void storageSpaceNotWithinThreshold() {
+        setupForStorageTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsWithinThresholds();
+        assertFalse(cmd.imagesRelatedChecks());
+    }
+
+    @Test
+    public void insufficientStorageSpace() {
+        setupForStorageTests();
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
+                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        assertFalse(cmd.imagesRelatedChecks());
+    }
+
 
     @Test
     public void testBeanValidations() {
@@ -121,5 +163,33 @@ public class AddVmTemplateCommandTest {
     public void testPatternBasedNameFails() {
         cmd.getParameters().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for Template", cmd.validateInputs());
+    }
+
+    private void setupForStorageTests() {
+        doReturn(true).when(cmd).validateVmNotDuringSnapshot();
+        vm.setStatus(VMStatus.Down);
+        doReturn(multipleSdValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
+        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
+        doReturn(ValidationResult.VALID).when(diskImagesValidator).diskImagesNotIllegal();
+
+        setupStoragePool();
+    }
+
+    private void setupStoragePool() {
+        StoragePool storagePool = new StoragePool();
+        storagePool.setId(spId);
+        storagePool.setStatus(StoragePoolStatus.Up);
+        doReturn(storagePoolDao).when(cmd).getStoragePoolDAO();
+        when(storagePoolDao.get(spId)).thenReturn(storagePool);
+    }
+
+    private List<DiskImage> getDisksList(Guid spId) {
+        List disksList = new ArrayList(1);
+        DiskImage disk = new DiskImage();
+        disk.setStorageIds(new ArrayList<>(Collections.singletonList(spId)));
+        disksList.add(disk);
+        return disksList;
     }
 }
