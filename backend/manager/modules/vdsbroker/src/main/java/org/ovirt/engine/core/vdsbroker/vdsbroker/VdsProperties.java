@@ -372,8 +372,13 @@ public final class VdsProperties {
     public static final String action = "action";
 
     // Network QoS
-    public static final String HOST_QOS_INBOUND = "qosInbound";
-    public static final String HOST_QOS_OUTBOUND = "qosOutbound";
+    public static final String HOST_QOS = "hostQos";
+    public static final String HOST_QOS_INBOUND = "in";
+    public static final String HOST_QOS_OUTBOUND = "out";
+    public static final String HOST_QOS_LINKSHARE = "ls";
+    public static final String HOST_QOS_UPPERLIMIT = "ul";
+    public static final String HOST_QOS_REALTIME = "rt";
+    public static final String HOST_QOS_AVERAGE = "m2";
     public static final String QOS_INBOUND = "inbound";
     public static final String QOS_OUTBOUND = "outbound";
     public static final String QOS_AVERAGE = "average";
