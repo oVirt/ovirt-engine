@@ -9,6 +9,7 @@
 		<include name="common/config/**" />
 
 		<!-- Business entities -->
+		<include name="common/businessentities/TemplateProvisioningMethod.java" />
 		<include name="common/businessentities/HasStoragePool.java" />
 		<include name="common/businessentities/BusinessEntity.java" />
 		<include name="common/businessentities/BusinessEntityWithStatus.java" />
