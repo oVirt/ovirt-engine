@@ -5,6 +5,7 @@ import java.util.Calendar;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
@@ -23,7 +24,11 @@ public class RegisterDiskCommand <T extends RegisterDiskParameters> extends Base
     private static final String DEFAULT_REGISTRATION_FORMAT = "RegisteredDisk_%1$tY-%1$tm-%1$td_%1$tH-%1$tM-%1$tS";
 
     public RegisterDiskCommand(T parameters) {
-        super(parameters);
+        this(parameters, null);
+    }
+
+    public RegisterDiskCommand(T parameters, CommandContext commandContext) {
+        super(parameters, commandContext);
         setStoragePoolId(parameters.getDiskImage().getStoragePoolId());
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.Disk, parameters.getDiskImage().getId()));
     }
