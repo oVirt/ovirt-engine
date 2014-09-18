@@ -12,7 +12,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -24,6 +26,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
+import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.MoveHost;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.NewHostModel;
@@ -416,6 +419,19 @@ public class ClusterGuideModel extends GuideModel
                         model.getCommands().add(tempVar2);
                     }
                 }));
+
+        ListModel<VDSGroup> clusterModel = model.getCluster();
+        if (clusterModel.getSelectedItem() != null) {
+            VDSGroup cluster = clusterModel.getSelectedItem();
+            Boolean jsonSupported =
+                    (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
+                            cluster.getcompatibility_version().toString());
+            if (jsonSupported) {
+                model.getProtocol().setEntity(true);
+            } else {
+                model.getProtocol().setEntity(false);
+            }
+        }
     }
 
     public void onConfirmPMHost()
@@ -473,6 +489,7 @@ public class ClusterGuideModel extends GuideModel
         host.setVdsName(model.getName().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(model.getPort().getEntity());
+        host.setProtocol(VdsProtocol.fromValue(model.getProtocol().getEntity() ? VdsProtocol.STOMP.toString() : VdsProtocol.XML.toString()));
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());

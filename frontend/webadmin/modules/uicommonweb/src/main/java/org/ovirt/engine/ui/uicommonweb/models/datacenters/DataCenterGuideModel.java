@@ -27,7 +27,9 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.interfaces.SearchType;
+import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -62,8 +64,11 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.RegexValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ITaskTarget;
@@ -1513,7 +1518,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
     public void addHost()
     {
-        HostModel model = new NewHostModel();
+        final HostModel model = new NewHostModel();
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().newHostTitle());
         model.setHelpTag(HelpTag.new_host_guide_me);
@@ -1526,6 +1531,25 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
+
+        model.getCluster().getSelectedItemChangedEvent().addListener(new IEventListener() {
+
+            @Override
+            public void eventRaised(Event ev, Object sender, EventArgs args) {
+                ListModel<VDSGroup> clusterModel = model.getCluster();
+                if (clusterModel.getSelectedItem() != null) {
+                    VDSGroup cluster = clusterModel.getSelectedItem();
+                    Boolean jsonSupported =
+                            (Boolean) AsyncDataProvider.getConfigValuePreConverted(ConfigurationValues.JsonProtocolSupported,
+                                    cluster.getcompatibility_version().toString());
+                    if (jsonSupported) {
+                        model.getProtocol().setEntity(true);
+                    } else {
+                        model.getProtocol().setEntity(false);
+                    }
+                }
+            }
+        });
 
         UICommand tempVar = new UICommand("OnConfirmPMHost", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
@@ -1586,6 +1610,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         host.setVdsName(model.getName().getEntity());
         host.setHostName(model.getHost().getEntity());
         host.setPort(model.getPort().getEntity());
+        host.setProtocol(VdsProtocol.fromValue(model.getProtocol().getEntity() ? VdsProtocol.STOMP.toString() : VdsProtocol.XML.toString()));
         host.setSshPort(model.getAuthSshPort().getEntity());
         host.setSshUsername(model.getUserName().getEntity());
         host.setSshKeyFingerprint(model.getFetchSshFingerprint().getEntity());
