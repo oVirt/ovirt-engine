@@ -3083,11 +3083,17 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Peak cannot be set lower than Average.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. All three QoS parameters are required to configure QoS in a certain direction, but the following network(s) are missing some of them: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES_LIST}.")
+    @DefaultStringValue("Cannot ${action} ${type}. Weighted share must be specified to complete QoS configuration.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES();
 
-    @DefaultStringValue("Cannot ${action} ${type}. QoS cannot be configured such that Peak is set lower than Average, but it was configured so on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE_LIST}.")
-    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
+    @DefaultStringValue("Cannot ${action} ${type}. Weighted share must be specified to complete QoS configuration, but the following network(s) are missing it: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. If both are provided, rate limit must not be lower than committed rate.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INCONSISTENT_VALUES();
+
+    @DefaultStringValue("Cannot ${action} ${type}. If both are provided, rate limit must not be lower than committed rate. However, this is not the case with the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
     String ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES();

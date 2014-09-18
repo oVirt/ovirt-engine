@@ -16,7 +16,7 @@ public class NetworkQosValidator extends QosValidator<NetworkQoS> {
      * Verify that if any inbound/outbound capping was specified, that all three parameters are present.
      */
     @Override
-    public ValidationResult allValuesPresent() {
+    public ValidationResult requiredValuesPresent() {
         return (getQos() != null)
                 && (missingValue(getQos().getInboundAverage(), getQos().getInboundPeak(), getQos().getInboundBurst())
                 || missingValue(getQos().getOutboundAverage(), getQos().getOutboundPeak(), getQos().getOutboundBurst()))

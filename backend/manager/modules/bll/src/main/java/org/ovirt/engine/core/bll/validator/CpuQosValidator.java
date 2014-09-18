@@ -18,7 +18,7 @@ public class CpuQosValidator extends QosValidator<CpuQos> {
     }
 
     @Override
-    public ValidationResult allValuesPresent() {
+    public ValidationResult requiredValuesPresent() {
         if (getQos().getCpuLimit() == null) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_QOS_MISSING_VALUES);
         }

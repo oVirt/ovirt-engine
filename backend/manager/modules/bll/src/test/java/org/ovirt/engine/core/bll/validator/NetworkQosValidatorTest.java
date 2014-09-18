@@ -122,12 +122,12 @@ public class NetworkQosValidatorTest {
     }
 
     private void valuesPresentTest(Matcher<ValidationResult> matcher) {
-        assertThat(validator.allValuesPresent(), matcher);
+        assertThat(validator.requiredValuesPresent(), matcher);
     }
 
     @Test
     public void valuesPresentNullInput() {
-        assertThat(nullValidator.allValuesPresent(), isValid());
+        assertThat(nullValidator.requiredValuesPresent(), isValid());
     }
 
     @Test

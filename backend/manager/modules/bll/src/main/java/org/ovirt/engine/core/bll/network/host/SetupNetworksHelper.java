@@ -257,11 +257,13 @@ public class SetupNetworksHelper {
                 }
 
                 NetworkQosValidator qosValidator = new NetworkQosValidator(iface.getQos());
-                if (qosValidator.allValuesPresent() != ValidationResult.VALID) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_MISSING_VALUES, iface.getNetworkName());
+                if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
+                            iface.getNetworkName());
                 }
                 if (qosValidator.peakConsistentWithAverage() != ValidationResult.VALID) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE, iface.getNetworkName());
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
+                            iface.getNetworkName());
                 }
             }
         }

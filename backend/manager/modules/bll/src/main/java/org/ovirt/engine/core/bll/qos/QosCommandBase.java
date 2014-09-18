@@ -32,7 +32,7 @@ public abstract class QosCommandBase<T extends QosBase, M extends QosValidator<T
     protected boolean canDoAction() {
         M validator = getQosValidator(getQos());
         return (validateParameters()
-                && validate(validator.allValuesPresent()));
+                && validate(validator.requiredValuesPresent()));
     }
 
     public T getQos() {

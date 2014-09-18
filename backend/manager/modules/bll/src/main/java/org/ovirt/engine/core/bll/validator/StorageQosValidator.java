@@ -25,7 +25,7 @@ public class StorageQosValidator extends QosValidator<StorageQos> {
      * write value.
      */
     @Override
-    public ValidationResult allValuesPresent() {
+    public ValidationResult requiredValuesPresent() {
         if (missingCategoryValues(getQos().getMaxThroughput(),
                 getQos().getMaxReadThroughput(),
                 getQos().getMaxWriteThroughput())

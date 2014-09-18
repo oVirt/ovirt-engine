@@ -83,7 +83,7 @@ public abstract class QosValidator<T extends QosBase> {
     }
 
     /**
-     * Verify that if any capping was specified, that all parameters are present.
+     * Verify that if any capping was specified, that all required parameters are present.
      */
-    public abstract ValidationResult allValuesPresent();
+    public abstract ValidationResult requiredValuesPresent();
 }
