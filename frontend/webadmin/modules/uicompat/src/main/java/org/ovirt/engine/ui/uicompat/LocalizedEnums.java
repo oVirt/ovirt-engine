@@ -431,6 +431,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___GLUSTER_GEOREP_SESSION_REFRESH_FAILED();
 
+    String AuditLogType___GEOREP_SESSION_STOP();
+
+    String AuditLogType___GEOREP_SESSION_STOP_FAILED();
+
+    String AuditLogType___GEOREP_SESSION_DELETE();
+
+    String AuditLogType___GEOREP_SESSION_DELETE_FAILED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();
@@ -739,6 +747,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___ManageGlusterService();
 
     String VdcActionType___RefreshGeoRepSessions();
+
+    String VdcActionType___StopGeoRepSession();
+
+    String VdcActionType___DeleteGeoRepSession();
 
     String VdcActionType___ConnectStorageToVds();
 

@@ -3072,6 +3072,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Another operation is in progress on this geo-replication session. Please try again.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is stopped.")
+    String ACTION_TYPE_FAILED_GEOREP_SESSION_STOPPED();
+
     @DefaultStringValue("Cannot ${action} ${type}. All three values are needed in order to define QoS on each network directions.")
     String ACTION_TYPE_FAILED_NETWORK_QOS_MISSING_VALUES();
 
