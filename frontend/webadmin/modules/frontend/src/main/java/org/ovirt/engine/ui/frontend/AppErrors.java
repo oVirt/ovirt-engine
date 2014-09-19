@@ -3069,6 +3069,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session not found.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_INVALID();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Geo-replication session is already started.")
+    String ACTION_TYPE_FAILED_GEOREP_SESSION_ALREADY_STARTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Another operation is in progress on this geo-replication session. Please try again.")
     String ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED();
 
