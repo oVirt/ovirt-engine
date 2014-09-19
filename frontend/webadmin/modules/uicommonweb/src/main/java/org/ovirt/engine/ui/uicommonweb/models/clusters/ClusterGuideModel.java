@@ -430,6 +430,7 @@ public class ClusterGuideModel extends GuideModel
                 model.getProtocol().setEntity(true);
             } else {
                 model.getProtocol().setEntity(false);
+                model.getProtocol().setIsChangable(false);
             }
         }
     }
