@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.common.action;
 
 import java.util.HashMap;
+
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 
 public enum VdcActionType {
@@ -307,6 +308,7 @@ public enum VdcActionType {
     RefreshGeoRepSessions(1426, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StopGeoRepSession(1427, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     DeleteGeoRepSession(1428, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    StartGlusterVolumeGeoRep(1429, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Scheduling Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
