@@ -53,7 +53,7 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
         if (!isInternalExecution()) {
             return Collections.singletonMap(getVdsGroupId().toString(),
-                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS));
         }
         return super.getExclusiveLocks();
     }
@@ -180,4 +180,5 @@ public abstract class GlusterCommandBase<T extends VdcActionParametersBase> exte
     protected GlusterBrickDao getGlusterBrickDao() {
         return getDbFacade().getGlusterBrickDao();
     }
+
 }

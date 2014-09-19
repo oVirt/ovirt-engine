@@ -17,6 +17,8 @@ public enum LockingGroup {
     REGISTER_VDS,
     VM_SNAPSHOTS,
     GLUSTER,
+    /** this group is used to lock geo-replication session */
+    GLUSTER_GEOREP,
     USER_VM_POOL,
     /** This group is used to lock template which is in export domain */
     REMOTE_TEMPLATE,
