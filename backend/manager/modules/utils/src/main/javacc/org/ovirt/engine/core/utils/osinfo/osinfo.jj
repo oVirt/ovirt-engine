@@ -64,6 +64,7 @@ void devices() : {} {
     | ("diskInterfaces" hardwareInterfacesValue())
     | ("maxPciDevices" intValue())
     | ("hyperv.enabled" booleanValue())
+    | ("floppy.support" booleanValue())
     )
 }
 

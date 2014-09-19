@@ -551,6 +551,19 @@ public class AsyncDataProvider {
         Frontend.getInstance().runPublicQuery(VdcQueryType.GetAAAProfileList, new VdcQueryParametersBase(), aQuery);
     }
 
+    public static void isFloppySupported(AsyncQuery aQuery, Integer osId, Version version) {
+        aQuery.converterCallback = new IAsyncConverter<Boolean>() {
+            @Override
+            public Boolean Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source != null ? (Boolean) source : Boolean.FALSE;
+            }
+        };
+        OsQueryParameters params = new OsQueryParameters(OsRepositoryVerb.GetFloppySupport, osId, version);
+
+        Frontend.getInstance().runQuery(VdcQueryType.OsRepository, params, aQuery);
+    }
+
     public void getIsoDomainByDataCenterId(AsyncQuery aQuery, Guid dataCenterId) {
         aQuery.converterCallback = new IAsyncConverter() {
             @Override

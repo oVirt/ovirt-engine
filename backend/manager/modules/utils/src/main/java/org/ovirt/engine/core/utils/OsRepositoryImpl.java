@@ -405,6 +405,11 @@ public enum OsRepositoryImpl implements OsRepository {
     }
 
     @Override
+    public boolean isFloppySupported(int osId, Version version) {
+        return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "devices.floppy.support", version), false);
+    }
+
+    @Override
     public boolean isTimezoneValueInteger(int osId, Version version) {
         return getBoolean(getValueByVersion(idToUnameLookup.get(osId), "isTimezoneTypeInteger", version), false);
     }

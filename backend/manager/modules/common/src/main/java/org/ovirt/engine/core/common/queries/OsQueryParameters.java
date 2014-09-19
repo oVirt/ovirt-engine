@@ -48,6 +48,7 @@ public class OsQueryParameters extends VdcQueryParametersBase {
         GetOsIds,
         GetMinimumOsRam,
         GetMaxOsRam,
+        GetFloppySupport,
         GetDiskInterfaces,
         GetNetworkDevices,
         GetDiskHotpluggableInterfaces,

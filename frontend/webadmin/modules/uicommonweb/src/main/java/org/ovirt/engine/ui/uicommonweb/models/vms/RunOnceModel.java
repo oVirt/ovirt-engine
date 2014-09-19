@@ -751,6 +751,19 @@ public abstract class RunOnceModel extends Model
                 vncProtocol : qxlProtocol);
         getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
         getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
+
+        AsyncDataProvider.isFloppySupported(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                Boolean isFloppySupported = (Boolean) returnValue;
+
+                if (!isFloppySupported.booleanValue()) {
+                    getAttachFloppy().setIsAvailable(false);
+                    getFloppyImage().setIsAvailable(false);
+                }
+
+            }
+        }), vm.getOs(), vm.getVdsGroupCompatibilityVersion());
     }
 
     private void initVmInitEnabled(VmInit vmInit, boolean isInitialized) {

@@ -57,6 +57,9 @@ public class OsRepositoryQuery<P extends OsQueryParameters> extends QueriesComma
             case HasNicHotplugSupport:
                 setReturnValue(osRepository.hasNicHotplugSupport(getParameters().getOsId(), getParameters().getVersion()));
                 break;
+            case GetFloppySupport:
+                setReturnValue(osRepository.isFloppySupported(getParameters().getOsId(), getParameters().getVersion()));
+                break;
             case GetDiskInterfaces:
                 setReturnValue(osRepository.getDiskInterfaces(getParameters().getOsId(), getParameters().getVersion()));
                 break;

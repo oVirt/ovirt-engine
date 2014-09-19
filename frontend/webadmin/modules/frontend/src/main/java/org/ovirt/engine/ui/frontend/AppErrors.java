@@ -1900,6 +1900,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Selected display type is not supported by the operating system.")
     String ACTION_TYPE_FAILED_ILLEGAL_VM_DISPLAY_TYPE_IS_NOT_SUPPORTED_BY_OS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Floppy devices are not supported by the operating system.")
+    String ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Selected operation system does not support VirtIO-SCSI. Please disable VirtIO-SCSI for the VM.")
     String ACTION_TYPE_FAILED_ILLEGAL_OS_TYPE_DOES_NOT_SUPPORT_VIRTIO_SCSI();
 

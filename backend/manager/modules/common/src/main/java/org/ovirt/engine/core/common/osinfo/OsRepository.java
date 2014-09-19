@@ -226,6 +226,13 @@ public interface OsRepository {
     String getCdInterface(int osId, Version version);
 
     /**
+     * @param osId
+     * @param version
+     * @return if there is floppy support in the given os
+     */
+    boolean isFloppySupported(int osId, Version version);
+
+    /**
      * early windows versions require a numeric identifier for sysprep to tell
      * the timezone. In later versions this was rectified and they use a universal name.
      * @param osId

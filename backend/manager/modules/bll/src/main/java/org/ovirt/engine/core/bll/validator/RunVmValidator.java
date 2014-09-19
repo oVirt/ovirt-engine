@@ -128,6 +128,7 @@ public class RunVmValidator {
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
                 validate(validateStatelessVm(vm, runVmParam.getRunAsStateless()), messages) &&
+                validate(validateFloppy(), messages) &&
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
@@ -146,6 +147,16 @@ public class RunVmValidator {
 
         if (vm.getMemSizeMb() > maxSize) {
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MEMORY_EXCEEDS_SUPPORTED_LIMIT);
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateFloppy() {
+
+        if (StringUtils.isNotEmpty(runVmParam.getFloppyPath()) && !VmValidationUtils.isFloppySupported(vm.getOs(),
+                vm.getVdsGroupCompatibilityVersion())) {
+            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_ILLEGAL_FLOPPY_IS_NOT_SUPPORTED_BY_OS);
         }
 
         return ValidationResult.VALID;

@@ -52,6 +52,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel7/resources/maximum/ram").put("value", "2048");
         preferences.node("/os/rhel7/devices/display/protocols").put("value", "VNC/cirrus,SPICE/qxl");
         preferences.node("/os/rhel7/devices/balloon/enabled").put("value", "true");
+        preferences.node("/os/rhel7/devices/floppy/support").put("value", "true");
         preferences.node("/os/rhel7/sysprepPath").put("value", PATH_TO_SYSPREP);
         preferences.node("/os/rhel7/productKey").put("value", SOME_PRODUCT_KEY);
         preferences.node("/os/rhel7/devices/audio").put("value", SOUND_DEVICE);
@@ -180,6 +181,11 @@ public class OsRepositoryImplTest {
 
         assertTrue(isSizeCorrect);
         assertTrue(containsSameElements);
+    }
+
+    @Test
+    public void testFloppySupport() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.isFloppySupported(777, null));
     }
 
     @Test

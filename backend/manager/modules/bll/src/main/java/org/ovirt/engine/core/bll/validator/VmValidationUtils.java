@@ -40,6 +40,18 @@ public class VmValidationUtils {
     }
 
     /**
+     * Check if the OS type supports floppy devices
+     *
+     * @param osId The OS identifier.
+     * @param clusterVersion The cluster version.
+     *
+     * @return If the floppy device is supported by the OS type.
+     */
+    public static boolean isFloppySupported(int osId, Version clusterVersion) {
+        return getOsRepository().isFloppySupported(osId, clusterVersion);
+    }
+
+    /**
      * Check if the OS type support the disk interface
      *
      * @param osId The OS identifier.
