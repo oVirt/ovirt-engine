@@ -57,6 +57,10 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
+            osetupcons.ConfigEnv.SKIP_FIREWALL_REVIEW,
+            False
+        )
+        self.environment.setdefault(
             osetupcons.ConfigEnv.VALID_FIREWALL_MANAGERS,
             ''
         )
@@ -222,6 +226,25 @@ class Plugin(plugin.PluginBase):
                 osetupcons.ConfigEnv.FIREWALL_MANAGER
             ]
         ).enable()
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_VALIDATION,
+        condition=lambda self: self.environment[
+            osetupcons.ConfigEnv.UPDATE_FIREWALL
+        ],
+        after=(
+            otopicons.Stages.FIREWALLD_VALIDATION,
+            otopicons.Stages.IPTABLES_VALIDATION,
+        ),
+    )
+    def _review_config(self):
+        if not self.environment[
+            osetupcons.ConfigEnv.SKIP_FIREWALL_REVIEW
+        ]:
+            manager = self.environment[
+                osetupcons.ConfigEnv.FIREWALL_MANAGER
+            ]
+            manager.review_config()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

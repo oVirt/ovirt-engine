@@ -68,5 +68,8 @@ class FirewallManagerBase(base.Base):
     def print_manual_configuration_instructions(self):
         pass
 
+    def review_config(self):
+        pass
+
 
 # vim: expandtab tabstop=4 shiftwidth=4
