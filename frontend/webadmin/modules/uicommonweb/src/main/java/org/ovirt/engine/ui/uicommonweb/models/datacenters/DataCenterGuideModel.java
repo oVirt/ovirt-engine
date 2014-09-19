@@ -1535,6 +1535,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getProtocol().setEntity(true);
                     } else {
                         model.getProtocol().setEntity(false);
+                        model.getProtocol().setIsChangable(false);
                     }
                 }
             }

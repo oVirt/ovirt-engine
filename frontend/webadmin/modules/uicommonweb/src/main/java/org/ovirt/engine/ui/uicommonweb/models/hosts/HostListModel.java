@@ -693,6 +693,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                         hostModel.getProtocol().setEntity(true);
                     } else {
                         hostModel.getProtocol().setEntity(false);
+                        hostModel.getProtocol().setIsChangable(false);
                     }
                 }
             }
