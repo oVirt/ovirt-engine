@@ -40,11 +40,6 @@
 			display: block;
 		}
 
-		.diskTypeRadioButton {
-			margin-right: 21px;
-			padding-left: 9px;
-		}
-
 		.mainPanel {
 			width: 100%;
 		}
@@ -96,10 +91,7 @@
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
 			<ge:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel} avw_contentWidget_pfly_fix">
-			<g:RadioButton ui:field="internalDiskRadioButton" name="disktype" text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
-			<g:RadioButton ui:field="externalDiskRadioButton" name="disktype" text="{constants.externalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
-		</g:HorizontalPanel>
+        <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
 				<g:VerticalPanel>

@@ -22,6 +22,7 @@ import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
 import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
@@ -71,7 +72,6 @@ import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.RadioButton;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
 public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDiskModel> {
@@ -196,16 +196,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     InfoIcon interfaceInfoIcon;
 
     @UiField
-    @Ignore
-    @WithElementId
-    RadioButton internalDiskRadioButton;
-
-    @UiField
-    @Ignore
-    @WithElementId
-    RadioButton externalDiskRadioButton;
-
-    @UiField
     VerticalPanel createDiskPanel;
 
     @UiField
@@ -221,7 +211,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     HorizontalPanel topPanel;
 
     @UiField
-    HorizontalPanel diskTypePanel;
+    RadioButtonsHorizontalPanel diskTypePanel;
 
     @Ignore
     @WithElementId
@@ -246,6 +236,9 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Ignore
     AbstractStorageView storageView;
 
+    @UiField
+    CommonApplicationConstants constants;
+
     private final Driver driver = GWT.create(Driver.class);
 
     boolean isNewLunDiskEnabled;
@@ -260,6 +253,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                              boolean isLunDiskEnabled) {
         this.isNewLunDiskEnabled = isLunDiskEnabled;
         this.progressContent = createProgressContentWidget();
+        this.constants = constants;
         initManualWidgets(constants, resources, templates);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -641,28 +635,30 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
-        internalDiskRadioButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                disk.getIsInternal().setEntity(true);
-                revealDiskPanel(disk);
-            }
-        });
-        externalDiskRadioButton.addClickHandler(new ClickHandler() {
-            @Override
-            public void onClick(ClickEvent event) {
-                disk.getIsInternal().setEntity(false);
-                revealStorageView(disk);
-                revealDiskPanel(disk);
-            }
-        });
-        internalDiskRadioButton.setValue(disk.getIsNew() ? true
-                : disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE);
-        externalDiskRadioButton.setValue(disk.getIsNew() ? false
-                : disk.getDisk().getDiskStorageType() == DiskStorageType.LUN);
+        diskTypePanel.addRadioButton(
+                constants.internalDisk(),
+                disk.getIsNew() || disk.getDisk().getDiskStorageType() == DiskStorageType.IMAGE,
+                disk.getIsNew(),
+                new ClickHandler() {
+                @Override
+                public void onClick(ClickEvent event) {
+                    disk.getIsInternal().setEntity(true);
+                    revealDiskPanel(disk);
+                }
+            });
 
-        internalDiskRadioButton.setEnabled(disk.getIsNew());
-        externalDiskRadioButton.setEnabled(disk.getIsNew());
+        diskTypePanel.addRadioButton(
+                constants.externalDisk(),
+                !disk.getIsNew() && disk.getDisk().getDiskStorageType() == DiskStorageType.LUN,
+                disk.getIsNew(),
+                new ClickHandler() {
+                    @Override
+                    public void onClick(ClickEvent event) {
+                        disk.getIsInternal().setEntity(false);
+                        revealStorageView(disk);
+                        revealDiskPanel(disk);
+                    }
+                });
 
         storageModel = new StorageModel(new NewEditStorageModelBehavior());
 
@@ -727,7 +723,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     private void revealDiskPanel(final AbstractDiskModel disk) {
         boolean isAttachDisk = disk.getIsAttachDisk().getEntity();
-        boolean isInternal = internalDiskRadioButton.getValue();
+        boolean isInternal = disk.getIsInternal().getEntity();
         boolean isInVm = disk.getVm() != null;
 
         // Hide tables
@@ -808,9 +804,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Override
     public int setTabIndexes(int nextTabIndex) {
         attachEditor.setTabIndex(nextTabIndex++);
-
-        internalDiskRadioButton.setTabIndex(nextTabIndex++);
-        externalDiskRadioButton.setTabIndex(nextTabIndex++);
         sizeEditor.setTabIndex(nextTabIndex++);
         sizeExtendEditor.setTabIndex(nextTabIndex++);
         aliasEditor.setTabIndex(nextTabIndex++);
