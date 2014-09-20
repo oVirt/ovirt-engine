@@ -61,6 +61,18 @@ public class VmDiskListModel extends VmDiskListModelBase
         privateNewCommand = value;
     }
 
+    private UICommand attachCommand;
+
+    public UICommand getAttachCommand()
+    {
+        return attachCommand;
+    }
+
+    private void setAttachCommand(UICommand value)
+    {
+        attachCommand = value;
+    }
+
     private UICommand privateEditCommand;
 
     @Override
@@ -205,6 +217,7 @@ public class VmDiskListModel extends VmDiskListModelBase
         setHashName("disks"); //$NON-NLS-1$
 
         setNewCommand(new UICommand("New", this)); //$NON-NLS-1$
+        setAttachCommand(new UICommand("Attach", this)); //$NON-NLS-1$
         setEditCommand(new UICommand("Edit", this)); //$NON-NLS-1$
         setRemoveCommand(new UICommand("Remove", this)); //$NON-NLS-1$
         setPlugCommand(new UICommand("Plug", this)); //$NON-NLS-1$
@@ -268,20 +281,32 @@ public class VmDiskListModel extends VmDiskListModelBase
         updateActionAvailability();
     }
 
-    private void newEntity()
-    {
-        final VM vm = getEntity();
+    private void newEntity() {
 
-        if (getWindow() != null)
-        {
+        if (getWindow() != null) {
             return;
         }
 
-        NewDiskModel model = new NewDiskModel();
-        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
-        model.setHelpTag(HelpTag.new_virtual_disk);
-        model.setHashName("new_virtual_disk"); //$NON-NLS-1$
-        model.setVm(vm);
+        addDisk(new NewDiskModel(),
+                ConstantsManager.getInstance().getConstants().newVirtualDiskTitle(),
+                HelpTag.new_virtual_disk, "new_virtual_disk"); //$NON-NLS-1$
+    }
+
+    private void attach() {
+        if (getWindow() != null) {
+            return;
+        }
+
+        addDisk(new AttachDiskModel(),
+                ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
+                HelpTag.attach_virtual_disk, "attach_virtual_disk"); //$NON-NLS-1$
+    }
+
+    private void addDisk(AbstractDiskModel model, String title, HelpTag helpTag, String hashName) {
+        model.setTitle(title);
+        model.setHelpTag(helpTag);
+        model.setHashName(hashName); //$NON-NLS-1$
+        model.setVm(getEntity());
         setWindow(model);
 
         UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
@@ -595,6 +620,8 @@ public class VmDiskListModel extends VmDiskListModelBase
 
         getNewCommand().setIsExecutionAllowed(true);
 
+        getAttachCommand().setIsExecutionAllowed(true);
+
         getEditCommand().setIsExecutionAllowed(disk != null && isSingleDiskSelected() && !isDiskLocked(disk) &&
                 (isVmDown() || !disk.getPlugged() || (isExtendImageSizeSupported() && isExtendImageSizeEnabled())));
 
@@ -754,6 +781,10 @@ public class VmDiskListModel extends VmDiskListModelBase
         if (command == getNewCommand())
         {
             newEntity();
+        }
+        else if (command == getAttachCommand())
+        {
+            attach();
         }
         else if (command == getEditCommand())
         {

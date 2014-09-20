@@ -3,8 +3,6 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 import java.util.ArrayList;
 
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -21,8 +19,6 @@ import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
-import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -65,50 +61,6 @@ public class NewDiskModel extends AbstractDiskModel
                 diskModel.getAlias().setEntity(suggestedDiskAlias);
             }
         }, getHash()), getVm().getId());
-    }
-
-    private void onAttachDisks()
-    {
-        ArrayList<VdcActionType> actionTypes = new ArrayList<VdcActionType>();
-        ArrayList<VdcActionParametersBase> paramerterList = new ArrayList<VdcActionParametersBase>();
-        ArrayList<IFrontendActionAsyncCallback> callbacks = new ArrayList<IFrontendActionAsyncCallback>();
-
-        IFrontendActionAsyncCallback onFinishCallback = new IFrontendActionAsyncCallback() {
-            @Override
-            public void executed(FrontendActionAsyncResult result) {
-                NewDiskModel diskModel = (NewDiskModel) result.getState();
-                diskModel.stopProgress();
-                diskModel.cancel();
-                postSave();
-            }
-        };
-
-        ArrayList<EntityModel<DiskModel>> disksToAttach = null;
-        switch (getDiskStorageType().getEntity()) {
-            case LUN:
-                disksToAttach = (ArrayList<EntityModel<DiskModel>>) getExternalAttachableDisks().getSelectedItems();
-                break;
-            default:
-                disksToAttach = (ArrayList<EntityModel<DiskModel>>) getInternalAttachableDisks().getSelectedItems();
-                break;
-        }
-
-        for (int i = 0; i < disksToAttach.size(); i++) {
-            DiskModel disk = disksToAttach.get(i).getEntity();
-            // Disk is attached to VM as read only or not, null is applicable only for floating disks
-            // but this is not a case here.
-            AttachDetachVmDiskParameters parameters = new AttachDetachVmDiskParameters(
-                    getVm().getId(), disk.getDisk().getId(), getIsPlugged().getEntity(),
-                    Boolean.TRUE.equals(disk.getDisk().getReadOnly()));
-
-            actionTypes.add(VdcActionType.AttachDiskToVm);
-            paramerterList.add(parameters);
-            callbacks.add(i == disksToAttach.size() - 1 ? onFinishCallback : null);
-        }
-
-        startProgress(null);
-
-        Frontend.getInstance().runMultipleActions(actionTypes, paramerterList, callbacks, null, this);
     }
 
     @Override
@@ -157,11 +109,6 @@ public class NewDiskModel extends AbstractDiskModel
             return;
         }
 
-        if (getIsAttachDisk().getEntity()) {
-            onAttachDisks();
-            return;
-        }
-
         super.onSave();
 
         if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
@@ -203,16 +150,6 @@ public class NewDiskModel extends AbstractDiskModel
 
     @Override
     public boolean validate() {
-        if (getIsAttachDisk().getEntity()) {
-            if (isSelectionsEmpty(getInternalAttachableDisks()) && isSelectionsEmpty(getExternalAttachableDisks())) {
-                getInvalidityReasons().add(CONSTANTS.noDisksSelected());
-                setIsValid(false);
-                return false;
-            }
-
-            return true;
-        }
-
         if (getDiskStorageType().getEntity() == Disk.DiskStorageType.LUN && getSanStorageModel() != null) {
             getSanStorageModel().validate();
             if (!getSanStorageModel().getIsValid()) {
@@ -237,10 +174,6 @@ public class NewDiskModel extends AbstractDiskModel
         getStorageDomain().validateSelectedItem(new IValidation[] { new NotEmptyValidation() });
 
         return super.validate() && getSize().getIsValid() && getStorageDomain().getIsValid();
-    }
-
-    private boolean isSelectionsEmpty(ListModel listModel) {
-        return listModel.getSelectedItems() == null || listModel.getSelectedItems().isEmpty();
     }
 
     @Override

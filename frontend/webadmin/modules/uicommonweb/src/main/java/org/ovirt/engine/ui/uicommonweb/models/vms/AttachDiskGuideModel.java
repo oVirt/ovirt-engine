@@ -1,10 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
-public class NewGuideDiskModel extends NewDiskModel {
+public class AttachDiskGuideModel extends AttachDiskModel {
 
     private VmGuideModel sourceModel;
 
-    public NewGuideDiskModel(VmGuideModel sourceModel) {
+    public AttachDiskGuideModel(VmGuideModel sourceModel) {
         this.sourceModel = sourceModel;
     }
 

@@ -12,6 +12,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.Find
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.HostPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageForceCreatePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StoragePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
 
@@ -29,6 +30,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
     private final Provider<StoragePopupPresenterWidget> storagePopupProvider;
     private final Provider<VmInterfacePopupPresenterWidget> vmInterfacePopupProvider;
     private final Provider<VmDiskPopupPresenterWidget> vmDiskPopupPopupProvider;
+    private final Provider<VmDiskAttachPopupPresenterWidget> vmDiskAttachPopupPopupProvider;
     private final Provider<MoveHostPopupPresenterWidget> moveHostPopupProvider;
     private final Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider;
     private final Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider;
@@ -43,6 +45,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             Provider<StoragePopupPresenterWidget> storagePopupProvider,
             Provider<VmInterfacePopupPresenterWidget> vmInterfacePopupProvider,
             Provider<VmDiskPopupPresenterWidget> vmDiskPopupPopupProvider,
+            Provider<VmDiskAttachPopupPresenterWidget> vmDiskAttachPopupPopupProvider,
             Provider<MoveHostPopupPresenterWidget> moveHostPopupProvider,
             Provider<FindSingleStoragePopupPresenterWidget> singleStoragePopupProvider,
             Provider<FindMultiStoragePopupPresenterWidget> multiStoragePopupProvider) {
@@ -53,6 +56,7 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
         this.storagePopupProvider = storagePopupProvider;
         this.vmInterfacePopupProvider = vmInterfacePopupProvider;
         this.vmDiskPopupPopupProvider = vmDiskPopupPopupProvider;
+        this.vmDiskAttachPopupPopupProvider = vmDiskAttachPopupPopupProvider;
         this.moveHostPopupProvider = moveHostPopupProvider;
         this.singleStoragePopupProvider = singleStoragePopupProvider;
         this.multiStoragePopupProvider = multiStoragePopupProvider;
@@ -81,8 +85,10 @@ public class GuidePopupPresenterWidget extends AbstractModelBoundPopupPresenterW
             return singleStoragePopupProvider.get();
         } else if (lastExecutedCommandName.equals("AddNetwork")) { //$NON-NLS-1$
             return vmInterfacePopupProvider.get();
-        } else if (lastExecutedCommandName.equals("AddDisk")) { //$NON-NLS-1$
+        } else if (lastExecutedCommandName.equals("NewDisk")) { //$NON-NLS-1$
             return vmDiskPopupPopupProvider.get();
+        } else if (lastExecutedCommandName.equals("AttachDisk")) { //$NON-NLS-1$
+            return vmDiskAttachPopupPopupProvider.get();
         } else {
             return super.getModelPopup(source, lastExecutedCommand, windowModel);
         }

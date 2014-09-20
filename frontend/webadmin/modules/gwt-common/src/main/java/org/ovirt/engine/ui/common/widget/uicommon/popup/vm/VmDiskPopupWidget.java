@@ -2,11 +2,8 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.Disk.DiskStorageType;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
-import org.ovirt.engine.core.common.businessentities.LunDisk;
 import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -14,7 +11,6 @@ import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
-import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -23,10 +19,8 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.RadioButtonsHorizontalPanel;
-import org.ovirt.engine.ui.common.widget.ValidatedPanelWidget;
 import org.ovirt.engine.ui.common.widget.dialog.InfoIcon;
 import org.ovirt.engine.ui.common.widget.dialog.ProgressPopupContent;
-import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxEditor;
@@ -34,17 +28,11 @@ import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBox
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.NullSafeRenderer;
 import org.ovirt.engine.ui.common.widget.renderer.StorageDomainFreeSpaceRenderer;
-import org.ovirt.engine.ui.common.widget.table.column.DiskSizeColumn;
-import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.ImageResourceColumn;
-import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
-import org.ovirt.engine.ui.common.widget.uicommon.disks.DisksViewColumns;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.AbstractStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.FcpStorageView;
 import org.ovirt.engine.ui.common.widget.uicommon.storage.IscsiStorageView;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
-import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.FcpStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.IscsiStorageModel;
@@ -52,7 +40,6 @@ import org.ovirt.engine.ui.uicommonweb.models.storage.NewEditStorageModelBehavio
 import org.ovirt.engine.ui.uicommonweb.models.storage.SanStorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.StorageModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.AbstractDiskModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.DiskModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -62,15 +49,10 @@ import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
 import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 
@@ -182,16 +164,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     EntityModelCheckBoxEditor isSgIoUnfilteredEditor;
 
     @UiField(provided = true)
-    @Path("isPlugged.entity")
-    @WithElementId("isPlugged")
-    EntityModelCheckBoxEditor isPluggedEditor;
-
-    @UiField(provided = true)
-    @Path("isAttachDisk.entity")
-    @WithElementId("attachDisk")
-    EntityModelCheckBoxEditor attachEditor;
-
-    @UiField(provided = true)
     @Ignore
     InfoIcon interfaceInfoIcon;
 
@@ -199,27 +171,10 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     VerticalPanel createDiskPanel;
 
     @UiField
-    VerticalPanel attachDiskPanel;
-
-    @UiField
-    ValidatedPanelWidget innerAttachDiskPanel;
-
-    @UiField
     FlowPanel externalDiskPanel;
 
     @UiField
-    HorizontalPanel topPanel;
-
-    @UiField
     RadioButtonsHorizontalPanel diskTypePanel;
-
-    @Ignore
-    @WithElementId
-    EntityModelCellTable<ListModel> internalDiskTable;
-
-    @Ignore
-    @WithElementId
-    EntityModelCellTable<ListModel> externalDiskTable;
 
     @UiField
     Label message;
@@ -258,9 +213,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
         ViewIdHandler.idHandler.generateAndSetIds(this);
-        initAttachPanelWidget();
-        initInternalDiskTable(constants, resources, templates);
-        initExternalDiskTable(constants, resources, templates);
         driver.initialize(this);
     }
 
@@ -284,8 +236,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isReadOnlyEditor.setLabel(constants.isReadOnlyVmDiskPopup());
         isScsiPassthroughEditor.setLabel(constants.isScsiPassthroughEditor());
         isSgIoUnfilteredEditor.setLabel(constants.isSgIoUnfilteredEditor());
-        attachEditor.setLabel(constants.attachDiskVmDiskPopup());
-        isPluggedEditor.setLabel(constants.activateVmDiskPopup());
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes" })
@@ -334,252 +284,8 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         isReadOnlyEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isScsiPassthroughEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         isSgIoUnfilteredEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        isPluggedEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-        attachEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
-
-        internalDiskTable = new EntityModelCellTable<ListModel>(true);
-        externalDiskTable = new EntityModelCellTable<ListModel>(true);
 
         interfaceInfoIcon = new InfoIcon(templates.italicText(constants.diskInterfaceInfo()), resources);
-    }
-
-    private void initAttachPanelWidget() {
-        // Create tables container
-        VerticalPanel verticalPanel = new VerticalPanel();
-        verticalPanel.add(internalDiskTable);
-        verticalPanel.add(externalDiskTable);
-
-        // Create ValidatedPanelWidget and add tables container
-        innerAttachDiskPanel.setWidget(verticalPanel);
-    }
-
-    private void initInternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources,
-            final CommonApplicationTemplates templates) {
-        internalDiskTable.enableColumnResizing();
-
-        TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getDiskAlias();
-            }
-        };
-        internalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "85px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getDiskDescription();
-            }
-        };
-        internalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getId().toString();
-            }
-        };
-        internalDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "85px"); //$NON-NLS-1$
-
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>() {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getSize();
-            }
-        };
-        internalDiskTable.addColumn(sizeColumn, constants.provisionedSizeVmDiskTable(), "105px"); //$NON-NLS-1$
-
-        DiskSizeColumn<EntityModel> actualSizeColumn = new DiskSizeColumn<EntityModel>() {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getActualSizeInBytes();
-            }
-        };
-        internalDiskTable.addColumn(actualSizeColumn, constants.sizeVmDiskTable(), "105px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> storageDomainColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                DiskImage diskImage = (DiskImage) (((DiskModel) (object.getEntity())).getDisk());
-                return diskImage.getStoragesNames().get(0);
-            }
-        };
-        internalDiskTable.addColumn(storageDomainColumn, constants.storageDomainVmDiskTable(), "115px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
-            @Override
-            protected DiskInterface getRawValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getDiskInterface();
-            }
-        };
-        internalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "95px"); //$NON-NLS-1$
-
-        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
-        );
-        internalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
-
-        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
-        );
-        internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
-                return disk.isBoot() ? resources.bootableDiskIcon() : null;
-            }
-        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
-
-        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
-        );
-        internalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isShareable() ? constants.shareable() : null);
-                return disk.isShareable() ? resources.shareableDiskIcon() : null;
-            }
-        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
-
-        internalDiskTable.setWidth("100%", true); //$NON-NLS-1$
-        internalDiskTable.setHeight("100%"); //$NON-NLS-1$
-    }
-
-    private void initExternalDiskTable(final CommonApplicationConstants constants,
-            final CommonApplicationResources resources,
-            final CommonApplicationTemplates templates) {
-        externalDiskTable.enableColumnResizing();
-
-        TextColumnWithTooltip<EntityModel> aliasColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getDiskAlias();
-            }
-        };
-        externalDiskTable.addColumn(aliasColumn, constants.aliasVmDiskTable(), "60px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> descriptionColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getDiskDescription();
-            }
-        };
-        externalDiskTable.addColumn(descriptionColumn, constants.descriptionVmDiskTable(), "85px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> lunIdColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getLun().getLUN_id();
-            }
-        };
-        externalDiskTable.addColumn(lunIdColumn, constants.lunIdSanStorage(), "60px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> idColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getId().toString();
-            }
-        };
-        externalDiskTable.addColumn(idColumn, constants.idVmDiskTable(), "60px"); //$NON-NLS-1$
-
-        DiskSizeColumn<EntityModel> sizeColumn = new DiskSizeColumn<EntityModel>(SizeConverter.SizeUnit.GB) {
-            @Override
-            protected Long getRawValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return (long) disk.getLun().getDeviceSize();
-            }
-        };
-        externalDiskTable.addColumn(sizeColumn, constants.devSizeSanStorage(), "70px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> pathColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return String.valueOf(disk.getLun().getPathCount());
-            }
-        };
-        externalDiskTable.addColumn(pathColumn, constants.pathSanStorage(), "40px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> vendorIdColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getLun().getVendorId();
-            }
-        };
-        externalDiskTable.addColumn(vendorIdColumn, constants.vendorIdSanStorage(), "70px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> productIdColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getLun().getProductId();
-            }
-        };
-        externalDiskTable.addColumn(productIdColumn, constants.productIdSanStorage(), "70px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> serialColumn = new TextColumnWithTooltip<EntityModel>() {
-            @Override
-            public String getValue(EntityModel object) {
-                LunDisk disk = (LunDisk) (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getLun().getSerial();
-            }
-        };
-        externalDiskTable.addColumn(serialColumn, constants.serialSanStorage(), "70px"); //$NON-NLS-1$
-
-        TextColumnWithTooltip<EntityModel> interfaceColumn = new EnumColumn<EntityModel, DiskInterface>() {
-            @Override
-            protected DiskInterface getRawValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                return disk.getDiskInterface();
-            }
-        };
-        externalDiskTable.addColumn(interfaceColumn, constants.interfaceVmDiskPopup(), "90px"); //$NON-NLS-1$
-
-        SafeHtml readOnlyColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.readOnlyDiskIcon()).getHTML()), constants.readOnly()
-        );
-        externalDiskTable.addColumn(DisksViewColumns.readOnlyCheckboxColumn, readOnlyColumnHeader, "30px"); //$NON-NLS-1$
-
-        SafeHtml bootableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.bootableDiskIcon()).getHTML()), constants.bootable()
-        );
-        externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isBoot() ? constants.bootableDisk() : null);
-                return disk.isBoot() ? resources.bootableDiskIcon() : null;
-            }
-        }, bootableColumnHeader, "30px"); //$NON-NLS-1$
-
-        SafeHtml shareableColumnHeader = templates.imageWithTitle(SafeHtmlUtils.fromTrustedString(
-                AbstractImagePrototype.create(resources.shareableDiskIcon()).getHTML()), constants.shareable()
-        );
-        externalDiskTable.addColumn(new ImageResourceColumn<EntityModel>() {
-            @Override
-            public ImageResource getValue(EntityModel object) {
-                Disk disk = (((DiskModel) (object.getEntity())).getDisk());
-                setTitle(disk.isShareable() ? constants.shareable() : null);
-                return disk.isShareable() ? resources.shareableDiskIcon() : null;
-            }
-        }, shareableColumnHeader, "30px"); //$NON-NLS-1$
-
-        externalDiskTable.setWidth("100%", true); //$NON-NLS-1$
-        externalDiskTable.setHeight("100%"); //$NON-NLS-1$
     }
 
     private ProgressPopupContent createProgressContentWidget() {
@@ -596,20 +302,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
     @Override
     public void edit(final AbstractDiskModel disk) {
         driver.edit(disk);
-
-        disk.getIsAttachDisk().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
-                boolean isAttach = (Boolean) ((EntityModel) sender).getEntity();
-                createDiskPanel.setVisible(!isAttach);
-                attachDiskPanel.setVisible(isAttach);
-
-                if (!isAttach && !isNewLunDiskEnabled) {
-                    disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
-                }
-                revealDiskPanel(disk);
-            }
-        });
 
         disk.getIsDirectLunDiskAvaialable().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
@@ -669,7 +361,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         iscsiStorageModel.setIsGrouppedByTarget(true);
         iscsiStorageModel.setIgnoreGrayedOut(true);
 
-        iscsiStorageView = new IscsiStorageView(false, 102, 201, 244, 275, 142, 55, -67);
+        iscsiStorageView = new IscsiStorageView(false, 115, 214, 244, 275, 142, 55, -67);
         iscsiStorageView.edit(iscsiStorageModel);
 
         // Create FcpStorageModel
@@ -703,53 +395,17 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         });
 
-        // Add event handlers
-        disk.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
-            @Override
-            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                String propName = args.propertyName;
-                if (propName.equals("IsValid")) { //$NON-NLS-1$
-                    if (disk.getIsValid()) {
-                        innerAttachDiskPanel.markAsValid();
-                    } else {
-                        innerAttachDiskPanel.markAsInvalid(disk.getInvalidityReasons());
-                    }
-                }
-            }
-        });
-
         revealDiskPanel(disk);
     }
 
     private void revealDiskPanel(final AbstractDiskModel disk) {
-        boolean isAttachDisk = disk.getIsAttachDisk().getEntity();
         boolean isInVm = disk.getVm() != null;
-
-        // Hide tables
-        internalDiskTable.setVisible(false);
-        externalDiskTable.setVisible(false);
 
         // Disk type (internal/external) selection panel is visible only when
         // 'Attach disk' mode is enabled or new LunDisk creation is enabled
-        diskTypePanel.setVisible(isAttachDisk || isNewLunDiskEnabled);
+        diskTypePanel.setVisible(isNewLunDiskEnabled);
+        externalDiskPanel.setVisible(isNewLunDiskEnabled && disk.getDiskStorageType().getEntity() == DiskStorageType.LUN);
 
-        if (isAttachDisk) {
-            if (disk.getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
-                // Show and edit internal disk table
-                internalDiskTable.setVisible(true);
-                internalDiskTable.asEditor().edit(disk.getInternalAttachableDisks());
-            }
-            else {
-                // Show and edit external disk table
-                externalDiskTable.setVisible(true);
-                externalDiskTable.asEditor().edit(disk.getExternalAttachableDisks());
-            }
-        }
-        else {
-            externalDiskPanel.setVisible(isNewLunDiskEnabled && disk.getDiskStorageType().getEntity() == DiskStorageType.LUN);
-        }
-
-        topPanel.setVisible(isInVm && disk.getIsNew());
         aliasEditor.setFocus(!isInVm);
     }
 
@@ -802,7 +458,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     @Override
     public int setTabIndexes(int nextTabIndex) {
-        attachEditor.setTabIndex(nextTabIndex++);
         sizeEditor.setTabIndex(nextTabIndex++);
         sizeExtendEditor.setTabIndex(nextTabIndex++);
         aliasEditor.setTabIndex(nextTabIndex++);
@@ -817,7 +472,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         storageTypeEditor.setTabIndex(nextTabIndex++);
         plugDiskToVmEditor.setTabIndex(nextTabIndex++);
         wipeAfterDeleteEditor.setTabIndex(nextTabIndex++);
-        isPluggedEditor.setTabIndex(nextTabIndex++);
         isBootableEditor.setTabIndex(nextTabIndex++);
         isShareableEditor.setTabIndex(nextTabIndex++);
         isReadOnlyEditor.setTabIndex(nextTabIndex++);

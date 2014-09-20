@@ -45,6 +45,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.DisksAl
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
@@ -216,6 +217,7 @@ public class VirtualMachineModule extends AbstractGinModule {
     public SearchableDetailModelProvider<Disk, VmListModel, VmDiskListModel> getVmDiskListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<VmDiskPopupPresenterWidget> popupProvider,
+            final Provider<VmDiskAttachPopupPresenterWidget> attachPopupProvider,
             final Provider<VmDiskRemovePopupPresenterWidget> removeConfirmPopupProvider,
             final Provider<DisksAllocationPopupPresenterWidget> movePopupProvider,
             final Provider<ChangeQuotaPopupPresenterWidget> changeQutoaPopupProvider) {
@@ -231,6 +233,8 @@ public class VirtualMachineModule extends AbstractGinModule {
                 if (lastExecutedCommand == model.getNewCommand()
                         || lastExecutedCommand == model.getEditCommand()) {
                     return popupProvider.get();
+                } else if (lastExecutedCommand == getModel().getAttachCommand()) {
+                    return attachPopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getMoveCommand()) {
                     return movePopupProvider.get();
                 } else if (lastExecutedCommand == getModel().getChangeQuotaCommand()) {

@@ -888,8 +888,11 @@ public interface CommonApplicationConstants extends Constants {
     String nameSnapshot();
 
     // Disk
-    @DefaultStringValue("Add")
-    String addDisk();
+    @DefaultStringValue("New")
+    String newDisk();
+
+    @DefaultStringValue("Attach")
+    String attachDisk();
 
     @DefaultStringValue("Edit")
     String editDisk();

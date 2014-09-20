@@ -1,9 +1,8 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-	xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
-  xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic"
-    xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
+	         xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor" xmlns:w="urn:import:org.ovirt.engine.ui.common.widget"
+             xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog">
 
 	<ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
@@ -19,16 +18,6 @@
 			margin-top: 10px;
 		}
 
-        @external obrand_topPanel;
-		.obrand_topPanel {
-			height: 36px;
-			width: 100%;
-			padding-top: 4px;
-			margin-bottom: 1px;
-			color: white;
-			font-weight: bold;
-		}
-
         @external obrand_diskTypePanel;
 		.obrand_diskTypePanel {
 			height: 36px;
@@ -42,11 +31,6 @@
 
 		.mainPanel {
 			width: 100%;
-		}
-
-		.isPluggedEditor {
-			position: absolute;
-			bottom: 10px;
 		}
 
 		.boxEditor {
@@ -68,18 +52,6 @@
 			position: absolute;
 		}
 
-		.attachDiskPanel {
-			position: absolute;
-			top: 80px;
-			bottom: 50px;
-			padding: 2px;
-			margin-right: 2px;
-		}
-
-        .attachEditor {
-            width: 90%;
-        }
-
         .infoIcon {
             float: left;
             padding-top: 5px;
@@ -88,9 +60,6 @@
 	</ui:style>
 
 	<g:FlowPanel addStyleNames="{style.container}">
-		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
-			<ge:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
-		</g:HorizontalPanel>
         <w:RadioButtonsHorizontalPanel ui:field="diskTypePanel" name="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}"/>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
@@ -123,10 +92,6 @@
 			</g:HorizontalPanel>
 			<g:Label ui:field="message" addStyleNames="{style.errorMessageLabel}" />
 			<g:FlowPanel ui:field="externalDiskPanel" addStyleNames="{style.externalDiskPanel}"/>
-		</g:VerticalPanel>
-		<g:VerticalPanel ui:field="attachDiskPanel" addStyleNames="{style.mainPanel}" visible="false">
-			<w:ValidatedPanelWidget ui:field="innerAttachDiskPanel" addStyleNames="{style.attachDiskPanel}" />
-			<ge:EntityModelCheckBoxEditor ui:field="isPluggedEditor" addStyleNames="{style.isPluggedEditor}" />
 		</g:VerticalPanel>
 	</g:FlowPanel>
 

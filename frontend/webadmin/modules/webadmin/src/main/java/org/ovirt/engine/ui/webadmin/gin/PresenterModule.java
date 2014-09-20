@@ -102,6 +102,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.user.ManageEven
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmExportPopupPresenterWidget;
@@ -340,6 +341,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.user.ManageEventsPop
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmClonePopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskAttachPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.vm.VmExportPopupView;
@@ -1341,6 +1343,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+
+        // VM Attach Disk
+        bindPresenterWidget(VmDiskAttachPopupPresenterWidget.class,
+                VmDiskAttachPopupPresenterWidget.ViewDef.class,
+                VmDiskAttachPopupView.class);
 
         // VM Detach/Remove Disk
         bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,

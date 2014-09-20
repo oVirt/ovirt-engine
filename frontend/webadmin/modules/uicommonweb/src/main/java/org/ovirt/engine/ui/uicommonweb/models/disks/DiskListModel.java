@@ -283,7 +283,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
     private void newEntity()
     {
         NewDiskModel model = new NewDiskModel(getSystemTreeSelectedItem());
-        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
+        model.setTitle(ConstantsManager.getInstance().getConstants().newVirtualDiskTitle());
         model.setHelpTag(HelpTag.new_virtual_disk);
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         setWindow(model);

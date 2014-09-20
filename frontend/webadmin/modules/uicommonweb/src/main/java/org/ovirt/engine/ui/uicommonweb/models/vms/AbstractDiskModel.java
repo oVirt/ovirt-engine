@@ -65,7 +65,6 @@ public abstract class AbstractDiskModel extends DiskModel
     private EntityModel<Boolean> isShareable;
     private EntityModel<Boolean> isPlugged;
     private EntityModel<Boolean> isReadOnly;
-    private EntityModel<Boolean> isAttachDisk;
     private EntityModel<Boolean> isDirectLunDiskAvaialable;
     private EntityModel<Boolean> isScsiPassthrough;
     private EntityModel<Boolean> isSgIoUnfiltered;
@@ -75,8 +74,6 @@ public abstract class AbstractDiskModel extends DiskModel
     private ListModel<StorageType> storageType;
     private ListModel<VDS> host;
     private ListModel<StoragePool> dataCenter;
-    private ListModel<EntityModel<DiskModel>> internalAttachableDisks;
-    private ListModel<EntityModel<DiskModel>> externalAttachableDisks;
 
     private SanStorageModel sanStorageModel;
     private VolumeFormat volumeFormat;
@@ -128,14 +125,6 @@ public abstract class AbstractDiskModel extends DiskModel
         this.isReadOnly = isReadOnly;
     }
 
-    public EntityModel<Boolean> getIsAttachDisk() {
-        return isAttachDisk;
-    }
-
-    public void setIsAttachDisk(EntityModel<Boolean> isAttachDisk) {
-        this.isAttachDisk = isAttachDisk;
-    }
-
     public EntityModel<Boolean> getIsDirectLunDiskAvaialable() {
         return isDirectLunDiskAvaialable;
     }
@@ -183,23 +172,6 @@ public abstract class AbstractDiskModel extends DiskModel
     public void setDataCenter(ListModel<StoragePool> dataCenter) {
         this.dataCenter = dataCenter;
     }
-
-    public ListModel<EntityModel<DiskModel>> getInternalAttachableDisks() {
-        return internalAttachableDisks;
-    }
-
-    public void setInternalAttachableDisks(ListModel<EntityModel<DiskModel>> internalAttachableDisks) {
-        this.internalAttachableDisks = internalAttachableDisks;
-    }
-
-    public ListModel<EntityModel<DiskModel>> getExternalAttachableDisks() {
-        return externalAttachableDisks;
-    }
-
-    public void setExternalAttachableDisks(ListModel<EntityModel<DiskModel>> externalAttachableDisks) {
-        this.externalAttachableDisks = externalAttachableDisks;
-    }
-
     public SanStorageModel getSanStorageModel() {
         return sanStorageModel;
     }
@@ -271,10 +243,6 @@ public abstract class AbstractDiskModel extends DiskModel
         setSizeExtend(new EntityModel<String>());
         getSizeExtend().setEntity("0");  //$NON-NLS-1$
 
-        setIsAttachDisk(new EntityModel<Boolean>());
-        getIsAttachDisk().setEntity(false);
-        getIsAttachDisk().getEntityChangedEvent().addListener(this);
-
         setIsWipeAfterDelete(new EntityModel<Boolean>());
         getIsWipeAfterDelete().setEntity(false);
 
@@ -325,9 +293,6 @@ public abstract class AbstractDiskModel extends DiskModel
 
         getVolumeType().getSelectedItemChangedEvent().addListener(this);
         getDiskInterface().getSelectedItemChangedEvent().addListener(this);
-
-        setInternalAttachableDisks(new ListModel<EntityModel<DiskModel>>());
-        setExternalAttachableDisks(new ListModel<EntityModel<DiskModel>>());
 
         setIsVirtioScsiEnabled(new EntityModel<Boolean>());
     }
@@ -789,40 +754,6 @@ public abstract class AbstractDiskModel extends DiskModel
         return vm.getStatus() == VMStatus.Up || vm.getStatus() == VMStatus.Down || vm.getStatus() == VMStatus.Paused;
     }
 
-    private void attachDisk_EntityChanged(EventArgs e) {
-        if (getIsAttachDisk().getEntity())
-        {
-            getIsPlugged().setIsAvailable(true);
-            // Get internal attachable disks
-            AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    AbstractDiskModel model = (AbstractDiskModel) target;
-                    ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Collections.sort(disks, new Linq.DiskByAliasComparer());
-                    ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
-
-                    model.getInternalAttachableDisks().setItems(Linq.toEntityModelList(
-                            Linq.filterDisksByType(diskModels, DiskStorageType.IMAGE)));
-                }
-            }, getHash()), getVm().getStoragePoolId(), getVm().getId());
-
-            // Get external attachable disks
-            AsyncDataProvider.getInstance().getAllAttachableDisks(new AsyncQuery(this, new INewAsyncCallback() {
-                @Override
-                public void onSuccess(Object target, Object returnValue) {
-                    AbstractDiskModel model = (AbstractDiskModel) target;
-                    ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
-                    Collections.sort(disks, new Linq.DiskByAliasComparer());
-                    ArrayList<DiskModel> diskModels = Linq.disksToDiskModelList(disks);
-
-                    model.getExternalAttachableDisks().setItems(Linq.toEntityModelList(
-                            Linq.filterDisksByType(diskModels, DiskStorageType.LUN)));
-                }
-            }, getHash()), null, getVm().getId());
-        }
-    }
-
     private void datacenter_SelectedItemChanged() {
         StoragePool datacenter = getDataCenter().getSelectedItem();
         boolean isInVm = getVm() != null;
@@ -974,9 +905,7 @@ public abstract class AbstractDiskModel extends DiskModel
         super.eventRaised(ev, sender, args);
 
         if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition)) {
-            if (sender == getIsAttachDisk()) {
-                attachDisk_EntityChanged(args);
-            } else if (sender == getIsReadOnly()) {
+            if (sender == getIsReadOnly()) {
                 updateScsiPassthroguhChangeability();
             } else if (sender == getIsScsiPassthrough()) {
                 updateSgIoUnfilteredChangeability();
@@ -985,21 +914,16 @@ public abstract class AbstractDiskModel extends DiskModel
                 diskStorageType_EntityChanged();
             }
         }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getVolumeType())
-        {
-            volumeType_SelectedItemChanged();
-        }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDiskInterface())
-        {
-            DiskInterface_SelectedItemChanged();
-        }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getDataCenter())
-        {
-            datacenter_SelectedItemChanged();
-        }
-        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition) && sender == getStorageDomain())
-        {
-            storageDomain_SelectedItemChanged();
+        else if (ev.matchesDefinition(ListModel.selectedItemChangedEventDefinition)) {
+            if (sender == getVolumeType()) {
+                volumeType_SelectedItemChanged();
+            } else if (sender == getDiskInterface()) {
+                DiskInterface_SelectedItemChanged();
+            } else if (sender == getDataCenter()) {
+                datacenter_SelectedItemChanged();
+            } else if (sender == getStorageDomain()) {
+                storageDomain_SelectedItemChanged();
+            }
         }
         else if (ev.matchesDefinition(Frontend.getInstance().getQueryStartedEventDefinition())
                 && ObjectUtils.objectsEqual(Frontend.getInstance().getCurrentContext(), getHash()))

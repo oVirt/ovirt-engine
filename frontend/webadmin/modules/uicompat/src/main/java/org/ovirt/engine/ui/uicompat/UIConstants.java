@@ -588,8 +588,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Remove Pool(s)")
     String removePoolsTitle();
 
-    @DefaultStringValue("Add Virtual Disk")
-    String addVirtualDiskTitle();
+    @DefaultStringValue("Attach Virtual Disks")
+    String attachVirtualDiskTitle();
 
     @DefaultStringValue("New Virtual Disk")
     String newVirtualDiskTitle();
@@ -1401,11 +1401,11 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Allocation can be modified only when importing a single VM")
     String allocCanBeModifiedOnlyWhenImportSingleVm();
 
-    @DefaultStringValue("Configure Virtual Disks")
-    String vmConfigureVirtualDisksAction();
+    @DefaultStringValue("Create a Virtual Disk")
+    String vmCreateVirtualDiskAction();
 
-    @DefaultStringValue("Add another Virtual Disk")
-    String vmAddAnotherVirtualDiskAction();
+    @DefaultStringValue("Attach Virtual Disks")
+    String vmAttachVirtualDisksAction();
 
     @DefaultStringValue("There is no active Storage Domain to create the Disk in. Please activate a Storage Domain.")
     String thereIsNoActiveStorageDomainCreateDiskInMsg();

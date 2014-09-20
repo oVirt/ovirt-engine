@@ -217,7 +217,7 @@ public class MainTabDiskView extends AbstractMainTabWithDetailsTableView<Disk, D
     }
 
     void initTableButtons() {
-        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.addDisk()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<Disk>(constants.newDisk()) {
             @Override
             protected UICommand resolveCommand() {
                 return getMainModel().getNewCommand();

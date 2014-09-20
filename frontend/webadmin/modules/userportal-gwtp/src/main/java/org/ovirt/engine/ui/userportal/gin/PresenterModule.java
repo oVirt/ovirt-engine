@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.popup.template.Temp
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.CloneVmPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmChangeCDPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmClonePopupPresenterWidget;
+import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskAttachPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskPopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.userportal.section.main.presenter.popup.vm.VmInterfacePopupPresenterWidget;
@@ -63,6 +64,7 @@ import org.ovirt.engine.ui.userportal.section.main.view.popup.template.TemplateN
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.CloneVmPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmChangeCDPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmClonePopupView;
+import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskAttachPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskPopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmDiskRemovePopupView;
 import org.ovirt.engine.ui.userportal.section.main.view.popup.vm.VmInterfacePopupView;
@@ -280,6 +282,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(VmDiskPopupPresenterWidget.class,
                 VmDiskPopupPresenterWidget.ViewDef.class,
                 VmDiskPopupView.class);
+        bindPresenterWidget(VmDiskAttachPopupPresenterWidget.class,
+                VmDiskAttachPopupPresenterWidget.ViewDef.class,
+                VmDiskAttachPopupView.class);
         bindPresenterWidget(VmDiskRemovePopupPresenterWidget.class,
                 VmDiskRemovePopupPresenterWidget.ViewDef.class,
                 VmDiskRemovePopupView.class);

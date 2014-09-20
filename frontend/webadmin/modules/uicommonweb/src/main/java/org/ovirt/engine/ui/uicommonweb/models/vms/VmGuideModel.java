@@ -12,15 +12,11 @@ import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.GuideModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.UIConstants;
 
 public class VmGuideModel extends GuideModel
 {
-    public final String VmConfigureVirtualDisksAction = ConstantsManager.getInstance()
-            .getConstants()
-            .vmConfigureVirtualDisksAction();
-    public final String VmAddAnotherVirtualDiskAction = ConstantsManager.getInstance()
-            .getConstants()
-            .vmAddAnotherVirtualDiskAction();
+    public final UIConstants constants = ConstantsManager.getInstance().getConstants();
 
     @Override
     public VM getEntity()
@@ -51,32 +47,47 @@ public class VmGuideModel extends GuideModel
         startProgress(null);
 
         // Add disk action.
-        UICommand addDiskAction = new UICommand("AddDisk", this); //$NON-NLS-1$
+        UICommand newDiskAction = new UICommand("NewDisk", this); //$NON-NLS-1$
+        newDiskAction.setTitle(constants.vmCreateVirtualDiskAction());
 
-        if (!containsDisks)
-        {
-            addDiskAction.setTitle(VmConfigureVirtualDisksAction);
-            getCompulsoryActions().add(addDiskAction);
-        }
-        else
-        {
-            addDiskAction.setTitle(VmAddAnotherVirtualDiskAction);
-            getOptionalActions().add(addDiskAction);
+        UICommand attachDiskAction = new UICommand("AttachDisk", this); //$NON-NLS-1$
+        attachDiskAction.setTitle(constants.vmAttachVirtualDisksAction());
+
+        if (!containsDisks) {
+            getCompulsoryActions().add(newDiskAction);
+            getCompulsoryActions().add(attachDiskAction);
+        } else {
+            getOptionalActions().add(newDiskAction);
+            getOptionalActions().add(attachDiskAction);
         }
 
         stopProgress();
     }
 
-    public void addDisk()
-    {
+    public void newDisk() {
         if (getEntity() == null) {
             return;
         }
 
-        NewDiskModel model = new NewGuideDiskModel(this);
-        model.setTitle(ConstantsManager.getInstance().getConstants().addVirtualDiskTitle());
-        model.setHelpTag(HelpTag.new_virtual_disk);
-        model.setHashName("new_virtual_disk"); //$NON-NLS-1$
+        addDisk(new NewDiskGuideModel(this),
+                ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
+                HelpTag.new_virtual_disk, "new_virtual_disk"); //$NON-NLS-1$
+    }
+
+    public void attachDisk() {
+        if (getEntity() == null) {
+            return;
+        }
+
+        addDisk(new AttachDiskGuideModel(this),
+                ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
+                HelpTag.attach_virtual_disk, "attach_virtual_disk"); //$NON-NLS-1$
+    }
+
+    private void addDisk(AbstractDiskModel model, String title, HelpTag helpTag, String hashName) {
+        model.setTitle(title);
+        model.setHelpTag(helpTag);
+        model.setHashName(hashName); //$NON-NLS-1$
         model.setVm(getEntity());
         setWindow(model);
 
@@ -99,11 +110,15 @@ public class VmGuideModel extends GuideModel
     {
         super.executeCommand(command);
 
-        if ("AddDisk".equals(command.getName())) //$NON-NLS-1$
+        if ("NewDisk".equals(command.getName())) //$NON-NLS-1$
         {
-            addDisk();
+            newDisk();
         }
-        if ("Cancel".equals(command.getName())) //$NON-NLS-1$
+        else if ("AttachDisk".equals(command.getName())) //$NON-NLS-1$
+        {
+            attachDisk();
+        }
+        else if ("Cancel".equals(command.getName())) //$NON-NLS-1$
         {
             cancel();
         }

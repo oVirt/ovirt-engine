@@ -312,6 +312,8 @@ public enum HelpTag {
 
     new_virtual_disk("new_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > New Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    attach_virtual_disk("attach_virtual_disk", HelpTagType.COMMON, "VMs Tab > Virtual Disks Sub-Tab > Attach Virtual Disk"), //$NON-NLS-1$ //$NON-NLS-2$
+
     new_virtual_machine___guide_me("new_virtual_machine___guide_me", HelpTagType.WEBADMIN), //$NON-NLS-1$
 
     new_vm("new_vm", HelpTagType.COMMON, "'VMs' main tab -> 'New VM' dialog [replaces the old 'New Desktop' (new_desktop) and 'New Server' (new_server)]"), //$NON-NLS-1$ //$NON-NLS-2$
