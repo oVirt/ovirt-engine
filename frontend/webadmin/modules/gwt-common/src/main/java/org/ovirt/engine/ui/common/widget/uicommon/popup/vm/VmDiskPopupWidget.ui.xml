@@ -96,9 +96,9 @@
 		<g:HorizontalPanel ui:field="topPanel" addStyleNames="{style.obrand_topPanel}">
 			<ge:EntityModelCheckBoxEditor ui:field="attachEditor" addStyleNames="{style.attachEditor}"/>
 		</g:HorizontalPanel>
-		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel}">
-			<g:RadioButton ui:field="internalDiskRadioButton" ui:name="disktype" ui:text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
-			<g:RadioButton ui:field="externalDiskRadioButton" ui:name="disktype" ui:text="{constants.externalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
+		<g:HorizontalPanel ui:field="diskTypePanel" addStyleNames="{style.obrand_diskTypePanel} avw_contentWidget_pfly_fix">
+			<g:RadioButton ui:field="internalDiskRadioButton" name="disktype" text="{constants.internalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
+			<g:RadioButton ui:field="externalDiskRadioButton" name="disktype" text="{constants.externalDisk}" addStyleNames="{style.diskTypeRadioButton}"/>
 		</g:HorizontalPanel>
 		<g:VerticalPanel ui:field="createDiskPanel" addStyleNames="{style.mainPanel}">
 			<g:HorizontalPanel>
