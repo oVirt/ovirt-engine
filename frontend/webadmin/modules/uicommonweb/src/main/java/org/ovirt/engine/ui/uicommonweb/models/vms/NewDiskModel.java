@@ -6,6 +6,7 @@ import org.ovirt.engine.core.common.action.AddDiskParameters;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.LUNs;
@@ -82,9 +83,15 @@ public class NewDiskModel extends AbstractDiskModel
             }
         };
 
-        ArrayList<EntityModel<DiskModel>> disksToAttach = getIsInternal().getEntity() ?
-                (ArrayList<EntityModel<DiskModel>>) getInternalAttachableDisks().getSelectedItems() :
-                (ArrayList<EntityModel<DiskModel>>) getExternalAttachableDisks().getSelectedItems();
+        ArrayList<EntityModel<DiskModel>> disksToAttach = null;
+        switch (getDiskStorageType().getEntity()) {
+            case LUN:
+                disksToAttach = (ArrayList<EntityModel<DiskModel>>) getExternalAttachableDisks().getSelectedItems();
+                break;
+            default:
+                disksToAttach = (ArrayList<EntityModel<DiskModel>>) getInternalAttachableDisks().getSelectedItems();
+                break;
+        }
 
         for (int i = 0; i < disksToAttach.size(); i++) {
             DiskModel disk = disksToAttach.get(i).getEntity();
@@ -157,8 +164,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         super.onSave();
 
-        boolean isInternal = getIsInternal().getEntity();
-        if (isInternal) {
+        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
             diskImage.setSizeInGigabytes(getSize().getEntity());
             diskImage.setVolumeType(getVolumeType().getSelectedItem());
@@ -175,7 +181,7 @@ public class NewDiskModel extends AbstractDiskModel
 
         AddDiskParameters parameters = new AddDiskParameters(getVmId(), getDisk());
         parameters.setPlugDiskToVm(getIsPlugged().getEntity());
-        if (getIsInternal().getEntity()) {
+        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.IMAGE) {
             StorageDomain storageDomain = getStorageDomain().getSelectedItem();
             parameters.setStorageDomainId(storageDomain.getId());
         }
@@ -207,7 +213,7 @@ public class NewDiskModel extends AbstractDiskModel
             return true;
         }
 
-        if (!getIsInternal().getEntity() && getSanStorageModel() != null) {
+        if (getDiskStorageType().getEntity() == Disk.DiskStorageType.LUN && getSanStorageModel() != null) {
             getSanStorageModel().validate();
             if (!getSanStorageModel().getIsValid()) {
                 return false;

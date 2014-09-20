@@ -45,8 +45,8 @@ public class EditDiskModel extends AbstractDiskModel
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
             DiskImage diskImage = (DiskImage) getDisk();
+            getDiskStorageType().setEntity(DiskStorageType.IMAGE);
             getSize().setEntity((int) diskImage.getSizeInGigabytes());
-            getIsInternal().setEntity(true);
             getVolumeType().setSelectedItem(diskImage.getVolumeType());
             setVolumeFormat(diskImage.getVolumeFormat());
 
@@ -65,8 +65,8 @@ public class EditDiskModel extends AbstractDiskModel
             }, getHash()), storageDomainId);
         } else {
             LunDisk lunDisk = (LunDisk) getDisk();
+            getDiskStorageType().setEntity(DiskStorageType.LUN);
             getSize().setEntity(lunDisk.getLun().getDeviceSize());
-            getIsInternal().setEntity(false);
             getSizeExtend().setIsAvailable(false);
         }
 

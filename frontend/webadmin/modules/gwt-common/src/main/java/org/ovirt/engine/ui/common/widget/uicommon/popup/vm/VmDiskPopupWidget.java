@@ -605,7 +605,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 attachDiskPanel.setVisible(isAttach);
 
                 if (!isAttach && !isNewLunDiskEnabled) {
-                    disk.getIsInternal().setEntity(true);
+                    disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
                 }
                 revealDiskPanel(disk);
             }
@@ -642,7 +642,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 new ClickHandler() {
                 @Override
                 public void onClick(ClickEvent event) {
-                    disk.getIsInternal().setEntity(true);
+                    disk.getDiskStorageType().setEntity(DiskStorageType.IMAGE);
                     revealDiskPanel(disk);
                 }
             });
@@ -654,7 +654,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
                 new ClickHandler() {
                     @Override
                     public void onClick(ClickEvent event) {
-                        disk.getIsInternal().setEntity(false);
+                        disk.getDiskStorageType().setEntity(DiskStorageType.LUN);
                         revealStorageView(disk);
                         revealDiskPanel(disk);
                     }
@@ -723,7 +723,6 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
 
     private void revealDiskPanel(final AbstractDiskModel disk) {
         boolean isAttachDisk = disk.getIsAttachDisk().getEntity();
-        boolean isInternal = disk.getIsInternal().getEntity();
         boolean isInVm = disk.getVm() != null;
 
         // Hide tables
@@ -735,7 +734,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
         diskTypePanel.setVisible(isAttachDisk || isNewLunDiskEnabled);
 
         if (isAttachDisk) {
-            if (isInternal) {
+            if (disk.getDiskStorageType().getEntity() == DiskStorageType.IMAGE) {
                 // Show and edit internal disk table
                 internalDiskTable.setVisible(true);
                 internalDiskTable.asEditor().edit(disk.getInternalAttachableDisks());
@@ -747,7 +746,7 @@ public class VmDiskPopupWidget extends AbstractModelBoundPopupWidget<AbstractDis
             }
         }
         else {
-            externalDiskPanel.setVisible(isNewLunDiskEnabled && !isInternal);
+            externalDiskPanel.setVisible(isNewLunDiskEnabled && disk.getDiskStorageType().getEntity() == DiskStorageType.LUN);
         }
 
         topPanel.setVisible(isInVm && disk.getIsNew());
