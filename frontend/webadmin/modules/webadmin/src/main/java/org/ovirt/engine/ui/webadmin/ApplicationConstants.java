@@ -3425,6 +3425,18 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Override QoS")
     String qosOverrideLabel();
 
+    @DefaultStringValue("Outbound")
+    String hostNetworkQosOutLabel();
+
+    @DefaultStringValue("Weighted Share")
+    String hostNetworkQosPopupOutAverageLinkshare();
+
+    @DefaultStringValue("Rate Limit [Mbps]")
+    String hostNetworkQosPopupOutAverageUpperlimit();
+
+    @DefaultStringValue("Committed Rate [Mbps]")
+    String hostNetworkQosPopupOutAverageRealtime();
+
     // MAC pool widget
     @DefaultStringValue("From")
     String macPoolWidgetLeftBound();

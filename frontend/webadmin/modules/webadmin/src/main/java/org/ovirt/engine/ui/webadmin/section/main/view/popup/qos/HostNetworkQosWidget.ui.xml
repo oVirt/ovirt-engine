@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
+<ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder"
+    xmlns:g="urn:import:com.google.gwt.user.client.ui" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+
+    <ui:with field="constants" type="org.ovirt.engine.ui.webadmin.ApplicationConstants" />
+
+    <ui:style type="org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosWidget.Style">
+        .paddingLeft {
+            padding-left: 5px;
+	    }
+
+        .valueBox {
+            width: 100px;
+	    }
+    </ui:style>
+
+    <g:FlowPanel ui:field="mainPanel" >
+        <g:Label text="{constants.hostNetworkQosOutLabel}" addStyleNames="{style.paddingLeft}" />
+        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageLinkshare" addStyleNames="{style.paddingLeft}" />
+        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageUpperlimit" addStyleNames="{style.paddingLeft}" />
+        <e:IntegerEntityModelTextBoxEditor ui:field="outAverageRealtime" addStyleNames="{style.paddingLeft}" />
+    </g:FlowPanel>
+
+</ui:UiBinder>
