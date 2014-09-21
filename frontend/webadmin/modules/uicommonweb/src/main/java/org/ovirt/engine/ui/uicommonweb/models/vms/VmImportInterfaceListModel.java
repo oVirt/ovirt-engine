@@ -14,13 +14,18 @@ public class VmImportInterfaceListModel extends SearchableListModel
     {
         if (getEntity() != null)
         {
-            VM vm = ((ImportVmData) getEntity()).getVm();
+            VM vm = (VM) getEntity();
             setItems(vm.getInterfaces());
         }
         else
         {
             setItems(null);
         }
+    }
+
+    @Override
+    public void setEntity(Object value) {
+        super.setEntity(value != null ? ((ImportVmData) value).getVm() : null);
     }
 
     @Override

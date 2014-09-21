@@ -19,7 +19,7 @@ public class VmImportDiskListModel extends SearchableListModel
     protected void onEntityChanged()
     {
         if (getEntity() != null) {
-            VM vm = ((ImportVmData) getEntity()).getVm();
+            VM vm = (VM) getEntity();
             if (vm != null && vm.getDiskMap() != null)
             {
                 ArrayList<DiskImage> list = new ArrayList<DiskImage>();
@@ -36,6 +36,11 @@ public class VmImportDiskListModel extends SearchableListModel
         {
             setItems(null);
         }
+    }
+
+    @Override
+    public void setEntity(Object value) {
+        super.setEntity(value == null ? null : ((ImportVmData) value).getVm());
     }
 
     @Override

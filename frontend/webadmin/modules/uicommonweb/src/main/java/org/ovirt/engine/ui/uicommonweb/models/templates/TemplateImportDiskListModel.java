@@ -28,7 +28,7 @@ public class TemplateImportDiskListModel extends SearchableListModel
         if (getEntity() != null)
         {
             ArrayList<DiskImage> list = new ArrayList<DiskImage>();
-            VmTemplate template = ((ImportTemplateData) getEntity()).getTemplate();
+            VmTemplate template = (VmTemplate) getEntity();
             for (Map.Entry<VmTemplate, List<DiskImage>> item : extendedItems) {
                 if (item.getKey().getQueryableId().equals(template.getQueryableId())) {
                     list.addAll(item.getValue());
@@ -42,6 +42,11 @@ public class TemplateImportDiskListModel extends SearchableListModel
         {
             setItems(null);
         }
+    }
+
+    @Override
+    public void setEntity(Object value) {
+        super.setEntity(value != null ? ((ImportTemplateData) value).getTemplate() : null);
     }
 
     public void setExtendedItems(ArrayList<Map.Entry<VmTemplate, List<DiskImage>>> arrayList) {
