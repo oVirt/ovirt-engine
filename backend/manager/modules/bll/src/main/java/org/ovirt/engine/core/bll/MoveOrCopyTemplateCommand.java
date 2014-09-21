@@ -168,8 +168,9 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         }
 
         for (DiskImage image : getImages()) {
-            setStorageDomainId(image.getStorageIds().get(0));
-            if (!validate(new StorageDomainValidator(getStorageDomain()).isDomainExistAndActive())) {
+            StorageDomain sd = getStorageDomainDAO().getForStoragePool(
+                    image.getStorageIds().get(0), getStoragePool().getId());
+            if (!validate(new StorageDomainValidator(sd).isDomainExistAndActive())) {
                 return false;
             }
         }
