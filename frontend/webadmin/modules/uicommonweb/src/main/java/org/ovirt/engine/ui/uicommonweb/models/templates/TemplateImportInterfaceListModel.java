@@ -18,13 +18,18 @@ public class TemplateImportInterfaceListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            VmTemplate template = ((ImportTemplateData) getEntity()).getTemplate();
+            VmTemplate template = (VmTemplate) getEntity();
             setItems(template.getInterfaces());
         }
         else
         {
             setItems(null);
         }
+    }
+
+    @Override
+    public void setEntity(Object value) {
+        super.setEntity(value != null ? ((ImportTemplateData) value).getTemplate() : null);
     }
 
     @Override
