@@ -35,13 +35,13 @@ public class Entities {
      *      }
      * }
      * </code>
-     * @param entityList
+     * @param entities
      * @return
      */
-    public static <E extends Nameable> Map<String, E> entitiesByName(List<E> entityList) {
-        if (entityList != null) {
+    public static <E extends Nameable> Map<String, E> entitiesByName(Collection<E> entities) {
+        if (entities != null) {
             Map<String, E> map = new HashMap<String, E>();
-            for (E e : entityList) {
+            for (E e : entities) {
                 map.put(e.getName(), e);
             }
             return map;
@@ -133,10 +133,10 @@ public class Entities {
         }
     }
 
-    public static <F extends Serializable, B extends BusinessEntity<F>> Map<F, B> businessEntitiesById(List<B> entityList) {
-        if (entityList != null) {
+    public static <F extends Serializable, B extends BusinessEntity<F>> Map<F, B> businessEntitiesById(Collection<B> entities) {
+        if (entities != null) {
             Map<F, B> map = new HashMap<F, B>();
-            for (B b : entityList) {
+            for (B b : entities) {
                 map.put(b.getId(), b);
             }
             return map;
