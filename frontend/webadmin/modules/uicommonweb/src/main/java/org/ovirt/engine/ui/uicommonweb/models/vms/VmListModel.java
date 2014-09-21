@@ -2228,9 +2228,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
                 params.setBalloonEnabled(balloonEnabled(model));
                 params.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-
-                ArrayList<VdcActionParametersBase> parameters = new ArrayList<VdcActionParametersBase>();
-                parameters.add(params);
                 params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
                 params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
                 setVmWatchdogToParams(model, params);
