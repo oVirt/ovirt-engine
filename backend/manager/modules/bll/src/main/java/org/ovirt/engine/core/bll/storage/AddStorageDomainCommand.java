@@ -157,6 +157,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
         }
 
+        if (!Guid.isNullOrEmpty(getParameters().getStoragePoolId()) && getTargetStoragePool() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        }
+
         ensureStorageFormatInitialized();
         if (!isStorageFormatSupportedByStoragePool() || !isStorageFormatCompatibleWithDomain()) {
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);

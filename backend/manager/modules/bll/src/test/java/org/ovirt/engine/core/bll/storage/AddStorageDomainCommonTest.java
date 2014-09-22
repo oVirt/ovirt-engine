@@ -64,6 +64,7 @@ public class AddStorageDomainCommonTest {
     private Guid spId;
     private StoragePool sp;
     private Guid connId;
+    private StorageDomainManagementParameter params;
 
     @Before
     public void setUp() {
@@ -96,7 +97,7 @@ public class AddStorageDomainCommonTest {
 
         when(sscDao.get(connId.toString())).thenReturn(conn);
 
-        StorageDomainManagementParameter params = new StorageDomainManagementParameter(sd);
+        params = new StorageDomainManagementParameter(sd);
         params.setVdsId(vdsId);
 
         cmd = spy(new AddStorageDomainCommon<>(params));
@@ -158,11 +159,20 @@ public class AddStorageDomainCommonTest {
     }
 
     @Test
-    public void canDoActionSucceedsNoPool() {
+    public void canDoActionSucceedsPoolNotSpecified() {
         sd.setStorageFormat(null);
         vds.setStoragePoolId(null);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
+
+    @Test
+    public void canDoActionFailsPoolSpecifiedDoesNotExist() {
+        params.setStoragePoolId(spId);
+        when(spDao.get(spId)).thenReturn(null);
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure
+                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+    }
+
 
     @Test
     public void canDoActionFailsBlockIso() {
