@@ -26,6 +26,7 @@ public class CpuQosParametersModel extends QosParametersModel<CpuQos> {
         cpuQos.setCpuLimit(getCpuLimit().getEntity());
     }
 
+    @Override
     public boolean validate() {
         if (!getIsAvailable()) {
             return true;

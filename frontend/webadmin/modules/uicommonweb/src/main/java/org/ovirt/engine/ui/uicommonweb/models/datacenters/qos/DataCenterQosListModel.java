@@ -42,9 +42,9 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
 
     protected abstract QosType getQosType();
 
-    protected abstract NewQosModel<T, P> getNewQosModel();
+    protected abstract QosModel<T, P> getNewQosModel();
 
-    protected abstract EditQosModel<T, P> getEditQosModel(final T qoS);
+    protected abstract QosModel<T, P> getEditQosModel(final T qoS);
 
     protected abstract RemoveQosModel<T> getRemoveQosModel();
 
@@ -140,7 +140,7 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
             return;
         }
 
-        final EditQosModel<T, P> qosModel = getEditQosModel(qos);
+        final QosModel<T, P> qosModel = getEditQosModel(qos);
         setWindow(qosModel);
 
         qosModel.getDataCenters().setItems(Arrays.asList(getEntity()), getEntity());
@@ -170,7 +170,7 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
             return;
         }
 
-        final NewQosModel<T, P> newQosModel = getNewQosModel();
+        final QosModel<T, P> newQosModel = getNewQosModel();
         setWindow(newQosModel);
 
         newQosModel.getDataCenters().setItems(Arrays.asList(getEntity()), getEntity());

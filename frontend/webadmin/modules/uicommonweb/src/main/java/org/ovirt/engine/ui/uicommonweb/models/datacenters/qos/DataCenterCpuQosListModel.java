@@ -27,12 +27,12 @@ public class DataCenterCpuQosListModel extends DataCenterQosListModel<CpuQos, Cp
     }
 
     @Override
-    protected NewQosModel<CpuQos, CpuQosParametersModel> getNewQosModel() {
+    protected QosModel<CpuQos, CpuQosParametersModel> getNewQosModel() {
         return new NewCpuQosModel(this, getEntity());
     }
 
     @Override
-    protected EditQosModel<CpuQos, CpuQosParametersModel> getEditQosModel(CpuQos qoS) {
+    protected QosModel<CpuQos, CpuQosParametersModel> getEditQosModel(CpuQos qoS) {
         return new EditCpuQosModel((CpuQos) getSelectedItem(), this, getEntity());
     }
 

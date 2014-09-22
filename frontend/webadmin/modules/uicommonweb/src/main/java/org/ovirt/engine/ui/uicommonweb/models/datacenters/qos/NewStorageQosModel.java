@@ -8,11 +8,10 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class NewStorageQosModel extends NewQosModel<StorageQos, StorageQosParametersModel> {
+public class NewStorageQosModel extends QosModel<StorageQos, StorageQosParametersModel> {
 
     public NewStorageQosModel(Model sourceModel, StoragePool dataCenter) {
-        super(sourceModel, dataCenter);
-        init(new StorageQos());
+        super(new StorageQos(), new StorageQosParametersModel(), sourceModel, dataCenter);
     }
 
     @Override
@@ -25,13 +24,6 @@ public class NewStorageQosModel extends NewQosModel<StorageQos, StorageQosParame
         QosParametersBase<StorageQos> qosParametersBase = new QosParametersBase<StorageQos>();
         qosParametersBase.setQos(getQos());
         return qosParametersBase;
-    }
-
-    @Override
-    public void init(StorageQos qos) {
-        setQos(qos);
-        setQosParametersModel(new StorageQosParametersModel());
-        getQosParametersModel().init(qos);
     }
 
     @Override

@@ -8,10 +8,10 @@ import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class EditCpuQosModel extends EditQosModel<CpuQos, CpuQosParametersModel> {
+public class EditCpuQosModel extends QosModel<CpuQos, CpuQosParametersModel> {
 
     public EditCpuQosModel(CpuQos qos, Model sourceModel, StoragePool dataCenter) {
-        super(qos, sourceModel, dataCenter);
+        super(qos, new CpuQosParametersModel(), sourceModel, dataCenter);
     }
 
     @Override
@@ -25,14 +25,6 @@ public class EditCpuQosModel extends EditQosModel<CpuQos, CpuQosParametersModel>
         qosParametersBase.setQos(getQos());
         qosParametersBase.setQosId(getQos().getId());
         return qosParametersBase;
-    }
-
-    @Override
-    public void init(CpuQos qos) {
-        super.init(qos);
-
-        setQosParametersModel(new CpuQosParametersModel());
-        getQosParametersModel().init(qos);
     }
 
     @Override

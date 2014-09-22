@@ -1,7 +1,12 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
+import org.ovirt.engine.core.common.action.QosParametersBase;
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
@@ -12,6 +17,8 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T>> extends Model {
     private T qos;
@@ -21,7 +28,7 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     private EntityModel<String> name;
     private EntityModel<String> description;
 
-    public QosModel(Model sourceModel, StoragePool dataCenter) {
+    protected QosModel(T qos, P qosParametersModel, Model sourceModel, StoragePool dataCenter) {
         this.sourceModel = sourceModel;
 
         setName(new EntityModel<String>());
@@ -35,12 +42,24 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         setHashName(getHashName());
 
         addCommands();
+
+        init(qos, qosParametersModel);
+    }
+
+    private void init(T qos, P qosParametersModel) {
+        setQos(qos);
+        getName().setEntity(qos.getName());
+        getDescription().setEntity(qos.getDescription());
+
+        setQosParametersModel(qosParametersModel);
+        getQosParametersModel().init(qos);
     }
 
     public boolean validate() {
         getName().validateEntity(new IValidation[] { new NotEmptyValidation(), new AsciiNameValidation() });
         getDescription().validateEntity(new IValidation[] { new AsciiOrNoneValidation() });
-        setIsValid(getIsValid() && getName().getIsValid() && getDescription().getIsValid());
+        getQosParametersModel().validate();
+        setIsValid(getName().getIsValid() && getDescription().getIsValid() && getQosParametersModel().getIsValid());
         return getIsValid();
     }
 
@@ -63,9 +82,26 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
         return getQos();
     }
 
-    protected abstract void executeSave();
+    protected void executeSave() {
+        final QosParametersBase<T> parameters = getParameters();
+        parameters.setQos(getQos());
+        Frontend.getInstance().runAction(getVdcAction(), parameters, new IFrontendActionAsyncCallback() {
+            @Override
+            public void executed(FrontendActionAsyncResult result1) {
+                VdcReturnValueBase retVal = result1.getReturnValue();
+                boolean succeeded = false;
+                if (retVal != null && retVal.getSucceeded()) {
+                    succeeded = true;
+                    getQos().setId((Guid) retVal.getActionReturnValue());
+                }
+                postSaveAction(succeeded);
+            }
+        });
+    }
 
-    public abstract void init(T qos);
+    protected abstract VdcActionType getVdcAction();
+
+    protected abstract QosParametersBase<T> getParameters();
 
     @Override
     public abstract String getTitle();
