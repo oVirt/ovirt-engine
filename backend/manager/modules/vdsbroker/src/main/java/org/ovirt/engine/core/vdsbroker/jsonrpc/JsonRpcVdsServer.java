@@ -1458,10 +1458,12 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
+    @SuppressWarnings("rawtypes")
     @Override
     public StatusOnlyReturnForXmlRpc updateVmPolicy(Map params) {
         JsonRpcRequest request =
-                new RequestBuilder("VM.updateVmPolicy").withParameter("params", params)
+                new RequestBuilder("VM.updateVmPolicy").withParameter("vmID", (String) params.get("vmId"))
+                        .withParameter("params", params)
                         .build();
         Map<String, Object> response =
                 new FutureMap(this.client, request);
