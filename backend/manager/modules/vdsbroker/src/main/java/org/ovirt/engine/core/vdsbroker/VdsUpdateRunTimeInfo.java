@@ -285,7 +285,6 @@ public class VdsUpdateRunTimeInfo {
         saveVmJobsToDb();
         saveVmGuestAgentNetworkDevices();
         saveVmNumaNodeRuntimeData();
-        getVdsEventListener().addExternallyManagedVms(_externalVmsToAdd);
     }
 
     private void saveVmNumaNodeRuntimeData() {
