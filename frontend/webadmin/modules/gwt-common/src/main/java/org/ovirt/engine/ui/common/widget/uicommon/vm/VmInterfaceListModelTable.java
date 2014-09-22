@@ -119,6 +119,15 @@ public class VmInterfaceListModelTable extends AbstractModelBoundTableWidget<VmN
         profileNameColumn.makeSortable();
         getTable().addColumn(profileNameColumn, constants.profileNameInterface(), "150px"); //$NON-NLS-1$
 
+        TextColumnWithTooltip<VmNetworkInterface> qosName = new TextColumnWithTooltip<VmNetworkInterface>() {
+            @Override
+            public String getValue(VmNetworkInterface object) {
+                return object.getQosName();
+            }
+        };
+        qosName.makeSortable();
+        getTable().addColumn(qosName, constants.vmNetworkQosName(), "150px"); //$NON-NLS-1$
+
         BooleanColumn<VmNetworkInterface> linkStateColumn =
                 new BooleanColumn<VmNetworkInterface>(constants.linkedNetworkInterface(),
                         constants.unlinkedNetworkInterface()) {

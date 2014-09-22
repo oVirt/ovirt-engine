@@ -795,6 +795,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Tx")
     String txInterface();
 
+    @DefaultStringValue("QoS Name")
+    String vmNetworkQosName();
+
     @DefaultStringValue("Drops")
     String dropsInterface();
 
