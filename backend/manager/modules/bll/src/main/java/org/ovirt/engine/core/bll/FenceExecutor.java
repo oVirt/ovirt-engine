@@ -316,7 +316,8 @@ public class FenceExecutor {
                  || vdsDynamic.getStatus() == VDSStatus.Reboot
                  || vdsDynamic.getStatus() == VDSStatus.Kdumping
                  || (vdsDynamic.getStatus() == VDSStatus.NonOperational
-                     && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE));
+                     && vdsDynamic.getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE)
+                 || vdsDynamic.getStatus() == VDSStatus.NonResponsive);
     }
 
     private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions) {
