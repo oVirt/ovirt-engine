@@ -62,6 +62,10 @@
           <param-name>url</param-name>
           <param-value>%{ENGINE_REPORTS_BASE_URL}</param-value>
       </init-param>
+      <init-param>
+          <param-name>url404</param-name>
+          <param-value>%{ENGINE_REPORTS_NOT_INSTALLED_URL}</param-value>
+      </init-param>
   </servlet>
   <servlet-mapping>
       <servlet-name>reports-redirect</servlet-name>
