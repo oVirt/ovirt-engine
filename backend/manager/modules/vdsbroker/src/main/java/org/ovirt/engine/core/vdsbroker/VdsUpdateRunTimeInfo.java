@@ -463,6 +463,7 @@ public class VdsUpdateRunTimeInfo {
      */
     private void checkVdsSwapThreshold(VdsStatistics stat) {
 
+        final double THRESHOLD = 0.98;
         Integer minAvailableThreshold = Config.getValue(ConfigValues.LogPhysicalMemoryThresholdInMB);
         Integer maxUsedPercentageThreshold =
                 Config.getValue(ConfigValues.LogMaxPhysicalMemoryUsedThresholdInPercentage);
@@ -473,16 +474,18 @@ public class VdsUpdateRunTimeInfo {
 
         Long swapUsedPercent = (stat.getswap_total() - stat.getswap_free()) / stat.getswap_total();
 
-        AuditLogType valueToLog = stat.getswap_free() < minAvailableThreshold ?
+        // Allow the space to be up to 2% lower than as defined in configuration
+        Long allowedMinAvailableThreshold = Math.round(minAvailableThreshold.doubleValue() * THRESHOLD);
+        AuditLogType valueToLog = stat.getswap_free() <  allowedMinAvailableThreshold ?
                 AuditLogType.VDS_LOW_SWAP :
                 AuditLogType.VDS_HIGH_SWAP_USE;
 
-        if (stat.getswap_free() < minAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
+        if (stat.getswap_free() < allowedMinAvailableThreshold || swapUsedPercent > maxUsedPercentageThreshold) {
             AuditLogableBase logable = new AuditLogableBase(stat.getId());
             logable.addCustomValue("HostName", _vds.getName());
             logable.addCustomValue("UsedSwap", swapUsedPercent.toString());
             logable.addCustomValue("AvailableSwapMemory", stat.getswap_free().toString());
-            logable.addCustomValue("Threshold", stat.getswap_free() < minAvailableThreshold ?
+            logable.addCustomValue("Threshold", stat.getswap_free() < allowedMinAvailableThreshold ?
                     minAvailableThreshold.toString() : maxUsedPercentageThreshold.toString());
             auditLog(logable, valueToLog);
         }
