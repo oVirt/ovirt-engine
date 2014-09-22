@@ -43,7 +43,7 @@ public class ProviderConditionFieldAutoCompleter extends BaseConditionFieldAutoC
     @Override
     public IConditionValueAutoCompleter getFieldValueAutoCompleter(String fieldName) {
         if (TYPE.equals(fieldName)) {
-            return new EnumValueAutoCompleter(ProviderType.class);
+            return new EnumNameAutoCompleter(ProviderType.class);
         }
         return null;
     }
