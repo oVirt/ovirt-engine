@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.resource.validation;
 
 import static org.ovirt.engine.api.common.util.EnumValidator.validateEnum;
 
+import org.ovirt.engine.api.model.GuestNicConfiguration;
 import org.ovirt.engine.api.model.Payload;
 import org.ovirt.engine.api.model.VM;
 import org.ovirt.engine.api.model.VmType;
@@ -18,6 +19,7 @@ public class VmValidator implements Validator<VM> {
     private CloudInitValidator cloudInitValidator = new CloudInitValidator();
     private CPUValidator cpuValidator = new CPUValidator();
     private RngDeviceValidator rngDeviceValidator = new RngDeviceValidator();
+    private GuestNicConfigurationValidator guestNicConfigurationValidator = new GuestNicConfigurationValidator();
 
     @Override
     public void validateEnums(VM vm) {
@@ -54,6 +56,13 @@ public class VmValidator implements Validator<VM> {
         }
         if (vm.isSetRngDevice()) {
             rngDeviceValidator.validateEnums(vm.getRngDevice());
+        }
+        if (vm.isSetInitialization() && vm.getInitialization().isSetNicConfigurations()) {
+            for (GuestNicConfiguration nic : vm.getInitialization().getNicConfigurations().getNicConfigurations()) {
+                if (nic.isSetBootProtocol()) {
+                    guestNicConfigurationValidator.validateEnums(nic);
+                }
+            }
         }
     }
 }

@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
-
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -15,6 +14,9 @@ public class VmInitNetwork implements Serializable, BusinessEntity<Guid> {
     private String gateway;
     private Guid id;
 
+    public VmInitNetwork() {
+        this.bootProtocol = NetworkBootProtocol.NONE;
+    }
 
     public Guid getId() {
         return id;
@@ -40,7 +42,7 @@ public class VmInitNetwork implements Serializable, BusinessEntity<Guid> {
         return bootProtocol;
     }
     public void setBootProtocol(NetworkBootProtocol bootProtocol) {
-        this.bootProtocol = bootProtocol;
+        this.bootProtocol = (bootProtocol == null) ? NetworkBootProtocol.NONE : bootProtocol;
     }
     public String getIp() {
         return ip;
