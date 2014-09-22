@@ -3,7 +3,7 @@
   <modelVersion>4.0.0</modelVersion>
   <groupId>org.ovirt.engine</groupId>
   <artifactId>root</artifactId>
-  <version>3.4.4-SNAPSHOT</version>
+  <version>3.4.4</version>
   <packaging>pom</packaging>
   <name>ovirt-root</name>
   <description>oVirt Engine Root Project</description>
@@ -33,7 +33,7 @@
 
   <properties>
     <!--  Version Info -->
-    <engine.version>3.4.4-SNAPSHOT</engine.version>
+    <engine.version>3.4.4</engine.version>
     <engine.groupId>org.ovirt.engine</engine.groupId>
 
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
