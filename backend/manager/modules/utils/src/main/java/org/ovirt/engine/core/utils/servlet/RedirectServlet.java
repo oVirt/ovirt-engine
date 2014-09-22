@@ -27,8 +27,11 @@ public class RedirectServlet extends HttpServlet {
     private static final long serialVersionUID = -1794616863361241804L;
 
     private static final String URL = "url";
+    private static final String URL404 = "url404";
 
     private String url;
+    private String url404;
+    private static final String url404Default = EngineLocalConfig.getInstance().getEngineURI() + "/404.html";
 
     @Override
     public void init(ServletConfig config) throws ServletException {
@@ -36,19 +39,29 @@ public class RedirectServlet extends HttpServlet {
 
         // we use %{x} convention to avoid conflict with jboss properties
         url = EngineLocalConfig.getInstance().expandString(config.getInitParameter(URL).replaceAll("%\\{", "\\${"));
+        String url404ConfigValue = config.getInitParameter(URL404);
+        if (StringUtils.isNotEmpty(url404ConfigValue)) {
+            url404 = EngineLocalConfig.getInstance().expandString(url404ConfigValue.replaceAll("%\\{", "\\${"));
+        } else {
+            url404 = url404Default;
+        }
     }
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         String redirectUrl = url;
-        String queryString = request.getQueryString();
-        if (StringUtils.isNotEmpty(queryString)) {
-            if (redirectUrl.indexOf("?") == -1) {
-                redirectUrl += "?";
-            } else {
-                redirectUrl += "&";
+        if (StringUtils.isNotEmpty(redirectUrl)) {
+            String queryString = request.getQueryString();
+            if (StringUtils.isNotEmpty(queryString)) {
+                if (redirectUrl.indexOf("?") == -1) {
+                    redirectUrl += "?";
+                } else {
+                    redirectUrl += "&";
+                }
+                redirectUrl += queryString;
             }
-            redirectUrl += queryString;
+        } else {
+            redirectUrl = url404;
         }
         response.sendRedirect(redirectUrl);
     }
