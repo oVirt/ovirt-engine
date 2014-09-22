@@ -19,6 +19,8 @@ public class ProxyServlet extends ProxyServletBase {
     private static final String TRUST_STORE_PASSWORD_PRM = "trustStorePassword";
     private static final String READ_TIMEOUT_PRM = "readTimeout";
     private static final String URL_PRM = "url";
+    private static final String HTTP = "http://";
+    private static final String HTTPS = "https://";
 
     private String getConfigString(String name) {
         String r = getServletConfig().getInitParameter(name);
@@ -49,6 +51,14 @@ public class ProxyServlet extends ProxyServletBase {
         return r;
     }
 
+    private String getUrl() {
+        String url = getConfigString(URL_PRM);
+        if (!url.startsWith(HTTP) && !url.startsWith(HTTPS)) {
+            url = null;
+        }
+        return url;
+    }
+
     @Override
     public void init() throws ServletException {
         setVerifyHost(getConfigBoolean(VERIFY_HOST_PRM));
@@ -59,7 +69,7 @@ public class ProxyServlet extends ProxyServletBase {
         setTrustStoreType(getConfigString(TRUST_STORE_TYPE_PRM));
         setTrustStorePassword(getConfigString(TRUST_STORE_PASSWORD_PRM));
         setReadTimeout(getConfigInteger(READ_TIMEOUT_PRM));
-        setUrl(getConfigString(URL_PRM));
+        setUrl(getUrl());
     }
 
 }
