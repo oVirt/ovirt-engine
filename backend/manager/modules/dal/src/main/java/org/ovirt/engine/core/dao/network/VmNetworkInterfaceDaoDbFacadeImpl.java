@@ -96,6 +96,7 @@ public class VmNetworkInterfaceDaoDbFacadeImpl extends DefaultReadDaoDbFacade<Vm
             entity.setVnicProfileName(rs.getString("vnic_profile_name"));
             entity.setPlugged(rs.getBoolean("is_plugged"));
             entity.setPortMirroring(rs.getBoolean("port_mirroring"));
+            entity.setQosName(rs.getString("qos_name"));
             return entity;
 
         }

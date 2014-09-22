@@ -13,6 +13,7 @@ public class VmNetworkInterface extends VmNic {
     private boolean portMirroring;
     private String vmName;
     private boolean plugged;
+    private String qosName;
 
     public VmNetworkInterface() {
         plugged = true;
@@ -43,6 +44,10 @@ public class VmNetworkInterface extends VmNic {
         return vnicProfileName;
     }
 
+    public String getQosName() {
+        return qosName;
+    }
+
     public void setVnicProfileName(String vnicProfileName) {
         this.vnicProfileName = vnicProfileName;
     }
@@ -69,6 +74,10 @@ public class VmNetworkInterface extends VmNic {
 
     public void setPlugged(boolean plugged) {
         this.plugged = plugged;
+    }
+
+    public void setQosName(String qosName) {
+        this.qosName = qosName;
     }
 
     @Override
@@ -101,6 +110,8 @@ public class VmNetworkInterface extends VmNic {
                 .append(getVmName())
                 .append(", vmTemplateId=")
                 .append(getVmTemplateId())
+                .append(", QoSName=")
+                .append(getQosName())
                 .append("}");
         return builder.toString();
     }
@@ -114,6 +125,7 @@ public class VmNetworkInterface extends VmNic {
         result = prime * result + (isPortMirroring() ? 1231 : 1237);
         result = prime * result + ((getVmName() == null) ? 0 : getVmName().hashCode());
         result = prime * result + (isPlugged() ? 1231 : 1237);
+        result = prime * result + ((getQosName() == null) ? 0 :getQosName().hashCode());
         return result;
     }
 
@@ -142,6 +154,9 @@ public class VmNetworkInterface extends VmNic {
             return false;
         }
         if (isPlugged() != other.isPlugged()) {
+            return false;
+        }
+        if (!ObjectUtils.objectsEqual(getQosName(), other.getQosName())) {
             return false;
         }
 
