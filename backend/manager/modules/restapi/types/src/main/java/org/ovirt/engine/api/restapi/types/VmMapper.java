@@ -7,7 +7,6 @@ import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.StatusUtils;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -1060,7 +1059,9 @@ public class VmMapper extends VmBaseMapper {
 
         model.setName(entity.getName());
         model.setOnBoot(entity.getStartOnBoot());
-        model.setBootProtocol(entity.getBootProtocol().name());
+        if (entity.getBootProtocol() != null) {
+            model.setBootProtocol(BootProtocolMapper.map(entity.getBootProtocol(), null).value());
+        }
         IP ip = new IP();
         model.setIp(ip);
         ip.setAddress(entity.getIp());
