@@ -167,6 +167,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
             returnValue = false;
         }
 
+        if (!Guid.isNullOrEmpty(getParameters().getStoragePoolId()) && getTargetStoragePool() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        }
+
         ensureStorageFormatInitialized();
         boolean isSupportedStorageFormat =
                 isStorageFormatSupportedByStoragePool() && isStorageFormatCompatibleWithDomain();
@@ -199,8 +203,10 @@ public abstract class AddStorageDomainCommand<T extends StorageDomainManagementP
         StorageFormatType storageFormat = getStorageDomain().getStorageFormat();
         StoragePool targetStoragePool = getTargetStoragePool();
 
+        // No reason to check supported storage format if we don't have a pool, the storage format will be validated
+        // upon the future attachment of the the created domain to a pool
         if (targetStoragePool == null) {
-            return false;
+            return true;
         }
 
         Set<StorageFormatType> supportedStorageFormats =
