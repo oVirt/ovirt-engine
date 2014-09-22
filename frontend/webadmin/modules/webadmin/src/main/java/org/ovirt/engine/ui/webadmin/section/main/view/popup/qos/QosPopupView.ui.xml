@@ -20,7 +20,7 @@
 					<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 				</g:FlowPanel>
-				<q:StorageQosWidget ui:field="qosWidget" />
+				<q:QosWidget ui:field="qosWidget" />
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>

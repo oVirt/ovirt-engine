@@ -1,15 +1,12 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
 
+import org.ovirt.engine.core.common.businessentities.qos.StorageQos;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.IntegerEntityModelTextBoxOnlyEditor;
-import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.StorageQosParametersModel;
-import org.ovirt.engine.ui.uicompat.Event;
-import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 
 import com.google.gwt.core.client.GWT;
@@ -19,12 +16,10 @@ import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
 
-public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosParametersModel> {
+public class StorageQosWidget extends QosWidget<StorageQos, StorageQosParametersModel> {
 
     interface Driver extends SimpleBeanEditorDriver<StorageQosParametersModel, StorageQosWidget> {
     }
-
-    private final Driver driver = GWT.create(Driver.class);
 
     interface ViewUiBinder extends UiBinder<FlowPanel, StorageQosWidget> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
@@ -40,9 +35,6 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
 
     @UiField
     WidgetStyle style;
-
-    @UiField
-    FlowPanel mainPanel;
 
     @UiField(provided = true)
     @Path(value = "throughput.enabled.entity")
@@ -84,9 +76,6 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
     @WithElementId
     IntegerEntityModelTextBoxOnlyEditor iopsWriteEditor;
 
-    private StorageQosParametersModel model;
-    private final IEventListener<PropertyChangedEventArgs> availabilityListener;
-
     public StorageQosWidget(ApplicationConstants constants) {
         throughputEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
         iopsEnabled = new EntityModelCheckBoxEditor(Align.RIGHT);
@@ -95,17 +84,9 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
 
         setStyle();
         localize(constants);
+
+        driver = GWT.create(Driver.class);
         driver.initialize(this);
-
-        availabilityListener = new IEventListener<PropertyChangedEventArgs>() {
-
-            @Override
-            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
-                if ("IsAvailable".equals(args.propertyName)) { //$NON-NLS-1$
-                    toggleVisibility();
-                }
-            }
-        };
     }
 
     private void setStyle() {
@@ -126,27 +107,6 @@ public class StorageQosWidget extends AbstractModelBoundPopupWidget<StorageQosPa
         iopsTotalEditor.setTitle(constants.totalStorageQosPopup() + constants.iopsCountLabelQosPopup());
         iopsReadEditor.setTitle(constants.readStorageQosPopup() + constants.iopsCountLabelQosPopup());
         iopsWriteEditor.setTitle(constants.writeStorageQosPopup() + constants.iopsCountLabelQosPopup());
-    }
-
-    private void toggleVisibility() {
-        mainPanel.setVisible(model.getIsAvailable());
-    }
-
-    @Override
-    public void edit(StorageQosParametersModel model) {
-        driver.edit(model);
-
-        if (this.model != null) {
-            this.model.getPropertyChangedEvent().removeListener(availabilityListener);
-        }
-        this.model = model;
-        model.getPropertyChangedEvent().addListener(availabilityListener);
-        toggleVisibility();
-    }
-
-    @Override
-    public StorageQosParametersModel flush() {
-        return driver.flush();
     }
 
 }

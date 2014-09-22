@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-
 public class CpuQosPopupPresenterWidget extends AbstractModelBoundPopupPresenterWidget<QosModel<CpuQos, CpuQosParametersModel>, CpuQosPopupPresenterWidget.ViewDef> {
 
     public interface ViewDef extends AbstractModelBoundPopupPresenterWidget.ViewDef<QosModel<CpuQos, CpuQosParametersModel>> {
