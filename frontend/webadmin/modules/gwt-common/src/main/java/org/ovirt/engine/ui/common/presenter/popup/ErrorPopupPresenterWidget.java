@@ -29,4 +29,8 @@ public class ErrorPopupPresenterWidget extends AbstractPopupPresenterWidget<Erro
         getView().hide();
     }
 
+    @Override
+    protected void handleEnterKey() {
+        onClose();
+    }
 }
