@@ -158,11 +158,10 @@ public class AddStorageDomainCommonTest {
     }
 
     @Test
-    public void canDoActionFailsNoPool() {
+    public void canDoActionSucceedsNoPool() {
         sd.setStorageFormat(null);
         vds.setStoragePoolId(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
     @Test
@@ -186,13 +185,6 @@ public class AddStorageDomainCommonTest {
         sd.setStorageDomainType(StorageDomainType.Master);
         CanDoActionTestUtils.runAndAssertCanDoActionFailure
                 (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-    }
-
-    @Test
-    public void canDoActionFailsNoStoragePool() {
-        when(spDao.get(spId)).thenReturn(null);
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure
-                (cmd, VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_FORMAT_ILLEGAL_HOST);
     }
 
     @Test
