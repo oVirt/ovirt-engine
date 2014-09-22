@@ -177,7 +177,13 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 
 BuildArch:	noarch
 
-BuildRequires:	java-devel
+%if 0%{?rhel}
+BuildRequires:	java7-devel
+%endif
+%if 0%{?fedora}
+BuildRequires:	java-devel >= 1.7.0
+%endif
+
 BuildRequires:	jpackage-utils
 BuildRequires:	make
 BuildRequires:	python
