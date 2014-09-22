@@ -774,7 +774,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
             " Higher values conserve memory at the expense of greater host CPU usage.")
     String clusterPopupMemoryOptimizationInfo();
 
-    @DefaultStringValue("None - Disable memory page sharing")
+    @DefaultStringValue("None - Disable memory overcommit")
     String clusterPopupOptimizationNoneLabel();
 
     @DefaultStringValue("CPU Threads")

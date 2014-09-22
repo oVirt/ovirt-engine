@@ -44,10 +44,10 @@ public interface ApplicationMessages extends CommonApplicationMessages {
     @DefaultMessage("All references to objects that belong to Data Center {0} in the database will be removed. You may need to manually clean the Storage Domains in order to reuse them.")
     String detaCenterForceRemovePopupMessageLabel(String dcName);
 
-    @DefaultMessage("For Server Load - Enable memory page sharing to {0}%")
+    @DefaultMessage("For Server Load - Allow scheduling of {0}% of physical memory")
     String clusterPopupMemoryOptimizationForServerLabel(String a);
 
-    @DefaultMessage("For Desktop Load - Enable memory page sharing to {0}%")
+    @DefaultMessage("For Desktop Load - Allow scheduling of {0}% of physical memory")
     String clusterPopupMemoryOptimizationForDesktopLabel(String a);
 
     @DefaultMessage("Custom Overcommit Threshold - Set to {0}% via API/CLI")
