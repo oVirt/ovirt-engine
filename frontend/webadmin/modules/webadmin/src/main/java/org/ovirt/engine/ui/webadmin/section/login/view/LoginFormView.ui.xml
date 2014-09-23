@@ -75,8 +75,8 @@
                     <form class="form-horizontal" role="form">
 
                         <div class="form-group">
-                            <div class="col-sm-9 col-md-9"></div>
-                            <div class="col-sm-3 col-md-3">
+                            <div class="col-sm-8 col-md-8"></div>
+                            <div class="col-sm-4 col-md-4">
                                 <b:ListBox ui:field="localeBox"/>
                             </div>
                         </div>
