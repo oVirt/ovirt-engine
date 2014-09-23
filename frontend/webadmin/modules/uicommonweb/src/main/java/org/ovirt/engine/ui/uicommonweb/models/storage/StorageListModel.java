@@ -675,6 +675,14 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
                             host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS,
                             model.getActivateDomain().getEntity() }))).run();
+        } else if (model.getSelectedItem() instanceof GlusterStorageModel) {
+            GlusterStorageModel glusterModel = (GlusterStorageModel) model.getSelectedItem();
+            glusterModel.setMessage(null);
+
+            Task.create(this,
+                    new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
+                            host.getId(), glusterModel.getPath().getEntity(), glusterModel.getRole(),
+                            StorageType.GLUSTERFS, model.getActivateDomain().getEntity() }))).run();
         } else if (model.getSelectedItem() instanceof ImportSanStorageModel) {
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
@@ -2026,6 +2034,11 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                         PosixStorageModel posixModel = (PosixStorageModel) storageModel;
                         tempVar.setVfsType(posixModel.getVfsType().getEntity());
                         tempVar.setMountOptions(posixModel.getMountOptions().getEntity());
+                    }
+                    if (storageModel instanceof GlusterStorageModel) {
+                        GlusterStorageModel glusterModel = (GlusterStorageModel) storageModel;
+                        tempVar.setVfsType(glusterModel.getVfsType().getEntity());
+                        tempVar.setMountOptions(glusterModel.getMountOptions().getEntity());
                     }
                     storageListModel.fileConnection = tempVar;
                     storageListModel.importFileStorageConnect();
