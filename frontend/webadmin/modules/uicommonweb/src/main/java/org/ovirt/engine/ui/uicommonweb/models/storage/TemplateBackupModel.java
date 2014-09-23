@@ -28,6 +28,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -327,7 +328,6 @@ public class TemplateBackupModel extends VmBackupModel
                                         new ArrayList<Map.Entry<VmTemplate, List<DiskImage>>>();
                                 HashMap<VmTemplate, List<DiskImage>> dictionary =
                                         (HashMap<VmTemplate, List<DiskImage>>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
-
                                 ArrayList<VmTemplate> list = new ArrayList<VmTemplate>();
                                 for (Map.Entry<VmTemplate, List<DiskImage>> item : dictionary.entrySet())
                                 {
@@ -337,6 +337,7 @@ public class TemplateBackupModel extends VmBackupModel
                                     template.getDiskList().addAll(item.getValue());
                                     list.add(template);
                                 }
+                                Collections.sort(list, new Linq.VmTemplateComparator());
                                 backupModel1.setItems(list);
                                 TemplateBackupModel.this.extendedItems = items;
                             }
