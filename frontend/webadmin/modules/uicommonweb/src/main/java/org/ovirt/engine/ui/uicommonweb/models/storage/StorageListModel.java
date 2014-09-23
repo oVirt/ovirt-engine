@@ -771,7 +771,6 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.setTitle(ConstantsManager.getInstance().getConstants().removeStoragesTitle());
         model.setHelpTag(HelpTag.remove_storage);
         model.setHashName("remove_storage"); //$NON-NLS-1$
-        model.getFormat().setIsAvailable(false);
 
         StorageDomain storage = (StorageDomain) getSelectedItem();
         boolean localFsOnly = storage.getStorageType() == StorageType.LOCALFS;
@@ -787,8 +786,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 ArrayList<VDS> hosts = (ArrayList<VDS>) returnValue;
                 removeStorageModel.getHostList().setItems(hosts);
                 removeStorageModel.getHostList().setSelectedItem(Linq.firstOrDefault(hosts));
-                removeStorageModel.getFormat()
-                        .setIsAvailable(storage.getStorageDomainType().isIsoOrImportExportDomain());
+                removeStorageModel.getFormat().setEntity(storage.getStorageDomainType().isDataDomain());
 
                 if (hosts.isEmpty()) {
                     UICommand tempVar = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -824,8 +822,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
             RemoveStorageDomainParameters tempVar = new RemoveStorageDomainParameters(storage.getId());
             tempVar.setVdsId(host.getId());
-            tempVar.setDoFormat(storage.getStorageDomainType().isDataDomain() ? true
-                : (Boolean) model.getFormat().getEntity());
+            tempVar.setDoFormat((Boolean) model.getFormat().getEntity());
 
             Frontend.getInstance().runAction(VdcActionType.RemoveStorageDomain, tempVar, null, this);
         }
