@@ -53,6 +53,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDeviceId;
+import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.businessentities.VmPoolType;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
@@ -127,6 +128,8 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         super(runVmParams, commandContext);
         getParameters().setEntityInfo(new EntityInfo(VdcObjectType.VM, runVmParams.getVmId()));
         setStoragePoolId(getVm() != null ? getVm().getStoragePoolId() : null);
+        // Load payload from Database (only if none was sent via the parameters)
+        loadPayloadDevice();
 
     }
 
@@ -665,18 +668,34 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             // if vm not initialized, use sysprep/cloud-init
             if (!getVm().isInitialized()) {
                 VmHandler.updateVmInitFromDB(getVm().getStaticData(), false);
+                getVm().setInitializationType(InitializationType.None);
                 if (osRepository.isWindows(getVm().getVmOsId())) {
-                    getVm().setInitializationType(InitializationType.Sysprep);
+                    if (!isPayloadExists(VmDeviceType.FLOPPY)) {
+                        getVm().setInitializationType(InitializationType.Sysprep);
+                    }
                 }
                 else if (getVm().getVmInit() != null) {
-                    getVm().setInitializationType(InitializationType.CloudInit);
-                }
-                else {
-                    getVm().setInitializationType(InitializationType.None);
+                    if (!isPayloadExists(VmDeviceType.CDROM)) {
+                        getVm().setInitializationType(InitializationType.CloudInit);
+                    }
                 }
             }
         } else {
             getVm().setInitializationType(getParameters().getInitializationType());
+            // If the user asked for sysprep/cloud-init via run-once we eliminate
+            // the payload since we can only have one media (Floppy/CDROM) per payload.
+            if (getParameters().getInitializationType() == InitializationType.Sysprep &&
+                    isPayloadExists(VmDeviceType.FLOPPY)) {
+                getVm().setVmPayload(null);
+            } else if (getParameters().getInitializationType() == InitializationType.CloudInit &&
+                    isPayloadExists(VmDeviceType.CDROM)) {
+                getVm().setVmPayload(null);
+            }
+        }
+        // if we asked for floppy from Iso Domain we cannot
+        // have floppy payload since we are limited to only one floppy device
+        if (!StringUtils.isEmpty(getParameters().getFloppyPath()) && isPayloadExists(VmDeviceType.FLOPPY)) {
+            getVm().setVmPayload(null);
         }
 
         // get what cpu flags should be passed to vdsm according to cluster
@@ -692,6 +711,37 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         if (getFlow() != RunVmFlow.RESUME_HIBERNATE) {
             getVm().setHibernationVolHandle(getMemoryFromSnapshot());
         }
+    }
+
+    protected boolean isPayloadExists(VmDeviceType deviceType) {
+        if (getVm().getVmPayload() != null && getVm().getVmPayload().getDeviceType().equals(deviceType)) {
+            return true;
+        }
+        return false;
+    }
+
+    protected void loadPayloadDevice() {
+        if (getParameters().getVmPayload() == null) {
+            VmPayload payload = getVmPayloadByDeviceType(VmDeviceType.CDROM);
+            if (payload != null) {
+                getVm().setVmPayload(payload);
+            } else {
+                getVm().setVmPayload(getVmPayloadByDeviceType(VmDeviceType.FLOPPY));
+            }
+        }
+    }
+
+    protected VmPayload getVmPayloadByDeviceType(VmDeviceType deviceType) {
+        List<VmDevice> vmDevices = getVmDeviceDao()
+                .getVmDeviceByVmIdTypeAndDevice(getVm().getId(),
+                        VmDeviceGeneralType.DISK,
+                        deviceType.getName());
+        for (VmDevice vmDevice : vmDevices) {
+            if (VmPayload.isPayload(vmDevice.getSpecParams())) {
+                return new VmPayload(vmDevice);
+            }
+        }
+        return null;
     }
 
     protected void fetchVmDisksFromDb() {
@@ -855,6 +905,20 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
         if (isRunAsStateless()) {
             return validateSpaceRequirements();
+        }
+
+        // Note: that we are setting the payload from database in the ctor.
+        //
+        // Checking if the user sent Payload and Sysprep/Cloud-init at the same media -
+        // Currently we cannot use two payloads in the same media (cdrom/floppy)
+        if (getParameters().getInitializationType() != null) {
+           if (getParameters().getInitializationType() == InitializationType.Sysprep && getParameters().getVmPayload() != null &&
+                   getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
+               return failCanDoAction(VdcBllMessages.VMPAYLOAD_FLOPPY_WITH_SYSPREP);
+           } else if (getParameters().getInitializationType() == InitializationType.CloudInit && getParameters().getVmPayload() != null &&
+                   getParameters().getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
+               return failCanDoAction(VdcBllMessages.VMPAYLOAD_CDROM_WITH_CLOUD_INIT);
+           }
         }
 
         return true;
