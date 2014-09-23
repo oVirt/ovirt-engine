@@ -1,0 +1,35 @@
+package org.ovirt.engine.ui.webadmin.section.main.view.popup.qos;
+
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.HostNetworkQosParametersModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.QosModel;
+import org.ovirt.engine.ui.webadmin.ApplicationConstants;
+import org.ovirt.engine.ui.webadmin.ApplicationResources;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
+
+import com.google.gwt.core.shared.GWT;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.event.shared.EventBus;
+import com.google.inject.Inject;
+
+public class HostNetworkQosPopupView extends QosPopupView<HostNetworkQos, HostNetworkQosParametersModel> implements HostNetworkQosPopupPresenterWidget.ViewDef {
+
+    interface Driver extends SimpleBeanEditorDriver<QosModel<HostNetworkQos, HostNetworkQosParametersModel>, HostNetworkQosPopupView> {
+    }
+
+    @Inject
+    public HostNetworkQosPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants) {
+        super(eventBus, resources, constants);
+    }
+
+    @Override
+    protected void createQosWidget() {
+        qosWidget = new HostNetworkQosWidget(constants);
+    }
+
+    @Override
+    protected SimpleBeanEditorDriver<QosModel<HostNetworkQos, HostNetworkQosParametersModel>, QosPopupView<HostNetworkQos, HostNetworkQosParametersModel>> createDriver() {
+        return GWT.create(Driver.class);
+    }
+
+}

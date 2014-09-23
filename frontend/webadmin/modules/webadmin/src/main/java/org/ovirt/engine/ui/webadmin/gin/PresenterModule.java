@@ -15,6 +15,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.SearchPanelPresenterW
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.DetachConfirmationPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.PermissionsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
@@ -314,6 +315,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ExternalSub
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ImportNetworksPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.provider.ProviderPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.CpuQosPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.HostNetworkQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.qos.StorageQosPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.ChangeQuotaPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.quota.EditQuotaClusterPopupView;
@@ -1399,6 +1401,11 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(CpuQosPopupPresenterWidget.class,
                 CpuQosPopupPresenterWidget.ViewDef.class,
                 CpuQosPopupView.class);
+
+        // Host Network QoS
+        bindPresenterWidget(HostNetworkQosPopupPresenterWidget.class,
+                HostNetworkQosPopupPresenterWidget.ViewDef.class,
+                HostNetworkQosPopupView.class);
 
         bindPresenterWidget(EditQuotaClusterPopupPresenterWidget.class,
                 EditQuotaClusterPopupPresenterWidget.ViewDef.class,

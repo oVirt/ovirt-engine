@@ -9,7 +9,7 @@ import java.util.Map.Entry;
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
+import org.ovirt.engine.core.common.businessentities.Nameable;
 import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
@@ -47,7 +47,7 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
     @Override
     public abstract String getTitle();
 
-    protected abstract VdcQueryType getProfilesByQosIdQueryType();
+    protected abstract VdcQueryType getUsingEntitiesByQosIdQueryType();
 
     protected abstract String getRemoveQosMessage(int size);
 
@@ -63,36 +63,38 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
         for (T qos : sourceListModel.getSelectedItems()) {
             VdcQueryParametersBase parameter = new IdQueryParameters(qos.getId());
             parameters.add(parameter);
-            queryTypes.add(getProfilesByQosIdQueryType());
+            queryTypes.add(getUsingEntitiesByQosIdQueryType());
         }
         Frontend.getInstance().runMultipleQueries(queryTypes, parameters, new IFrontendMultipleQueryAsyncCallback() {
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                Map<ProfileBase, String> profilesAndQos = new HashMap<ProfileBase, String>();
+                Map<String, String> entitiesAndQos = new HashMap<String, String>();
 
                 setHelpTag(getRemoveQosHelpTag());
                 setHashName(getRemoveQosHashName());
 
                 int index = 0;
                 for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
-                        for (ProfileBase profileBase : (List<ProfileBase>)returnValue.getReturnValue()) {
-                                profilesAndQos.put(profileBase, sourceListModel.getSelectedItems().get(index).getName());
-                                        }
-                        index++;
+                    for (Nameable entity : (List<Nameable>) returnValue.getReturnValue()) {
+                        entitiesAndQos.put(entity.getName(), sourceListModel.getSelectedItems()
+                                .get(index)
+                                .getName());
+                    }
+                    index++;
                 }
-                if (profilesAndQos.isEmpty()) {
+                if (entitiesAndQos.isEmpty()) {
                     ArrayList<String> list = new ArrayList<String>();
                     for (T item : sourceListModel.getSelectedItems()) {
                         list.add(item.getName());
                     }
                     setItems(list);
                 } else {
-                    setMessage(getRemoveQosMessage(profilesAndQos.size()));
+                    setMessage(getRemoveQosMessage(entitiesAndQos.size()));
 
                     ArrayList<String> list = new ArrayList<String>();
-                    for (Entry<ProfileBase, String> item : profilesAndQos.entrySet()) {
-                        list.add(item.getKey().getName() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
+                    for (Entry<String, String> item : entitiesAndQos.entrySet()) {
+                        list.add(item.getKey() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     setItems(list);
                 }

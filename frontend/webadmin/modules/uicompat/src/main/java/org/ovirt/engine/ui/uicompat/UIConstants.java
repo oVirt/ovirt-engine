@@ -2173,6 +2173,15 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("New Network QoS")
     String newNetworkQoSTitle();
 
+    @DefaultStringValue("New Host Network QoS")
+    String newHostNetworkQosTitle();
+
+    @DefaultStringValue("Edit Host Network QoS")
+    String editHostNetworkQosTitle();
+
+    @DefaultStringValue("Remove Host Network QoS")
+    String removeHostNetworkQosTitle();
+
     @DefaultStringValue("New Storage QoS")
     String newStorageQoSTitle();
 

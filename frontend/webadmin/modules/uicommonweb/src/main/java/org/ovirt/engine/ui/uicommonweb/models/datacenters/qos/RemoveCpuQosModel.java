@@ -20,7 +20,7 @@ public class RemoveCpuQosModel extends RemoveQosModel<CpuQos> {
     }
 
     @Override
-    protected VdcQueryType getProfilesByQosIdQueryType() {
+    protected VdcQueryType getUsingEntitiesByQosIdQueryType() {
         return VdcQueryType.GetCpuProfilesByCpuQosId;
     }
 

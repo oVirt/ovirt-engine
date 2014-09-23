@@ -310,6 +310,9 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     @DefaultMessage("This CPU QoS is used by {0} CPU Profiles.\nAre you sure you want to remove this CPU QoS?\n\n Profiles using this QoS:\n")
     String removeCpuQoSMessage(int numOfProfiles);
 
+    @DefaultMessage("This Host Network QoS is used by {0} Networks.\nAre you sure you want to remove it?\n\nNetworks using this QoS:\n")
+    String removeHostNetworkQosMessage(int numOfNetworks);
+
     @DefaultMessage("{0} ({1} Socket(s), {2} Core(s) per Socket)")
     String cpuInfoMessage(int numOfCpus, int sockets, int coresPerSocket);
 
