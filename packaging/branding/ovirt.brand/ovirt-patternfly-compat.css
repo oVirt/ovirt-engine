@@ -143,6 +143,8 @@ span.label {
 }
 .avw_contentWidget_pfly_fix span.gwt-RadioButton label {
     padding-left: 5px !important;
+    position: relative;
+    top: -2px;
 }
 .avmpw_monitorsLabel_pfly_fix {
     width: 276px !important;
@@ -221,6 +223,8 @@ div.avw_contentWidget_pfly_fix {
 }
 .hpv_spmPanel_pfly_fix label {
     padding-left: 5px;
+    position: relative;
+    top: -2px;
 }
 .hpv_consoleAddressHelpIcon_pfly_fix {
     padding-top: 0 !important;
@@ -300,6 +304,8 @@ div.avw_contentWidget_pfly_fix {
 }
 .mtev_buttonPanel_pfly_fix label {
     padding-left: 3px !important;
+    position: relative;
+    top: -2px;
 }
 .db_text {
     position: relative !important;
@@ -331,6 +337,8 @@ input[readonly="readonly"], input[readonly=""] {
 .dvrg_radioGroup_pfly_fix label, .stnhv_radioGroup_pfly_fix label, .stnvmv_radioGroup_pfly_fix label,
         .mtdv_radioGroup_pfly_fix label {
     padding-left: 3px !important;
+    position: relative;
+    top: -2px;
 }
 a.dropdown-toggle {
     line-height: 11px !important;
@@ -352,6 +360,8 @@ a.dropdown-toggle {
 }
 .hpv_radio_pfly_fix label {
     padding-left: 3px !important;
+    position: relative;
+    top: -2px;
 }
 #PermissionsPopupView_specificUserOrGroupRadio input, #PermissionsPopupView_everyoneRadio input {
     margin-left: 3px !important;
