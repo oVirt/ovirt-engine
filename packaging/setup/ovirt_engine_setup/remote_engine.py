@@ -405,13 +405,13 @@ class EnrollCert(base.Base):
             # manual_inline and have another function for that,
             # or perhaps make _enroll_cert_manual_files work with both.
             cert = {
-                osetupcons.Const.REMOTE_ENGINE_SETUP_STYLE_AUTO_SSH:
-                    self._enroll_cert_auto_ssh,
-                osetupcons.Const.REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES:
-                    self._enroll_cert_manual_files,
-            }[
-                self._remote_engine.style().name
-            ]()
+                osetupcons.Const.REMOTE_ENGINE_SETUP_STYLE_AUTO_SSH: (
+                    self._enroll_cert_auto_ssh
+                ),
+                osetupcons.Const.REMOTE_ENGINE_SETUP_STYLE_MANUAL_FILES: (
+                    self._enroll_cert_manual_files
+                ),
+            }[self._remote_engine.style().name]()
         self._cert = cert
 
     def add_to_transaction(
