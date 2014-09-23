@@ -221,7 +221,9 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         // get vms from db
         List<VM> vmsToUpdate = getVmDAO().getVmsListByInstanceType(getVmTemplateId());
         for (VM vm : vmsToUpdate) {
-            runInternalAction(VdcActionType.UpdateVm, new VmManagementParametersBase(vm));
+            VmManagementParametersBase params = new VmManagementParametersBase(vm);
+            params.setApplyChangesLater(true);
+            runInternalAction(VdcActionType.UpdateVm, params);
         }
     }
 
