@@ -3,18 +3,12 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.tab;
 import java.util.List;
 import java.util.Map;
 
-import com.google.gwt.http.client.Request;
-import com.google.gwt.http.client.RequestBuilder;
-import com.google.gwt.http.client.RequestCallback;
-import com.google.gwt.http.client.RequestException;
-import com.google.gwt.http.client.Response;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.common.widget.table.ActionTable;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
-import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.models.reports.ReportsListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
@@ -38,8 +32,6 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, ReportsListModel, MainTabReportsPresenter.ViewDef, MainTabReportsPresenter.ProxyDef> {
 
     private static boolean reportsWebappDeployed = false;
-    private final ErrorPopupManager errorPopupManager;
-    private final ApplicationConstants applicationConstants;
 
     @ProxyCodeSplit
     @NameToken(ApplicationPlaces.reportsMainTabPlace)
@@ -63,35 +55,7 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
             ErrorPopupManager errorPopupManager, ApplicationConstants applicationConstants,
             PlaceManager placeManager, MainModelProvider<Void, ReportsListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
-        this.errorPopupManager = errorPopupManager;
-        this.applicationConstants = applicationConstants;
         getModel().getReportsAvailabilityEvent().addListener(new ReportsModelRefreshEvent());
-    }
-
-    private void checkUpdateReportsPanel(final String url,
-                                         final Map<String, List<String>> params) {
-        RequestBuilder requestBuilder = ReportInit.constructServiceRequestBuilder(ReportInit.STATUS_SERVICE);
-        try {
-            requestBuilder.setTimeoutMillis(1000);
-            requestBuilder.sendRequest(null, new RequestCallback() {
-                @Override
-                public void onError(Request request, Throwable exception) {
-                    errorPopupManager.show(applicationConstants.reportsWebAppNotDeployedMsg());
-                }
-
-                @Override
-                public void onResponseReceived(Request request, Response response) {
-                    if (response.getStatusCode() == Response.SC_OK) {
-                        reportsWebappDeployed = true;
-                        getView().updateReportsPanel(url, params);
-                    } else {
-                        errorPopupManager.show(applicationConstants.reportsWebAppNotDeployedMsg());
-                    }
-                }
-            });
-        } catch (RequestException e) {
-            errorPopupManager.show(applicationConstants.reportsWebAppErrorMsg());
-        }
     }
 
     @Override
@@ -103,14 +67,21 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     @Override
     protected void onReveal() {
         super.onReveal();
+        getModel().setReportsTabSelected(true);
+        reportsWebappDeployed = true;
         getModel().updateReportsAvailability();
+    }
+
+    @Override
+    protected void onHide() {
+        super.onHide();
+        getModel().setReportsTabSelected(false);
     }
 
     @Override
     protected void onReset() {
         super.onReset();
         if (!hasReportsModelRefreshEvent()) {
-            reportsWebappDeployed = false;
             getModel().getReportsAvailabilityEvent().addListener(new ReportsModelRefreshEvent());
         }
         setSubTabPanelVisible(false);
@@ -129,10 +100,8 @@ public class MainTabReportsPresenter extends AbstractMainTabPresenter<Void, Repo
     class ReportsModelRefreshEvent implements IEventListener<EventArgs> {
         @Override
         public void eventRaised(Event<EventArgs> ev, Object sender, EventArgs args) {
-            if (reportsWebappDeployed) {
+            if (reportsWebappDeployed && getModel().getUri() != null) {
                 getView().updateReportsPanel(getModel().getUrl(), getModel().getParams());
-            } else {
-                checkUpdateReportsPanel(getModel().getUrl(), getModel().getParams());
             }
         }
     }

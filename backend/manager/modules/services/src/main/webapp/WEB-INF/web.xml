@@ -69,6 +69,19 @@
   </servlet-mapping>
 
   <servlet>
+      <servlet-name>reports-rightclick-redirect</servlet-name>
+      <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
+      <init-param>
+          <param-name>url</param-name>
+          <param-value>%{ENGINE_REPORTS_RIGHTCLICK_URL}</param-value>
+      </init-param>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>reports-rightclick-redirect</servlet-name>
+      <url-pattern>/reports-rightclick-redirect</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
     <servlet-name>reports-interface-proxy</servlet-name>
     <servlet-class>org.ovirt.engine.core.services.ProxyServlet</servlet-class>
     <init-param>

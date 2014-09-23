@@ -311,16 +311,20 @@ public class CommonModel extends ListModel
         // Select a default item depending on system tree selection.
         ListModel oldSelectedItem = getSelectedItem();
 
+        boolean performSearch = false;
         // Do not Change Tab if the Selection is the Reports
-        if (!reportsList.getIsAvailable() || getSelectedItem() != reportsList) {
+        if (!reportsList.getIsAvailable() ||
+                (getSelectedItem() != reportsList && !reportsList.isReportsTabSelected())) {
             changeSelectedTabIfNeeded(model);
+            performSearch = true;
         } else {
             reportsList.refreshReportModel();
         }
 
         // Update search string if selected item was not changed. If it is,
         // search string will be updated in OnSelectedItemChanged method.
-        if (getSelectedItem() == oldSelectedItem)
+        // dont perform search if refreshing reports
+        if (performSearch && getSelectedItem() == oldSelectedItem)
         {
             String prefix = ""; //$NON-NLS-1$
             String search = ""; //$NON-NLS-1$
@@ -548,7 +552,9 @@ public class CommonModel extends ListModel
 
     private void setAllListModelsUnavailable() {
         for (ListModel m : getItems()) {
-            m.setIsAvailable(false);
+            if (!(m instanceof ReportsListModel)) {
+                m.setIsAvailable(false);
+            }
         }
     }
 
