@@ -1038,6 +1038,20 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
+Create or replace FUNCTION GetAllManagementNetworksByDataCenterId(v_data_center_id UUID)
+RETURNS SETOF network STABLE
+   AS $procedure$
+BEGIN
+   RETURN QUERY
+   SELECT network.*
+   FROM network
+   JOIN network_cluster ON network.id = network_cluster.network_id
+   JOIN vds_groups ON network_cluster.cluster_id = vds_groups.vds_group_id
+   WHERE vds_groups.storage_pool_id = v_data_center_id
+   AND   network_cluster.management;
+
+END; $procedure$
+LANGUAGE plpgsql;
 
 
 

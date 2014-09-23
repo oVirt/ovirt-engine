@@ -27,6 +27,7 @@ public class NetworkDaoTest extends BaseDAOTestCase {
     private static final String EXISTING_NETWORK_NAME1 = "engine";
     private static final String EXISTING_NETWORK_NAME2 = "engine3";
     private static final int NUM_OF_NETWORKS = 7;
+    private static final int NUM_OF_MANAGEMENT_NETWORKS = 1;
     private static final String NETWORK_LABEL = "lbl1";
 
     @Override
@@ -96,6 +97,16 @@ public class NetworkDaoTest extends BaseDAOTestCase {
 
         assertNotNull(result);
         assertEquals(MANAGEMENT_NETWORK_ID, result.getId());
+    }
+
+    /**
+     * Ensures that all management networks are returned.
+     */
+    @Test
+    public void testGetManagementNetworks() {
+        List<Network> result = dao.getManagementNetworks(datacenter);
+
+        assertEquals(NUM_OF_MANAGEMENT_NETWORKS, result.size());
     }
 
     /**

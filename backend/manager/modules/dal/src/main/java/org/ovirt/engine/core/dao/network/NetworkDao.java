@@ -155,4 +155,14 @@ public interface NetworkDao extends GenericDao<Network, Guid> {
      * @return the management {@link Network}
      */
     Network getManagementNetwork(Guid clusterId);
+
+    /**
+     * Retrieves the management networks for the given DC.
+     *
+     * @param dataCenterId
+     *            the data center the network is belongs to
+     *
+     * @return the management {@link Network}s
+     */
+    List<Network> getManagementNetworks(Guid dataCenterId);
 }

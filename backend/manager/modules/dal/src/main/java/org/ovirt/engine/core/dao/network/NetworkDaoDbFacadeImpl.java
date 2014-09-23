@@ -149,6 +149,13 @@ public class NetworkDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Network, G
     }
 
     @Override
+    public List<Network> getManagementNetworks(Guid dataCenterId) {
+        return getCallsHandler().executeReadList("GetAllManagementNetworksByDataCenterId",
+                NetworkRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("data_center_id", dataCenterId));
+    }
+
+    @Override
     protected MapSqlParameterSource createIdParameterMapper(Guid id) {
         return getCustomMapSqlParameterSource().addValue("id", id);
     }
