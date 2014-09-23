@@ -61,7 +61,7 @@ public class ExtensionsManager extends Observable {
                 }
                 return module;
             } catch (ModuleLoadException exception) {
-                throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded.", moduleSpec),
+                throw new ConfigurationException(String.format("The module '%1$s' cannot be loaded: %2$s", moduleSpec, exception.getMessage()),
                         exception);
             }
         }
@@ -146,8 +146,8 @@ public class ExtensionsManager extends Observable {
             props.load(inputStream);
             return loadImpl(props, file);
         } catch (IOException exception) {
-            throw new ConfigurationException(String.format("Can't load object configuration file '%1$s'",
-                    file.getAbsolutePath()), exception);
+            throw new ConfigurationException(String.format("Can't load object configuration file '%1$s': %2$s",
+                    file.getAbsolutePath(), exception.getMessage()), exception);
         }
     }
 
@@ -247,7 +247,7 @@ public class ExtensionsManager extends Observable {
                );
            }
         } catch (Exception e) {
-            throw new RuntimeException(String.format("Error loading extension %1$s", entry.name), e);
+            throw new RuntimeException(String.format("Error loading extension '%1$s': %2$s", entry.name, e.getMessage()), e);
         }
         loadedEntries.put(entry.name, entry);
         dumpConfig(entry.extension);
@@ -313,7 +313,7 @@ public class ExtensionsManager extends Observable {
                     );
             logger.info("Extension '{}' initialized", entry.name);
         } catch (Exception ex) {
-            log.error("Error in activating extension {}. Exception message is {}", entry.name, ex.getMessage());
+            log.error("Error in activating extension '{}': {}", entry.name, ex.getMessage());
             if (log.isDebugEnabled()) {
                 log.debug(ex.toString(), ex);
             }
