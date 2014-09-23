@@ -36,7 +36,7 @@ public class UpdateCpuProfileCommand extends UpdateProfileCommandBase<CpuProfile
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__UPDATE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__CPU_PROFILE);
     }
 
     @Override

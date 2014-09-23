@@ -835,6 +835,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$type Disk Snapshot")
     String VAR__TYPE__DISK__SNAPSHOT();
 
+    @DefaultStringValue("$type Disk Profile")
+    String VAR__TYPE__DISK_PROFILE();
+
+    @DefaultStringValue("$type CPU Profile")
+    String VAR__TYPE__CPU_PROFILE();
+
     @DefaultStringValue("$action run")
     String VAR__ACTION__RUN();
 

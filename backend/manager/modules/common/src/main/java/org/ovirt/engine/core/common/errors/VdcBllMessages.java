@@ -38,6 +38,8 @@ public enum VdcBllMessages {
     VAR__TYPE__AFFINITY_GROUP,
     VAR__TYPE__ISCSI_BOND,
     VAR__TYPE__DISK__SNAPSHOT,
+    VAR__TYPE__DISK_PROFILE,
+    VAR__TYPE__CPU_PROFILE,
 
     // Gluster types
     VAR__TYPE__GLUSTER_VOLUME,
