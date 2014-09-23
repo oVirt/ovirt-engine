@@ -11,6 +11,13 @@
   <ui:style type="org.ovirt.engine.ui.common.widget.uicommon.popup.vm.SerialNumberPolicyWidget.Style">
     .container {
       width: 100%;
+      position: relative;
+      left: 9px;
+    }
+
+    .hPanel {
+      position: relative;
+      top: -8px;
     }
 
     .serialNumberPolicy {
@@ -20,20 +27,22 @@
 
     .customSerialNumber {
       width: 230px;
-      float: right;
-      padding-top: 56px;
+      float: left;
+      padding-top: 50px;
       margin-right: 9px;
       padding-bottom: 20px;
+      padding-left: 15px;
     }
 
     .serialNumberInfoIcon {
       display: inline;
       float: left;
+      position: relative;
+      top: 9px;
     }
 
     .checkbox {
       margin-left: -9px;
-      width: 255px;
     }
 
     .checkbox div {
@@ -43,7 +52,7 @@
   </ui:style>
 
   <g:FlowPanel addStyleNames="{style.container}">
-    <g:HorizontalPanel>
+    <g:HorizontalPanel addStyleNames="{style.hPanel}">
       <ge:EntityModelCheckBoxEditor ui:field="overrideSerialNumberPolicy" label="{constants.overrideSerialNumberPolicy}" addStyleNames="{style.checkbox}" />
       <d:InfoIcon ui:field="serialNumberInfoIcon" addStyleNames="{style.serialNumberInfoIcon}" />
     </g:HorizontalPanel>
