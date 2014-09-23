@@ -4,6 +4,7 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,10 @@ public class BllCDIAdapter {
         return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
     }
 
+    @Produces
+    private NetworkDao produceNetworkDao(DbFacade dbFacade) {
+        return dbFacade.getNetworkDao();
+    }
 
     private BllCDIAdapter() {
         // hide me
