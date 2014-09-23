@@ -85,6 +85,7 @@ public final class EntityObject extends JsMutableObjectWithProperties {
         else if (businessEntity instanceof VM) {
             obj.setValueAsString("name", ((VM) businessEntity).getName()); //$NON-NLS-1$
             obj.setValueAsString("ipaddress", ((VM) businessEntity).getVmIp()); //$NON-NLS-1$
+            obj.setValueAsString("status", ((VM) businessEntity).getStatus().name()); //$NON-NLS-1$
         }
 
         // Pool
