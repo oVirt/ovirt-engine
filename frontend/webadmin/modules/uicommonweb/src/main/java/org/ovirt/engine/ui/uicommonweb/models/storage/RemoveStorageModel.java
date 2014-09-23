@@ -42,7 +42,6 @@ public class RemoveStorageModel extends Model
         setFormat(new EntityModel<Boolean>());
         getFormat().getEntityChangedEvent().addListener(this);
         getFormat().getPropertyChangedEvent().addListener(this);
-        getFormat().setEntity(false);
     }
 
     @Override
