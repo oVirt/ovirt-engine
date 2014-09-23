@@ -148,6 +148,11 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
     }
 
     @Override
+    public boolean canConnect() {
+        return super.canConnect() && !getIsConnected();
+    }
+
+    @Override
     protected void connect() {
         if (getEntity() != null) {
             getLogger().debug("Connecting to Spice console..."); //$NON-NLS-1$
