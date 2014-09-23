@@ -38,7 +38,7 @@ public class AddDiskProfileCommand extends AddProfileCommandBase<DiskProfilePara
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__ADD);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__DISK_PROFILE);
     }
 
     @Override

@@ -36,7 +36,7 @@ public class RemoveDiskProfileCommand extends RemoveProfileCommandBase<DiskProfi
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
-        addCanDoActionMessage(VdcBllMessages.VAR__ACTION__REMOVE);
+        addCanDoActionMessage(VdcBllMessages.VAR__TYPE__DISK_PROFILE);
     }
 
     @Override
