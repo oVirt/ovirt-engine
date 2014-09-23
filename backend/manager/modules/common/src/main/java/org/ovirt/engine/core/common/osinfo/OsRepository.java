@@ -262,4 +262,30 @@ public interface OsRepository {
      * @return an boolean
      */
     public boolean isHypervEnabled(int osId, Version version);
+
+    /**
+     * Some Operating Systems don't support certain CPUs. As a result of working
+     * with one,the guest OS might stop working, blue-screen, oops, or other well known red lights.
+     * @param osId
+     * @param version
+     * @return unsupported cpus mapping of {osId, version}->{set of cpu ids} ; cpu id is lower-case
+     */
+    public Map<Pair<Integer, Version>, Set<String>> getUnsupportedCpus();
+
+    /**
+     * Stripped version of getUnsupportedCpus.
+     * @param osId
+     * @param version
+     * @return
+     */
+    public Set<String> getUnsupportedCpus(int osId, Version version);
+    /**
+     * Some Operating Systems don't support certain CPUs. As a result of working
+     * with one,the guest OS might stop working, blue-screen, oops, or other well known red lights.
+     * @param osId
+     * @param version
+     * @param cpuId cpu id as being specified in vdc_options, <bold>case insensitive</bold>
+     * @return true if the cpu supported otherwise false
+     */
+    public boolean isCpuSupported(int osId, Version version, String cpuId);
 }

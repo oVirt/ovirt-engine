@@ -16,6 +16,7 @@ import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Version;
 
 public class OsRepositoryImplTest {
@@ -59,6 +60,7 @@ public class OsRepositoryImplTest {
         preferences.node("/os/windows_8/id").put("value", "20");
         preferences.node("/backwardCompatibility").put("Windows8", "20");
         preferences.node("/os/windows_7/devices/hyperv/enabled").put("value", "true");
+        preferences.node("/os/windows_8/cpu/unsupported").put("value", "conroe, opteron_g1");
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -244,4 +246,25 @@ public class OsRepositoryImplTest {
     public void testHyperVWindows() throws Exception {
         assertTrue(OsRepositoryImpl.INSTANCE.isHypervEnabled(OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_7"), Version.v3_5));
     }
+
+    @Test
+    public void testUnsupportedCpus() {
+        assertFalse(
+                OsRepositoryImpl.INSTANCE.isCpuSupported(
+                        OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"),
+                        Version.getLast(),
+                        "OpTeRon_g1"));
+        assertTrue(
+                OsRepositoryImpl.INSTANCE.isCpuSupported(
+                        OsRepositoryImpl.INSTANCE.getOsIdByUniqueName("windows_8"),
+                        Version.getLast(),
+                        "OpTeRon_g2"));
+        assertFalse(
+                OsRepositoryImpl.INSTANCE.getUnsupportedCpus()
+                        .get(new Pair<>(20, Version.getLast())).contains("Penrin".toLowerCase()));
+        assertTrue(
+                OsRepositoryImpl.INSTANCE.getUnsupportedCpus()
+                        .get(new Pair<>(20, Version.getLast())).contains("Conroe".toLowerCase()));
+    }
+
 }
