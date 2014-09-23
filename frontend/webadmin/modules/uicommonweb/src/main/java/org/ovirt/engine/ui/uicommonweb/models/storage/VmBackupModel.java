@@ -33,6 +33,7 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
@@ -573,8 +574,9 @@ public class VmBackupModel extends ManageBackupModel {
                             public void onSuccess(Object model1,
                                     Object ReturnValue1) {
                                 VmBackupModel backupModel1 = (VmBackupModel) model1;
-
-                                backupModel1.setItems((ArrayList<VM>) ((VdcQueryReturnValue) ReturnValue1).getReturnValue());
+                                ArrayList<VM> vms = ((VdcQueryReturnValue) ReturnValue1).getReturnValue();
+                                Collections.sort(vms, new Linq.VmComparator());
+                                backupModel1.setItems(vms);
                             }
                         };
                         GetAllFromExportDomainQueryParameters tempVar = new GetAllFromExportDomainQueryParameters(
