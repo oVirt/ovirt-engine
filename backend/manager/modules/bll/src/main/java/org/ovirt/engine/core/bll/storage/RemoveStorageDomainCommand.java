@@ -7,13 +7,12 @@ import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
-import org.ovirt.engine.core.common.action.DetachStorageDomainFromPoolParameters;
 import org.ovirt.engine.core.common.action.RemoveStorageDomainParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -55,7 +54,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             return;
         }
 
-        if (!isISO(dom) && !isExport(dom) || format) {
+        if (format) {
             if (!connectStorage()) {
                 return;
             }
@@ -106,7 +105,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         VDS vds = getVds();
-        boolean format = getParameters().getDoFormat();
         boolean localFs = isLocalFs(dom);
 
         if (!checkStorageDomain() || !checkStorageDomainSharedStatusNotLocked(dom)) {
@@ -132,11 +130,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             }
         }
 
-        if (isDataDomain(dom) && !format) {
-            addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_REMOVE_STORAGE_DOMAIN_DO_FORMAT);
-            return false;
-        }
-
         if (dom.getStorageType() == StorageType.GLANCE) {
             addCanDoActionMessage(VdcBllMessages.ERROR_CANNOT_MANAGE_STORAGE_DOMAIN);
             return false;
@@ -157,18 +150,6 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
     protected boolean isLocalFs(StorageDomain dom) {
         return dom.getStorageType() == StorageType.LOCALFS;
-    }
-
-    protected boolean isDataDomain(StorageDomain dom) {
-        return dom.getStorageDomainType() == StorageDomainType.Data;
-    }
-
-    protected boolean isISO(StorageDomain dom) {
-        return dom.getStorageDomainType() == StorageDomainType.ISO;
-    }
-
-    protected boolean isExport(StorageDomain dom) {
-        return dom.getStorageDomainType() == StorageDomainType.ImportExport;
     }
 
     protected boolean isDomainAttached(StorageDomain storageDomain) {
