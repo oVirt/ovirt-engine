@@ -30,7 +30,7 @@ public class AddVmParameters extends VmManagementParametersBase {
     }
 
     public void setDiskInfoList(ArrayList<DiskImage> diskInfoList) {
-        this.diskInfoList = diskInfoList;
+        this.diskInfoList = diskInfoList != null ? diskInfoList : new ArrayList<DiskImage>();
     }
 
     public TemplateProvisioningMethod getTemplateProvisioningMethod() {
