@@ -19,7 +19,6 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
-
 import java.util.Set;
 import org.junit.Assert;
 import org.junit.Before;
@@ -330,7 +329,11 @@ public class RunVmCommandTest {
         SimpleDependecyInjector.getInstance().bind(OsRepository.class, osRepository);
 
         RunVmParams param = new RunVmParams(Guid.newGuid());
-        command = spy(new RunVmCommand<RunVmParams>(param));
+        command = spy(new RunVmCommand<RunVmParams>(param) {
+            @Override
+            protected void loadPayloadDevice() {
+            }
+        });
         mockIsoDomainListSyncronizer();
         mockSuccessfulRunVmValidator();
         doNothing().when(command).initParametersForExternalNetworks();

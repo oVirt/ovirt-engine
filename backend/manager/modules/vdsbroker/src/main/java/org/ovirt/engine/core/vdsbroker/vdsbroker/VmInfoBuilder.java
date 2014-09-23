@@ -130,24 +130,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmCD() {
         Map<String, Object> struct;
+        boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM;
         // check if we have payload CD
-        if (vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
-            VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                            VmDeviceGeneralType.DISK,
-                            VmDeviceType.CDROM.getName(),
-                            "",
-                            0,
-                            vm.getVmPayload().getSpecParams(),
-                            true,
-                            true,
-                            true,
-                            "",
-                            null,
-                            null);
+        if (hasPayload) {
             struct = new HashMap<String, Object>();
-            addCdDetails(vmDevice, struct, vm);
-            addDevice(struct, vmDevice, "");
+            addCdDetails(vm.getVmPayload(), struct, vm);
+            addDevice(struct, vm.getVmPayload(), "");
         }
         // check first if CD was given as a parameter
         if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getCdPath())) {
@@ -180,6 +168,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 if (!vmDevice.getIsManaged()) {
                     continue;
                 }
+                // The Payload is loaded in via RunVmCommand to VM.Payload
+                // and its handled at the beginning of the method, so no
+                // need to add the device again
+                if (VmPayload.isPayload(vmDevice.getSpecParams())) {
+                    continue;
+                }
                 struct = new HashMap<String, Object>();
                 String cdPath = vm.getCdPath();
                 addCdDetails(vmDevice, struct, vm);
@@ -191,24 +185,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
 
     @Override
     protected void buildVmFloppy() {
-        // check if we have payload CD
-        if (vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
-            VmDevice vmDevice =
-                    new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
-                            VmDeviceGeneralType.DISK,
-                            VmDeviceType.FLOPPY.getName(),
-                            "",
-                            0,
-                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
-                            true,
-                            true,
-                            true,
-                            "",
-                            null,
-                            null);
+        // check if we have payload Floppy
+        boolean hasPayload = vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY;
+        if (hasPayload) {
             Map<String, Object> struct = new HashMap<String, Object>();
-            addCdDetails(vmDevice, struct, vm);
-            addDevice(struct, vmDevice, "");
+            addFloppyDetails(vm.getVmPayload(), struct);
+            addDevice(struct, vm.getVmPayload(), "");
         }
         // check first if Floppy was given as a parameter
         else if (vm.isRunOnce() && !StringUtils.isEmpty(vm.getFloppyPath())) {
@@ -218,7 +200,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             VmDeviceType.FLOPPY.getName(),
                             "",
                             0,
-                            (vm.getVmPayload() == null) ? null : vm.getVmPayload().getSpecParams(),
+                            null,
                             true,
                             true,
                             true,
@@ -244,6 +226,12 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                 // more then one device mean that we have payload and should use it
                 // instead of the blank cd
                 if (!VmPayload.isPayload(vmDevice.getSpecParams()) && vmDevices.size() > 1) {
+                    continue;
+                }
+                // The Payload is loaded in via RunVmCommand to VM.Payload
+                // and its handled at the beginning of the method, so no
+                // need to add the device again
+                if (VmPayload.isPayload(vmDevice.getSpecParams())) {
                     continue;
                 }
                 Map<String, Object> struct = new HashMap<String, Object>();

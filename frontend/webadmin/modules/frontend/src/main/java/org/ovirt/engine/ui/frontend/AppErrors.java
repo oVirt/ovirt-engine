@@ -2771,6 +2771,12 @@ public interface AppErrors extends ConstantsWithLookup {
 
     String VMPAYLOAD_FLOPPY_EXCEEDED();
 
+    @DefaultStringValue("Payload floppy deivce cannot be used with Sysprep via floppy device.")
+    String VMPAYLOAD_FLOPPY_WITH_SYSPREP();
+
+    @DefaultStringValue("Payload cdrom deivce cannot be used with Cloud-Init via cdrom device.")
+    String VMPAYLOAD_CDROM_WITH_CLOUD_INIT();
+
     // Gluster Messages
     @DefaultStringValue("Cannot ${action} ${type}. Cluster ID is not valid.")
     String ACTION_TYPE_FAILED_CLUSTER_IS_NOT_VALID();
