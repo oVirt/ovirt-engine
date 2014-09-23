@@ -26,6 +26,8 @@ public class ReportsListModel extends SearchableListWithReportsModel {
     HtmlParameters htmlParams = new HtmlParameters();
     private String lastResourceId = ""; //$NON-NLS-1$
     private final String reportUrl;
+    private String uri;
+    private boolean reportsTabSelected = false;
 
     public ReportsListModel(String baseUrl, String ssoToken) {
         reportUrl = baseUrl;
@@ -70,11 +72,16 @@ public class ReportsListModel extends SearchableListWithReportsModel {
     }
 
     public void setUri(String uri) {
+        this.uri = uri;
         if (ReportInit.getInstance().isCommunityEdition()) {
             htmlParams.setParameter("reportUnit", uri); //$NON-NLS-1$
         } else {
             htmlParams.setParameter("dashboardResource", uri); //$NON-NLS-1$
         }
+    }
+
+    public String getUri() {
+        return uri;
     }
 
     private void clearTreeSensitiveParams() {
@@ -193,4 +200,11 @@ public class ReportsListModel extends SearchableListWithReportsModel {
         return searchString.trim().toLowerCase().startsWith("reports"); //$NON-NLS-1$
     }
 
+    public boolean isReportsTabSelected() {
+        return reportsTabSelected;
+    }
+
+    public void setReportsTabSelected(boolean reportsTabSelected) {
+        this.reportsTabSelected = reportsTabSelected;
+    }
 }

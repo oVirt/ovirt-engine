@@ -27,6 +27,7 @@ public class ReportInit {
     private static final int MAX_RETRY_COUNTS = 20;
     private static final int RETRY_INTERVAL = 30000;
     public static final String REDIRECT_SERVICE = "services/reports-redirect"; //$NON-NLS-1$
+    public static final String RIGHT_CLICK_REDIRECT_SERVICE = "services/reports-rightclick-redirect"; //$NON-NLS-1$
     public static final String STATUS_SERVICE = "services/reports-interface-proxy?command=status"; //$NON-NLS-1$
     public static final String XML_SERVICE = "services/reports-interface-proxy?command=webadmin-ui-xml"; //$NON-NLS-1$
     private int retryCount;
@@ -37,6 +38,7 @@ public class ReportInit {
     private boolean initEventRaised;
     private Event reportsInitEvent;
     private String reportBaseUrl;
+    private String reportRightClickUrl;
     private String ssoToken;
     private boolean isCommunityEdition;
 
@@ -59,6 +61,7 @@ public class ReportInit {
         initState();
 
         setReportBaseUrl(buildUrl(REDIRECT_SERVICE));
+        setReportRightClickUrl(buildUrl(RIGHT_CLICK_REDIRECT_SERVICE));
         parseReportsXML();
     }
 
@@ -69,6 +72,7 @@ public class ReportInit {
         scheduledStatusCheckInProgress = false;
         initEventRaised = false;
         reportBaseUrl = ""; //$NON-NLS-1$
+        reportRightClickUrl = ""; //$NON-NLS-1$
         isCommunityEdition = false;
         resourceMap = new HashMap<String, Resource>();
         dashboardMap = new HashMap<String, Dashboard>();
@@ -193,6 +197,14 @@ public class ReportInit {
 
     public String getReportBaseUrl() {
         return reportBaseUrl;
+    }
+
+    public void setReportRightClickUrl(String reportRightClickUrl) {
+        this.reportRightClickUrl = reportRightClickUrl;
+    }
+
+    public String getReportRightClickUrl() {
+        return reportRightClickUrl;
     }
 
     public void setSsoToken(final String token) {

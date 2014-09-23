@@ -517,7 +517,7 @@ public abstract class SearchableListModel<T> extends SortedListModel<T> implemen
 
     protected ReportModel createReportModel() {
         ReportCommand reportCommand = (ReportCommand) getLastExecutedCommand();
-        ReportModel reportModel = new ReportModel(ReportInit.getInstance().getReportBaseUrl(),
+        ReportModel reportModel = new ReportModel(ReportInit.getInstance().getReportRightClickUrl(),
                 ReportInit.getInstance().getSsoToken());
 
         reportModel.setReportUnit(reportCommand.getUriValue());
