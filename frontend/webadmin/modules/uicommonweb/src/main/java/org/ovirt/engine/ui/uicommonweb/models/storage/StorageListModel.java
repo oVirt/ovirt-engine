@@ -639,53 +639,44 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.getCommands().add(command);
     }
 
-    private void onImport()
-    {
+    private void onImport() {
         StorageModel model = (StorageModel) getWindow();
-
-        if (model.getProgress() != null)
-        {
+        if (model.getProgress() != null) {
             return;
         }
-
-        if (!model.validate())
-        {
+        if (!model.validate()) {
             return;
         }
-
         model.startProgress(ConstantsManager.getInstance().getConstants().importingStorageDomainProgress());
 
         VDS host = (VDS) model.getHost().getSelectedItem();
 
         // Save changes.
-        if (model.getSelectedItem() instanceof NfsStorageModel)
-        {
+        if (model.getSelectedItem() instanceof NfsStorageModel) {
             NfsStorageModel nfsModel = (NfsStorageModel) model.getSelectedItem();
             nfsModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS, model.getActivateDomain().getEntity() }))).run();
-        }
-        else if (model.getSelectedItem() instanceof LocalStorageModel)
-        {
+                            host.getId(), nfsModel.getPath().getEntity(), nfsModel.getRole(), StorageType.NFS,
+                            model.getActivateDomain().getEntity() }))).run();
+        } else if (model.getSelectedItem() instanceof LocalStorageModel) {
             LocalStorageModel localModel = (LocalStorageModel) model.getSelectedItem();
             localModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS, model.getActivateDomain().getEntity() }))).run();
-        }
-        else if (model.getSelectedItem() instanceof PosixStorageModel)
-        {
+                            host.getId(), localModel.getPath().getEntity(), localModel.getRole(), StorageType.LOCALFS,
+                            model.getActivateDomain().getEntity() }))).run();
+        } else if (model.getSelectedItem() instanceof PosixStorageModel) {
             PosixStorageModel posixModel = (PosixStorageModel) model.getSelectedItem();
             posixModel.setMessage(null);
 
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportFile", //$NON-NLS-1$
-                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS, model.getActivateDomain().getEntity() }))).run();
-        }
-        else if (model.getSelectedItem() instanceof ImportSanStorageModel) {
+                            host.getId(), posixModel.getPath().getEntity(), posixModel.getRole(), StorageType.POSIXFS,
+                            model.getActivateDomain().getEntity() }))).run();
+        } else if (model.getSelectedItem() instanceof ImportSanStorageModel) {
             Task.create(this,
                     new ArrayList<Object>(Arrays.asList(new Object[] { "ImportSan", //$NON-NLS-1$
                             host.getId(), model.getActivateDomain().getEntity() }))).run();
