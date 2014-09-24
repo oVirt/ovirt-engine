@@ -476,12 +476,15 @@ public enum VdcActionType {
 
     // Host Devices
     RefreshHostDevices(4000, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
-    RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE);
+    RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
+
+    // Network Attachments
+    HostSetupNetworks(5200, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;
     private boolean isActionMonitored;
-    private static final HashMap<Integer, VdcActionType> mappings = new HashMap<Integer, VdcActionType>();
+    private static final HashMap<Integer, VdcActionType> mappings = new HashMap<>();
     private QuotaDependency quotaDependency;
     private boolean quotaDependentAsInternalCommand = false;
 

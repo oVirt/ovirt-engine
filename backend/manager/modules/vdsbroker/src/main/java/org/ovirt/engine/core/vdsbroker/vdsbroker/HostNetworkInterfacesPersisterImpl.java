@@ -7,6 +7,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
 
 public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfacesPersister {
@@ -21,12 +22,12 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
     public HostNetworkInterfacesPersisterImpl(InterfaceDao interfaceDao,
             List<VdsNetworkInterface> reportedNics,
             List<VdsNetworkInterface> dbNics,
-            List<VdsNetworkInterface> userConfiguredNics) {
+            UserConfiguredNetworkData userConfiguredData) {
         this.interfaceDao = interfaceDao;
         this.reportedNics = reportedNics;
         this.reportedNicsByNames = Entities.entitiesByName(reportedNics);
         this.dbNics = dbNics;
-        this.userConfiguredNicsByName = Entities.entitiesByName(userConfiguredNics);
+        this.userConfiguredNicsByName = Entities.entitiesByName(userConfiguredData.getNics());
     }
 
     @Override
@@ -38,11 +39,15 @@ public class HostNetworkInterfacesPersisterImpl implements HostNetworkInterfaces
 
     private void removeUnreportedInterfaces() {
         for (VdsNetworkInterface dbNic : dbNics) {
-            if (!reportedNicsByNames.containsKey(dbNic.getName())) {
+            if (nicShouldBeRemoved(dbNic.getName())) {
                 interfaceDao.removeInterfaceFromVds(dbNic.getId());
                 interfaceDao.removeStatisticsForVds(dbNic.getId());
             }
         }
+    }
+
+    private boolean nicShouldBeRemoved(String nicName) {
+        return !reportedNicsByNames.containsKey(nicName);
     }
 
     private void updateModifiedInterfaces() {

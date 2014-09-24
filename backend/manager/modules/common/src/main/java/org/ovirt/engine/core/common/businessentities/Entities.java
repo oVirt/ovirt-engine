@@ -14,12 +14,16 @@ import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * General utility class for common entities functions
  */
+//TODO MM: this mapping creating static utils enforces doing calculation over and over again. Move this to newly create businessEntity map or into its (newly created) parent.
 public class Entities {
 
+    private final static Logger log = LoggerFactory.getLogger(Entities.class);
     /**
      * Map entity's name -> entity object. A lot of logic code does filtering of data from 2 collections by quad
      * iterating over them. Common scenario: entity Parent.name is represent in Child.parentName. given list<Parent> and
@@ -196,5 +200,46 @@ public class Entities {
             ids.add(entity.getId());
         }
         return ids;
+    }
+
+
+    /**
+     * @param requestedIds ids to find.
+     * @param existingEntities all entities to search among
+     *
+     * @return all entities from <code>existingEntities</code> collection, which has complying id.
+     */
+    public static <E extends BusinessEntity<I>, I extends Serializable> List<E> filterEntitiesByRequiredIds(Collection<I> requestedIds,
+        Collection<E> existingEntities) {
+
+        List<E> resultCollection = new ArrayList<>(requestedIds.size());
+
+        Map<I, E> existingEntitiesMap = businessEntitiesById(existingEntities);
+        for (I requestedId : requestedIds) {
+            if (existingEntitiesMap.containsKey(requestedId)) {
+                resultCollection.add(existingEntitiesMap.get(requestedId));
+            }
+        }
+
+        return resultCollection;
+    }
+
+    public static <E extends BusinessEntity<I>, I extends Serializable> List<I> idsNotReferencingExistingRecords(
+            Collection<I> ids,
+            Collection<E> existingEntities) {
+
+        return idsNotReferencingExistingRecords(ids, businessEntitiesById(existingEntities));
+    }
+
+    public static <E extends BusinessEntity<I>, I extends Serializable> List<I> idsNotReferencingExistingRecords(
+            Collection<I> ids, Map<I, E> entitiesById) {
+        List<I> idsNotReferencingExistingRecords = new ArrayList<>();
+        for (I id : ids) {
+            if (!entitiesById.containsKey(id)) {
+                idsNotReferencingExistingRecords.add(id);
+            }
+        }
+
+        return idsNotReferencingExistingRecords;
     }
 }

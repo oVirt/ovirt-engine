@@ -1,8 +1,9 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
+
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,20 +23,20 @@ import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
+import org.ovirt.engine.core.common.vdscommands.UserConfiguredNetworkData;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
 import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkAttachmentDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterfacePredicate;
-
-import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
 
 @Singleton
 final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersister {
@@ -47,14 +48,17 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
     private final ResourceManager resourceManager;
     private final ManagementNetworkUtil managementNetworkUtil;
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final NetworkAttachmentDao networkAttachmentDao;
 
     @Inject
     HostNetworkTopologyPersisterImpl(VmDynamicDAO vmDynamicDao,
                                      InterfaceDao interfaceDao,
+                                     NetworkAttachmentDao networkAttachmentDao,
                                      NetworkDao networkDao,
                                      HostNetworkQosDao hostNetworkQosDao,
                                      ResourceManager resourceManager,
                                      ManagementNetworkUtil managementNetworkUtil) {
+        Validate.notNull(networkDao, "networkAttachmentDao can not be null");
         Validate.notNull(networkDao, "networkDao can not be null");
         Validate.notNull(interfaceDao, "interfaceDao can not be null");
         Validate.notNull(vmDynamicDao, "vmDynamicDao can not be null");
@@ -68,16 +72,17 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         this.hostNetworkQosDao = hostNetworkQosDao;
         this.resourceManager = resourceManager;
         this.managementNetworkUtil = managementNetworkUtil;
+        this.networkAttachmentDao = networkAttachmentDao;
     }
 
     @Override
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
                                                                    boolean skipManagementNetwork,
-                                                                   List<VdsNetworkInterface> userConfiguredNics) {
+                                                                   UserConfiguredNetworkData userConfiguredData) {
         List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
         List<Network> clusterNetworks = networkDao.getAllForCluster(host.getVdsGroupId());
 
-        persistTopology(host.getInterfaces(), dbIfaces, userConfiguredNics);
+        persistTopology(host, dbIfaces, clusterNetworks, userConfiguredData);
         NonOperationalReason nonOperationalReason =
                 enforceNetworkCompliance(host, skipManagementNetwork, clusterNetworks);
         auditNetworkCompliance(host, dbIfaces, clusterNetworks);
@@ -97,7 +102,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             // here we check if the host networks match it's cluster networks
             String networks = getMissingOperationalClusterNetworks(host, clusterNetworks);
             if (networks.length() > 0) {
-                customLogValues = new HashMap<String, String>();
+                customLogValues = new HashMap<>();
                 customLogValues.put("Networks", networks);
 
                 setNonOperational(host, NonOperationalReason.NETWORK_UNREACHABLE, customLogValues);
@@ -107,7 +112,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
             // Check that VM networks are implemented above a bridge.
             networks = getVmNetworksImplementedAsBridgeless(host, clusterNetworks);
             if (networks.length() > 0) {
-                customLogValues = new HashMap<String, String>();
+                customLogValues = new HashMap<>();
                 customLogValues.put("Networks", networks);
 
                 setNonOperational(host, NonOperationalReason.VM_NETWORK_IS_BRIDGELESS, customLogValues);
@@ -133,7 +138,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
 
     @Override
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host) {
-        return persistAndEnforceNetworkCompliance(host, false, Collections.<VdsNetworkInterface> emptyList());
+        return persistAndEnforceNetworkCompliance(host, false, new UserConfiguredNetworkData());
     }
 
     private void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks, Guid clusterId) {
@@ -246,21 +251,33 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
      * <li>A nic which existed on db and wasn't reported will be removed with its network attachment</li>
      * </ul>
      *
-     * @param reportedNics
-     *            network interfaces reported by vdsm
+     * @param host
+     *            the host for which the network topology should be persisted and contains the list of the reported nics
      * @param dbNics
      *            network interfaces from the database prior to vdsm report
-     * @param userConfiguredNics
-     *            network interfaces that should preserve their configuration
+     * @param clusterNetworks
+     *            the networks which assigned to the host's cluster
+     * @param userConfiguredData
+     *            The network configuration as provided by the user, for which engine managed data will be preserved.
      */
-    private void persistTopology(List<VdsNetworkInterface> reportedNics,
+    private void persistTopology(VDS host,
             List<VdsNetworkInterface> dbNics,
-            List<VdsNetworkInterface> userConfiguredNics) {
+            List<Network> clusterNetworks,
+            UserConfiguredNetworkData userConfiguredData) {
 
         final HostNetworkInterfacesPersister networkInterfacesPersister =
-                new HostNetworkInterfacesPersisterImpl(interfaceDao, reportedNics, dbNics, userConfiguredNics);
+                new HostNetworkInterfacesPersisterImpl(interfaceDao, host.getInterfaces(), dbNics, userConfiguredData);
 
         networkInterfacesPersister.persistTopology();
+
+        final HostNetworkAttachmentsPersister networkAttachmentPersister =
+                new HostNetworkAttachmentsPersister(networkAttachmentDao,
+                        host.getId(),
+                        host.getInterfaces(),
+                        userConfiguredData.getNetworkAttachments(),
+                        clusterNetworks);
+
+        networkAttachmentPersister.persistNetworkAttachments();
     }
 
     private String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {

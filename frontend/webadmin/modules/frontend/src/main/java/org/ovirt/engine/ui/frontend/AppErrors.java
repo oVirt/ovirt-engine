@@ -1504,6 +1504,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Neither bond nor vlan can be slave.")
     String NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network interface '${NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES_ENTITY}' is used multiple times in new or modified bonds in this request. Slave can be neither shared by multiple bonds nor used multiple times in one bond.")
+    String NETWORK_INTERFACE_REFERENCED_AS_A_SLAVE_MULTIPLE_TIMES();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot create Network Attachment directly on slave or vlan interface.")
     String CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN();
 
