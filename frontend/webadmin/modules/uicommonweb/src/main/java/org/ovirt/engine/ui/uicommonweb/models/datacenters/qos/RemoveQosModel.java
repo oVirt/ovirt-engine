@@ -20,7 +20,6 @@ import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 
@@ -37,11 +36,9 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
     }
 
     private void addCommands() {
-        getCommands().add(new UICommand("onRemove", this).setTitle(ConstantsManager.getInstance().getConstants().ok()) //$NON-NLS-1$
-                .setIsDefault(true));
+        getCommands().add(UICommand.createDefaultOkUiCommand("onRemove", this)); //$NON-NLS-1$
 
-        getCommands().add(new UICommand("cancel", this).setTitle(ConstantsManager.getInstance().getConstants().cancel()) //$NON-NLS-1$
-                .setIsCancel(true));
+        getCommands().add(UICommand.createCancelUiCommand("cancel", this)); //$NON-NLS-1$
     }
 
     @Override

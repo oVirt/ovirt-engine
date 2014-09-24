@@ -587,13 +587,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         model.getDataCenter()
                                 .setItems(new ArrayList<StoragePool>(Arrays.asList(new StoragePool[] { getEntity() })));
                         model.getDataCenter().setSelectedItem(getEntity());
-                        UICommand tempVar = new UICommand("OnAddStorage", listModel); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar.setIsDefault(true);
+                        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddStorage", listModel); //$NON-NLS-1$
                         model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", listModel); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar2.setIsCancel(true);
+                        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", listModel); //$NON-NLS-1$
                         model.getCommands().add(tempVar2);
                     }
                 }),
@@ -638,13 +634,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.initialize();
 
-        UICommand tempVar6 = new UICommand("OnAddStorage", this); //$NON-NLS-1$
-        tempVar6.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar6.setIsDefault(true);
+        UICommand tempVar6 = UICommand.createDefaultOkUiCommand("OnAddStorage", this); //$NON-NLS-1$
         model.getCommands().add(tempVar6);
-        UICommand tempVar7 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar7.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar7.setIsCancel(true);
+        UICommand tempVar7 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar7);
     }
 
@@ -1137,16 +1129,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
         model.setItems(usedLunsMessages);
 
-        UICommand command;
-        command = new UICommand("OnSaveSanStorage", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        model.getCommands().add(command);
+        UICommand onSaveSanStorageCommand = UICommand.createDefaultOkUiCommand("OnSaveSanStorage", this); //$NON-NLS-1$
+        model.getCommands().add(onSaveSanStorageCommand);
 
-        command = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        UICommand cancelConfirmCommand = UICommand.createCancelUiCommand("CancelConfirm", this); //$NON-NLS-1$
+        model.getCommands().add(cancelConfirmCommand);
     }
 
     private void attachStorageInternal(List<StorageDomain> storages, String title)
@@ -1165,13 +1152,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.setItems(items);
 
-        UICommand tempVar2 = new UICommand("OnAttachStorage", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar2.setIsDefault(true);
+        UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttachStorage", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
+        UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar3);
     }
 
@@ -1316,13 +1299,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         model.getDataCenter().setSelectedItem(getEntity());
         model.getDataCenter().setIsChangable(false);
 
-        UICommand tempVar = new UICommand("OnAddCluster", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddCluster", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1423,13 +1402,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
                         moveHostModel.getCluster().setItems(clusters);
                         moveHostModel.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
 
-                        UICommand tempVar = new UICommand("OnSelectHost", dataCenterGuideModel); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar.setIsDefault(true);
+                        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSelectHost", dataCenterGuideModel); //$NON-NLS-1$
                         moveHostModel.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", dataCenterGuideModel); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar2.setIsCancel(true);
+                        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", dataCenterGuideModel); //$NON-NLS-1$
                         moveHostModel.getCommands().add(tempVar2);
                     }
                 }), getEntity().getId());
@@ -1544,13 +1519,11 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             }
         });
 
-        UICommand tempVar = new UICommand("OnConfirmPMHost", this); //$NON-NLS-1$
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", this); //$NON-NLS-1$
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1572,13 +1545,9 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
             confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-            UICommand tempVar = new UICommand("OnAddHost", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddHost", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
         else

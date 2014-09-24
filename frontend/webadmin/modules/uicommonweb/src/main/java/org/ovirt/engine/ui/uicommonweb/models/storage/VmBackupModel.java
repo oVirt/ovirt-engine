@@ -127,13 +127,9 @@ public class VmBackupModel extends ManageBackupModel {
 
         model.setNote(ConstantsManager.getInstance().getConstants().noteTheDeletedItemsMightStillAppearOntheSubTab());
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -225,9 +221,7 @@ public class VmBackupModel extends ManageBackupModel {
             confirmModel.setHashName("multiple_archs_dialog"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().invalidImportMsg());
 
-            UICommand command = new UICommand("multipleArchsOK", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
+            UICommand command = UICommand.createDefaultOkUiCommand("multipleArchsOK", this); //$NON-NLS-1$
             confirmModel.getCommands().add(command);
 
             setConfirmWindow(confirmModel);
@@ -239,13 +233,9 @@ public class VmBackupModel extends ManageBackupModel {
         setWindow(model);
         model.startProgress(null);
         UICommand restoreCommand;
-        restoreCommand = new UICommand("OnRestore", this); //$NON-NLS-1$
-        restoreCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        restoreCommand.setIsDefault(true);
+        restoreCommand = UICommand.createDefaultOkUiCommand("OnRestore", this); //$NON-NLS-1$
         model.getCommands().add(restoreCommand);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
+        UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar3);
         model.init(getSelectedItems(), getEntity().getId());
         model.setTargetArchitecture(firstArch);
@@ -293,14 +283,8 @@ public class VmBackupModel extends ManageBackupModel {
         entity.setTitle(getImportConflictTitle());
         entity.setHelpTag(HelpTag.import_conflict);
         entity.setHashName("import_conflict"); //$NON-NLS-1$
-        UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        entity.getCommands().add(command);
-        command = new UICommand("closeClone", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        entity.getCommands().add(command);
+        entity.getCommands().add(UICommand.createDefaultOkUiCommand("onClone", this)); //$NON-NLS-1$
+        entity.getCommands().add(UICommand.createCancelUiCommand("closeClone", this)); //$NON-NLS-1$
 
         setConfirmWindow(entity);
     }

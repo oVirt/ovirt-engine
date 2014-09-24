@@ -276,15 +276,8 @@ public class MigrateModel extends Model
             }
         } else {
             getHosts().setItems(hosts, Linq.firstOrDefault(hosts));
-
-            UICommand tempVar2 = new UICommand("OnMigrate", parentModel); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", parentModel); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            getCommands().add(tempVar3);
+            getCommands().add(UICommand.createDefaultOkUiCommand("OnMigrate", parentModel)); //$NON-NLS-1$
+            getCommands().add(UICommand.createCancelUiCommand("Cancel", parentModel)); //$NON-NLS-1$
         }
     }
 

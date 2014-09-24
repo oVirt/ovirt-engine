@@ -145,14 +145,9 @@ public class VolumeParameterListModel extends SearchableListModel {
                 innerParameterModel.getKeyList().setItems(optionInfoList);
                 innerParameterModel.stopProgress();
 
-                UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
+                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
-                command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsCancel(true);
-                innerParameterModel.getCommands().add(command);
+                innerParameterModel.getCommands().add(UICommand.createCancelUiCommand("OnCancel", volumeParameterListModel)); //$NON-NLS-1$
             }
         };
         AsyncDataProvider.getInstance().getGlusterVolumeOptionInfoList(_asyncQuery, volume.getClusterId());
@@ -260,13 +255,9 @@ public class VolumeParameterListModel extends SearchableListModel {
 
                 innerParameterModel.stopProgress();
 
-                UICommand command = new UICommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
+                UICommand command = UICommand.createDefaultOkUiCommand("OnSetParameter", volumeParameterListModel); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
-                command = new UICommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsCancel(true);
+                command = UICommand.createCancelUiCommand("OnCancel", volumeParameterListModel); //$NON-NLS-1$
                 innerParameterModel.getCommands().add(command);
             }
         };
@@ -302,13 +293,9 @@ public class VolumeParameterListModel extends SearchableListModel {
         list.add(selectedOption.getKey());
         model.setItems(list);
 
-        UICommand okCommand = new UICommand("OnResetParameter", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnResetParameter", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("OnCancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("OnCancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 
@@ -357,13 +344,9 @@ public class VolumeParameterListModel extends SearchableListModel {
         model.setHashName("reset_all_options"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().resetAllOptionsMsg());
 
-        UICommand okCommand = new UICommand("OnResetAllParameters", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnResetAllParameters", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("OnCancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("OnCancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 

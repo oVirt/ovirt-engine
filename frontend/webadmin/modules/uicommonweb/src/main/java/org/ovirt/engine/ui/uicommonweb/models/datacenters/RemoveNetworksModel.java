@@ -66,13 +66,9 @@ public class RemoveNetworksModel extends ConfirmationModel {
             setForceLabel(ConstantsManager.getInstance().getConstants().removeNetworkFromProvider());
         }
 
-        UICommand tempVar = new UICommand("onRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("onRemove", this); //$NON-NLS-1$
         getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("cancel", this); //$NON-NLS-1$
         getCommands().add(tempVar2);
     }
 

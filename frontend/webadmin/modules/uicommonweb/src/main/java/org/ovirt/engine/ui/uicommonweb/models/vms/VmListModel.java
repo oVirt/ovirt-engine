@@ -592,13 +592,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         getAttachedTagsToSelectedVMs(model);
 
-        UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAssignTags", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -788,13 +784,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.getProvisioning().setEntity(true);
 
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -811,13 +803,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
 
-        final UICommand saveCommand = new UICommand("OnEditConsoleSave", this); //$NON-NLS-1$
-        saveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        saveCommand.setIsDefault(true);
+        final UICommand saveCommand = UICommand.createDefaultOkUiCommand("OnEditConsoleSave", this); //$NON-NLS-1$
         model.getCommands().add(saveCommand);
-        final UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        final UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 
@@ -868,13 +856,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        model.getCommands().add(new UICommand("OnSave", this) //$NON-NLS-1$
-          .setTitle(ConstantsManager.getInstance().getConstants().ok())
-          .setIsDefault(true));
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
 
-        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
-          .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-          .setIsCancel(true));
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private Map<Guid, EntityModel> vmsRemoveMap;
@@ -910,13 +894,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         window.setItems(vmsRemoveMap.entrySet());
         initRemoveDisksCheckboxes(vmsRemoveMap);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         window.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         window.getCommands().add(tempVar2);
     }
 
@@ -1205,13 +1185,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                 .theFollowingTemplatesAreMissingOnTargetExportDomainMsg());
                 confirmModel.setItems(missingTemplatesFromVms);
 
-                UICommand tempVar = new UICommand("OnExportNoTemplates", this); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnExportNoTemplates", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
+                UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar2);
             }
             else
@@ -1381,10 +1357,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                         .setTitle(ConstantsManager.getInstance().getConstants().ok())
                         .setIsDefault(true));
 
-        model.getCommands().add(
-                new UICommand("Cancel", this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                .setIsCancel(true));
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         model.getIsHighlyAvailable().setEntity(vm.getStaticData().isAutoStartup());
     }
@@ -1682,9 +1655,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
         tempVar.setIsDefault(true);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1884,13 +1855,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         };
         AsyncDataProvider.getInstance().getIrsImageList(getIrsImageListCallback, vm.getStoragePoolId());
 
-        UICommand tempVar = new UICommand("OnChangeCD", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnChangeCD", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -2030,9 +1997,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                             .setTitle(ConstantsManager.getInstance().getConstants().ok())
                             .setIsDefault(true));
 
-                            confirmModel.getCommands().add(new UICommand("CancelConfirmation", VmListModel.this) //$NON-NLS-1$
-                            .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                            .setIsCancel(true));
+                            confirmModel.getCommands().add(UICommand.createCancelUiCommand("CancelConfirmation", VmListModel.this)); //$NON-NLS-1$
 
                             setConfirmWindow(confirmModel);
                         }
@@ -2602,13 +2567,9 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHelpTag(HelpTag.clone_vm);
         model.setHashName("clone_vm"); //$NON-NLS-1$
 
-        UICommand okCommand = new UICommand("OnClone", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnClone", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 

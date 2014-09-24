@@ -126,13 +126,9 @@ public abstract class VmBaseListModel<T> extends ListWithDetailsAndReportsModel 
         else {
             showWarningOnExistingEntities(model, getEntityExportDomain());
 
-            UICommand tempVar4 = new UICommand("OnExport", this); //$NON-NLS-1$
-            tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar4.setIsDefault(true);
+            UICommand tempVar4 = UICommand.createDefaultOkUiCommand("OnExport", this); //$NON-NLS-1$
             model.getCommands().add(tempVar4);
-            UICommand tempVar5 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar5.setIsCancel(true);
+            UICommand tempVar5 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             model.getCommands().add(tempVar5);
         }
     }

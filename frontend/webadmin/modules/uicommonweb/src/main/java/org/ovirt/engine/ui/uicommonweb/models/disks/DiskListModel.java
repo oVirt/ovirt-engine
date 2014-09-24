@@ -287,9 +287,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.setHashName("new_virtual_disk"); //$NON-NLS-1$
         setWindow(model);
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.setCancelCommand(cancelCommand);
 
         model.initialize();
@@ -357,9 +355,7 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.setEntity(this);
         model.init(disks);
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
 
         model.setCancelCommand(cancelCommand);
         model.getCommands().add(cancelCommand);
@@ -382,14 +378,9 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         model.startProgress(null);
         model.init(disks);
 
-        UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("onChangeQuota", this); //$NON-NLS-1$
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onChangeQuota() {
@@ -473,13 +464,9 @@ public class DiskListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

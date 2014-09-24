@@ -379,15 +379,10 @@ public class VolumeBrickListModel extends SearchableListModel {
         // TODO: fetch the mount points to display
         volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
 
-        UICommand command = new UICommand("OnAddBricks", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnAddBricks", this); //$NON-NLS-1$
         volumeBrickModel.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        volumeBrickModel.getCommands().add(command);
+        volumeBrickModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onAddBricks() {
@@ -605,16 +600,11 @@ public class VolumeBrickListModel extends SearchableListModel {
                 removeBrickModel.setMessage(ConstantsManager.getInstance().getConstants().removeBricksMessage());
             }
 
-            UICommand command = new UICommand("OnRemove", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
+            UICommand command = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
             removeBrickModel.getCommands().add(command);
         }
 
-        UICommand command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        removeBrickModel.getCommands().add(command);
+        removeBrickModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     public boolean validateRemoveBricks(GlusterVolumeType volumeType,
@@ -867,9 +857,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         model.setItems(list);
 
-        UICommand okCommand = new UICommand("OnStopRemoveBricks", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnStopRemoveBricks", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
 
         UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
@@ -936,14 +924,10 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         model.setItems(list);
 
-        UICommand okCommand = new UICommand("OnCommitRemoveBricks", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnCommitRemoveBricks", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
 
-        UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 
@@ -1102,9 +1086,7 @@ public class VolumeBrickListModel extends SearchableListModel {
         }
         model.setItems(list);
 
-        UICommand okCommand = new UICommand("OnRetainBricks", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnRetainBricks", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
 
         UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
@@ -1203,15 +1185,10 @@ public class VolumeBrickListModel extends SearchableListModel {
         };
         AsyncDataProvider.getInstance().getClusterById(_asyncQuery, volumeEntity.getClusterId());
 
-        UICommand command = new UICommand("OnReplace", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnReplace", this); //$NON-NLS-1$
         brickModel.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsDefault(true);
-        brickModel.getCommands().add(command);
+        brickModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onReplaceBrick()

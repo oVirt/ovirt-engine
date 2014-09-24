@@ -265,14 +265,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             }
         });
 
-        UICommand command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnCreateQuota", this); //$NON-NLS-1$
         qModel.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        qModel.getCommands().add(command);
+        qModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void cancel() {
@@ -405,23 +400,20 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             qModel.setHashName("edit_quota"); //$NON-NLS-1$
         }
 
-        UICommand command = null;
+        UICommand command;
 
         if (!isClone) {
-            command = new UICommand("OnCreateQuota", this); //$NON-NLS-1$
+            command = UICommand.createDefaultOkUiCommand("OnCreateQuota", this); //$NON-NLS-1$
         } else {
-            command = new UICommand("onCloneQuota", this); //$NON-NLS-1$
+            command = UICommand.createDefaultOkUiCommand("onCloneQuota", this); //$NON-NLS-1$
             qModel.getName().setEntity(COPY_OF + outer_quota.getQuotaName());
             qModel.getDescription().setEntity(""); //$NON-NLS-1$
             qModel.getCopyPermissions().setIsAvailable(true);
         }
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
         qModel.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        qModel.getCommands().add(command);
+
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        qModel.getCommands().add(cancelCommand);
 
         AsyncQuery asyncQuery = new AsyncQuery();
         asyncQuery.model = this;
@@ -588,9 +580,7 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
             UICommand tempVar = new UICommand("OnCreateQuotaInternal", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             tempVar2.setIsDefault(true);
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
@@ -655,13 +645,9 @@ public class QuotaListModel extends ListWithDetailsModel implements ISupportSyst
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

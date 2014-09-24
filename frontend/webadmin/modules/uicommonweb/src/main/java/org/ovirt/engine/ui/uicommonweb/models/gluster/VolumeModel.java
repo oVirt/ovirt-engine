@@ -336,15 +336,10 @@ public class VolumeModel extends Model {
         else
             volumeBrickModel.getBricks().setItems(new ArrayList<EntityModel<GlusterBrickEntity>>());
 
-        UICommand command = new UICommand("OnAddBricks", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnAddBricks", this); //$NON-NLS-1$
         volumeBrickModel.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        volumeBrickModel.getCommands().add(command);
+        volumeBrickModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
     }
 

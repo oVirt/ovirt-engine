@@ -1,5 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.storage;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -21,14 +26,8 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleQueryAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
-
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 public abstract class RegisterEntityModel extends Model {
 
@@ -59,9 +58,7 @@ public abstract class RegisterEntityModel extends Model {
         super.initialize();
 
         // Create and set commands
-        UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
-        onSaveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        onSaveCommand.setIsDefault(true);
+        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         getCommands().add(onSaveCommand);
         getCommands().add(getCancelCommand());
 

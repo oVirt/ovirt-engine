@@ -90,9 +90,7 @@ public class VmGuideModel extends GuideModel
         model.setVm(getEntity());
         setWindow(model);
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.setCancelCommand(cancelCommand);
 
         model.initialize();

@@ -461,13 +461,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
 
         getAttachedTagsToSelectedHosts(model);
 
-        UICommand tempVar = new UICommand("OnAssignTags", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAssignTags", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -599,13 +595,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         model.getLatch().setIsAvailable(true);
         model.getLatch().setIsChangable(true);
 
-        UICommand tempVar = new UICommand("OnManualFence", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnManualFence", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -793,17 +785,11 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 }
 
 
-                UICommand command;
+                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                innerHostModel.getCommands().add(onSaveFalseCommand);
 
-                command = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
-                innerHostModel.getCommands().add(command);
-
-                command = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsCancel(true);
-                innerHostModel.getCommands().add(command);
+                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
+                innerHostModel.getCommands().add(cancelCommand);
             }
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
@@ -851,17 +837,11 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                     }));
                 }
 
+                UICommand onSaveFalseCommand = UICommand.createDefaultOkUiCommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
+                hostModel.getCommands().add(onSaveFalseCommand);
 
-                UICommand command;
-                command = new UICommand("OnSaveFalse", hostListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
-                hostModel.getCommands().add(command);
-
-                command = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsCancel(true);
-                hostModel.getCommands().add(command);
+                UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
+                hostModel.getCommands().add(cancelCommand);
 
                 if (getSystemTreeSelectedItem() != null && getSystemTreeSelectedItem().getType() == SystemTreeItemType.Host) {
                     hostModel.getName().setIsChangable(false);
@@ -901,17 +881,13 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
 
-                UICommand command;
+                UICommand approveCommand = UICommand.createDefaultOkUiCommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
+                confirmModel.getCommands().add(approveCommand);
 
-                command = new UICommand(approveInitiated ? "OnSaveInternalFromApprove" : "OnSaveInternalNotFromApprove", this); //$NON-NLS-1$ //$NON-NLS-2$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
-                confirmModel.getCommands().add(command);
-
-                command = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().configurePowerManagement());
-                command.setIsCancel(true);
-                confirmModel.getCommands().add(command);
+                UICommand cancelCommand = new UICommand("CancelConfirmFocusPM", this); //$NON-NLS-1$
+                cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().configurePowerManagement());
+                cancelCommand.setIsCancel(true);
+                confirmModel.getCommands().add(cancelCommand);
             }
             else
             {
@@ -1208,13 +1184,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             }), clusters.iterator().next());
         }
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1294,13 +1266,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
         model.setItems(vdss);
 
-        UICommand tempVar = new UICommand("OnMaintenance", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirm", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1357,13 +1325,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
                 innerHostModel.setHelpTag(HelpTag.edit_and_approve_host);
                 innerHostModel.setHashName("edit_and_approve_host"); //$NON-NLS-1$
 
-                UICommand tempVar = new UICommand("OnApprove", hostListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnApprove", hostListModel); //$NON-NLS-1$
                 innerHostModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", hostListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", hostListModel); //$NON-NLS-1$
                 innerHostModel.getCommands().add(tempVar2);
             }
         };
@@ -1411,9 +1375,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     {
 
         if (!isOnlyClose) {
-            UICommand command = new UICommand("OnInstall", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
+            UICommand command = UICommand.createDefaultOkUiCommand("OnInstall", this); //$NON-NLS-1$
             model.getCommands().add(command);
         }
         model.getUserName().setEntity(host.getSshUsername());
@@ -1540,9 +1502,7 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
     {
 
         if (!isOnlyClose) {
-            UICommand command = new UICommand("OnUpgrade", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
+            UICommand command = UICommand.createDefaultOkUiCommand("OnUpgrade", this); //$NON-NLS-1$
             model.getCommands().add(command);
         }
         model.getUserName().setEntity(host.getSshUsername());
@@ -1707,13 +1667,9 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
         }
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnStop", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnStop", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1799,32 +1755,26 @@ public class HostListModel extends ListWithDetailsAndReportsModel implements ISu
             }
         }
 
-        UICommand command;
-
         if (hostSupportLocalStorage) {
 
             model.setDefaultNames(host);
 
-            command = new UICommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
-            model.getCommands().add(command);
+            UICommand onConfigureLocalStorageCommand = UICommand.createDefaultOkUiCommand("OnConfigureLocalStorage", this); //$NON-NLS-1$
+            model.getCommands().add(onConfigureLocalStorageCommand);
 
-            command = new UICommand("Cancel", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            command.setIsCancel(true);
-            model.getCommands().add(command);
+            UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+            model.getCommands().add(cancelCommand);
         } else {
 
             model.setMessage(ConstantsManager.getInstance()
                     .getConstants()
                     .hostDoesntSupportLocalStorageConfigurationMsg());
 
-            command = new UICommand("Cancel", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().close());
-            command.setIsCancel(true);
-            command.setIsDefault(true);
-            model.getCommands().add(command);
+            UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+            cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().close());
+            cancelCommand.setIsCancel(true);
+            cancelCommand.setIsDefault(true);
+            model.getCommands().add(cancelCommand);
         }
     }
 

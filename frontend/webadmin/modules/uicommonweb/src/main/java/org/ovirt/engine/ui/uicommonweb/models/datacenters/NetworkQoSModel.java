@@ -59,13 +59,9 @@ public abstract class NetworkQoSModel extends BaseNetworkQosModel {
     }
 
     protected void addCommands() {
-        UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar2.setIsDefault(true);
+        UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
+        UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         getCommands().add(tempVar3);
     }
 

@@ -40,13 +40,9 @@ public class NewExternalSubnetModel extends Model {
     }
 
     protected void initCommands() {
-        UICommand okCommand = new UICommand("OnSave", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         getCommands().add(cancelCommand);
     }
 

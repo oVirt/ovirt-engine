@@ -152,14 +152,10 @@ public class EditVmInterfaceModel extends BaseEditVmInterfaceModel {
             model.setHashName("unplug_vnic"); //$NON-NLS-1$
             getSourceModel().setConfirmWindow(model);
 
-            UICommand approveCommand = new UICommand(ON_APPROVE_COMMAND, this);
-            approveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            approveCommand.setIsDefault(true);
+            UICommand approveCommand = UICommand.createDefaultOkUiCommand(ON_APPROVE_COMMAND, this);
             model.getCommands().add(approveCommand);
 
-            UICommand cancel = new UICommand(ABORT_COMMAMD, this);
-            cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            cancel.setIsCancel(true);
+            UICommand cancel = UICommand.createCancelUiCommand(ABORT_COMMAMD, this); //$NON-NLS-1$
             model.getCommands().add(cancel);
         } else {
             onSave();

@@ -337,13 +337,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
                             .theFollowingTemplatesAreMissingOnTargetExportDomainForTemplateVersionsMsg());
             confirmModel.setItems(missingTemplatesFromVms);
 
-            UICommand tempVar = new UICommand("OnExportNoTemplates", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnExportNoTemplates", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
         else
@@ -485,17 +481,12 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        UICommand command;
 
-        command = new UICommand("OnSave", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        model.getCommands().add(command);
+        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+        model.getCommands().add(onSaveCommand);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
+        model.getCommands().add(cancelCommand);
     }
 
     protected String getEditTemplateAdvancedModelKey() {
@@ -531,13 +522,9 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
 
         model.setItems(items);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

@@ -164,17 +164,11 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         getCommitChanges().setEntity(true);
 
         // ok command
-        okCommand = new UICommand("OnSetupNetworks", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        okCommand = UICommand.createDefaultOkUiCommand("OnSetupNetworks", this); //$NON-NLS-1$
         getCommands().add(okCommand);
 
         // cancel command
-        UICommand cancelCommand;
-        cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
-        getCommands().add(cancelCommand);
+        getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     public boolean candidateOperation(String op1Key, String op1Type, String op2Key, String op2Type, boolean drop) {
@@ -484,9 +478,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
         }
 
         // ok command
-        UICommand okCommand = new UICommand("OK", okTarget); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OK", okTarget); //$NON-NLS-1$
 
         // cancel command
         UICommand cancelCommand = new UICommand("Cancel", new BaseCommandTarget() { //$NON-NLS-1$

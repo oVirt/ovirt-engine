@@ -289,14 +289,8 @@ public class TemplateDiskListModel extends SearchableListModel
         model.startProgress(null);
         model.init(disks);
 
-        UICommand command = new UICommand("onChangeQuota", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        model.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createDefaultOkUiCommand("onChangeQuota", this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onChangeQuota() {

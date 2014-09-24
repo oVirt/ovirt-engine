@@ -156,9 +156,7 @@ public class StorageIsoListModel extends SearchableListModel
         model.setEntity(this);
         model.init((StorageDomain) getEntity(), repoImages);
 
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
 
         model.setCancelCommand(cancelCommand);
         model.getCommands().add(cancelCommand);

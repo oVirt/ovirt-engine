@@ -152,14 +152,9 @@ public abstract class AffinityGroupListModel<T extends BusinessEntity<Guid>> ext
         }
         model.setItems(list);
 
-        UICommand command = new UICommand("OnRemove", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onRemove() {

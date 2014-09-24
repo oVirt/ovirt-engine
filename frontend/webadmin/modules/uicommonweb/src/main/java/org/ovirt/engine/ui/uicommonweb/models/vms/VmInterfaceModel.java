@@ -27,7 +27,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.MacAddressValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NoSpecialCharactersWithDotValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
@@ -467,15 +466,11 @@ public abstract class VmInterfaceModel extends Model
     }
 
     protected void initCommands() {
-        okCommand = new UICommand(ON_SAVE_COMMAND, this);
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        okCommand = UICommand.createDefaultOkUiCommand(ON_SAVE_COMMAND, this);
         // wait for data to fetch
         okCommand.setIsExecutionAllowed(false);
         getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand(CANCEL_COMMAND, this);
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand(CANCEL_COMMAND, this); //$NON-NLS-1$
         getCommands().add(cancelCommand);
     }
 

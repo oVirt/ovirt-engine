@@ -214,13 +214,9 @@ public class ProviderModel extends Model {
         Collections.sort(providerTypes, new Linq.ProviderTypeComparator());
         getType().setItems(providerTypes);
 
-        UICommand tempVar = new UICommand(CMD_SAVE, this);
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_SAVE, this);
         getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand(CMD_CANCEL, this);
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         getCommands().add(tempVar2);
         setTestCommand(new UICommand(CMD_TEST, this));
     }

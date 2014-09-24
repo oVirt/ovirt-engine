@@ -108,9 +108,7 @@ public class ImportNetworksModel extends Model {
         importCommand.setTitle(ConstantsManager.getInstance().getConstants().importNetworksButton());
         importCommand.setIsDefault(true);
         getCommands().add(importCommand);
-        UICommand cancelCommand = new UICommand(CMD_CANCEL, this);
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         getCommands().add(cancelCommand);
 
         SystemTreeItemModel treeSelectedDcItem =

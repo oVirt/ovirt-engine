@@ -343,13 +343,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                     cModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
-                UICommand tempVar = new UICommand("OnSave", clModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", clModel); //$NON-NLS-1$
                 cModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", clModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", clModel); //$NON-NLS-1$
                 cModel.getCommands().add(tempVar2);
             }
         };
@@ -449,13 +445,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
             clusterModel.getName().setChangeProhibitionReason(constants.cannotEditNameInTreeContext());
         }
 
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         clusterModel.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         clusterModel.getCommands().add(tempVar2);
     }
 
@@ -479,13 +471,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -550,13 +538,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                     .changeClusterCompatibilityVersionTitle());
             confirmModel.setHelpTag(HelpTag.change_cluster_compatibility_version);
             confirmModel.setHashName("change_cluster_compatibility_version"); //$NON-NLS-1$
-            UICommand tempVar = new UICommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuThreads", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar2);
             checkForNonResponsiveHosts(confirmModel);
         } else {
@@ -585,13 +569,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                     .getConstants()
                     .youAreAboutChangeClusterCpuThreadSupportMsg());
 
-            UICommand tempVar = new UICommand("OnSaveConfirmCpuLevel", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveConfirmCpuLevel", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             getConfirmWindow().getCommands().add(tempVar2);
         } else {
             onSaveConfirmCpuLevel();
@@ -649,13 +629,9 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
                 .getConstants()
                 .changeCpuLevelConfirmation());
 
-        UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar2);
     }
     public void onPreSaveInternal(ClusterModel model)
@@ -855,14 +831,10 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         hostsModel.setClusterModel(clusterModel);
         hostsModel.getHosts().setItems(hostList);
 
-        UICommand command = new UICommand("OnSaveHosts", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        UICommand command = UICommand.createOkUiCommand("OnSaveHosts", this); //$NON-NLS-1$
         hostsModel.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        hostsModel.getCommands().add(command);
+        hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onSaveHosts()

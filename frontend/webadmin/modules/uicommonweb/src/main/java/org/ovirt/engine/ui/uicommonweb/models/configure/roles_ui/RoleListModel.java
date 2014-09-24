@@ -265,13 +265,9 @@ public class RoleListModel extends ListWithDetailsModel
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -428,9 +424,7 @@ public class RoleListModel extends ListWithDetailsModel
 
         if (!role.getis_readonly() || commandType == CommandType.Clone)
         {
-            UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
             UICommand tempVar2 = new UICommand("OnReset", this); //$NON-NLS-1$
             tempVar2.setTitle(ConstantsManager.getInstance().getConstants().resetTitle());

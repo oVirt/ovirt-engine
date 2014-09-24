@@ -223,9 +223,7 @@ public class SnapshotModel extends EntityModel<Snapshot>
         model.setHashName("create_snapshot"); //$NON-NLS-1$
 
         // the cancel command has to be created be before the call to initialize to avoid race condition
-        model.setCancelCommand(new UICommand("Cancel", cancelCommandTarget) //$NON-NLS-1$
-                                       .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                                       .setIsCancel(true));
+        model.setCancelCommand(UICommand.createCancelUiCommand("Cancel", cancelCommandTarget)); //$NON-NLS-1$
 
         return model;
     }
@@ -381,9 +379,7 @@ public class SnapshotModel extends EntityModel<Snapshot>
     }
 
     private UICommand getOnSaveCommand() {
-        UICommand onSaveCommand = new UICommand("OnSave", this); //$NON-NLS-1$
-        onSaveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        onSaveCommand.setIsDefault(true);
+        UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
 
         return onSaveCommand;
     }

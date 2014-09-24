@@ -302,14 +302,9 @@ public class QuotaModel extends EntityModel {
 
         setWindow(model);
 
-        UICommand command = new UICommand("OnEditClusterQuota", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnEditClusterQuota", this); //$NON-NLS-1$
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     public void editQuotaStorage(QuotaStorage object) {
@@ -327,14 +322,9 @@ public class QuotaModel extends EntityModel {
 
         setWindow(model);
 
-        UICommand command = new UICommand("OnEditStorageQuota", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnEditStorageQuota", this); //$NON-NLS-1$
         model.getCommands().add(command);
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void onEditClusterQuota() {

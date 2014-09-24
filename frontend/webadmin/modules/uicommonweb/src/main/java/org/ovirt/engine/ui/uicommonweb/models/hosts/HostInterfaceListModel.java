@@ -963,13 +963,9 @@ public class HostInterfaceListModel extends SearchableListModel
                 }
                 else
                 {
-                    UICommand tempVar3 = new UICommand("OnSave", hostInterfaceListModel); //$NON-NLS-1$
-                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                    tempVar3.setIsDefault(true);
+                    UICommand tempVar3 = UICommand.createDefaultOkUiCommand("OnSave", hostInterfaceListModel); //$NON-NLS-1$
                     hostInterfaceModel.getCommands().add(tempVar3);
-                    UICommand tempVar4 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                    tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                    tempVar4.setIsCancel(true);
+                    UICommand tempVar4 = UICommand.createCancelUiCommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
                     hostInterfaceModel.getCommands().add(tempVar4);
                 }
 
@@ -1083,13 +1079,9 @@ public class HostInterfaceListModel extends SearchableListModel
                         }
 
                         UICommand tempVar =
-                                new UICommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar.setIsDefault(true);
+                                UICommand.createDefaultOkUiCommand("OnEditManagementNetworkConfirmation", hostInterfaceListModel); //$NON-NLS-1$
                         managementModel.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar2.setIsCancel(true);
+                        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
                         managementModel.getCommands().add(tempVar2);
 
                     }
@@ -1142,21 +1134,15 @@ public class HostInterfaceListModel extends SearchableListModel
 
         if (!isBond)
         {
-            UICommand tempVar = new UICommand("OnEditManagementNetwork", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnEditManagementNetwork", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnBond", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
+            UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnBond", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
-        UICommand tempVar3 = new UICommand("CancelConfirm", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
+        UICommand tempVar3 = UICommand.createCancelUiCommand("CancelConfirm", this); //$NON-NLS-1$
         confirmModel.getCommands().add(tempVar3);
 
     }
@@ -1488,24 +1474,16 @@ public class HostInterfaceListModel extends SearchableListModel
         {
             if (interfaceWithNetwork != null && interfaceWithNetwork.getIsManagement())
             {
-                UICommand tempVar2 = new UICommand("OnEditManagementNetworkConfirmation_Bond", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar2.setIsDefault(true);
+                UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnEditManagementNetworkConfirmation_Bond", hostInterfaceListModel); //$NON-NLS-1$
                 innerBondModel.getCommands().add(tempVar2);
-                UICommand tempVar3 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar3.setIsCancel(true);
+                UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
                 innerBondModel.getCommands().add(tempVar3);
             }
             else
             {
-                UICommand tempVar4 = new UICommand("OnBond", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar4.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar4.setIsDefault(true);
+                UICommand tempVar4 = UICommand.createDefaultOkUiCommand("OnBond", hostInterfaceListModel); //$NON-NLS-1$
                 innerBondModel.getCommands().add(tempVar4);
-                UICommand tempVar5 = new UICommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
-                tempVar5.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar5.setIsCancel(true);
+                UICommand tempVar5 = UICommand.createCancelUiCommand("Cancel", hostInterfaceListModel); //$NON-NLS-1$
                 innerBondModel.getCommands().add(tempVar5);
             }
         }
@@ -1724,13 +1702,9 @@ public class HostInterfaceListModel extends SearchableListModel
         VdsNetworkInterface nic = (VdsNetworkInterface) getSelectedItem();
         model.getName().setEntity(nic.getName());
 
-        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnDetach", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -1841,13 +1815,9 @@ public class HostInterfaceListModel extends SearchableListModel
                         .getMessages()
                         .youAreAboutToDisconnectHostInterfaceMsg(nic.getName()));
 
-                UICommand tempVar = new UICommand("OnConfirmManagementDetach", this); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmManagementDetach", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
                 confirmModel.getCommands().add(tempVar2);
             }
             else
@@ -2054,13 +2024,9 @@ public class HostInterfaceListModel extends SearchableListModel
         model.setHashName("save_network_configuration"); //$NON-NLS-1$
         model.setMessage(ConstantsManager.getInstance().getConstants().areYouSureYouWantToMakeTheChangesPersistentMsg());
 
-        UICommand tempVar = new UICommand("OnSaveNetworkConfig", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveNetworkConfig", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

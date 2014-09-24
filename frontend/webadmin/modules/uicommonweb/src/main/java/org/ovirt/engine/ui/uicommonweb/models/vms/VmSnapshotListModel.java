@@ -6,8 +6,6 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 
-import com.google.gwt.i18n.client.DateTimeFormat;
-
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -18,9 +16,9 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
-import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
+import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
@@ -51,6 +49,8 @@ import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 
 @SuppressWarnings("unused")
 public class VmSnapshotListModel extends SearchableListModel
@@ -368,13 +368,9 @@ public class VmSnapshotListModel extends SearchableListModel
                     .getMessages()
                     .areYouSureYouWantToDeleteSanpshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
                             snapshot.getDescription()));
-            UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
             model.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             model.getCommands().add(tempVar2);
         }
     }
@@ -618,12 +614,8 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void addCommands(Model model, String okCommandName) {
-        model.getCommands().add(new UICommand(okCommandName, this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().ok())
-                .setIsDefault(true));
-        model.getCommands().add(new UICommand("Cancel", this) //$NON-NLS-1$
-                .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-                .setIsCancel(true));
+        model.getCommands().add(UICommand.createDefaultOkUiCommand(okCommandName, this)); //$NON-NLS-1$
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     private void cancel()
@@ -673,13 +665,9 @@ public class VmSnapshotListModel extends SearchableListModel
                 switchModeCommand.init(model);
                 model.getCommands().add(switchModeCommand);
 
-                UICommand tempVar = new UICommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                tempVar.setIsDefault(true);
+                UICommand tempVar = UICommand.createDefaultOkUiCommand("OnCloneVM", vmSnapshotListModel); //$NON-NLS-1$
                 model.getCommands().add(tempVar);
-                UICommand tempVar2 = new UICommand("Cancel", vmSnapshotListModel); //$NON-NLS-1$
-                tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                tempVar2.setIsCancel(true);
+                UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", vmSnapshotListModel); //$NON-NLS-1$
                 model.getCommands().add(tempVar2);
 
                 vmSnapshotListModel.stopProgress();

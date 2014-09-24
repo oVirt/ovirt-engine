@@ -10,7 +10,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
 
@@ -29,10 +28,8 @@ public abstract class RemoveProfileModel<P extends ProfileBase> extends Confirma
         }
         setItems(items);
 
-        getCommands().add(new UICommand("OnRemove", this).setTitle(ConstantsManager.getInstance().getConstants().ok()) //$NON-NLS-1$
-                .setIsDefault(true));
-        getCommands().add(new UICommand("Cancel", this).setTitle(ConstantsManager.getInstance().getConstants().cancel()) //$NON-NLS-1$
-                .setIsCancel(true));
+        getCommands().add(UICommand.createDefaultOkUiCommand("OnRemove", this)); //$NON-NLS-1$
+        getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     protected abstract VdcActionType getRemoveActionType();

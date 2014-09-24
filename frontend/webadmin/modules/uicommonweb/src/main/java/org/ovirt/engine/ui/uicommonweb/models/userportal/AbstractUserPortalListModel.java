@@ -12,7 +12,6 @@ import org.ovirt.engine.ui.uicommonweb.models.ConsolePopupModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListWithDetailsModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
 import org.ovirt.engine.ui.uicommonweb.models.VmConsoles;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
 public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
     private UICommand editConsoleCommand;
@@ -89,13 +88,9 @@ public abstract class AbstractUserPortalListModel extends ListWithDetailsModel {
         model.setHashName("editConsole"); //$NON-NLS-1$
         setWindow(model);
 
-        UICommand saveCommand = new UICommand("OnEditConsoleSave", this); //$NON-NLS-1$
-        saveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        saveCommand.setIsDefault(true);
+        UICommand saveCommand = UICommand.createDefaultOkUiCommand("OnEditConsoleSave", this); //$NON-NLS-1$
         model.getCommands().add(saveCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 

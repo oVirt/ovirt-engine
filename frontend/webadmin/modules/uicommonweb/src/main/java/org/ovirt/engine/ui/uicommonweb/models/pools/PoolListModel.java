@@ -211,15 +211,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        UICommand command = new UICommand("OnSave", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
+        UICommand command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        model.getCommands().add(command);
+        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     public void edit()
@@ -297,15 +292,10 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         switchModeCommand.init(model);
                         model.getCommands().add(switchModeCommand);
 
-                        UICommand command = new UICommand("OnSave", poolListModel); //$NON-NLS-1$
-                        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        command.setIsDefault(true);
+                        UICommand command = UICommand.createDefaultOkUiCommand("OnSave", poolListModel); //$NON-NLS-1$
                         model.getCommands().add(command);
 
-                        command = new UICommand("Cancel", poolListModel); //$NON-NLS-1$
-                        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        command.setIsCancel(true);
-                        model.getCommands().add(command);
+                        model.getCommands().add(UICommand.createCancelUiCommand("Cancel", poolListModel)); //$NON-NLS-1$
 
                         model.setTitle(ConstantsManager.getInstance().getConstants().editPoolTitle());
                         model.setHelpTag(HelpTag.edit_pool);
@@ -357,13 +347,9 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

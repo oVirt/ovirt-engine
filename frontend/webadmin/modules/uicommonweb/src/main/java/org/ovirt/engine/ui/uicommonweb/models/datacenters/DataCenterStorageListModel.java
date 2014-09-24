@@ -255,14 +255,10 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
         model.setItems(items);
 
-        UICommand maintenance = new UICommand("OnMaintenance", this); //$NON-NLS-1$
-        maintenance.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        maintenance.setIsDefault(true);
+        UICommand maintenance = UICommand.createDefaultOkUiCommand("OnMaintenance", this); //$NON-NLS-1$
         model.getCommands().add(maintenance);
 
-        UICommand cancel = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancel.setIsCancel(true);
+        UICommand cancel = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancel);
     }
 
@@ -439,13 +435,9 @@ public class DataCenterStorageListModel extends SearchableListModel
         }
         else
         {
-            UICommand tempVar2 = new UICommand("OnAttach", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
+            UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnAttach", this); //$NON-NLS-1$
             listModel.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
+            UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
             listModel.getCommands().add(tempVar3);
         }
     }
@@ -578,13 +570,9 @@ public class DataCenterStorageListModel extends SearchableListModel
         if (shouldAddressWarnning) {
             model.setNote(ConstantsManager.getInstance().getConstants().detachWarnningNote());
         }
-        UICommand tempVar = new UICommand("OnDetach", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnDetach", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

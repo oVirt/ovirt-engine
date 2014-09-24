@@ -296,9 +296,7 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
 
                 innerGlusterSwiftModel.stopProgress();
 
-                UICommand command = new UICommand("OnManageGlusterSwift", ClusterGeneralModel.this); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
+                UICommand command = UICommand.createDefaultOkUiCommand("OnManageGlusterSwift", ClusterGeneralModel.this); //$NON-NLS-1$
                 innerGlusterSwiftModel.getCommands().add(command);
 
                 command = new UICommand("Cancel", ClusterGeneralModel.this); //$NON-NLS-1$
@@ -439,15 +437,11 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         hostsModel.setHelpTag(HelpTag.add_hosts);
         hostsModel.setHashName("add_hosts"); //$NON-NLS-1$
 
-        UICommand command = new UICommand("OnSaveHosts", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        UICommand command = UICommand.createOkUiCommand("OnSaveHosts", this); //$NON-NLS-1$
         hostsModel.getCommands().add(command);
         hostsModel.getHosts().setItems(new ArrayList<EntityModel<HostDetailModel>>());
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        hostsModel.getCommands().add(command);
+        hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         hostsModel.startProgress(null);
 
@@ -558,15 +552,11 @@ public class ClusterGeneralModel extends EntityModel<VDSGroup> {
         hostsModel.setHelpTag(HelpTag.detach_gluster_hosts);
         hostsModel.setHashName("detach_gluster_hosts"); //$NON-NLS-1$
 
-        UICommand command = new UICommand("OnDetachGlusterHosts", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
+        UICommand command = UICommand.createOkUiCommand("OnDetachGlusterHosts", this); //$NON-NLS-1$
         hostsModel.getCommands().add(command);
         hostsModel.getHosts().setItems(new ArrayList<EntityModel<String>>());
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        hostsModel.getCommands().add(command);
+        hostsModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
 
         hostsModel.startProgress(null);
 

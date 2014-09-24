@@ -144,13 +144,9 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
         }
         model.setItems(list);
 
-        UICommand okCommand = new UICommand("OnDisableHook", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("OnDisableHook", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("OnCancelConfirmation", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("OnCancelConfirmation", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 
@@ -295,9 +291,7 @@ public class ClusterGlusterHookListModel extends SearchableListModel {
 
                 innerConflictsModel.stopProgress();
 
-                UICommand command = new UICommand("OnResolveConflicts", ClusterGlusterHookListModel.this); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
+                UICommand command = UICommand.createDefaultOkUiCommand("OnResolveConflicts", ClusterGlusterHookListModel.this); //$NON-NLS-1$
                 innerConflictsModel.getCommands().add(command);
 
                 command = new UICommand("Cancel", ClusterGlusterHookListModel.this); //$NON-NLS-1$

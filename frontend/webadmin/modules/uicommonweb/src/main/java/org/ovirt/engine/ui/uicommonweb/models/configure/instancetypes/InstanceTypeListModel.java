@@ -170,13 +170,9 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
 
 
 
-        UICommand tempVar = new UICommand("OnDeleteInstanceType", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnDeleteInstanceType", this); //$NON-NLS-1$
         window.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         window.getCommands().add(tempVar2);
     }
 
@@ -329,14 +325,10 @@ public class InstanceTypeListModel extends ListWithDetailsModel {
         switchModeCommand.init(model);
         model.getCommands().add(switchModeCommand);
 
-        UICommand newTemplate = new UICommand(onOkAction, this); //$NON-NLS-1$
-        newTemplate.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        newTemplate.setIsDefault(true);
+        UICommand newTemplate = UICommand.createDefaultOkUiCommand(onOkAction, this);
         model.getCommands().add(newTemplate);
 
-        UICommand cancel = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancel.setIsCancel(true);
+        UICommand cancel = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancel);
     }
 

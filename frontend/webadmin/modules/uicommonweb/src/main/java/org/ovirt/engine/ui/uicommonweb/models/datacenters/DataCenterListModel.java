@@ -321,13 +321,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         model.setHashName("new_data_center"); //$NON-NLS-1$
         model.setIsNew(true);
 
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -381,13 +377,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
 
         model.getQuotaEnforceTypeListModel().setSelectedItem(dataCenter.getQuotaEnforcementType());
 
-        UICommand tempVar = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -435,13 +427,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
         if (shouldAddressWarnning) {
             model.setNote(ConstantsManager.getInstance().getConstants().removeDataCenterWarnningNote());
@@ -465,13 +453,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnForceRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnForceRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -521,13 +505,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                     tempVar2.setIsCancel(true);
                     windowModel.getCommands().add(tempVar2);
                 } else {
-                    UICommand tempVar3 = new UICommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
-                    tempVar3.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                    tempVar3.setIsDefault(true);
+                    UICommand tempVar3 = UICommand.createDefaultOkUiCommand("OnRecover", DataCenterListModel.this); //$NON-NLS-1$
                     windowModel.getCommands().add(tempVar3);
-                    UICommand tempVar4 = new UICommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
-                    tempVar4.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                    tempVar4.setIsCancel(true);
+                    UICommand tempVar4 = UICommand.createCancelUiCommand("Cancel", DataCenterListModel.this); //$NON-NLS-1$
                     windowModel.getCommands().add(tempVar4);
                 }
 
@@ -725,13 +705,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             IdQueryParameters params = new IdQueryParameters(sp.getId());
             Frontend.getInstance().runQuery(VdcQueryType.GetStorageDomainsByStoragePoolId, params, _asyncQuery);
 
-            UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
         else if (getSelectedItem() != null
@@ -777,13 +753,9 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
                 .getConstants()
                 .youAreAboutChangeDCQuotaEnforcementMsg());
 
-        UICommand tempVar = new UICommand("OnSaveInternal", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSaveInternal", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
         getConfirmWindow().getCommands().add(tempVar2);
     }
 

@@ -299,13 +299,9 @@ public class ClusterGuideModel extends GuideModel
                         model.getCluster().setSelectedItem(Linq.firstOrDefault(clusters));
                         model.getCluster().setIsAvailable(false);
 
-                        UICommand tempVar = new UICommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
-                        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                        tempVar.setIsDefault(true);
+                        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnSelectHost", ClusterGuideModel.this); //$NON-NLS-1$
                         model.getCommands().add(tempVar);
-                        UICommand tempVar2 = new UICommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
-                        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                        tempVar2.setIsCancel(true);
+                        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", ClusterGuideModel.this); //$NON-NLS-1$
                         model.getCommands().add(tempVar2);
 
                     }
@@ -411,13 +407,9 @@ public class ClusterGuideModel extends GuideModel
                                                                                  }
                                                                                  model.getDataCenter().setIsChangable(false);
 
-                                                                                 UICommand tempVar = new UICommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
-                                                                                 tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                                                                                 tempVar.setIsDefault(true);
+                                                                                 UICommand tempVar = UICommand.createDefaultOkUiCommand("OnConfirmPMHost", clusterGuideModel); //$NON-NLS-1$
                                                                                  model.getCommands().add(tempVar);
-                                                                                 UICommand tempVar2 = new UICommand("Cancel", clusterGuideModel); //$NON-NLS-1$
-                                                                                 tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                                                                                 tempVar2.setIsCancel(true);
+                                                                                 UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", clusterGuideModel); //$NON-NLS-1$
                                                                                  model.getCommands().add(tempVar2);
                                                                              }
                                                                          }));
@@ -456,13 +448,9 @@ public class ClusterGuideModel extends GuideModel
             confirmModel.setHashName("power_management_configuration"); //$NON-NLS-1$
             confirmModel.setMessage(ConstantsManager.getInstance().getConstants().youHavntConfigPmMsg());
 
-            UICommand tempVar = new UICommand("OnAddHost", this); //$NON-NLS-1$
-            tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar.setIsDefault(true);
+            UICommand tempVar = UICommand.createDefaultOkUiCommand("OnAddHost", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar);
-            UICommand tempVar2 = new UICommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar2.setIsCancel(true);
+            UICommand tempVar2 = UICommand.createCancelUiCommand("CancelConfirmWithFocus", this); //$NON-NLS-1$
             confirmModel.getCommands().add(tempVar2);
         }
         else

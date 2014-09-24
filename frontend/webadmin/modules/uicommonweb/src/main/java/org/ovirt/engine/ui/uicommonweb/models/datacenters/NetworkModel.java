@@ -575,13 +575,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
     }
 
     private void addCommands() {
-        UICommand tempVar2 = new UICommand("OnSave", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar2.setIsDefault(true);
+        UICommand tempVar2 = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         getCommands().add(tempVar2);
-        UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar3.setIsCancel(true);
+        UICommand tempVar3 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         getCommands().add(tempVar3);
         addQosCommand = new UICommand("AddQos", this); //$NON-NLS-1$
         addQosCommand.setTitle(ConstantsManager.getInstance().getConstants().newNetworkQosButton());
@@ -701,13 +697,9 @@ public abstract class NetworkModel extends Model implements HasValidatedTabs
         if (isManagemet()) {
             ConfirmationModel confirmationModel = new ConfirmationModel();
             confirmationModel.setMessage(ConstantsManager.getInstance().getConstants().updateManagementNetworkWarning());
-            UICommand cmdOk = new UICommand(CMD_APPROVE, this);
-            cmdOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            cmdOk.setIsDefault(true);
+            UICommand cmdOk = UICommand.createDefaultOkUiCommand(CMD_APPROVE, this);
             confirmationModel.getCommands().add(cmdOk);
-            UICommand cmdCancel = new UICommand(CMD_ABORT, this);
-            cmdCancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            cmdCancel.setIsCancel(true);
+            UICommand cmdCancel = UICommand.createCancelUiCommand(CMD_ABORT, this); //$NON-NLS-1$
             confirmationModel.getCommands().add(cmdCancel);
             sourceListModel.setConfirmWindow(confirmationModel);
         } else {

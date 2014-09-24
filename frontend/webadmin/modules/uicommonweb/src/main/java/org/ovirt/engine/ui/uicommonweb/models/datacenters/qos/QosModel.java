@@ -16,7 +16,6 @@ import org.ovirt.engine.ui.uicommonweb.validation.AsciiNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.AsciiOrNoneValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
@@ -64,10 +63,8 @@ public abstract class QosModel<T extends QosBase, P extends QosParametersModel<T
     }
 
     protected void addCommands() {
-        getCommands().add(new UICommand("OnSave", this).setTitle(ConstantsManager.getInstance().getConstants().ok()) //$NON-NLS-1$
-                .setIsDefault(true));
-        getCommands().add(new UICommand("Cancel", this).setTitle(ConstantsManager.getInstance().getConstants().cancel()) //$NON-NLS-1$
-                .setIsCancel(true));
+        getCommands().add(UICommand.createDefaultOkUiCommand("OnSave", this)); //$NON-NLS-1$
+        getCommands().add(UICommand.createCancelUiCommand("Cancel", this)); //$NON-NLS-1$
     }
 
     public StoragePool getSelectedDc() {

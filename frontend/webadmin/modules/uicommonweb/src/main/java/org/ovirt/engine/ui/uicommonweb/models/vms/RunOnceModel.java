@@ -688,13 +688,9 @@ public abstract class RunOnceModel extends Model
         setIsLinuxOS(false);
         setIsWindowsOS(false);
 
-        runOnceCommand = new UICommand(RunOnceModel.RUN_ONCE_COMMAND, this)
-         .setTitle(ConstantsManager.getInstance().getConstants().ok())
-         .setIsDefault(true);
+        runOnceCommand = UICommand.createDefaultOkUiCommand(RunOnceModel.RUN_ONCE_COMMAND, this);
 
-        cancelCommand = new UICommand(Model.CANCEL_COMMAND, this)
-         .setTitle(ConstantsManager.getInstance().getConstants().cancel())
-         .setIsCancel(true);
+        cancelCommand = UICommand.createCancelUiCommand(Model.CANCEL_COMMAND, this);
 
         getCommands().addAll(Arrays.asList(runOnceCommand, cancelCommand));
     }

@@ -115,13 +115,9 @@ public class SharedMacPoolListModel extends ListWithDetailsModel {
         model.setHashName("remove_shared_mac_pools"); //$NON-NLS-1$
         model.setHelpTag(HelpTag.remove_shared_mac_pools);
 
-        UICommand tempVar = new UICommand(CMD_REMOVE, this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_REMOVE, this);
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand(CMD_CANCEL, this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
 
         List<String> macPoolNames = new ArrayList<String>();

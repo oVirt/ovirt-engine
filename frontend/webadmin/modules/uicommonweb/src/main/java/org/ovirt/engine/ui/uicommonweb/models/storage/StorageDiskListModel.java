@@ -154,13 +154,9 @@ public class StorageDiskListModel extends SearchableListModel
         }
         model.setItems(items);
 
-        UICommand onRemoveCommand = new UICommand("OnRemove", this); //$NON-NLS-1$
-        onRemoveCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        onRemoveCommand.setIsDefault(true);
+        UICommand onRemoveCommand = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(onRemoveCommand);
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 

@@ -313,7 +313,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         model.initialize();
 
-        UICommand  command = createOKCommand("OnSave"); //$NON-NLS-1$
+        UICommand  command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
         command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -407,7 +407,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
         UICommand command;
         if (isStorageNameEditable || isStoragePropertiesEditable) {
-            command = createOKCommand("OnSave"); //$NON-NLS-1$
+            command = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
             model.getCommands().add(command);
 
             command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -624,7 +624,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.initialize();
 
         UICommand command;
-        command = createOKCommand("OnImport"); //$NON-NLS-1$
+        command = UICommand.createDefaultOkUiCommand("OnImport", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
         command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -786,7 +786,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
                 } else {
 
                     UICommand command;
-                    command = createOKCommand("OnRemove"); //$NON-NLS-1$
+                    command = UICommand.createDefaultOkUiCommand("OnRemove", StorageListModel.this); //$NON-NLS-1$
                     removeStorageModel.getCommands().add(command);
 
                     command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -837,7 +837,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
 
 
         UICommand command;
-        command = createOKCommand("OnDestroy"); //$NON-NLS-1$
+        command = UICommand.createDefaultOkUiCommand("OnDestroy", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
         command = createCancelCommand("Cancel"); //$NON-NLS-1$
@@ -1002,7 +1002,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         model.setHashName("force_storage_domain_creation"); //$NON-NLS-1$
         model.setItems(usedLunsMessages);
 
-        UICommand command = createOKCommand("OnSaveSanStorage"); //$NON-NLS-1$
+        UICommand command = UICommand.createDefaultOkUiCommand("OnSaveSanStorage", this); //$NON-NLS-1$
         model.getCommands().add(command);
 
         command = createCancelCommand("CancelConfirm"); //$NON-NLS-1$
@@ -2209,7 +2209,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
         final StorageModel storageModel = (StorageModel) getWindow();
         StoragePool storagePool = storageModel.getDataCenter().getSelectedItem();
 
-        final UICommand okCommand = createOKCommand(commandName);
+        final UICommand okCommand = UICommand.createDefaultOkUiCommand(commandName, this);
 
         if (storagePool.getId().equals(Guid.Empty)) {
             okCommand.execute();
@@ -2372,18 +2372,7 @@ public class StorageListModel extends ListWithDetailsAndReportsModel implements 
     }
 
     private UICommand createCancelCommand(String commandName) {
-        UICommand command;
-        command = new UICommand(commandName, this);
-        command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        command.setIsCancel(true);
-        return command;
-    }
-
-    private UICommand createOKCommand(String commandName) {
-        UICommand command = new UICommand(commandName, this);
-        command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        command.setIsDefault(true);
-        return command;
+        return UICommand.createCancelUiCommand(commandName, this);
     }
 
     public DiskProfileListModel getDiskProfileListModel() {

@@ -152,9 +152,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
         }
         model.setItems(items);
 
-        UICommand removeCommand = new UICommand("OnRemove", this); //$NON-NLS-1$
-        removeCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        removeCommand.setIsDefault(true);
+        UICommand removeCommand = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(removeCommand);
 
         model.getCommands().add(createCancelCommand());
@@ -232,9 +230,7 @@ public class DataCenterIscsiBondListModel extends SearchableListModel {
     }
 
     private UICommand createCancelCommand() {
-        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         return cancelCommand;
     }
 

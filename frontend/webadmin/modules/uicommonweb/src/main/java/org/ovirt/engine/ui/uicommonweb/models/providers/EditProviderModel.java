@@ -102,13 +102,9 @@ public class EditProviderModel extends ProviderModel {
         confirmationModel.setMessage(ConstantsManager.getInstance()
                 .getMessages()
                 .providerUrlWarningText(networkList.toString()));
-        UICommand cmdOk = new UICommand(CMD_APPROVE, this);
-        cmdOk.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        cmdOk.setIsDefault(true);
+        UICommand cmdOk = UICommand.createDefaultOkUiCommand(CMD_APPROVE, this);
         confirmationModel.getCommands().add(cmdOk);
-        UICommand cmdCancel = new UICommand(CMD_CANCEL, this);
-        cmdCancel.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cmdCancel.setIsCancel(true);
+        UICommand cmdCancel = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         confirmationModel.getCommands().add(cmdCancel);
         sourceListModel.setConfirmWindow(confirmationModel);
     }

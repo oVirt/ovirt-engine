@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
+
 import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -10,7 +11,6 @@ import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
-import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
@@ -30,14 +30,10 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
 
-        cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        cancelCommand = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         getCommands().add(cancelCommand);
 
-        okCommand = new UICommand("OnManage", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        okCommand = UICommand.createDefaultOkUiCommand("OnManage", this); //$NON-NLS-1$
         getCommands().add(0, okCommand);
 
         getItemsChangedEvent().addListener(new IEventListener<EventArgs>() {

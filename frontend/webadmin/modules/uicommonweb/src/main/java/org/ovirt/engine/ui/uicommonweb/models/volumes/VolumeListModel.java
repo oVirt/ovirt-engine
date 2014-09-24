@@ -319,14 +319,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
                     innerVolumeModel.getDataCenter().setSelectedItem(Linq.firstOrDefault(dataCenters));
                 }
 
-                UICommand command = new UICommand("onCreateVolume", volumeListModel); //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-                command.setIsDefault(true);
+                UICommand command = UICommand.createDefaultOkUiCommand("onCreateVolume", volumeListModel); //$NON-NLS-1$
                 innerVolumeModel.getCommands().add(command);
-                command = new UICommand("Cancel", volumeListModel);  //$NON-NLS-1$
-                command.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-                command.setIsCancel(true);
-                innerVolumeModel.getCommands().add(command);
+                innerVolumeModel.getCommands().add(UICommand.createCancelUiCommand("Cancel", volumeListModel)); //$NON-NLS-1$
             }
         };
         AsyncDataProvider.getInstance().getDataCenterByClusterServiceList(_asyncQuery, false, true);
@@ -357,13 +352,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("OnRemove", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 
@@ -683,13 +674,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         model.setMessage(ConstantsManager.getInstance().getMessages().confirmStopVolumeRebalance(
                 volumeEntity.getName()));
 
-        UICommand okCommand = new UICommand("onStopRebalance", this); //$NON-NLS-1$
-        okCommand.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        okCommand.setIsDefault(true);
+        UICommand okCommand = UICommand.createDefaultOkUiCommand("onStopRebalance", this); //$NON-NLS-1$
         model.getCommands().add(okCommand);
-        UICommand cancelCommand = new UICommand("CancelConfirmation", this); //$NON-NLS-1$
-        cancelCommand.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        cancelCommand.setIsCancel(true);
+        UICommand cancelCommand = UICommand.createCancelUiCommand("CancelConfirmation", this); //$NON-NLS-1$
         model.getCommands().add(cancelCommand);
     }
 
@@ -966,13 +953,9 @@ public class VolumeListModel extends ListWithDetailsModel implements ISupportSys
         }
         model.setItems(list);
 
-        UICommand tempVar = new UICommand("onStop", this); //$NON-NLS-1$
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand("onStop", this); //$NON-NLS-1$
         model.getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand("Cancel", this); //$NON-NLS-1$
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand("Cancel", this); //$NON-NLS-1$
         model.getCommands().add(tempVar2);
     }
 

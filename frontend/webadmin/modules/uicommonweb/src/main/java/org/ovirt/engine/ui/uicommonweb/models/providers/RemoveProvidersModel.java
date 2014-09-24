@@ -41,13 +41,9 @@ public class RemoveProvidersModel extends ConfirmationModel {
         }
         setItems(providerNames);
 
-        UICommand tempVar = new UICommand(CMD_REMOVE, this);
-        tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
-        tempVar.setIsDefault(true);
+        UICommand tempVar = UICommand.createDefaultOkUiCommand(CMD_REMOVE, this);
         getCommands().add(tempVar);
-        UICommand tempVar2 = new UICommand(CMD_CANCEL, this);
-        tempVar2.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-        tempVar2.setIsCancel(true);
+        UICommand tempVar2 = UICommand.createCancelUiCommand(CMD_CANCEL, this); //$NON-NLS-1$
         getCommands().add(tempVar2);
     }
 

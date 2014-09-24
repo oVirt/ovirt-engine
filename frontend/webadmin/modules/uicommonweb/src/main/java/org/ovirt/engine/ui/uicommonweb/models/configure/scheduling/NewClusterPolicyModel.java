@@ -218,22 +218,19 @@ public class NewClusterPolicyModel extends Model {
     }
 
     private void initCommands() {
-        UICommand command;
         if (!clusterPolicy.isLocked() || commandType == CommandType.Clone) {
-            command = new UICommand("OnSave", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            command.setIsDefault(true);
-            getCommands().add(command);
-            command = new UICommand("OnReset", this); //$NON-NLS-1$
-            command.setTitle(ConstantsManager.getInstance().getConstants().resetTitle());
-            getCommands().add(command);
+            UICommand onSaveCommand = UICommand.createDefaultOkUiCommand("OnSave", this); //$NON-NLS-1$
+            getCommands().add(onSaveCommand);
+            UICommand onResetCommand = new UICommand("OnReset", this); //$NON-NLS-1$
+            onResetCommand.setTitle(ConstantsManager.getInstance().getConstants().resetTitle());
+            getCommands().add(onResetCommand);
         }
 
-        command = new UICommand("Cancel", this); //$NON-NLS-1$
-        command.setTitle(!clusterPolicy.isLocked() ? ConstantsManager.getInstance().getConstants().cancel()
+        UICommand cancelCommand = new UICommand("Cancel", this); //$NON-NLS-1$
+        cancelCommand.setTitle(!clusterPolicy.isLocked() ? ConstantsManager.getInstance().getConstants().cancel()
                 : ConstantsManager.getInstance().getConstants().close());
-        command.setIsCancel(true);
-        getCommands().add(command);
+        cancelCommand.setIsCancel(true);
+        getCommands().add(cancelCommand);
     }
 
     private void initTitle() {
