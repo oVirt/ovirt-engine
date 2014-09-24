@@ -77,7 +77,7 @@
         }
         .panelInfo {
             display: inline-block;
-            margin-left: 20px;
+            margin-left: 5px;
         }
         .nestedSubsequentPanel {
             padding-top: 24px;
@@ -200,7 +200,7 @@
                             <g:FlowPanel addStyleNames="{style.optimizationTabPanel}">
                                 <g:FlowPanel addStyleNames="{style.radioButtonsTabContent}">
                                     <g:Label ui:field="memoryOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
-                                    <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo} cpv_panelInfo_pfly_fix" />
+                                    <d:InfoIcon ui:field="memoryOptimizationInfo" addStyleNames="{style.panelInfo}" />
                                     <ge:EntityModelRadioButtonEditor ui:field="optimizationNoneEditor" addStyleNames="{style.radioButtonPositioning}"/>
                                     <ge:EntityModelRadioButtonEditor ui:field="optimizationForServerEditor" addStyleNames="{style.radioButtonPositioning}"/>
                                     <ge:EntityModelRadioButtonEditor ui:field="optimizationForDesktopEditor" addStyleNames="{style.radioButtonPositioning}"/>
@@ -208,7 +208,7 @@
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="cpuThreadsPanel" addStyleNames="{style.nestedSubsequentPanel}">
                                     <g:Label ui:field="cpuThreadsPanelTitle" addStyleNames="{style.panelTitle}" />
-                                    <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo} cpv_panelInfo_pfly_fix" />
+                                    <d:InfoIcon ui:field="cpuThreadsInfo" addStyleNames="{style.panelInfo}" />
                                     <ge:EntityModelCheckBoxEditor ui:field="countThreadsAsCoresEditor" />
                                 </g:FlowPanel>
                                 <g:FlowPanel addStyleNames="{style.nestedSubsequentPanel}">
@@ -245,15 +245,15 @@
                                 </g:ScrollPanel>
                                 <g:FlowPanel>
                                     <g:Label ui:field="schedulerOptimizationPanelTitle" addStyleNames="{style.panelTitle}" />
+                                    <d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo}" />
                                     <g:HorizontalPanel>
                                         <ge:EntityModelRadioButtonEditor ui:field="optimizeForUtilizationEditor" addStyleNames="{style.radioButtonLabel}" />
                                         <ge:EntityModelRadioButtonEditor ui:field="optimizeForSpeedEditor" addStyleNames="{style.radioButtonLabel}" />
-                                        <d:InfoIcon ui:field="schedulerOptimizationInfoIcon" addStyleNames="{style.panelInfo} cpv_panelInfo_pfly_fix" />
                                     </g:HorizontalPanel>
                                     <g:HorizontalPanel ui:field="allowOverbookingPanel">
                                         <ge:EntityModelRadioButtonEditor ui:field="guarantyResourcesEditor" addStyleNames="{style.radioButtonLabel}"/>
                                         <ge:EntityModelRadioButtonEditor ui:field="allowOverbookingEditor" addStyleNames="{style.radioButtonLabel}"/>
-                                        <d:InfoIcon ui:field="allowOverbookingInfoIcon" addStyleNames="{style.panelInfo} cpv_panelInfo_pfly_fix" />
+                                        <d:InfoIcon ui:field="allowOverbookingInfoIcon" addStyleNames="{style.panelInfo}" />
                                     </g:HorizontalPanel>
                                 </g:FlowPanel>
                                 <g:FlowPanel ui:field="additionPropsPanel" addStyleNames="{style.nestedSubsequentPanel}">
