@@ -448,9 +448,9 @@ public class JsonRpcVdsServer implements IVdsServer {
     }
 
     private void updateHeartbeatPolicy(boolean isheartbeat) {
-        RetryPolicy policy = client.getRetryPolicy();
+        RetryPolicy policy = client.getClientRetryPolicy();
         policy.setHeartbeat(isheartbeat);
-        client.setRetryPolicy(policy);
+        client.setClientRetryPolicy(policy);
     }
 
     @Override
