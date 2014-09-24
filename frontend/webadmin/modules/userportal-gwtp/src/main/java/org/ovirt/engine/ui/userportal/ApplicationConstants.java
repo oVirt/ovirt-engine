@@ -88,8 +88,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Monitor")
     String extendedVirtualMachineMonitorSubTabLabel();
 
-    @DefaultStringValue("Sessions")
-    String extendedVirtualMachineSessionsSubTabLabel();
+    @DefaultStringValue("Guest Information")
+    String extendedVirtualMachineGuestInfoSubTabLabel();
 
     @DefaultStringValue("General")
     String extendedTemplateGeneralSubTabLabel();

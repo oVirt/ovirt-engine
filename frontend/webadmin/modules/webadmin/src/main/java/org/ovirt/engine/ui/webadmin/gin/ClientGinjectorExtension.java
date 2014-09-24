@@ -160,9 +160,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.HostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.volumes.VolumeListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
@@ -316,7 +316,7 @@ public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     SearchableDetailModelProvider<Permission, VmListModel<Void>, PermissionListModel<VM>> getSubTabVirtualMachinePermissionModelProvider();
 
-    DetailModelProvider<VmListModel<Void>, VmSessionsModel> getSubTabVirtualMachineSessionsModelProvider();
+    DetailModelProvider<VmListModel<Void>, VmGuestInfoModel> getSubTabVirtualMachineGuestInfoModelProvider();
 
     SearchableDetailModelProvider<AuditLog, VmListModel<Void>, VmEventListModel> getSubTabVirtualMachineEventModelProvider();
 

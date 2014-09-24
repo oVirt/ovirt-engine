@@ -9,6 +9,6 @@
 		}
 	</ui:style>
 
-	<f:VmSessionsModelForm ui:field="form" addStyleNames="{style.formPanel}" />
+	<f:VmGuestInfoModelForm ui:field="form" addStyleNames="{style.formPanel}" />
 
 </ui:UiBinder>

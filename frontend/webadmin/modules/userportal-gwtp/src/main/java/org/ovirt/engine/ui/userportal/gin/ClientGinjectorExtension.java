@@ -9,7 +9,7 @@ import org.ovirt.engine.ui.uicommonweb.models.pools.PoolInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UserPortalVmEventListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.userportal.auth.LoggedInExtendedPlaceGatekeeper;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
@@ -60,6 +60,6 @@ public interface ClientGinjectorExtension extends UserPortalGinUiBinderWidgets {
     UserPortalSearchableDetailModelProvider<Disk, UserPortalListModel, PoolDiskListModel>
         getPoolDiskListModelProvider();
 
-    UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> getVmSessionsModelProvider();
+    UserPortalDetailModelProvider<UserPortalListModel, VmGuestInfoModel> getVmGuestInfoModelProvider();
 
 }

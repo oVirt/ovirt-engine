@@ -41,9 +41,9 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmImportGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VncInfoModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.AssignTagsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.ImportVmsPopupPresenterWidget;
@@ -422,7 +422,7 @@ public class VirtualMachineModule extends AbstractGinModule {
         bind(new TypeLiteral<VmListModel<Void>>() {}).in(Singleton.class);
         bind(VmGeneralModel.class).in(Singleton.class);
         bind(VmImportGeneralModel.class).in(Singleton.class);
-        bind(VmSessionsModel.class).in(Singleton.class);
+        bind(VmGuestInfoModel.class).in(Singleton.class);
         bind(VmDiskListModel.class).in(Singleton.class);
         bind(VmInterfaceListModel.class).in(Singleton.class);
         bind(VmEventListModel.class).in(Singleton.class);
@@ -438,8 +438,8 @@ public class VirtualMachineModule extends AbstractGinModule {
             .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGeneralModel>>(){}).in(Singleton.class);
         bind(new TypeLiteral<DetailModelProvider<ImportVmsModel, VmImportGeneralModel>>(){})
             .to(new TypeLiteral<DetailTabModelProvider<ImportVmsModel, VmImportGeneralModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmSessionsModel>>(){})
-           .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmSessionsModel>>(){}).in(Singleton.class);
+        bind(new TypeLiteral<DetailModelProvider<VmListModel<Void>, VmGuestInfoModel>>(){})
+           .to(new TypeLiteral<DetailTabModelProvider<VmListModel<Void>, VmGuestInfoModel>>(){}).in(Singleton.class);
         // Search-able Detail Models
         bind(new TypeLiteral<SearchableDetailModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})
            .to(new TypeLiteral<SearchableDetailTabModelProvider<String, VmListModel<Void>, VmAppListModel<VM>>>(){})

@@ -462,7 +462,7 @@ public enum HelpTag {
 
     services("services", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
-    sessions("sessions", HelpTagType.UNKNOWN), //$NON-NLS-1$
+    guest_info("guest_info", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     engine_sessions("engine_sessions", HelpTagType.UNKNOWN), //$NON-NLS-1$
 

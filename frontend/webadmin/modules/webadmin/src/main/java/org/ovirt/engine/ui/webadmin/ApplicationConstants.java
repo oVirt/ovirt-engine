@@ -533,8 +533,8 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Permissions")
     String virtualMachinePermissionSubTabLabel();
 
-    @DefaultStringValue("Sessions")
-    String virtualMachineSessionsSubTabLabel();
+    @DefaultStringValue("Guest Info")
+    String virtualMachineGuestInfoSubTabLabel();
 
     @DefaultStringValue("Events")
     String virtualMachineEventSubTabLabel();

@@ -523,4 +523,21 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Non-Passthrough profile cannot be attached to a VM of type {0}")
     String vnicTypeDoesntMatchNonPassthroughProfile(String type);
-}
+
+    @DefaultMessage(" ({0})")
+    String guestOSVersionOptional(String optional);
+
+    @DefaultMessage("{0} {1}{2}")
+    String guestOSVersionLinux(String distribution, String version, String codeName);
+
+    @DefaultMessage("Microsoft Windows {0} ({1})")
+    String guestOSVersionWindows(String version, String build);
+
+    @DefaultMessage("Microsoft Windows {0} Server ({1})")
+    String guestOSVersionWindowsServer(String version, String build);
+
+    @DefaultMessage("{0} (UTC+{1}:{2})")
+    String positiveTimezoneOffset(String name, String hours, String minutes);
+
+    @DefaultMessage("{0} (UTC-{1}:{2})")
+    String negativeTimezoneOffset(String name, String hours, String minutes);}

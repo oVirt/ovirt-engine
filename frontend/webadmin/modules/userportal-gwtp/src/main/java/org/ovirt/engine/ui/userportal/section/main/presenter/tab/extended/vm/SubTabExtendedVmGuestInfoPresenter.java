@@ -4,7 +4,7 @@ import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.userportal.ApplicationConstants;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.userportal.gin.AssetProvider;
@@ -19,15 +19,15 @@ import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabExtendedVmSessionsPresenter
-  extends AbstractSubTabExtendedVmPresenter<VmSessionsModel, SubTabExtendedVmSessionsPresenter.ViewDef, SubTabExtendedVmSessionsPresenter.ProxyDef>
+public class SubTabExtendedVmGuestInfoPresenter
+  extends AbstractSubTabExtendedVmPresenter<VmGuestInfoModel, SubTabExtendedVmGuestInfoPresenter.ViewDef, SubTabExtendedVmGuestInfoPresenter.ProxyDef>
 {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
     @ProxyCodeSplit
-    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineSessionsSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmSessionsPresenter> {
+    @NameToken(UserPortalApplicationPlaces.extendedVirtualMachineGuestInfoSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabExtendedVmGuestInfoPresenter> {
 
     }
 
@@ -37,16 +37,16 @@ public class SubTabExtendedVmSessionsPresenter
 
     @TabInfo(container = ExtendedVmSubTabPanelPresenter.class)
     static TabData getTabData(
-            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
-        return new ModelBoundTabData(constants.extendedVirtualMachineSessionsSubTabLabel(), 11, modelProvider);
+            UserPortalDetailModelProvider<UserPortalListModel, VmGuestInfoModel> modelProvider) {
+        return new ModelBoundTabData(constants.extendedVirtualMachineGuestInfoSubTabLabel(), 11, modelProvider);
     }
 
     @Inject
-    public SubTabExtendedVmSessionsPresenter(EventBus eventBus,
+    public SubTabExtendedVmGuestInfoPresenter(EventBus eventBus,
             ViewDef view,
             ProxyDef proxy,
             PlaceManager placeManager,
-            UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel> modelProvider) {
+            UserPortalDetailModelProvider<UserPortalListModel, VmGuestInfoModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider);
     }
 

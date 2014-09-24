@@ -14,7 +14,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
@@ -28,11 +28,11 @@ public class TemplateVmListModel extends VmListModel<VmTemplate> {
             final VmDiskListModel vmDiskListModel, final VmSnapshotListModel vmSnapshotListModel,
             final VmEventListModel vmEventListModel, final VmAppListModel<VM> vmAppListModel,
             final PermissionListModel<VM> permissionListModel,
-            final VmAffinityGroupListModel vmAffinityGroupListModel, final VmSessionsModel vmSessionsModel,
+            final VmAffinityGroupListModel vmAffinityGroupListModel, final VmGuestInfoModel vmGuestInfoModel,
             Provider<ImportVmsModel> importVmsModelProvider, VmHostDeviceListModel vmHostDeviceListModel,
             final VmDevicesListModel vmDevicesListModel) {
         super(vmGeneralModel, vmInterfaceListModel, vmDiskListModel, vmSnapshotListModel, vmEventListModel,
-                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmSessionsModel, importVmsModelProvider,
+                vmAppListModel, permissionListModel, vmAffinityGroupListModel, vmGuestInfoModel, importVmsModelProvider,
                 vmHostDeviceListModel,  vmDevicesListModel);
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
         setHelpTag(HelpTag.virtual_machines);

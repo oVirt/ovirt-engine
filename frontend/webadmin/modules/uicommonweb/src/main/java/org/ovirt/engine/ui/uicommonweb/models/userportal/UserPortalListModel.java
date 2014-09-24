@@ -86,7 +86,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceCreatingManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmNextRunConfigurationModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.place.UserPortalApplicationPlaces;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
@@ -243,7 +243,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private final VmGeneralModel vmGeneralModel;
-    private final VmSessionsModel vmSessionsModel;
+    private final VmGuestInfoModel vmGuestInfoModel;
     private final UserPortalVmSnapshotListModel vmSnapshotListModel;
     private final VmMonitorModel vmMonitorModel;
     private final VmDiskListModel vmDiskListModel;
@@ -304,7 +304,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     @Inject
-    public UserPortalListModel(final VmGeneralModel vmGeneralModel, final VmSessionsModel vmSessionsModel,
+    public UserPortalListModel(final VmGeneralModel vmGeneralModel, final VmGuestInfoModel vmGuestInfoModel,
             final UserPortalVmSnapshotListModel userPortalVmSnapshotListModel, final VmMonitorModel vmMonitorModel,
             final VmDiskListModel vmDiskListModel, final VmInterfaceListModel vmInterfaceListModel,
             final UserPortalPermissionListModel userPortalPermissionListModel,
@@ -312,7 +312,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
             final PoolGeneralModel poolGeneralModel, final PoolDiskListModel poolDiskListModel,
             final PoolInterfaceListModel poolInterfaceListModel) {
         this.vmGeneralModel = vmGeneralModel;
-        this.vmSessionsModel = vmSessionsModel;
+        this.vmGuestInfoModel = vmGuestInfoModel;
         this.vmSnapshotListModel = userPortalVmSnapshotListModel;
         this.vmMonitorModel = vmMonitorModel;
         this.vmDiskListModel = vmDiskListModel;
@@ -356,7 +356,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         permissionListModel.setIsAvailable(true);
         vmEventListModel.setIsAvailable(true);
         vmAppListModel.setIsAvailable(true);
-        vmSessionsModel.setIsAvailable(true);
+        vmGuestInfoModel.setIsAvailable(true);
 
         List<HasEntity<? /* extends VmOrPool */>> list = new ArrayList<>();
         list.add(vmGeneralModel);
@@ -370,7 +370,7 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
         list.add(vmEventListModel);
         list.add(vmAppListModel);
         list.add(vmMonitorModel);
-        list.add(vmSessionsModel);
+        list.add(vmGuestInfoModel);
 
         setDetailModels((List) list);
     }

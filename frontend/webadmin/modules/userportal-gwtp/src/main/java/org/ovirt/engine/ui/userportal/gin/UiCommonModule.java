@@ -30,7 +30,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmMonitorModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.userportal.uicommon.UserPortalConfigurator;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDataBoundModelProvider;
 import org.ovirt.engine.ui.userportal.uicommon.model.UserPortalDetailModelProvider;
@@ -81,7 +81,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(new TypeLiteral<VmAppListModel<VM>>() {}).in(Singleton.class);
         bind(VmMonitorModel.class).in(Singleton.class);
         bind(PoolInterfaceListModel.class).in(Singleton.class);
-        bind(VmSessionsModel.class).in(Singleton.class);
+        bind(VmGuestInfoModel.class).in(Singleton.class);
 
         // Extended tab: Template
         bind(UserPortalTemplateListModel.class).in(Singleton.class);
@@ -118,7 +118,7 @@ public class UiCommonModule extends BaseUiCommonModule {
         bind(VmMonitorModelProvider.class).in(Singleton.class);
         bind(new TypeLiteral<UserPortalSearchableDetailModelProvider<VmNetworkInterface, UserPortalListModel,
                 PoolInterfaceListModel>>(){}).in(Singleton.class);
-        bind(new TypeLiteral<UserPortalDetailModelProvider<UserPortalListModel, VmSessionsModel>>(){})
+        bind(new TypeLiteral<UserPortalDetailModelProvider<UserPortalListModel, VmGuestInfoModel>>(){})
             .in(Singleton.class);
 
         // Extended tab: Template

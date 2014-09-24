@@ -50,10 +50,10 @@ import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.Sub
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmApplicationPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmEventPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGeneralPresenter;
+import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmGuestInfoPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmMonitorPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmNetworkInterfacePresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmPermissionPresenter;
-import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSessionsPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmSnapshotPresenter;
 import org.ovirt.engine.ui.userportal.section.main.presenter.tab.extended.vm.SubTabExtendedVmVirtualDiskPresenter;
 import org.ovirt.engine.ui.userportal.section.main.view.AboutPopupView;
@@ -101,10 +101,10 @@ import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabEx
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmApplicationView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmEventView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGeneralView;
+import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmGuestInfoView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmMonitorView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmNetworkInterfaceView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmPermissionView;
-import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmSessionsView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmSnapshotView;
 import org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm.SubTabExtendedVmVirtualDiskView;
 
@@ -218,10 +218,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabExtendedVmMonitorPresenter.ViewDef.class,
                 SubTabExtendedVmMonitorView.class,
                 SubTabExtendedVmMonitorPresenter.ProxyDef.class);
-        bindPresenter(SubTabExtendedVmSessionsPresenter.class,
-                SubTabExtendedVmSessionsPresenter.ViewDef.class,
-                SubTabExtendedVmSessionsView.class,
-                SubTabExtendedVmSessionsPresenter.ProxyDef.class);
+        bindPresenter(SubTabExtendedVmGuestInfoPresenter.class,
+                SubTabExtendedVmGuestInfoPresenter.ViewDef.class,
+                SubTabExtendedVmGuestInfoView.class,
+                SubTabExtendedVmGuestInfoPresenter.ProxyDef.class);
 
         // Template
         bindPresenter(ExtendedTemplateSubTabPanelPresenter.class,

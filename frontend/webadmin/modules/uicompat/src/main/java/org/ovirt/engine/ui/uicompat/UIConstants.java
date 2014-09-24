@@ -735,8 +735,8 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Monitor")
     String monitorTitle();
 
-    @DefaultStringValue("Sessions")
-    String sessionsTitle();
+    @DefaultStringValue("Guest Information")
+    String guestInformationTitle();
 
     @DefaultStringValue("User Sessions")
     String userSessionsTitle();

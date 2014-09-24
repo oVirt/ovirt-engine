@@ -5,8 +5,8 @@ import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
 import org.ovirt.engine.ui.uicommonweb.place.WebAdminApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.gin.AssetProvider;
@@ -23,8 +23,8 @@ import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
 
-public class SubTabVirtualMachineSessionsPresenter
-    extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmSessionsModel, SubTabVirtualMachineSessionsPresenter.ViewDef, SubTabVirtualMachineSessionsPresenter.ProxyDef> {
+public class SubTabVirtualMachineGuestInfoPresenter
+    extends AbstractSubTabPresenter<VM, VmListModel<Void>, VmGuestInfoModel, SubTabVirtualMachineGuestInfoPresenter.ViewDef, SubTabVirtualMachineGuestInfoPresenter.ProxyDef> {
 
     private final static ApplicationConstants constants = AssetProvider.getConstants();
 
@@ -32,21 +32,21 @@ public class SubTabVirtualMachineSessionsPresenter
     }
 
     @ProxyCodeSplit
-    @NameToken(WebAdminApplicationPlaces.virtualMachineSessionsSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineSessionsPresenter> {
+    @NameToken(WebAdminApplicationPlaces.virtualMachineGuestInfoSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabVirtualMachineGuestInfoPresenter> {
 
     }
 
     @TabInfo(container = VirtualMachineSubTabPanelPresenter.class)
     static TabData getTabData(
-            DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider) {
-        return new ModelBoundTabData(constants.virtualMachineSessionsSubTabLabel(), 9, modelProvider);
+            DetailModelProvider<VmListModel<Void>, VmGuestInfoModel> modelProvider) {
+        return new ModelBoundTabData(constants.virtualMachineGuestInfoSubTabLabel(), 9, modelProvider);
     }
 
     @Inject
-    public SubTabVirtualMachineSessionsPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabVirtualMachineGuestInfoPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
             PlaceManager placeManager,
-            DetailModelProvider<VmListModel<Void>, VmSessionsModel> modelProvider) {
+            DetailModelProvider<VmListModel<Void>, VmGuestInfoModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 VirtualMachineSubTabPanelPresenter.TYPE_SetTabContent);
     }

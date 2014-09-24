@@ -19,6 +19,7 @@
 		<include name="compat/KeyValuePairCompat.java" />
 		<include name="compat/NotImplementedException.java" />
 		<include name="compat/TimeSpan.java" />
+		<include name="compat/WindowsJavaTimezoneMapping.java" />
 
 		<include name="compat/DateTime.java" />
 		<include name="compat/DayOfWeek.java" />

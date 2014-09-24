@@ -2226,4 +2226,19 @@ public interface CommonApplicationConstants extends Constants {
 
     @DefaultStringValue("Unknown")
     String unknownDeviceGeneralType();
+
+    @DefaultStringValue("Architecture")
+    String guestOsArchitecture();
+
+    @DefaultStringValue("Type")
+    String guestOsType();
+
+    @DefaultStringValue("Operating System")
+    String guestOperatingSystem();
+
+    @DefaultStringValue("Kernel Version")
+    String guestOsKernelInfo();
+
+    @DefaultStringValue("Timezone")
+    String guestOsTimezone();
 }

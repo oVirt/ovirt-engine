@@ -16,7 +16,7 @@ import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.hostdev.VmHostDeviceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmInterfaceListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
-import org.ovirt.engine.ui.uicommonweb.models.vms.VmSessionsModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.VmGuestInfoModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmSnapshotListModel;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
@@ -34,7 +34,7 @@ public class ClusterVmListModel extends VmListModel<VDSGroup> {
             VmAppListModel<VM> vmAppListModel,
             PermissionListModel<VM> permissionListModel,
             VmAffinityGroupListModel vmAffinityGroupListModel,
-            VmSessionsModel vmSessionsModel,
+            VmGuestInfoModel vmGuestInfoModel,
             Provider<ImportVmsModel> importVmsModelProvider,
             VmHostDeviceListModel vmHostDeviceListModel,
             VmDevicesListModel vmDevicesListModel) {
@@ -46,7 +46,7 @@ public class ClusterVmListModel extends VmListModel<VDSGroup> {
                 vmAppListModel,
                 permissionListModel,
                 vmAffinityGroupListModel,
-                vmSessionsModel,
+                vmGuestInfoModel,
                 importVmsModelProvider,
                 vmHostDeviceListModel,
                 vmDevicesListModel);

@@ -16,7 +16,7 @@
 	</ui:style>
 
 	<g:FlowPanel>
-		<f:VmSessionsModelForm ui:field="form" addStyleNames="{style.form}" />
+		<f:VmGuestInfoModelForm ui:field="form" addStyleNames="{style.form}" />
 	</g:FlowPanel>
 
 </ui:UiBinder>
