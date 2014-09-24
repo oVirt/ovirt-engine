@@ -172,12 +172,12 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             @Override
             protected void onLoadingStateChanged(LoadingState state) {
                 super.onLoadingStateChanged(state);
+                enforceScrollPosition();
 
-                if (state == LoadingState.LOADED) {
+                if (state == LoadingState.LOADING) {
                     Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                         @Override
                         public void execute() {
-                            enforceScrollPosition();
                             doAutoSelect = true;
                         }
                     });
