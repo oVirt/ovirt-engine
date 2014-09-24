@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 
@@ -13,6 +14,7 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.utils.PluralMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -174,23 +176,19 @@ public class NetworkValidator {
     }
 
     protected ValidationResult networkNotUsed(List<? extends Nameable> entities, VdcBllMessages entitiesReplacementPlural, VdcBllMessages entitiesReplacementSingular) {
-        if (entities.isEmpty()) {
-            return ValidationResult.VALID;
-        }
-
-        Collection<String> replacements = ReplacementUtils.replaceWithNameable("ENTITIES_USING_NETWORK", entities);
-        VdcBllMessages replacementMessageToUse = entities.size() == 1 ? entitiesReplacementSingular : entitiesReplacementPlural;
-        replacements.add(replacementMessageToUse.name());
-        return new ValidationResult(getNetworkInUseValidationMessage(entities.size()), replacements);
+        return new PluralMessages().getNetworkInUse(getEntitiesNames(entities),
+            entitiesReplacementSingular,
+            entitiesReplacementPlural);
     }
 
-    private VdcBllMessages getNetworkInUseValidationMessage(int numberOfEntities) {
-        boolean singular = numberOfEntities == 1;
-        if (singular) {
-            return VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_ONE_USE;
-        } else {
-            return VdcBllMessages.ACTION_TYPE_FAILED_NETWORK_IN_MANY_USES;
+    private Collection<String> getEntitiesNames(List<? extends Nameable> entities) {
+        List<String> result = new ArrayList<>(entities.size());
+
+        for (Nameable itemName : entities) {
+            result.add(itemName.getName());
         }
+
+        return result;
     }
 
     /**
