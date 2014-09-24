@@ -333,6 +333,9 @@ public enum VdcActionType {
     AddCpuQos(1756, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     UpdateCpuQos(1757, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveCpuQos(1758, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    AddHostNetworkQos(1770, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    UpdateHostNetworkQos(1771, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
+    RemoveHostNetworkQos(1772, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
     // disk profiles
     AddDiskProfile(1760, ActionGroup.CREATE_STORAGE_DISK_PROFILE, false, QuotaDependency.NONE),
     UpdateDiskProfile(1761, ActionGroup.CONFIGURE_STORAGE_DISK_PROFILE, false, QuotaDependency.NONE),
