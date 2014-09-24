@@ -38,6 +38,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * Replaced by {@link org.ovirt.engine.core.bll.network.host.HostSetupNetworksCommand}
+ */
+@Deprecated
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
 

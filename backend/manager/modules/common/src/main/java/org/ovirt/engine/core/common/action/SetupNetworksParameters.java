@@ -10,7 +10,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.validation.annotation.ConfiguredRange;
 import org.ovirt.engine.core.common.validation.annotation.NoRepetitiveStaticIpInList;
 
-
+@Deprecated
 public class SetupNetworksParameters extends VdsActionParameters {
 
     private static final long serialVersionUID = 7275844490628744535L;
