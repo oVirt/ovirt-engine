@@ -294,15 +294,18 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             ovfStoreDiskImage.setShareable(true);
             RegisterDiskParameters registerDiskParams =
                     new RegisterDiskParameters(ovfStoreDiskImage, getParameters().getStorageDomainId());
-            String result = "succeeded";
-            if (!runInternalAction(VdcActionType.RegisterDisk, registerDiskParams, cloneContext()).getSucceeded()) {
-                result = "failed";
-            }
+
+            boolean registerDiskResult = runInternalAction(VdcActionType.RegisterDisk, registerDiskParams,
+                    cloneContext()).getSucceeded();
+
             log.info("Register new floating OVF_STORE disk with disk id '{}' for storage domain '{}' has {}",
                     ovfStoreDiskImage.getId(),
                     getParameters().getStorageDomainId(),
-                    result);
-            addOvfStoreDiskToDomain(ovfStoreDiskImage);
+                    registerDiskResult ? "succeeded" : "failed");
+
+            if (registerDiskResult) {
+                addOvfStoreDiskToDomain(ovfStoreDiskImage);
+            }
         }
     }
 
