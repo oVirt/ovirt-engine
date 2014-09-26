@@ -46,6 +46,7 @@ class Plugin(plugin.PluginBase):
         stage=plugin.Stages.STAGE_SETUP,
     )
     def _setup(self):
+        self.environment[oengcommcons.ConfigEnv.JAVA_NEEDED] = True
         self.environment[oengcommcons.ConfigEnv.JBOSS_NEEDED] = True
 
     @plugin.event(
