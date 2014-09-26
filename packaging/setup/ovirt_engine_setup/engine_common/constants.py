@@ -217,6 +217,7 @@ class ConfigEnv(object):
     JBOSS_DIRECT_HTTPS_PORT = 'OVESETUP_CONFIG/jbossDirectHttpsPort'
     JBOSS_DEBUG_ADDRESS = 'OVESETUP_CONFIG/jbossDebugAddress'
     JBOSS_NEEDED = 'OVESETUP_CONFIG/jbossNeeded'
+    JAVA_NEEDED = 'OVESETUP_CONFIG/javaNeeded'
 
 
 @util.export

@@ -536,7 +536,7 @@ fi
 
 %package setup-plugin-websocket-proxy
 Summary:	Setup and upgrade specific plugins for websocket-proxy
-Requires:	%{name}-setup-base = %{version}-%{release}
+Requires:	%{name}-setup-plugin-ovirt-engine-common = %{version}-%{release}
 
 %description setup-plugin-websocket-proxy
 Setup and upgrade specific plugins for websocket-proxy

@@ -49,12 +49,20 @@ class Plugin(plugin.PluginBase):
             oengcommcons.ConfigEnv.JAVA_HOME,
             None
         )
+        self.environment.setdefault(
+            oengcommcons.ConfigEnv.JAVA_NEEDED,
+            False
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
-        condition=lambda self: self.environment[
-            oengcommcons.ConfigEnv.JAVA_HOME
-        ] is None,
+        condition=lambda self: (
+            self.environment[
+                oengcommcons.ConfigEnv.JAVA_NEEDED
+            ] and self.environment[
+                oengcommcons.ConfigEnv.JAVA_HOME
+            ] is None
+        ),
     )
     def _validation(self):
         self.environment[
