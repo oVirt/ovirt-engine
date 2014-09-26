@@ -45,7 +45,7 @@ import org.ovirt.engine.core.uutils.crypto.CryptMD5;
 
 public class ForemanHostProviderProxy extends BaseProviderProxy implements HostProviderProxy {
 
-    private Provider hostProvider;
+    private Provider<?> hostProvider;
 
     private HttpClient httpClient = new HttpClient();
 
@@ -70,7 +70,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
     private static final String OPERATION_SYSTEM_ENTRY_POINT = API_ENTRY_POINT + "/operatingsystems";
     private static final String OPERATION_SYSTEM_QUERY = OPERATION_SYSTEM_ENTRY_POINT + "?" + JSON_FORMAT;
 
-    public ForemanHostProviderProxy(Provider hostProvider) {
+    public ForemanHostProviderProxy(Provider<?> hostProvider) {
         super(hostProvider);
         this.hostProvider = hostProvider;
         initHttpClient();
