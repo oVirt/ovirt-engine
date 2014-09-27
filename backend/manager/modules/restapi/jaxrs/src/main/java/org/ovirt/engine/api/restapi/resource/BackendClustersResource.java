@@ -10,8 +10,8 @@ import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -82,7 +82,7 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         }
 
         return performCreate(VdcActionType.AddVdsGroup,
-                new VdsGroupOperationParameters(entity),
+                new AddClusterOperationParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
     }
 

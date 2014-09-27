@@ -1,9 +1,6 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.easymock.EasyMock.expect;
-
 import java.util.List;
-
 import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
@@ -12,8 +9,8 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.model.Version;
+import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -22,6 +19,8 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import static org.easymock.EasyMock.expect;
 
 public class BackendClustersResourceTest extends
         AbstractBackendCollectionResourceTest<Cluster, VDSGroup, BackendClustersResource> {
@@ -104,7 +103,7 @@ public class BackendClustersResourceTest extends
                                    setUpStoragePool(-1));
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  VdsGroupOperationParameters.class,
+                                  AddClusterOperationParameters.class,
                                   new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 2) },
                                   true,
@@ -135,7 +134,7 @@ public class BackendClustersResourceTest extends
                                    setUpStoragePool(-1));
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  VdsGroupOperationParameters.class,
+                                  AddClusterOperationParameters.class,
                                   new String[] { "VdsGroup.CompatibilityVersion" },
                                   new Object[] { new org.ovirt.engine.core.compat.Version(2, 3) },
                                   true,
@@ -178,7 +177,7 @@ public class BackendClustersResourceTest extends
                                    setUpStoragePool(-1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
-                                           VdsGroupOperationParameters.class,
+                                           AddClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            canDo,
@@ -205,7 +204,7 @@ public class BackendClustersResourceTest extends
                 setUpStoragePool(1));
 
         setUpCreationExpectations(VdcActionType.AddVdsGroup,
-                                  VdsGroupOperationParameters.class,
+                                  AddClusterOperationParameters.class,
                                   new String[] {},
                                   new Object[] {},
                                   true,
@@ -245,7 +244,7 @@ public class BackendClustersResourceTest extends
                 setUpStoragePool(1));
 
         setUriInfo(setUpActionExpectations(VdcActionType.AddVdsGroup,
-                                           VdsGroupOperationParameters.class,
+                                           AddClusterOperationParameters.class,
                                            new String[] {},
                                            new Object[] {},
                                            canDo,
