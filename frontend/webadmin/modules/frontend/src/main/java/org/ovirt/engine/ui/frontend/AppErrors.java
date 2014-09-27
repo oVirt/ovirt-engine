@@ -1678,6 +1678,18 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Overriding MTU is not supported for this Data Center's compatibility version.")
     String NETWORK_MTU_OVERRIDE_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network belongs to a different data-center.")
+    String ACTION_TYPE_FAILED_NETWORK_FROM_DIFFERENT_DC();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Default management network is not found or is ambiguous.")
+    String ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Changing management network in a non-empty cluster is not allowed.")
+    String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_CHANGED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Management network has to be not external one.")
+    String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL();
+
     @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
     String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
 
@@ -1752,6 +1764,9 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("The Management Network ('${NetworkName}') is mandatory and cannot be removed.")
     String NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Unsetting management network property is not allowed.")
+    String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_UNSET();
 
     @DefaultStringValue("The Network ('${NetworkName}') could not be removed since several iSCSI bonds (${IscsiBonds_COUNTER}) are using this network:\n ${IscsiBonds}.\nPlease remove the network first from those iSCSI bonds, and try again.")
     String NETWORK_CANNOT_REMOVE_ISCSI_BOND_NETWORK();

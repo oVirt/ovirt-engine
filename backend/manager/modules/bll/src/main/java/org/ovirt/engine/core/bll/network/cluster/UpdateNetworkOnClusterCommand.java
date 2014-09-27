@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -16,24 +18,16 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
-public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends
-        NetworkClusterCommandBase<T> {
+public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> extends NetworkClusterCommandBase<T> {
 
-    private Network mgmtNetwork;
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters) {
         super(parameters);
-    }
-
-    private Network getManagementNetwork() {
-        if (mgmtNetwork == null) {
-            mgmtNetwork = getNetworkDAO().getByNameAndCluster(NetworkUtils.getDefaultManagementNetworkName(), getVdsGroupId());
-        }
-
-        return mgmtNetwork;
     }
 
     private NetworkCluster getOldNetworkCluster() {
@@ -44,8 +38,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
         return oldNetworkCluster;
     }
 
-    @Override
-    protected Version getClusterVersion() {
+    private Version getClusterVersion() {
         return getVdsGroupDAO().get(getNetworkCluster().getClusterId()).getCompatibilityVersion();
     }
 
@@ -69,14 +62,23 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
         getNetworkClusterDAO().update(getNetworkCluster());
 
+        final Network managementNetwork;
+
+        if (getNetworkCluster().isManagement() && !getOldNetworkCluster().isManagement()) {
+            getNetworkClusterDAO().setNetworkExclusivelyAsManagement(getVdsGroupId(), getPersistedNetwork().getId());
+            managementNetwork = getPersistedNetwork();
+        } else {
+            managementNetwork = managementNetworkUtil.getManagementNetwork(getVdsGroupId());
+        }
+
         if (getNetworkCluster().isDisplay() != getOldNetworkCluster().isDisplay()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsDisplay(getVdsGroupId(),
-                    getNetworkCluster().isDisplay() ? getPersistedNetwork().getId() : getManagementNetwork().getId());
+                    getNetworkCluster().isDisplay() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         if (getNetworkCluster().isMigration() != getOldNetworkCluster().isMigration()) {
             getNetworkClusterDAO().setNetworkExclusivelyAsMigration(getVdsGroupId(),
-                    getNetworkCluster().isMigration() ? getPersistedNetwork().getId() : getManagementNetwork().getId());
+                    getNetworkCluster().isMigration() ? getPersistedNetwork().getId() : managementNetwork.getId());
         }
 
         NetworkClusterHelper.setStatus(getVdsGroupId(), getPersistedNetwork());
@@ -85,7 +87,14 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     protected boolean canDoAction() {
-        return validate(networkClusterAttachmentExists()) && validateAttachment();
+        return validate(networkClusterAttachmentExists())
+               && validateAttachment();
+    }
+
+    private boolean validateAttachment() {
+        final UpdateNetworkClusterValidator networkClusterValidator = createNetworkClusterValidator();
+        return validate(networkClusterValidator.managementNetworkUnset()) &&
+               validateAttachment(networkClusterValidator);
     }
 
     private ValidationResult networkClusterAttachmentExists() {
@@ -123,5 +132,9 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
         getReturnValue().getCanDoActionMessages().addAll(messages);
         return false;
+    }
+
+    private UpdateNetworkClusterValidator createNetworkClusterValidator() {
+        return new UpdateNetworkClusterValidator(getNetworkCluster(), getOldNetworkCluster(), getClusterVersion());
     }
 }

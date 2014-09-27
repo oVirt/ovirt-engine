@@ -38,11 +38,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
         super(parameters);
     }
 
-    private Network getNetwork() {
+    protected Network getNetwork() {
         return getParameters().getNetwork();
     }
 
-    @Override
     protected Version getClusterVersion() {
         return getVdsGroup().getCompatibilityVersion();
     }
@@ -100,6 +99,13 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
                 && changesAreClusterCompatible()
                 && logicalNetworkExists()
                 && validateAttachment();
+    }
+
+    private boolean validateAttachment() {
+        final AttachNetworkClusterValidator networkClusterValidator =
+                new AttachNetworkClusterValidator(getNetworkCluster(), getClusterVersion());
+        return validate(networkClusterValidator.networkBelongsToClusterDataCenter(getVdsGroup(), getNetwork()))
+                && validateAttachment(networkClusterValidator);
     }
 
     private boolean logicalNetworkExists() {
@@ -213,6 +219,10 @@ public class AttachNetworkToVdsGroupCommand<T extends AttachNetworkToVdsGroupPar
 
         if (network.getCluster().isMigration()) {
             getNetworkClusterDao().setNetworkExclusivelyAsMigration(clusterId, network.getId());
+        }
+
+        if (network.getCluster().isManagement()) {
+            getNetworkClusterDao().setNetworkExclusivelyAsManagement(clusterId, network.getId());
         }
 
         NetworkClusterHelper.setStatus(clusterId, network);

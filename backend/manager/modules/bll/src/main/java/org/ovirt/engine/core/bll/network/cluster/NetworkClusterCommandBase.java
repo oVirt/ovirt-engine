@@ -4,8 +4,6 @@ import org.ovirt.engine.core.bll.VdsGroupCommandBase;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public abstract class NetworkClusterCommandBase<T extends NetworkClusterParameters> extends VdsGroupCommandBase<T> {
 
@@ -31,20 +29,18 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
         return getPersistedNetwork().getName();
     }
 
-    private boolean validateExternalNetwork(NetworkClusterValidator validator) {
+    private boolean validateExternalNetwork(NetworkClusterValidatorBase validator) {
         return validate(validator.externalNetworkSupported())
                 && validate(validator.externalNetworkNotDisplay(getNetworkName()))
                 && validate(validator.externalNetworkNotRequired(getNetworkName()));
     }
 
-    protected abstract Version getClusterVersion();
-
-    protected boolean validateAttachment() {
-        NetworkClusterValidator validator = new NetworkClusterValidator(getNetworkCluster(), getClusterVersion());
-        return (!NetworkUtils.isManagementNetwork(getNetworkName())
-                || validate(validator.managementNetworkAttachment(getNetworkName())))
-                && validate(validator.migrationPropertySupported(getNetworkName()))
-                && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));
+    protected boolean validateAttachment(NetworkClusterValidatorBase validator) {
+        final Network network = getPersistedNetwork();
+        return validate(validator.managementNetworkRequired(network))
+               && validate(validator.managementNetworkNotExternal(network))
+               && validate(validator.managementNetworkChange())
+               && validate(validator.migrationPropertySupported())
+               && (!network.isExternal() || validateExternalNetwork(validator));
     }
-
 }
