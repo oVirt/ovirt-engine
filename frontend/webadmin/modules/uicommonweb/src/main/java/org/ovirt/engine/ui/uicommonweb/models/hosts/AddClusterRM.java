@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.uicommonweb.models.hosts;
 
+import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
@@ -99,7 +100,7 @@ public class AddClusterRM extends IEnlistmentNotification {
                 cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
                 cluster.setCompatibilityVersion(version);
                 cluster.setMigrateOnError(clusterModel.getMigrateOnErrorOption());
-                VdsGroupOperationParameters parameters = new VdsGroupOperationParameters(cluster);
+                VdsGroupOperationParameters parameters = new AddClusterOperationParameters(cluster);
                 parameters.setCorrelationId(getCorrelationId());
                 Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, parameters,
                         new IFrontendActionAsyncCallback() {

@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.AddSANStorageDomainParameters;
 import org.ovirt.engine.core.common.action.AddVdsActionParameters;
 import org.ovirt.engine.core.common.action.ApproveVdsParameters;
@@ -15,7 +16,6 @@ import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainSharedStatus;
@@ -1348,7 +1348,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
 
         model.startProgress(null);
 
-        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new VdsGroupOperationParameters(cluster),
+        Frontend.getInstance().runAction(VdcActionType.AddVdsGroup, new AddClusterOperationParameters(cluster),
                 new IFrontendActionAsyncCallback() {
                     @Override
                     public void executed(FrontendActionAsyncResult result) {
@@ -1609,7 +1609,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
     }
 
     private List<FenceAgent> getFenceAgents(HostModel model) {
-        List<FenceAgent> agents = new LinkedList<FenceAgent>();
+        List<FenceAgent> agents = new LinkedList<>();
         if (model.getManagementIp() != null && model.getManagementIp().getEntity() != null) {
             // Save primary PM parameters.
             FenceAgent primaryAgent = new FenceAgent();
