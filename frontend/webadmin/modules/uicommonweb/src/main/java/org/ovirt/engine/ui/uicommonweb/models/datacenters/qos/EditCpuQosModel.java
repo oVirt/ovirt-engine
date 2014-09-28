@@ -37,7 +37,7 @@ public class EditCpuQosModel extends EditQosModel<CpuQos, CpuQosParametersModel>
 
     @Override
     public String getTitle() {
-        return ConstantsManager.getInstance().getConstants().editStorageQoSTitle();
+        return ConstantsManager.getInstance().getConstants().editCpuQoSTitle();
     }
 
     @Override
