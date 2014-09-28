@@ -2,7 +2,6 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
 
-import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.SchedulingPolicyUnit;
@@ -14,7 +13,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.parameters.RemoveExternalPolicyUnitParameters;
-import org.ovirt.engine.core.compat.Guid;
 
 public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollectionResource<SchedulingPolicyUnit, PolicyUnit> implements SchedulingPolicyUnitsResource {
 
@@ -49,17 +47,7 @@ public class BackendSchedulingPolicyUnitsResource extends AbstractBackendCollect
 
     @Override
     @SingleEntityResource
-    public SchedulingPolicyUnitResource getSchedulingPolicyUnitSubResource(@PathParam("id") String id) {
-        return inject(new BackendSchedulingPolicyUnitResource(id, getPolicyUnit(id)));
-    }
-
-    private PolicyUnit getPolicyUnit(String id) {
-        Guid guid = asGuid(id);
-        for (PolicyUnit policyUnit : getCollection()) {
-            if (policyUnit.getId().equals(guid)) {
-                return policyUnit;
-            }
-        }
-        return null;
+    public SchedulingPolicyUnitResource getSchedulingPolicyUnitSubResource(String id) {
+        return inject(new BackendSchedulingPolicyUnitResource(id));
     }
 }
