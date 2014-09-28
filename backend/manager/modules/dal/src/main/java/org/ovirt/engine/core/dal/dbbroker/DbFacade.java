@@ -51,6 +51,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.compat.Guid;
@@ -204,6 +205,7 @@ public class DbFacade {
             put(ExternalVariable.class, ExternalVariableDao.class);
             put(VdsKdumpStatus.class, VdsKdumpStatusDao.class);
             put(VmJob.class, VmJobDao.class);
+            put(DiskProfile.class, DiskProfileDao.class);
         }
     };
 
