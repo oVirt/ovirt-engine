@@ -796,8 +796,8 @@ public class VmHandler {
             try {
                 isEnabled = (Boolean) field.get(objectWithEditableDeviceFields);
             } catch (IllegalAccessException | ClassCastException e) {
-                e.printStackTrace();
                 log.warn("VmHandler:: isUpdateValidForVmDevices: Reflection error");
+                log.debug("Original exception was:", e);
             }
 
             // if device type is set to unknown, search by general type only
