@@ -514,6 +514,8 @@ public enum HelpTag {
 
     cpu_qos("storage_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
+    host_network_qos("host_network_qos", HelpTagType.UNKNOWN), //$NON-NLS-1$
+
     disk_profiles("disk profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     new_disk_profile("new_disk_profile", HelpTagType.WEBADMIN, "Storage Tab > Disk Profiles sub-tab -> New Disk Profile dialog"), //$NON-NLS-1$ //$NON-NLS-2$

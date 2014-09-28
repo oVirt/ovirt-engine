@@ -1,13 +1,13 @@
 package org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter;
 
 import org.ovirt.engine.core.common.businessentities.StoragePool;
-import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.ui.common.place.PlaceRequestFactory;
 import org.ovirt.engine.ui.common.presenter.AbstractSubTabPresenter;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableDetailModelProvider;
 import org.ovirt.engine.ui.common.widget.tab.ModelBoundTabData;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterListModel;
-import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.place.ApplicationPlaces;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.DataCenterSelectionChangeEvent;
@@ -20,16 +20,16 @@ import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
 import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.annotations.TabInfo;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
-import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
+import com.gwtplatform.mvp.shared.proxy.PlaceRequest;
 
-public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel,
-        DataCenterCpuQosListModel, SubTabDataCenterCpuQosPresenter.ViewDef,
-        SubTabDataCenterCpuQosPresenter.ProxyDef> {
+public class SubTabDataCenterHostNetworkQosPresenter extends AbstractSubTabPresenter<StoragePool, DataCenterListModel,
+        DataCenterHostNetworkQosListModel, SubTabDataCenterHostNetworkQosPresenter.ViewDef,
+        SubTabDataCenterHostNetworkQosPresenter.ProxyDef> {
 
     @ProxyCodeSplit
-    @NameToken(ApplicationPlaces.dataCenterCpuQosSubTabPlace)
-    public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterCpuQosPresenter> {
+    @NameToken(ApplicationPlaces.dataCenterHostNetworkQosSubTabPlace)
+    public interface ProxyDef extends TabContentProxyPlace<SubTabDataCenterHostNetworkQosPresenter> {
     }
 
     public interface ViewDef extends AbstractSubTabPresenter.ViewDef<StoragePool> {
@@ -37,14 +37,16 @@ public class SubTabDataCenterCpuQosPresenter extends AbstractSubTabPresenter<Sto
 
     @TabInfo(container = DataCenterQosSubTabPanelPresenter.class)
     static TabData getTabData(ApplicationConstants applicationConstants,
-            SearchableDetailModelProvider<CpuQos, DataCenterListModel, DataCenterCpuQosListModel> modelProvider) {
-        return new ModelBoundTabData(applicationConstants.dataCenterCpuQosSubTabLabel(), 3, modelProvider);
+            SearchableDetailModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> modelProvider) {
+        return new ModelBoundTabData(applicationConstants.dataCenterHostNetworkQosSubTabLabel(), 2, modelProvider);
     }
 
     @Inject
-    public SubTabDataCenterCpuQosPresenter(EventBus eventBus, ViewDef view, ProxyDef proxy,
+    public SubTabDataCenterHostNetworkQosPresenter(EventBus eventBus,
+            ViewDef view,
+            ProxyDef proxy,
             PlaceManager placeManager,
-            SearchableDetailModelProvider<CpuQos, DataCenterListModel, DataCenterCpuQosListModel> modelProvider) {
+            SearchableDetailModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> modelProvider) {
         super(eventBus, view, proxy, placeManager, modelProvider,
                 DataCenterQosSubTabPanelPresenter.TYPE_SetTabContent);
     }

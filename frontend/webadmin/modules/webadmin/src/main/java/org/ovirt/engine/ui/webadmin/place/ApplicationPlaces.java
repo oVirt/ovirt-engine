@@ -75,6 +75,9 @@ public class ApplicationPlaces {
     public static final String dataCenterCpuQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "cpu_qos"; //$NON-NLS-1$
 
+    public static final String dataCenterHostNetworkQosSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
+            + "host_network_qos"; //$NON-NLS-1$
+
     public static final String dataCenterPermissionSubTabPlace = dataCenterMainTabPlace + SUB_TAB_PREFIX
             + "permissions"; //$NON-NLS-1$
 

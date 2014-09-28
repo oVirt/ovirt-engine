@@ -214,6 +214,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Network")
     String dataCenterNetworkQoSSubTabLabel();
 
+    @DefaultStringValue("Host Network")
+    String dataCenterHostNetworkQosSubTabLabel();
+
     @DefaultStringValue("Storage")
     String dataCenterStorageQosSubTabLabel();
 
@@ -3437,6 +3440,15 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Committed Rate [Mbps]")
     String hostNetworkQosPopupOutAverageRealtime();
 
+    @DefaultStringValue("Out Share")
+    String hostNetworkQosTabOutAverageLinkshare();
+
+    @DefaultStringValue("Out Limit")
+    String hostNetworkQosTabOutAverageUpperlimit();
+
+    @DefaultStringValue("Out Committed")
+    String hostNetworkQosTabOutAverageRealtime();
+
     // MAC pool widget
     @DefaultStringValue("From")
     String macPoolWidgetLeftBound();
@@ -3885,13 +3897,13 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String storageQosIopsWrite();
 
     @DefaultStringValue("New")
-    String newStorageQos();
+    String newQos();
 
     @DefaultStringValue("Edit")
-    String editStorageQos();
+    String editQos();
 
     @DefaultStringValue("Remove")
-    String removeStorageQos();
+    String removeQos();
 
     @DefaultStringValue("New")
     String newCpuQos();
@@ -3906,7 +3918,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterQosPopup();
 
     @DefaultStringValue("Description")
-    String storageQosDescription();
+    String qosDescription();
 
     @DefaultStringValue("Throughput")
     String throughputLabelQosPopup();

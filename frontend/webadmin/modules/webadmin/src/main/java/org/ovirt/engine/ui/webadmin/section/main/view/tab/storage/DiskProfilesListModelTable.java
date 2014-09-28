@@ -106,7 +106,7 @@ public class DiskProfilesListModelTable extends AbstractModelBoundTableWidget<Di
                 return name;
             }
         };
-        getTable().addColumn(qosColumn, constants.storageQosName(), "200px"); //$NON-NLS-1$
+        getTable().addColumn(qosColumn, constants.qosName(), "200px"); //$NON-NLS-1$
         qosColumn.makeSortable();
 
         getTable().addActionButton(new WebAdminButtonDefinition<DiskProfile>(constants.newProfile()) {

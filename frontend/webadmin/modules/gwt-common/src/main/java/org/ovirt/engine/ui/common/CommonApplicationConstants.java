@@ -1918,7 +1918,7 @@ public interface CommonApplicationConstants extends Constants {
     String profileDescriptionLabel();
 
     @DefaultStringValue("QoS Name")
-    String storageQosName();
+    String qosName();
 
     @DefaultStringValue("QoS Name")
     String cpuQosName();

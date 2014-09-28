@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.qos.CpuQos;
@@ -34,9 +35,11 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSLi
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.ReportPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.CpuQosPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.HostNetworkQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.NetworkQoSPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.StorageQosPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.datacenter.DataCenterForceRemovePopupPresenterWidget;
@@ -290,6 +293,44 @@ public class DataCenterModule extends AbstractGinModule {
 
     @Provides
     @Singleton
+    public SearchableDetailModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> getDataCenterHostNetworkQosListProvider(EventBus eventBus,
+            Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
+            final Provider<HostNetworkQosPopupPresenterWidget> hostNetworkQosPopupProvider,
+            final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider,
+            final Provider<DataCenterListModel> mainModelProvider,
+            final Provider<DataCenterHostNetworkQosListModel> modelProvider) {
+        SearchableDetailTabModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> result =
+                new SearchableDetailTabModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel>(eventBus,
+                        defaultConfirmPopupProvider) {
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(DataCenterHostNetworkQosListModel source,
+                    UICommand lastExecutedCommand,
+                    Model windowModel) {
+                if (lastExecutedCommand.equals(getModel().getNewCommand())
+                        || lastExecutedCommand.equals(getModel().getEditCommand())) {
+                    return hostNetworkQosPopupProvider.get();
+                } else {
+                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
+                }
+            }
+
+            @Override
+            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(DataCenterHostNetworkQosListModel source,
+                    UICommand lastExecutedCommand) {
+                if (lastExecutedCommand.equals(getModel().getRemoveCommand())) {
+                    return removeConfirmPopupProvider.get();
+                } else {
+                    return super.getConfirmModelPopup(source, lastExecutedCommand);
+                }
+            }
+        };
+        result.setMainModelProvider(mainModelProvider);
+        result.setModelProvider(modelProvider);
+        return result;
+    }
+
+    @Provides
+    @Singleton
     public SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> getDataCenterStorageQosListProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<StorageQosPopupPresenterWidget> storageQosPopupProvider,
@@ -441,6 +482,7 @@ public class DataCenterModule extends AbstractGinModule {
         bind(DataCenterStorageListModel.class).in(Singleton.class);
         bind(DataCenterQuotaListModel.class).in(Singleton.class);
         bind(DataCenterNetworkQoSListModel.class).in(Singleton.class);
+        bind(DataCenterHostNetworkQosListModel.class).in(Singleton.class);
         bind(DataCenterEventListModel.class).in(Singleton.class);
         bind(DataCenterIscsiBondListModel.class).in(Singleton.class);
         bind(DataCenterStorageQosListModel.class).in(Singleton.class);

@@ -272,6 +272,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("CPU QoS")
     String cpuQosTitle();
 
+    @DefaultStringValue("Host Network QoS")
+    String hostNetworkQosTitle();
+
     @DefaultStringValue("Volumes")
     String volumesTitle();
 

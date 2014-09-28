@@ -148,6 +148,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.DataCe
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterClusterPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterCpuQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterEventPresenter;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterHostNetworkQosPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterIscsiBondPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkPresenter;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.tab.datacenter.SubTabDataCenterNetworkQoSPresenter;
@@ -391,6 +392,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.DataCenterS
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterClusterView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterCpuQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterEventView;
+import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterHostNetworkQosView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterIscsiBondView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkQoSView;
 import org.ovirt.engine.ui.webadmin.section.main.view.tab.datacenter.SubTabDataCenterNetworkView;
@@ -651,6 +653,10 @@ public class PresenterModule extends BasePresenterModule {
                 SubTabDataCenterCpuQosPresenter.ViewDef.class,
                 SubTabDataCenterCpuQosView.class,
                 SubTabDataCenterCpuQosPresenter.ProxyDef.class);
+        bindPresenter(SubTabDataCenterHostNetworkQosPresenter.class,
+                SubTabDataCenterHostNetworkQosPresenter.ViewDef.class,
+                SubTabDataCenterHostNetworkQosView.class,
+                SubTabDataCenterHostNetworkQosPresenter.ProxyDef.class);
         bindPresenter(SubTabDataCenterClusterPresenter.class,
                 SubTabDataCenterClusterPresenter.ViewDef.class,
                 SubTabDataCenterClusterView.class,

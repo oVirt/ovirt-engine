@@ -49,7 +49,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
             }
         };
         nameColumn.makeSortable();
-        getTable().addColumn(nameColumn, constants.storageQosName(), "200px"); //$NON-NLS-1$
+        getTable().addColumn(nameColumn, constants.qosName(), "200px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageQos> descColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
@@ -58,7 +58,7 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
             }
         };
         descColumn.makeSortable();
-        getTable().addColumn(descColumn, constants.storageQosDescription(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(descColumn, constants.qosDescription(), "150px"); //$NON-NLS-1$
 
         TextColumnWithTooltip<StorageQos> throughputColumn = new TextColumnWithTooltip<StorageQos>() {
             @Override
@@ -120,21 +120,21 @@ public class SubTabDataCenterStorageQosView extends AbstractSubTabTableView<Stor
         writeIopsColumn.makeSortable();
         getTable().addColumn(writeIopsColumn, constants.storageQosIopsWrite(), "105px"); //$NON-NLS-1$
 
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.newStorageQos()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.newQos()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getNewCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.editStorageQos()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.editQos()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getEditCommand();
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.removeStorageQos()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<StorageQos>(constants.removeQos()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();

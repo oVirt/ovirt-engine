@@ -80,8 +80,8 @@ public abstract class QosPopupView<T extends QosBase, P extends QosParametersMod
     }
 
     private void localize() {
-        nameEditor.setLabel(constants.storageQosName());
-        descriptionEditor.setLabel(constants.storageQosDescription());
+        nameEditor.setLabel(constants.qosName());
+        descriptionEditor.setLabel(constants.qosDescription());
         dataCenterEditor.setLabel(constants.dataCenterQosPopup());
     }
 

@@ -67,7 +67,8 @@ public class DataCenterQosSubTabPanelPresenter extends
         super.setInSlot(slot, content);
         if (content instanceof SubTabDataCenterStorageQosPresenter
                 || content instanceof SubTabDataCenterNetworkQoSPresenter
-                || content instanceof SubTabDataCenterCpuQosPresenter) {
+                || content instanceof SubTabDataCenterCpuQosPresenter
+                || content instanceof SubTabDataCenterHostNetworkQosPresenter) {
             lastPresenter = (Presenter<?, ?>) content;
         }
         TabContentProxy<?> proxy = (TabContentProxy<?>) lastPresenter.getProxy();

@@ -51,6 +51,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemType;
 import org.ovirt.engine.ui.uicommonweb.models.configure.PermissionListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.NewSharedMacPoolModel;
 import org.ovirt.engine.ui.uicommonweb.models.macpool.SharedMacPoolModel;
@@ -193,6 +194,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterNetworkListModel dataCenterNetworkListModel,
             final DataCenterClusterListModel dataCenterClusterListModel,
             final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
+            final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
             final PermissionListModel permissionListModel,
@@ -201,8 +203,8 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         iscsiBondListModel = dataCenterIscsiBondListModel;
         quotaListModel = dataCenterQuotaListModel;
         setDetailList(dataCenterStorageListModel, dataCenterNetworkListModel, dataCenterClusterListModel,
-                dataCenterNetworkQoSListModel, dataCenterStorageQosListModel, dataCenterCpuQosListModel,
-                permissionListModel, dataCenterEventListModel);
+                dataCenterNetworkQoSListModel, dataCenterHostNetworkQosListModel, dataCenterStorageQosListModel,
+                dataCenterCpuQosListModel, permissionListModel, dataCenterEventListModel);
         setTitle(ConstantsManager.getInstance().getConstants().dataCentersTitle());
 
         setDefaultSearchString("DataCenter:"); //$NON-NLS-1$
@@ -260,6 +262,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
             final DataCenterNetworkListModel dataCenterNetworkListModel,
             final DataCenterClusterListModel dataCenterClusterListModel,
             final DataCenterNetworkQoSListModel dataCenterNetworkQoSListModel,
+            final DataCenterHostNetworkQosListModel dataCenterHostNetworkQosListModel,
             final DataCenterStorageQosListModel dataCenterStorageQosListModel,
             final DataCenterCpuQosListModel dataCenterCpuQosListModel,
             final PermissionListModel permissionListModel,
@@ -272,6 +275,7 @@ public class DataCenterListModel extends ListWithDetailsAndReportsModel implemen
         quotaListModel.setIsAvailable(false);
         list.add(quotaListModel);
         list.add(dataCenterNetworkQoSListModel);
+        list.add(dataCenterHostNetworkQosListModel);
         list.add(dataCenterStorageQosListModel);
         list.add(dataCenterCpuQosListModel);
         list.add(permissionListModel);

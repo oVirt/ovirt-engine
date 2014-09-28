@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerServic
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeOptionEntity;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
@@ -63,6 +64,7 @@ import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterNetworkQoSLi
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterQuotaListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.DataCenterStorageListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterCpuQosListModel;
+import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterHostNetworkQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.datacenters.qos.DataCenterStorageQosListModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.disks.DiskListModel;
@@ -218,6 +220,8 @@ public interface ClientGinjectorExtension {
     SearchableDetailModelProvider<Quota, DataCenterListModel, DataCenterQuotaListModel> getSubTabDataCenterQuotaModelProvider();
 
     SearchableDetailModelProvider<NetworkQoS, DataCenterListModel, DataCenterNetworkQoSListModel> getSubTabDataCenterNetworkQoSModelProvider();
+
+    SearchableDetailModelProvider<HostNetworkQos, DataCenterListModel, DataCenterHostNetworkQosListModel> getSubTabDataCenterHostNetworkQosModelProvider();
 
     SearchableDetailModelProvider<StorageQos, DataCenterListModel, DataCenterStorageQosListModel> getSubTabDataCenterStorageQosModelProvider();
 

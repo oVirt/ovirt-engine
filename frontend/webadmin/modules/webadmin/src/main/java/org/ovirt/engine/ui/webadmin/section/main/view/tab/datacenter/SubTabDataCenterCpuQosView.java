@@ -84,7 +84,7 @@ public class SubTabDataCenterCpuQosView extends AbstractSubTabTableView<StorageP
             }
         });
 
-        getTable().addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.removeStorageQos()) {
+        getTable().addActionButton(new WebAdminButtonDefinition<CpuQos>(constants.removeQos()) {
             @Override
             protected UICommand resolveCommand() {
                 return getDetailModel().getRemoveCommand();
