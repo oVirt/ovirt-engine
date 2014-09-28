@@ -176,7 +176,7 @@ public class Snmp extends Transport {
         }
     }
 
-    private static class Host {
+    static class Host {
         public String name;
         public int port = 162;
 
@@ -201,8 +201,8 @@ public class Snmp extends Transport {
         }
     }
 
-    private static class Profile {
-        private static final Pattern HOST_PATTERN = Pattern.compile("(?<host>[^:\\s]+)(:(?<port>[^\\s]*))?");
+    static class Profile {
+        Pattern HOST_PATTERN = Pattern.compile("(?<host>(([^\\[:\\s]+)|(\\[[^\\]]+\\])))(:(?<port>[^\\s]*))?");
 
         public List<Host> hosts = new LinkedList<>();
         public OctetString community;
