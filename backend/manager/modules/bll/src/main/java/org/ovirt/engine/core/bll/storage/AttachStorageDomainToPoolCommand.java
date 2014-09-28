@@ -12,6 +12,7 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
@@ -31,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMap;
 import org.ovirt.engine.core.common.businessentities.StoragePoolIsoMapId;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -150,6 +152,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 }
                             }
                         }
+                        createDefaultDiskProfile();
                     }
 
                     runVdsCommand(VDSCommandType.AttachStorageDomain,
@@ -191,6 +194,27 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     setSucceeded(true);
                 }
             }
+        }
+    }
+
+    /**
+     * Creating default disk profile for existing storage domain.
+     */
+    private void createDefaultDiskProfile() {
+        if (FeatureSupported.storageQoS(getStoragePool().getcompatibility_version())
+                && getDiskProfileDao().getAllForStorageDomain(getStorageDomain().getId()).isEmpty()) {
+            final DiskProfile diskProfile =
+                    DiskProfileHelper.createDiskProfile(getStorageDomain().getId(),
+                            getStorageDomainName());
+            executeInNewTransaction(new TransactionMethod<Object>() {
+                @Override
+                public Void runInTransaction() {
+                    getDiskProfileDao().save(diskProfile);
+                    getCompensationContext().snapshotNewEntity(diskProfile);
+                    getCompensationContext().stateChanged();
+                    return null;
+                }
+            });
         }
     }
 
