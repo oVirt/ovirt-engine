@@ -424,7 +424,14 @@ DECLARE
 
 BEGIN
 	mult := ( SELECT
-	    		COALESCE(SUM(images_storage_domain_view.size),0)
+	    		COALESCE(SUM(
+                       CASE
+                           WHEN (images_storage_domain_view.active = true
+                                 AND (images_storage_domain_view.entity_type IS NULL OR       -- Floating disk
+                                      images_storage_domain_view.entity_type <> 'TEMPLATE'))  -- or a VM
+                               THEN images_storage_domain_view.size
+                           ELSE images_storage_domain_view.actual_size
+                       END),0)
 				FROM images_storage_domain_view
 				WHERE images_storage_domain_view.storage_id = v_storage_domain_id );
         -- convert to GB from bytes
