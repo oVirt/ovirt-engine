@@ -37,4 +37,11 @@ public abstract class ProfileCommandBase<T extends ProfileParametersBase<P>, P e
     }
 
     protected abstract ProfilesDao<P> getProfileDao();
+
+    /**
+     * used for auditLog's ${ProfileName} placeholder
+     */
+    public String getProfileName() {
+        return getProfile().getName();
+    }
 }
