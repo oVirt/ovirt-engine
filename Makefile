@@ -210,6 +210,7 @@ all: \
 	generated-files \
 	validations \
 	$(BUILD_FILE) \
+	post-build-validations \
 	$(NULL)
 
 generated-files:	$(GENERATED)
@@ -231,9 +232,15 @@ maven:
 $(BUILD_FILE):
 	$(MAKE) maven
 
+post-build-validations:
+	if [ "$(BUILD_VALIDATION)" != 0 ]; then \
+		( cd build/validations && $(MVN) test -Dosinfo.properties=../../packaging/conf/osinfo-defaults.properties ); \
+	fi
+
 clean:
 	# Clean maven generated stuff:
 	$(MVN) clean $(EXTRA_BUILD_FLAGS)
+	( cd build/validations && $(MVN) clean )
 	rm -rf $(OUTPUT_RPMBUILD) $(OUTPUT_DIR) $(BUILD_FILE) tmp.dev.flist
 
 	# Clean files generated from templates:
