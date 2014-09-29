@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -202,6 +203,11 @@ public class TemplateBackupModel extends VmBackupModel
             if (importModel.getClusterQuota().getSelectedItem() != null &&
                     importModel.getClusterQuota().getIsAvailable()) {
                 importVmTemplateParameters.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
+            }
+
+            CpuProfile cpuProfile = importModel.getCpuProfiles().getSelectedItem();
+            if (cpuProfile != null) {
+                importVmTemplateParameters.setCpuProfileId(cpuProfile.getId());
             }
 
             Map<Guid, Guid> map = new HashMap<Guid, Guid>();
