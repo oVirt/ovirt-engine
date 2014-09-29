@@ -213,6 +213,7 @@ Requires:	ovirt-image-uploader >= 3.6.0
 Requires:	ovirt-iso-uploader >= 3.6.0
 Requires:	patternfly1
 Requires:	postgresql-server >= 8.4.7
+Requires:	slf4j >= 1.7.0
 Requires:	ws-commons-util
 Requires:	yum-plugin-versionlock
 
@@ -718,6 +719,8 @@ common/org/apache/xmlgraphics/fop/main/fop.jar
 common/org/ovirt/otopi/main/otopi.jar otopi/otopi.jar
 common/org/ovirt/ovirt-host-deploy/main/ovirt-host-deploy.jar ovirt-host-deploy/ovirt-host-deploy.jar
 common/org/ovirt/vdsm-jsonrpc-java/main/vdsm-jsonrpc-java-client.jar vdsm-jsonrpc-java/vdsm-jsonrpc-java-client.jar
+tools/org/slf4j/main/slf4j-api.jar slf4j/slf4j-api.jar
+tools/org/slf4j/main/slf4j-jdk14.jar slf4j/slf4j-jdk14.jar
 %if 0%{?fedora}
 %if %{fedora} >= 19
 common/com/mchange/c3p0/main/c3p0.jar

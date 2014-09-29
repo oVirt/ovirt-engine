@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+     The module contains original SLF4J implementation, so java.util.logging
+     can be used as a logging backend (this functionality is missing in JBoss
+     provided SLF4J reimplementation).
+-->
+<module xmlns="urn:jboss:module:1.1" name="org.slf4j">
+  <resources>
+    <resource-root path="slf4j-api.jar"/>
+    <resource-root path="slf4j-jdk14.jar"/>
+  </resources>
+</module>

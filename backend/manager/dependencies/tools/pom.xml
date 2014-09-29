@@ -1,0 +1,61 @@
+<project
+  xmlns="http://maven.apache.org/POM/4.0.0"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.ovirt.engine.core.manager</groupId>
+    <artifactId>dependencies</artifactId>
+    <version>3.6.0-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>tools-dependencies</artifactId>
+  <packaging>jar</packaging>
+
+  <name>oVirt Engine tools dependencies</name>
+
+  <!-- We need to put here all the dependencies corresponding to the
+              .jar files that will be added to the modules archive: -->
+
+  <dependencies>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <version>${slf4j.version}</version>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <plugins>
+        <plugin>
+          <groupId>org.ovirt.engine</groupId>
+          <artifactId>jboss-modules-maven-plugin</artifactId>
+          <configuration>
+            <generateIndex>false</generateIndex>
+            <category>tools</category>
+            <modules>
+              <module>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-api</artifactId>
+                <moduleName>org.slf4j</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.slf4j</groupId>
+                <artifactId>slf4j-jdk14</artifactId>
+                <moduleName>org.slf4j</moduleName>
+              </module>
+            </modules>
+          </configuration>
+        </plugin>
+    </plugins>
+  </build>
+</project>
