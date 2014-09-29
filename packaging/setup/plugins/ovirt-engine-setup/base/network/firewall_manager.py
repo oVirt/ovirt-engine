@@ -43,6 +43,7 @@ class Plugin(plugin.PluginBase):
         super(Plugin, self).__init__(context=context)
         self._detected_managers = []
         self._available_managers = []
+        self._selected_manager = None
 
     @plugin.event(
         stage=plugin.Stages.STAGE_INIT,
@@ -57,8 +58,8 @@ class Plugin(plugin.PluginBase):
             None
         )
         self.environment.setdefault(
-            osetupcons.ConfigEnv.SKIP_FIREWALL_REVIEW,
-            False
+            osetupcons.ConfigEnv.FIREWALL_CHANGES_REVIEW,
+            None
         )
         self.environment.setdefault(
             osetupcons.ConfigEnv.VALID_FIREWALL_MANAGERS,
@@ -220,12 +221,13 @@ class Plugin(plugin.PluginBase):
                     ],
                 ),
             )
-        next(
+        self._selected_manager = [
             m for m in self._available_managers
             if m.name == self.environment[
                 osetupcons.ConfigEnv.FIREWALL_MANAGER
             ]
-        ).enable()
+        ][0]
+        self._selected_manager.enable()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_VALIDATION,
@@ -238,13 +240,7 @@ class Plugin(plugin.PluginBase):
         ),
     )
     def _review_config(self):
-        if not self.environment[
-            osetupcons.ConfigEnv.SKIP_FIREWALL_REVIEW
-        ]:
-            manager = self.environment[
-                osetupcons.ConfigEnv.FIREWALL_MANAGER
-            ]
-            manager.review_config()
+        self._selected_manager.review_config()
 
     @plugin.event(
         stage=plugin.Stages.STAGE_MISC,

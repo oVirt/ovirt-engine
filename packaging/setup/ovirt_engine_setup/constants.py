@@ -387,7 +387,14 @@ class ConfigEnv(object):
         return 'OVESETUP_CONFIG/updateFirewall'
 
     FIREWALL_MANAGERS = 'OVESETUP_CONFIG/firewallManagers'
-    SKIP_FIREWALL_REVIEW = 'OVESETUP_CONFIG/skipFirewallReview'
+
+    @osetupattrs(
+        answerfile=True,
+        summary=False,
+    )
+    def FIREWALL_CHANGES_REVIEW(self):
+        return 'OVESETUP_CONFIG/firewallChangesReview'
+
     VALID_FIREWALL_MANAGERS = 'OVESETUP_CONFIG/validFirewallManagers'
     FQDN_REVERSE_VALIDATION = 'OVESETUP_CONFIG/fqdnReverseValidation'
     FQDN_NON_LOOPBACK_VALIDATION = 'OVESETUP_CONFIG/fqdnNonLoopback'

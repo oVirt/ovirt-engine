@@ -22,6 +22,7 @@ Firewall manager iptables plugin.
 
 import difflib
 import gettext
+import os
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
 
 
@@ -127,44 +128,97 @@ class Plugin(plugin.PluginBase):
             )
 
         def review_config(self):
-            diffl = ''
-            with open(
-                    osetupcons.FileLocations.SYSCONFIG_IPTABLES,
-                    'r'
-            ) as current:
-                diff = difflib.unified_diff(
-                    current.readlines(),
-                    self._get_rules().splitlines(True),
-                    fromfile=_('current'),
-                    tofile=_('proposed'),
-                )
-                diffl = ''.join(diff)
-            if len(diffl) > 0:
-                confirmed = dialog.queryBoolean(
-                    dialog=self.plugin.dialog,
-                    name='OVESETUP_CONFIRM_IPTABLES_CHANGES',
-                    note=_(
-                        'Generated iptables rules are different '
-                        'from current ones.\n'
-                        'Please review the changes:\n\n'
-                        '{diff}\n\n'
-                        'Do you want to proceed with firewall configuration? '
-                        '(@VALUES@) [@DEFAULT@]: '
-                    ).format(
-                        diff=diffl
-                    ),
-                    prompt=True,
-                    true=_('Yes'),
-                    false=_('No'),
-                    default=True,
-                )
-                if not confirmed:
-                    raise RuntimeError(
+            diff_lines = ''
+            current_rules = ''
+            current_modified_since_prev_setup = False
+            interactive = True
+            if os.path.isfile(osetupcons.FileLocations.SYSCONFIG_IPTABLES):
+                with open(
+                        osetupcons.FileLocations.SYSCONFIG_IPTABLES,
+                        'r'
+                ) as current:
+                    current_rules = current.read().splitlines()
+            if os.path.isfile(osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE):
+                with open(
+                        osetupcons.FileLocations.OVIRT_IPTABLES_EXAMPLE,
+                        'r'
+                ) as prev_setup_example:
+                    prev_setup_rules = prev_setup_example.read().splitlines()
+                    diff_prev_cur = difflib.unified_diff(
+                        current_rules,
+                        prev_setup_rules,
+                        lineterm='',
+                    )
+                    diff_lines = '\n'.join(diff_prev_cur)
+                    if len(diff_lines) > 0:
+                        current_modified_since_prev_setup = True
+            diff = difflib.unified_diff(
+                current_rules,
+                self._get_rules().splitlines(),
+                lineterm='',
+                fromfile=_('current'),
+                tofile=_('proposed'),
+            )
+            diff_lines = '\n'.join(diff)
+            if len(diff_lines) > 0:
+                if current_modified_since_prev_setup:
+                    self.logger.warning(
                         _(
-                            'iptables proposed configuration '
-                            'was rejected by user'
+                            "It seams that previously generated iptables "
+                            "configuration was manually edited,\n"
+                            "please carefully review the proposed "
+                            "configuration"
                         )
                     )
+                if self.environment[
+                    osetupcons.ConfigEnv.FIREWALL_CHANGES_REVIEW
+                ] is None:
+                    self.environment[
+                        osetupcons.ConfigEnv.FIREWALL_CHANGES_REVIEW
+                    ] = dialog.queryBoolean(
+                        dialog=self.plugin.dialog,
+                        name='OVESETUP_REVIEW_IPTABLES_CHANGES',
+                        note=_(
+                            'Generated iptables rules are different '
+                            'from current ones.\n'
+                            'Do you want to review them? '
+                            '(@VALUES@) [@DEFAULT@]: '
+                        ),
+                        prompt=True,
+                        true=_('Yes'),
+                        false=_('No'),
+                        default=False,
+                    )
+                else:
+                    interactive = False
+
+                if self.environment[
+                    osetupcons.ConfigEnv.FIREWALL_CHANGES_REVIEW
+                ] and interactive:
+                    confirmed = dialog.queryBoolean(
+                        dialog=self.plugin.dialog,
+                        name='OVESETUP_CONFIRM_IPTABLES_CHANGES',
+                        note=_(
+                            'Please review the changes:\n\n'
+                            '{diff}\n\n'
+                            'Do you want to proceed with firewall '
+                            'configuration? '
+                            '(@VALUES@) [@DEFAULT@]: '
+                        ).format(
+                            diff=diff_lines
+                        ),
+                        prompt=True,
+                        true=_('Yes'),
+                        false=_('No'),
+                        default=True,
+                    )
+                    if not confirmed:
+                        raise RuntimeError(
+                            _(
+                                'iptables proposed configuration '
+                                'was rejected by user'
+                            )
+                        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_SETUP,
