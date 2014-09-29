@@ -29,6 +29,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandler<TaskHandlerCommand<? extends LiveMigrateDiskParameters>> {
+    private Guid sourceQuotaId;
+    private Guid sourceDiskProfileId;
+
     public VmReplicateDiskFinishTaskHandler(TaskHandlerCommand<? extends LiveMigrateDiskParameters> cmd) {
         super(cmd);
     }
@@ -48,7 +51,9 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
 
         // Update the DB before sending the command (perform rollback on failure)
         moveDiskInDB(getEnclosingCommand().getParameters().getSourceStorageDomainId(),
-                getEnclosingCommand().getParameters().getTargetStorageDomainId());
+                getEnclosingCommand().getParameters().getTargetStorageDomainId(),
+                getEnclosingCommand().getParameters().getQuotaId(),
+                getEnclosingCommand().getParameters().getDiskProfileId());
 
         VDSReturnValue ret = null;
         try {
@@ -64,7 +69,9 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
             }
         } catch (Exception e) {
             moveDiskInDB(getEnclosingCommand().getParameters().getTargetStorageDomainId(),
-                    getEnclosingCommand().getParameters().getSourceStorageDomainId());
+                    getEnclosingCommand().getParameters().getSourceStorageDomainId(),
+                    sourceQuotaId,
+                    sourceDiskProfileId);
             log.errorFormat("Failed VmReplicateDiskFinish (Disk {0} , VM {1})",
                     getEnclosingCommand().getParameters().getImageGroupID(),
                     getEnclosingCommand().getParameters().getVmId());
@@ -72,7 +79,10 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
         }
     }
 
-    private void moveDiskInDB(final Guid sourceStorageDomainId, final Guid targetStorageDomainId) {
+    private void moveDiskInDB(final Guid sourceStorageDomainId,
+            final Guid targetStorageDomainId,
+            final Guid targetQuota,
+            final Guid targetDiskProfile) {
         if (isMoveDiskInDbSucceded(targetStorageDomainId)) {
             return;
         }
@@ -90,8 +100,17 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                             getImageStorageDomainMapDao().save
                                     (new image_storage_domain_map(di.getImageId(),
                                             targetStorageDomainId,
-                                            di.getQuotaId(),
-                                            di.getDiskProfileId()));
+                                            targetQuota,
+                                            targetDiskProfile));
+                            // since moveDiskInDB can be called to 'rollback' the entity in case of
+                            // an exception, we store locally the old quota and disk profile id.
+                            if (sourceQuotaId == null) {
+                                sourceQuotaId = di.getQuotaId();
+                            }
+
+                            if (sourceDiskProfileId == null) {
+                                sourceDiskProfileId = di.getDiskProfileId();
+                            }
                         }
                         return null;
                     }
