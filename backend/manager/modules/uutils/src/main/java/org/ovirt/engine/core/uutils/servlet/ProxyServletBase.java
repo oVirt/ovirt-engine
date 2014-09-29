@@ -1,29 +1,24 @@
 package org.ovirt.engine.core.uutils.servlet;
 
-import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.URLConnection;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.util.List;
 import java.util.Map;
-import javax.net.ssl.HostnameVerifier;
-import javax.net.ssl.HttpsURLConnection;
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSession;
-import javax.net.ssl.TrustManager;
+
 import javax.net.ssl.TrustManagerFactory;
-import javax.net.ssl.X509TrustManager;
 import javax.servlet.ServletConfig;
 import javax.servlet.ServletException;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import org.ovirt.engine.core.uutils.net.HttpURLConnectionBuilder;
 
 public class ProxyServletBase extends HttpServlet {
 
@@ -86,60 +81,16 @@ public class ProxyServletBase extends HttpServlet {
         this.url = url;
     }
 
-    protected URLConnection createConnection(URL url) throws IOException, GeneralSecurityException {
-        URLConnection connection = url.openConnection();
-        connection.setDoInput(true);
-        connection.setDoOutput(false);
-        connection.setAllowUserInteraction(false);
-        connection.setUseCaches(false);
-        if (readTimeout != null) {
-            connection.setReadTimeout(readTimeout);
-        }
-        if (connection instanceof HttpsURLConnection) {
-            HttpsURLConnection httpsConnection = (HttpsURLConnection)connection;
-            TrustManager[] tm = null;
-            if (verifyChain) {
-                if (trustStore != null) {
-                    try(InputStream is = new FileInputStream(trustStore)) {
-                        KeyStore ks = KeyStore.getInstance(trustStoreType);
-                        ks.load(is, trustStorePassword.toCharArray());
-                        TrustManagerFactory tmf = TrustManagerFactory.getInstance(trustManagerAlgorithm);
-                        tmf.init(ks);
-                        tm = tmf.getTrustManagers();
-                    }
-                } else {
-                    tm = new TrustManager[] {
-                        new X509TrustManager() {
-                            public java.security.cert.X509Certificate[] getAcceptedIssuers() {
-                                return new java.security.cert.X509Certificate[] {};
-                            }
-                            public void checkClientTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                            }
-                            public void checkServerTrusted(
-                                java.security.cert.X509Certificate[] certs, String authType) {
-                            }
-                        }
-                    };
-                }
-            }
-
-            SSLContext sslContext = SSLContext.getInstance(httpsProtocol);
-            sslContext.init(null, tm, null);
-            httpsConnection.setSSLSocketFactory(sslContext.getSocketFactory());
-
-            if (!verifyHost) {
-                httpsConnection.setHostnameVerifier(
-                    new HostnameVerifier() {
-                        public boolean verify(String hostname, SSLSession session) {
-                            return true;
-                        }
-                    }
-                );
-            }
-        }
-
-        return connection;
+    protected HttpURLConnection create(URL url) throws IOException, GeneralSecurityException {
+        return new HttpURLConnectionBuilder(url).setHttpsProtocol(httpsProtocol)
+                .setReadTimeout(readTimeout)
+                .setTrustManagerAlgorithm(trustManagerAlgorithm)
+                .setTrustStore(trustStore)
+                .setTrustStorePassword(trustStorePassword)
+                .setTrustStoreType(trustStoreType)
+                .setURL(url)
+                .setVerifyChain(verifyChain)
+                .setVerifyHost(verifyHost).create();
     }
 
     private String mergeQuery(String url, String queryString) throws MalformedURLException {
@@ -187,17 +138,12 @@ public class ProxyServletBase extends HttpServlet {
         if (url == null) {
             response.sendError(response.SC_NOT_FOUND, "Cannot proxy, no URL is configured.");
         } else {
-            URLConnection connection;
+            HttpURLConnection connection = null;
             try {
-                connection = createConnection(new URL(mergeQuery(url, request.getQueryString())));
-            } catch(Exception e) {
-                throw new ServletException(e);
-            }
-            connection.connect();
-            try {
-                if (connection instanceof HttpURLConnection) {
-                    response.setStatus(((HttpURLConnection)connection).getResponseCode());
-                }
+                connection = create(new URL(mergeQuery(url, request.getQueryString())));
+                connection.setDoInput(true);
+                connection.setDoOutput(false);
+                response.setStatus(connection.getResponseCode());
                 for (Map.Entry<String, List<String>> entry : connection.getHeaderFields().entrySet()) {
                     if (entry.getKey() != null) {
                         boolean first = true;
@@ -212,9 +158,12 @@ public class ProxyServletBase extends HttpServlet {
                     }
                 }
                 copy(connection.getInputStream(), response.getOutputStream());
+                connection.connect();
+            } catch (Exception e) {
+                throw new ServletException(e);
             } finally {
-                if (connection instanceof HttpURLConnection) {
-                    ((HttpURLConnection)connection).disconnect();
+                if (connection != null) {
+                    connection.disconnect();
                 }
             }
         }
