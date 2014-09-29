@@ -276,7 +276,9 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
             // Compensation context is not passed, as we do not want to compensate in case of failure
             // in detach of one of storage domains
             if (!Backend.getInstance()
-                    .runInternalAction(VdcActionType.DetachStorageDomainFromPool, tempVar)
+                    .runInternalAction(VdcActionType.DetachStorageDomainFromPool,
+                            tempVar,
+                            cloneContext().withoutCompensationContext().withoutExecutionContext())
                     .getSucceeded()) {
                 return false;
             }
