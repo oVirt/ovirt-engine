@@ -172,7 +172,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
 
         return getBackend()
                 .runInternalAction(VdcActionType.DetachStorageDomainFromPool,
-                        params).getSucceeded();
+                        params, cloneContext().withoutCompensationContext().withoutExecutionContext()).getSucceeded();
     }
 
     protected boolean formatStorage(StorageDomain dom, VDS vds) {
