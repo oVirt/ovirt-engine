@@ -19,6 +19,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.FormatStorageDomainVDSCommandParameters;
@@ -55,7 +56,9 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         }
 
         if (format) {
-            if (!connectStorage()) {
+            Pair<Boolean, VdcFault> connectResult = connectStorage();
+            if (!connectResult.getFirst()) {
+                getReturnValue().setFault(connectResult.getSecond());
                 return;
             }
 
@@ -138,8 +141,8 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
         return true;
     }
 
-    private boolean connectStorage() {
-        return getStorageHelper(getStorageDomain()).connectStorageToDomainByVdsId(getStorageDomain(),
+    private Pair<Boolean, VdcFault> connectStorage() {
+        return getStorageHelper(getStorageDomain()).connectStorageToDomainByVdsIdDetails(getStorageDomain(),
                 getVds().getId());
     }
 

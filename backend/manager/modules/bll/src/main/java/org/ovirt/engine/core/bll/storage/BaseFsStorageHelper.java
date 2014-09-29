@@ -8,30 +8,35 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.common.action.StorageServerConnectionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
+import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
 
     @Override
-    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
-        boolean returnValue = false;
+    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+        Pair<Boolean, VdcFault> result;
         StorageServerConnections connection = DbFacade.getInstance().getStorageServerConnectionDao().get(
                 storageDomain.getStorage());
         if (connection != null) {
-            returnValue = Backend
+            VdcReturnValueBase returnValue = Backend
                     .getInstance()
                     .runInternalAction(VdcActionType.forValue(type),
-                            new StorageServerConnectionParametersBase(connection, vdsId)).getSucceeded();
+                            new StorageServerConnectionParametersBase(connection, vdsId));
+            result = new Pair<>(returnValue.getSucceeded(), returnValue.getFault());
         } else {
+            result = new Pair<>(false, null);
             log.warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getStorageName()
                     + " because connection for connectionId:" + storageDomain.getStorage() + " is null.");
         }
-        return returnValue;
+        return result;
     }
 
     @Override
