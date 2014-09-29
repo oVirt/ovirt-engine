@@ -15,6 +15,8 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
+import org.ovirt.engine.core.common.errors.VdcFault;
+import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
@@ -27,18 +29,19 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
-    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
+    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
         return runConnectionStorageToDomain(storageDomain, vdsId, type, null, Guid.Empty);
     }
 
     @SuppressWarnings("unchecked")
     @Override
-    protected boolean runConnectionStorageToDomain(StorageDomain storageDomain,
+    protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain,
             Guid vdsId,
             int type,
             LUNs lun,
             Guid storagePoolId) {
         boolean isSuccess = true;
+        VDSReturnValue returnValue = null;
         List<StorageServerConnections> list =
                 (lun == null) ? DbFacade.getInstance()
                         .getStorageServerConnectionDao().getAllForVolumeGroup(storageDomain.getStorage())
@@ -55,7 +58,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
             if (storageDomain != null && storageDomain.getStoragePoolId() != null) {
                 poolId = storageDomain.getStoragePoolId();
             }
-            VDSReturnValue returnValue = Backend
+            returnValue = Backend
                     .getInstance()
                     .getResourceManager()
                     .RunVdsCommand(
@@ -67,7 +70,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 isSuccess = isConnectSucceeded((Map<String, String>) returnValue.getReturnValue(), list);
             }
         }
-        return isSuccess;
+        VdcFault vdcFault = null;
+        if (!isSuccess && returnValue != null && returnValue.getVdsError() != null) {
+            vdcFault = new VdcFault();
+            vdcFault.setError(returnValue.getVdsError().getCode());
+        }
+        return new Pair<>(isSuccess, vdcFault);
     }
 
     public static List<StorageServerConnections> updateIfaces(List<StorageServerConnections> conns, Guid vdsId) {
@@ -224,12 +232,12 @@ public class ISCSIStorageHelper extends StorageHelperBase {
 
     @Override
     public boolean connectStorageToDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue());
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.ConnectStorageServer.getValue()).getFirst();
     }
 
     @Override
     public boolean disconnectStorageFromDomainByVdsId(StorageDomain storageDomain, Guid vdsId) {
-        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue());
+        return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue()).getFirst();
     }
 
     @Override
@@ -238,13 +246,13 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                 vdsId,
                 VDSCommandType.ConnectStorageServer.getValue(),
                 lun,
-                storagePoolId);
+                storagePoolId).getFirst();
     }
 
     @Override
     public boolean disconnectStorageFromLunByVdsId(StorageDomain storageDomain, Guid vdsId, LUNs lun) {
         return runConnectionStorageToDomain(storageDomain, vdsId, VDSCommandType.DisconnectStorageServer.getValue(),
-                lun, Guid.Empty);
+                lun, Guid.Empty).getFirst();
     }
 
     @Override
