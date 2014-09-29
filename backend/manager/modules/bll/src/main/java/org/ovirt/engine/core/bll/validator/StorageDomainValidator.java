@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 public class StorageDomainValidator {
 
@@ -92,10 +91,6 @@ public class StorageDomainValidator {
                     storageName());
         }
         return ValidationResult.VALID;
-    }
-
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     private static Integer getLowDiskSpaceThreshold() {

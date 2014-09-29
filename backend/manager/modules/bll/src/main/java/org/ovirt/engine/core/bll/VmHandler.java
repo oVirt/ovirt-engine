@@ -680,48 +680,6 @@ public class VmHandler {
      *
      * @param storagePoolId
      *           The storage pool where the search for a domain will be made
-     * @param sizeRequested
-     *           The free size we need to have in the domain, in gigabytes
-     * @param domain2reservedSpaceInDomain
-     *           Maps storage domain to size we already reserved on it
-     * @return storage domain in the given pool with at least the required amount of free space,
-     *         or null if no such storage domain exists in the pool
-     *
-     * This method is deprecated. Instead use findStorageDomainForMemory(Guid storagePoolId, List<DiskImage> disksList),
-     * and prepare the relevant dikslisk (probably dummies to reflect size).
-     */
-    @Deprecated
-    public static StorageDomain findStorageDomainForMemory(Guid storagePoolId, long sizeRequested,
-            Map<StorageDomain, Integer> domain2reservedSpaceInDomain) {
-        List<StorageDomain> domainsInPool = DbFacade.getInstance().getStorageDomainDao().getAllForStoragePool(storagePoolId);
-        for (StorageDomain currDomain : domainsInPool) {
-            long reservedSizeForDisks = domain2reservedSpaceInDomain.containsKey(currDomain) ?
-                    domain2reservedSpaceInDomain.get(currDomain) : 0;
-            long sizeNeeded = sizeRequested + reservedSizeForDisks;
-            if (currDomain.getStorageDomainType().isDataDomain()
-                    && currDomain.getStatus() == StorageDomainStatus.Active
-                    && doesStorageDomainHaveSpaceForRequest(currDomain, sizeNeeded)) {
-                return currDomain;
-            }
-        }
-        return null;
-    }
-
-    /**
-     * This method is deprecated. Instead use doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, List<DiskImage> disksList).
-     */
-    @Deprecated
-    private static boolean doesStorageDomainHaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
-        // not calling validate in order not to add the messages per domain
-        return (new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested)).isValid();
-    }
-
-    /**
-     * Returns a <code>StorageDomain</code> in the given <code>StoragePool</code> that has
-     * at least as much as requested free space and can be used to store memory images
-     *
-     * @param storagePoolId
-     *           The storage pool where the search for a domain will be made
      * @param disksList
      *           Disks for which space is needed
      * @return storage domain in the given pool with at least the required amount of free space,
