@@ -18,37 +18,37 @@
 
 .gwt-DialogBox .dialogTopLeft,
 .gwt-DialogBox .dialogTopRight {
-	width: 14px;
-	height: 20px;
+    width: 14px;
+    height: 20px;
 }
 
 .gwt-DialogBox .dialogBottomLeft,
 .gwt-DialogBox .dialogBottomRight {
-	width: 14px;
-	height: 14px;
+    width: 14px;
+    height: 14px;
 }
-		
+
 .gwt-DialogBox .dialogTop,
 .gwt-DialogBox .dialogTopCenter,
 .gwt-DialogBox .dialogTopCenterInner {
-	height: 20px;
+    height: 20px;
 }
 
 .gwt-DialogBox .dialogMiddleCenter {
-	background-color: #FFFFFF;
+    background-color: #FFFFFF;
 }
-				
-.gwt-DialogBox .Caption {	
-	background: transparent;
-	position: relative;
-	border: 0px;
-	height: 20px;
-	z-index: 1;
+
+.gwt-DialogBox .Caption {
+    background: transparent;
+    position: relative;
+    border: 0px;
+    height: 36px;
+    z-index: 1;
 }
 
 .generalDialogComment {
-	color: #555555;
-	font-style: italic;
-	font-size: 13px;
-	font-family: Verdana, sans-serif;	
+    color: #555555;
+    font-style: italic;
+    font-size: 13px;
+    font-family: Verdana, sans-serif;
 }
