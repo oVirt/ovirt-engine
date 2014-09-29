@@ -511,7 +511,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     protected boolean waitForStatus(String vdsName, FenceActionType actionType, FenceAgentOrder order) {
         final String FENCE_CMD = (actionType == FenceActionType.Start) ? "on" : "off";
         final String ACTION_NAME = actionType.name().toLowerCase();
+        final int UNKNOWN_RESULT_ALLOWED = 3;
         int i = 1;
+        int j = 1;
         boolean statusReached = false;
         log.infoFormat("Waiting for vds {0} to {1}", vdsName, ACTION_NAME);
 
@@ -531,9 +533,17 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     if (returnValue != null && returnValue.getReturnValue() != null) {
                         FenceStatusReturnValue value = (FenceStatusReturnValue) returnValue.getReturnValue();
                         if (value.getStatus().equalsIgnoreCase("unknown")) {
-                            // No need to retry , agent definitions are corrupted
-                            log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
-                            break;
+                            // Allow command to fail temporarily
+                            if (j <= UNKNOWN_RESULT_ALLOWED && i <= getRerties()) {
+                                ThreadUtils.sleep(getDelayInSeconds() * 1000);
+                                i++;
+                                j++;
+                            }
+                            else {
+                                // No need to retry , agent definitions are corrupted
+                                log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
+                                break;
+                            }
                         }
                         else {
                             if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
