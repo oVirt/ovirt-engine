@@ -24,6 +24,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
@@ -437,6 +438,11 @@ public class VmBackupModel extends ManageBackupModel {
             if (importModel.getClusterQuota().getSelectedItem() != null &&
                     importModel.getClusterQuota().getIsAvailable()) {
                 prm.setQuotaId(((Quota) importModel.getClusterQuota().getSelectedItem()).getId());
+            }
+
+            CpuProfile cpuProfile = importModel.getCpuProfiles().getSelectedItem();
+            if (cpuProfile != null) {
+                prm.setCpuProfileId(cpuProfile.getId());
             }
 
             prm.setForceOverride(true);
