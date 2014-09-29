@@ -1,15 +1,15 @@
 package org.ovirt.engine.api.restapi.resource;
 
-import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePool;
-
 import java.util.List;
 
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
+import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.resource.ClusterResource;
 import org.ovirt.engine.api.resource.ClustersResource;
+import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdsGroupParametersBase;
@@ -17,10 +17,13 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.IdAndNameQueryParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+
+import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.getStoragePool;
 
 public class BackendClustersResource extends AbstractBackendCollectionResource<Cluster, VDSGroup>
         implements ClustersResource {
@@ -72,18 +75,52 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
 
     @Override
     public Response add(Cluster cluster) {
-        validateParameters(cluster, "name", "dataCenter.name|id");
+        validateParameters(cluster, getMandatoryParameters());
         validateEnums(Cluster.class, cluster);
-        StoragePool pool = getStoragePool(cluster.getDataCenter(), this);
-        VDSGroup entity = map(cluster, map(pool));
+        StoragePool dataCenter = getDataCenter(cluster);
+        return performCreate(VdcActionType.AddVdsGroup,
+                createAddCommandParams(cluster, dataCenter),
+                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
+    }
 
-        if (!cluster.isSetErrorHandling() || !cluster.getErrorHandling().isSetOnError()) {
-            entity.setMigrateOnError(null);
+    protected String[] getMandatoryParameters() {
+        return new String[] { "name", "dataCenter.name|id" };
+    }
+
+    protected StoragePool getDataCenter(Cluster cluster) {
+        return getStoragePool(cluster.getDataCenter(), this);
+    }
+
+    private Guid getManagementNetworkId(Cluster cluster, Guid dataCenterId) {
+        Guid managementNetworkId = null;
+        if (cluster.isSetManagementNetwork()) {
+            validateParameters(cluster.getManagementNetwork(), "id|name");
+            final Network rawManagementNetwork = cluster.getManagementNetwork();
+            if (rawManagementNetwork.isSetId()) {
+                managementNetworkId = GuidUtils.asGuid(rawManagementNetwork.getId());
+            } else {
+                final org.ovirt.engine.core.common.businessentities.network.Network managementNetwork =
+                        getEntity(org.ovirt.engine.core.common.businessentities.network.Network.class,
+                                VdcQueryType.GetNetworkByByNameAndDataCenter,
+                                new IdAndNameQueryParameters(dataCenterId, rawManagementNetwork.getName()),
+                                String.format("Network: %s", rawManagementNetwork.getName()));
+
+                managementNetworkId = managementNetwork.getId();
+            }
+        }
+        return managementNetworkId;
+    }
+
+    protected AddClusterOperationParameters createAddCommandParams(Cluster cluster, StoragePool dataCenter) {
+        VDSGroup clusterEntity = map(cluster, map(dataCenter));
+
+        if (!(cluster.isSetErrorHandling() && cluster.getErrorHandling().isSetOnError())) {
+            clusterEntity.setMigrateOnError(null);
         }
 
-        return performCreate(VdcActionType.AddVdsGroup,
-                new AddClusterOperationParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
+        final Guid managementNetworkId = getManagementNetworkId(cluster, dataCenter.getId());
+
+        return new AddClusterOperationParameters(clusterEntity, managementNetworkId);
     }
 
     @Override

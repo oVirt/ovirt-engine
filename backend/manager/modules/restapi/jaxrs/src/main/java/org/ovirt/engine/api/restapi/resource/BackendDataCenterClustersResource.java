@@ -4,14 +4,10 @@ import static org.ovirt.engine.api.restapi.resource.BackendDataCenterResource.ge
 
 import java.util.List;
 
-import javax.ws.rs.core.Response;
-
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.Clusters;
 import org.ovirt.engine.api.model.DataCenter;
 import org.ovirt.engine.api.resource.ClusterResource;
-import org.ovirt.engine.core.common.action.AddClusterOperationParameters;
-import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -43,17 +39,17 @@ public class BackendDataCenterClustersResource extends BackendClustersResource {
     }
 
     @Override
-    public Response add(Cluster cluster) {
-        validateParameters(cluster, "name");
-        validateEnums(Cluster.class, cluster);
+    protected String[] getMandatoryParameters() {
+        return new String[] { "name" };
+    }
+
+    @Override
+    protected StoragePool getDataCenter(Cluster cluster) {
         DataCenter dataCenter = new DataCenter();
         dataCenter.setId(dataCenterId.toString());
         cluster.setDataCenter(dataCenter);
         StoragePool pool = getStoragePool(cluster.getDataCenter(), this);
-        VDSGroup entity = map(cluster, map(pool));
-        return performCreate(VdcActionType.AddVdsGroup,
-                new AddClusterOperationParameters(entity),
-                new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));
+        return pool;
     }
 
 }

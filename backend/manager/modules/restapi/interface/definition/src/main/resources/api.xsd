@@ -1713,6 +1713,7 @@
           <xs:element name="required_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
           <xs:element ref="fencing_policy"  minOccurs="0" maxOccurs="1"/>
           <xs:element ref="migration" minOccurs="0" maxOccurs="1" />
+          <xs:element name="management_network" type="Network" minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
