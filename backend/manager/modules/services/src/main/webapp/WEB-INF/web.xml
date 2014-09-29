@@ -60,12 +60,25 @@
       <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
       <init-param>
           <param-name>url</param-name>
-          <param-value>%{ENGINE_REPORTS_DASHBOARD_URL}</param-value>
+          <param-value>%{ENGINE_REPORTS_BASE_URL}</param-value>
       </init-param>
   </servlet>
   <servlet-mapping>
       <servlet-name>reports-redirect</servlet-name>
       <url-pattern>/reports-redirect</url-pattern>
+  </servlet-mapping>
+
+  <servlet>
+      <servlet-name>reports-dashboard-redirect</servlet-name>
+      <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
+      <init-param>
+          <param-name>url</param-name>
+          <param-value>%{ENGINE_REPORTS_DASHBOARD_URL}</param-value>
+      </init-param>
+  </servlet>
+  <servlet-mapping>
+      <servlet-name>reports-dashboard-redirect</servlet-name>
+      <url-pattern>/reports-dashboard-redirect</url-pattern>
   </servlet-mapping>
 
   <servlet>

@@ -26,7 +26,7 @@ public class ReportInit {
     private static final ReportInit INSTANCE = new ReportInit();
     private static final int MAX_RETRY_COUNTS = 20;
     private static final int RETRY_INTERVAL = 30000;
-    public static final String REDIRECT_SERVICE = "services/reports-redirect"; //$NON-NLS-1$
+    public static final String REDIRECT_SERVICE = "services/reports-dashboard-redirect"; //$NON-NLS-1$
     public static final String RIGHT_CLICK_REDIRECT_SERVICE = "services/reports-rightclick-redirect"; //$NON-NLS-1$
     public static final String STATUS_SERVICE = "services/reports-interface-proxy?command=status"; //$NON-NLS-1$
     public static final String XML_SERVICE = "services/reports-interface-proxy?command=webadmin-ui-xml"; //$NON-NLS-1$
