@@ -27,6 +27,7 @@ public class SyntaxChecker implements ISyntaxChecker {
     private static final Logger log = LoggerFactory.getLogger(SyntaxChecker.class);
 
     public static final String SORTBY = "SORTBY";
+    public static final String PAGE = "PAGE";
     public static final String SORTDIR_ASC = "ASC";
     public static final String SORTDIR_DESC = "DESC";
     public static final String PAGE = "PAGE";

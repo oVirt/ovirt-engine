@@ -6,14 +6,19 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.SyntaxChecker;
 import org.ovirt.engine.core.searchbackend.SyntaxContainer;
 import org.ovirt.engine.core.searchbackend.SyntaxError;
 import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
+import org.ovirt.engine.ui.uicommonweb.StringConstants;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
-public class SearchSuggestModel extends SearchableListModel
-{
+public class SearchSuggestModel extends SearchableListModel {
+
+    private final String[] itemsToIgnore = { "monitor-desktop", //$NON-NLS-1$
+            SyntaxChecker.PAGE, SyntaxChecker.SORTBY, SyntaxChecker.SORTDIR_ASC, SyntaxChecker.SORTDIR_DESC};
+
     @Override
     public List getItems()
     {
@@ -100,7 +105,7 @@ public class SearchSuggestModel extends SearchableListModel
         if (getSearchObjectFilter() != null && syntax.getState() != SyntaxObjectType.BEGIN) {
             for (String value : getSearchObjectFilter()) {
                 if (pf.toLowerCase().equals(value.toLowerCase())
-                        || pf.toLowerCase().startsWith(value.toLowerCase() + ":")) { //$NON-NLS-1$
+                        || pf.toLowerCase().startsWith(value.toLowerCase() + ":") || containsWithItemsToIgnore(pf)) { //$NON-NLS-1$
                     addSuggestItem("", SuggestItemPartType.Valid, search, SuggestItemPartType.Erroneous); //$NON-NLS-1$
                     return;
                 }
@@ -153,12 +158,11 @@ public class SearchSuggestModel extends SearchableListModel
                 if ((pf.length() > 0) && (!pf.substring(pf.length() - 1, pf.length() - 1 + 1).equals(".")) //$NON-NLS-1$
                         && (!".".equals(item))) //$NON-NLS-1$
                 {
-                    space = " "; //$NON-NLS-1$
+                    space = StringConstants.SPACE;
                 }
 
                 // Patch: monitor-desktop
-                if (!item.trim().toLowerCase().startsWith("monitor-desktop")) //$NON-NLS-1$
-                {
+                if (!inItemsToIgnore(item)) {
                     addSuggestItem(StringHelper.trimEnd(pf),
                             SuggestItemPartType.Valid,
                             space + item.trim(),
@@ -170,6 +174,26 @@ public class SearchSuggestModel extends SearchableListModel
         {
             addSuggestItem(pf, SuggestItemPartType.Valid, notHandled, SuggestItemPartType.Erroneous);
         }
+    }
+
+    private boolean containsWithItemsToIgnore(String pf) {
+        for (String item: itemsToIgnore) {
+            if (pf.toUpperCase().contains(StringConstants.SPACE + item.trim().toUpperCase())) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean inItemsToIgnore(String actualItem) {
+        if (actualItem != null) {
+            for (String item: itemsToIgnore) {
+                if (item.equalsIgnoreCase(actualItem.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 
     private void addSuggestItem(String firstPart, SuggestItemPartType firstPartType,

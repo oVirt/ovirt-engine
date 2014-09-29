@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.uicommonweb.models;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -12,6 +16,10 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.RegexOptions;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.ovirt.engine.core.searchbackend.ISyntaxChecker;
+import org.ovirt.engine.core.searchbackend.SyntaxContainer;
+import org.ovirt.engine.core.searchbackend.SyntaxObject;
+import org.ovirt.engine.core.searchbackend.SyntaxObjectType;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
@@ -1096,8 +1104,29 @@ public class CommonModel extends ListModel<SearchableListModel> {
         return searchString;
     }
 
-    public void setSearchString(String value) {
-        setSearchString(value, true);
+    public void setSearchString(String value)
+    {
+        if (value == null || !containsTokens(value, SyntaxObjectType.SORTBY, SyntaxObjectType.PAGE,
+                SyntaxObjectType.SORT_DIRECTION)) {
+            setSearchString(value, true);
+        }
+    }
+
+    private boolean containsTokens(String searchString, SyntaxObjectType... tokens) {
+        if (tokens == null) {
+            return false;
+        }
+        ISyntaxChecker syntaxChecker = getAutoCompleteModel().getSyntaxChecker();
+        SyntaxContainer syntaxCont = syntaxChecker.analyzeSyntaxState(searchString, true);
+        Set<SyntaxObjectType> searchTokenSet = new HashSet<SyntaxObjectType>();
+        Iterator<SyntaxObject> iterator = syntaxCont.iterator();
+        while(iterator.hasNext()) {
+            searchTokenSet.add(iterator.next().getType());
+        }
+        Set<SyntaxObjectType> tokenSet = new HashSet<SyntaxObjectType>();
+        tokenSet.addAll(Arrays.asList(tokens));
+        searchTokenSet.retainAll(tokenSet);
+        return !searchTokenSet.isEmpty();
     }
 
     public void setSearchString(String value, boolean checkIfNewValue) {
