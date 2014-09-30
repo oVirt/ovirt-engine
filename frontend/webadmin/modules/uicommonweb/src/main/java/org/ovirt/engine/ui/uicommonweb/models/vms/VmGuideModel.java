@@ -70,7 +70,7 @@ public class VmGuideModel extends GuideModel
         }
 
         addDisk(new NewDiskGuideModel(this),
-                ConstantsManager.getInstance().getConstants().attachVirtualDiskTitle(),
+                ConstantsManager.getInstance().getConstants().newVirtualDiskTitle(),
                 HelpTag.new_virtual_disk, "new_virtual_disk"); //$NON-NLS-1$
     }
 
