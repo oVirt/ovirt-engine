@@ -85,6 +85,14 @@ public interface JobRepository {
     void loadJobSteps(Job job);
 
     /**
+     * Update the {@link Step} entity with its Steps.
+     *
+     * @param step
+     *            The job to update with its steps(can't be <code>null</code>).
+     */
+    void loadParentStepSteps(Step step);
+
+    /**
      * Handles the status of uncompleted jobs and their steps:
      * <li>Job without Steps that have tasks will be marked as {@code ExecutionStatus.UNKNOWN}
      * <li>Job with Steps that have tasks will be remained as is to be process by the {@code AsyncTaskManager}.

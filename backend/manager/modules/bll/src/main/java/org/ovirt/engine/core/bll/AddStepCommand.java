@@ -5,6 +5,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext.ExecutionMethod;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
+import org.ovirt.engine.core.bll.job.JobRepositoryFactory;
 import org.ovirt.engine.core.common.action.AddStepParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.job.Job;
@@ -52,6 +53,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         if (parentStep == null) { // A step that is directly under a job
                 context.setJob(job);
                 context.setExecutionMethod(ExecutionMethod.AsJob);
+                JobRepositoryFactory.getJobRepository().loadJobSteps(job);
                 Step step = ExecutionHandler.addStep(context, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
@@ -59,6 +61,7 @@ public abstract class AddStepCommand<T extends AddStepParameters> extends Comman
         else {// this is a sub-step
                 context.setStep(parentStep);
                 context.setExecutionMethod(ExecutionMethod.AsStep);
+                JobRepositoryFactory.getJobRepository().loadParentStepSteps(parentStep);
                 Step step = ExecutionHandler.addSubStep(context, parentStep, getParameters().getStepType(), getParameters().getDescription(), true);
                 setActionReturnValue(step.getId());
                 setSucceeded(true);
