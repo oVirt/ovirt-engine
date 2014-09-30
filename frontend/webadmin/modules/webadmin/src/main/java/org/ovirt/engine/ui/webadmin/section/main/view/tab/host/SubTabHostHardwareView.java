@@ -51,7 +51,7 @@ public class SubTabHostHardwareView extends AbstractSubTabFormView<VDS, HostList
     TextBoxLabel cpuType = new TextBoxLabel();
     TextBoxLabel cpuModel = new TextBoxLabel();
     NullableNumberTextBoxLabel<Integer> numberOfSockets = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
-    NullableNumberTextBoxLabel<Integer> coresPerSocket = new NullableNumberTextBoxLabel<Integer>(constants.unknown());
+    TextBoxLabel coresPerSocket = new TextBoxLabel();
     TextBoxLabel threadsPerCore = new TextBoxLabel();
 
     @UiField(provided = true)
