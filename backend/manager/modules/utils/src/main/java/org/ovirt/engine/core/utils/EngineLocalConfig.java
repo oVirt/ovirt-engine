@@ -142,6 +142,18 @@ public class EngineLocalConfig extends ShellLikeConfd {
         return getFile("ENGINE_CACHE");
     }
 
+    public File getExternalProvidersTrustStore() {
+        return getFile("ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE");
+    }
+
+    public String getExternalProvidersTrustStoreType() {
+        return getProperty("ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_TYPE");
+    }
+
+    public String getExternalProvidersTrustStorePassword() {
+        return getProperty("ENGINE_EXTERNAL_PROVIDERS_TRUST_STORE_PASSWORD");
+    }
+
     /**
      * Gets the port number where the engine can be contacted using HTTP from
      * external hosts. This will usually be the proxy HTTP port if the proxy is

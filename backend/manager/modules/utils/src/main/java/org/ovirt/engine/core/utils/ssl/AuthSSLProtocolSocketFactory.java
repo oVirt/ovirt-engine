@@ -183,6 +183,7 @@ import org.apache.commons.logging.LogFactory;
  * </p>
  */
 
+@Deprecated
 public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory {
 
     /** Log object for this class. */
