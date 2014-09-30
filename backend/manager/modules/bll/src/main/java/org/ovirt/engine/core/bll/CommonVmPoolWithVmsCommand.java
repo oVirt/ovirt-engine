@@ -45,12 +45,13 @@ import org.ovirt.engine.core.utils.NameForVmInPoolGenerator;
 
 
 /**
- * This class responsible to create vmpool with vms within. This class not transactive, that mean that function Execute
- * not running in transaction. From other hand, each vm added to system and attached to vmpool in transaction(one
- * transaction for two operation). To make it work, Transaction generated in Execute function. Transactions isolated,
- * that mean if one of vms not added from some reason(image not exists, etc) - it not affect other vms generation Each
- * vm created with this format: {vm_name}_{number} where number runs from 1 to vms count. If one of vms to be created
- * already exists - number increased. For example if vm_8 exists - vm_9 will be created instead of it.
+ * This class is responsible for creation of a vmpool with vms within it. This class is not transactive,
+ * which means that the 'execute' method does not run in transaction. On the other hand, each vm is added to the system
+ * and attached to the vmpool in a transaction (one transaction for two operations).
+ * To make this work, a Transaction is generated in the Execute function. Transactions are isolated,
+ * which means that if one of vms is not added for some reason (image does not exists, etc) - it does not affect other
+ * vms generation. Each vm is created with this format: {vm_name}_{number} where number runs from 1 to vms count. If one of vms to be created
+ * already exists - the number is increased. For example if vm_8 exists - vm_9 will be created instead of it.
  */
 
 public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> extends AddVmPoolCommand<T>
@@ -397,10 +398,6 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
 
     protected boolean isAddVmsSucceded() {
         return addVmsSucceeded;
-    }
-
-    public String getVmsCount() {
-        return Integer.toString(getParameters().getVmsCount());
     }
 
     protected boolean setAndValidateDiskProfiles() {
