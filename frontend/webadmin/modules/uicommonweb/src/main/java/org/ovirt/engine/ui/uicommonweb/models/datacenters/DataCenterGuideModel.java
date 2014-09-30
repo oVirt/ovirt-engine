@@ -1365,6 +1365,7 @@ public class DataCenterGuideModel extends GuideModel implements ITaskTarget
         cluster.setmax_vds_memory_over_commit(model.getMemoryOverCommit());
         cluster.setTransparentHugepages(version.compareTo(new Version("3.0")) >= 0); //$NON-NLS-1$
         cluster.setcompatibility_version(version);
+        cluster.setMigrateOnError(model.getMigrateOnErrorOption());
         cluster.setVirtService(model.getEnableOvirtService().getEntity());
         cluster.setGlusterService(model.getEnableGlusterService().getEntity());
         cluster.setOptionalReasonRequired(model.getEnableOptionalReason().getEntity());
