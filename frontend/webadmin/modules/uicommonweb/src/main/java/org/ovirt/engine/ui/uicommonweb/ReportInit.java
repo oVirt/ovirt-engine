@@ -3,7 +3,6 @@ package org.ovirt.engine.ui.uicommonweb;
 import java.util.HashMap;
 import java.util.Map;
 
-import com.google.gwt.core.client.Scheduler;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent;
 import org.ovirt.engine.ui.frontend.communication.SSOTokenChangeEvent.SSOTokenChangeHandler;
 import org.ovirt.engine.ui.frontend.utils.BaseContextPathData;
@@ -13,6 +12,7 @@ import org.ovirt.engine.ui.uicompat.ReportParser;
 import org.ovirt.engine.ui.uicompat.ReportParser.Dashboard;
 import org.ovirt.engine.ui.uicompat.ReportParser.Resource;
 
+import com.google.gwt.core.client.Scheduler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.http.client.Request;
@@ -27,8 +27,7 @@ public class ReportInit {
     private static final ReportInit INSTANCE = new ReportInit();
     private static final int MAX_RETRY_COUNTS = 20;
     private static final int RETRY_INTERVAL = 30000;
-    public static final String REDIRECT_SERVICE = "services/reports-dashboard-redirect"; //$NON-NLS-1$
-    public static final String RIGHT_CLICK_REDIRECT_SERVICE = "services/reports-rightclick-redirect"; //$NON-NLS-1$
+    public static final String REDIRECT_SERVICE = "services/reports-redirect"; //$NON-NLS-1$
     public static final String STATUS_SERVICE = "services/reports-interface-proxy?command=status"; //$NON-NLS-1$
     public static final String XML_SERVICE = "services/reports-interface-proxy?command=webadmin-ui-xml"; //$NON-NLS-1$
     private int retryCount;
@@ -60,8 +59,8 @@ public class ReportInit {
         // the re-init can happen after logout/login.
         // As this class has it's state, it needs to be inited again
         initState();
-        setReportBaseUrl(buildUrl(REDIRECT_SERVICE));
-        setReportRightClickUrl(buildUrl(RIGHT_CLICK_REDIRECT_SERVICE));
+        setReportBaseUrl(buildUrl(REDIRECT_SERVICE, ReportsUrls.instance().getReportUrl()));
+        setReportRightClickUrl(buildUrl(REDIRECT_SERVICE, ReportsUrls.instance().getRightClickUrl()));
         parseReportsXML();
     }
 
@@ -100,9 +99,13 @@ public class ReportInit {
     }
 
     private static String buildUrl(String service) {
+        return buildUrl(service, null);
+    }
+
+    private static String buildUrl(String service, String params) {
         return "/" //$NON-NLS-1$
                 + BaseContextPathData.getInstance().getRelativePath()
-                + service;
+                + service + (params != null ? params : ""); //$NON-NLS-1$
     }
 
     private void scheduleCheckStatus() {

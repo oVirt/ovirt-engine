@@ -10,6 +10,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.models.CommonModel;
@@ -33,7 +34,8 @@ public class ReportsListModel extends SearchableListWithReportsModel {
     private final Provider<CommonModel> commonModelProvider;
 
     public ReportsListModel(String baseUrl, String ssoToken, final Provider<CommonModel> commonModelProvider) {
-        reportUrl = baseUrl;
+        reportUrl = FrontendUrlUtils.stripParameters(baseUrl);
+        htmlParams.parseUrlParams(baseUrl);
         htmlParams.setParameter("sessionID", ssoToken); //$NON-NLS-1$
         this.commonModelProvider = commonModelProvider;
 

@@ -33,6 +33,9 @@
         <c:if test="${requestScope['baseContextPath'] != null}">
             var baseContextPath = <c:out value="${requestScope['baseContextPath']}" escapeXml="false"/>;
         </c:if>
+        <c:if test="${requestScope['ENGINE_REPORTS_BASE_URL'] != null}">
+            var engineReportsUrls = <c:out value="${requestScope['ENGINE_REPORTS_BASE_URL']}" escapeXml="false"/>;
+        </c:if>
     </script>
 </head>
 <body>

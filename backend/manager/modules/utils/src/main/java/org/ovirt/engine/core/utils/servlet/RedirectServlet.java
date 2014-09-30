@@ -26,10 +26,10 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 public class RedirectServlet extends HttpServlet {
     private static final long serialVersionUID = -1794616863361241804L;
 
-    private static final String URL = "url";
+    private static final String TARGET_URL = "targetUrl";
     private static final String URL404 = "url404";
 
-    private String url;
+    private String targetUrl;
     private String url404;
     private static final String url404Default = EngineLocalConfig.getInstance().getEngineURI() + "/404.html";
 
@@ -38,7 +38,8 @@ public class RedirectServlet extends HttpServlet {
         super.init(config);
 
         // we use %{x} convention to avoid conflict with jboss properties
-        url = EngineLocalConfig.getInstance().expandString(config.getInitParameter(URL).replaceAll("%\\{", "\\${"));
+        targetUrl = EngineLocalConfig.getInstance().expandString(
+                config.getInitParameter(TARGET_URL).replaceAll("%\\{", "\\${"));
         String url404ConfigValue = config.getInitParameter(URL404);
         if (StringUtils.isNotEmpty(url404ConfigValue)) {
             url404 = EngineLocalConfig.getInstance().expandString(url404ConfigValue.replaceAll("%\\{", "\\${"));
@@ -49,8 +50,12 @@ public class RedirectServlet extends HttpServlet {
 
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-        String redirectUrl = url;
+        String redirectUrl = targetUrl;
         if (StringUtils.isNotEmpty(redirectUrl)) {
+            String pathInfo = request.getPathInfo();
+            if (StringUtils.isNotEmpty(pathInfo)) {
+                redirectUrl += pathInfo;
+            }
             String queryString = request.getQueryString();
             if (StringUtils.isNotEmpty(queryString)) {
                 if (redirectUrl.indexOf("?") == -1) {

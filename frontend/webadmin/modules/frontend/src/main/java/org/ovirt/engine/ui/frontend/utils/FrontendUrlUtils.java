@@ -47,4 +47,14 @@ public class FrontendUrlUtils {
         return url;
     }-*/;
 
+    /**
+     * Strip the parameters of the passed in URL. For instance passing in <br />
+     * <p>http://someurl/somewhere?x=y&a=b</p> will return <p>http://someurl/somewhere</p>
+     * If there are no parameters on the URL, the full URL will be returned.
+     * @param url The URL to strip.
+     * @return The stripped URL.
+     */
+    public static String stripParameters(String url) {
+        return url.indexOf('?') < 0 ? url : url.substring(0, url.indexOf('?'));
+    }
 }

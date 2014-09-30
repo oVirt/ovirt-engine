@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.uicommonweb.models.reports;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.ui.frontend.utils.FrontendUrlUtils;
 import org.ovirt.engine.ui.uicommonweb.HtmlParameters;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 
@@ -15,8 +16,8 @@ public class ReportModel extends EntityModel {
     private final String reportUrl;
 
     public ReportModel(String baseUrl, String ssoToken) {
-
-        reportUrl = baseUrl;
+        reportUrl = FrontendUrlUtils.stripParameters(baseUrl);
+        paramsMap.parseUrlParams(baseUrl);
         paramsMap.setParameter("sessionID", ssoToken); //$NON-NLS-1$
         paramsMap.setParameter("active_hosts_select", //$NON-NLS-1$
                "AND+delete_date+IS+NULL"); //$NON-NLS-1$

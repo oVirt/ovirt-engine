@@ -45,4 +45,23 @@ public class HtmlParameters {
     private static String encodeParameter(String value) {
         return URL.encode(value);
     }
+
+    /**
+     * Parse the passed in URL, and take any parameters found and put them in this {@code HtmlParameters} object.
+     * This is a naive parse method.
+     * This will not handle duplicate parameters, nor empty ones, nor hash tags, or partials.
+     * So this will fail: ?a=b&c&d&e=f#g;h even though it is a valid URL.
+     * @param baseUrl The {@code String} URL to parse.
+     */
+    public void parseUrlParams(String baseUrl) {
+        if (baseUrl.indexOf('?') >= 0) {
+            String params = baseUrl.substring(baseUrl.indexOf('?') + 1);
+            for (String keyValue: params.split("&")) { //$NON-NLS-1$
+                String[] pair = keyValue.split("="); //$NON-NLS-1$
+                if (!"".equals(pair[1])) {
+                    setParameter(pair[0], pair[1]);
+                }
+            }
+        }
+    }
 }

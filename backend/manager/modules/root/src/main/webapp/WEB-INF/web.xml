@@ -115,7 +115,7 @@
     <servlet-name>index</servlet-name>
     <servlet-class>org.ovirt.engine.core.utils.servlet.RedirectServlet</servlet-class>
     <init-param>
-      <param-name>url</param-name>
+      <param-name>targetUrl</param-name>
       <param-value>%{ENGINE_URI}</param-value>
     </init-param>
   </servlet>
