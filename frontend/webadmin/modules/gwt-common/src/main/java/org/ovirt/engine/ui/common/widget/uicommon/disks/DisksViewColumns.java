@@ -157,6 +157,7 @@ public class DisksViewColumns {
         public ImageResource getValue(Disk object) {
             setEnumTitle(object.getVmEntityType());
             if (object.getVmEntityType() == null) {
+                setTitle(constants.unattachedDisk());
                 return null;
             }
             return object.getVmEntityType().isVmType() ? resources.vmsImage() :
