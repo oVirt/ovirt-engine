@@ -128,6 +128,10 @@ public class BackendStorageDomainResource extends
      * @param incoming
      */
     private void extendStorageDomain(StorageDomain incoming, StorageDomain storageDomain, StorageType storageType) {
+        if (incoming.getStorage() == null) {
+            // LUNs info was not supplied in the request so no need to check whether to extend
+            return;
+        }
         List<LogicalUnit> existingLuns = storageDomain.getStorage().getVolumeGroup().getLogicalUnits();
         List<LogicalUnit> incomingLuns = getIncomingLuns(incoming.getStorage());
         List<LogicalUnit> newLuns = findNewLuns(existingLuns, incomingLuns);
