@@ -125,6 +125,15 @@ public class JobRepositoryImpl implements JobRepository {
         }
     }
 
+    @Override
+    public void loadParentStepSteps(final Step step) {
+        List<Step> steps = stepDao.getStepsByParentStepId(step.getId());
+        if (!steps.isEmpty()) {
+            step.setSteps(steps);
+        }
+    }
+
+
     /**
      * Gets a list of {@link Step} entities ordered by:
      * <li> parent step id, preceded by nulls
