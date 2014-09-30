@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll.provider;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.KeyStore;
 
@@ -37,16 +36,24 @@ public class ExternalTrustStoreInitializer {
     }
 
     public static KeyStore getTrustStore() {
-        try (InputStream in = new FileInputStream(getTrustStorePath())) {
-            // TODO: do not use password of other store
-            String password = EngineLocalConfig.getInstance().getPKITrustStorePassword();
-            KeyStore ks = KeyStore.getInstance("JKS");
-            ks.load(in, password.toCharArray());
-            return ks;
+        KeyStore ks = null;
+        try {
+            ks = EngineLocalConfig.getInstance().getExternalProvidersTrustStore().exists() ?
+                            KeyStore.getInstance(EngineLocalConfig.getInstance().getExternalProvidersTrustStoreType())
+                            : null;
+            if (ks != null) {
+                try (FileInputStream ksFileInputStream =
+                        new FileInputStream(EngineLocalConfig.getInstance().getExternalProvidersTrustStore())) {
+                        ks.load(ksFileInputStream, EngineLocalConfig.getInstance()
+                            .getExternalProvidersTrustStorePassword()
+                            .toCharArray());
+                }
+            }
+        } catch (Exception ex) {
+            throw new RuntimeException(ex);
         }
-        catch (Exception e) {
-            throw new RuntimeException(e);
-        }
+        return ks;
+
     }
 
     public static void setTrustStore(KeyStore keystore) {

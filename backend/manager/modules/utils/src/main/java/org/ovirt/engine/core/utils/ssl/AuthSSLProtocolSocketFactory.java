@@ -183,6 +183,7 @@ import org.slf4j.LoggerFactory;
  * </p>
  */
 
+@Deprecated
 public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory {
 
     /** Log object for this class. */
