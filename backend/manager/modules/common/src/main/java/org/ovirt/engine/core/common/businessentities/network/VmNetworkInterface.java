@@ -140,16 +140,16 @@ public class VmNetworkInterface extends VmNic {
             return false;
         }
         VmNetworkInterface other = (VmNetworkInterface) obj;
-        if (!ObjectUtils.objectsEqual(other.getNetworkName(), other.getNetworkName())) {
+        if (!ObjectUtils.objectsEqual(getNetworkName(), other.getNetworkName())) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(other.getVnicProfileName(), other.getVnicProfileName())) {
+        if (!ObjectUtils.objectsEqual(getVnicProfileName(), other.getVnicProfileName())) {
             return false;
         }
         if (isPortMirroring() != other.isPortMirroring()) {
             return false;
         }
-        if (!ObjectUtils.objectsEqual(other.getVmName(), other.getVmName())) {
+        if (!ObjectUtils.objectsEqual(getVmName(), other.getVmName())) {
             return false;
         }
         if (isPlugged() != other.isPlugged()) {
