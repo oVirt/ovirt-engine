@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.core.common.interfaces.SearchType;
@@ -425,54 +424,35 @@ public class ClusterListModel extends ListWithDetailsAndReportsModel implements 
         AsyncDataProvider.getInstance().getAllowClusterWithVirtGlusterEnabled(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object model, Object returnValue) {
-                final boolean isVirtGlusterAllowed = (Boolean) returnValue;
-                AsyncQuery asyncQuery = new AsyncQuery();
-                asyncQuery.setModel(clusterModel);
-                asyncQuery.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model1, Object result) {
-                        ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
-                        if (volumes.size() > 0) {
-                            clusterModel.getEnableGlusterService().setIsChangable(false);
-                            if (!isVirtGlusterAllowed) {
-                                clusterModel.getEnableOvirtService().setIsChangable(false);
+                        final boolean isVirtGlusterAllowed = (Boolean) returnValue;
+                        AsyncQuery asyncQuery = new AsyncQuery();
+                        asyncQuery.setModel(clusterModel);
+                        asyncQuery.asyncCallback = new INewAsyncCallback() {
+                            @Override
+                            public void onSuccess(Object model1, Object result) {
+                                ArrayList<GlusterVolumeEntity> volumes = (ArrayList<GlusterVolumeEntity>) result;
+                                if (volumes.size() > 0) {
+                                    clusterModel.getEnableGlusterService().setIsChangable(false);
+                                    if (!isVirtGlusterAllowed) {
+                                        clusterModel.getEnableOvirtService().setIsChangable(false);
+                                    }
+                                }
                             }
-                        }
-                    }
-                };
-                AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
-
-                AsyncQuery asyncQuery1 = new AsyncQuery();
-                asyncQuery1.setModel(clusterModel);
-                asyncQuery1.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model1, Object result) {
-                        ArrayList<VM> vmList = (ArrayList<VM>) result;
-                        if (vmList.size() > 0) {
+                        };
+                        AsyncDataProvider.getInstance().getVolumeList(asyncQuery, cluster.getName());
+                        if (cluster.getGroupHostsAndVms().getVms() > 0) {
                             clusterModel.getEnableOvirtService().setIsChangable(false);
                             if (!isVirtGlusterAllowed) {
                                 clusterModel.getEnableGlusterService().setIsChangable(false);
                             }
                         }
-                    }
-                };
-                AsyncDataProvider.getInstance().getVmListByClusterName(asyncQuery1, cluster.getName());
-                AsyncQuery asyncQuery2 = new AsyncQuery();
-                asyncQuery2.setModel(clusterModel);
-                asyncQuery2.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model1, Object result) {
-                        ArrayList<VDS> vdsList = (ArrayList<VDS>) result;
-                        if (vdsList.size() > 0) {
+                        if (cluster.getGroupHostsAndVms().getHosts() > 0) {
                             clusterModel.getEnableTrustedService().setIsChangable(false);
                             clusterModel.getEnableTrustedService().setChangeProhibitionReason(
                                     ConstantsManager.getInstance()
                                             .getConstants()
                                             .trustedServiceDisabled());
                         }
-                    }
-                };
-                AsyncDataProvider.getInstance().getHostListByCluster(asyncQuery2, cluster.getName());
             }
         }));
 
