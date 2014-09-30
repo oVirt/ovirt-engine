@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -305,7 +304,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         if (!setAndValidateCpuProfile()) {
             return false;
         }
-        return checkFreeSpaceAndTypeOnDestDomains();
+        return checkDestDomains();
     }
 
     protected boolean verifyAddVM() {
@@ -353,8 +352,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
         return true;
     }
 
-    public boolean checkFreeSpaceAndTypeOnDestDomains() {
-        boolean retValue = true;
+    public boolean checkDestDomains() {
         List<Guid> validDomains = new ArrayList<Guid>();
         for (DiskImage diskImage : diskInfoDestinationMap.values()) {
             Guid domainId = diskImage.getStorageIds().get(0);
@@ -364,29 +362,18 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             StorageDomain domain = destStorages.get(domainId);
             if (domain == null) {
                 domain = getStorageDomainDAO().getForStoragePool(domainId, getVmTemplate().getStoragePoolId());
+                destStorages.put(domainId, domain);
             }
-            int numOfDisksOnDomain = 0;
             if (storageToDisksMap.containsKey(domainId)) {
-                numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
-            }
-            if (numOfDisksOnDomain > 0) {
-                if (domain.getStorageDomainType() == StorageDomainType.ImportExport) {
-                    addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
-                    retValue = false;
-                    break;
-                }
-                if (!doesStorageDomainhaveSpaceForRequest(domain, numOfDisksOnDomain
-                        * getBlockSparseInitSizeInGB() * getParameters().getVmsCount())) {
-                    return false;
+                int numOfDisksOnDomain = storageToDisksMap.get(domainId).size();
+                if (numOfDisksOnDomain > 0
+                    && (domain.getStorageDomainType() == StorageDomainType.ImportExport)) {
+                        return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_TYPE_ILLEGAL);
                 }
             }
             validDomains.add(domainId);
         }
-        return retValue;
-    }
-
-    protected boolean doesStorageDomainhaveSpaceForRequest(StorageDomain storageDomain, long sizeRequested) {
-        return validate(new StorageDomainValidator(storageDomain).isDomainHasSpaceForRequest(sizeRequested));
+        return true;
     }
 
     private int getBlockSparseInitSizeInGB() {
