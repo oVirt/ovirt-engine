@@ -403,4 +403,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
 
     @DefaultMessage("Default ({0})")
     String defaultMtu(int mtu);
+
+    @DefaultMessage("{0} ({1})")
+    String threadsAsCoresPerSocket(int cores, int threads);
 }

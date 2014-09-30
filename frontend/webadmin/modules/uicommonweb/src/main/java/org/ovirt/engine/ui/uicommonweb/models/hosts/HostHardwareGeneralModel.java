@@ -173,14 +173,14 @@ public class HostHardwareGeneralModel extends EntityModel
         }
     }
 
-    private Integer coresPerSocket;
+    private String coresPerSocket;
 
-    public Integer getCoresPerSocket()
+    public String getCoresPerSocket()
     {
         return coresPerSocket;
     }
 
-    public void setCoresPerSocket(Integer value)
+    public void setCoresPerSocket(String value)
     {
         if (coresPerSocket == null && value == null) {
             return;
@@ -251,8 +251,18 @@ public class HostHardwareGeneralModel extends EntityModel
         setCpuModel(vds.getCpuModel());
         setNumberOfSockets(vds.getCpuSockets());
 
-        if (vds.getCpuCores() != null && vds.getCpuSockets() != null && vds.getCpuSockets() != 0) {
-            setCoresPerSocket(vds.getCpuCores() / vds.getCpuSockets());
+        if (vds.getCpuCores() != null && vds.getCpuSockets() != null
+                && vds.getCpuThreads() != null && vds.getCpuSockets() != 0) {
+            int coresPerSocket = vds.getCpuCores() / vds.getCpuSockets();
+
+
+            String fieldValue = String.valueOf(coresPerSocket);
+            if (vds.getCountThreadsAsCores()) {
+                fieldValue = ConstantsManager.getInstance().getMessages()
+                        .threadsAsCoresPerSocket(coresPerSocket, vds.getCpuThreads());
+            }
+
+            setCoresPerSocket(fieldValue);
         } else {
             setCoresPerSocket(null);
         }
