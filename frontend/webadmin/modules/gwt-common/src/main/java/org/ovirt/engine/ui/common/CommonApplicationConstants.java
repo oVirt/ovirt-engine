@@ -1002,6 +1002,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Attached To")
     String attachedToDisk();
 
+    @DefaultStringValue("Unattached")
+    String unattachedDisk();
+
     @DefaultStringValue("Apply later")
     String applyLater();
 
