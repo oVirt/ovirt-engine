@@ -2182,8 +2182,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private CommandEntity buildCommandEntity(Guid parentCommandId, boolean callBackEnabled) {
         return CommandEntity.buildCommandEntity(getCommandId(),
                 parentCommandId,
-                getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
-                getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
+                getExecutionContext() == null || getExecutionContext().getJob() == null ? Guid.Empty : getExecutionContext().getJob().getId(),
+                getExecutionContext() == null || getExecutionContext().getStep() == null ? Guid.Empty : getExecutionContext().getStep().getId(),
                 getActionType(),
                 getParameters(),
                 commandStatus,
