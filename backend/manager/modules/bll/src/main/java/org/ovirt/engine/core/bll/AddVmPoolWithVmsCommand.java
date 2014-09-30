@@ -5,16 +5,19 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaSanityParameter;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmPoolWithVmsParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.VmPool;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -119,5 +122,28 @@ public class AddVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParameters> exten
     protected List<Class<?>> getValidationGroups() {
         addValidationGroup(CreateEntity.class);
         return super.getValidationGroups();
+    }
+
+    @Override
+    public boolean checkDestDomains() {
+        return super.checkDestDomains() && validateSpaceRequirements();
+    }
+
+    protected boolean validateSpaceRequirements() {
+        int numOfVms = getParameters().getVmsCount();
+        List<DiskImage> disksList = new ArrayList<>();
+        // Number of added disks multiplies by the vms number
+        for (int i = 0; i < numOfVms; ++i) {
+            disksList.addAll(diskInfoDestinationMap.values());
+        }
+        Guid spId = getVmTemplate().getStoragePoolId();
+        Set<Guid> sdIds = destStorages.keySet();
+        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(spId, sdIds);
+        return validate(storageDomainsValidator.allDomainsWithinThresholds())
+                && validate(storageDomainsValidator.allDomainsHaveSpaceForNewDisks(disksList));
+    }
+
+    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Set<Guid> sdIds) {
+        return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 }
