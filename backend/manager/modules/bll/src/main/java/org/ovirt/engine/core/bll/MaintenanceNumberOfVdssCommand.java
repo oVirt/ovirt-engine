@@ -197,7 +197,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             && (vds.getStatus() != VDSStatus.Up) && (vds.getStatus() != VDSStatus.Error)
                             && (vds.getStatus() != VDSStatus.PreparingForMaintenance)
                             && (vds.getStatus() != VDSStatus.Down)
-                            && (vds.getStatus() != VDSStatus.NonOperational)) {
+                            && (vds.getStatus() != VDSStatus.NonOperational
+                            && (vds.getStatus() != VDSStatus.InstallFailed))) {
                         result = false;
                         addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_IS_NOT_OPERATIONAL);
                     }
