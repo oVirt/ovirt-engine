@@ -31,6 +31,11 @@ public class ConnectStorageToVdsCommandTest {
     }
 
     @Test
+    public void testNfsConnectionWithInvalidMountOptionsNotLowerCase() {
+        testConnectionMountOptionsValidations(StorageType.NFS, "TImeo=30, nfsVERS=4", false);
+    }
+
+    @Test
     public void testNfsConnectionWithInvalidMountOptions() {
         testConnectionMountOptionsValidations(StorageType.NFS, "timeo=30, nfsvers=4", false);
     }
