@@ -1020,10 +1020,10 @@ public class VmMapper {
 
     @Mapping(from = VmPayload.class, to = Payload.class)
     public static Payload map(VmPayload entity, Payload template) {
-        if (entity.getType() != null || entity.getFiles().isEmpty()) {
+        if (entity.getDeviceType() != null || entity.getFiles().isEmpty()) {
             Payload model = template != null ? template : new Payload();
-            if (entity.getType() != null) {
-                org.ovirt.engine.api.model.VmDeviceType deviceType = map(entity.getType(), null);
+            if (entity.getDeviceType() != null) {
+                org.ovirt.engine.api.model.VmDeviceType deviceType = map(entity.getDeviceType(), null);
                 if (deviceType != null) {
                     model.setType(deviceType.value());
                 }
@@ -1049,7 +1049,7 @@ public class VmMapper {
         if (model.getType() != null) {
             org.ovirt.engine.api.model.VmDeviceType deviceType = org.ovirt.engine.api.model.VmDeviceType.fromValue(model.getType());
             if (deviceType!=null) {
-                entity.setType(map(deviceType, null));
+                entity.setDeviceType(map(deviceType, null));
             }
         }
         if (model.isSetVolumeId()) {

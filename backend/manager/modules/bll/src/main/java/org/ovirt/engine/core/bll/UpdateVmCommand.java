@@ -322,7 +322,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             if (!getParameters().isClearPayload()) {
                 VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), getVmId()),
                         VmDeviceGeneralType.DISK,
-                        payload.getType(),
+                        payload.getDeviceType(),
                         payload.getSpecParams(),
                         true,
                         true,

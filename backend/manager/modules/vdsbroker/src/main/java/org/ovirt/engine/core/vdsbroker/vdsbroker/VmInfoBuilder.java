@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -132,7 +131,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     protected void buildVmCD() {
         Map<String, Object> struct;
         // check if we have payload CD
-        if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.CDROM) {
+        if (vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.CDROM) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
@@ -193,7 +192,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildVmFloppy() {
         // check if we have payload CD
-        if (vm.getVmPayload() != null && vm.getVmPayload().getType() == VmDeviceType.FLOPPY) {
+        if (vm.getVmPayload() != null && vm.getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
             VmDevice vmDevice =
                     new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
                             VmDeviceGeneralType.DISK,
@@ -552,7 +551,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // We do not validate the size of the content being passed to the VM payload by VmPayload.isPayloadSizeLegal().
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
         VmPayload vmPayload = new VmPayload();
-        vmPayload.setType(VmDeviceType.FLOPPY);
+        vmPayload.setDeviceType(VmDeviceType.FLOPPY);
         vmPayload.getFiles().put(SYSPREP_FILE_NAME, Base64.encodeBase64String(sysPrepContent.getBytes()));
 
         VmDevice vmDevice =
@@ -576,7 +575,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     @Override
     protected void buildCloudInitVmPayload(Map<String, byte[]> cloudInitContent) {
         VmPayload vmPayload = new VmPayload();
-        vmPayload.setType(VmDeviceType.CDROM);
+        vmPayload.setDeviceType(VmDeviceType.CDROM);
         vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
         for (Map.Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
             vmPayload.getFiles().put(entry.getKey(), Base64.encodeBase64String(entry.getValue()));

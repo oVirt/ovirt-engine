@@ -855,7 +855,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         if (payload != null) {
             VmDeviceUtils.addManagedDevice(new VmDeviceId(Guid.newGuid(), getParameters().getVmId()),
                     VmDeviceGeneralType.DISK,
-                    payload.getType(),
+                    payload.getDeviceType(),
                     payload.getSpecParams(),
                     true,
                     true,
