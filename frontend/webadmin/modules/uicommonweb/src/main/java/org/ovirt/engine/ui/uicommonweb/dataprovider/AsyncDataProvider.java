@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.gluster.GlusterVolumeRemoveBricksQueriesParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.BusinessEntity;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
@@ -41,7 +42,6 @@ import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
-import org.ovirt.engine.core.common.businessentities.Quota;
 import org.ovirt.engine.core.common.businessentities.QuotaEnforcementTypeEnum;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Role;
@@ -80,10 +80,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmInterfaceType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
-import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfileView;
-import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
-import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.interfaces.SearchType;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.core.common.queries.ArchCapabilitiesParameters;
@@ -3221,73 +3218,30 @@ public class AsyncDataProvider {
         return StringHelper.join("+", values.toArray(new String[] {})); //$NON-NLS-1$
     }
 
-    public Guid getEntityGuid(Object entity)
-    {
-        if (entity instanceof VM)
-        {
-            return ((VM) entity).getId();
+    public <T extends Guid> T getEntityGuid(BusinessEntity<T> entity) {
+        return entity.getId();
+    }
+
+    public Guid getEntityGuid(Object entity) {
+        if (entity instanceof BusinessEntity) {
+            //BusinessEntity can have lot of different ID types, but from this context it cannot be determined.
+            Object id = ((BusinessEntity<?>) entity).getId();
+
+            //check whether result can be casted to Guid, otherwise continue with explicit rules.
+            if (id instanceof Guid) {
+                return (Guid) id;
+            }
         }
-        else if (entity instanceof StoragePool)
-        {
-            return ((StoragePool) entity).getId();
-        }
-        else if (entity instanceof VDSGroup)
-        {
-            return ((VDSGroup) entity).getId();
-        }
-        else if (entity instanceof VDS)
-        {
-            return ((VDS) entity).getId();
-        }
-        else if (entity instanceof StorageDomain)
-        {
-            return ((StorageDomain) entity).getId();
-        }
-        else if (entity instanceof VmTemplate)
-        {
-            return ((VmTemplate) entity).getId();
-        }
-        else if (entity instanceof VmPool)
-        {
+
+        if (entity instanceof VmPool) {
             return ((VmPool) entity).getVmPoolId();
-        }
-        else if (entity instanceof DbUser)
-        {
+        } else if (entity instanceof DbUser) {
             return ((DbUser) entity).getId();
-        }
-        else if (entity instanceof DbGroup)
-        {
+        } else if (entity instanceof DbGroup) {
             return ((DbGroup) entity).getId();
+        } else {
+            return Guid.Empty;
         }
-        else if (entity instanceof Quota)
-        {
-            return ((Quota) entity).getId();
-        }
-        else if (entity instanceof DiskImage)
-        {
-            return ((DiskImage) entity).getId();
-        }
-        else if (entity instanceof GlusterVolumeEntity)
-        {
-            return ((GlusterVolumeEntity) entity).getId();
-        }
-        else if (entity instanceof Network)
-        {
-            return ((Network) entity).getId();
-        }
-        else if (entity instanceof VnicProfile)
-        {
-            return ((VnicProfile) entity).getId();
-        }
-        else if (entity instanceof DiskProfile)
-        {
-            return ((DiskProfile) entity).getId();
-        }
-        else if (entity instanceof CpuProfile)
-        {
-            return ((CpuProfile) entity).getId();
-        }
-        return Guid.Empty;
     }
 
     public boolean isWindowsOsType(Integer osType) {
