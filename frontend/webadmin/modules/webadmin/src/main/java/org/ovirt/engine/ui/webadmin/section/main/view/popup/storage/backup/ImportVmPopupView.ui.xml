@@ -93,7 +93,7 @@
                 </g:HorizontalPanel>
                 <g:Label ui:field="message" addStyleNames="{style.labelStyle}" />
                 <g:SplitLayoutPanel ui:field="splitLayoutPanel"
-                    height="375px" addStyleNames="{style.splitLayoutPanelStyle}" />
+                    height="360px" addStyleNames="{style.splitLayoutPanelStyle}" />
             </g:VerticalPanel>
         </d:content>
     </d:SimpleDialogPanel>
