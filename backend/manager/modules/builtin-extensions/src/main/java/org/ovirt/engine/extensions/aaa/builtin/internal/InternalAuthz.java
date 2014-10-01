@@ -1,9 +1,11 @@
 package org.ovirt.engine.extensions.aaa.builtin.internal;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Properties;
 
 import org.ovirt.engine.api.extensions.Base;
+import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.ExtUUID;
 import org.ovirt.engine.api.extensions.Extension;
@@ -21,14 +23,16 @@ public class InternalAuthz implements Extension {
 
     private ExtMap adminUser;
 
+    private String userName;
+
     private static class Opaque {
 
         private boolean firstCall;
-        private boolean isUser;
+        private boolean found;
 
-        public Opaque(boolean isUser) {
+        public Opaque(boolean found) {
             firstCall = true;
-            this.isUser = isUser;
+            this.found = found;
         }
     }
 
@@ -44,8 +48,7 @@ public class InternalAuthz implements Extension {
             } else if (command.equals(Authz.InvokeCommands.QUERY_CLOSE)) {
                 // Do nothing
             } else if (command.equals(Authz.InvokeCommands.QUERY_OPEN)) {
-                output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(input.<ExtUUID> get(Authz.InvokeKeys.QUERY_ENTITY)
-                        .equals(Authz.QueryEntity.PRINCIPAL)));
+                doQueryOpen(input, output);
             } else if (command.equals(Authz.InvokeCommands.QUERY_EXECUTE)) {
                 doQueryExecute(input, output);
             } else {
@@ -67,10 +70,35 @@ public class InternalAuthz implements Extension {
         }
     }
 
+    private void doQueryOpen(ExtMap input, ExtMap output) {
+        if (input.get(Authz.InvokeKeys.QUERY_ENTITY).equals(Authz.QueryEntity.PRINCIPAL)) {
+            output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(doQueryOpenImpl(input.<ExtMap> get(Authz.InvokeKeys.QUERY_FILTER))));
+        } else {
+            output.put(Authz.InvokeKeys.QUERY_OPAQUE, new Opaque(false));
+        }
+    }
+
+    private boolean doQueryOpenImpl(ExtMap filter) {
+        boolean found = false;
+        if (filter.<Integer> get(Authz.QueryFilterRecord.OPERATOR) == Authz.QueryFilterOperator.EQ) {
+            if (filter.<ExtKey> get(Authz.QueryFilterRecord.KEY).equals(Authz.PrincipalRecord.NAME)) {
+                String name = filter.<String> get(Authz.PrincipalRecord.NAME);
+                found = userName.matches(name.replace("*", ".*"));
+            } else {
+                found = false;
+            }
+        } else {
+            for (ExtMap currentFilter : filter.<Collection<ExtMap>> get(Authz.QueryFilterRecord.FILTER)) {
+                found = found || doQueryOpenImpl(currentFilter);
+            }
+        }
+        return found;
+    }
+
     private void doQueryExecute(ExtMap input, ExtMap output) {
         Opaque opaque = input.<Opaque> get(Authz.InvokeKeys.QUERY_OPAQUE);
         output.put(Authz.InvokeKeys.QUERY_RESULT,
-                opaque.firstCall && opaque.isUser ? Arrays.asList(adminUser)
+                opaque.firstCall && opaque.found ? Arrays.asList(adminUser)
                         : null);
         opaque.firstCall = false;
     }
@@ -113,7 +141,7 @@ public class InternalAuthz implements Extension {
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Arrays.asList(NAMESPACE)
                         );
-        String userName = configuration.getProperty("config.authz.user.name");
+        userName = configuration.getProperty("config.authz.user.name");
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAMESPACE,
                 NAMESPACE
