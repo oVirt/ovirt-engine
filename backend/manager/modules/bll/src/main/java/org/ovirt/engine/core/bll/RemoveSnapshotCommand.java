@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.Map.Entry;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
@@ -16,7 +15,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -34,7 +33,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
@@ -44,7 +42,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -336,43 +333,26 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     /**
      * Validates the storage domains.
      *
-     * Each domain is validated for status and for enough free space to perform removeSnapshot. <BR/>
+     * Each domain is validated for status, threshold and for enough free space to perform removeSnapshot.
      * The remove snapshot logic in VDSM includes creating a new temporary volume which might be as large as the disk's
-     * actual size. <BR/>
+     * actual size.
      * Hence, as part of the validation, we sum up all the disks virtual sizes, for each storage domain.
      *
      * @return True if there is enough space in all relevant storage domains. False otherwise.
      */
     protected boolean validateStorageDomains() {
-        for (final Entry<Guid, List<DiskImage>> storageToDiskEntry : getStorageToDiskMap().entrySet()) {
-            Guid storageDomainId = storageToDiskEntry.getKey();
-            StorageDomain storageDomain =
-                    getStorageDomainDAO().getForStoragePool(storageDomainId, getStoragePoolId());
-            StorageDomainValidator validator = new StorageDomainValidator(storageDomain);
-
-            if (!validate(validator.isDomainExistAndActive())) {
-                return false;
-            }
-
-            List<DiskImage> diskImages = storageToDiskEntry.getValue();
-            long sizeRequested = 0L;
-            for (DiskImage diskImage : diskImages) {
-                sizeRequested += diskImage.getActualSize();
-            }
-
-            if (!validate(validator.isDomainHasSpaceForRequest(sizeRequested, false))) {
-                return false;
-            }
-        }
-        return true;
+        MultipleStorageDomainsValidator storageDomainsValidator = getStorageDomainsValidator(getStoragePoolId(), getStorageDomainsIds());
+        return validate(storageDomainsValidator.allDomainsExistAndActive())
+                && validate(storageDomainsValidator.allDomainsWithinThresholds())
+                && validate(storageDomainsValidator.allDomainsHaveSpaceForClonedDisks(getSourceImages()));
     }
 
-    private Map<Guid, List<DiskImage>> getStorageToDiskMap() {
-        Map<Guid, List<DiskImage>> storageToDisksMap = new HashMap<Guid, List<DiskImage>>();
-        for (DiskImage disk : getSourceImages()) {
-            MultiValueMapUtils.addToMap(disk.getStorageIds().get(0), disk, storageToDisksMap);
-        }
-        return storageToDisksMap;
+    protected Collection<Guid> getStorageDomainsIds() {
+        return ImagesHandler.getAllStorageIdsForImageIds(getSourceImages());
+    }
+
+    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Guid spId, Collection<Guid> sdIds) {
+        return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
     @Override
