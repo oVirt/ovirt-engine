@@ -264,7 +264,11 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     }
 
     protected boolean validateStorageDomainAvailableSpace() {
-        return validate(getStorageDomainValidator().hasSpaceForRemovingDiskSnapshots(getImages()));
+        // What should be checked here is that there's enough space for removing a set of disk snapshots consecutively.
+        // Worst-case scenario when merging a snapshot in terms of space, is the outcome volume, along with the not-yet-deleted volumes.
+        // The following implementation does just that. In this case only snapshots are passed to the validation
+        // (as opposed to the whole chain).
+        return validate(getStorageDomainValidator().hasSpaceForClonedDisks(getImages()));
     }
 
     protected DiskImagesValidator createDiskImageValidator(List<DiskImage> disksList) {

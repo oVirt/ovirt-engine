@@ -159,7 +159,7 @@ public class MultipleStorageDomainsValidator {
     }
 
     /** @return The DAO object used to retrieve storage domains */
-    protected StorageDomainDAO getStorageDomainDAO() {
+    public StorageDomainDAO getStorageDomainDAO() {
         return DbFacade.getInstance().getStorageDomainDao();
     }
 

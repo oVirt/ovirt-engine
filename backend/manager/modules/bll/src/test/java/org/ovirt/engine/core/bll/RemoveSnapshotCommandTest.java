@@ -4,14 +4,18 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anySet;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.junit.Before;
 import org.junit.Rule;
@@ -20,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -30,9 +35,11 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -74,11 +81,13 @@ public class RemoveSnapshotCommandTest {
 
     private VmValidator vmValidator;
 
+    private MultipleStorageDomainsValidator storageDomainsValidator;
+
     private static final Guid STORAGE_DOMAIN_ID = Guid.newGuid();
     private static final Guid STORAGE_DOMAIN_ID2 = Guid.newGuid();
     private static final Guid STORAGE_POOLD_ID = Guid.newGuid();
 
-    private static final int USED_SPACE_GB = 4;
+    //private static final int USED_SPACE_GB = 4;
     private static final int IMAGE_ACTUAL_SIZE_GB = 4;
 
     @Before
@@ -102,6 +111,7 @@ public class RemoveSnapshotCommandTest {
         snapshotValidator = spy(new SnapshotsValidator());
         doReturn(snapshotValidator).when(cmd).createSnapshotValidator();
         mockConfigSizeDefaults();
+        spySdValidator();
     }
 
     private void mockVm() {
@@ -134,6 +144,24 @@ public class RemoveSnapshotCommandTest {
                 storageDomainId));
     }
 
+    private void spySdValidatorForOneDomain() {
+        Set<Guid> sdIds = new HashSet<>(Arrays.asList(STORAGE_DOMAIN_ID));
+        spySdValidator(sdIds);
+    }
+
+    private void spySdValidator() {
+        Set<Guid> sdIds = new HashSet<>(Arrays.asList(STORAGE_DOMAIN_ID, STORAGE_DOMAIN_ID2));
+        spySdValidator(sdIds);
+    }
+
+    private void spySdValidator(Set<Guid> sdIds) {
+        storageDomainsValidator = spy(new MultipleStorageDomainsValidator(STORAGE_POOLD_ID, sdIds));
+        doReturn(storageDomainsValidator).when(cmd).getStorageDomainsValidator(any(Guid.class), anySet());
+        doReturn(ValidationResult.VALID).when(storageDomainsValidator).allDomainsExistAndActive();
+        doReturn(sdDAO).when(storageDomainsValidator).getStorageDomainDAO();
+        doReturn(sdIds).when(cmd).getStorageDomainsIds();
+    }
+
     @Test
     public void testValidateImageNotInTemplateTrue() {
         when(vmTemplateDAO.get(mockSourceImage())).thenReturn(null);
@@ -160,6 +188,7 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testEnoughSpaceToMergeSnapshotsWithOneDisk() {
+        spySdValidatorForOneDomain();
         when(diskImageDAO.get(mockSourceImage())).thenReturn(new DiskImage());
         mockStorageDomainDAOGetForStoragePool(10, STORAGE_DOMAIN_ID);
         assertTrue("Validation should succeed. Free space minus threshold should be bigger then disk size",
@@ -168,6 +197,7 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testNotEnoughSpaceToMergeSnapshotsWithOneDisk() {
+        spySdValidatorForOneDomain();
         when(diskImageDAO.get(mockSourceImage())).thenReturn(new DiskImage());
         mockStorageDomainDAOGetForStoragePool(3, STORAGE_DOMAIN_ID);
         assertFalse("Validation should fail. Free space minus threshold should be smaller then disk size",
@@ -176,6 +206,7 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testEnoughSpaceToMergeSnapshotsWithMultipleDisk() {
+        spySdValidatorForOneDomain();
         List<DiskImage> imagesDisks = mockMultipleSourceImagesForDomain(4, STORAGE_DOMAIN_ID, IMAGE_ACTUAL_SIZE_GB);
         doReturn(imagesDisks).when(cmd).getSourceImages();
         mockStorageDomainDAOGetForStoragePool(22, STORAGE_DOMAIN_ID);
@@ -185,6 +216,7 @@ public class RemoveSnapshotCommandTest {
 
     @Test
     public void testNotEnoughSpaceToMergeSnapshotsWithMultipleDisk() {
+        spySdValidatorForOneDomain();
         List<DiskImage> imagesDisks = mockMultipleSourceImagesForDomain(4, STORAGE_DOMAIN_ID, IMAGE_ACTUAL_SIZE_GB);
         doReturn(imagesDisks).when(cmd).getSourceImages();
         mockStorageDomainDAOGetForStoragePool(15, STORAGE_DOMAIN_ID);
@@ -315,6 +347,9 @@ public class RemoveSnapshotCommandTest {
             list.add(storageDomainId);
             image.setStorageIds(list);
             image.setActualSize(actualDiskSize);
+            image.setSizeInGigabytes(actualDiskSize);
+            image.setvolumeFormat(VolumeFormat.COW);
+            image.getSnapshots().add(image);
             listDisks.add(image);
         }
         return listDisks;
@@ -325,7 +360,7 @@ public class RemoveSnapshotCommandTest {
         sd.setStorageDomainType(StorageDomainType.Master);
         sd.setStatus(StorageDomainStatus.Active);
         sd.setAvailableDiskSize(availableSpace);
-        sd.setUsedDiskSize(USED_SPACE_GB);
+        sd.setStorageType(StorageType.ISCSI);
         sd.setStoragePoolId(STORAGE_POOLD_ID);
         sd.setId(storageDomainId);
         return sd;

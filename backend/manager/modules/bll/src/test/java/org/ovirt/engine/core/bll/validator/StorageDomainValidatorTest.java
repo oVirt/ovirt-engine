@@ -7,15 +7,12 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import org.junit.Before;
 import org.junit.ClassRule;
 import org.junit.Test;
-import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.utils.MockConfigRule;
-
-import java.util.Arrays;
 
 /**
  * A test case for the {@link StorageDomainValidator} class.
@@ -103,46 +100,6 @@ public class StorageDomainValidatorTest {
         assertTrue("Domain should have more space then threshold", validator.isDomainWithinThresholds().isValid());
     }
 
-    @Test
-    public void testDomainWithEnoughSizeToRemoveDiskSnapshotsSumOfActualSizes() {
-        validator = new StorageDomainValidator(mockStorageDomain(1024, 0, StorageType.NFS));
-        DiskImage image1 = mockDiskImage(128, 1024);
-        DiskImage image2 = mockDiskImage(256, 2048);
-
-        assertTrue("Domain should have enough space for merging the snapshots",
-            validator.hasSpaceForRemovingDiskSnapshots(Arrays.asList(image1, image2)).isValid());
-    }
-
-    @Test
-    public void testDomainWithEnoughSizeToRemoveDiskSnapshotsMaxVirtualSize() {
-        validator = new StorageDomainValidator(mockStorageDomain(1024, 0, StorageType.NFS));
-        DiskImage image1 = mockDiskImage(1024, 1024);
-        DiskImage image2 = mockDiskImage(256, 1024);
-
-        assertTrue("Domain should have enough space for merging the snapshots",
-            validator.hasSpaceForRemovingDiskSnapshots(Arrays.asList(image1, image2)).isValid());
-    }
-
-    @Test
-    public void testDomainWithNotEnoughSizeToRemoveDiskSnapshotsSumOfActualSizes() {
-        validator = new StorageDomainValidator(mockStorageDomain(1024, 0, StorageType.NFS));
-        DiskImage image1 = mockDiskImage(1024, 1512);
-        DiskImage image2 = mockDiskImage(256, 1512);
-
-        assertTrue("Domain should not have enough space for merging the snapshots",
-            !validator.hasSpaceForRemovingDiskSnapshots(Arrays.asList(image1, image2)).isValid());
-    }
-
-    @Test
-    public void testDomainWithNotEnoughSizeToRemoveDiskSnapshotsMaxVirtualSize() {
-        validator = new StorageDomainValidator(mockStorageDomain(512, 0, StorageType.NFS));
-        DiskImage image1 = mockDiskImage(768, 1024);
-        DiskImage image2 = mockDiskImage(768, 1024);
-
-        assertTrue("Domain should not have enough space for merging the snapshots",
-                !validator.hasSpaceForRemovingDiskSnapshots(Arrays.asList(image1, image2)).isValid());
-    }
-
     private static StorageDomain mockStorageDomain(int availableSize, int usedSize, StorageType storageType) {
         StorageDomain sd = new StorageDomain();
         sd.setAvailableDiskSize(availableSize);
@@ -150,13 +107,5 @@ public class StorageDomainValidatorTest {
         sd.setStatus(StorageDomainStatus.Active);
         sd.setStorageType(storageType);
         return sd;
-    }
-
-    private static DiskImage mockDiskImage(long actualSize, long virtualSize) {
-        DiskImage image = new DiskImage();
-        image.setActualSize(actualSize);
-        image.setSize(virtualSize);
-
-        return image;
     }
 }
