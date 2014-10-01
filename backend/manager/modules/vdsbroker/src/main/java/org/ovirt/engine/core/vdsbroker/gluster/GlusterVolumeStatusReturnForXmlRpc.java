@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.gluster.BrickDetails;
 import org.ovirt.engine.core.common.businessentities.gluster.BrickProperties;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterClientInfo;
+import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterStatus;
@@ -22,7 +23,10 @@ import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
 import org.ovirt.engine.core.common.utils.gluster.GlusterCoreUtil;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
+import org.ovirt.engine.core.utils.log.Log;
+import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
 
@@ -77,8 +81,9 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String MEMORY_POOLMISSES = "poolMisses";
     private static final String MEMORY_MAXSTDALLOC = "maxStdAlloc";
 
+    private static final Log log = LogFactory.getLog(GlusterVolumeStatusReturnForXmlRpc.class);
     private StatusForXmlRpc status;
-    private GlusterVolumeAdvancedDetails volumeAdvancedDetails = new GlusterVolumeAdvancedDetails();
+    private final GlusterVolumeAdvancedDetails volumeAdvancedDetails = new GlusterVolumeAdvancedDetails();
 
     public GlusterVolumeStatusReturnForXmlRpc(Guid clusterId, Map<String, Object> innerMap) {
         super(innerMap);
@@ -184,11 +189,12 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
 
     private BrickProperties getBrickProperties(GlusterVolumeEntity volume, Map<String, Object> brick) {
         BrickProperties brickProperties = new BrickProperties();
+        GlusterBrickEntity brickEntity = getBrickEntity(volume, brick);
 
-        GlusterBrickEntity brickEntity =
-                GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(), (String) brick.get(BRICK));
         if (brickEntity != null) {
             brickProperties.setBrickId(brickEntity.getId());
+        } else {
+            log.warnFormat("Could not update brick {0} as not found in db", (String) brick.get(BRICK));
         }
 
         if (brick.containsKey(STATUS)) {
@@ -236,6 +242,29 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             brickProperties.setFsName((String) brick.get(DETAIL_FS_NAME));
         }
         return brickProperties;
+    }
+
+    private GlusterBrickEntity getBrickEntity(GlusterVolumeEntity volume, Map<String, Object> brick) {
+        String brickName = (String) brick.get(BRICK);
+
+        String glusterHostUuid = (String) brick.get(HOST_UUID);
+        if (!StringUtils.isEmpty(glusterHostUuid)) {
+            GlusterServer glusterServer =
+                    GlusterDBUtils.getInstance().getServerByUuid(Guid.createGuidFromString(glusterHostUuid));
+            if (glusterServer == null) {
+                log.warnFormat("Could not update brick {0} to volume {1} - server uuid {2} not found",
+                        brickName, volume.getName(), glusterHostUuid);
+                return null;
+            }
+            String[] brickParts = brickName.split(":", -1);
+            if (brickParts.length != 2) {
+                log.warnFormat("Invalid brick representation [" + brickName + "]");
+                return null;
+            }
+            String brickDir = brickParts[1];
+            return DbFacade.getInstance().getGlusterBrickDao().getBrickByServerIdAndDirectory(glusterServer.getId(), brickDir);
+        }
+        return GlusterCoreUtil.getBrickByQualifiedName(volume.getBricks(), brickName);
     }
 
     private List<Mempool> prepareMemPool(Object[] memoryPool) {
