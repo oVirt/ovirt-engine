@@ -9,6 +9,7 @@ import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.core.bll.LockMessagesMatchUtil;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RetrieveImageDataParameters;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -16,6 +17,7 @@ import org.ovirt.engine.core.bll.profiles.DiskProfileHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AttachStorageDomainToPoolParameters;
+import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.RegisterDiskParameters;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 import org.ovirt.engine.core.common.action.StoragePoolWithStoragesParameter;
@@ -36,6 +38,7 @@ import org.ovirt.engine.core.common.businessentities.profiles.DiskProfile;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
+import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.GetUnregisteredDisksQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -53,6 +56,7 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 import org.ovirt.engine.core.utils.ovf.OvfParser;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 
+
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoolParameters> extends
         StorageDomainCommandBase<T> {
@@ -67,6 +71,10 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         super(parameters, commandContext);
     }
 
+    @Override
+    protected LockProperties applyLockProperties(LockProperties lockProperties) {
+        return lockProperties.withScope(LockProperties.Scope.Execution);
+    }
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -388,6 +396,12 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             log.errorFormat("LastUpdate Date could not be parsed from disk desscription. Exception: {0}", e);
         }
         return null;
+    }
+
+    @Override
+    protected Map<String, Pair<String, String>> getExclusiveLocks() {
+        return Collections.singletonMap(getParameters().getStorageDomainId().toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.STORAGE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
     }
 
     private boolean isDomainExistsInDiskDescription(Map<String, Object> map, Guid storageDomainId) {
