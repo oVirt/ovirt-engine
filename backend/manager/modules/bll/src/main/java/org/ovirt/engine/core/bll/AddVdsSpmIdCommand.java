@@ -78,7 +78,9 @@ public class AddVdsSpmIdCommand<T extends VdsActionParameters> extends VdsComman
                 break;
             }
         }
-        vds_spm_id_map newMap = new vds_spm_id_map(getVds().getStoragePoolId(), getVdsId(), selectedId);
+        // get the dc id from cluster if DC was removed and cluster is attached to a new DC
+        Guid dcId = (getVds().getStoragePoolId().equals(Guid.Empty) ? getVdsGroup().getStoragePoolId() : getVds().getStoragePoolId());
+        vds_spm_id_map newMap = new vds_spm_id_map(dcId, getVdsId(), selectedId);
         DbFacade.getInstance().getVdsSpmIdMapDao().save(newMap);
         if (getParameters().isCompensationEnabled()) {
             getCompensationContext().snapshotNewEntity(newMap);
