@@ -5,10 +5,10 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.TreeSet;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
@@ -123,8 +123,11 @@ public class ConnectStorageToVdsCommand<T extends StorageServerConnectionParamet
                 getConnection().getstorage_type() == StorageType.POSIXFS ? POSIX_MANAGED_OPTIONS : NFS_MANAGED_OPTIONS;
         Map<String, String> optionsMap = XmlRpcStringUtils.string2Map(mountOptions);
 
-        Set<String> optionsKeys = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
-        optionsKeys.addAll(optionsMap.keySet());
+        Set<String> optionsKeys = new HashSet<>();
+        for (String option : optionsMap.keySet()) {
+            optionsKeys.add(option.toLowerCase());
+        }
+
         optionsKeys.retainAll(disallowedOptions);
 
         if (!optionsKeys.isEmpty()) {
