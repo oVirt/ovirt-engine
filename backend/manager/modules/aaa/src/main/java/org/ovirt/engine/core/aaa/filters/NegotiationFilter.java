@@ -102,6 +102,7 @@ public class NegotiationFilter implements Filter {
         );
     }
 
+    @SuppressWarnings("unchecked")
     @Override
     public void doFilter(ServletRequest req, ServletResponse rsp, FilterChain chain)
             throws IOException, ServletException {

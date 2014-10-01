@@ -38,6 +38,7 @@ public class EnforceAuthFilter implements Filter {
         if (FiltersHelper.isAuthenticated(req)) {
             chain.doFilter(request, response);
         } else {
+            @SuppressWarnings("unchecked")
             List<String> schemes = (List<String>) req.getAttribute(FiltersHelper.Constants.REQUEST_SCHEMES_KEY);
             if (schemes == null) {
                 schemes = Collections.emptyList();
