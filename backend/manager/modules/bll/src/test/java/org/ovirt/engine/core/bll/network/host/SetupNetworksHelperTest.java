@@ -373,6 +373,7 @@ public class SetupNetworksHelperTest {
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
         iface.setQosOverridden(true);
+        iface.setQos(createQos());
 
         SetupNetworksHelper helper = createHelper(createParametersForNics(iface));
 
@@ -414,6 +415,49 @@ public class SetupNetworksHelperTest {
         Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
         SetupNetworksHelper helper = qosValuesTest(network, createQos());
         validateAndAssertNetworkModified(helper, network);
+    }
+
+    private SetupNetworksHelper setupCompositeQosConfiguration(String nicName, boolean qosOnAll) {
+        Network net1 = createNetwork("net1");
+        net1.setVlanId(100);
+        Network net2 = createNetwork("net2");
+        net2.setVlanId(200);
+        Network net3 = createNetwork("net3");
+        net3.setVmNetwork(false);
+
+        Guid qosId = Guid.newGuid();
+        when(qosDao.get(qosId)).thenReturn(createQos());
+        net1.setQosId(qosId);
+        net2.setQosId(qosId);
+        net3.setQosId(qosOnAll ? qosId : null);
+
+        VdsNetworkInterface nic = createNic(nicName, net3.getName());
+        VdsNetworkInterface vlan1 = createVlan(nic.getName(), net1.getVlanId(), net1.getName());
+        VdsNetworkInterface vlan2 = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
+
+        mockExistingNetworks(net1, net2, net3);
+        mockExistingIfaces(nic);
+
+        return createHelper(createParametersForNics(nic, vlan1, vlan2), Version.v3_4);
+    }
+
+    private SetupNetworksHelper setupCompositeQosConfiguration(boolean qosOnAll) {
+        return setupCompositeQosConfiguration("nic0", qosOnAll);
+    }
+
+    @Test
+    public void qosConfiguredOnAllNetworks() {
+        SetupNetworksHelper helper = setupCompositeQosConfiguration(true);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosNotConfiguredOnAllNetworks() {
+        String nicName = "nic0";
+        SetupNetworksHelper helper = setupCompositeQosConfiguration(nicName, false);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
+                nicName);
     }
 
     @Test

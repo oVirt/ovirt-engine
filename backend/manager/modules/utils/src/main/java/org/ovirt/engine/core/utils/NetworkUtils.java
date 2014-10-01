@@ -137,6 +137,23 @@ public final class NetworkUtils {
         }
     }
 
+    /**
+     * Check whether the interface has any QoS configured on it, whether via its attached network or overridden.
+     *
+     * @param iface
+     *            The network interface.
+     * @param network
+     *            The network attached to the interface.
+     * @return true iff any QoS is applied to the interface.
+     */
+    public static boolean qosConfiguredOnInterface(VdsNetworkInterface iface, Network network) {
+        if (iface.isQosOverridden()) {
+            return iface.getQos() != null;
+        } else {
+            return network != null && network.getQosId() != null;
+        }
+    }
+
     public static boolean isNetworkInSync(VdsNetworkInterface iface, Network network, HostNetworkQos qos) {
         return ((network.getMtu() == 0 && iface.getMtu() == getDefaultMtu()) || iface.getMtu() == network.getMtu())
                 && Objects.equals(iface.getVlanId(), network.getVlanId())

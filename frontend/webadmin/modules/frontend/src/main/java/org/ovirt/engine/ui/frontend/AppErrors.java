@@ -3095,6 +3095,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. If both are provided, rate limit must not be lower than committed rate. However, this is not the case with the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES();
 
+    @DefaultStringValue("Cannot ${action} ${type}. All or none of the networks attached to an interface must have QoS configured, but on the following interface(s) some of the networks are missing QoS: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS();
+
     @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
     String ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES();
 

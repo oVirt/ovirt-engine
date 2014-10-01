@@ -245,26 +245,64 @@ public class SetupNetworksHelper {
                 String.format("[%s]", StringUtils.join(mtuDiffNetworks, ", ")));
     }
 
+    private void validateNetworkQos() {
+        validateQosOverriddenInterfaces();
+        validateQosNotPartiallyConfigured();
+    }
+
     /**
      * Validates that the feature is supported if any QoS configuration was specified, and that the values associated
      * with it are valid.
      */
-    private void validateNetworkQos() {
+    private void validateQosOverriddenInterfaces() {
         for (VdsNetworkInterface iface : params.getInterfaces()) {
+            String networkName = iface.getNetworkName();
+
+            // check that the interface has a network attached to it, otherwise QoS settings should be wiped anyway
+            if (networkName == null) {
+                continue;
+            }
+
             if (iface.isQosOverridden()) {
                 if (!hostNetworkQosSupported) {
-                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, iface.getNetworkName());
+                    addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_NOT_SUPPORTED, networkName);
                 }
 
                 HostNetworkQosValidator qosValidator = new HostNetworkQosValidator(iface.getQos());
                 if (qosValidator.requiredValuesPresent() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_MISSING_VALUES,
-                            iface.getNetworkName());
+                            networkName);
                 }
                 if (qosValidator.valuesConsistent() != ValidationResult.VALID) {
                     addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_SETUP_NETWORKS_INCONSISTENT_VALUES,
-                            iface.getNetworkName());
+                            networkName);
                 }
+            }
+        }
+    }
+
+    /**
+     * Ensure that either none or all of the networks on a single interface have QoS configured on them.
+     */
+    private void validateQosNotPartiallyConfigured() {
+        Set<String> someSubInterfacesHaveQos = new HashSet<>();
+        Set<String> notAllSubInterfacesHaveQos = new HashSet<>();
+
+        // first map which interfaces have some QoS configured on them, and which interfaces lack some QoS configuration
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
+            Network network = getExistingClusterNetworks().get(iface.getNetworkName());
+            String baseIfaceName = NetworkUtils.stripVlan(iface);
+            if (NetworkUtils.qosConfiguredOnInterface(iface, network)) {
+                someSubInterfacesHaveQos.add(baseIfaceName);
+            } else {
+                notAllSubInterfacesHaveQos.add(baseIfaceName);
+            }
+        }
+
+        // if any base interface has some sub-interfaces with QoS and some without - this is a partial configuration
+        for (String ifaceName : someSubInterfacesHaveQos) {
+            if (notAllSubInterfacesHaveQos.contains(ifaceName)) {
+                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS, ifaceName);
             }
         }
     }
