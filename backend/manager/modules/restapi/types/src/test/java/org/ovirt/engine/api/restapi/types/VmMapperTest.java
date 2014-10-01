@@ -156,10 +156,10 @@ public class VmMapperTest extends
     @Test
     public void testVmPayloadMapToPaylod() {
         VmPayload vmPayload = new VmPayload();
-        vmPayload.setType(org.ovirt.engine.core.common.utils.VmDeviceType.CDROM);
+        vmPayload.setDeviceType(org.ovirt.engine.core.common.utils.VmDeviceType.CDROM);
         vmPayload.setVolumeId("CD-VOL");
         Payload payload = VmMapper.map(vmPayload, null);
-        assertEquals(vmPayload.getType().name().toLowerCase(), payload.getType());
+        assertEquals(vmPayload.getDeviceType().name().toLowerCase(), payload.getType());
         assertEquals(vmPayload.getVolumeId(), payload.getVolumeId());
     }
 
@@ -169,7 +169,7 @@ public class VmMapperTest extends
         payload.setType("CDROM");
         payload.setVolumeId("CD-VOL");
         VmPayload vmPayload = VmMapper.map(payload, null);
-        assertEquals(payload.getType(), vmPayload.getType().name());
+        assertEquals(payload.getType(), vmPayload.getDeviceType().name());
         assertEquals(payload.getVolumeId(), vmPayload.getVolumeId());
     }
 

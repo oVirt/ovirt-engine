@@ -1223,7 +1223,7 @@ public class BackendVmsResourceTest
 
     private VmPayload getPayloadModel() {
         VmPayload payload = new VmPayload();
-        payload.setType(VmDeviceType.CDROM);
+        payload.setDeviceType(VmDeviceType.CDROM);
         payload.getFiles().put("payloadFile", new String(Base64.decodeBase64(PAYLOAD_COMTENT)));
         return payload;
     }

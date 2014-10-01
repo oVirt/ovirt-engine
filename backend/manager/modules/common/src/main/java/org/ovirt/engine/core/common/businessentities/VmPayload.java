@@ -3,35 +3,40 @@ package org.ovirt.engine.core.common.businessentities;
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
-
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 
 
-public class VmPayload implements Serializable {
+public class VmPayload extends VmDevice implements Serializable {
     private static final long serialVersionUID = -3665087594884425768L;
     private static final String SpecParamsPayload = "vmPayload";
     private static final String SpecParamsVolumeIdType = "volId";
     private static final String SpecParamsFileType = "file";
 
-    private VmDeviceType type;
     private String volumeId;
     private HashMap<String, String> files; // file data is base64-encoded
 
     public VmPayload() {
-        this.type = VmDeviceType.CDROM;
+        setDeviceType(VmDeviceType.CDROM);
         this.volumeId = null;
         this.files = new HashMap<String, String>();
     }
 
     @SuppressWarnings("unchecked")
-    public VmPayload(VmDeviceType type, Map<String, Object> specParams) {
-        this.type = type;
+    public VmPayload(VmDevice dev) {
+        super(dev.getId(), dev.getType(), dev.getDevice(),
+                dev.getAddress(), dev.getBootOrder(), dev.getSpecParams(),
+                dev.getIsManaged(), dev.getIsPlugged(), dev.getIsReadOnly(),
+                dev.getAlias(), dev.getCustomProperties(), dev.getSnapshotId(),
+                dev.getLogicalName());
 
-        Map<String, Object> payload = (Map<String, Object>)specParams.get(SpecParamsPayload);
-        this.volumeId = (String)payload.get(SpecParamsVolumeIdType);
-        this.files = (HashMap<String, String>)payload.get(SpecParamsFileType);
+        if (dev.getSpecParams() != null) {
+            Map<String, Object> payload = (Map<String, Object>)dev.getSpecParams().get(SpecParamsPayload);
+            this.volumeId = (String)payload.get(SpecParamsVolumeIdType);
+            this.files = (HashMap<String, String>)payload.get(SpecParamsFileType);
+        }
     }
 
     public static boolean isPayload(Map<String, Object> specParams) {
@@ -42,12 +47,12 @@ public class VmPayload implements Serializable {
         return payload.length() <= Config.<Integer> getValue(ConfigValues.PayloadSize);
     }
 
-    public VmDeviceType getType() {
-        return this.type;
+    public VmDeviceType getDeviceType() {
+        return VmDeviceType.getByName(super.getDevice());
     }
 
-    public void setType(VmDeviceType type) {
-        this.type = type;
+    public void setDeviceType(VmDeviceType type) {
+        super.setDevice(type.getName());
     }
 
     public String getVolumeId() {
@@ -82,5 +87,32 @@ public class VmPayload implements Serializable {
         payload.put(SpecParamsFileType, files);
 
         return specParams;
+    }
+
+    @Override
+    public int hashCode() {
+        final int prime = 31;
+        int result = 1;
+        result = prime * result + super.hashCode();
+        result = prime * result + ((volumeId == null) ? 0 : volumeId.hashCode());
+        result = prime * result + ((files == null) ? 0 : files.hashCode());
+        return result;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (!(obj instanceof VmDevice)) {
+            return false;
+        }
+        VmPayload other = (VmPayload) obj;
+        return (super.equals(obj)
+                && ObjectUtils.objectsEqual(volumeId, other.volumeId)
+                && ObjectUtils.objectsEqual(files, other.files));
     }
 }

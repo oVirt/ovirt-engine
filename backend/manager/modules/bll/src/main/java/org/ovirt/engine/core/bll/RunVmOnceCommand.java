@@ -3,7 +3,6 @@ package org.ovirt.engine.core.bll;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
@@ -26,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -89,9 +87,7 @@ public class RunVmOnceCommand<T extends RunVmOnceParams> extends RunVmCommand<T>
 
         for (VmDevice disk : disks) {
             if (VmPayload.isPayload(disk.getSpecParams())) {
-                VmPayload payload = new VmPayload(VmDeviceType.valueOf(disk.getType().name()),
-                        disk.getSpecParams());
-                payload.setType(VmDeviceType.valueOf(disk.getDevice().toUpperCase()));
+                VmPayload payload = new VmPayload(disk);
                 getVm().setVmPayload(payload);
                 break;
             }

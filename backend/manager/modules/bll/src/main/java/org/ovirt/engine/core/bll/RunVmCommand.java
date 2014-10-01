@@ -842,7 +842,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
 
             if (checkPayload(getParameters().getVmPayload(), getParameters().getDiskPath()) &&
                     !StringUtils.isEmpty(getParameters().getFloppyPath()) &&
-                    getParameters().getVmPayload().getType() == VmDeviceType.FLOPPY) {
+                    getParameters().getVmPayload().getDeviceType() == VmDeviceType.FLOPPY) {
                 return failCanDoAction(VdcBllMessages.VMPAYLOAD_FLOPPY_EXCEEDED);
             }
 

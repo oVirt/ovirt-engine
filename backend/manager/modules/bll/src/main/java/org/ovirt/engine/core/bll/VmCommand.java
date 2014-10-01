@@ -527,7 +527,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
 
     protected boolean checkPayload(VmPayload payload, String isoPath) {
         boolean returnValue = true;
-        if (payload.getType() != VmDeviceType.CDROM && payload.getType() != VmDeviceType.FLOPPY) {
+        if (payload.getDeviceType() != VmDeviceType.CDROM && payload.getDeviceType() != VmDeviceType.FLOPPY) {
             addCanDoActionMessage(VdcBllMessages.VMPAYLOAD_INVALID_PAYLOAD_TYPE);
             returnValue = false;
         } else {

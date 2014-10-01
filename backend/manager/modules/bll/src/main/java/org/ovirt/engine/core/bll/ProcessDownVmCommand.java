@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.quota.QuotaManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
@@ -15,8 +13,8 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.action.VmPoolSimpleUserParameters;
-import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -208,7 +206,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
                     break;
                 case DISK:
                     if (VmPayload.isPayload(device.getSpecParams())) {
-                        updateVmParams.setVmPayload(new VmPayload(VmDeviceType.getByName(device.getDevice()), device.getSpecParams()));
+                        updateVmParams.setVmPayload(new VmPayload(device));
                     }
                     break;
                 case CONSOLE:
