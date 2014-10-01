@@ -15,6 +15,14 @@ public class BaseAutoCompleter implements IAutoCompleter {
     protected final Map<String, List<String>> mVerbCompletion =
             new HashMap<String, List<String>>();
 
+    private static final List<String> daysOfWeek = new ArrayList<String>();
+
+    static {
+        for(DayOfWeek day: DayOfWeek.values()) {
+            daysOfWeek.add(day.toString());
+        }
+    }
+
     public BaseAutoCompleter() {
 
     }
@@ -77,12 +85,8 @@ public class BaseAutoCompleter implements IAutoCompleter {
 
     @Override
     public String changeCaseDisplay(String text) {
-        try {
-            if (DayOfWeek.valueOf(text) != null) {
-                return text;
-            }
-        } catch (Exception e) {
-            // no enum value found for this literal
+        if (daysOfWeek.contains(text)) {
+            return text;
         }
         return text.toLowerCase();
     }
