@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -94,6 +95,17 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
             storagePoolForVds = getStoragePoolDAO().getForVds(getVds().getId());
         }
         return storagePoolForVds;
+    }
+
+    @Override
+    public Map<String, String> getJobMessageProperties() {
+        if (jobProperties == null) {
+            jobProperties = super.getJobMessageProperties();
+            if (getVds() != null) {
+                jobProperties.put(VdcObjectType.StoragePool.name().toLowerCase(), getVds().getStoragePoolName());
+            }
+        }
+        return jobProperties;
     }
 
     @Override
