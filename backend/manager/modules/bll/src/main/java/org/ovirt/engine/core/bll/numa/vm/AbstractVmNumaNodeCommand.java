@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.VmCommand;
+import org.ovirt.engine.core.bll.VmHandler;
 import org.ovirt.engine.core.common.action.VmNumaNodeOperationParameters;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -58,6 +59,11 @@ public abstract class AbstractVmNumaNodeCommand<T extends VmNumaNodeOperationPar
     @Override
     protected boolean canDoAction() {
         List<VmNumaNode> vmNumaNodes = getParameters().getVmNumaNodeList();
+
+        if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getNumaTuneMode(), vmNumaNodes, getVmId()))) {
+            return false;
+        }
+
         if (vmNumaNodes == null || vmNumaNodes.size() == 0) {
             // if VM do not contain any NUMA node, skip checking
             return true;

@@ -31,6 +31,7 @@ import org.ovirt.engine.core.common.businessentities.EditableDeviceOnVmStatusFie
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVm;
 import org.ovirt.engine.core.common.businessentities.EditableOnVmStatusField;
+import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
@@ -41,6 +42,7 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmInit;
+import org.ovirt.engine.core.common.businessentities.VmNumaNode;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
@@ -830,5 +832,36 @@ public class VmHandler {
         canDoActionMessages.add(VdcBllMessages.CPU_TYPE_UNSUPPORTED_FOR_THE_GUEST_OS.name());
         canDoActionMessages.add("$unsupportedCpus " + StringUtils.strip(unsupportedCpus.toString(), "[]"));
         return false;
+    }
+
+    /**
+     * preferred supports single pinned vnuma node (without that VM fails to run in libvirt).
+     * used by add/update VM commands
+     */
+    public static ValidationResult checkNumaPreferredTuneMode(NumaTuneMode numaTuneMode,
+            List<VmNumaNode> vmNumaNodes,
+            Guid vmId) {
+        // check tune mode
+        if (numaTuneMode != NumaTuneMode.PREFERRED) {
+            return ValidationResult.VALID;
+        }
+
+        if (vmNumaNodes == null && vmId != null) {
+            vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vmId);
+        }
+
+        // check single node pinned
+        if (vmNumaNodes != null && vmNumaNodes.size() == 1) {
+            List<Pair<Guid, Pair<Boolean, Integer>>> vdsNumaNodeList = vmNumaNodes.get(0).getVdsNumaNodeList();
+            boolean pinnedToSingleNode = vdsNumaNodeList != null
+                    && vdsNumaNodeList.size() == 1
+                    && vdsNumaNodeList.get(0).getSecond() != null
+                    && vdsNumaNodeList.get(0).getSecond().getFirst();
+            if (pinnedToSingleNode) {
+                return ValidationResult.VALID;
+            }
+        }
+
+        return new ValidationResult(VdcBllMessages.VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE);
     }
 }
