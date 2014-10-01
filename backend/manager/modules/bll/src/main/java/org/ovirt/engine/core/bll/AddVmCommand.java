@@ -604,6 +604,12 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
             return false;
         }
 
+        if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData()
+                .getNumaTuneMode(),
+                getParameters().getVmStaticData().getvNumaNodeList(), getVmId()))) {
+            return false;
+        }
+
         return true;
     }
 

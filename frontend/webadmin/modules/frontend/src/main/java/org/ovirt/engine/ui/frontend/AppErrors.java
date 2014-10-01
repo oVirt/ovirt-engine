@@ -3243,6 +3243,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it has insufficient NUMA node free memory to run the VM")
     String VAR__DETAIL__NUMA_PINNING_FAILED();
 
+    @DefaultStringValue("Preferred NUMA tune mode is allowed for a single pinned Virtual NUMA Node.")
+    String VM_NUMA_NODE_PREFERRED_NOT_PINNED_TO_SINGLE_NODE();
+
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 

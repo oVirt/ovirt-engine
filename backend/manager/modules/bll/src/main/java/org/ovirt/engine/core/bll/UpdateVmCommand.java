@@ -630,6 +630,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
+        if (!validate(VmHandler.checkNumaPreferredTuneMode(getParameters().getVmStaticData().getNumaTuneMode(),
+                getParameters().getVmStaticData().getvNumaNodeList(),
+                getVmId()))) {
+            return false;
+        }
+
         return true;
     }
 
