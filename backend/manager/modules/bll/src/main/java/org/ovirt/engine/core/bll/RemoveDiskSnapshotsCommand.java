@@ -86,7 +86,11 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
                     // Disks existence is validated in canDoAction
                     continue;
                 }
-                images.add(getDiskImageDao().getSnapshotById(imageId));
+
+                DiskImage image = getDiskImageDao().getSnapshotById(imageId);
+                if (image != null) {
+                    images.add(image);
+                }
             }
         }
         return images;
