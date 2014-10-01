@@ -511,7 +511,7 @@ public class StorageDataCenterListModel extends SearchableListModel
             }
             else
             {
-                AsyncDataProvider.getLocalStorageHost(new AsyncQuery(new Object[] { this, storageDomain },
+                AsyncDataProvider.getLocalStorageHost(new AsyncQuery(new Object[] { this, getEntity() },
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object target, Object returnValue) {
