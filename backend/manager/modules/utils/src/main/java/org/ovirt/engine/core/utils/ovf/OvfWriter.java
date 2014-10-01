@@ -194,6 +194,9 @@ public abstract class OvfWriter implements IOvfBuilder {
 
             case Unassigned:
                 break;
+
+            default:
+                break;
             }
             _writer.WriteAttributeString(OVF_URI, "format", format);
             _writer.WriteAttributeString(OVF_URI, "volume-format", image.getVolumeFormat().toString());
