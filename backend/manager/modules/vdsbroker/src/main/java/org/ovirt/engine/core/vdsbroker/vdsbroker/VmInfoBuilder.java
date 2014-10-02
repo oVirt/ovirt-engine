@@ -1138,8 +1138,11 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private void addNumaSetting(final String compatibilityVersion) {
         if (Boolean.TRUE.equals(Config.<Boolean> getValue(ConfigValues.CpuPinningEnabled,
                         compatibilityVersion))) {
-            NumaTuneMode numaTune = vm.getNumaTuneMode();
             List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
+            if (vmNumaNodes.isEmpty()) {
+                return;
+            }
+            NumaTuneMode numaTune = vm.getNumaTuneMode();
             List<VdsNumaNode> totalVdsNumaNodes = DbFacade.getInstance().getVdsNumaNodeDAO()
                     .getAllVdsNumaNodeByVdsId(vdsId);
             if (numaTune != null) {
