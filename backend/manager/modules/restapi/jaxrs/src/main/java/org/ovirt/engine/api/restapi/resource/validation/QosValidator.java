@@ -10,6 +10,8 @@ public class QosValidator implements Validator<QoS> {
 
     @Override
     public void validateEnums(QoS qos) {
-        validateEnum(QosType.class, qos.getType(), true);
+        if (qos.isSetType()) {
+            validateEnum(QosType.class, qos.getType(), true);
+        }
     }
 }
