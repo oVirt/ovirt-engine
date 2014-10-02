@@ -21,7 +21,7 @@ public class MockEngineLocalConfigRule extends TestWatcher {
     private Map<String, String> newValues;
 
     public MockEngineLocalConfigRule(KeyValue... values) {
-        newValues = new HashMap();
+        newValues = new HashMap<String, String>();
         for (KeyValue v : values) {
             newValues.put(v.key, v.value);
         }

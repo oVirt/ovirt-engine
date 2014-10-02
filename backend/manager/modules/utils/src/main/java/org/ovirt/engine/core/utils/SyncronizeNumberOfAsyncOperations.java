@@ -3,13 +3,14 @@ package org.ovirt.engine.core.utils;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Callable;
+
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public final class SyncronizeNumberOfAsyncOperations {
     private int _numberOfOperations;
     private ISingleAsyncOperationFactory _factory;
 
-    public SyncronizeNumberOfAsyncOperations(int numberOfOperations, ArrayList parameters,
+    public SyncronizeNumberOfAsyncOperations(int numberOfOperations, ArrayList<?> parameters,
             ISingleAsyncOperationFactory factory) {
         _numberOfOperations = numberOfOperations;
         _factory = factory;

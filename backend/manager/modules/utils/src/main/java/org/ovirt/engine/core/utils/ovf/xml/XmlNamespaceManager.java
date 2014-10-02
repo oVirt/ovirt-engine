@@ -37,7 +37,7 @@ public class XmlNamespaceManager implements NamespaceContext {
     }
 
     @Override
-    public Iterator getPrefixes(String namespaceURI) {
+    public Iterator<String> getPrefixes(String namespaceURI) {
         List<String> prefixes = new LinkedList<String>();
 
         for (Map.Entry<String, String> prefixToUriEntry : prefixToUri.entrySet()) {

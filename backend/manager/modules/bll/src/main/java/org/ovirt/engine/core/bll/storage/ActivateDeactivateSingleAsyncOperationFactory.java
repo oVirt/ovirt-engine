@@ -26,7 +26,7 @@ public abstract class ActivateDeactivateSingleAsyncOperationFactory implements I
     }
 
     @Override
-    public void initialize(ArrayList parameters) {
+    public void initialize(ArrayList<?> parameters) {
         if (!(parameters.get(0) instanceof ArrayList)) {
             throw new IllegalArgumentException();
         }

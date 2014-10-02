@@ -68,6 +68,7 @@ public class XmlTextWriter {
         }
     }
 
+    @SuppressWarnings("unchecked")
     public void WriteMap(Map<String, Object> map) {
         if (map != null) {
             for (Entry<String, Object> param : map.entrySet()) {
