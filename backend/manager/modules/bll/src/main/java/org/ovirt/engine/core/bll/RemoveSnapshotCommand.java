@@ -424,7 +424,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
     }
 
     private VdcActionType getSnapshotActionType() {
-        return getVm().isDown() ? VdcActionType.RemoveSnapshotSingleDisk : VdcActionType.RemoveSnapshotSingleDiskLive;
+        return getVm().isQualifiedForLiveSnapshotMerge() ? VdcActionType.RemoveSnapshotSingleDiskLive : VdcActionType.RemoveSnapshotSingleDisk;
     }
 
     @Override
@@ -445,6 +445,6 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
     @Override
     public CommandCallBack getCallBack() {
-        return new RemoveSnapshotCommandCallback();
+        return getVm().isQualifiedForLiveSnapshotMerge() ? new RemoveSnapshotCommandCallback() : null;
     }
 }
