@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.TryBackToAllSnapshotsOfVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.SnapshotActionEnum;
@@ -439,14 +440,19 @@ public class VmSnapshotListModel extends SearchableListModel
         AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
-                ArrayList<DiskImage> disks = (ArrayList<DiskImage>) returnValue;
-                for (DiskImage disk : disks) {
-                    if (disk.getSnapshots().size() <= 1) {
+                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                for (Disk disk : disks) {
+                    if (disk.getDiskStorageType() == Disk.DiskStorageType.LUN) {
                         continue;
                     }
 
-                    Guid snapshotId = disk.getSnapshots().get(1).getVmSnapshotId();
-                    snapshotsMap.get(snapshotId).getEntity().getDiskImages().add(disk);
+                    DiskImage diskImage = (DiskImage) disk;
+                    if (diskImage.getSnapshots().size() <= 1) {
+                        continue;
+                    }
+
+                    Guid snapshotId = diskImage.getSnapshots().get(1).getVmSnapshotId();
+                    snapshotsMap.get(snapshotId).getEntity().getDiskImages().add(diskImage);
                 }
 
                 updateItems(snapshots);
