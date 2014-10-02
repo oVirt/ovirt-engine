@@ -246,7 +246,8 @@ public class Snmp extends Transport {
     }
 
     static class Profile {
-        Pattern HOST_PATTERN = Pattern.compile("(?<host>(([^\\[:\\s]+)|(\\[[^\\]]+\\])))(:(?<port>[^\\s]*))?");
+        private static final Pattern HOST_PATTERN = Pattern.compile(
+            "(?<host>(([^\\[:\\s]+)|(\\[[^\\]]+\\])))(:(?<port>[^\\s]*))?");
 
         public List<Host> hosts = new LinkedList<>();
         public OctetString community;
