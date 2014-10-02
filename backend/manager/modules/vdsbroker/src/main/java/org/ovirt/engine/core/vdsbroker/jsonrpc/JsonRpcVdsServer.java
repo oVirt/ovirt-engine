@@ -7,6 +7,7 @@ import java.util.Map;
 import java.util.concurrent.Callable;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
@@ -912,12 +913,17 @@ public class JsonRpcVdsServer implements IVdsServer {
 
     @Override
     public FutureTask<Map<String, Object>> poll() {
+        return timeBoundPoll(0, TimeUnit.MILLISECONDS);
+    }
+
+    @Override
+    public FutureTask<Map<String, Object>> timeBoundPoll(final long timeout, final TimeUnit unit) {
         final JsonRpcRequest request = new RequestBuilder("Host.ping").build();
         final FutureCallable callable = new FutureCallable(new Callable<Map<String, Object>>() {
 
             @Override
             public Map<String, Object> call() throws Exception {
-                return new FutureMap(client, request);
+                return new FutureMap(client, request, timeout, unit);
             }
         });
 

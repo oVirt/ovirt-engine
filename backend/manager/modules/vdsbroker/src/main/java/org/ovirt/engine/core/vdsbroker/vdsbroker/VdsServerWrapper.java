@@ -4,6 +4,7 @@ import java.lang.reflect.UndeclaredThrowableException;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
@@ -858,6 +859,11 @@ public class VdsServerWrapper implements IVdsServer {
     @Override
     public FutureTask<Map<String, Object>> poll() {
         return vdsServer.futurePing();
+    }
+
+    @Override
+    public FutureTask<Map<String, Object>> timeBoundPoll(long timeout, TimeUnit unit) {
+        return poll();
     }
 
     @Override
