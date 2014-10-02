@@ -6,6 +6,7 @@ import java.util.Map;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.transport.ProtocolDetector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
@@ -14,7 +15,9 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.VdsProtocol;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
@@ -160,6 +163,18 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                     RunSleepOnReboot(getStatusOnReboot());
                 break;
                 case Complete:
+                    if (checkProtocolTofallback(getVds())) {
+                        // we need to check whether we are connecting to vdsm which supports xmlrpc only
+                        ProtocolDetector detector = new ProtocolDetector(getVds());
+                        if (!detector.attemptConnection()) {
+                            detector.stopConnection();
+                            if (detector.attemptFallbackProtocol()) {
+                                detector.setFallbackProtocol();
+                            } else {
+                                throw new VdsInstallException(VDSStatus.InstallFailed, "Host not reachable");
+                            }
+                        }
+                    }
                     if (!configureNetworkUsingHostDeploy) {
                         configureManagementNetwork();
                     }
@@ -182,6 +197,10 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
         } catch (Exception e) {
             handleError(e, VDSStatus.InstallFailed);
         }
+    }
+
+    private boolean checkProtocolTofallback(VDS vds) {
+        return VdsProtocol.STOMP.equals(vds.getProtocol());
     }
 
     private void configureManagementNetwork() {

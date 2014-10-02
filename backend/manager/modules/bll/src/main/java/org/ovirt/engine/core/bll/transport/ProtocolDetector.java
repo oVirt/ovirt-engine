@@ -26,32 +26,42 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
  */
 public class ProtocolDetector {
 
+    private Integer connectionTimeout = null;
+    private Integer retryAttempts = null;
+
     private VDS vds;
 
     public ProtocolDetector(VDS vds) {
         this.vds = vds;
+        this.retryAttempts = Config.<Integer> getValue(ConfigValues.ProtocolFallbackRetries);
+        this.connectionTimeout = Config.<Integer> getValue(ConfigValues.ProtocolFallbackTimeoutInMilliSeconds);
     }
 
     /**
      * Attempts to connect to vdsm using a proxy from {@code VdsManager} for a host.
+     * There are 3 attempts to connect.
      *
      * @return <code>true</code> if connected or <code>false</code> if connection failed.
      */
     public boolean attemptConnection() {
+        boolean connected = false;
         try {
-            long timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
-            FutureVDSCall<VDSReturnValue> task =
-                    Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.TimeBoundPoll,
-                            new TimeBoundPollVDSCommandParameters(vds.getId(), timeout, TimeUnit.SECONDS));
-            VDSReturnValue returnValue =
-                    task.get(timeout, TimeUnit.SECONDS);
-
-            if (returnValue.getSucceeded()) {
-                return true;
+            for (int i = 0; i < this.retryAttempts; i++) {
+                long timeout = Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
+                FutureVDSCall<VDSReturnValue> task =
+                        Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.TimeBoundPoll,
+                                new TimeBoundPollVDSCommandParameters(vds.getId(), timeout, TimeUnit.SECONDS));
+                VDSReturnValue returnValue =
+                        task.get(timeout, TimeUnit.SECONDS);
+                connected = returnValue.getSucceeded();
+                if (connected) {
+                    break;
+                }
+                Thread.sleep(this.connectionTimeout);
             }
-        } catch (TimeoutException ignored) {
+        } catch (TimeoutException | InterruptedException ignored) {
         }
-        return false;
+        return connected;
     }
 
     /**
