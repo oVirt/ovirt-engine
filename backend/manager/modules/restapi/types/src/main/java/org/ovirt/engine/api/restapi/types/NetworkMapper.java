@@ -110,8 +110,6 @@ public class NetworkMapper {
             if (entity.getCluster().isMigration()) {
                 model.getUsages().getUsages().add(NetworkUsage.MIGRATION.value());
             }
-        }
-        if (entity.getCluster() != null) {
             if (entity.getCluster().getStatus() != null) {
                 model.setStatus(StatusUtils.create(map(entity.getCluster().getStatus(), null)));
             }
