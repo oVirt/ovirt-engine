@@ -38,6 +38,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -695,7 +696,13 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                fetchResult.setText(object.getFetchResult().getEntity());
+                String fetchResultText = object.getFetchResult().getEntity();
+                if (ConstantsManager.getInstance().getConstants().errorLoadingFingerprint().equals(fetchResultText)) {
+                    fetchResult.addStyleName(style.fetchResultErrorLabel());
+                } else {
+                    fetchResult.removeStyleName(style.fetchResultErrorLabel());
+                }
+                fetchResult.setText(fetchResultText);
             }
         });
 
@@ -1084,6 +1091,8 @@ public class HostPopupView extends AbstractTabbedModelBoundPopupView<HostModel> 
         String expanderContent();
 
         String pkStyle();
+
+        String fetchResultErrorLabel();
     }
 
     public void setPkPasswordSectionVisiblity(boolean visible) {
