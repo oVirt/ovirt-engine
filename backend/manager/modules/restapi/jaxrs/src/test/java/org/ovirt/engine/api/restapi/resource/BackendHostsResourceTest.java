@@ -337,16 +337,16 @@ public class BackendHostsResourceTest
     static VDS setUpStatisticalEntityExpectations(VDS entity, VdsStatistics statistics) {
         expect(entity.getPhysicalMemMb()).andReturn(5120).anyTimes();
         expect(entity.getStatisticsData()).andReturn(statistics).anyTimes();
-        expect(statistics.getusage_mem_percent()).andReturn(20).anyTimes();
-        expect(statistics.getswap_free()).andReturn(25L).anyTimes();
-        expect(statistics.getswap_total()).andReturn(30L).anyTimes();
-        expect(statistics.getmem_available()).andReturn(35L).anyTimes();
-        expect(statistics.getmem_shared()).andReturn(38L).anyTimes();
-        expect(statistics.getksm_cpu_percent()).andReturn(40).anyTimes();
-        expect(statistics.getcpu_user()).andReturn(45.0).anyTimes();
-        expect(statistics.getcpu_sys()).andReturn(50.0).anyTimes();
-        expect(statistics.getcpu_idle()).andReturn(55.0).anyTimes();
-        expect(statistics.getcpu_load()).andReturn(0.60).anyTimes();
+        expect(statistics.getUsageMemPercent()).andReturn(20).anyTimes();
+        expect(statistics.getSwapFree()).andReturn(25L).anyTimes();
+        expect(statistics.getSwapTotal()).andReturn(30L).anyTimes();
+        expect(statistics.getMemAvailable()).andReturn(35L).anyTimes();
+        expect(statistics.getMemShared()).andReturn(38L).anyTimes();
+        expect(statistics.getKsmCpuPercent()).andReturn(40).anyTimes();
+        expect(statistics.getCpuUser()).andReturn(45.0).anyTimes();
+        expect(statistics.getCpuSys()).andReturn(50.0).anyTimes();
+        expect(statistics.getCpuIdle()).andReturn(55.0).anyTimes();
+        expect(statistics.getCpuLoad()).andReturn(0.60).anyTimes();
         return entity;
     }
 

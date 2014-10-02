@@ -140,17 +140,17 @@ public class JsonObjectSerializationEntitiesTest {
     private static VdsStatistics randomVdsStatistics() {
         RandomUtils random = RandomUtils.instance();
         VdsStatistics vdsStatistics = new VdsStatistics();
-        vdsStatistics.setcpu_idle(random.nextDouble());
-        vdsStatistics.setcpu_load(random.nextDouble());
-        vdsStatistics.setcpu_sys(random.nextDouble());
-        vdsStatistics.setcpu_user(random.nextDouble());
-        vdsStatistics.setmem_available(random.nextLong());
+        vdsStatistics.setCpuIdle(random.nextDouble());
+        vdsStatistics.setCpuLoad(random.nextDouble());
+        vdsStatistics.setCpuSys(random.nextDouble());
+        vdsStatistics.setCpuUser(random.nextDouble());
+        vdsStatistics.setMemAvailable(random.nextLong());
         vdsStatistics.setMemFree(random.nextLong());
-        vdsStatistics.setmem_shared(random.nextLong());
-        vdsStatistics.setusage_cpu_percent(random.nextInt());
-        vdsStatistics.setusage_mem_percent(random.nextInt());
-        vdsStatistics.setusage_network_percent(random.nextInt());
-        vdsStatistics.setcpu_over_commit_time_stamp(new Date(random.nextLong()));
+        vdsStatistics.setMemShared(random.nextLong());
+        vdsStatistics.setUsageCpuPercent(random.nextInt());
+        vdsStatistics.setUsageMemPercent(random.nextInt());
+        vdsStatistics.setUsageNetworkPercent(random.nextInt());
+        vdsStatistics.setCpuOverCommitTimeStamp(new Date(random.nextLong()));
         return vdsStatistics;
     }
 

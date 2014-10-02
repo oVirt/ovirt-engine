@@ -12,23 +12,23 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private static final long serialVersionUID = 69893283302260434L;
 
     private Guid id;
-    private BigDecimal cpu_idle;
-    private BigDecimal cpu_load;
-    private BigDecimal cpu_sys;
-    private BigDecimal cpu_user;
-    private Integer usage_mem_percent;
-    private Integer usage_cpu_percent;
-    private Integer usage_network_percent;
-    private Long mem_available;
+    private BigDecimal cpuIdle;
+    private BigDecimal cpuLoad;
+    private BigDecimal cpuSys;
+    private BigDecimal cpuUser;
+    private Integer usageMemPercent;
+    private Integer usageCpuPercent;
+    private Integer usageNetworkPercent;
+    private Long memAvailable;
     private Long memFree;
-    private Long mem_shared;
-    private Long swap_free;
-    private Long swap_total;
-    private Integer ksm_cpu_percent;
-    private Long ksm_pages;
-    private Boolean ksm_state;
+    private Long memShared;
+    private Long swapFree;
+    private Long swapTotal;
+    private Integer ksmCpuPercent;
+    private Long ksmPages;
+    private Boolean ksmState;
     private int anonymousHugePages;
-    private Long boot_time;
+    private Long bootTime;
     // The following values store the state of the Hosted Engine HA environment
     // for each host and allow the user to see/change that state through the
     // engine UI.  They originate in the HA agent and are updated with the other
@@ -38,22 +38,22 @@ public class VdsStatistics implements BusinessEntity<Guid> {
     private boolean highlyAvailableIsActive;
     private boolean highlyAvailableGlobalMaintenance;
     private boolean highlyAvailableLocalMaintenance;
-    private Date cpu_over_commit_time_stamp;
+    private Date cpuOverCommitTimeStamp;
 
     private List<CpuStatistics> cpuCoreStatistics;
 
     public VdsStatistics() {
-        this.cpu_idle = BigDecimal.ZERO;
-        this.cpu_load = BigDecimal.ZERO;
-        this.cpu_sys = BigDecimal.ZERO;
-        this.cpu_user = BigDecimal.ZERO;
-        mem_available = 0L;
+        this.cpuIdle = BigDecimal.ZERO;
+        this.cpuLoad = BigDecimal.ZERO;
+        this.cpuSys = BigDecimal.ZERO;
+        this.cpuUser = BigDecimal.ZERO;
+        memAvailable = 0L;
         memFree = 0L;
-        mem_shared = 0L;
-        swap_free = 0L;
-        swap_total = 0L;
-        ksm_pages = 0L;
-        boot_time = null;
+        memShared = 0L;
+        swapFree = 0L;
+        swapTotal = 0L;
+        ksmPages = 0L;
+        bootTime = null;
         highlyAvailableScore = 0;
         highlyAvailableIsConfigured = false;
         highlyAvailableIsActive = false;
@@ -75,29 +75,29 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         final int prime = 31;
         int result = 1;
         result = prime * result + ((id == null) ? 0 : id.hashCode());
-        result = prime * result + ((cpu_idle == null) ? 0 : cpu_idle.hashCode());
-        result = prime * result + ((cpu_load == null) ? 0 : cpu_load.hashCode());
-        result = prime * result + ((cpu_sys == null) ? 0 : cpu_sys.hashCode());
-        result = prime * result + ((cpu_user == null) ? 0 : cpu_user.hashCode());
-        result = prime * result + ((mem_available == null) ? 0 : mem_available.hashCode());
+        result = prime * result + ((cpuIdle == null) ? 0 : cpuIdle.hashCode());
+        result = prime * result + ((cpuLoad == null) ? 0 : cpuLoad.hashCode());
+        result = prime * result + ((cpuSys == null) ? 0 : cpuSys.hashCode());
+        result = prime * result + ((cpuUser == null) ? 0 : cpuUser.hashCode());
+        result = prime * result + ((memAvailable == null) ? 0 : memAvailable.hashCode());
         result = prime * result + ((memFree == null) ? 0 : memFree.hashCode());
-        result = prime * result + ((mem_shared == null) ? 0 : mem_shared.hashCode());
-        result = prime * result + ((usage_cpu_percent == null) ? 0 : usage_cpu_percent.hashCode());
-        result = prime * result + ((usage_network_percent == null) ? 0 : usage_network_percent.hashCode());
-        result = prime * result + ((ksm_state == null) ? 0 : ksm_state.hashCode());
-        result = prime * result + ((ksm_pages == null) ? 0 : ksm_pages.hashCode());
-        result = prime * result + ((ksm_cpu_percent == null) ? 0 : ksm_cpu_percent.hashCode());
-        result = prime * result + ((swap_total == null) ? 0 : swap_total.hashCode());
-        result = prime * result + ((swap_free == null) ? 0 : swap_free.hashCode());
+        result = prime * result + ((memShared == null) ? 0 : memShared.hashCode());
+        result = prime * result + ((usageCpuPercent == null) ? 0 : usageCpuPercent.hashCode());
+        result = prime * result + ((usageNetworkPercent == null) ? 0 : usageNetworkPercent.hashCode());
+        result = prime * result + ((ksmState == null) ? 0 : ksmState.hashCode());
+        result = prime * result + ((ksmPages == null) ? 0 : ksmPages.hashCode());
+        result = prime * result + ((ksmCpuPercent == null) ? 0 : ksmCpuPercent.hashCode());
+        result = prime * result + ((swapTotal == null) ? 0 : swapTotal.hashCode());
+        result = prime * result + ((swapFree == null) ? 0 : swapFree.hashCode());
         result = prime * result + anonymousHugePages;
-        result = prime * result + ((boot_time == null) ? 0 : boot_time.hashCode());
+        result = prime * result + ((bootTime == null) ? 0 : bootTime.hashCode());
         result = prime * result + highlyAvailableScore;
         result = prime * result + (highlyAvailableIsConfigured ? 1231 : 1237);
         result = prime * result + (highlyAvailableIsActive ? 1231 : 1237);
         result = prime * result + (highlyAvailableGlobalMaintenance ? 1231 : 1237);
         result = prime * result + (highlyAvailableLocalMaintenance ? 1231 : 1237);
         result = prime * result + ((cpuCoreStatistics == null) ? 0 : cpuCoreStatistics.hashCode());
-        result = prime * result + ((cpu_over_commit_time_stamp == null) ? 0 : cpu_over_commit_time_stamp.hashCode());
+        result = prime * result + ((cpuOverCommitTimeStamp == null) ? 0 : cpuOverCommitTimeStamp.hashCode());
         return result;
     }
 
@@ -114,61 +114,61 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         }
         VdsStatistics other = (VdsStatistics) obj;
         return (ObjectUtils.objectsEqual(id, other.id)
-                && ObjectUtils.bigDecimalEqual(cpu_idle, other.cpu_idle)
-                && ObjectUtils.bigDecimalEqual(cpu_load, other.cpu_load)
-                && ObjectUtils.bigDecimalEqual(cpu_sys, other.cpu_sys)
-                && ObjectUtils.bigDecimalEqual(cpu_user, other.cpu_user)
-                && ObjectUtils.objectsEqual(mem_available, other.mem_available)
+                && ObjectUtils.bigDecimalEqual(cpuIdle, other.cpuIdle)
+                && ObjectUtils.bigDecimalEqual(cpuLoad, other.cpuLoad)
+                && ObjectUtils.bigDecimalEqual(cpuSys, other.cpuSys)
+                && ObjectUtils.bigDecimalEqual(cpuUser, other.cpuUser)
+                && ObjectUtils.objectsEqual(memAvailable, other.memAvailable)
                 && ObjectUtils.objectsEqual(memFree, other.memFree)
-                && ObjectUtils.objectsEqual(mem_shared, other.mem_shared)
-                && ObjectUtils.objectsEqual(usage_cpu_percent, other.usage_cpu_percent)
-                && ObjectUtils.objectsEqual(usage_network_percent, other.usage_network_percent)
-                && ObjectUtils.objectsEqual(ksm_state, other.ksm_state)
-                && ObjectUtils.objectsEqual(ksm_pages, other.ksm_pages)
-                && ObjectUtils.objectsEqual(ksm_cpu_percent, other.ksm_cpu_percent)
-                && ObjectUtils.objectsEqual(swap_total, other.swap_total)
-                && ObjectUtils.objectsEqual(swap_free, other.swap_free)
+                && ObjectUtils.objectsEqual(memShared, other.memShared)
+                && ObjectUtils.objectsEqual(usageCpuPercent, other.usageCpuPercent)
+                && ObjectUtils.objectsEqual(usageNetworkPercent, other.usageNetworkPercent)
+                && ObjectUtils.objectsEqual(ksmState, other.ksmState)
+                && ObjectUtils.objectsEqual(ksmPages, other.ksmPages)
+                && ObjectUtils.objectsEqual(ksmCpuPercent, other.ksmCpuPercent)
+                && ObjectUtils.objectsEqual(swapTotal, other.swapTotal)
+                && ObjectUtils.objectsEqual(swapFree, other.swapFree)
                 && (anonymousHugePages == other.anonymousHugePages)
-                && ObjectUtils.objectsEqual(boot_time, other.boot_time)
+                && ObjectUtils.objectsEqual(bootTime, other.bootTime)
                 && (highlyAvailableScore == other.highlyAvailableScore)
                 && (highlyAvailableIsConfigured == other.highlyAvailableIsConfigured)
                 && (highlyAvailableIsActive == other.highlyAvailableIsActive)
                 && (highlyAvailableGlobalMaintenance == other.highlyAvailableGlobalMaintenance)
                 && (highlyAvailableLocalMaintenance == other.highlyAvailableLocalMaintenance)
                 && ObjectUtils.objectsEqual(cpuCoreStatistics, other.cpuCoreStatistics)
-                && ObjectUtils.objectsEqual(cpu_over_commit_time_stamp, other.cpu_over_commit_time_stamp));
+                && ObjectUtils.objectsEqual(cpuOverCommitTimeStamp, other.cpuOverCommitTimeStamp));
     }
 
-    public Double getcpu_idle() {
-        return this.cpu_idle.doubleValue();
+    public Double getCpuIdle() {
+        return this.cpuIdle.doubleValue();
     }
 
-    public void setcpu_idle(Double cpuIdle) {
-        this.cpu_idle = BigDecimal.valueOf(cpuIdle);
+    public void setCpuIdle(Double cpuIdle) {
+        this.cpuIdle = BigDecimal.valueOf(cpuIdle);
     }
 
-    public Double getcpu_load() {
-        return this.cpu_load.doubleValue();
+    public Double getCpuLoad() {
+        return this.cpuLoad.doubleValue();
     }
 
-    public void setcpu_load(Double cpuLoad) {
-        this.cpu_load = BigDecimal.valueOf(cpuLoad);
+    public void setCpuLoad(Double cpuLoad) {
+        this.cpuLoad = BigDecimal.valueOf(cpuLoad);
     }
 
-    public Double getcpu_sys() {
-        return this.cpu_sys.doubleValue();
+    public Double getCpuSys() {
+        return this.cpuSys.doubleValue();
     }
 
-    public void setcpu_sys(Double cpuSys) {
-        this.cpu_sys = BigDecimal.valueOf(cpuSys);
+    public void setCpuSys(Double cpuSys) {
+        this.cpuSys = BigDecimal.valueOf(cpuSys);
     }
 
-    public Double getcpu_user() {
-        return this.cpu_user.doubleValue();
+    public Double getCpuUser() {
+        return this.cpuUser.doubleValue();
     }
 
-    public void setcpu_user(Double cpuUser) {
-        this.cpu_user = BigDecimal.valueOf(cpuUser);
+    public void setCpuUser(Double cpuUser) {
+        this.cpuUser = BigDecimal.valueOf(cpuUser);
     }
 
     /**
@@ -179,12 +179,12 @@ public class VdsStatistics implements BusinessEntity<Guid> {
      * Thus, we deduct the growth potential of qemu processes, which is (memCommitted - resident)
      * @return - free mem available for new vm
      */
-    public Long getmem_available() {
-        return this.mem_available;
+    public Long getMemAvailable() {
+        return this.memAvailable;
     }
 
-    public void setmem_available(Long value) {
-        this.mem_available = value;
+    public void setMemAvailable(Long value) {
+        this.memAvailable = value;
     }
 
     /**
@@ -200,36 +200,36 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.memFree = value;
     }
 
-    public Long getmem_shared() {
-        return this.mem_shared;
+    public Long getMemShared() {
+        return this.memShared;
     }
 
-    public void setmem_shared(Long value) {
-        this.mem_shared = value;
+    public void setMemShared(Long value) {
+        this.memShared = value;
     }
 
-    public Integer getusage_cpu_percent() {
-        return this.usage_cpu_percent;
+    public Integer getUsageCpuPercent() {
+        return this.usageCpuPercent;
     }
 
-    public void setusage_cpu_percent(Integer value) {
-        this.usage_cpu_percent = value;
+    public void setUsageCpuPercent(Integer value) {
+        this.usageCpuPercent = value;
     }
 
-    public Integer getusage_mem_percent() {
-        return this.usage_mem_percent;
+    public Integer getUsageMemPercent() {
+        return this.usageMemPercent;
     }
 
-    public void setusage_mem_percent(Integer value) {
-        this.usage_mem_percent = value;
+    public void setUsageMemPercent(Integer value) {
+        this.usageMemPercent = value;
     }
 
-    public Integer getusage_network_percent() {
-        return this.usage_network_percent;
+    public Integer getUsageNetworkPercent() {
+        return this.usageNetworkPercent;
     }
 
-    public void setusage_network_percent(Integer value) {
-        this.usage_network_percent = value;
+    public void setUsageNetworkPercent(Integer value) {
+        this.usageNetworkPercent = value;
     }
 
     @Override
@@ -242,52 +242,52 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.id = id;
     }
 
-    public Long getswap_free() {
-        return this.swap_free;
+    public Long getSwapFree() {
+        return this.swapFree;
     }
 
-    public void setswap_free(Long value) {
-        this.swap_free = value;
+    public void setSwapFree(Long value) {
+        this.swapFree = value;
     }
 
-    public Long getswap_total() {
-        return this.swap_total;
+    public Long getSwapTotal() {
+        return this.swapTotal;
     }
 
-    public void setswap_total(Long value) {
-        this.swap_total = value;
+    public void setSwapTotal(Long value) {
+        this.swapTotal = value;
     }
 
-    public Integer getksm_cpu_percent() {
-        return this.ksm_cpu_percent;
+    public Integer getKsmCpuPercent() {
+        return this.ksmCpuPercent;
     }
 
-    public void setksm_cpu_percent(Integer value) {
-        this.ksm_cpu_percent = value;
+    public void setKsmCpuPercent(Integer value) {
+        this.ksmCpuPercent = value;
     }
 
-    public Long getksm_pages() {
-        return this.ksm_pages;
+    public Long getKsmPages() {
+        return this.ksmPages;
     }
 
-    public void setksm_pages(Long value) {
-        this.ksm_pages = value;
+    public void setKsmPages(Long value) {
+        this.ksmPages = value;
     }
 
-    public Boolean getksm_state() {
-        return this.ksm_state;
+    public Boolean getKsmState() {
+        return this.ksmState;
     }
 
-    public void setksm_state(Boolean value) {
-        this.ksm_state = value;
+    public void setKsmState(Boolean value) {
+        this.ksmState = value;
     }
 
-    public Long getboot_time() {
-        return this.boot_time;
+    public Long getBootTime() {
+        return this.bootTime;
     }
 
-    public void setboot_time(Long value) {
-        this.boot_time = value;
+    public void setBootTime(Long value) {
+        this.bootTime = value;
     }
 
     public int getHighlyAvailableScore() {
@@ -338,11 +338,11 @@ public class VdsStatistics implements BusinessEntity<Guid> {
         this.cpuCoreStatistics = cpuCoreStatistics;
     }
 
-    public Date getcpu_over_commit_time_stamp() {
-        return this.cpu_over_commit_time_stamp;
+    public Date getCpuOverCommitTimeStamp() {
+        return this.cpuOverCommitTimeStamp;
     }
 
-    public void setcpu_over_commit_time_stamp(Date value) {
-        this.cpu_over_commit_time_stamp = value;
+    public void setCpuOverCommitTimeStamp(Date value) {
+        this.cpuOverCommitTimeStamp = value;
     }
 }

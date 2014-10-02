@@ -26,34 +26,34 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
         @Override
         public VdsStatistics mapRow(ResultSet rs, int rowNum) throws SQLException {
             VdsStatistics entity = new VdsStatistics();
-            entity.setcpu_idle(rs.getDouble("cpu_idle"));
-            entity.setcpu_load(rs.getDouble("cpu_load"));
-            entity.setcpu_sys(rs.getDouble("cpu_sys"));
-            entity.setcpu_user(rs.getDouble("cpu_user"));
-            entity.setusage_cpu_percent((Integer) rs
+            entity.setCpuIdle(rs.getDouble("cpu_idle"));
+            entity.setCpuLoad(rs.getDouble("cpu_load"));
+            entity.setCpuSys(rs.getDouble("cpu_sys"));
+            entity.setCpuUser(rs.getDouble("cpu_user"));
+            entity.setUsageCpuPercent((Integer) rs
                     .getObject("usage_cpu_percent"));
-            entity.setusage_mem_percent((Integer) rs
+            entity.setUsageMemPercent((Integer) rs
                     .getObject("usage_mem_percent"));
-            entity.setusage_network_percent((Integer) rs
+            entity.setUsageNetworkPercent((Integer) rs
                     .getObject("usage_network_percent"));
             entity.setId(getGuidDefaultEmpty(rs, "vds_id"));
-            entity.setmem_available(rs.getLong("mem_available"));
+            entity.setMemAvailable(rs.getLong("mem_available"));
             entity.setMemFree(rs.getLong("mem_free"));
-            entity.setmem_shared(rs.getLong("mem_shared"));
-            entity.setswap_free(rs.getLong("swap_free"));
-            entity.setswap_total(rs.getLong("swap_total"));
-            entity.setksm_cpu_percent((Integer) rs
+            entity.setMemShared(rs.getLong("mem_shared"));
+            entity.setSwapFree(rs.getLong("swap_free"));
+            entity.setSwapTotal(rs.getLong("swap_total"));
+            entity.setKsmCpuPercent((Integer) rs
                     .getObject("ksm_cpu_percent"));
-            entity.setksm_pages(rs.getLong("ksm_pages"));
-            entity.setksm_state((Boolean) rs.getObject("ksm_state"));
+            entity.setKsmPages(rs.getLong("ksm_pages"));
+            entity.setKsmState((Boolean) rs.getObject("ksm_state"));
             entity.setAnonymousHugePages(rs.getInt("anonymous_hugepages"));
-            entity.setboot_time((Long) rs.getObject("boot_time"));
+            entity.setBootTime((Long) rs.getObject("boot_time"));
             entity.setHighlyAvailableScore(rs.getInt("ha_score"));
             entity.setHighlyAvailableIsConfigured(rs.getBoolean("ha_configured"));
             entity.setHighlyAvailableIsActive(rs.getBoolean("ha_active"));
             entity.setHighlyAvailableGlobalMaintenance(rs.getBoolean("ha_global_maintenance"));
             entity.setHighlyAvailableLocalMaintenance(rs.getBoolean("ha_local_maintenance"));
-            entity.setcpu_over_commit_time_stamp(DbFacadeUtils.fromDate(rs
+            entity.setCpuOverCommitTimeStamp(DbFacadeUtils.fromDate(rs
                     .getTimestamp("cpu_over_commit_time_stamp")));
             return entity;
         }
@@ -72,31 +72,31 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
     @Override
     public void save(VdsStatistics stats) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cpu_idle", stats.getcpu_idle())
-                .addValue("cpu_load", stats.getcpu_load())
-                .addValue("cpu_sys", stats.getcpu_sys())
-                .addValue("cpu_user", stats.getcpu_user())
-                .addValue("usage_cpu_percent", stats.getusage_cpu_percent())
-                .addValue("usage_mem_percent", stats.getusage_mem_percent())
+                .addValue("cpu_idle", stats.getCpuIdle())
+                .addValue("cpu_load", stats.getCpuLoad())
+                .addValue("cpu_sys", stats.getCpuSys())
+                .addValue("cpu_user", stats.getCpuUser())
+                .addValue("usage_cpu_percent", stats.getUsageCpuPercent())
+                .addValue("usage_mem_percent", stats.getUsageMemPercent())
                 .addValue("usage_network_percent",
-                        stats.getusage_network_percent())
+                        stats.getUsageNetworkPercent())
                 .addValue("vds_id", stats.getId())
-                .addValue("mem_available", stats.getmem_available())
+                .addValue("mem_available", stats.getMemAvailable())
                 .addValue("mem_free" , stats.getMemFree())
-                .addValue("mem_shared", stats.getmem_shared())
-                .addValue("swap_free", stats.getswap_free())
-                .addValue("swap_total", stats.getswap_total())
-                .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
-                .addValue("ksm_pages", stats.getksm_pages())
-                .addValue("ksm_state", stats.getksm_state())
+                .addValue("mem_shared", stats.getMemShared())
+                .addValue("swap_free", stats.getSwapFree())
+                .addValue("swap_total", stats.getSwapTotal())
+                .addValue("ksm_cpu_percent", stats.getKsmCpuPercent())
+                .addValue("ksm_pages", stats.getKsmPages())
+                .addValue("ksm_state", stats.getKsmState())
                 .addValue("anonymous_hugepages", stats.getAnonymousHugePages())
-                .addValue("boot_time", stats.getboot_time())
+                .addValue("boot_time", stats.getBootTime())
                 .addValue("ha_score", stats.getHighlyAvailableScore())
                 .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
                 .addValue("ha_active", stats.getHighlyAvailableIsActive())
                 .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
                 .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance())
-                .addValue("cpu_over_commit_time_stamp", stats.getcpu_over_commit_time_stamp());
+                .addValue("cpu_over_commit_time_stamp", stats.getCpuOverCommitTimeStamp());
 
         getCallsHandler().executeModification("InsertVdsStatistics", parameterSource);
     }
@@ -104,31 +104,31 @@ public class VdsStatisticsDAODbFacadeImpl extends BaseDAODbFacade implements Vds
     @Override
     public void update(VdsStatistics stats) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("cpu_idle", stats.getcpu_idle())
-                .addValue("cpu_load", stats.getcpu_load())
-                .addValue("cpu_sys", stats.getcpu_sys())
-                .addValue("cpu_user", stats.getcpu_user())
-                .addValue("usage_cpu_percent", stats.getusage_cpu_percent())
-                .addValue("usage_mem_percent", stats.getusage_mem_percent())
+                .addValue("cpu_idle", stats.getCpuIdle())
+                .addValue("cpu_load", stats.getCpuLoad())
+                .addValue("cpu_sys", stats.getCpuSys())
+                .addValue("cpu_user", stats.getCpuUser())
+                .addValue("usage_cpu_percent", stats.getUsageCpuPercent())
+                .addValue("usage_mem_percent", stats.getUsageMemPercent())
                 .addValue("usage_network_percent",
-                        stats.getusage_network_percent())
+                        stats.getUsageNetworkPercent())
                 .addValue("vds_id", stats.getId())
-                .addValue("mem_available", stats.getmem_available())
+                .addValue("mem_available", stats.getMemAvailable())
                 .addValue("mem_free" , stats.getMemFree())
-                .addValue("mem_shared", stats.getmem_shared())
-                .addValue("swap_free", stats.getswap_free())
-                .addValue("swap_total", stats.getswap_total())
-                .addValue("ksm_cpu_percent", stats.getksm_cpu_percent())
-                .addValue("ksm_pages", stats.getksm_pages())
-                .addValue("ksm_state", stats.getksm_state())
+                .addValue("mem_shared", stats.getMemShared())
+                .addValue("swap_free", stats.getSwapFree())
+                .addValue("swap_total", stats.getSwapTotal())
+                .addValue("ksm_cpu_percent", stats.getKsmCpuPercent())
+                .addValue("ksm_pages", stats.getKsmPages())
+                .addValue("ksm_state", stats.getKsmState())
                 .addValue("anonymous_hugepages", stats.getAnonymousHugePages())
-                .addValue("boot_time", stats.getboot_time())
+                .addValue("boot_time", stats.getBootTime())
                 .addValue("ha_score", stats.getHighlyAvailableScore())
                 .addValue("ha_configured", stats.getHighlyAvailableIsConfigured())
                 .addValue("ha_active", stats.getHighlyAvailableIsActive())
                 .addValue("ha_global_maintenance", stats.getHighlyAvailableGlobalMaintenance())
                 .addValue("ha_local_maintenance", stats.getHighlyAvailableLocalMaintenance())
-                .addValue("cpu_over_commit_time_stamp", stats.getcpu_over_commit_time_stamp());
+                .addValue("cpu_over_commit_time_stamp", stats.getCpuOverCommitTimeStamp());
 
         getCallsHandler().executeModification("UpdateVdsStatistics", parameterSource);
     }

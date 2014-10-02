@@ -530,35 +530,35 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Double getCpuIdle() {
-        return this.mVdsStatistics.getcpu_idle();
+        return this.mVdsStatistics.getCpuIdle();
     }
 
     public void setCpuIdle(Double value) {
-        this.mVdsStatistics.setcpu_idle(value);
+        this.mVdsStatistics.setCpuIdle(value);
     }
 
     public Double getCpuLoad() {
-        return this.mVdsStatistics.getcpu_load();
+        return this.mVdsStatistics.getCpuLoad();
     }
 
     public void setCpuLoad(Double value) {
-        this.mVdsStatistics.setcpu_load(value);
+        this.mVdsStatistics.setCpuLoad(value);
     }
 
     public Double getCpuSys() {
-        return this.mVdsStatistics.getcpu_sys();
+        return this.mVdsStatistics.getCpuSys();
     }
 
     public void setCpuSys(Double value) {
-        this.mVdsStatistics.setcpu_sys(value);
+        this.mVdsStatistics.setCpuSys(value);
     }
 
     public Double getCpuUser() {
-        return this.mVdsStatistics.getcpu_user();
+        return this.mVdsStatistics.getCpuUser();
     }
 
     public void setCpuUser(Double value) {
-        this.mVdsStatistics.setcpu_user(value);
+        this.mVdsStatistics.setCpuUser(value);
     }
 
     public Integer getMemCommited() {
@@ -643,27 +643,27 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getUsageMemPercent() {
-        return this.mVdsStatistics.getusage_mem_percent();
+        return this.mVdsStatistics.getUsageMemPercent();
     }
 
     public void setUsageMemPercent(Integer value) {
-        this.mVdsStatistics.setusage_mem_percent(value);
+        this.mVdsStatistics.setUsageMemPercent(value);
     }
 
     public Integer getUsageCpuPercent() {
-        return this.mVdsStatistics.getusage_cpu_percent();
+        return this.mVdsStatistics.getUsageCpuPercent();
     }
 
     public void setUsageCpuPercent(Integer value) {
-        this.mVdsStatistics.setusage_cpu_percent(value);
+        this.mVdsStatistics.setUsageCpuPercent(value);
     }
 
     public Integer getUsageNetworkPercent() {
-        return this.mVdsStatistics.getusage_network_percent();
+        return this.mVdsStatistics.getUsageNetworkPercent();
     }
 
     public void setUsageNetworkPercent(Integer value) {
-        this.mVdsStatistics.setusage_network_percent(value);
+        this.mVdsStatistics.setUsageNetworkPercent(value);
     }
 
     public Integer getGuestOverhead() {
@@ -682,11 +682,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Long getBootTime() {
-        return this.mVdsStatistics.getboot_time();
+        return this.mVdsStatistics.getBootTime();
     }
 
     public void setBootTime(Long value) {
-        this.mVdsStatistics.setboot_time(value);
+        this.mVdsStatistics.setBootTime(value);
     }
 
     public VDSStatus getPreviousStatus() {
@@ -698,11 +698,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Long getMemAvailable() {
-        return this.mVdsStatistics.getmem_available();
+        return this.mVdsStatistics.getMemAvailable();
     }
 
     public void setMemAvailable(Long value) {
-        this.mVdsStatistics.setmem_available(value);
+        this.mVdsStatistics.setMemAvailable(value);
     }
 
     public Long getMemFree() {
@@ -714,11 +714,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Long getMemShared() {
-        return this.mVdsStatistics.getmem_shared();
+        return this.mVdsStatistics.getMemShared();
     }
 
     public void setMemShared(Long value) {
-        this.mVdsStatistics.setmem_shared(value);
+        this.mVdsStatistics.setMemShared(value);
     }
 
     public String getConsoleAddress() {
@@ -752,7 +752,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Integer getMemSharedPercent() {
-        Long shared = mVdsStatistics.getmem_shared();
+        Long shared = mVdsStatistics.getMemShared();
         Integer physical = mVdsDynamic.getphysical_mem_mb();
 
         if (shared == null || physical == null || physical == 0) {
@@ -774,43 +774,43 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Long getSwapFree() {
-        return this.mVdsStatistics.getswap_free();
+        return this.mVdsStatistics.getSwapFree();
     }
 
     public void setSwapFree(Long value) {
-        this.mVdsStatistics.setswap_free(value);
+        this.mVdsStatistics.setSwapFree(value);
     }
 
     public Long getSwapTotal() {
-        return this.mVdsStatistics.getswap_total();
+        return this.mVdsStatistics.getSwapTotal();
     }
 
     public void setSwapTotal(Long value) {
-        this.mVdsStatistics.setswap_total(value);
+        this.mVdsStatistics.setSwapTotal(value);
     }
 
     public Integer getKsmCpuPercent() {
-        return this.mVdsStatistics.getksm_cpu_percent();
+        return this.mVdsStatistics.getKsmCpuPercent();
     }
 
     public void setKsmCpuPercent(Integer value) {
-        this.mVdsStatistics.setksm_cpu_percent(value);
+        this.mVdsStatistics.setKsmCpuPercent(value);
     }
 
     public Long getKsmPages() {
-        return this.mVdsStatistics.getksm_pages();
+        return this.mVdsStatistics.getKsmPages();
     }
 
     public void setKsmPages(Long value) {
-        this.mVdsStatistics.setksm_pages(value);
+        this.mVdsStatistics.setKsmPages(value);
     }
 
     public Boolean getKsmState() {
-        return this.mVdsStatistics.getksm_state();
+        return this.mVdsStatistics.getKsmState();
     }
 
     public void setKsmState(Boolean value) {
-        this.mVdsStatistics.setksm_state(value);
+        this.mVdsStatistics.setKsmState(value);
     }
 
     public String getSoftwareVersion() {
@@ -846,11 +846,11 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
     }
 
     public Date getCpuOverCommitTimestamp() {
-        return mVdsStatistics.getcpu_over_commit_time_stamp();
+        return mVdsStatistics.getCpuOverCommitTimeStamp();
     }
 
     public void setCpuOverCommitTimestamp(Date value) {
-        mVdsStatistics.setcpu_over_commit_time_stamp(value);
+        mVdsStatistics.setCpuOverCommitTimeStamp(value);
     }
 
     public int getVdsStrength() {

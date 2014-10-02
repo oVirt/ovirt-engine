@@ -40,23 +40,23 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         VdsStatistics s = entity.getStatisticsData();
         // if user queries host statistics before host installation completed, null values are possible (therefore added checks).
         long memTotal = entity.getPhysicalMemMb()==null ? 0 : entity.getPhysicalMemMb() * Mb;
-        long memUsed = (s==null || s.getusage_mem_percent()==null) ? 0 : memTotal * s.getusage_mem_percent() / 100;
+        long memUsed = (s==null || s.getUsageMemPercent()==null) ? 0 : memTotal * s.getUsageMemPercent() / 100;
         return asList(setDatum(clone(MEM_TOTAL),   memTotal),
                       setDatum(clone(MEM_USED),    memUsed),
                       setDatum(clone(MEM_FREE),    (memTotal-memUsed)),
-                      setDatum(clone(MEM_SHARED),  (s==null || s.getmem_shared()==null) ? 0 : s.getmem_shared()*Mb),
+                      setDatum(clone(MEM_SHARED),  (s==null || s.getMemShared()==null) ? 0 : s.getMemShared()*Mb),
                       setDatum(clone(MEM_BUFFERS), 0),
                       setDatum(clone(MEM_CACHED),  0),
-                      setDatum(clone(SWAP_TOTAL),  (s==null || s.getswap_total()==null) ? 0 : s.getswap_total()*Mb),
-                      setDatum(clone(SWAP_FREE),   (s==null || s.getswap_free()==null) ? 0 : s.getswap_free()*Mb),
+                      setDatum(clone(SWAP_TOTAL),  (s==null || s.getSwapTotal()==null) ? 0 : s.getSwapTotal()*Mb),
+                      setDatum(clone(SWAP_FREE),   (s==null || s.getSwapFree()==null) ? 0 : s.getSwapFree()*Mb),
                       setDatum(clone(SWAP_USED),   getSwapUsed(s)*Mb),
                       setDatum(clone(SWAP_CACHED), 0),
-                      setDatum(clone(CPU_KSM),     (s==null || s.getksm_cpu_percent()==null) ? 0 : s.getksm_cpu_percent()),
-                      setDatum(clone(CPU_USER),    (s==null || s.getcpu_user()==null) ? 0 : s.getcpu_user()),
-                      setDatum(clone(CPU_SYS),     (s==null || s.getcpu_sys()==null) ? 0 : s.getcpu_sys()),
-                      setDatum(clone(CPU_IDLE),    (s==null || s.getcpu_idle()==null) ? 0 : s.getcpu_idle()),
-                      setDatum(clone(CPU_LOAD),    (s==null || s.getcpu_load()==null) ? 0 : s.getcpu_load()/100),
-                      setDatum(clone(BOOT_TIME),   (s==null || s.getboot_time()==null) ? 0 : s.getboot_time()));
+                      setDatum(clone(CPU_KSM),     (s==null || s.getKsmCpuPercent()==null) ? 0 : s.getKsmCpuPercent()),
+                      setDatum(clone(CPU_USER),    (s==null || s.getCpuUser()==null) ? 0 : s.getCpuUser()),
+                      setDatum(clone(CPU_SYS),     (s==null || s.getCpuSys()==null) ? 0 : s.getCpuSys()),
+                      setDatum(clone(CPU_IDLE),    (s==null || s.getCpuIdle()==null) ? 0 : s.getCpuIdle()),
+                      setDatum(clone(CPU_LOAD),    (s==null || s.getCpuLoad()==null) ? 0 : s.getCpuLoad()/100),
+                      setDatum(clone(BOOT_TIME),   (s==null || s.getBootTime()==null) ? 0 : s.getBootTime()));
     }
 
     public Statistic adopt(Statistic statistic) {
@@ -68,13 +68,13 @@ public class HostStatisticalQuery extends AbstractStatisticalQuery<Host, VDS> {
         if (s==null) {
             return 0;
         } else {
-            if (s.getswap_total()==null) {
+            if (s.getSwapTotal()==null) {
                 return 0;
             } else {
-                if (s.getswap_free()==null) {
-                    return s.getswap_total();
+                if (s.getSwapFree()==null) {
+                    return s.getSwapTotal();
                 } else {
-                    return s.getswap_total() - s.getswap_free();
+                    return s.getSwapTotal() - s.getSwapFree();
                 }
             }
         }
