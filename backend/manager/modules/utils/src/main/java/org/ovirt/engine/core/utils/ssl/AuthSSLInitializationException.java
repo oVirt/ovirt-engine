@@ -29,6 +29,7 @@
 
 package org.ovirt.engine.core.utils.ssl;
 
+@SuppressWarnings("serial")
 public class AuthSSLInitializationException extends RuntimeException {
 
     /**
