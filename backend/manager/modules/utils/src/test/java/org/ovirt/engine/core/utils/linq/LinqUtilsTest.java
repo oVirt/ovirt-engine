@@ -11,20 +11,20 @@ import java.util.Map;
 import org.junit.Test;
 
 public class LinqUtilsTest {
-    private List<String> list = new LinkedList<String>() {
-        {
-            add("one");
-            add("two");
-            add("three");
-        }
-    };
-    private List<String> cutlist = new LinkedList<String>() {
-        {
-            add("o");
-            add("t");
-            add("t");
-        }
-    };
+    private List<String> list;
+    private List<String> cutlist;
+
+    public LinqUtilsTest() {
+        list  = new LinkedList<String>();
+        list.add("one");
+        list.add("two");
+        list.add("three");
+
+        cutlist = new LinkedList<String>();
+        cutlist.add("o");
+        cutlist.add("t");
+        cutlist.add("t");
+    }
 
     @Test
     public void exampleFirstOrNull() {
@@ -76,12 +76,9 @@ public class LinqUtilsTest {
             }
         });
 
-        Map<String, String> example = new HashMap<String, String>() {
-            {
-                put("t", "three");
-                put("o", "one");
-            }
-        };
+        Map<String, String> example = new HashMap<String, String>();
+        example.put("t", "three");
+        example.put("o", "one");
 
         assertEquals(map, example);
     }
@@ -95,12 +92,9 @@ public class LinqUtilsTest {
             }
         });
 
-        Map<String, String> example = new HashMap<String, String>() {
-            {
-                put("t", "three");
-                put("o", "one");
-            }
-        };
+        Map<String, String> example = new HashMap<String, String>();
+        example.put("t", "three");
+        example.put("o", "one");
 
         assertEquals(map, example);
     }
