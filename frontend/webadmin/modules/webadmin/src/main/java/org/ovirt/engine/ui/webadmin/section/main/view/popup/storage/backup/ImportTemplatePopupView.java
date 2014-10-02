@@ -12,7 +12,7 @@ import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
@@ -24,7 +24,7 @@ import com.google.gwt.resources.client.ImageResource;
 import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.inject.Inject;
 
-public class ImportTemplatePopupView extends ImportVmPopupView implements ImportTemplatePopupPresenterWidget.ViewDef {
+public class ImportTemplatePopupView extends ImportVmFromExportDomainPopupView implements ImportTemplatePopupPresenterWidget.ViewDef {
 
     private ImportTemplateGeneralSubTabView generalView;
 
@@ -37,7 +37,7 @@ public class ImportTemplatePopupView extends ImportVmPopupView implements Import
 
     @Override
     protected void initMainTable() {
-        this.table = new ListModelObjectCellTable<Object, ImportVmModel>();
+        this.table = new ListModelObjectCellTable<Object, ImportVmFromExportDomainModel>();
 
         CheckboxColumn<Object> cloneTemplateColumn = new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
             @Override

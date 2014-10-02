@@ -18,12 +18,12 @@ import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 
 @SuppressWarnings("unused")
-public class ImportTemplateModel extends ImportVmModel
+public class ImportTemplateModel extends ImportVmFromExportDomainModel
 {
 
     private TemplateImportDiskListModel templateImportDiskListModel;

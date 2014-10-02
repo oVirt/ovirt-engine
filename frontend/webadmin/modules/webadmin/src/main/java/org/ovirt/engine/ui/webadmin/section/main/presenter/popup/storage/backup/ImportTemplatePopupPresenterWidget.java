@@ -3,9 +3,9 @@ package org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup
 import com.google.gwt.event.shared.EventBus;
 import com.google.inject.Inject;
 
-public class ImportTemplatePopupPresenterWidget extends ImportVmPopupPresenterWidget {
+public class ImportTemplatePopupPresenterWidget extends ImportVmFromExportDomainPopupPresenterWidget {
 
-    public interface ViewDef extends ImportVmPopupPresenterWidget.ViewDef {
+    public interface ViewDef extends ImportVmFromExportDomainPopupPresenterWidget.ViewDef {
     }
 
     @Inject

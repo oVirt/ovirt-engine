@@ -8,7 +8,7 @@
         type='org.ovirt.engine.ui.webadmin.ApplicationResources' />
     <ui:with field='constants' type='org.ovirt.engine.ui.webadmin.ApplicationConstants'/>
     <ui:style
-        type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmPopupView.WidgetStyle">
+        type="org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView.WidgetStyle">
         @external .gwt-TabLayoutPanel;
         @external .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs;
             .gwt-TabLayoutPanel .gwt-TabLayoutPanelTabs {

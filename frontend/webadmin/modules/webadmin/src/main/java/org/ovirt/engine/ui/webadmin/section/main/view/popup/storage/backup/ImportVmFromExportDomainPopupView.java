@@ -32,7 +32,7 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportDiskData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmGeneralModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmListModel;
@@ -41,7 +41,7 @@ import org.ovirt.engine.ui.uicompat.IEventListener;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 import org.ovirt.engine.ui.webadmin.ApplicationConstants;
 import org.ovirt.engine.ui.webadmin.ApplicationResources;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.widget.table.column.CustomSelectionCell;
 import org.ovirt.engine.ui.webadmin.widget.table.column.IsProblematicImportVmColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
@@ -70,12 +70,12 @@ import com.google.gwt.view.client.SelectionChangeEvent.Handler;
 import com.google.gwt.view.client.SingleSelectionModel;
 import com.google.inject.Inject;
 
-public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel> implements ImportVmPopupPresenterWidget.ViewDef {
+public class ImportVmFromExportDomainPopupView extends AbstractModelBoundPopupView<ImportVmFromExportDomainModel> implements ImportVmFromExportDomainPopupPresenterWidget.ViewDef {
 
-    interface Driver extends SimpleBeanEditorDriver<ImportVmModel, ImportVmPopupView> {
+    interface Driver extends SimpleBeanEditorDriver<ImportVmFromExportDomainModel, ImportVmFromExportDomainPopupView> {
     }
 
-    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmPopupView> {
+    interface ViewUiBinder extends UiBinder<SimpleDialogPanel, ImportVmFromExportDomainPopupView> {
         ViewUiBinder uiBinder = GWT.create(ViewUiBinder.class);
     }
 
@@ -106,7 +106,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     Label message;
 
     @Ignore
-    protected ListModelObjectCellTable<Object, ImportVmModel> table;
+    protected ListModelObjectCellTable<Object, ImportVmFromExportDomainModel> table;
 
     @Ignore
     private ListModelObjectCellTable<DiskImage, SearchableListModel> diskTable;
@@ -119,7 +119,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     @Ignore
     protected TabLayoutPanel subTabLayoutPanel = null;
 
-    protected ImportVmModel importModel;
+    protected ImportVmFromExportDomainModel importModel;
 
     private ImportVmGeneralSubTabView generalView;
 
@@ -144,7 +144,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     protected final ApplicationResources resources;
 
     @Inject
-    public ImportVmPopupView(EventBus eventBus,
+    public ImportVmFromExportDomainPopupView(EventBus eventBus,
             ApplicationResources resources,
             ApplicationConstants constants) {
         super(eventBus, resources);
@@ -236,7 +236,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     protected void initMainTable() {
-        this.table = new ListModelObjectCellTable<Object, ImportVmModel>();
+        this.table = new ListModelObjectCellTable<Object, ImportVmFromExportDomainModel>();
 
         CheckboxColumn<Object> collapseSnapshotsColumn =
                 new CheckboxColumn<Object>(new FieldUpdater<Object, Boolean>() {
@@ -649,7 +649,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
 
     @SuppressWarnings("unchecked")
     @Override
-    public void edit(final ImportVmModel object) {
+    public void edit(final ImportVmFromExportDomainModel object) {
         this.importModel = object;
         table.asEditor().edit(object);
 
@@ -711,7 +711,7 @@ public class ImportVmPopupView extends AbstractModelBoundPopupView<ImportVmModel
     }
 
     @Override
-    public ImportVmModel flush() {
+    public ImportVmFromExportDomainModel flush() {
         table.flush();
         nicTable.flush();
         diskTable.flush();

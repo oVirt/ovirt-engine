@@ -41,7 +41,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ConfirmationModel;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportEntityData;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
@@ -62,7 +62,7 @@ public class VmBackupModel extends ManageBackupModel {
      *  to be created using import in case of choosing multiple VM imports */
     protected Set<String> assignedVmNames = new HashSet<String>();
     protected Map<Guid, Object> cloneObjectMap;
-    protected ImportVmModel importModel;
+    protected ImportVmFromExportDomainModel importModel;
 
     public VmAppListModel getAppListModel() {
         return privateAppListModel;
@@ -220,7 +220,7 @@ public class VmBackupModel extends ManageBackupModel {
             return;
         }
 
-        ImportVmModel model = getImportModel();
+        ImportVmFromExportDomainModel model = getImportModel();
         setWindow(model);
         model.startProgress(null);
         UICommand restoreCommand;
@@ -243,8 +243,8 @@ public class VmBackupModel extends ManageBackupModel {
         model.setCloseCommand(closeCommand);
     }
 
-    protected ImportVmModel getImportModel() {
-        ImportVmModel model = new ImportVmModel();
+    protected ImportVmFromExportDomainModel getImportModel() {
+        ImportVmFromExportDomainModel model = new ImportVmFromExportDomainModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importVirtualMachinesTitle());
         model.setHelpTag(HelpTag.import_virtual_machine);
         model.setHashName("import_virtual_machine"); //$NON-NLS-1$
@@ -253,7 +253,7 @@ public class VmBackupModel extends ManageBackupModel {
     }
 
     public void onRestore() {
-        importModel = (ImportVmModel) getWindow();
+        importModel = (ImportVmFromExportDomainModel) getWindow();
 
         if (importModel.getProgress() != null) {
             return;

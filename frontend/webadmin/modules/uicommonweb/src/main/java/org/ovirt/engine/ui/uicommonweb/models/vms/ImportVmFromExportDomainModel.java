@@ -51,7 +51,7 @@ import org.ovirt.engine.ui.uicompat.IFrontendMultipleQueryAsyncCallback;
 import org.ovirt.engine.ui.uicompat.ObservableCollection;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 
-public class ImportVmModel extends ListWithDetailsModel {
+public class ImportVmFromExportDomainModel extends ListWithDetailsModel {
     public static final String ON_DISK_LOAD = "OnDiskLoad"; //$NON-NLS-1$
 
     ArchitectureType targetArchitecture;
@@ -142,12 +142,12 @@ public class ImportVmModel extends ListWithDetailsModel {
         public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
             Frontend.getInstance().runQuery(VdcQueryType.GetAllRelevantQuotasForVdsGroup,
                     new IdQueryParameters(((VDSGroup) getCluster().getSelectedItem()).getId()),
-                    new AsyncQuery(ImportVmModel.this,
+                    new AsyncQuery(ImportVmFromExportDomainModel.this,
                             new INewAsyncCallback() {
 
                                 @Override
                                 public void onSuccess(Object model, Object returnValue) {
-                                    ImportVmModel importVmModel = (ImportVmModel) model;
+                                    ImportVmFromExportDomainModel importVmModel = (ImportVmFromExportDomainModel) model;
                                     ArrayList<Quota> quotaList = ((VdcQueryReturnValue) returnValue).getReturnValue();
                                     importVmModel.getClusterQuota().setItems(quotaList);
                                     if (quotaList.isEmpty()
@@ -172,7 +172,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         onEntityChanged();
     }
 
-    public ImportVmModel() {
+    public ImportVmFromExportDomainModel() {
         setStorage(new ListModel());
         setCluster(new ListModel());
         setClusterQuota(new ListModel());
@@ -207,12 +207,12 @@ public class ImportVmModel extends ListWithDetailsModel {
                }
                // get cluster
                if (dataCenter != null) {
-                   AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmModel.this, new INewAsyncCallback() {
+                   AsyncDataProvider.getInstance().getClusterByServiceList(new AsyncQuery(ImportVmFromExportDomainModel.this, new INewAsyncCallback() {
                        @Override
                        public void onSuccess(Object model, Object returnValue) {
                            ArrayList<VDSGroup> clusters = (ArrayList<VDSGroup>) returnValue;
 
-                           ImportVmModel importModel = (ImportVmModel) model;
+                           ImportVmFromExportDomainModel importModel = (ImportVmFromExportDomainModel) model;
                            ArchitectureType targetArch = importModel.getTargetArchitecture();
 
                            if (targetArch != null) {
@@ -226,7 +226,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                            }
                            VDSGroup cluster = (VDSGroup) getCluster().getSelectedItem();
                            // get storage domains
-                           AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmModel.this,
+                           AsyncDataProvider.getInstance().getStorageDomainList(new AsyncQuery(ImportVmFromExportDomainModel.this,
                                    new INewAsyncCallback() {
 
                                        @Override
@@ -452,7 +452,7 @@ public class ImportVmModel extends ListWithDetailsModel {
         GetAllFromExportDomainQueryParameters tempVar =
                 new GetAllFromExportDomainQueryParameters(storagePool.getId(), ((StorageDomain) getEntity())
                         .getId());
-        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmModel.this,
+        Frontend.getInstance().runQuery(VdcQueryType.GetTemplatesFromExportDomain, tempVar, new AsyncQuery(ImportVmFromExportDomainModel.this,
                 new INewAsyncCallback() {
 
                     @Override
@@ -478,7 +478,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                                 return;
                             }
                         }
-                        ImportVmModel.this.setMessage(ConstantsManager.getInstance()
+                        ImportVmFromExportDomainModel.this.setMessage(ConstantsManager.getInstance()
                                 .getConstants()
                                 .importMissingStorages());
 
@@ -647,7 +647,7 @@ public class ImportVmModel extends ListWithDetailsModel {
                             }
                             vmDataList.add(vmData);
                         }
-                        ImportVmModel.super.setItems(vmDataList);
+                        ImportVmFromExportDomainModel.super.setItems(vmDataList);
                         doInit(storageDomainId);
                     }
                 }));

@@ -54,7 +54,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.vm.VmDiskRemovePopupPresenterWidget;
 
 import com.google.gwt.event.shared.EventBus;
@@ -364,7 +364,7 @@ public class StorageModule extends AbstractGinModule {
     @Singleton
     public SearchableDetailModelProvider<VM, StorageListModel, VmBackupModel> getVmBackupProvider(EventBus eventBus,
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
-            final Provider<ImportVmPopupPresenterWidget> importVmPopupProvider,
+            final Provider<ImportVmFromExportDomainPopupPresenterWidget> importVmPopupProvider,
             final Provider<ImportCloneDialogPresenterWidget> importClonePopupProvider,
             final Provider<RemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
         return new SearchableDetailTabModelProvider<VM, StorageListModel, VmBackupModel>(

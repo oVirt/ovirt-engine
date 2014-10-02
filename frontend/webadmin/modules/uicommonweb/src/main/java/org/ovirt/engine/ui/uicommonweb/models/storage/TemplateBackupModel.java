@@ -37,7 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.ImportTemplateModel;
 import org.ovirt.engine.ui.uicommonweb.models.templates.TemplateImportDiskListModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.ImportTemplateData;
-import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmModel;
+import org.ovirt.engine.ui.uicommonweb.models.vms.ImportVmFromExportDomainModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.UnitVmModel;
 import org.ovirt.engine.ui.uicommonweb.models.vms.VmAppListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -122,7 +122,7 @@ public class TemplateBackupModel extends VmBackupModel
     }
 
     @Override
-    protected ImportVmModel getImportModel() {
+    protected ImportVmFromExportDomainModel getImportModel() {
         ImportTemplateModel model = new ImportTemplateModel();
         model.setTitle(ConstantsManager.getInstance().getConstants().importTemplatesTitle());
         model.setHelpTag(HelpTag.import_template);

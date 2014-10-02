@@ -94,7 +94,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.Storage
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.StorageRemovePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportCloneDialogPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportTemplatePopupPresenterWidget;
-import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.storage.backup.ImportVmFromExportDomainPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.tag.TagPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateInterfacePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.template.TemplateNewPresenterWidget;
@@ -333,7 +333,7 @@ import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StoragePopup
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.StorageRemovePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportCloneDialogPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportTemplatePopupView;
-import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmPopupView;
+import org.ovirt.engine.ui.webadmin.section.main.view.popup.storage.backup.ImportVmFromExportDomainPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.tag.TagPopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateInterfacePopupView;
 import org.ovirt.engine.ui.webadmin.section.main.view.popup.template.TemplateNewPopupView;
@@ -1228,9 +1228,9 @@ public class PresenterModule extends BasePresenterModule {
         bindPresenterWidget(FindSingleDcPopupPresenterWidget.class,
                 FindSingleDcPopupPresenterWidget.ViewDef.class,
                 FindSingleDcPopupView.class);
-        bindPresenterWidget(ImportVmPopupPresenterWidget.class,
-                ImportVmPopupPresenterWidget.ViewDef.class,
-                ImportVmPopupView.class);
+        bindPresenterWidget(ImportVmFromExportDomainPopupPresenterWidget.class,
+                ImportVmFromExportDomainPopupPresenterWidget.ViewDef.class,
+                ImportVmFromExportDomainPopupView.class);
         bindPresenterWidget(ImportTemplatePopupPresenterWidget.class,
                 ImportTemplatePopupPresenterWidget.ViewDef.class,
                 ImportTemplatePopupView.class);
