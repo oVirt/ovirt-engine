@@ -3,6 +3,7 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.Map;
 import java.util.concurrent.Future;
 import java.util.concurrent.FutureTask;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.compat.Guid;
@@ -184,6 +185,8 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc vmUpdateDevice(String vmId, Map device);
 
     FutureTask<Map<String, Object>> poll();
+
+    FutureTask<Map<String, Object>> timeBoundPoll(long timeout, TimeUnit unit);
 
     StatusOnlyReturnForXmlRpc snapshot(String vmId, Map<String, String>[] disks);
 

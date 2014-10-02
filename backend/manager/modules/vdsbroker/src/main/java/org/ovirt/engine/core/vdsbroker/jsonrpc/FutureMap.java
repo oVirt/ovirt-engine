@@ -44,9 +44,17 @@ public class FutureMap implements Map<String, Object> {
             super.put("code", 0);
         }
     };
+    private Map<String, Object> timeoutStatus = new HashMap<String, Object>() {
+        {
+            super.put("message", "Internal timeout occured");
+            super.put("code", -1);
+        }
+    };
     private Class<?> clazz = new HashMap<String, Object>().getClass();
     private Class<?> subTypeClazz;
     private boolean ignoreResponseKey = false;
+    private long timeout = 0;
+    private TimeUnit unit = TimeUnit.MILLISECONDS;
 
     /**
      * During creation request is sent and <code>Future</code> for a response is held.
@@ -64,6 +72,25 @@ public class FutureMap implements Map<String, Object> {
     }
 
     /**
+     * During creation request is sent and <code>Future</code> for a response is held.
+     *
+     * @param client - Client object used to send request.
+     * @param request - Request to be sent.
+     * @param timeout - Timeout which is used when populating response map.
+     * @param unit - Time unit for timeout.
+     * @throws XmlRpcRunTimeException when there are connection issues.
+     */
+    public FutureMap(JsonRpcClient client, JsonRpcRequest request, long timeout, TimeUnit unit) {
+        try {
+            this.timeout = timeout;
+            this.unit = unit;
+            this.response = client.call(request);
+        } catch (ClientConnectionException e) {
+            throw new XmlRpcRunTimeException("Connection issues during send request", e);
+        }
+    }
+
+    /**
      * Whenever any method is executed to obtain value of response during the first invocation it gets real response
      * from the <code>Future</code> and decompose it to object of provided type and structure.
      *
@@ -73,10 +100,16 @@ public class FutureMap implements Map<String, Object> {
         try (LockWrapper wrapper = new LockWrapper(this.lock)) {
             if (this.responseMap.isEmpty()) {
                 try {
-                    populate(this.response.get());
+                    if (timeout != 0) {
+                        populate(this.response.get(timeout, unit));
+                    } else {
+                        populate(this.response.get());
+                    }
                 } catch (InterruptedException | ExecutionException e) {
                     log.error("Exception occured during response decomposition", e);
                     throw new IllegalStateException(e);
+                } catch (TimeoutException e) {
+                    this.responseMap.put(STATUS, timeoutStatus);
                 }
             }
         }

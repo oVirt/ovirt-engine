@@ -2,7 +2,8 @@ package org.ovirt.engine.core.common.vdscommands;
 
 public enum FutureVDSCommandType {
     SetupNetworks,
-    Poll;
+    Poll,
+    TimeBoundPoll;
 
     private static final String DEFAULT_PACKAGE = "org.ovirt.engine.core.vdsbroker.vdsbroker";
     String packageName;
