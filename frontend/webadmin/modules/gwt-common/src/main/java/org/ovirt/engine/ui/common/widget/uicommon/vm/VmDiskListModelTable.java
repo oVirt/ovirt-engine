@@ -136,11 +136,10 @@ public class VmDiskListModelTable extends BaseVmDiskListModelTable<VmDiskListMod
     }
 
     protected void attachActivationListenersForModel() {
-        getModel().getPropertyChangedEvent().addListener(new IEventListener() {
+        getModel().getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
             @Override
-            public void eventRaised(Event ev, Object sender, EventArgs args) {
-                PropertyChangedEventArgs changedArgs = (PropertyChangedEventArgs) args;
-                if ("IsDiskHotPlugAvailable".equals(changedArgs.propertyName)) { //$NON-NLS-1$
+            public void eventRaised(Event<PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                if ("IsDiskHotPlugAvailable".equals(args.propertyName)) { //$NON-NLS-1$
                     InitializeEvent.fire(plugButtonDefinition);
                     InitializeEvent.fire(unPlugButtonDefinition);
                 }
