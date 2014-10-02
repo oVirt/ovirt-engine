@@ -872,7 +872,10 @@ public abstract class AbstractDiskModel extends DiskModel
         }
 
         if (getDisk().getDiskStorageType() == DiskStorageType.IMAGE) {
-            ((DiskImage) getDisk()).setDiskProfileId(getDiskProfile().getSelectedItem().getId());
+            DiskProfile selectedDiskProfile = getDiskProfile().getSelectedItem();
+            if (selectedDiskProfile != null) {
+                ((DiskImage) getDisk()).setDiskProfileId(selectedDiskProfile.getId());
+            }
         }
         getDisk().setDiskAlias(getAlias().getEntity());
         getDisk().setDiskDescription(getDescription().getEntity());
