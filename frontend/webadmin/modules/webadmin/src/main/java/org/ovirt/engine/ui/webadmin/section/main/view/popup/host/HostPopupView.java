@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.hosts.HostModel;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
@@ -716,7 +717,13 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         object.getFetchResult().getEntityChangedEvent().addListener(new IEventListener() {
             @Override
             public void eventRaised(Event ev, Object sender, EventArgs args) {
-                fetchResult.setText((String) object.getFetchResult().getEntity());
+                String fetchResultText = object.getFetchResult().getEntity();
+                if (ConstantsManager.getInstance().getConstants().errorLoadingFingerprint().equals(fetchResultText)) {
+                    fetchResult.addStyleName(style.fetchResultErrorLabel());
+                } else {
+                    fetchResult.removeStyleName(style.fetchResultErrorLabel());
+                }
+                fetchResult.setText(fetchResultText);
             }
         });
 
@@ -1107,6 +1114,8 @@ public class HostPopupView extends AbstractModelBoundPopupView<HostModel> implem
         String expanderContent();
 
         String pkStyle();
+
+        String fetchResultErrorLabel();
     }
 
     public void setPkPasswordSectionVisiblity(boolean visible) {

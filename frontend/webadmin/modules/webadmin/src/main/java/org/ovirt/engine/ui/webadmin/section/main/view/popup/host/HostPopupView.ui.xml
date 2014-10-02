@@ -55,9 +55,12 @@
         }
 
         .fetchResultLabel {
-            font-color: red;
-            color: red;
+            color: black;
             margin-left: 4px;
+        }
+
+        .fetchResultErrorLabel {
+            color: red;
         }
 
         .providerStatusLabel {
