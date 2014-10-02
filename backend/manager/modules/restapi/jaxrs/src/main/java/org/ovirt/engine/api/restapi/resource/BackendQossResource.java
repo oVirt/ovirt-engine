@@ -39,7 +39,7 @@ public class BackendQossResource extends AbstractBackendCollectionResource<QoS, 
 
     @Override
     public Response add(QoS qos) {
-        validateParameters(qos, "name");
+        validateParameters(qos, "name", "type");
         validateEnums(QoS.class, qos);
         QosParametersBase<QosBase> params = new QosParametersBase<QosBase>();
         QosBase entity = null;
