@@ -10,7 +10,6 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.sql.Timestamp;
-import java.text.MessageFormat;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.Set;
@@ -27,7 +26,6 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
@@ -36,6 +34,8 @@ import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.db.DbUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class uses to monitor the oVirt Engineanager service by sampling its health servlet. Upon response other than code 200,
@@ -46,7 +46,7 @@ import org.ovirt.engine.core.utils.db.DbUtils;
  */
 public class EngineMonitorService implements Runnable {
 
-    private static final Logger log = Logger.getLogger(EngineMonitorService.class);
+    private static final Logger log = LoggerFactory.getLogger(EngineMonitorService.class);
     private static final String ENGINE_NOT_RESPONDING_ERROR = "Engine server is not responding.";
     private static final String ENGINE_RESPONDING_MESSAGE = "Engine server is up and running.";
     private static final String HEALTH_SERVLET_PATH = "/services/health";
@@ -82,9 +82,9 @@ public class EngineMonitorService implements Runnable {
         serverMonitorRetries = prop.getInteger(NotificationProperties.ENGINE_MONITOR_RETRIES);
         repeatNonResponsiveNotification = this.prop.getBoolean(NotificationProperties.REPEAT_NON_RESPONSIVE_NOTIFICATION);
         if (log.isDebugEnabled()) {
-            log.debug(MessageFormat.format("Checking server status using {0}, {1}ignoring SSL errors.",
+            log.debug("Checking server status using {}, {}ignoring SSL errors.",
                     isHttpsProtocol ? "HTTPS" : "HTTP",
-                    sslIgnoreCertErrors ? "" : "without "));
+                    sslIgnoreCertErrors ? "" : "without ");
         }
     }
 
@@ -120,9 +120,10 @@ public class EngineMonitorService implements Runnable {
         if (isHttpsProtocol) {
             initHttpsSettings();
         } else if (sslIgnoreCertErrors || sslIgnoreHostVerification) {
-            log.warn("Properties " + NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS
-                    + " and " + NotificationProperties.SSL_IGNORE_HOST_VERIFICATION + " are ignored, since property "
-                    + NotificationProperties.IS_HTTPS_PROTOCOL + " is not set.");
+            log.warn("Properties {} and {} are ignored, since property {} is not set.",
+                    NotificationProperties.SSL_IGNORE_CERTIFICATE_ERRORS,
+                    NotificationProperties.SSL_IGNORE_HOST_VERIFICATION,
+                    NotificationProperties.IS_HTTPS_PROTOCOL);
         }
         initServerUrl();
     }
@@ -198,7 +199,7 @@ public class EngineMonitorService implements Runnable {
             else {
                 serverUrl = config.getExternalHttpUrl(HEALTH_SERVLET_PATH);
             }
-            log.info("Engine health servlet URL is \"" + serverUrl + "\".");
+            log.info("Engine health servlet URL is \"{}\".", serverUrl);
         }
         catch (MalformedURLException exception) {
             throw new NotificationServiceException("Can't get engine health servlet URL.", exception);
@@ -270,7 +271,7 @@ public class EngineMonitorService implements Runnable {
 
         // errors should contain distinct list of errors while trying to obtain server status
         if (errors.size() > 0) {
-            log.error("Failed to get server status with:" + errors);
+            log.error("Failed to get server status with: {}", errors);
             errors.clear();
         }
 
@@ -367,7 +368,7 @@ public class EngineMonitorService implements Runnable {
                 int responseCode = engineConn.getResponseCode();
                 if (responseCode != HttpURLConnection.HTTP_OK) {
                     isResponsive = false;
-                    log.debug(MessageFormat.format("Server is non responsive with response code: {0}", responseCode));
+                    log.debug("Server is non responsive with response code: {}", responseCode);
                 }
             } catch (Exception e) {
                 errors.add(e.getMessage());
@@ -379,7 +380,7 @@ public class EngineMonitorService implements Runnable {
                 }
             }
         }
-        log.debug("checkServerStatus return: " + isResponsive);
+        log.debug("checkServerStatus return: {}", isResponsive);
         return isResponsive;
     }
 

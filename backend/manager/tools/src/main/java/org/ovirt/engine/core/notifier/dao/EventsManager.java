@@ -17,7 +17,6 @@ import java.util.Set;
 
 import javax.sql.DataSource;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.filter.AuditLogEventType;
@@ -28,12 +27,14 @@ import org.ovirt.engine.core.notifier.transport.Observable;
 import org.ovirt.engine.core.notifier.transport.Observer;
 import org.ovirt.engine.core.utils.db.StandaloneDataSource;
 import org.ovirt.engine.core.utils.db.DbUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EventsManager implements Observer {
 
     public static final String DATABASE_UNREACHABLE = "DATABASE_UNREACHABLE";
 
-    private static final Logger log = Logger.getLogger(EventsManager.class);
+    private static final Logger log = LoggerFactory.getLogger(EventsManager.class);
 
     private DataSource ds;
 
@@ -138,9 +139,9 @@ public class EventsManager implements Observer {
             DbUtils.closeQuietly(rs, ps, connection);
         }
         if (log.isDebugEnabled()) {
-            log.debug(String.format("%d unprocessed events read from audit_log database table.", auditLogEvents.size()));
+            log.debug("{} unprocessed events read from audit_log database table.", auditLogEvents.size());
             for (int i = 0; i < auditLogEvents.size(); i++) {
-                log.debug(String.format("event %d => %s", i, auditLogEvents.get(i).toString()));
+                log.debug("event {} => {}", i, auditLogEvents.get(i).toString());
             }
         }
         return auditLogEvents;
@@ -201,7 +202,7 @@ public class EventsManager implements Observer {
             statement.setTimestamp(1, ts);
             updatedRecords = statement.executeUpdate();
             if (updatedRecords > 0) {
-                log.debug(updatedRecords + " old records were marked as processed in the \"audit_log\" table.");
+                log.debug("{} old records were marked as processed in the \"audit_log\" table.", updatedRecords);
             }
         } catch (SQLException e) {
             throw new NotificationServiceException("Failed mark old events as processed.", e);
@@ -228,7 +229,7 @@ public class EventsManager implements Observer {
                 deleteStmt.setTimestamp(1, startDeleteFrom);
                 deletedRecords = deleteStmt.executeUpdate();
                 if (deletedRecords > 0) {
-                    log.debug(deletedRecords + " records were deleted from \"event_notification_hist\" table.");
+                    log.debug("{} records were deleted from \"event_notification_hist\" table.", deletedRecords);
                 }
             } finally {
                 DbUtils.closeQuietly(deleteStmt, connection);
@@ -250,8 +251,8 @@ public class EventsManager implements Observer {
             ps.setLong(1, auditLogId);
             int updated = ps.executeUpdate();
             if (updated != 1) {
-                log.error("Failed to mark audit_log entry as processed for audit_log_id: "
-                        + auditLogId);
+                log.error("Failed to mark audit_log entry as processed for audit_log_id: {}",
+                        auditLogId);
             }
         } finally {
             DbUtils.closeQuietly(ps, connection);

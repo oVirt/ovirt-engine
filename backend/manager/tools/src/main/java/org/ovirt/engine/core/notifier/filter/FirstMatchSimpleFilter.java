@@ -10,8 +10,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.notifier.transport.Transport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FirstMatchSimpleFilter {
 
@@ -32,7 +33,7 @@ public class FirstMatchSimpleFilter {
             "\\s*" +
             ""
         );
-    private static final Logger log = Logger.getLogger(FirstMatchSimpleFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(FirstMatchSimpleFilter.class);
     private Map<String, Transport> transports = new HashMap<>();
     private List<FilterEntry> notify = new LinkedList<>();
     private Set<Recipient> recipients = new HashSet<>();
@@ -51,7 +52,7 @@ public class FirstMatchSimpleFilter {
 
     public void addFilterEntries(List<FilterEntry> entries) {
         for (FilterEntry entry : entries) {
-            log.debug(String.format("addFilterEntry: %s", entry));
+            log.debug("addFilterEntry: {}", entry);
             notify.add(entry);
             if (entry.getRecipient() != null) {
                 addRecipient(entry.getRecipient());
@@ -65,9 +66,9 @@ public class FirstMatchSimpleFilter {
     }
 
     public void processEvent(AuditLogEvent event) {
-        log.debug(String.format("Event: %s", event.getName()));
+        log.debug("Event: {}", event.getName());
         for (Recipient recipient : recipients) {
-            log.debug(String.format("Recipient: %s", recipient));
+            log.debug("Recipient: {}", recipient);
             for (FilterEntry entry : notify) {
                 if ((
                         entry.getEventName() == null ||
@@ -77,11 +78,11 @@ public class FirstMatchSimpleFilter {
                         entry.getRecipient() == null ||
                         entry.getRecipient().equals(recipient)
                         )) {
-                    log.debug(String.format("Entry match((%s)): %s", entry.isExclude() ? "exclude" : "include", entry));
+                    log.debug("Entry match(({})): {}", entry.isExclude() ? "exclude" : "include", entry);
                     if (!entry.isExclude()) {
                         Transport transport = transports.get(recipient.getTransport());
                         if (transport == null) {
-                            log.debug(String.format("Ignoring recipient '%s' as transport not registered", recipient));
+                            log.debug("Ignoring recipient '{}' as transport not registered", recipient);
                         }
                         else {
                             transport.dispatchEvent(event, recipient.getName());
@@ -100,7 +101,7 @@ public class FirstMatchSimpleFilter {
             boolean ok = false;
             int expectedStart = 0;
             while (m.find()) {
-                log.debug(String.format("parse: handling '%s'", m.group(0)));
+                log.debug("parse: handling '{}'", m.group(0));
 
                 if (m.start() != expectedStart) {
                     throw new RuntimeException("Cannot parse filters");

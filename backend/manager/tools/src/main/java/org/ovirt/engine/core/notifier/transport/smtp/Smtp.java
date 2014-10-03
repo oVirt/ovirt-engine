@@ -19,12 +19,13 @@ import javax.mail.internet.InternetAddress;
 import javax.mail.internet.MimeMessage;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class sends e-mails to event subscribers.
@@ -55,7 +56,7 @@ public class Smtp extends Transport {
     private static final String MAIL_SEND_INTERVAL = "MAIL_SEND_INTERVAL";
     private static final String MAIL_RETRIES = "MAIL_RETRIES";
 
-    private static final Logger log = Logger.getLogger(Smtp.class);
+    private static final Logger log = LoggerFactory.getLogger(Smtp.class);
     private int retries;
     private int sendIntervals;
     private int lastSendInterval = 0;
@@ -145,7 +146,7 @@ public class Smtp extends Transport {
     @Override
     public void dispatchEvent(AuditLogEvent event, String address) {
         if (StringUtils.isEmpty(address)) {
-            log.error("Address is empty, cannot distribute message." + event.getName());
+            log.error("Address is empty, cannot distribute message. {}", event.getName());
         }
         else {
             sendQueue.add(new DispatchAttempt(event, address));
@@ -164,13 +165,10 @@ public class Smtp extends Transport {
                     EventMessageContent message = new EventMessageContent();
                     message.prepareMessage(hostName, attempt.event, isBodyHtml);
 
-                    log.info(String.format("Send email to [%s]%n subject:%n [%s]",
-                            attempt.address,
-                            message.getMessageSubject()));
-                    if (log.isDebugEnabled()) {
-                        log.debug(String.format("body:%n [%s]",
-                                message.getMessageBody()));
-                    }
+                    log.info("Send mail subject='{}' to='{}'",
+                            message.getMessageSubject(),
+                            attempt.address);
+                    log.debug("Send mail body='{}'", message.getMessageBody());
                     sendMail(attempt.address, message.getMessageSubject(), message.getMessageBody());
                     notifyObservers(DispatchResult.success(attempt.event, attempt.address, EventNotificationMethod.SMTP));
                     iterator.remove();

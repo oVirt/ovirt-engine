@@ -8,7 +8,6 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.notifier.dao.EventsManager;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
@@ -16,6 +15,8 @@ import org.ovirt.engine.core.notifier.filter.FirstMatchSimpleFilter;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
 import org.ovirt.engine.core.notifier.utils.ShutdownHook;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for an execution of the service for the current events in the system which should be notified to the
@@ -25,7 +26,7 @@ public class NotificationService implements Runnable {
 
     public static final String FILTER = "FILTER";
 
-    private static final Logger log = Logger.getLogger(NotificationService.class);
+    private static final Logger log = LoggerFactory.getLogger(NotificationService.class);
 
     private final NotificationProperties prop;
 
@@ -140,7 +141,7 @@ public class NotificationService implements Runnable {
                 throw se;
             }
         } catch (Throwable t) {
-            log.error(String.format("Failed to run the service."), t);
+            log.error("Failed to run the service.", t);
         }
     }
 
@@ -165,9 +166,7 @@ public class NotificationService implements Runnable {
             try {
                 firstMatchSimpleFilter.processEvent(eventsManager.createDBDownEvent());
             } catch (Exception e) {
-                log.error(
-                        String.format("Failed to dispatch %s event", EventsManager.DATABASE_UNREACHABLE),
-                        e);
+                log.error("Failed to dispatch {} event", EventsManager.DATABASE_UNREACHABLE, e);
                 // Don't rethrow. we don't want to mask the original query exception.
             }
         }

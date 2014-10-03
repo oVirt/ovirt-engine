@@ -5,7 +5,8 @@ import java.util.List;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Class designed to handle a proper shutdown in case of an external signal which was registered was caught by the
@@ -13,7 +14,7 @@ import org.apache.log4j.Logger;
  */
 public class ShutdownHook extends Thread {
 
-    private static final Logger log = Logger.getLogger(ShutdownHook.class);
+    private static final Logger log = LoggerFactory.getLogger(ShutdownHook.class);
 
     private List<ScheduledExecutorService> schedulers = new LinkedList<>();
     private List<ScheduledFuture<?>> serviceHandlers = new LinkedList<>();

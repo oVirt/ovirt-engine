@@ -10,7 +10,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.EventNotificationMethod;
 import org.ovirt.engine.core.notifier.NotificationServiceException;
@@ -18,6 +17,8 @@ import org.ovirt.engine.core.notifier.dao.DispatchResult;
 import org.ovirt.engine.core.notifier.filter.AuditLogEvent;
 import org.ovirt.engine.core.notifier.transport.Transport;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.snmp4j.CommunityTarget;
 import org.snmp4j.PDU;
 import org.snmp4j.mp.SnmpConstants;
@@ -30,7 +31,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 public class Snmp extends Transport {
 
-    private static final Logger log = Logger.getLogger(Snmp.class);
+    private static final Logger log = LoggerFactory.getLogger(Snmp.class);
 
     private static final String SNMP_MANAGERS = "SNMP_MANAGERS";
     private static final String SNMP_COMMUNITY = "SNMP_COMMUNITY";
@@ -89,7 +90,7 @@ public class Snmp extends Transport {
         if (profile == null) {
             profile = profiles.get("");
             if (profile == null) {
-                log.warn("Could not find snmp profile: " + address);
+                log.warn("Could not find snmp profile: {}", address);
                 return;
             }
         }
@@ -103,7 +104,7 @@ public class Snmp extends Transport {
 
             auditLogTypeVal = AuditLogType.valueOf(event.getName()).getValue();
         } catch (IllegalArgumentException e) {
-            log.warn("Could not find event: " + event.getName() + " in auditLogTypes");
+            log.warn("Could not find event: {} in auditLogTypes", event.getName());
         }
         OID trapOID = SnmpConstants.getTrapOID(profile.oid, ENTERPRISE_SPECIFIC, auditLogTypeVal);
         v2pdu.add(new VariableBinding(SnmpConstants.snmpTrapOID, trapOID));
@@ -159,8 +160,8 @@ public class Snmp extends Transport {
         target.setVersion(SnmpConstants.version2c);
         for (Host host : profile.hosts) {
             try {
-                log.info(String.format("Generate an snmp trap for event: %s to address: %s ",
-                    event, host.name));
+                log.info("Generate an snmp trap for event: {} to address: {} ",
+                    event, host.name);
                 target.setAddress(
                     new UdpAddress(
                         InetAddress.getByName(host.name),
