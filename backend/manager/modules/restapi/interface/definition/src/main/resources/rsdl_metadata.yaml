@@ -76,6 +76,7 @@ actions:
           vm.cpu_shares: xs:int
           vm.memory: xs:long
           vm.memory_policy.guaranteed: xs:long
+          vm.memory_policy.ballooning: xs:boolean
           vm.high_availability.priority: xs:int
           vm.high_availability.enabled: xs:boolean
           vm.domain.name: xs:string
@@ -160,6 +161,7 @@ actions:
           vm.cpu.architecture: xs:string
           vm.memory: xs:long
           vm.memory_policy.guaranteed: xs:long
+          vm.memory_policy.ballooning: xs:boolean
           vm.high_availability.priority: xs:int
           vm.high_availability.enabled: xs:boolean
           vm.domain.name: xs:string
@@ -225,6 +227,7 @@ actions:
           vm.cpu.architecture: xs:string
           vm.memory: xs:long
           vm.memory_policy.guaranteed: xs:long
+          vm.memory_policy.ballooning: xs:boolean
           vm.high_availability.priority: xs:int
           vm.high_availability.enabled: xs:boolean
           vm.domain.name: xs:string
@@ -279,6 +282,7 @@ actions:
                 vm.cpu.topology.cores: xs:int
                 vm.memory: xs:long
                 vm.memory_policy.guaranteed: xs:long
+                vm.memory_policy.ballooning: xs:boolean
                 vm.high_availability.priority: xs:int
                 vm.high_availability.enabled: xs:boolean
                 vm.domain.name: xs:string
