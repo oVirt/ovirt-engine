@@ -67,6 +67,10 @@ class FileLocations(object):
         OVIRT_ENGINE_PKIDIR,
         'certs',
     )
+    OVIRT_ENGINE_PKIREQUESTSDIR = os.path.join(
+        OVIRT_ENGINE_PKIDIR,
+        'requests',
+    )
 
     OVIRT_ENGINE_PKI_WEBSOCKET_PROXY_KEY = os.path.join(
         OVIRT_ENGINE_PKIKEYSDIR,
@@ -96,6 +100,9 @@ class Stages(object):
         'setup.config.websocket-proxy.customization'
 
     REMOTE_VDC = 'setup.config.websocket-proxy.remote_vdc'
+
+    # sync with engine
+    ENGINE_CORE_ENABLE = 'osetup.engine.core.enable'
 
 
 @util.export
@@ -130,6 +137,16 @@ class ConfigEnv(object):
     WSP_CERTIFICATE_CHAIN = 'OVESETUP_CONFIG/wspCertificateChain'
     REMOTE_ENGINE_CER = 'OVESETUP_CONFIG/remoteEngineCer'
 
+    PKI_WSP_CSR_FILENAME = 'OVESETUP_CONFIG/pkiWSPCSRFilename'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class EngineCoreEnv(object):
+    """Sync with ovirt-engine"""
+    ENABLE = 'OVESETUP_ENGINE_CORE/enable'
+
 
 @util.export
 @util.codegen
@@ -154,6 +171,22 @@ class RPMDistroEnv(object):
 @util.codegen
 class Displays(object):
     CERTIFICATE_REQUEST = 'WSP_CERTIFICATE_REQUEST'
+
+
+@util.export
+@util.codegen
+@osetupattrsclass
+class EngineConfigEnv(object):
+    """Sync with ovirt-engine"""
+
+    @osetupattrs(
+        answerfile=True,
+        summary=True,
+        description=_('Engine Host FQDN'),
+        postinstallfile=True,
+    )
+    def ENGINE_FQDN(self):
+        return 'OVESETUP_ENGINE_CONFIG/fqdn'
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
