@@ -1,14 +1,15 @@
 package org.ovirt.engine.core.config.validation;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfigMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <code>KeyValidator</code> class is a action specific validator for the 'set' action.
  */
 public class SetValidator implements EngineConfigValidator {
 
-    private final static Logger log = Logger.getLogger(SetValidator.class);
+    private final static Logger log = LoggerFactory.getLogger(SetValidator.class);
 
     /**
      * Validates that the 'set' action has a key and value.

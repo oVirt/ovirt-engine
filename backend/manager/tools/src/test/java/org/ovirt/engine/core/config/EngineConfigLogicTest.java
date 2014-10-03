@@ -3,16 +3,17 @@ package org.ovirt.engine.core.config;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EngineConfigLogicTest {
 
-    private static final Logger log = Logger.getLogger(EngineConfigLogicTest.class);
+    private static final Logger log = LoggerFactory.getLogger(EngineConfigLogicTest.class);
     private static EngineConfigCLIParser parser = mock(EngineConfigCLIParser.class);
     // Is static so that it can be initiated just once in @BeforeClass, cannot be initiated
     // here since c'tor throws an exception
@@ -26,9 +27,9 @@ public class EngineConfigLogicTest {
     @Test
     public void testGetValue() throws Exception {
         final String key = "MaxNumberOfHostsInStoragePool";
-        log.info("getValue: Testing fetch of " + key);
+        log.info("getValue: Testing fetch of {}", key);
         ConfigKey configKey = engineConfigLogic.fetchConfigKey(key, null);
-        log.info("getValue: got: " + configKey);
+        log.info("getValue: got: {}", configKey);
         Assert.assertNotNull(configKey.getValue());
     }
 
@@ -45,13 +46,13 @@ public class EngineConfigLogicTest {
         final String newValue = "15";
         String oldValue = getOldValue(key);
 
-        log.info(key + " old value: " + oldValue);
-        log.info("setIntValue: Testing set of " + key);
+        log.info("{} old value: {}", key, oldValue);
+        log.info("setIntValue: Testing set of {}", key);
 
         engineConfigLogic.persist(key, newValue, "");
         String updatedValue = engineConfigLogic.fetchConfigKey(key, null).getValue();
 
-        log.info(key + " new value: " + updatedValue);
+        log.info("{} new value: {}", key, updatedValue);
         Assert.assertEquals(Integer.parseInt(updatedValue), Integer.parseInt(newValue));
 
         // Restoring original value
@@ -64,13 +65,13 @@ public class EngineConfigLogicTest {
         final String newValue = "ExampleSysPrepDefaultUser";
         String oldValue = getOldValue(key);
 
-        log.info(key + " old value: " + oldValue);
-        log.info("setStringValue: Testing set of " + key);
+        log.info("{} old value: {}", key, oldValue);
+        log.info("setStringValue: Testing set of {}", key);
 
         engineConfigLogic.persist(key, newValue, "");
         String updatedValue = engineConfigLogic.fetchConfigKey(key, null).getValue();
 
-        log.info(key + " new value: " + updatedValue);
+        log.info("{} new value: {}", key, updatedValue);
         Assert.assertEquals(updatedValue, newValue);
 
         // Restoring original value

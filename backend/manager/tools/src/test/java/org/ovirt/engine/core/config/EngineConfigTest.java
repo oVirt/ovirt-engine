@@ -4,15 +4,16 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
 import java.util.List;
 
-import org.apache.log4j.Logger;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.config.entity.ConfigKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EngineConfigTest {
 
-    private static final Logger log = Logger.getLogger(EngineConfigTest.class);
+    private static final Logger log = LoggerFactory.getLogger(EngineConfigTest.class);
     private EngineConfig config = EngineConfig.getInstance();
 
     @BeforeClass
@@ -32,10 +33,10 @@ public class EngineConfigTest {
     @Test
     public void getValueWithMultipleVersions() throws Exception {
         final String key = "MaxNumOfVmSockets";
-        log.info("getValue: Testing fetch multiple version of " + key);
+        log.info("getValue: Testing fetch multiple version of {}", key);
         List<ConfigKey> keys = config.getEngineConfigLogic().getConfigDAO().getKeysForName(key);
         for (ConfigKey configKey : keys) {
-            log.info(configKey.getDisplayValue() + " version: " + configKey.getVersion());
+            log.info("{} version: {}", configKey.getDisplayValue(), configKey.getVersion());
         }
         Assert.assertTrue(keys.size() > 0);
     }

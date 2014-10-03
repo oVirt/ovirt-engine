@@ -5,16 +5,17 @@ import java.io.IOException;
 import java.security.GeneralSecurityException;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.EngineConfigLogic;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.tools.ToolConsole;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PasswordValueHelper implements ValueHelper {
     // The log:
-    private static final Logger log = Logger.getLogger(PasswordValueHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(PasswordValueHelper.class);
 
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
@@ -49,7 +50,7 @@ public class PasswordValueHelper implements ValueHelper {
             catch (Exception exception) {
                 String msg = "Failed to decrypt the current value.";
                 console.writeLine(msg);
-                log.error(exception);
+                log.error("Exception", exception);
                 throw new GeneralSecurityException(msg);
             }
         }

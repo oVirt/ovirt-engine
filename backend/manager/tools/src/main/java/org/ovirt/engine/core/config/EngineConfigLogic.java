@@ -18,20 +18,21 @@ import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.configuration.tree.ConfigurationNode;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.db.ConfigDAO;
 import org.ovirt.engine.core.config.db.ConfigDaoImpl;
 import org.ovirt.engine.core.config.entity.ConfigKey;
 import org.ovirt.engine.core.config.entity.ConfigKeyFactory;
 import org.ovirt.engine.core.config.validation.ConfigActionType;
 import org.ovirt.engine.core.tools.ToolConsole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <code>EngineConfigLogic</code> class is responsible for the logic of the EngineConfig tool.
  */
 public class EngineConfigLogic {
     // The log:
-    private static final Logger log = Logger.getLogger(EngineConfigLogic.class);
+    private static final Logger log = LoggerFactory.getLogger(EngineConfigLogic.class);
 
     // The console:
     private static final ToolConsole console = ToolConsole.getInstance();
@@ -96,7 +97,7 @@ public class EngineConfigLogic {
      */
     public void execute() throws Exception {
         ConfigActionType actionType = parser.getConfigAction();
-        log.debug("execute: beginning execution of action " + actionType + ".");
+        log.debug("execute: beginning execution of action {}.", actionType);
 
         switch (actionType) {
         case ACTION_ALL:
@@ -121,7 +122,7 @@ public class EngineConfigLogic {
             reloadConfigurations();
             break;
         default: // Should have already been discovered before execute
-            log.debug("execute: unable to recognize action: " + actionType + ".");
+            log.debug("execute: unable to recognize action: {}.", actionType);
             throw new UnsupportedOperationException("Please tell me what to do: list? get? set? get-all? reload?");
         }
     }
@@ -226,7 +227,7 @@ public class EngineConfigLogic {
     private void printAllValuesForKey(String key) throws Exception {
         List<ConfigKey> keysForName = getConfigDAO().getKeysForName(key);
         if (keysForName.size() == 0) {
-            log.debug("Failed to fetch value for key \"" + key + "\", no such entry with default version.");
+            log.debug("Failed to fetch value for key \"{}\", no such entry with default version.", key);
             throw new RuntimeException("Error fetching " + key + " value: no such entry with default version.");
         }
 
@@ -260,7 +261,7 @@ public class EngineConfigLogic {
                 printAllValuesForKey(key.getKey());
             }
             catch (Exception exception) {
-                log.error("Error while retriving value for key \"" + key.getKey() + "\".", exception);
+                log.error("Error while retrieving value for key \"{}\".", key.getKey(), exception);
             }
         }
     }
@@ -346,7 +347,7 @@ public class EngineConfigLogic {
     private void printKeyWithSpecifiedVersion(String key, String version) throws Exception {
         ConfigKey configKey = fetchConfigKey(key, version);
         if (configKey == null || configKey.getKey() == null) {
-            log.debug("getValue: error fetching " + key + " value: no such entry with version '" + version + "'.");
+            log.debug("getValue: error fetching {} value: no such entry with version '{}'.", key, version);
             throw new RuntimeException("Error fetching " + key + " value: no such entry with version '" + version
                     + "'.");
         }
@@ -372,8 +373,10 @@ public class EngineConfigLogic {
         }
         boolean sucessUpdate = persist(key, value, version);
         if (!sucessUpdate) {
-            log.debug("setValue: error setting " + key + "'s value. No such entry"
-                    + (version == null ? "" : " with version " + version) + ".");
+            log.debug("setValue: error setting {}'s value. No such entry{}{}.",
+                    key,
+                    version == null ? "" : " with version ",
+                    version);
             throw new IllegalArgumentException("Error setting " + key + "'s value. No such entry"
                     + (version == null ? "" : " with version " + version) + ".");
         }
@@ -539,7 +542,7 @@ public class EngineConfigLogic {
         ckReturn = configKeyFactory.generateByPropertiesKey(key);
         if (ckReturn == null || ckReturn.getKey() == null) {
             ckReturn = null;
-            log.debug("getConfigKey: Unable to fetch the value of " + key + ".");
+            log.debug("getConfigKey: Unable to fetch the value of {}.", key);
         }
 
         return ckReturn;
@@ -548,11 +551,11 @@ public class EngineConfigLogic {
     public ConfigKey fetchConfigKey(String key, String version) {
         ConfigKey configKey = getConfigKey(key);
         if (configKey == null || configKey.getKey() == null) {
-            log.debug("Unable to fetch the value of " + key + " in version " + version);
+            log.debug("Unable to fetch the value of {} in version {}", key, version);
             return null;
         }
         configKey.setVersion(version);
-        log.debug("Fetching key=" + configKey.getKey() + " ver=" + version);
+        log.debug("Fetching key={} ver={}", configKey.getKey(), version);
         try {
             return getConfigDAO().getKey(configKey);
         } catch (SQLException e) {

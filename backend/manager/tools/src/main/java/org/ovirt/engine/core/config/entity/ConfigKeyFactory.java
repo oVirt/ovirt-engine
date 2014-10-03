@@ -7,11 +7,11 @@ import java.util.Map;
 import org.apache.commons.configuration.HierarchicalConfiguration;
 import org.apache.commons.configuration.SubnodeConfiguration;
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.config.EngineConfig;
 import org.ovirt.engine.core.config.EngineConfigCLIParser;
 import org.ovirt.engine.core.config.entity.helper.StringValueHelper;
 import org.ovirt.engine.core.config.entity.helper.ValueHelper;
+import org.slf4j.LoggerFactory;
 
 public class ConfigKeyFactory {
 
@@ -107,7 +107,8 @@ public class ConfigKeyFactory {
             valueHelper = (ValueHelper) cls.newInstance();
         } catch (Exception e) {
             // failed finding a helper for this type. Setting default string type
-            Logger.getLogger(EngineConfig.class).debug("Unable to find " + type + " type. Using default string type.");
+            LoggerFactory.getLogger(EngineConfig.class)
+                    .debug("Unable to find {} type. Using default string type.", type);
             valueHelper = new StringValueHelper();
         }
         return valueHelper;
