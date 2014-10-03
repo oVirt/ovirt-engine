@@ -13,6 +13,7 @@ public class NotificationProperties extends ShellLikeConfd {
     /**
      * Service parameters
      */
+    public static final String LOG_LEVEL = "LOG_LEVEL";
     public static final String DAYS_TO_KEEP_HISTORY = "DAYS_TO_KEEP_HISTORY";
     public static final String INTERVAL_IN_SECONDS = "INTERVAL_IN_SECONDS";
     public static final String ENGINE_INTERVAL_IN_SECONDS = "ENGINE_INTERVAL_IN_SECONDS";

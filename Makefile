@@ -177,9 +177,9 @@ GENERATED = \
 	packaging/bin/engine-prolog.sh \
 	packaging/bin/ovirt-engine-log-setup-event.sh \
 	packaging/bin/pki-common.sh \
+	packaging/conf/notifier-logging.properties \
 	packaging/etc/engine-manage-domains/engine-manage-domains.conf \
 	packaging/etc/engine.conf.d/README \
-	packaging/etc/notifier/log4j.xml \
 	packaging/etc/notifier/notifier.conf.d/README \
 	packaging/etc/ovirt-fence-kdump-listener.conf.d/README \
 	packaging/etc/ovirt-websocket-proxy.conf.d/README \

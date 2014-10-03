@@ -41,6 +41,7 @@ ENGINE_USR="@ENGINE_USR@"
 #   -Dmy.param=my.value -Dmy.flag -Dyour.param=your.value
 #
 NOTIFIER_PROPERTIES=""
+NOTIFIER_PROPERTIES="${NOTIFIER_PROPERTIES} \"java.util.logging.config.file=${ENGINE_USR}/conf/notifier-logging.properties\""
 
 #
 # Extra Java arguments to be added to command-line.
@@ -69,6 +70,13 @@ NOTIFIER_DEBUG_ADDRESS=
 #
 NOTIFIER_STOP_TIME=30
 NOTIFIER_STOP_INTERVAL=1
+
+#
+# Logging level
+#
+# One of FINE, INFO, WARNING, SEVERE.
+#
+LOG_LEVEL=INFO
 
 #-------------------------------------#
 # Notification Service Configuration: #

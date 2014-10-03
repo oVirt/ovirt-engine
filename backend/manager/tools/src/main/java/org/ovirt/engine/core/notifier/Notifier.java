@@ -1,44 +1,24 @@
 package org.ovirt.engine.core.notifier;
 
-import java.net.MalformedURLException;
-import java.net.URL;
+import static org.ovirt.engine.core.notifier.utils.NotificationProperties.LOG_LEVEL;
 
-import javax.xml.parsers.FactoryConfigurationError;
-
-import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.LogManager;
-import org.apache.log4j.Logger;
-import org.apache.log4j.xml.DOMConfigurator;
 import org.ovirt.engine.core.notifier.transport.smtp.Smtp;
 import org.ovirt.engine.core.notifier.transport.snmp.Snmp;
 import org.ovirt.engine.core.notifier.utils.NotificationProperties;
+import org.ovirt.engine.core.utils.log.JavaLoggingUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Main class of event notification service. Initiate the service and handles termination signals
  */
 public class Notifier {
-    private static final Logger log = Logger.getLogger(Notifier.class);
+    private static final Logger log = LoggerFactory.getLogger(Notifier.class);
 
     /**
      * Command line argument, that tells Notifier to validate properties only (it exits after validation)
      */
     private static final String ARG_VALIDATE = "validate";
-
-    /**
-     * Initializes logging configuration
-     */
-    private static void initLogging() {
-        String cfgFile = System.getProperty("log4j.configuration");
-        if (StringUtils.isNotBlank(cfgFile)) {
-            try {
-                URL url = new URL(cfgFile);
-                LogManager.resetConfiguration();
-                DOMConfigurator.configure(url);
-            } catch (FactoryConfigurationError | MalformedURLException ex) {
-                System.out.println("Cannot configure logging: " + ex.getMessage());
-            }
-        }
-    }
 
     /**
      * @param args
@@ -47,13 +27,15 @@ public class Notifier {
      */
     public static void main(String[] args) {
         NotificationProperties prop = null;
-        initLogging();
 
         NotificationService notificationService = null;
         EngineMonitorService engineMonitorService = null;
 
         try {
             prop = NotificationProperties.getInstance();
+
+            JavaLoggingUtils.setLogLevel(prop.getProperty(LOG_LEVEL));
+
             prop.validate();
             notificationService = new NotificationService(prop);
             engineMonitorService = new EngineMonitorService(prop);

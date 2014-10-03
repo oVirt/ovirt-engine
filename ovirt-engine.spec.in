@@ -1059,7 +1059,6 @@ fi
 %files tools -f .mfiles-tools
 
 %config %{_sysconfdir}/logrotate.d/ovirt-engine-notifier
-%config %{engine_etc}/notifier/log4j.xml
 %config(noreplace) %{engine_etc}/engine-config/engine-config.conf
 %config(noreplace) %{engine_etc}/engine-manage-domains/engine-manage-domains.conf
 %dir %attr(-, %{engine_user}, %{engine_group}) %{engine_log}/notifier
@@ -1080,6 +1079,7 @@ fi
 %{engine_data}/bin/engine-prolog.sh
 %{engine_data}/bin/ovirt-engine-role.sh
 %{engine_data}/conf/jaas.conf
+%{engine_data}/conf/notifier-logging.properties
 %{engine_data}/conf/tools-logging.properties
 %{engine_data}/services/ovirt-engine-notifier
 %{engine_data}/services/ovirt-fence-kdump-listener/
