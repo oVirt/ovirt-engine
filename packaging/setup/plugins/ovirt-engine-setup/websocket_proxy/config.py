@@ -33,8 +33,10 @@ from otopi import plugin
 
 
 from ovirt_engine_setup import constants as osetupcons
+from ovirt_engine_setup.engine_common import constants as oengcommcons
 from ovirt_engine_setup.websocket_proxy import constants as owspcons
 from ovirt_engine_setup import dialog
+from ovirt_engine_setup import hostname as osetuphostname
 
 
 @util.export
@@ -61,6 +63,14 @@ class Plugin(plugin.PluginBase):
         self.environment.setdefault(
             owspcons.ConfigEnv.WEBSOCKET_PROXY_HOST,
             'localhost'
+        )
+        self.environment.setdefault(
+            owspcons.EngineConfigEnv.ENGINE_FQDN,
+            None
+        )
+        self.environment.setdefault(
+            owspcons.EngineCoreEnv.ENABLE,
+            None
         )
 
     @plugin.event(
@@ -113,6 +123,28 @@ class Plugin(plugin.PluginBase):
         self._enabled = self.environment[
             owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
         ]
+
+    @plugin.event(
+        stage=plugin.Stages.STAGE_CUSTOMIZATION,
+        after=(
+            osetupcons.Stages.DIALOG_TITLES_S_NETWORK,
+            oengcommcons.Stages.NETWORK_OWNERS_CONFIG_CUSTOMIZED,
+        ),
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_E_NETWORK,
+        ),
+        condition=lambda self: self.environment[
+            owspcons.ConfigEnv.WEBSOCKET_PROXY_CONFIG
+        ],
+    )
+    def _customization_network(self):
+        osetuphostname.Hostname(
+            plugin=self,
+        ).getHostname(
+            envkey=owspcons.EngineConfigEnv.ENGINE_FQDN,
+            whichhost=_('the engine'),
+            supply_default=False,
+        )
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CUSTOMIZATION,
