@@ -15,8 +15,7 @@ public enum OptionKey {
         OPTION_ADMINPASSFILE(Arrays.asList(new String[] { "--admin-pass-file" })),
         OPTION_ONLY_RELOADABLE(Arrays.asList(new String[] { "-o", "--only-reloadable" })),
         OPTION_LOG_FILE(Arrays.asList(new String[] { "--log-file" })),
-        OPTION_LOG_LEVEL(Arrays.asList(new String[] { "--log-level" })),
-        OPTION_LOG4J_CONFIG(Arrays.asList(new String[] { "--log4j-config" }));
+        OPTION_LOG_LEVEL(Arrays.asList(new String[] { "--log-level" }));
 
     private List<String> optionalStrings;
 

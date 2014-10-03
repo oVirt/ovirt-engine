@@ -18,7 +18,6 @@ public class EngineConfigMap {
     private boolean onlyReloadable;
     private String logFile;
     private String logLevel;
-    private String log4jConfig;
 
     public boolean isOnlyReloadable() {
         return onlyReloadable;
@@ -111,14 +110,6 @@ public class EngineConfigMap {
         this.logLevel = logLevel;
     }
 
-    public String getLog4jConfig() {
-        return log4jConfig;
-    }
-
-    public void setLog4jConfig(String log4jConfig) {
-        this.log4jConfig = log4jConfig;
-    }
-
     @Override
     public String toString() {
         final String SEPARATOR = ", ";
@@ -134,7 +125,6 @@ public class EngineConfigMap {
                 .append("alternatePropertiesFile = ").append(this.alternatePropertiesFile).append(SEPARATOR)
                 .append("logFile = ").append(this.logFile).append(SEPARATOR)
                 .append("logLevel = ").append(this.logLevel).append(SEPARATOR)
-                .append("log4jConfig = ").append(this.log4jConfig).append(SEPARATOR)
                 .append(" )");
 
         return retValue.toString();

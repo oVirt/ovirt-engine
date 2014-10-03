@@ -44,10 +44,7 @@ OPTIONS
            Sets file to write logging into (if not set nothing is logged).
 
        --log-level=LOG_LEVEL
-           Sets log level, one of DEBUG (default), INFO, WARN, ERROR (case insensitive).
-
-       --log4j-config=XML_FILE
-           Sets log4j.xml file which logging configuration is loaded from.
+           Sets log level, one of FINE, INFO (default), WARNING, SEVERE (case insensitive).
 
 SETTING PASSWORDS
        Passwords can be set in interactive mode:
@@ -60,6 +57,10 @@ SETTING PASSWORDS
            engine-config -s PasswordEntry=/tmp/mypass
 
        PasswordEntry varies between the different password options.
+
+CUSTOM LOGGING
+       If you need custom logging setup, please create your own java.util.logging properties file,
+       set a path to this file into OVIRT_LOGGING_PROPERTIES environment variable and execute engine-config.
 
 NOTE
        In order for your change(s) to take effect, restart the oVirt engine.
@@ -110,6 +111,7 @@ parseArgs "$@"
 #
 
 exec "${JAVA_HOME}/bin/java" \
+	-Djava.util.logging.config.file="${OVIRT_LOGGING_PROPERTIES}" \
 	-Djboss.modules.write-indexes=false \
 	-jar "${JBOSS_HOME}/jboss-modules.jar" \
 	-dependencies org.ovirt.engine.core.tools \

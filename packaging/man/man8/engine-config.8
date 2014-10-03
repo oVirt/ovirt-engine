@@ -58,7 +58,7 @@ Sets file to write logging into (if not set nothing is logged).
 .PP
 \fB\-\-log\-level\fR=\fILOG_LEVEL\fR
 .RS 4
-Sets log level, one of DEBUG (default), INFO, WARN, ERROR (case insensitive).
+Sets log level, one of FINE, INFO (default), WARNING, SEVERE (case insensitive).
 .RE
 .PP
 \fB\-\-log4j\-config\fR=\fIXML_FILE\fR
@@ -85,6 +85,12 @@ engine-config -s PasswordEntry=/tmp/mypass
 .BR
 .RE
 PasswordEntry varies between the different password options.
+
+.SH CUSTOM LOGGING
+If you need custom logging setup, please create your own java.util.logging properties file,
+set a path to this file into OVIRT_LOGGING_PROPERTIES environment variable and execute
+engine-config.
+
 .SH NOTE
 In order for your change(s) to take effect, restart the oVirt engine.
 

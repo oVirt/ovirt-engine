@@ -260,7 +260,6 @@ public class EngineConfigCLIParser {
         engineConfigMap.setOnlyReloadable(parseOptionKey(OptionKey.OPTION_ONLY_RELOADABLE));
         engineConfigMap.setLogFile(parseOptionKey(OptionKey.OPTION_LOG_FILE));
         engineConfigMap.setLogLevel(parseOptionKey(OptionKey.OPTION_LOG_LEVEL));
-        engineConfigMap.setLog4jConfig(parseOptionKey(OptionKey.OPTION_LOG4J_CONFIG));
     }
 
     public EngineConfigMap getEngineConfigMap() {

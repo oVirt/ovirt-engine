@@ -19,6 +19,7 @@
     <module name="org.ovirt.engine.core.utils"/>
     <module name="org.ovirt.engine.core.uutils"/>
     <module name="org.postgresql"/>
+    <module name="org.slf4j"/>
     <module name="org.snmp4j"/>
     <module name="sun.jdk"/>
   </dependencies>
