@@ -368,7 +368,7 @@ public class VolumeBrickListModel extends SearchableListModel {
                             }
                         }
 
-                        volumeBrickModel.getServers().setItems(hostList);
+                        volumeBrickModel.setHostList(hostList);
                     }
                 };
                 AsyncDataProvider.getInstance().getHostListByCluster(_asyncQueryInner, cluster.getName());

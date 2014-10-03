@@ -327,7 +327,7 @@ public class VolumeModel extends Model {
                         iterator.remove();
                     }
                 }
-                volumeBrickModel.getServers().setItems(hostList);
+                volumeBrickModel.setHostList(hostList);
             }
         };
         AsyncDataProvider.getInstance().getHostListByCluster(_asyncQuery, getCluster().getSelectedItem().getName());

@@ -1,11 +1,14 @@
 package org.ovirt.engine.ui.uicommonweb.models.gluster;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.comparators.LexoNumericComparator;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -659,6 +662,17 @@ public class VolumeBrickModel extends Model {
         }
 
         return true;
+    }
+
+    public void setHostList(List<VDS> hosts) {
+        final LexoNumericComparator lexoNumeric = new LexoNumericComparator();
+        Collections.sort(hosts, new Comparator<VDS>() {
+            @Override
+            public int compare(VDS host0, VDS host1) {
+                return lexoNumeric.compare(host0.getHostName(), host1.getHostName());
+            }
+        });
+        getServers().setItems(hosts);
     }
 
     @Override
