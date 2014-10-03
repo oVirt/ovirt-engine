@@ -1657,6 +1657,7 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /storagedomains/{storagedomain:id}/templates/{template:id}|rel=get
   description: get the details of the specified template in the export or data domain
@@ -1716,6 +1717,7 @@ actions:
       signatures: []
     urlparams:
       max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
     headers: {}
 - name: /storagedomains/{storagedomain:id}/vms/{vm:id}|rel=delete
   description: delete the specified virtual machine from the storage domain
@@ -4812,8 +4814,7 @@ actions:
     body:
       parameterType: null
       signatures: []
-    urlparams:
-      unregistered: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    urlparams: {}
     headers: {}
 - name: /storagedomains/{storagedomain:id}/disks/{disk:id}|rel=delete
   description: delete the specified disk in the storage domain
