@@ -5,7 +5,9 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.PersistentSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -19,18 +21,26 @@ import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class RemoveNetworkParametersBuilder extends NetworkParametersBuilder {
 
-    private Network network;
+    private final Network network;
+    private final ManagementNetworkUtil managementNetworkUtil;
 
-    public RemoveNetworkParametersBuilder(Network network, CommandContext commandContext) {
+    public RemoveNetworkParametersBuilder(Network network,
+                                          CommandContext commandContext,
+                                          ManagementNetworkUtil managementNetworkUtil) {
         super(commandContext);
+
+        Validate.notNull(network, "network cannot be null");
+        Validate.notNull(managementNetworkUtil, "managementNetworkUtil cannot be null");
+
         this.network = network;
+        this.managementNetworkUtil = managementNetworkUtil;
     }
 
     public ArrayList<VdcActionParametersBase> buildParameters(List<VdsNetworkInterface> nics) {
         Set<Guid> nonUpdateableHosts = new HashSet<>();
         ArrayList<VdcActionParametersBase> parameters = new ArrayList<>();
 
-        if (NetworkUtils.isManagementNetwork(network)) {
+        if (managementNetworkUtil.isManagementNetwork(network.getId())) {
             return parameters;
         }
 

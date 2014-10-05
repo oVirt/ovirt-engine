@@ -9,6 +9,7 @@ import org.ovirt.engine.core.bll.PredefinedRoles;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
+import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -124,7 +125,11 @@ public class NetworkHelper {
     }
 
     private static void removeNetworkFromHosts(Network network, CommandContext context, List<VdsNetworkInterface> nics) {
-        RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(network, context);
+
+        final ManagementNetworkUtil managementNetworkUtil = Injector.get(ManagementNetworkUtil.class);
+
+        RemoveNetworkParametersBuilder builder =
+                new RemoveNetworkParametersBuilder(network, context, managementNetworkUtil);
         ArrayList<VdcActionParametersBase> parameters = builder.buildParameters(nics);
 
         if (!parameters.isEmpty()) {

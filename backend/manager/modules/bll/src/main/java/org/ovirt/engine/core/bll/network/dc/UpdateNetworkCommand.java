@@ -10,6 +10,8 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
@@ -20,6 +22,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -48,6 +51,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 @NonTransactiveCommandAttribute
 public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> extends NetworkModification<T> implements RenamedEntityInfoProvider {
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     private Network oldNetwork;
 
     public UpdateNetworkCommand(T parameters) {
@@ -429,7 +436,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
         }
 
         private ArrayList<VdcActionParametersBase> createRemoveNetworkParameters(List<VdsNetworkInterface> nicsForRemove) {
-            RemoveNetworkParametersBuilder builder = new RemoveNetworkParametersBuilder(getOldNetwork(), getContext());
+            RemoveNetworkParametersBuilder builder =
+                    new RemoveNetworkParametersBuilder(getOldNetwork(), getContext(), managementNetworkUtil);
             return builder.buildParameters(nicsForRemove);
         }
 
