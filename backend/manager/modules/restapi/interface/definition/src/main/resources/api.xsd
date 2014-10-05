@@ -1347,6 +1347,35 @@
     </xs:sequence>
   </xs:complexType>
 
+  <!-- Fencing Policy -->
+
+  <xs:element name="fencing_policy" type="FencingPolicy"/>
+
+  <xs:element name="skip_if_sd_active" type="SkipIfSDActive"/>
+
+  <xs:element name="skip_if_connectivity_broken" type="SkipIfConnectivityBroken"/>
+
+  <xs:complexType name="SkipIfConnectivityBroken">
+    <xs:sequence>
+      <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="threshold" type="xs:int" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="SkipIfSDActive">
+    <xs:sequence>
+      <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="FencingPolicy">
+    <xs:sequence>
+      <xs:element name="enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="skip_if_sd_active" minOccurs="0" maxOccurs="1"/>
+      <xs:element ref="skip_if_connectivity_broken"  minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
   <!-- Clusters -->
 
   <xs:element name="cluster" type="Cluster"/>
@@ -1622,6 +1651,7 @@
           <xs:element ref="ksm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="serial_number" minOccurs="0" maxOccurs="1" />
           <xs:element name="required_rng_sources" type="RngSources" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="fencing_policy"  minOccurs="0" maxOccurs="1"/>
           <!-- Also a rel="networks" link -->
         </xs:sequence>
       </xs:extension>
@@ -4812,7 +4842,7 @@
   <xs:element name="iscsi_bond" type="IscsiBond"/>
 
   <xs:element name="iscsi_bonds" type="IscsiBonds"/>
-  
+
   <!-- Disk Profiles -->
   <xs:element name="disk_profile" type="DiskProfile"/>
 
