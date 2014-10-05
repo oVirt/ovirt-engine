@@ -598,7 +598,6 @@ public class AddVmCommandTest {
         initDestSDs(cmd);
         storageDomainValidator = mock(StorageDomainValidator.class);
         doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainWithinThresholds();
-        doReturn(ValidationResult.VALID).when(storageDomainValidator).isDomainHasSpaceForRequest(any(int.class));
         doReturn(storageDomainValidator).when(cmd).createStorageDomainValidator(any(StorageDomain.class));
         return cmd;
     }

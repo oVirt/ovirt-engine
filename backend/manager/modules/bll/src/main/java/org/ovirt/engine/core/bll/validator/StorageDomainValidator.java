@@ -2,8 +2,6 @@ package org.ovirt.engine.core.bll.validator;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -65,32 +63,6 @@ public class StorageDomainValidator {
 
     private String storageName() {
         return String.format("$%1$s %2$s", "storageName", storageDomain.getStorageName());
-    }
-
-    /**
-     * @deprecated
-     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
-     * hasSpaceForNewDisk, according to the situation.
-     */
-    @Deprecated
-    public ValidationResult isDomainHasSpaceForRequest(final long requestedSize) {
-        return isDomainHasSpaceForRequest(requestedSize, true);
-    }
-
-    /**
-     * @deprecated
-     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
-     * hasSpaceForNewDisk, according to the situation.
-     */
-    @Deprecated
-    public ValidationResult isDomainHasSpaceForRequest(final long requestedSize, final boolean useThresHold) {
-        long size = useThresHold ? getLowDiskSpaceThreshold() : 0L;
-        if (storageDomain.getAvailableDiskSize() != null &&
-                storageDomain.getAvailableDiskSize() - requestedSize < size) {
-            return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
-                    storageName());
-        }
-        return ValidationResult.VALID;
     }
 
     private static Integer getLowDiskSpaceThreshold() {
@@ -243,28 +215,6 @@ public class StorageDomainValidator {
 
         return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN,
                 storageName());
-    }
-
-    /**
-     * @deprecated
-     * This validation is replaced by hadSpaceForClonedDisks,hadSpaceForClonedDisk, hasSpaceForNewDisks and
-     * hasSpaceForNewDisk, according to the situation.
-     */
-    @Deprecated
-    public static Map<StorageDomain, Integer> getSpaceRequirementsForStorageDomains(Map<DiskImage, StorageDomain> imageToDomainMap) {
-        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
-        if (!imageToDomainMap.isEmpty()) {
-            for (Map.Entry<DiskImage, StorageDomain> entry : imageToDomainMap.entrySet()) {
-                StorageDomain domain = entry.getValue();
-                int size = (int) entry.getKey().getActualSize();
-                if (map.containsKey(domain)) {
-                    map.put(domain, map.get(domain) + size);
-                } else {
-                    map.put(domain, size);
-                }
-            }
-        }
-        return map;
     }
 
     /**
