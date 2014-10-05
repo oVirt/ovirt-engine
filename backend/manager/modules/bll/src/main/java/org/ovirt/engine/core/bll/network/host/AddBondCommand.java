@@ -2,7 +2,10 @@ package org.ovirt.engine.core.bll.network.host;
 
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddBondParameters;
@@ -19,6 +22,9 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<T> {
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
 
     public AddBondCommand(T parameters) {
         super(parameters);
@@ -137,7 +143,7 @@ public class AddBondCommand<T extends AddBondParameters> extends VdsBondCommand<
         }
 
         if (StringUtils.isNotEmpty(getParameters().getGateway()) &&
-                !NetworkUtils.isManagementNetwork(getParameters().getNetwork())) {
+            !managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getId(), getVdsGroupId())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;
         }
