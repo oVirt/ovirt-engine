@@ -4,8 +4,12 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
+import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.bll.profiles.CpuProfileHelper;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -39,13 +43,19 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extends
         VdsGroupOperationCommandBase<T>  implements RenamedEntityInfoProvider{
 
+    @Inject
+    private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
+
     private List<VDS> allForVdsGroup;
     private VDSGroup oldGroup;
+
+    private boolean isAddedToStoragePool = false;
+
+    private NetworkCluster managementNetworkCluster;
 
     public UpdateVdsGroupCommand(T parameters) {
         this(parameters, null);
@@ -105,7 +115,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         getVdsGroupDAO().update(getParameters().getVdsGroup());
 
-        if (oldGroup.getStoragePoolId() == null && getVdsGroup().getStoragePoolId() != null) {
+        if (isAddedToStoragePool) {
             for (VDS vds : allForVdsGroup) {
                 VdsActionParameters parameters = new VdsActionParameters();
                 parameters.setVdsId(vds.getId());
@@ -117,22 +127,24 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                 }
             }
 
-            // when moving the cluster back into a DC, need to add its management network
-            Network managementNetwork =
-                    getNetworkDAO().getByNameAndDataCenter(NetworkUtils.getDefaultManagementNetworkName(),
-                            getVdsGroup().getStoragePoolId());
-            getNetworkClusterDAO().save(new NetworkCluster(getVdsGroup().getId(),
-                    managementNetwork.getId(),
-                    NetworkStatus.OPERATIONAL,
-                    true,
-                    true,
-                    true,
-                    false));
+            getNetworkClusterDAO().save(managementNetworkCluster);
         }
 
         alertIfFencingDisabled();
 
         setSucceeded(true);
+    }
+
+    private NetworkCluster createManagementNetworkCluster(Network managementNetwork) {
+        final NetworkCluster networkCluster = new NetworkCluster(
+                getVdsGroup().getId(),
+                managementNetwork.getId(),
+                NetworkStatus.OPERATIONAL,
+                true,
+                true,
+                true,
+                true);
+        return networkCluster;
     }
 
     @Override
@@ -251,8 +263,13 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
         if (result) {
             List<VDS> vdss = new ArrayList<VDS>();
-            boolean isAddedToStoragePool = oldGroup.getStoragePoolId() == null
+            isAddedToStoragePool = oldGroup.getStoragePoolId() == null
                     && getVdsGroup().getStoragePoolId() != null;
+
+            if (isAddedToStoragePool && !validateManagementNetworkAttachement()) {
+                return false;
+            }
+
             for (VDS vds : allForVdsGroup) {
                 if (vds.getStatus() == VDSStatus.Up) {
                     if (isAddedToStoragePool) {
@@ -386,6 +403,19 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
         return result;
     }
 
+    private boolean validateManagementNetworkAttachement() {
+        final Network managementNetwork =
+                getDefaultManagementNetworkFinder().findDefaultManagementNetwork(getVdsGroup().getStoragePoolId());
+        if (managementNetwork == null) {
+            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+            return false;
+        }
+
+        managementNetworkCluster = createManagementNetworkCluster(managementNetwork);
+        final UpdateClusterNetworkClusterValidator networkClusterValidator = createManagementNetworkClusterValidator();
+        return validate(networkClusterValidator.managementNetworkChange());
+    }
+
     @Override
     protected void setActionMessageParameters() {
         super.setActionMessageParameters();
@@ -465,5 +495,14 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     @Override
     public void setEntityId(AuditLogableBase logable) {
         logable.setVdsGroupId(oldGroup.getId());
+    }
+
+    DefaultManagementNetworkFinder getDefaultManagementNetworkFinder() {
+        return defaultManagementNetworkFinder;
+    }
+
+    UpdateClusterNetworkClusterValidator createManagementNetworkClusterValidator() {
+        return new UpdateClusterNetworkClusterValidator(managementNetworkCluster,
+                getVdsGroup().getCompatibilityVersion());
     }
 }

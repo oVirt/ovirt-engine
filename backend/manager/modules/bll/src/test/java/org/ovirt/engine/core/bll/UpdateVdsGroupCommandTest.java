@@ -1,15 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Matchers.anyBoolean;
-import static org.mockito.Matchers.anyString;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -25,6 +15,8 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.network.cluster.DefaultManagementNetworkFinder;
+import org.ovirt.engine.core.bll.network.cluster.UpdateClusterNetworkClusterValidator;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
@@ -33,6 +25,7 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -44,14 +37,27 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyBoolean;
+import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
 @RunWith(MockitoJUnitRunner.class)
 public class UpdateVdsGroupCommandTest {
+
 
     private static final Version VERSION_1_0 = new Version(1, 0);
     private static final Version VERSION_1_1 = new Version(1, 1);
     private static final Version VERSION_1_2 = new Version(1, 2);
-    private static final Guid STORAGE_POOL_ID = Guid.newGuid();
+    private static final Guid DC_ID1 = Guid.newGuid();
+    private static final Guid DC_ID2 = Guid.newGuid();
     private static final Guid DEFAULT_VDS_GROUP_ID = new Guid("99408929-82CF-4DC7-A532-9D998063FA95");
+    private static final Guid TEST_MANAGEMENT_NETWORK_ID = Guid.newGuid();
 
     private static final Map<String, String> migrationMap = new HashMap<>();
 
@@ -78,6 +84,19 @@ public class UpdateVdsGroupCommandTest {
     private GlusterVolumeDao glusterVolumeDao;
     @Mock
     private VmDAO vmDao;
+    @Mock
+    private DefaultManagementNetworkFinder defaultManagementNetworkFinder;
+    @Mock
+    private UpdateClusterNetworkClusterValidator networkClusterValidator;
+
+    @Mock
+    private Network mockManagementNetwork = createManagementNetwork();
+
+    private Network createManagementNetwork() {
+        final Network network = new Network();
+        network.setId(TEST_MANAGEMENT_NETWORK_ID);
+        return network;
+    }
 
     private UpdateVdsGroupCommand<VdsGroupOperationParameters> cmd;
 
@@ -154,16 +173,14 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void invalidVersion() {
         createCommandWithInvalidVersion();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_GIVEN_VERSION_NOT_SUPPORTED);
     }
 
     @Test
     public void versionDecreaseWithHost() {
         createCommandWithOlderVersion();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         VdsExist();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
     }
@@ -171,8 +188,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void versionDecreaseNoHostsOrNetwork() {
         createCommandWithOlderVersion();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         StoragePoolDAO storagePoolDAO2 = Mockito.mock(StoragePoolDAO.class);
         when(storagePoolDAO2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
         doReturn(storagePoolDAO2).when(cmd).getStoragePoolDAO();
@@ -185,16 +201,14 @@ public class UpdateVdsGroupCommandTest {
         StoragePoolDAO storagePoolDAO2 = Mockito.mock(StoragePoolDAO.class);
         when(storagePoolDAO2.get(any(Guid.class))).thenReturn(createStoragePoolLocalFSOldVersion());
         doReturn(storagePoolDAO2).when(cmd).getStoragePoolDAO();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION_UNDER_DC);
     }
 
     @Test
     public void updateWithLowerVersionThanHosts() {
         createCommandWithDefaultVdsGroup();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         VdsExistWithHigherVersion();
         architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_UPDATE_COMPATIBILITY_VERSION_WITH_LOWER_HOSTS);
@@ -203,8 +217,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void updateWithCpuLowerThanHost() {
         createCommandWithDefaultVdsGroup();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         clusterHasVds();
         cpuFlagsMissing();
         architectureIsUpdatable();
@@ -214,8 +227,7 @@ public class UpdateVdsGroupCommandTest {
     @Test
     public void updateStoragePool() {
         createCommandWithDifferentPool();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         clusterHasVds();
         cpuFlagsNotMissing();
         canDoActionFailedWithReason(VdcBllMessages.VDS_GROUP_CANNOT_CHANGE_STORAGE_POOL);
@@ -223,11 +235,12 @@ public class UpdateVdsGroupCommandTest {
 
     @Test
     public void clusterAlreadyInLocalFs() {
+        prepareManagementNetworkMocks();
+
         createCommandWithDefaultVdsGroup();
         oldGroupIsDetachedDefault();
         storagePoolIsLocalFS();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         allQueriesForVms();
         storagePoolAlreadyHasCluster();
         architectureIsUpdatable();
@@ -235,16 +248,59 @@ public class UpdateVdsGroupCommandTest {
     }
 
     @Test
+    public void clusterMovesToDcWithNoDefaultManagementNetwork() {
+        noNewDefaultManagementNetworkFound();
+
+        createCommandWithDefaultVdsGroup();
+        oldGroupIsDetachedDefault();
+        setupCpu();
+        canDoActionFailedWithReason(VdcBllMessages.ACTION_TYPE_FAILED_DEFAULT_MANAGEMENT_NETWORK_NOT_FOUND);
+    }
+
+    @Test
+    public void invalidDefaultManagementNetworkAttachement() {
+        newDefaultManagementNetworkFound();
+        final VdcBllMessages expected = VdcBllMessages.Unassigned;
+        when(networkClusterValidator.managementNetworkChange()).thenReturn(new ValidationResult(expected));
+
+        createCommandWithDefaultVdsGroup();
+        oldGroupIsDetachedDefault();
+        setupCpu();
+        canDoActionFailedWithReason(expected);
+    }
+
+    private void setupCpu() {
+        cpuExists();
+        cpuManufacturersMatch();
+    }
+
+    @Test
     public void defaultClusterInLocalFs() {
+        prepareManagementNetworkMocks();
+
         mcr.mockConfigValue(ConfigValues.AutoRegistrationDefaultVdsGroupID, DEFAULT_VDS_GROUP_ID);
         createCommandWithDefaultVdsGroup();
         oldGroupIsDetachedDefault();
         storagePoolIsLocalFS();
-        cpuExists();
-        cpuManufacturersMatch();
+        setupCpu();
         allQueriesForVms();
         architectureIsUpdatable();
         canDoActionFailedWithReason(VdcBllMessages.DEFAULT_CLUSTER_CANNOT_BE_ON_LOCALFS);
+    }
+
+    private void prepareManagementNetworkMocks() {
+        newDefaultManagementNetworkFound();
+        when(networkClusterValidator.managementNetworkChange()).thenReturn(ValidationResult.VALID);
+    }
+
+    private void newDefaultManagementNetworkFound() {
+        when(defaultManagementNetworkFinder.findDefaultManagementNetwork(DC_ID1)).
+                thenReturn(mockManagementNetwork);
+    }
+
+    private void noNewDefaultManagementNetworkFound() {
+        when(defaultManagementNetworkFinder.findDefaultManagementNetwork(DC_ID1)).
+                thenReturn(null);
     }
 
     @Test
@@ -375,6 +431,8 @@ public class UpdateVdsGroupCommandTest {
         doReturn(storagePoolDAO).when(cmd).getStoragePoolDAO();
         doReturn(glusterVolumeDao).when(cmd).getGlusterVolumeDao();
         doReturn(vmDao).when(cmd).getVmDAO();
+        doReturn(defaultManagementNetworkFinder).when(cmd).getDefaultManagementNetworkFinder();
+        doReturn(networkClusterValidator).when(cmd).createManagementNetworkClusterValidator();
         doReturn(true).when(cmd).validateClusterPolicy();
 
         if (StringUtils.isEmpty(group.getCpuName())) {
@@ -414,7 +472,7 @@ public class UpdateVdsGroupCommandTest {
         group.setId(DEFAULT_VDS_GROUP_ID);
         group.setCpuName("Intel Conroe");
         group.setCompatibilityVersion(VERSION_1_1);
-        group.setStoragePoolId(STORAGE_POOL_ID);
+        group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.x86_64);
         return group;
     }
@@ -432,7 +490,7 @@ public class UpdateVdsGroupCommandTest {
         group.setName("Default");
         group.setId(DEFAULT_VDS_GROUP_ID);
         group.setCompatibilityVersion(VERSION_1_1);
-        group.setStoragePoolId(STORAGE_POOL_ID);
+        group.setStoragePoolId(DC_ID1);
         group.setArchitecture(ArchitectureType.undefined);
         return group;
     }
@@ -446,7 +504,7 @@ public class UpdateVdsGroupCommandTest {
     private static VDSGroup createVdsGroupWithOlderVersion() {
         VDSGroup group = createNewVdsGroup();
         group.setCompatibilityVersion(VERSION_1_0);
-        group.setStoragePoolId(STORAGE_POOL_ID);
+        group.setStoragePoolId(DC_ID1);
         return group;
     }
 
@@ -458,7 +516,7 @@ public class UpdateVdsGroupCommandTest {
 
     private static VDSGroup createVdsGroupWithDifferentPool() {
         VDSGroup group = createNewVdsGroup();
-        group.setStoragePoolId(Guid.newGuid());
+        group.setStoragePoolId(DC_ID2);
         return group;
     }
 
@@ -484,11 +542,11 @@ public class UpdateVdsGroupCommandTest {
     }
 
     private void storagePoolIsLocalFS() {
-        when(storagePoolDAO.get(any(Guid.class))).thenReturn(createStoragePoolLocalFS());
+        when(storagePoolDAO.get(DC_ID1)).thenReturn(createStoragePoolLocalFS());
     }
 
     private void oldGroupIsDetachedDefault() {
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(createDetachedDefaultVdsGroup());
+        when(vdsGroupDAO.get(DEFAULT_VDS_GROUP_ID)).thenReturn(createDetachedDefaultVdsGroup());
     }
 
     private void storagePoolAlreadyHasCluster() {
