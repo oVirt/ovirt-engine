@@ -12,11 +12,11 @@ import java.util.TreeSet;
 import static org.junit.Assert.assertTrue;
 
 public class VdcActionTypeTest {
-    private static final int bitsetSize = 5000;
+    private static final int bitSetSize = 5000;
 
     @Test
     public void testAuditLogTypeValueUniqueness() {
-        BitSet bitset = new BitSet(bitsetSize);
+        BitSet bitset = new BitSet(bitSetSize);
         Set<Integer> nonUniqueValues = new TreeSet<Integer>();
 
         for (VdcActionType vat : VdcActionType.values()) {
@@ -31,7 +31,7 @@ public class VdcActionTypeTest {
     }
 
     @Test
-    public void testCommandClassExistance() {
+    public void testCommandClassExistence() {
         List<VdcActionType> missingCommands = new ArrayList<>();
         for (VdcActionType vat : VdcActionType.values()) {
             if (vat != VdcActionType.Unknown) {
