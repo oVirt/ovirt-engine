@@ -1,11 +1,9 @@
 package org.ovirt.engine.core.bll.validator;
 
 import java.util.Arrays;
-import java.util.HashMap;
+import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
@@ -27,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -117,7 +114,7 @@ public class RunVmValidator {
                 validate(validateStoragePoolUp(vm, storagePool, getVmImageDisks()), messages) &&
                 validate(validateIsoPath(vm, runVmParam.getDiskPath(), runVmParam.getFloppyPath(), activeIsoDomainId), messages)  &&
                 validate(vmDuringInitialization(vm), messages) &&
-                validate(validateStatelessVm(vm, getVmDisks(), runVmParam.getRunAsStateless()), messages) &&
+                validate(validateStatelessVm(vm, runVmParam.getRunAsStateless()), messages) &&
                 validate(validateStorageDomains(vm, isInternalExecution, getVmImageDisks()), messages) &&
                 validate(validateImagesForRunVm(vm, getVmImageDisks()), messages) &&
                 validate(validateMemorySize(vm), messages) &&
@@ -309,7 +306,7 @@ public class RunVmValidator {
         return ValidationResult.VALID;
     }
 
-    protected ValidationResult validateStatelessVm(VM vm, List<Disk> plugDisks, Boolean stateless) {
+    protected ValidationResult validateStatelessVm(VM vm, Boolean stateless) {
         // if the VM is not stateless, there is nothing to check
         if (stateless != null ? !stateless : !vm.isStateless()) {
             return ValidationResult.VALID;
@@ -325,7 +322,7 @@ public class RunVmValidator {
             return new ValidationResult(VdcBllMessages.VM_CANNOT_RUN_STATELESS_HA);
         }
 
-        ValidationResult hasSpaceValidation = hasSpaceForSnapshots(vm, plugDisks);
+        ValidationResult hasSpaceValidation = hasSpaceForSnapshots();
         if (!hasSpaceValidation.isValid()) {
             return hasSpaceValidation;
         }
@@ -346,18 +343,20 @@ public class RunVmValidator {
      * check that we can create snapshots for all disks
      * return true if all storage domains have enough space to create snapshots for this VM plugged disks
      */
-    protected ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
-        Integer minSnapshotSize = Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB);
-        Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks = mapStorageDomainsToNumOfDisks(vm, plugDisks);
-        for (Entry<StorageDomain, Integer> e : mapStorageDomainsToNumOfDisks.entrySet()) {
-            ValidationResult validationResult =
-                    new StorageDomainValidator(e.getKey()).isDomainHasSpaceForRequest(minSnapshotSize * e.getValue());
-            if (!validationResult.isValid()) {
-                return validationResult;
-            }
-        }
+    protected ValidationResult hasSpaceForSnapshots() {
+        Set<Guid> sdIds = ImagesHandler.getAllStorageIdsForImageIds(getVmImageDisks());
 
-        return ValidationResult.VALID;
+        MultipleStorageDomainsValidator msdValidator = getStorageDomainsValidator(sdIds);
+        ValidationResult retVal = msdValidator.allDomainsWithinThresholds();
+        if (retVal == ValidationResult.VALID) {
+            return msdValidator.allDomainsHaveSpaceForNewDisks(getVmImageDisks());
+        }
+        return retVal;
+    }
+
+    protected MultipleStorageDomainsValidator getStorageDomainsValidator(Collection<Guid> sdIds) {
+        Guid spId = vm.getStoragePoolId();
+        return new MultipleStorageDomainsValidator(spId, sdIds);
     }
 
     protected ValidationResult validateStoragePoolUp(VM vm, StoragePool storagePool, List<DiskImage> vmImages) {
@@ -499,25 +498,6 @@ public class RunVmValidator {
 
     protected SnapshotsValidator getSnapshotValidator() {
         return new SnapshotsValidator();
-    }
-
-    /**
-     * map the VM number of pluggable and snapable disks from their domain.
-     * @param vm
-     * @param plugDisks
-     * @return
-     */
-    public Map<StorageDomain, Integer> mapStorageDomainsToNumOfDisks(VM vm, List<Disk> plugDisks) {
-        Map<StorageDomain, Integer> map = new HashMap<StorageDomain, Integer>();
-        for (Disk disk : plugDisks) {
-            if (disk.isAllowSnapshot()) {
-                for (StorageDomain domain : getStorageDomainDAO().getAllStorageDomainsByImageId(((DiskImage) disk).getImageId())) {
-                    map.put(domain, map.containsKey(domain) ? Integer.valueOf(map.get(domain) + 1) : Integer.valueOf(1));
-                }
-            }
-        }
-
-        return map;
     }
 
     private VdsDynamic getVdsDynamic(Guid vdsId) {
