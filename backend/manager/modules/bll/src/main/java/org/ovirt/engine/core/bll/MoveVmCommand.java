@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -8,7 +7,6 @@ import java.util.Map;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
-import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -106,13 +104,7 @@ public class MoveVmCommand<T extends MoveVmParameters> extends MoveOrCopyTemplat
 
         // update vm snapshots for storage free space check
         ImagesHandler.fillImagesBySnapshots(getVm());
-        return retValue && destinationHasSpace(diskImagesToValidate);
-    }
-
-    private boolean destinationHasSpace(Collection<DiskImage> diskImages) {
-        StorageDomainValidator sdv = new StorageDomainValidator(getStorageDomain());
-        return validate(sdv.isDomainWithinThresholds()) &&
-                validate(sdv.hasSpaceForClonedDisks(diskImages));
+        return retValue && validateSpaceRequirements(diskImagesToValidate);
     }
 
     protected boolean checkTemplateInStorageDomain(List<DiskImage> diskImages) {
