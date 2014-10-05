@@ -58,8 +58,8 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
     public void setUnlimited() {
         percentageBarA.setStyleName(style.percentageBarUnlimited());
         percentageLabelA.setStyleName(style.percentageLabel());
-        percentageLabelA.setText("Unlimited"); //$NON-NLS-1$
-        percentageLabelA.setTitle("Unlimited"); //$NON-NLS-1$
+        percentageLabelA.setText(constants.unlimitedQuota());
+        percentageLabelA.setTitle(constants.unlimitedQuota());
         percentageBarB.setVisible(false);
 
     }
@@ -67,7 +67,7 @@ public abstract class QuotaProgressBar extends DoublePercentageProgressBar imple
     public void setExceeded() {
         percentageBarA.setStyleName(style.percentageBarExceeded());
         percentageLabelA.setStyleName(style.percentageLabel());
-        percentageLabelA.setText("Exceeded"); //$NON-NLS-1$
+        percentageLabelA.setText(constants.exceededQuota());
         percentageBarB.setVisible(false);
     }
 

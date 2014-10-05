@@ -346,4 +346,10 @@ public interface ApplicationConstants extends CommonApplicationConstants {
 
     @DefaultStringValue("Total usage")
     String tooltipTotalUsageLabel();
+
+    @DefaultStringValue("Unlimited")
+    String unlimitedQuota();
+
+    @DefaultStringValue("Exceeded")
+    String exceededQuota();
 }
