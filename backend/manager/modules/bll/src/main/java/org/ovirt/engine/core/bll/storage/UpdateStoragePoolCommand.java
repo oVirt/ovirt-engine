@@ -3,10 +3,13 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.ArrayList;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
 import org.ovirt.engine.core.bll.validator.NetworkValidator;
@@ -38,7 +41,6 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -46,6 +48,10 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute
 public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T>  implements RenamedEntityInfoProvider{
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     public UpdateStoragePoolCommand(T parameters) {
         this(parameters, null);
     }
@@ -194,16 +200,13 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                     return false;
                 }
                 List<Network> networks = getNetworkDAO().getAllForDataCenter(getStoragePoolId());
-                if (networks.size() == 1) {
-                    Network network = networks.get(0);
+                for (Network network : networks) {
                     NetworkValidator validator = getNetworkValidator(network);
                     validator.setDataCenter(getStoragePool());
-                    if (!NetworkUtils.isManagementNetwork(network)
+                    if (!getManagementNetworkUtil().isManagementNetwork(network.getId())
                             || !validator.canNetworkCompatabilityBeDecreased()) {
                         return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                     }
-                } else if (networks.size() > 1) {
-                    return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_DECREASE_COMPATIBILITY_VERSION);
                 }
             } else if (!checkAllClustersLevel()) {  // Check all clusters has at least the same compatibility version.
                 return false;
@@ -357,5 +360,9 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
         }
 
         return result;
+    }
+
+    ManagementNetworkUtil getManagementNetworkUtil() {
+        return managementNetworkUtil;
     }
 }
