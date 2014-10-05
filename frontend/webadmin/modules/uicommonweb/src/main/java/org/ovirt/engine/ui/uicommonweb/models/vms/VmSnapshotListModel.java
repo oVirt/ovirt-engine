@@ -220,6 +220,16 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
+    private List<DiskImage> vmDisks;
+
+    public List<DiskImage> getVmDisks() {
+        return vmDisks;
+    }
+
+    public void setVmDisks(List<DiskImage> value) {
+        vmDisks = value;
+    }
+
     public VmSnapshotListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().snapshotsTitle());
@@ -238,6 +248,7 @@ public class VmSnapshotListModel extends SearchableListModel
         getCanSelectSnapshot().setEntity(true);
 
         setSnapshotsMap(new HashMap<Guid, SnapshotModel>());
+        setVmDisks(new ArrayList<DiskImage>());
     }
 
     @Override
@@ -286,14 +297,12 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     @Override
-    public void setEntity(Object value)
-    {
+    public void setEntity(Object value) {
         updateIsMemorySnapshotSupported(value);
         updateIsLiveMergeSupported(value);
-
         super.setEntity(value);
-
         updateIsCloneVmSupported();
+        updateVmActiveDisks();
     }
 
     @Override
@@ -409,55 +418,79 @@ public class VmSnapshotListModel extends SearchableListModel
         }
     }
 
-    private void preview()
-    {
+    private void preview() {
         VM vm = (VM) getEntity();
         if (vm == null) {
             return;
         }
 
-        Snapshot snapshot = (Snapshot) getSelectedItem();
-        // if snapshot doesn't have memory, just trigger preview without showing popup
-        if (!isMemorySnapshotSupported() || snapshot.getMemoryVolume().isEmpty()) {
-            Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm,
-                    new TryBackToAllSnapshotsOfVmParameters(vm.getId(), snapshot.getId()),
-                    null);
-        }
-        // otherwise, show a popup asking whether to use the memory or not
-        else {
-            SnapshotModel model = new SnapshotModel();
-            setWindow(model);
+        final Snapshot snapshot = (Snapshot) getSelectedItem();
+        AsyncDataProvider.getVmConfigurationBySnapshot(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                VM vm = (VM) returnValue;
+                ArrayList<DiskImage> snapshotDisks = vm.getDiskList();
+                List<DiskImage> disksExcludedFromSnapshot = Linq.imagesSubtract(getVmDisks(), snapshotDisks);
 
-            model.setTitle(ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
-            model.setHelpTag(HelpTag.preview_snapshot);
-            model.setHashName("preview_snapshot"); //$NON-NLS-1$
+                boolean showMemorySnapshotWarning = isMemorySnapshotSupported() && !snapshot.getMemoryVolume().isEmpty();
+                boolean showPartialSnapshotWarning = !disksExcludedFromSnapshot.isEmpty();
 
-            addCommands(model, "OnPreview"); //$NON-NLS-1$
-        }
+                if (showMemorySnapshotWarning || showPartialSnapshotWarning) {
+                    SnapshotModel model = new SnapshotModel();
+                    model.setVmDisks(getVmDisks());
+                    model.setDisks(snapshotDisks);
+                    model.setShowMemorySnapshotWarning(showMemorySnapshotWarning);
+                    model.setShowPartialSnapshotWarning(showPartialSnapshotWarning);
+                    setWindow(model);
+
+                    model.setTitle(showPartialSnapshotWarning ?
+                            ConstantsManager.getInstance().getConstants().previewPartialSnapshotTitle() :
+                            ConstantsManager.getInstance().getConstants().previewSnapshotTitle());
+                    model.setHelpTag(showPartialSnapshotWarning ? HelpTag.preview_partial_snapshot : HelpTag.preview_snapshot);
+                    model.setHashName(showPartialSnapshotWarning ? "preview_partial_snapshot" : "preview_snapshot"); //$NON-NLS-1$ //$NON-NLS-2$
+
+                    addCommands(model, "OnPreview"); //$NON-NLS-1$
+                } else {
+                    runTryBackToAllSnapshotsOfVm(null, vm, snapshot, false, null);
+                }
+            }
+        }), snapshot.getId());
     }
 
-    private void updatePreviewedDiskSnapshots(final List<Snapshot> snapshots) {
+    private void updateVmActiveDisks() {
+        VM vm = (VM) getEntity();
+        if (vm == null) {
+            return;
+        }
+
         AsyncDataProvider.getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
             @Override
             public void onSuccess(Object target, Object returnValue) {
                 ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+                getVmDisks().clear();
                 for (Disk disk : disks) {
                     if (disk.getDiskStorageType() == Disk.DiskStorageType.LUN) {
                         continue;
                     }
 
                     DiskImage diskImage = (DiskImage) disk;
-                    if (diskImage.getSnapshots().size() <= 1) {
-                        continue;
-                    }
-
-                    Guid snapshotId = diskImage.getSnapshots().get(1).getVmSnapshotId();
-                    snapshotsMap.get(snapshotId).getEntity().getDiskImages().add(diskImage);
+                    getVmDisks().add(diskImage);
                 }
-
-                updateItems(snapshots);
             }
-        }), ((VM) getEntity()).getId());
+        }), vm.getId());
+    }
+
+    private void updatePreviewedDiskSnapshots(final List<Snapshot> snapshots) {
+        for (DiskImage diskImage : getVmDisks()) {
+            if (diskImage.getSnapshots().size() <= 1) {
+                continue;
+            }
+
+            Guid snapshotId = diskImage.getSnapshots().get(1).getVmSnapshotId();
+            getSnapshotsMap().get(snapshotId).getEntity().getDiskImages().add(diskImage);
+        }
+
+        updateItems(snapshots);
     }
 
     private void customPreview()
@@ -488,7 +521,6 @@ public class VmSnapshotListModel extends SearchableListModel
 
     private void onPreview() {
         Snapshot snapshot = (Snapshot) getSelectedItem();
-
         if (snapshot == null) {
             cancel();
             return;
@@ -496,9 +528,32 @@ public class VmSnapshotListModel extends SearchableListModel
 
         VM vm = (VM) getEntity();
         SnapshotModel snapshotModel = (SnapshotModel) getWindow();
-        boolean memory = (Boolean) snapshotModel.getMemory().getEntity();
+        boolean memory = false;
+        List<DiskImage> disks = null;
 
-        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, null);
+        if (snapshotModel.isShowPartialSnapshotWarning()) {
+            switch (snapshotModel.getPartialPreviewSnapshotOptions().getSelectedItem()) {
+                case preserveActiveDisks:
+                    // get snapshot disks
+                    disks = snapshotModel.getDisks();
+                    // add active disks missed from snapshot
+                    disks.addAll(Linq.imagesSubtract(getVmDisks(), disks));
+                    break;
+                case excludeActiveDisks:
+                    // nothing to do - default behaviour
+                    break;
+                case openCustomPreviewDialog:
+                    setWindow(null);
+                    getCustomPreviewCommand().execute();
+                    return;
+            }
+        }
+
+        if (snapshotModel.isShowMemorySnapshotWarning()) {
+            memory = snapshotModel.getMemory().getEntity();
+        }
+
+        runTryBackToAllSnapshotsOfVm(snapshotModel, vm, snapshot, memory, disks);
     }
 
     private void onCustomPreview() {
@@ -512,13 +567,19 @@ public class VmSnapshotListModel extends SearchableListModel
     }
 
     private void runTryBackToAllSnapshotsOfVm(final Model model, VM vm, Snapshot snapshot, boolean memory, List<DiskImage> disks) {
-        model.startProgress(null);
+        if (model != null) {
+            model.startProgress(null);
+        }
+
         Frontend.getInstance().runAction(VdcActionType.TryBackToAllSnapshotsOfVm, new TryBackToAllSnapshotsOfVmParameters(
             vm.getId(), snapshot.getId(), memory, disks),
             new IFrontendActionAsyncCallback() {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
-                    model.stopProgress();
+                    if (model != null) {
+                        model.stopProgress();
+                    }
+
                     if (result.getReturnValue().getSucceeded()) {
                         cancel();
                     }

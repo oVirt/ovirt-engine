@@ -154,6 +154,12 @@ public interface CommonApplicationMessages extends Messages {
     @DefaultMessage("{0} (Previewing: {1})")
     String snapshotPreviewing(String snapshotDescription, String diskAliases);
 
+    @DefaultMessage("The VM contains {0} disk(s): {1}")
+    String vmDisksLabel(int numOfDisks, String diskAliases);
+
+    @DefaultMessage("(The snapshot contains {0} disk(s): {1})")
+    String snapshotDisksLabel(int numOfDisks, String diskAliases);
+
     //Numa messages
     @DefaultMessage("{0}_NUMA{1}")
     String vNumaName(String name, int index);

@@ -848,6 +848,25 @@ public final class Linq
         return aliases;
     }
 
+    public static List<DiskImage> imagesSubtract(Iterable<DiskImage> images, Iterable<DiskImage> imagesToSubtract) {
+        List<DiskImage> subtract = new ArrayList<DiskImage>();
+        for (DiskImage image : images) {
+            if (Linq.getDiskImageById(image.getId(), imagesToSubtract) == null) {
+                subtract.add(image);
+            }
+        }
+        return subtract;
+    }
+
+    private static DiskImage getDiskImageById(Guid id, Iterable<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            if (diskImage.getId().equals(id)) {
+                return diskImage;
+            }
+        }
+        return null;
+    }
+
     public final static class TimeZonePredicate implements IPredicate<TimeZoneModel>
     {
         private final String timeZone;

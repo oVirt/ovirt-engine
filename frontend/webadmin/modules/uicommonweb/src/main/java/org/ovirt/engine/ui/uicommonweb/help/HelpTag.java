@@ -324,6 +324,8 @@ public enum HelpTag {
 
     preview_snapshot("preview_snapshot", HelpTagType.COMMON, "VMs main tab -> Snapshots sub-tab -> 'Preview Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
 
+    preview_partial_snapshot("preview_partial_snapshot", HelpTagType.COMMON, "VMs main tab -> Snapshots sub-tab -> 'Preview Partial Snapshot' dialog"), //$NON-NLS-1$ //$NON-NLS-2$
+
     profiles("profiles", HelpTagType.UNKNOWN), //$NON-NLS-1$
 
     providers("providers", HelpTagType.UNKNOWN), //$NON-NLS-1$
