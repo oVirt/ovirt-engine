@@ -5,6 +5,8 @@ import java.util.List;
 import org.apache.commons.lang.ObjectUtils;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.CpuProfile;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -83,5 +85,15 @@ public class CpuProfileValidator extends ProfileValidator<CpuProfile> {
     @Override
     protected List<CpuProfile> getProfilesByParentEntity() {
         return getDbFacade().getCpuProfileDao().getAllForCluster(getCluster().getId());
+    }
+
+    @Override
+    public List<VmTemplate> getTemplatesUsingProfile() {
+        return getDbFacade().getVmTemplateDao().getAllForCpuProfile(getProfile().getId());
+    }
+
+    @Override
+    public List<VM> getVmsUsingProfile() {
+        return getDbFacade().getVmDao().getAllForCpuProfile(getProfile().getId());
     }
 }

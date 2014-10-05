@@ -170,4 +170,20 @@ public class DiskImageDaoTest extends BaseReadDaoTestCase<Guid, DiskImage, DiskI
 
         assertTrue(images.isEmpty());
     }
+
+    @Test
+    public void testEmptyGetAllDisksByDiskProfile() {
+        List<DiskImage> diskImages = dao.getAllForDiskProfile(Guid.newGuid());
+
+        assertNotNull(diskImages);
+        assertTrue(diskImages.isEmpty());
+    }
+
+    @Test
+    public void testGetAllDisksByDiskProfile() {
+        List<DiskImage> diskImages = dao.getAllForDiskProfile(FixturesTool.DISK_PROFILE_1);
+
+        assertNotNull(diskImages);
+        assertEquals(6, diskImages.size());
+    }
 }

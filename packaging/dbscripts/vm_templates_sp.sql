@@ -631,3 +631,28 @@ RETURN QUERY SELECT DISTINCT templates.*
       WHERE image_storage_domain_map.storage_domain_id != v_storage_domain_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+CREATE OR REPLACE FUNCTION GetVmTemplatesByCpuProfileId(v_cpu_profile_id UUID)
+RETURNS SETOF vm_templates_view STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vm_templates_view.*
+        FROM vm_templates_view
+        WHERE cpu_profile_id = v_cpu_profile_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
+CREATE OR REPLACE FUNCTION GetAllVmTemplatesRelatedToDiskProfile(v_disk_profile_id UUID)
+RETURNS SETOF vm_templates_view STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vm_templates.*
+        FROM vm_templates_view vm_templates
+        INNER JOIN vm_device vd ON vd.vm_id = vm_templates.vmt_guid
+        INNER JOIN images ON images.image_group_id = vd.device_id
+            AND images.active = TRUE
+        INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+        WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
+END; $procedure$
+LANGUAGE plpgsql;

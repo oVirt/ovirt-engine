@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.common.businessentities.Nameable;
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.profiles.ProfileBase;
 import org.ovirt.engine.core.common.errors.EngineMessage;
 import org.ovirt.engine.core.compat.Guid;
@@ -61,6 +63,17 @@ public abstract class ProfileValidator<T extends ProfileBase> {
         return ValidationResult.VALID;
     }
 
+    public ValidationResult profileNotUsed() {
+        ValidationResult vmsErrorMsg =
+                profileNotUsed(getVmsUsingProfile(),
+                        EngineMessage.VAR__ENTITIES__VMS);
+        if (!vmsErrorMsg.isValid()) {
+            return vmsErrorMsg;
+        }
+        return profileNotUsed(getTemplatesUsingProfile(),
+                EngineMessage.VAR__ENTITIES__VM_TEMPLATES);
+    }
+
     protected ValidationResult profileNotUsed(List<? extends Nameable> entities, EngineMessage entitiesReplacement) {
         if (entities.isEmpty()) {
             return ValidationResult.VALID;
@@ -97,4 +110,8 @@ public abstract class ProfileValidator<T extends ProfileBase> {
     protected abstract List<T> getProfilesByParentEntity();
 
     protected abstract ProfilesDao<T> getProfileDao();
+
+    protected abstract List<VmTemplate> getTemplatesUsingProfile();
+
+    protected abstract List<VM> getVmsUsingProfile();
 }

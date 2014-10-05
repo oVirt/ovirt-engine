@@ -156,6 +156,16 @@ public class DiskImageDaoImpl extends BaseDao implements DiskImageDao {
                 parameterSource);
     }
 
+    @Override
+    public List<DiskImage> getAllForDiskProfile(Guid diskProfileId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("disk_profile_id", diskProfileId);
+
+        return getCallsHandler().executeReadList("GetAllForDiskProfile",
+                DiskImageRowMapper.instance,
+                parameterSource);
+    }
+
     protected static class DiskImageRowMapper extends AbstractDiskRowMapper<DiskImage> {
 
         public static final DiskImageRowMapper instance = new DiskImageRowMapper();

@@ -300,6 +300,20 @@ public class VmDaoImpl extends BaseDao implements VmDao {
                         .addValue("storage_pool_id", storagePoolId));
     }
 
+    @Override
+    public List<VM> getAllForCpuProfile(Guid cpuProfileId) {
+        return getCallsHandler().executeReadList("GetVmsByCpuProfileId",
+                VMRowMapper.instance, getCustomMapSqlParameterSource()
+                        .addValue("cpu_profile_id", cpuProfileId));
+    }
+
+    @Override
+    public List<VM> getAllForDiskProfile(Guid diskProfileId) {
+        return getCallsHandler().executeReadList("GetAllVmsRelatedToDiskProfile",
+                VMRowMapper.instance, getCustomMapSqlParameterSource()
+                        .addValue("disk_profile_id", diskProfileId));
+    }
+
     static final class VMRowMapper implements RowMapper<VM> {
         public static final VMRowMapper instance = new VMRowMapper();
 
