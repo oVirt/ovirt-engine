@@ -80,9 +80,13 @@
         line-height: 30px;
         font-weight: bold;
         }
+        .separatorStyle {
+        margin: 5px;
+        width: 100%;
+        }
     </ui:style>
 
-    <d:SimpleDialogPanel width="700px" height="650px">
+    <d:SimpleDialogPanel width="760px" height="650px">
         <d:content>
             <g:VerticalPanel>
                 <g:FlowPanel>
@@ -98,7 +102,7 @@
                         <d:InfoIcon ui:field="filterInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
-                        <hr style="width:100%;" />
+                        <hr class='{style.separatorStyle}' />
                     </g:HTML>
                     <g:HorizontalPanel height="100px" width="100%">
                         <g:Cell width="50%" height="100%">
@@ -130,7 +134,7 @@
                         <d:InfoIcon ui:field="functionInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
-                        <hr style="width:100%;" />
+                        <hr class='{style.separatorStyle}' />
                     </g:HTML>
                     <g:HorizontalPanel height="100px" width="100%">
                         <g:Cell width="50%" height="100%">
@@ -160,7 +164,7 @@
                         <d:InfoIcon ui:field="loadBalancingInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
-                        <hr style="width:100%;" />
+                        <hr class='{style.separatorStyle}' />
                     </g:HTML>
                     <g:HorizontalPanel>
                     <e:ListModelListBoxOnlyEditor
@@ -175,7 +179,7 @@
                         <d:InfoIcon ui:field="propertiesInfoIcon" addStyleNames="{style.iconInfoStyle} cppv_infoIcon_pfly_fix"/>
                     </g:HorizontalPanel>
                     <g:HTML>
-                        <hr style="width:100%;" />
+                        <hr class='{style.separatorStyle}' />
                     </g:HTML>
                     <g:ScrollPanel height="100px">
                         <k:KeyValueWidget ui:field="customPropertiesSheetEditor" />
