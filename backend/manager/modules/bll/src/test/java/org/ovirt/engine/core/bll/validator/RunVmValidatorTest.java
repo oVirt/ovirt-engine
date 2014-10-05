@@ -277,15 +277,14 @@ public class RunVmValidatorTest {
             };
 
             @Override
-            public ValidationResult hasSpaceForSnapshots(VM vm, List<Disk> plugDisks) {
+            public ValidationResult hasSpaceForSnapshots() {
                 return ValidationResult.VALID;
             }
         };
         VM vm = new VM();
         vm.setAutoStartup(autoStartUp);
         vm.setStateless(isVmStateless);
-        List<Disk> disks = new ArrayList<Disk>();
-        validateResult(runVmValidator.validateStatelessVm(vm, disks, isStatelessParam),
+        validateResult(runVmValidator.validateStatelessVm(vm, isStatelessParam),
                 shouldPass,
                 message);
     }
