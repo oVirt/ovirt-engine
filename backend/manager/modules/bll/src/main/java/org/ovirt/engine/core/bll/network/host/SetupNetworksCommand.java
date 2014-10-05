@@ -7,11 +7,14 @@ import java.util.Map;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
 import org.ovirt.engine.core.bll.VdsCommand;
 import org.ovirt.engine.core.bll.VdsHandler;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -47,6 +50,10 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
             Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksCommand.class);
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {
@@ -79,7 +86,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
             return false;
         }
 
-        helper = new SetupNetworksHelper(getParameters(), vds);
+        helper = new SetupNetworksHelper(getParameters(), vds, managementNetworkUtil);
         List<String> validationMessages = helper.validate();
 
         if (!validationMessages.isEmpty()) {

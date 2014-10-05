@@ -1,14 +1,5 @@
 package org.ovirt.engine.core.bll.network.host;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.when;
-import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
-
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,9 +14,11 @@ import org.apache.commons.lang.StringUtils;
 import org.junit.ClassRule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Matchers;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
@@ -45,6 +38,16 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
+import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
+
 @RunWith(MockitoJUnitRunner.class)
 public class SetupNetworksHelperTest {
 
@@ -63,8 +66,7 @@ public class SetupNetworksHelperTest {
     private static final int DEFAULT_SPEED = 1000;
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultManagementNetwork,
-            MANAGEMENT_NETWORK_NAME),
+    public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_3.toString(), true),
             mockConfig(ConfigValues.MultipleGatewaysSupported, Version.v3_2.toString(), false),
             mockConfig(ConfigValues.HostNetworkQosSupported, Version.v3_2.toString(), false),
@@ -97,6 +99,9 @@ public class SetupNetworksHelperTest {
 
     @Mock
     private HostNetworkQosDao qosDao;
+
+    @Mock
+    private ManagementNetworkUtil managementNetworkUtil;
 
     /* --- Tests for networks functionality --- */
 
@@ -302,7 +307,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void managementNetworkChangedCorrectly() {
-        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network net = createManagementNetwork();
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
@@ -320,7 +325,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void managementNetworkChangedCorrectlyWhenDhcpSet() {
-        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network net = createManagementNetwork();
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.DHCP);
@@ -337,7 +342,7 @@ public class SetupNetworksHelperTest {
     }
 
     public void managementNetworkChangedCorrectlyWithIpHostname() {
-        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network net = createManagementNetwork();
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
@@ -357,7 +362,7 @@ public class SetupNetworksHelperTest {
     public void managementNetworkChangedIncorrectly() {
         String hostName = "1.1.1.1";
 
-        Network net = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network net = createManagementNetwork();
         mockExistingNetworks(net);
         VdsNetworkInterface nic = createNicSyncedWithNetwork("nic0", net);
         nic.setBootProtocol(NetworkBootProtocol.STATIC_IP);
@@ -376,7 +381,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void qosNotSupported() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
@@ -392,7 +397,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void qosOverridden() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
@@ -673,7 +678,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void customPropertiesNotSupported() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
@@ -701,7 +706,7 @@ public class SetupNetworksHelperTest {
     @Test
     public void customPropertiesNetworkRemoved() {
         mockExistingNetworks();
-        VdsNetworkInterface iface = createNic("eth0", MANAGEMENT_NETWORK_NAME);
+        VdsNetworkInterface iface = createManagementNetworkNic("eth0");
         iface.setCustomProperties(createCustomProperties());
         mockExistingIfaces(iface);
         iface.setNetworkName(null);
@@ -713,11 +718,11 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void customPropertiesBadInput() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
-        Map<String, String> customProperties = new HashMap<String, String>();
+        Map<String, String> customProperties = new HashMap<>();
         customProperties.put("foo", "b@r");
         iface.setCustomProperties(customProperties);
 
@@ -730,7 +735,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void customPropertiesModified() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
@@ -748,7 +753,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void bridgePropertiesNonVm() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         network.setVmNetwork(false);
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
@@ -872,7 +877,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void syncNetworkQosNotSupported() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         mockExistingIfaces(iface);
@@ -966,7 +971,7 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void syncNetworkQosOverridden() {
-        Network network = createNetwork(MANAGEMENT_NETWORK_NAME);
+        Network network = createManagementNetwork();
         mockExistingNetworks(network);
         VdsNetworkInterface iface = createNicSyncedWithNetwork("eth0", network);
         iface.setBridged(!network.isVmNetwork());
@@ -1816,13 +1821,13 @@ public class SetupNetworksHelperTest {
 
     private void assertBondRemoved(SetupNetworksHelper helper, String expectedBondName) {
         assertTrue(MessageFormat.format("Expected bond ''{0}'' to be removed but it wasn''t. Removed bonds: {1}",
-                expectedBondName, helper.getRemovedBonds()),
+                        expectedBondName, helper.getRemovedBonds()),
                 helper.getRemovedBonds().containsKey(expectedBondName));
     }
 
     private void assertNetworkRemoved(SetupNetworksHelper helper, String expectedNetworkName) {
         assertTrue(MessageFormat.format("Expected network ''{0}'' to be removed but it wasn''t. Removed networks: {1}",
-                expectedNetworkName, helper.getRemoveNetworks()),
+                        expectedNetworkName, helper.getRemoveNetworks()),
                 helper.getRemoveNetworks().contains(expectedNetworkName));
     }
 
@@ -1842,9 +1847,9 @@ public class SetupNetworksHelperTest {
     private void assertNetworkModified(SetupNetworksHelper helper, Network expectedNetwork) {
         assertEquals("Expected a modified network.", 1, helper.getNetworks().size());
         assertEquals(MessageFormat.format(
-                "Expected network ''{0}'' to be modified but it wasn''t. Modified networks: {1}",
-                expectedNetwork,
-                helper.getNetworks()),
+                        "Expected network ''{0}'' to be modified but it wasn''t. Modified networks: {1}",
+                        expectedNetwork,
+                        helper.getNetworks()),
                 expectedNetwork,
                 helper.getNetworks().get(0));
     }
@@ -1852,7 +1857,7 @@ public class SetupNetworksHelperTest {
     private void assertBondModified(SetupNetworksHelper helper, VdsNetworkInterface expectedBond) {
         assertEquals(1, helper.getBonds().size());
         assertEquals(MessageFormat.format("Expected bond ''{0}'' to be modified but it wasn''t. Modified bonds: {1}",
-                expectedBond, helper.getBonds()),
+                        expectedBond, helper.getBonds()),
                 expectedBond, helper.getBonds().get(0));
     }
 
@@ -1875,14 +1880,17 @@ public class SetupNetworksHelperTest {
         for (VdsNetworkInterface modifiedIface : helper.getModifiedInterfaces()) {
             modifiedNames.add(modifiedIface.getName());
         }
-        assertTrue(MessageFormat.format("Expected interface ''{0}'' to be modified but it wasn''t. Modified interfaces: {1}",
-                iface, helper.getModifiedInterfaces()),
+        assertTrue(MessageFormat.format(
+                        "Expected interface ''{0}'' to be modified but it wasn''t. Modified interfaces: {1}",
+                        iface,
+                        helper.getModifiedInterfaces()),
                 modifiedNames.contains(iface.getName()));
     }
 
     private void assertNoInterfacesModified(SetupNetworksHelper helper) {
-        assertEquals(MessageFormat.format("Expected no interfaces to be modified, but the following interfaces were: {0}",
-                helper.getModifiedInterfaces()),
+        assertEquals(MessageFormat.format(
+                        "Expected no interfaces to be modified, but the following interfaces were: {0}",
+                        helper.getModifiedInterfaces()),
                 0,
                 helper.getModifiedInterfaces().size());
     }
@@ -1894,6 +1902,11 @@ public class SetupNetworksHelperTest {
      */
     private Network createNetwork(String networkName) {
         return new Network("", "", Guid.newGuid(), networkName, "", "", 0, null, false, 0, true);
+    }
+
+    private Network createManagementNetwork() {
+        when(managementNetworkUtil.isManagementNetwork(eq(MANAGEMENT_NETWORK_NAME), any(Guid.class))).thenReturn(true);
+        return createNetwork(MANAGEMENT_NETWORK_NAME);
     }
 
     /**
@@ -1973,6 +1986,11 @@ public class SetupNetworksHelperTest {
                 DEFAULT_SPEED);
     }
 
+    private VdsNetworkInterface createManagementNetworkNic(String nicName) {
+        when(managementNetworkUtil.isManagementNetwork(eq(MANAGEMENT_NETWORK_NAME), any(Guid.class))).thenReturn(true);
+        return createNic(nicName, MANAGEMENT_NETWORK_NAME);
+    }
+
     /**
      * @param nicName
      *            The name of the NIC.
@@ -1982,8 +2000,8 @@ public class SetupNetworksHelperTest {
      *            The labels to be set for the nic
      * @return {@link VdsNetworkInterface} representing a regular labeled NIC with the given parameters.
      */
-    private VdsNetworkInterface createLabeledNic(String string, String networkName, String... labels) {
-        VdsNetworkInterface nic = createNic("nic0", networkName);
+    private VdsNetworkInterface createLabeledNic(String nicName, String networkName, String ... labels) {
+        VdsNetworkInterface nic = createNic(nicName, networkName);
         nic.setLabels(new HashSet<>(Arrays.asList(labels)));
         return nic;
     }
@@ -2254,10 +2272,10 @@ public class SetupNetworksHelperTest {
     private SetupNetworksHelper createHelper(SetupNetworksParameters params, VDS vds, Version compatibilityVersion) {
         when(vds.getVdsGroupCompatibilityVersion()).thenReturn(compatibilityVersion);
 
-        SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds));
+        SetupNetworksHelper helper = spy(new SetupNetworksHelper(params, vds, managementNetworkUtil));
 
         when(helper.getVmInterfaceManager()).thenReturn(vmInterfaceManager);
-        doReturn(null).when(helper).translateErrorMessages(any(List.class));
+        doReturn(null).when(helper).translateErrorMessages(Matchers.<List<String>> any());
         DbFacade dbFacade = mock(DbFacade.class);
         doReturn(dbFacade).when(helper).getDbFacade();
         doReturn(interfaceDAO).when(dbFacade).getInterfaceDao();

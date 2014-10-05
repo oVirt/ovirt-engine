@@ -15,9 +15,11 @@ import java.util.regex.Pattern;
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.VmInterfaceManager;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.validator.HostNetworkQosValidator;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
@@ -71,8 +73,15 @@ public class SetupNetworksHelper {
     private boolean hostNetworkQosSupported;
     private boolean networkCustomPropertiesSupported;
 
-    public SetupNetworksHelper(SetupNetworksParameters parameters, VDS vds) {
-        params = parameters;
+    private final ManagementNetworkUtil managementNetworkUtil;
+
+    public SetupNetworksHelper(SetupNetworksParameters parameters,
+                               VDS vds,
+                               ManagementNetworkUtil managementNetworkUtil) {
+        Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
+
+        this.managementNetworkUtil = managementNetworkUtil;
+        this.params = parameters;
         this.vds = vds;
 
         setSupportedFeatures();
@@ -894,7 +903,7 @@ public class SetupNetworksHelper {
      */
     private void validateGateway(VdsNetworkInterface iface) {
         if (StringUtils.isNotEmpty(iface.getGateway())
-                && !NetworkUtils.isManagementNetwork(iface.getNetworkName())
+                && !managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), vds.getVdsGroupId())
                 && !FeatureSupported.multipleGatewaysSupported(vds.getVdsGroupCompatibilityVersion())) {
 
             addViolation(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY, iface.getNetworkName());
