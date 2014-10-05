@@ -260,6 +260,21 @@ public class VmTemplateDaoImpl extends VmBaseDao<VmTemplate> implements VmTempla
                 getCustomMapSqlParameterSource().addValue("base_template_id", baseTemplateId));
     }
 
+    @Override
+    public List<VmTemplate> getAllForCpuProfile(Guid cpuProfileId) {
+        return getCallsHandler().executeReadList("GetVmTemplatesByCpuProfileId",
+                VMTemplateRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("cpu_profile_id", cpuProfileId));
+    }
+
+    @Override
+    public List<VmTemplate> getAllForDiskProfile(Guid diskProfileId) {
+        return getCallsHandler().executeReadList("GetAllVmTemplatesRelatedToDiskProfile",
+                VMTemplateRowMapper.instance, getCustomMapSqlParameterSource()
+                        .addValue("disk_profile_id", diskProfileId));
+    }
+
     private final static class VMTemplateRowMapper extends AbstractVmRowMapper<VmTemplate> {
         public static final VMTemplateRowMapper instance = new VMTemplateRowMapper();
 

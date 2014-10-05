@@ -1982,4 +1982,26 @@ BEGIN
 END;$PROCEDURE$
 LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetVmsByCpuProfileId(v_cpu_profile_id UUID)
+RETURNS SETOF vms STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY SELECT vms.*
+        FROM vms
+        WHERE cpu_profile_id = v_cpu_profile_id;
+END; $procedure$
+LANGUAGE plpgsql;
 
+CREATE OR REPLACE FUNCTION GetAllVmsRelatedToDiskProfile(v_disk_profile_id UUID)
+RETURNS SETOF vms STABLE
+AS $procedure$
+BEGIN
+  RETURN QUERY SELECT vms.*
+      FROM vms
+          INNER JOIN vm_device vd ON vd.vm_id = vms.vm_guid
+          INNER JOIN images ON images.image_group_id = vd.device_id
+              AND images.active = TRUE
+          INNER JOIN image_storage_domain_map ON image_storage_domain_map.image_id = images.image_guid
+          WHERE image_storage_domain_map.disk_profile_id = v_disk_profile_id;
+END; $procedure$
+LANGUAGE plpgsql;

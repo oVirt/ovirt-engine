@@ -330,4 +330,22 @@ public interface VmDao extends Dao {
      * @return vms that are part of the given storage pool
      */
     List<VM> getAllForStoragePool(Guid storagePoolId);
+
+    /**
+     * Retrieves all VMS that are attached to provided profile
+     *
+     * @param cpuProfileId
+     *            CPU profile id
+     * @return the list of VMs
+     */
+    List<VM> getAllForCpuProfile(Guid cpuProfileId);
+
+    /**
+     * Retrieves all VMS that have disks attached to provided profile
+     *
+     * @param diskProfileId
+     *            disk profile id
+     * @return the list of VMs
+     */
+    List<VM> getAllForDiskProfile(Guid diskProfileId);
 }

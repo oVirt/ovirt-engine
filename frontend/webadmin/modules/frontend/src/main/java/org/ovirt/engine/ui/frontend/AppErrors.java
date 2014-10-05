@@ -751,6 +751,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$entities template")
     String VAR__ENTITIES__VM_TEMPLATE();
 
+    @DefaultStringValue("$entities Disks")
+    String VAR__ENTITIES__DISKS();
+
     @DefaultStringValue("$type Snapshot")
     String VAR__TYPE__SNAPSHOT();
 
@@ -3350,7 +3353,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot change profile.")
     String ACTION_TYPE_FAILED_CANNOT_CHANGE_PROFILE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Profile is in use.")
+    @DefaultStringValue("Cannot ${action} ${type}. Several ${entities} (${ENTITIES_USING_PROFILE_COUNTER}) are using this Profile:\n${ENTITIES_USING_PROFILE}\n - Please remove it from all ${entities} that are using it and try again.")
     String ACTION_TYPE_FAILED_PROFILE_IN_USE();
 
     @DefaultStringValue("Cannot ${action} ${type}. Disk Profile is empty.")

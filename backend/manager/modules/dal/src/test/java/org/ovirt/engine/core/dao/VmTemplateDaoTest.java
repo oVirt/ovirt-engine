@@ -127,7 +127,7 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
         Collection<Guid> recieved = CollectionUtils.collect(result, new Transformer() {
             @Override
             public Object transform(Object input) {
-                return ((VmTemplate)input).getId();
+                return ((VmTemplate) input).getId();
             }
         });
         assertTrue("the received list didn't contain an expected Template", recieved.contains(EXISTING_TEMPLATE_ID));
@@ -429,4 +429,37 @@ public class VmTemplateDaoTest extends BaseDaoTestCase {
     public void testGetTemplateWithLatestVersionInChain() {
         assertEquals(FixturesTool.VM_TEMPLATE_RHEL5_V2, dao.getTemplateWithLatestVersionInChain(FixturesTool.VM_TEMPLATE_RHEL5).getId());
     }
+
+    @Test
+    public void testEmptyGetAllForCpuProfile() {
+        List<VmTemplate> result = dao.getAllForCpuProfile(Guid.newGuid());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllForCpuProfile() {
+        List<VmTemplate> result = dao.getAllForCpuProfile(FixturesTool.CPU_PROFILE_1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testEmptyGetAllForDiskProfile() {
+        List<VmTemplate> result = dao.getAllForDiskProfile(Guid.newGuid());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllForDiskProfile() {
+        List<VmTemplate> result = dao.getAllForDiskProfile(FixturesTool.DISK_PROFILE_1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
 }

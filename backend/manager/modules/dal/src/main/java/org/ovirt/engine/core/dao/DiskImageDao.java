@@ -130,4 +130,13 @@ public interface DiskImageDao extends ReadDao<DiskImage, Guid> {
      * @return List of DiskImages related to the Storage Domain.
      */
     List<DiskImage> getAllForStorageDomain(Guid storageDomainId);
+
+    /**
+     * Return all images that attached to disk profile.
+     *
+     * @param diskProfileId
+     *            The Disk Profile Id attached to disks.
+     * @return List of DiskImages
+     */
+    List<DiskImage> getAllForDiskProfile(Guid diskProfileId);
 }

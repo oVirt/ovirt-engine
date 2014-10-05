@@ -546,4 +546,36 @@ public class VmDaoTest extends BaseDaoTestCase {
         assertTrue(result.isEmpty());
     }
 
+    @Test
+    public void testEmptyGetAllForCpuProfile() {
+        List<VM> result = dao.getAllForCpuProfile(Guid.newGuid());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllForCpuProfile() {
+        List<VM> result = dao.getAllForCpuProfile(FixturesTool.CPU_PROFILE_1);
+
+        assertNotNull(result);
+        assertEquals(1, result.size());
+    }
+
+    @Test
+    public void testEmptyGetAllForDiskProfile() {
+        List<VM> result = dao.getAllForDiskProfile(Guid.newGuid());
+
+        assertNotNull(result);
+        assertTrue(result.isEmpty());
+    }
+
+    @Test
+    public void testGetAllForDiskProfile() {
+        List<VM> result = dao.getAllForDiskProfile(FixturesTool.DISK_PROFILE_1);
+
+        assertNotNull(result);
+        assertEquals(2, result.size());
+    }
+
 }

@@ -15,7 +15,8 @@ public abstract class RemoveProfileCommandBase<T extends ProfileParametersBase<P
         Q validator = getProfileValidator();
         return validate(validator.profileIsSet())
                 && validate(validator.profileExists())
-                && validate(validator.isLastProfileInParentEntity());
+                && validate(validator.isLastProfileInParentEntity())
+                && validate(validator.profileNotUsed());
     }
 
     @Override

@@ -225,4 +225,22 @@ public interface VmTemplateDao extends GenericDao<VmTemplate, Guid>, StatusAware
      * 'vmt_guid' column of all sub-templates.
      */
     void shiftBaseTemplate(Guid baseTemplateId);
+
+     /**
+     * Retrieves all templates that are attached to provided profile
+     *
+     * @param cpuProfileId
+     *            CPU profile id
+     * @return the list of Templates
+     */
+    List<VmTemplate> getAllForCpuProfile(Guid cpuProfileId);
+
+    /**
+     * Retrieves all templates that have disks attached to provided profile
+     *
+     * @param diskProfileId
+     *            disk profile id
+     * @return the list of Templates
+     */
+    List<VmTemplate> getAllForDiskProfile(Guid diskProfileId);
 }
