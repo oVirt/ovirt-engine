@@ -4,6 +4,8 @@ import java.util.Collection;
 import java.util.List;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.bll.utils.Injector;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.Nameable;
@@ -123,7 +125,7 @@ public class NetworkValidator {
     }
 
     /**
-     * @return An error iff the network's name is already used by another network in the same data center.
+     * @return An error if the network's name is already used by another network in the same data center.
      */
     public ValidationResult networkNameNotUsed() {
         for (Network otherNetwork : getNetworks()) {
@@ -137,10 +139,23 @@ public class NetworkValidator {
     }
 
     public ValidationResult notManagementNetwork() {
-        return NetworkUtils.isManagementNetwork(network)
-                ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
-                        getNetworkNameReplacement())
-                : ValidationResult.VALID;
+        final boolean isManagementNetwork = isManagementNetwork();
+        return getManagementNetworkValidationResult(isManagementNetwork);
+    }
+
+    protected boolean isManagementNetwork() {
+        return getManagementNetworkUtil().isManagementNetwork(network.getId());
+    }
+
+    private ValidationResult getManagementNetworkValidationResult(final boolean isManagementNetwork) {
+        return isManagementNetwork
+                                  ? new ValidationResult(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK,
+                                          getNetworkNameReplacement())
+                                  : ValidationResult.VALID;
+    }
+
+    protected ManagementNetworkUtil getManagementNetworkUtil() {
+        return Injector.get(ManagementNetworkUtil.class);
     }
 
     public ValidationResult notIscsiBondNetwork() {
@@ -154,7 +169,7 @@ public class NetworkValidator {
         return ValidationResult.VALID;
     }
 
-    private String getNetworkNameReplacement() {
+    protected String getNetworkNameReplacement() {
         return String.format("$NetworkName %s", network.getName());
     }
 

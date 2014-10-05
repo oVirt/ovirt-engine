@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.validator;
 
-import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
@@ -22,6 +21,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -71,6 +71,9 @@ public class NetworkValidatorTest {
     @Mock
     private StoragePool dataCenter;
 
+    @Mock
+    private ManagementNetworkUtil managementNetworkUtil;
+
     private List<Network> networks = new ArrayList<Network>();
 
     private NetworkValidator validator;
@@ -81,6 +84,7 @@ public class NetworkValidatorTest {
         // spy on attempts to access the database
         validator = spy(new NetworkValidator(network));
         doReturn(dbFacade).when(validator).getDbFacade();
+        doReturn(managementNetworkUtil).when(validator).getManagementNetworkUtil();
 
         // mock some commonly used DAOs
         when(dbFacade.getStoragePoolDao()).thenReturn(dataCenterDao);
@@ -409,7 +413,21 @@ public class NetworkValidatorTest {
     @Test
     public void testNotExternalNetworkSucceedsForNonExternalNetwork() throws Exception {
         when(network.isExternal()).thenReturn(false);
-        assertThat(validator.notExternalNetwork(), is(ValidationResult.VALID));
+        assertThat(validator.notExternalNetwork(), isValid());
+    }
+
+    @Test
+    public void testNotManagementNetworkPositive() {
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+        when(managementNetworkUtil.isManagementNetwork(DEFAULT_GUID)).thenReturn(true);
+        assertThat(validator.notManagementNetwork(), failsWith(VdcBllMessages.NETWORK_CANNOT_REMOVE_MANAGEMENT_NETWORK));
+    }
+
+    @Test
+    public void testNotManagementNetworkNegative() {
+        when(network.getId()).thenReturn(DEFAULT_GUID);
+        when(managementNetworkUtil.isManagementNetwork(DEFAULT_GUID)).thenReturn(false);
+        assertThat(validator.notManagementNetwork(), isValid());
     }
 
 }
