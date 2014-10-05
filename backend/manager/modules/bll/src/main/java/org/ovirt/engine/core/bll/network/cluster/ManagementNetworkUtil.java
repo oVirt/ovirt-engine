@@ -36,4 +36,15 @@ public interface ManagementNetworkUtil {
      */
     boolean isManagementNetwork(Guid networkId, Guid clusterId);
 
+    /**
+     * The method checks if the given network is defined as the management network for the given cluster.
+     *
+     * @param networkName
+     *            the given network name
+     * @param clusterId
+     *            the given cluster id
+     * @return true if the network is defined as the management one for the given cluster,
+     *         false otherwise
+     */
+    boolean isManagementNetwork(String networkName, Guid clusterId);
 }
