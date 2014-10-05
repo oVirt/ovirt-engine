@@ -89,7 +89,6 @@ public class RunVmValidator {
      * A general method for run vm validations. used in runVmCommand and in VmPoolCommandBase
      *
      * @param messages
-     * @param vmDisks
      * @param storagePool
      * @param vdsBlackList
      *            - hosts that we already tried to run on
@@ -222,8 +221,6 @@ public class RunVmValidator {
      *
      * @param vm
      *            The VM to run
-     * @param message
-     *            The error messages to append to
      * @param isInternalExecution
      *            Command is internal?
      * @param vmImages
@@ -391,16 +388,15 @@ public class RunVmValidator {
     }
 
     /**
-     * @param clusterNetworksNames
-     *            cluster logical networks names
-     * @param interfaceNetworkNames
-     *            VM interface network names
+     * @param vm The VM to be run
+     * @param clusterNetworkNames cluster logical networks names
+     * @param interfaceNetworkNames VM interface network names
      * @return true if all VM network interfaces are attached to existing cluster networks
      */
     protected ValidationResult validateInterfacesAttachedToClusterNetworks(VM vm,
             final Set<String> clusterNetworkNames, final Set<String> interfaceNetworkNames) {
 
-        Set<String> result = new HashSet<String>(interfaceNetworkNames);
+        Set<String> result = new HashSet<>(interfaceNetworkNames);
         result.removeAll(clusterNetworkNames);
         if (FeatureSupported.networkLinking(vm.getVdsGroupCompatibilityVersion())) {
             result.remove(null);
