@@ -56,17 +56,27 @@ public class SnapshotModel extends EntityModel<Snapshot>
 
     private ArrayList<DiskImage> disks;
 
-    public ArrayList<DiskImage> getDisks()
-    {
+    public ArrayList<DiskImage> getDisks() {
         return disks;
     }
 
-    public void setDisks(ArrayList<DiskImage> value)
-    {
-        if (disks != value)
-        {
+    public void setDisks(ArrayList<DiskImage> value) {
+        if (disks != value) {
             disks = value;
             onPropertyChanged(new PropertyChangedEventArgs("Disks")); //$NON-NLS-1$
+        }
+    }
+
+    private List<DiskImage> vmDisks;
+
+    public List<DiskImage> getVmDisks() {
+        return vmDisks;
+    }
+
+    public void setVmDisks(List<DiskImage> value) {
+        if (vmDisks != value) {
+            vmDisks = value;
+            onPropertyChanged(new PropertyChangedEventArgs("VmDisks")); //$NON-NLS-1$
         }
     }
 
@@ -148,10 +158,44 @@ public class SnapshotModel extends EntityModel<Snapshot>
         snapshotDisks = value;
     }
 
+    private boolean showMemorySnapshotWarning;
+
+    public boolean isShowMemorySnapshotWarning()
+    {
+        return showMemorySnapshotWarning;
+    }
+
+    public void setShowMemorySnapshotWarning(boolean value)
+    {
+        showMemorySnapshotWarning = value;
+    }
+
+    private boolean showPartialSnapshotWarning;
+
+    public boolean isShowPartialSnapshotWarning()
+    {
+        return showPartialSnapshotWarning;
+    }
+
+    public void setShowPartialSnapshotWarning(boolean value)
+    {
+        showPartialSnapshotWarning = value;
+    }
+
+    private ListModel<PreivewPartialSnapshotOption> partialPreviewSnapshotOptions;
+
+    public ListModel<PreivewPartialSnapshotOption> getPartialPreviewSnapshotOptions() {
+        return partialPreviewSnapshotOptions;
+    }
+
+    private void setPartialPreviewSnapshotOptions(ListModel<PreivewPartialSnapshotOption> value) {
+        partialPreviewSnapshotOptions = value;
+    }
+
     private UICommand cancelCommand;
 
     public UICommand getCancelCommand() {
-        return cancelCommand;
+        return cancelCommand != null ? cancelCommand : super.getCancelCommand();
     }
 
     public void setCancelCommand(UICommand cancelCommand) {
@@ -165,8 +209,11 @@ public class SnapshotModel extends EntityModel<Snapshot>
         setDisks(new ArrayList<DiskImage>());
         setNics(new ArrayList<VmNetworkInterface>());
         setApps(new ArrayList<String>());
-
         setSnapshotDisks(new ListModel<DiskImage>());
+
+        ListModel<PreivewPartialSnapshotOption> partialPreviewSnapshotOptions = new ListModel<PreivewPartialSnapshotOption>();
+        partialPreviewSnapshotOptions.setItems(Arrays.asList(PreivewPartialSnapshotOption.values()));
+        setPartialPreviewSnapshotOptions(partialPreviewSnapshotOptions);
     }
 
     public static SnapshotModel createNewSnapshotModel(ICommandTarget cancelCommandTarget) {
@@ -383,4 +430,20 @@ public class SnapshotModel extends EntityModel<Snapshot>
                 }, this);
     }
 
+    public enum PreivewPartialSnapshotOption {
+        preserveActiveDisks(ConstantsManager.getInstance().getConstants().preserveActiveDisks()),
+        excludeActiveDisks(ConstantsManager.getInstance().getConstants().excludeActiveDisks()),
+        openCustomPreviewDialog(ConstantsManager.getInstance().getConstants().openCustomPreviewDialog());
+
+        private String description;
+
+        private PreivewPartialSnapshotOption(String description) {
+            this.description = description;
+        }
+
+        @Override
+        public String toString() {
+            return description;
+        }
+    }
 }

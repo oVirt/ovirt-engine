@@ -1,25 +1,54 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!DOCTYPE ui:UiBinder SYSTEM "http://dl.google.com/gwt/DTD/xhtml.ent">
 <ui:UiBinder xmlns:ui="urn:ui:com.google.gwt.uibinder" xmlns:g="urn:import:com.google.gwt.user.client.ui"
-    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
+    xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor">
+
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants' />
 
     <ui:style>
+        .container {
+            padding: 20px;
+        }
 
         .memoryEditor {
             width: 100%;
         }
 
-        .messageLabel {
-            padding-top: 15px;
-            padding-left: 10px;
-            padding-right: 5px;
-            height: 40%;
+        .horizontalSeparator {
+            width: 100%;
+            border-bottom: 1px solid black;
+            margin: 15px 0;
+        }
+
+        .staticDisksLabel {
+            font-weight: bold;
+        }
+
+        .staticQuestionLabel {
+            font-weight: bold !important;
+            padding-top: 20px;
+        }
+
+        .partialPreviewSnapshotOptionEditor {
+            width: 100%;
+            padding: 0;
         }
     </ui:style>
 
-    <g:FlowPanel>
-        <g:Label ui:field="messageLabel" addStyleNames="{style.messageLabel}" />
-        <ge:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
+    <g:FlowPanel addStyleNames="{style.container}">
+        <g:FlowPanel ui:field="partialSnapshotWarningPanel">
+            <g:Label ui:field="vmDisksLabel" />
+            <g:Label text="{constants.previewPartialSnapshotSubsetDisksLabel}" addStyleNames="{style.staticDisksLabel}" />
+            <g:Label ui:field="snapshotDisksLabel" />
+            <e:ListModelRadioGroupEditor ui:field="partialPreviewSnapshotOptionEditor" addStyleNames="{style.partialPreviewSnapshotOptionEditor} dvrg_radioGroup_pfly_fix"
+                                         label="{constants.previewPartialSnapshotQuestionLabel}" labelStyleName="{style.staticQuestionLabel}"
+                                         contentWidgetStyleName="{style.partialPreviewSnapshotOptionEditor}"/>
+        </g:FlowPanel>
+        <g:SimplePanel ui:field="horizontalSeparator" addStyleNames="{style.horizontalSeparator}"/>
+        <g:FlowPanel ui:field="memoryWarningPanel">
+            <g:Label ui:field="messageLabel" />
+            <ge:EntityModelCheckBoxEditor ui:field="memoryEditor" addStyleNames="{style.memoryEditor}" />
+        </g:FlowPanel>
     </g:FlowPanel>
 
 </ui:UiBinder>

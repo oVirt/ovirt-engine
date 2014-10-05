@@ -1802,6 +1802,12 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Excluded disks will be deleted when the snapshot is committed.")
     String snapshotPreviewWithExcludedDisksWarning();
 
+    @DefaultStringValue("You chose to preview a snapshot that contains only a subset of these disks")
+    String previewPartialSnapshotSubsetDisksLabel();
+
+    @DefaultStringValue("What would you like to do?")
+    String previewPartialSnapshotQuestionLabel();
+
     @DefaultStringValue("Import as Template")
     String importAsTemplate();
 

@@ -1,11 +1,17 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
+import com.google.gwt.dom.client.Style;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
+import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.Align;
+import org.ovirt.engine.ui.common.widget.editor.ListModelRadioGroupEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SnapshotModel;
 
 import com.google.gwt.core.client.GWT;
@@ -13,7 +19,7 @@ import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.Label;
+import org.ovirt.engine.ui.uicompat.external.StringUtils;
 
 public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<SnapshotModel> {
 
@@ -29,6 +35,28 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
     }
 
     @UiField
+    FlowPanel partialSnapshotWarningPanel;
+
+    @UiField
+    @Ignore
+    Label vmDisksLabel;
+
+    @UiField
+    @Ignore
+    Label snapshotDisksLabel;
+
+    @UiField
+    @Path(value = "partialPreviewSnapshotOptions.selectedItem")
+    public ListModelRadioGroupEditor<SnapshotModel.PreivewPartialSnapshotOption> partialPreviewSnapshotOptionEditor;
+
+
+    @UiField
+    FlowPanel memoryWarningPanel;
+
+    @UiField
+    SimplePanel horizontalSeparator;
+
+    @UiField
     @Ignore
     Label messageLabel;
 
@@ -38,8 +66,10 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
     public EntityModelCheckBoxEditor memoryEditor;
 
     private final Driver driver = GWT.create(Driver.class);
+    private final CommonApplicationMessages messages;
 
-    public VmSnapshotPreviewPopupWidget(CommonApplicationConstants constants) {
+    public VmSnapshotPreviewPopupWidget(CommonApplicationConstants constants, CommonApplicationMessages messages) {
+        this.messages = messages;
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         localize(constants);
@@ -59,6 +89,21 @@ public class VmSnapshotPreviewPopupWidget extends AbstractModelBoundPopupWidget<
     @Override
     public void edit(final SnapshotModel model) {
         driver.edit(model);
+
+        if (model.isShowMemorySnapshotWarning() && !model.isShowPartialSnapshotWarning()) {
+            Style dialogStyle = getParent().getParent().getParent().getElement().getStyle();
+            dialogStyle.setWidth(450, Style.Unit.PX);
+            dialogStyle.setHeight(200, Style.Unit.PX);
+        }
+
+        partialSnapshotWarningPanel.setVisible(model.isShowPartialSnapshotWarning());
+        memoryWarningPanel.setVisible(model.isShowMemorySnapshotWarning());
+        horizontalSeparator.setVisible(model.isShowPartialSnapshotWarning() && model.isShowMemorySnapshotWarning());
+
+        vmDisksLabel.setText(messages.vmDisksLabel(model.getVmDisks().size(),
+                StringUtils.join(Linq.getDiskAliases(model.getVmDisks()), ", "))); //$NON-NLS-1$
+        snapshotDisksLabel.setText(messages.snapshotDisksLabel(model.getDisks().size(),
+                StringUtils.join(Linq.getDiskAliases(model.getDisks()), ", "))); //$NON-NLS-1$
     }
 
     @Override

@@ -623,6 +623,18 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Custom Preview Snapshot")
     String customPreviewSnapshotTitle();
 
+    @DefaultStringValue("Preview Partial Snapshot")
+    String previewPartialSnapshotTitle();
+
+    @DefaultStringValue("Include in the previewed VM all disks (keep the disks that are not included in the snapshot as-is).")
+    String preserveActiveDisks();
+
+    @DefaultStringValue("Include in the previewed VM only the disks that are included in the snapshot.")
+    String excludeActiveDisks();
+
+    @DefaultStringValue("None of the above, take me to the 'Custom Preview Snapshot' dialog.")
+    String openCustomPreviewDialog();
+
     @DefaultStringValue("Applications")
     String applicationsTitle();
 
