@@ -10,6 +10,7 @@ import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,6 +20,8 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -147,8 +150,16 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
 
     protected DiskImage getDiskImage() {
         if (getParameters().getDiskImage() == null) {
-            getParameters().setDiskImage(
-                    getProviderProxy().getImageAsDiskImage(getParameters().getSourceRepoImageId()));
+            DiskImage diskImage = getProviderProxy().getImageAsDiskImage(getParameters().getSourceRepoImageId());
+            if (diskImage != null) {
+                if (diskImage.getVolumeFormat() == VolumeFormat.RAW &&
+                        getStorageDomain().getStorageType().isBlockDomain()) {
+                    diskImage.setVolumeType(VolumeType.Preallocated);
+                } else {
+                    diskImage.setVolumeType(VolumeType.Sparse);
+                }
+            }
+            getParameters().setDiskImage(diskImage);
         }
         return getParameters().getDiskImage();
     }
@@ -236,6 +247,17 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DISK_NOT_EXIST);
         }
 
-        return true;
+        return validateSpaceRequirements(diskImage);
+    }
+
+    protected boolean validateSpaceRequirements(DiskImage diskImage) {
+        StorageDomainValidator sdValidator = createStorageDomainValidator();
+        return (validate(sdValidator.isDomainExistAndActive())
+                && validate(sdValidator.isDomainWithinThresholds()))
+                && validate(sdValidator.hasSpaceForClonedDisk(diskImage));
+    }
+
+    protected StorageDomainValidator createStorageDomainValidator() {
+        return new StorageDomainValidator(getStorageDomain());
     }
 }

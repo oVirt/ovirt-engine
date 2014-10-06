@@ -5,9 +5,11 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ImportRepoImageParameters;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 
+import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
@@ -35,6 +37,7 @@ public class ImportRepoImageCommandTest extends ImportExportRepoImageCommandTest
         doReturn(getStorageDomainDao()).when(cmd).getStorageDomainDAO();
         doReturn(getStoragePoolDao()).when(cmd).getStoragePoolDAO();
         doReturn(getProviderProxy()).when(cmd).getProviderProxy();
+        doReturn(true).when(cmd).validateSpaceRequirements(any(DiskImage.class));
     }
 
     @Test
