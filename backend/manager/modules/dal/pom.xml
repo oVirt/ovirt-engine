@@ -72,7 +72,11 @@
       <artifactId>slf4j-jdk14</artifactId>
       <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>${hibernate-jpa.version}</version>
+    </dependency>
   </dependencies>
   <build>
     <filters>

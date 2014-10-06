@@ -1,0 +1,14 @@
+<persistence xmlns="http://java.sun.com/xml/ns/persistence"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://java.sun.com/xml/ns/persistence http://java.sun.com/xml/ns/persistence/persistence_2_0.xsd"
+    version="2.0">
+    <persistence-unit name="ovirt">
+        <provider>org.hibernate.ejb.HibernatePersistence</provider>
+        <non-jta-data-source>java:/ENGINEDataSource</non-jta-data-source>
+        <properties>
+            <property name="hibernate.dialect" value="org.hibernate.dialect.PostgreSQLDialect" />
+            <property name="jboss.entity.manager.jndi.name" value="java:/ovirtEM"/>
+            <property name="jboss.entity.manager.factory.jndi.name" value="java:/ovirtEMF"/>
+        </properties>
+    </persistence-unit>
+</persistence>

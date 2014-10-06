@@ -44,6 +44,12 @@
       <artifactId>jboss-modules</artifactId>
       <version>1.1.1.GA</version>
     </dependency>
+
+    <dependency>
+      <groupId>org.hibernate</groupId>
+      <artifactId>hibernate-entitymanager</artifactId>
+      <version>${hibernate-jpa.version}</version>
+    </dependency>
   </dependencies>
 
   <build>

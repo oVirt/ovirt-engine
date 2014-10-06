@@ -249,7 +249,7 @@
                 <addClasspath>false</addClasspath>
               </manifest>
               <manifestEntries>
-                <Dependencies>org.slf4j, javax.interceptor.api, javax.ejb.api, sun.jdk</Dependencies>
+                <Dependencies>org.hibernate.envers, javax.persistence.api, org.hibernate, org.slf4j, javax.interceptor.api, javax.ejb.api, sun.jdk</Dependencies>
               </manifestEntries>
             </archive>
           </configuration>
