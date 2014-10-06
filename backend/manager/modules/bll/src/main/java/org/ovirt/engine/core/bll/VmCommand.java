@@ -391,10 +391,6 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected int getBlockSparseInitSizeInGb() {
-        return Config.<Integer> getValue(ConfigValues.InitStorageSparseSizeInGB).intValue();
-    }
-
     protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
         return VmPropertiesUtils.getInstance().validateVmProperties(
                 getVdsGroup().getcompatibility_version(),
