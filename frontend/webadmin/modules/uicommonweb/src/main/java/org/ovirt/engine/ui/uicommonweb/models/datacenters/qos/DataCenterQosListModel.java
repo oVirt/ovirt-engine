@@ -146,6 +146,18 @@ public abstract class DataCenterQosListModel<T extends QosBase, P extends QosPar
         qosModel.getDataCenters().setItems(Arrays.asList(getEntity()), getEntity());
     }
 
+    @Override
+    protected void onSelectedItemChanged() {
+        super.onSelectedItemChanged();
+        updateActionAvailability();
+    }
+
+    @Override
+    protected void selectedItemsChanged() {
+        super.selectedItemsChanged();
+        updateActionAvailability();
+    }
+
     private void updateActionAvailability() {
         List selectedItems = getSelectedItems();
 
