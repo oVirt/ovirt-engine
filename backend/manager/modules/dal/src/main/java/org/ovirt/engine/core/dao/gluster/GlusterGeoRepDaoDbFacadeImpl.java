@@ -254,4 +254,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
         };
     }
 
+    public List<GlusterGeoRepSession> getAllSessions() {
+        return getCallsHandler().executeReadList("GetAllGlusterGeoRepSessions", georepSessionRowMapper, getCustomMapSqlParameterSource());
+    }
 }

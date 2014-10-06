@@ -297,3 +297,12 @@ BEGIN
       GROUP BY groups.vds_group_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+Create or replace FUNCTION GetVdsGroupsByServiceAndCompatibilityVersion(v_gluster_service BOOLEAN, v_virt_service BOOLEAN, v_compatibility_version VARCHAR(40)) RETURNS SETOF vds_groups_view STABLE
+   AS $procedure$
+BEGIN
+      RETURN QUERY SELECT vds_groups_view.*
+      FROM vds_groups_view
+      WHERE virt_service = v_virt_service AND gluster_service = v_gluster_service AND compatibility_version = v_compatibility_version;
+END; $procedure$
+LANGUAGE plpgsql;

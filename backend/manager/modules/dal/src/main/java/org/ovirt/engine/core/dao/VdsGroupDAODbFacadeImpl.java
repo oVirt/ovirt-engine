@@ -340,4 +340,13 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
         return vdsGroups;
 
     }
+
+    @Override
+    public List<VDSGroup> getClustersByServiceAndCompatibilityVersion(boolean glusterService, boolean virtService, String compatibilityVersion) {
+        return getCallsHandler().executeReadList("GetVdsGroupsByServiceAndCompatibilityVersion",
+                VdsGroupRowMapper.instance,
+                getCustomMapSqlParameterSource().addValue("gluster_service", glusterService)
+                        .addValue("virt_service", virtService)
+                        .addValue("compatibility_version", compatibilityVersion));
+    }
 }
