@@ -12,6 +12,7 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterBrickDao;
 import org.ovirt.engine.core.dao.gluster.GlusterClusterServiceDao;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
@@ -67,6 +68,10 @@ public abstract class GlusterQueriesCommandBase<P extends VdcQueryParametersBase
             throw new RuntimeException("No up server found");
         }
         return vds.getId();
+    }
+
+    protected VdsGroupDAO getVdsGroupDao() {
+        return DbFacade.getInstance().getVdsGroupDao();
     }
 
     protected Guid getRandomUpServerId(Guid clusterId) {

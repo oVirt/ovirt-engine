@@ -471,4 +471,12 @@ public class VdsGroupDAOTest extends BaseDAOTestCase {
         assertEquals("Incorrect number of VMs in cluster", data.get(0).getGroupHostsAndVms().getVms(), 7);
         assertEquals("Incorrect number of Hosts in cluster", data.get(0).getGroupHostsAndVms().getHosts(), 1);
     }
+
+    @Test
+    public void testGetClustersByServiceAndCompatibilityVersion() {
+        List<VDSGroup> vdsGroups = ((VdsGroupDAODbFacadeImpl)dao).getClustersByServiceAndCompatibilityVersion(true, false, "2.3");
+        assertNotNull(vdsGroups);
+        assertEquals(1, vdsGroups.size());
+        assertEquals(FixturesTool.GLUSTER_CLUSTER_ID, vdsGroups.get(0).getId());
+    }
 }

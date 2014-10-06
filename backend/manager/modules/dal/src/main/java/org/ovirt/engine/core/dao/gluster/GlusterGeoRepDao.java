@@ -52,4 +52,5 @@ public interface GlusterGeoRepDao extends DAO {
 
     public List<GlusterGeoRepSessionConfiguration> getGeoRepSessionConfig(Guid sessionId);
 
+    public List<GlusterGeoRepSession> getAllSessions();
  }

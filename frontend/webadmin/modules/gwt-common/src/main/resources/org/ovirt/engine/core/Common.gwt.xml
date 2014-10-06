@@ -307,6 +307,7 @@
 		<include name="common/businessentities/gluster/GlusterVolumeType.java" />
 		<include name="common/businessentities/gluster/GlusterTaskSupport.java"/>
 		<include name="common/businessentities/gluster/GlusterStatus.java" />
+		<include name="common/businessentities/gluster/GlusterGeoRepNonEligibilityReason.java" />
 		<include name="common/businessentities/gluster/GeoRepCrawlStatus.java" />
 		<include name="common/businessentities/gluster/GeoRepSessionStatus.java" />
 		<include name="common/businessentities/gluster/GlusterServiceStatus.java" />
@@ -337,6 +338,7 @@
 		<include name="common/asynctasks/gluster/GlusterAsyncTask.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskStatus.java"/>
 		<include name="common/asynctasks/gluster/GlusterTaskType.java"/>
+		<include name="common/businessentities/gluster/GlusterGeoRepEnums.java"/>
                 <include name="common/asynctasks/gluster/GlusterTaskParameters.java"/>
 		<include name="common/businessentities/gluster/GlusterVolumeTaskStatusDetail.java"/>
 		<include name="common/businessentities/gluster/GlusterVolumeTaskStatusForHost.java"/>
