@@ -16,18 +16,12 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Permissions;
-import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 
 
 public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
 
     private final CommandBase<? extends ImportRepoImageParameters> enclosingCommand;
-
-    private StorageDomain destinationStorageDomain;
 
     public ImportRepoImageCreateTaskHandler(CommandBase<? extends ImportRepoImageParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
@@ -50,13 +44,6 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
             diskImage.setId(enclosingCommand.getParameters().getImageGroupID());
             diskImage.setDiskInterface(DiskInterface.VirtIO);
 
-            if (diskImage.getVolumeFormat() == VolumeFormat.RAW &&
-                    getDestinationStorageDomain().getStorageType().isBlockDomain()) {
-                diskImage.setVolumeType(VolumeType.Preallocated);
-            } else {
-                diskImage.setVolumeType(VolumeType.Sparse);
-            }
-
             VdcReturnValueBase vdcReturnValue =
                     Backend.getInstance().runInternalAction(VdcActionType.AddImageFromScratch,
                             getAddImageFromScratchParameters(),
@@ -76,14 +63,6 @@ public class ImportRepoImageCreateTaskHandler implements SPMAsyncTaskHandler {
             ExecutionHandler.setAsyncJob(enclosingCommand.getExecutionContext(), true);
             enclosingCommand.getReturnValue().setSucceeded(true);
         }
-    }
-
-    protected StorageDomain getDestinationStorageDomain() {
-        if (destinationStorageDomain == null) {
-            destinationStorageDomain = DbFacade.getInstance().getStorageDomainDao().get(
-                    enclosingCommand.getParameters().getStorageDomainId());
-        }
-        return destinationStorageDomain;
     }
 
     protected AddImageFromScratchParameters getAddImageFromScratchParameters() {
