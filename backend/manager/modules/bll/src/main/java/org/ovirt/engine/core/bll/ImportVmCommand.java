@@ -147,7 +147,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        if (!StringUtils.isBlank(getParameters().getVm().getName())) {
+        if (getParameters().getVm() != null && !StringUtils.isBlank(getParameters().getVm().getName())) {
             return Collections.singletonMap(getParameters().getVm().getName(),
                     LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM_NAME, VdcBllMessages.ACTION_TYPE_FAILED_NAME_ALREADY_USED));
         }
