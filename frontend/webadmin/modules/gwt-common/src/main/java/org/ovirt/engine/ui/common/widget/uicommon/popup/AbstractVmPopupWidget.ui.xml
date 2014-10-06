@@ -665,14 +665,14 @@
                             <g:Label text="{constants.cpuAllocVmPopup}" addStyleNames="{style.sectionLabel}" />
                             <g:FlowPanel addStyleNames="{style.labelToCouple}">
                                 <e:ListModelListBoxEditor ui:field="cpuProfilesEditor" />
-                                <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
-                                <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
+                                <g:FlowPanel ui:field="cpuSharesPanel" addStyleNames="{style.labelToCoupleCouple}">
+	                                <g:Label ui:field="cpuSharesEditor" text="{constants.cpuShares}" addStyleNames="{style.labelToCoupleLabel}"/>
                                     <e:ListModelListBoxOnlyEditor ui:field="cpuSharesAmountSelectionEditor" addStyleNames="{style.labelToCoupleCoupleLeft}" contentWidgetStyleName="{style.cpuSahresValueListBox}" />
                                     <ge:IntegerEntityModelTextBoxOnlyEditor ui:field="cpuSharesAmountEditor" addStyleNames="{style.labelToCoupleCoupleRight}" contentWidgetStyleName="{style.cpuSahresValueTextBox} avmpw_cpuSahresValueTextBox_pfly_fix" />
                                 </g:FlowPanel>
                             </g:FlowPanel>
 
-                            <g:FlowPanel addStyleNames="{style.labelToCouple}">
+                            <g:FlowPanel ui:field="cpuPinningPanel" addStyleNames="{style.labelToCouple}">
                                 <g:Label text="{constants.cpuPinningLabel}" addStyleNames="{style.labelToCoupleLabel}"/>
                                 <g:FlowPanel addStyleNames="{style.labelToCoupleCouple}">
                                     <d:InfoIcon ui:field="cpuPinningInfo" addStyleNames="{style.labelToCoupleCoupleLeft} avmpw_infoIcon_pfly_fix"/>
@@ -681,7 +681,7 @@
                             </g:FlowPanel>
 
                         </g:FlowPanel>
-                        <g:FlowPanel addStyleNames="{style.sectionPanelTight}">
+                        <g:FlowPanel ui:field="memAllocationPanel" addStyleNames="{style.sectionPanelTight}">
                             <ge:DetachableLabel ui:field="memAllocationLabel" contentWidgetStyleName="{style.sectionLabel}">
                                 <ge:decorated>
                                     <g:Label text="{constants.memAllocVmPopup}" />

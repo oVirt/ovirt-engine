@@ -726,6 +726,15 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     protected DialogTab resourceAllocationTab;
 
     @UiField
+    protected FlowPanel cpuSharesPanel;
+
+    @UiField
+    protected FlowPanel cpuPinningPanel;
+
+    @UiField
+    protected FlowPanel memAllocationPanel;
+
+    @UiField
     protected FlowPanel storageAllocationPanel;
 
     @UiField

@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.template;
 
 import static org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfig.hiddenField;
 
-import com.google.gwt.event.shared.EventBus;
+import java.util.Arrays;
+import java.util.List;
+
 import org.ovirt.engine.ui.common.CommonApplicationConstants;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -12,6 +14,8 @@ import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractVmPopupWidget;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.vm.PopupWidgetConfigMap;
 
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.user.client.ui.Widget;
 
 public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
 
@@ -39,8 +43,15 @@ public class TemplateNewPopupWidget extends AbstractVmPopupWidget {
                 putAll(poolSpecificFields(), hiddenField()).
                 putOne(instanceTypesEditor, hiddenField()).
                 putOne(templateWithVersionEditor, hiddenField()).
-                update(resourceAllocationTab, hiddenField());
-
+                putAll(resourceAllocationTemplateHiddenFields(), hiddenField());
     }
 
+    protected List<Widget> resourceAllocationTemplateHiddenFields() {
+        return Arrays.<Widget> asList(
+                cpuSharesPanel,
+                cpuPinningPanel,
+                memAllocationPanel,
+                storageAllocationPanel,
+                disksAllocationPanel);
+    }
 }
