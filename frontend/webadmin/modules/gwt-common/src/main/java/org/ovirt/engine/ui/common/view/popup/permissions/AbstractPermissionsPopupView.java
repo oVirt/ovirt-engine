@@ -56,7 +56,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField(provided = true)
     @Path("profile.selectedItem")
     @WithElementId("profile")
-    public ListModelListBoxEditor<Object> profileSelection;
+    public ListModelListBoxEditor<ProfileEntry> profileSelection;
 
     @UiField(provided = true)
     @Path("namespace.selectedItem")
@@ -70,7 +70,7 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     @UiField(provided = true)
     @Path("role.selectedItem")
     @WithElementId("role")
-    public ListModelListBoxEditor<Object> roleSelection;
+    public ListModelListBoxEditor<Role> roleSelection;
 
     @UiField(provided = true)
     @Ignore
@@ -127,17 +127,17 @@ public abstract class AbstractPermissionsPopupView<T extends AdElementListModel>
     protected abstract T doFlush();
 
     private void initListBoxEditors() {
-        profileSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        profileSelection = new ListModelListBoxEditor<ProfileEntry>(new NullSafeRenderer<ProfileEntry>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((ProfileEntry) object).toString();
+            public String renderNullSafe(ProfileEntry object) {
+                return object.toString();
             }
         });
 
-        roleSelection = new ListModelListBoxEditor<Object>(new NullSafeRenderer<Object>() {
+        roleSelection = new ListModelListBoxEditor<Role>(new NullSafeRenderer<Role>() {
             @Override
-            public String renderNullSafe(Object object) {
-                return ((Role) object).getname();
+            public String renderNullSafe(Role object) {
+                return object.getname();
             }
         });
 
