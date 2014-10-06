@@ -6,7 +6,6 @@ import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.ovirt.engine.api.model.BaseResource;
 import org.ovirt.engine.core.utils.MockConfigRule;
 
 /**
@@ -21,7 +20,7 @@ import org.ovirt.engine.core.utils.MockConfigRule;
  * @param <I>
  *            inverse type (may be identical to T)
  */
-public abstract class AbstractInvertibleMappingTest<F extends BaseResource, T, I> extends Assert {
+public abstract class AbstractInvertibleMappingTest<F, T, I> extends Assert {
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule();
