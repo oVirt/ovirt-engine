@@ -132,9 +132,11 @@ class Plugin(plugin.PluginBase):
                         self._parent.command.get('rpm'),
                         '-q',
                     ) + tuple(
-                        self.environment[
-                            osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
-                        ]
+                        set(
+                            self.environment[
+                                osetupcons.RPMDistroEnv.VERSION_LOCK_APPLY
+                            ]
+                        )
                     ),
                 )
                 changes = []
