@@ -142,9 +142,8 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     private boolean allowedNetworkLabelManipulation() {
         boolean labelNotChanged = !labelChanged();
-        boolean newLabelAssigned = !labelAdded();
 
-        return !getNetwork().isExternal() && (labelNotChanged || newLabelAssigned);
+        return !getNetwork().isExternal() && (labelNotChanged || labelAdded());
     }
 
     /**
