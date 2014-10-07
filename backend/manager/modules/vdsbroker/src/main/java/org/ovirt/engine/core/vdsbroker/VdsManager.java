@@ -57,8 +57,9 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.CollectVdsNetworkDataVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetCapabilitiesVDSCommand;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersisterImpl;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
@@ -74,6 +75,7 @@ public class VdsManager {
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS vds;
+    private final HostNetworkTopologyPersister hostNetworkTopologyPersister;
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
@@ -97,6 +99,7 @@ public class VdsManager {
         sshSoftFencingExecuted = new AtomicBoolean(false);
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
                 new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
+        hostNetworkTopologyPersister = HostNetworkTopologyPersisterImpl.getInstance();
 
         handlePreviousStatus();
         handleSecureSetup();
@@ -572,7 +575,7 @@ public class VdsManager {
 
             VDSStatus returnStatus = vds.getStatus();
             NonOperationalReason nonOperationalReason =
-                    CollectVdsNetworkDataVDSCommand.persistAndEnforceNetworkCompliance(vds);
+                    hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(vds);
 
             if (nonOperationalReason != NonOperationalReason.NONE) {
                 setIsSetNonOperationalExecuted(true);
