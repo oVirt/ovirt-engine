@@ -14,7 +14,7 @@ public class GetImagesListQuery<P extends GetImagesListParameters> extends GetIm
      * @return The storage domain to get the images from
      */
     @Override
-    protected Guid getStorageDomainId() {
+    protected Guid getStorageDomainIdForQuery() {
         return getParameters().getStorageDomainId();
     }
 }
