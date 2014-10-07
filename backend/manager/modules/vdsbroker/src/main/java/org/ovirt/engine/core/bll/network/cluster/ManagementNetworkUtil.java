@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll.network.cluster;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 
+// TODO: move the interface to more suitable for that module as soon as it will be possible (CDI cross module issue
+// is solved).
 public interface ManagementNetworkUtil {
 
     /**
