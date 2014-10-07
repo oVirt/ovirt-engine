@@ -3829,7 +3829,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Write")
     String writeStorageQosPopup();
 
-    @DefaultStringValue("Mbps")
+    @DefaultStringValue("MB/s")
     String mbpsLabelStorageQosPopup();
 
     @DefaultStringValue("Count")
