@@ -126,10 +126,13 @@ public class BackendVmPoolResource
             if (vm.getVmtGuid() != null) {
                 final VmTemplate template = getEntity(VmTemplate.class,
                                                 VdcQueryType.GetVmTemplate,
-                                                new GetVmTemplateParameters(vm.getId()),
-                                                vm.getId().toString());
+                                                new GetVmTemplateParameters(vm.getVmtGuid()),
+                                                vm.getVmtGuid().toString());
                 vm.getStaticData().setMemSizeMb(template.getMemSizeMb());
                 vm.getStaticData().setSingleQxlPci(template.getSingleQxlPci());
+                vm.getStaticData().setOsId(template.getOsId());
+                vm.getStaticData().setDefaultDisplayType(template.getDefaultDisplayType());
+                vm.getStaticData().setMigrationSupport(template.getMigrationSupport());
             }
 
             final AddVmPoolWithVmsParameters parameters = new AddVmPoolWithVmsParameters(entity, vm, size, -1);
