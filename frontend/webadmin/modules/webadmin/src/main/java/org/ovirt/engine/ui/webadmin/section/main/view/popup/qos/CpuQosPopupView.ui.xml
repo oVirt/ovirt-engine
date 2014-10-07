@@ -11,9 +11,12 @@
 			background-color: #D3D3D3;
 			margin: 5px;
 		}
+		.decorator {
+			margin: 5px;
+		}
 	</ui:style>
 
-	<d:SimpleDialogPanel width="400px" height="200px">
+	<d:SimpleDialogPanel width="400px" height="220px">
 		<d:content>
 			<g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.topDecorator}">
@@ -21,7 +24,7 @@
 					<ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
 					<ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
 				</g:FlowPanel>
-				<ge:IntegerEntityModelTextBoxEditor ui:field="cpuLimitEditor" />
+				<ge:IntegerEntityModelTextBoxEditor addStyleNames="{style.decorator}" ui:field="cpuLimitEditor"/>
 			</g:FlowPanel>
 		</d:content>
 	</d:SimpleDialogPanel>
