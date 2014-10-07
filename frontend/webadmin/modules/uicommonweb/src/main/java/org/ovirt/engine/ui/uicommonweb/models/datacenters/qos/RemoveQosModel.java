@@ -1,7 +1,10 @@
 package org.ovirt.engine.ui.uicommonweb.models.datacenters.qos;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 
 import org.ovirt.engine.core.common.action.QosParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -66,26 +69,30 @@ public abstract class RemoveQosModel<T extends QosBase> extends ConfirmationMode
 
             @Override
             public void executed(FrontendMultipleQueryAsyncResult result) {
-                List<ProfileBase> profiles = new ArrayList<ProfileBase>();
+                Map<ProfileBase, String> profilesAndQos = new HashMap<ProfileBase, String>();
 
                 setHelpTag(getRemoveQosHelpTag());
                 setHashName(getRemoveQosHashName());
 
+                int index = 0;
                 for (VdcQueryReturnValue returnValue : result.getReturnValues()) {
-                    profiles.addAll((List<ProfileBase>) returnValue.getReturnValue());
+                        for (ProfileBase profileBase : (List<ProfileBase>)returnValue.getReturnValue()) {
+                                profilesAndQos.put(profileBase, sourceListModel.getSelectedItems().get(index).getName());
+                                        }
+                        index++;
                 }
-                if (profiles.isEmpty()) {
+                if (profilesAndQos.isEmpty()) {
                     ArrayList<String> list = new ArrayList<String>();
                     for (T item : sourceListModel.getSelectedItems()) {
                         list.add(item.getName());
                     }
                     setItems(list);
                 } else {
-                    setMessage(getRemoveQosMessage(profiles.size()));
+                    setMessage(getRemoveQosMessage(profilesAndQos.size()));
 
                     ArrayList<String> list = new ArrayList<String>();
-                    for (ProfileBase item : profiles) {
-                        list.add(item.getName());
+                    for (Entry<ProfileBase, String> item : profilesAndQos.entrySet()) {
+                        list.add(item.getKey().getName() + " (" + item.getValue() + ")"); //$NON-NLS-1$ //$NON-NLS-2$
                     }
                     setItems(list);
                 }
