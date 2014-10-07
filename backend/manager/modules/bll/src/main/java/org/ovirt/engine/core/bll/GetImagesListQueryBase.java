@@ -22,10 +22,10 @@ public abstract class GetImagesListQueryBase<P extends GetImagesListParametersBa
     /**
      * @return The storage domain to get the images from
      */
-    protected abstract Guid getStorageDomainId();
+    protected abstract Guid getStorageDomainIdForQuery();
 
     protected List<RepoImage> getUserRequestForStorageDomainRepoFileList() {
         return IsoDomainListSyncronizer.getInstance().getUserRequestForStorageDomainRepoFileList
-                (getStorageDomainId(), getParameters().getImageType(), getParameters().getForceRefresh());
+                (getStorageDomainIdForQuery(), getParameters().getImageType(), getParameters().getForceRefresh());
     }
 }

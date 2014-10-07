@@ -19,7 +19,7 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
      * @return The storage domain to get the images from
      */
     @Override
-    protected Guid getStorageDomainId() {
+    protected Guid getStorageDomainIdForQuery() {
         if (doesUserHavePermissionsOnStoragePool()) {
             return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
         }
