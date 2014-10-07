@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.vdscommands.GetVmsInfoVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExportDomainQueryParameters>
@@ -62,7 +61,7 @@ public abstract class GetAllFromExportDomainQuery <T, P extends GetAllFromExport
         } catch (RuntimeException e) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("StorageDomainName", storage.getStorageName());
-            new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
+            auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_GET_VMS_INFO_FAILED);
             throw e;
         }
     }

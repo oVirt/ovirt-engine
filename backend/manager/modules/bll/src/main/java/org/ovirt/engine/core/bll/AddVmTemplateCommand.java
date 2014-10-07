@@ -68,7 +68,6 @@ import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
@@ -83,7 +82,6 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         implements QuotaStorageDependent, QuotaVdsDependent {
 
     private final List<DiskImage> mImages = new ArrayList<DiskImage>();
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<PermissionSubject> permissionCheckSubject;
     protected Map<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, List<DiskImage>> sourceImageDomainsImageMap;

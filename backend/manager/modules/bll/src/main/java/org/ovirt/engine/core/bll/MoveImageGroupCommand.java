@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll;
 
 import org.ovirt.engine.core.bll.context.CommandContext;
-
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
@@ -12,7 +11,6 @@ import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.storage.ImageDbOperationScope;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @SuppressWarnings("serial")
@@ -82,6 +80,6 @@ public class MoveImageGroupCommand<T extends MoveOrCopyImageGroupParameters> ext
         } else {
             logType = AuditLogType.USER_MOVE_IMAGE_GROUP_FAILED_TO_DELETE_DST_IMAGE;
         }
-        new AuditLogDirector().log(logable, logType);
+        auditLogDirector.log(logable, logType);
     }
 }

@@ -33,7 +33,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogger;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.entities.VmInternalData;
@@ -78,7 +77,6 @@ public class VmAnalyzer {
 
     //dependencies
     private final VmsMonitoring vmsMonitoring; // aggregate all data using it.
-    private AuditLogger auditLogger;
 
     private static final int TO_MEGA_BYTES = 1024;
     /** names of fields in {@link org.ovirt.engine.core.common.businessentities.VmDynamic} that are not changed by VDSM */
@@ -95,15 +93,15 @@ public class VmAnalyzer {
         UNCHANGEABLE_FIELDS_BY_VDSM = Collections.unmodifiableList(tmpList);
     }
 
-    private AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector;
 
     // FIXME auditlogger is a dependency and realy doesn't belong in the constructor but
     // there is no way to mock it otherwise.
-    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, AuditLogger auditLogger) {
+    public VmAnalyzer(VM dbVm, VmInternalData vdsmVm, VmsMonitoring vmsMonitoring, AuditLogDirector auditLogDirector) {
         this.dbVm = dbVm;
         this.vdsmVm = vdsmVm;
         this.vmsMonitoring = vmsMonitoring;
-        this.auditLogger = auditLogger;
+        this.auditLogDirector = auditLogDirector;
     }
 
     /**
@@ -972,7 +970,7 @@ public class VmAnalyzer {
     }
 
     protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
-        auditLogger.log(auditLogable, logType);
+        auditLogDirector.log(auditLogable, logType);
     }
 
     public boolean isRerun() {

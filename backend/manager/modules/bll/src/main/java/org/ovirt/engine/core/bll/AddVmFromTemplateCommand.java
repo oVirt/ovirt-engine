@@ -31,14 +31,12 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 /**
  * This class adds a cloned VM from a template (Deep disk copy)
  */
 public class AddVmFromTemplateCommand<T extends AddVmParameters> extends AddVmCommand<T> {
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private Map<Guid, Guid> diskInfoSourceMap;
     private Map<Guid, Set<Guid>> validDisksDomains;
 

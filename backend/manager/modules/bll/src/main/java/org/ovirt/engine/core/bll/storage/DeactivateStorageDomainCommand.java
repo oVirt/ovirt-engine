@@ -39,7 +39,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
@@ -332,7 +331,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
         if (!asyncTasks.isEmpty()) {
             AuditLogableBase auditLogableBase = new AuditLogableBase();
             auditLogableBase.setStorageDomain(getStorageDomain());
-            new AuditLogDirector().log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
+            auditLogDirector.log(auditLogableBase, AuditLogType.STORAGE_DOMAIN_TASKS_ERROR);
         }
     }
 

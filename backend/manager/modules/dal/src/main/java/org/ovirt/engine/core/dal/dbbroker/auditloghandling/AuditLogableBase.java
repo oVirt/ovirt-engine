@@ -5,6 +5,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
@@ -64,7 +65,8 @@ import org.slf4j.LoggerFactory;
 public class AuditLogableBase extends TimeoutBase {
     private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    @Inject
+    protected AuditLogDirector auditLogDirector;
 
     private Guid mVmId = Guid.Empty;
     private DbUser dbUser;
@@ -857,5 +859,13 @@ public class AuditLogableBase extends TimeoutBase {
 
     public void setRepeatable(boolean repeatable) {
         this.repeatable = repeatable;
+    }
+
+    public AuditLogDirector getAuditLogDirector() {
+        return auditLogDirector;
+    }
+
+    public void setAuditLogDirector(AuditLogDirector auditLogDirector) {
+        this.auditLogDirector = auditLogDirector;
     }
 }

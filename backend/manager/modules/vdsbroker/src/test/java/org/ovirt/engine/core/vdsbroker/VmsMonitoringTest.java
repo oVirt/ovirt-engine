@@ -25,6 +25,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.VdsDAO;
@@ -105,6 +106,9 @@ public class VmsMonitoringTest {
     ResourceManager resourceManager;
 
     @Mock
+    AuditLogDirector auditLogDirector;
+
+    @Mock
     private VdsManager vdsManager;
 
     @Before
@@ -116,7 +120,7 @@ public class VmsMonitoringTest {
                 new VmsMonitoring(
                         vdsManager,
                         Arrays.asList(VmTestPairs.MIGRATION_DONE.build()),
-                        Collections.<Pair<VM, VmInternalData>>emptyList()) {
+                        Collections.<Pair<VM, VmInternalData>>emptyList(), auditLogDirector) {
 
                     @Override
                     public DbFacade getDbFacade() {

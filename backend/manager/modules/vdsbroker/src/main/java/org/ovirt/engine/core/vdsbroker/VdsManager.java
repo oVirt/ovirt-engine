@@ -71,7 +71,7 @@ public class VdsManager {
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
     private VDS cachedVds;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final AuditLogDirector auditLogDirector;
     private long lastUpdate;
     private long updateStartTime;
     private long nextMaintenanceAttemptTime;
@@ -88,7 +88,8 @@ public class VdsManager {
     private boolean monitoringNeeded;
     private List<Pair<VM, VmInternalData>> lastVmsList = Collections.emptyList();
 
-    private VdsManager(VDS vds) {
+    public VdsManager(VDS vds, AuditLogDirector auditLogDirector) {
+        this.auditLogDirector = auditLogDirector;
         log.info("Entered VdsManager constructor");
         cachedVds = vds;
         vdsId = vds.getId();
@@ -123,11 +124,6 @@ public class VdsManager {
         } else {
             cachedVds.setPreviousStatus(VDSStatus.Up);
         }
-    }
-
-    public static VdsManager buildVdsManager(VDS vds) {
-        VdsManager vdsManager = new VdsManager(vds);
-        return vdsManager;
     }
 
     public void scheduleJobs() {
@@ -273,7 +269,8 @@ public class VdsManager {
             fetcher.fetch();
             new VmsMonitoring(this,
                     fetcher.getChangedVms(),
-                    fetcher.getVmsWithChangedDevices()
+                    fetcher.getVmsWithChangedDevices(),
+                    auditLogDirector
             ).perform();
         }
     }

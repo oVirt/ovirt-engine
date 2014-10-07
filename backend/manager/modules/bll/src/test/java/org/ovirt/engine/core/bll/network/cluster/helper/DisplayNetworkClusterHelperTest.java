@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogger;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 
@@ -43,7 +43,7 @@ public class DisplayNetworkClusterHelperTest {
     @Mock
     private VM mockVm;
     @Mock
-    private AuditLogger mockAuditLogger;
+    private AuditLogDirector mockAuditLogDirector;
 
     @Captor
     private ArgumentCaptor<AuditLogableBase> auditLogableBaseCaptor;
@@ -57,7 +57,7 @@ public class DisplayNetworkClusterHelperTest {
                 mockVmDao,
                 mockNetworkCluster,
                 TEST_NETWORK_NAME,
-                mockAuditLogger);
+                mockAuditLogDirector);
 
         Mockito.when(mockNetworkCluster.getId()).thenReturn(TEST_NETWORK_CLUSTER_ID);
         Mockito.when(mockNetworkClusterDao.get(TEST_NETWORK_CLUSTER_ID)).thenReturn(mockNetworkClusterBeforeUpdate);
@@ -128,7 +128,7 @@ public class DisplayNetworkClusterHelperTest {
 
         testWarnOnActiveVmInner(true);
 
-        Mockito.verify(mockAuditLogger).log(auditLogableBaseCaptor.capture(),
+        Mockito.verify(mockAuditLogDirector).log(auditLogableBaseCaptor.capture(),
                 Mockito.same(AuditLogType.NETWORK_UPDATE_DISPLAY_FOR_CLUSTER_WITH_ACTIVE_VM));
 
         final AuditLogableBase actualLoggable = auditLogableBaseCaptor.getValue();
@@ -141,7 +141,7 @@ public class DisplayNetworkClusterHelperTest {
 
         testWarnOnActiveVmInner(false);
 
-        Mockito.verifyZeroInteractions(mockAuditLogger);
+        Mockito.verifyZeroInteractions(mockAuditLogDirector);
     }
 
     private void testWarnOnActiveVmInner(boolean activeVm) {

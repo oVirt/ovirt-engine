@@ -7,6 +7,7 @@ import javax.annotation.PostConstruct;
 import javax.ejb.DependsOn;
 import javax.ejb.Singleton;
 import javax.ejb.Startup;
+import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.dwh.DwhHeartBeat;
@@ -43,6 +44,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
 
     private static final Logger log = LoggerFactory.getLogger(InitBackendServicesOnStartupBean.class);
 
+    @Inject
+    private PmHealthCheckManager pmHealthCheckManager;
+
     /**
      * This method is called upon the bean creation as part
      * of the management Service bean life cycle.
@@ -55,9 +59,9 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             // This must be done before starting to sample the hosts status from VDSM since the sampling will turn such host from Reboot to NonResponsive
             List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
             // Initialize Power Management Health Check
-            PmHealthCheckManager.getInstance().initialize();
+            pmHealthCheckManager.initialize();
             // recover from engine failure
-            PmHealthCheckManager.getInstance().recover(hosts);
+            pmHealthCheckManager.recover(hosts);
 
             CommandCoordinatorUtil.initAsyncTaskManager();
             Injector.get(ResourceManager.class);

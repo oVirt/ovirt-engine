@@ -39,6 +39,7 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsDynamicDAO;
@@ -52,6 +53,7 @@ import org.slf4j.LoggerFactory;
 
 public class SchedulingManager {
     private static final Logger log = LoggerFactory.getLogger(SchedulingManager.class);
+    private AuditLogDirector auditLogDirector = new AuditLogDirector();
     /**
      * singleton
      */
@@ -817,7 +819,7 @@ public class SchedulingManager {
                         String failedHostsStr = StringUtils.join(Entities.objectNames(returnedFailedHosts), ", ");
 
                         logable.addCustomValue("Hosts", failedHostsStr);
-                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
+                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION, auditLogDirector);
                         log.info("Cluster '{}' fail to pass HA reservation check.", cluster.getName());
                     }
 
@@ -833,7 +835,7 @@ public class SchedulingManager {
                         AuditLogableBase logable = new AuditLogableBase();
                         logable.setVdsGroupId(cluster.getId());
                         logable.addCustomValue("ClusterName", cluster.getName());
-                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN);
+                        AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION_DOWN, auditLogDirector);
                     }
                 }
             }

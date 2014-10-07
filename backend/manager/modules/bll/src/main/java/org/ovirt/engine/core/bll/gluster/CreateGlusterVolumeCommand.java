@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.validation.group.gluster.CreateStripedVolume
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.CreateGlusterVolumeVDSParameters;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * BLL command to create a new Gluster Volume
@@ -170,7 +169,7 @@ public class CreateGlusterVolumeCommand extends GlusterCommandBase<CreateGluster
         // the messages from SetGlusterVolumeOptionCommand appear first,
         // making it look like options were set before volume was created.
         // Hence we explicitly log the volume creation before setting the options.
-        new AuditLogDirector().log(this, AuditLogType.GLUSTER_VOLUME_CREATE);
+        auditLogDirector.log(this, AuditLogType.GLUSTER_VOLUME_CREATE);
         // And don't log it at the end
         setCommandShouldBeLogged(false);
 

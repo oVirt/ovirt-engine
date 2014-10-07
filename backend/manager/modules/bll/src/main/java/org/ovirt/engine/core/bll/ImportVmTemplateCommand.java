@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -61,8 +60,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmTemplateCommand extends MoveOrCopyTemplateCommand<ImportVmTemplateParameters>
         implements QuotaStorageDependent {
-
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public ImportVmTemplateCommand(ImportVmTemplateParameters parameters) {
         super(parameters);

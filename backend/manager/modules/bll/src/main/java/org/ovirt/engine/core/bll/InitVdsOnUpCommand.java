@@ -60,7 +60,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.gluster.GlusterServerDao;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -80,7 +79,6 @@ import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 @NonTransactiveCommandAttribute
 public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePoolParametersBase> {
     private boolean fenceSucceeded = false;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private boolean vdsProxyFound;
     private List<StorageDomainStatic> problematicDomains;
     private boolean connectPoolSucceeded;
@@ -366,13 +364,13 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 if (!vdsProxyFound) {
                     logable.addCustomValue("Reason",
                             auditLogDirector.getMessage(AuditLogType.VDS_ALERT_FENCE_NO_PROXY_HOST));
-                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                 } else if (!fenceStatusReturnValue.getIsSucceeded()) {
                     logable.addCustomValue("Reason", fenceStatusReturnValue.getMessage());
-                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED);
+                    AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_TEST_FAILED, auditLogDirector);
                 }
             } else {
-                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED);
+                AlertDirector.Alert(logable, AuditLogType.VDS_ALERT_FENCE_IS_NOT_CONFIGURED, auditLogDirector);
             }
         }
 

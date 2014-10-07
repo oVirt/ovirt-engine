@@ -37,7 +37,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainStaticDAO;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -135,7 +134,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             } catch (VdcBLLException e) {
                 log.warn("Upgrade process of Storage Pool '{}' has encountered a problem due to following reason: {}",
                         spId, e.getMessage());
-                new AuditLogDirector().log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
+                auditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
             }
         }
 

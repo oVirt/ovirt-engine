@@ -81,7 +81,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
@@ -638,7 +637,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     void auditLog(AuditLogableBase logable, AuditLogType logType) {
-        new AuditLogDirector().log(logable, logType);
+        auditLogDirector.log(logable, logType);
     }
 
     private void internalEndWithFailure() {

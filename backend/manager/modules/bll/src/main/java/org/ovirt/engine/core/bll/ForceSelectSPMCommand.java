@@ -17,7 +17,6 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.SpmStopOnIrsVDSCommandParameters;
 
 @NonTransactiveCommandAttribute
@@ -70,9 +69,9 @@ public class ForceSelectSPMCommand<T extends ForceSelectSPMParameters> extends C
                         getParameters().getPreferredSPMId());
 
         if (runVdsCommand(VDSCommandType.SpmStopOnIrs, params).getSucceeded()) {
-            new AuditLogDirector().log(this, AuditLogType.USER_FORCE_SELECTED_SPM);
+            auditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM);
         } else {
-            new AuditLogDirector().log(this, AuditLogType.USER_FORCE_SELECTED_SPM_STOP_FAILED);
+            auditLogDirector.log(this, AuditLogType.USER_FORCE_SELECTED_SPM_STOP_FAILED);
         }
 
         setSucceeded(true);

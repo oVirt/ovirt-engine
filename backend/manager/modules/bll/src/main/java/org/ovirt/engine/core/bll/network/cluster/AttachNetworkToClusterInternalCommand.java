@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkStatus;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
 
 @InternalCommandAttribute
 @CanDoActionSupportsTransaction
@@ -121,7 +120,7 @@ public class AttachNetworkToClusterInternalCommand<T extends AttachNetworkToVdsG
                     getVmDAO(),
                     networkCluster,
                     network.getName(),
-                    AuditLogDirectorDelegator.getInstance());
+                    auditLogDirector);
             if (displayNetworkClusterHelper.isDisplayToBeUpdated()) {
                 displayNetworkClusterHelper.warnOnActiveVm();
             }

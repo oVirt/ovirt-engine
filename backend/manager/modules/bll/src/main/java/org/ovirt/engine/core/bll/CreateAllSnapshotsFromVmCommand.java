@@ -56,7 +56,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.NotImplementedException;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -65,7 +64,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 @DisableInPrepareMode
 public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmParameters> extends VmCommand<T> implements QuotaStorageDependent, TaskHandlerCommand<CreateAllSnapshotsFromVmParameters> {
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<DiskImage> cachedSelectedActiveDisks;
     private Guid cachedStorageDomainId = Guid.Empty;
     private String cachedSnapshotIsBeingTakenMessage;

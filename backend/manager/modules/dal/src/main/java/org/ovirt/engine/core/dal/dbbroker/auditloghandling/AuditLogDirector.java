@@ -12,6 +12,8 @@ import java.util.concurrent.TimeUnit;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogSeverity;
 import org.ovirt.engine.core.common.AuditLogType;
@@ -22,8 +24,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
-public final class AuditLogDirector {
+@Singleton
+public class AuditLogDirector {
     private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";

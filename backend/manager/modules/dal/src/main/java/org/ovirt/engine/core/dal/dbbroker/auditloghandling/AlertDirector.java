@@ -9,8 +9,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
  */
 public final class AlertDirector {
 
-    private static final AuditLogDirector auditLogDirector = new AuditLogDirector();
-
     /**
      * Alerts the specified audit logable.
      *
@@ -19,16 +17,16 @@ public final class AlertDirector {
      * @param logType
      *            Type of the log.
      */
-    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType) {
+    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector) {
         auditLogDirector.log(auditLogable, logType);
     }
 
-    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, String message) {
+    public static void Alert(AuditLogableBase auditLogable, AuditLogType logType, AuditLogDirector auditLogDirector, String message) {
         auditLogDirector.log(auditLogable, logType, message);
     }
 
-    public static void AddVdsAlert(Guid vdsId, AuditLogType type) {
-        AddVdsAlert(vdsId, type, new AuditLogableBase());
+    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector) {
+        AddVdsAlert(vdsId, type, auditLogDirector, new AuditLogableBase());
     }
 
     /**
@@ -36,9 +34,9 @@ public final class AlertDirector {
      * @param vdsId
      * @param type
      */
-    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogableBase alert) {
+    public static void AddVdsAlert(Guid vdsId, AuditLogType type, AuditLogDirector auditLogDirector, AuditLogableBase alert) {
         alert.setVdsId(vdsId);
-        AlertDirector.Alert(alert, type);
+        AlertDirector.Alert(alert, type, auditLogDirector);
     }
     /**
      * Removes the alert.

@@ -37,7 +37,6 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -326,7 +325,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     private void logEventForUser(String userName, AuditLogType auditLogType) {
         AuditLogableBase msg = new AuditLogableBase();
         msg.setUserName(userName);
-        new AuditLogDirector().log(msg, auditLogType);
+        auditLogDirector.log(msg, auditLogType);
     }
 
     @Override
@@ -354,7 +353,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected void logAutheticationFailure() {
         AuditLogableBase logable = new AuditLogableBase();
         logable.setUserName(getUserName());
-        new AuditLogDirector().log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
+        auditLogDirector.log(logable, AuditLogType.USER_VDC_LOGIN_FAILED);
     }
 
     private boolean isCredentialsAuth(ExtensionProxy authnExtension) {

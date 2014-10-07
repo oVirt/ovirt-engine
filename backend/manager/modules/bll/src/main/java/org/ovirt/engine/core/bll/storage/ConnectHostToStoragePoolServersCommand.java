@@ -12,7 +12,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.storage.StorageType;
 import org.ovirt.engine.core.common.vdscommands.StorageServerConnectionManagementVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 /**
  * Connect host to all Storage server connections in Storage pool. We
@@ -43,7 +42,7 @@ public class ConnectHostToStoragePoolServersCommand extends
         setSucceeded(connectStorageServer(getConnectionsTypeMap()));
 
         if (!getSucceeded()) {
-            new AuditLogDirector().log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
+            auditLogDirector.log(this, AuditLogType.CONNECT_STORAGE_SERVERS_FAILED);
         }
     }
 

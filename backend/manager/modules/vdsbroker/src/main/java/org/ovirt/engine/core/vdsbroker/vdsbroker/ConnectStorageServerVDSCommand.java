@@ -5,6 +5,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -22,6 +24,9 @@ import org.ovirt.engine.core.utils.collections.DefaultValueMap;
 public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionManagementVDSParameters>
         extends VdsBrokerCommand<P> {
     protected ServerConnectionStatusReturnForXmlRpc _result;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public ConnectStorageServerVDSCommand(P parameters) {
         super(parameters);
@@ -119,7 +124,7 @@ public class ConnectStorageServerVDSCommand<P extends StorageServerConnectionMan
         if (failedDomainNames.length() > 0) {
             AuditLogableBase logable = new AuditLogableBase(getParameters().getVdsId());
             logable.addCustomValue("failedStorageDomains", failedDomainNames.toString());
-            new AuditLogDirector().log(logable, AuditLogType.VDS_STORAGES_CONNECTION_FAILED);
+            auditLogDirector.log(logable, AuditLogType.VDS_STORAGES_CONNECTION_FAILED);
         }
     }
 

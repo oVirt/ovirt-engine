@@ -42,8 +42,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogger;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.VmDAO;
@@ -64,7 +64,7 @@ public class VmAnalyzerTest {
     @Mock
     VmsMonitoring vmsMonitoring;
     @Mock
-    private AuditLogger auditLogger;
+    private AuditLogDirector auditLogDirector;
     @Captor
     private ArgumentCaptor<AuditLogableBase> loggableCaptor;
     @Captor
@@ -146,7 +146,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Normal);
         //then
         vmAnalyzer.analyze();
-        verify(auditLogger, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring.getResourceManager(), never()).RemoveAsyncRunningVm(data.dbVm().getId());
         verify(vmsMonitoring.getResourceManager()).runVdsCommand(vdsCommandTypeCaptor.capture(),
@@ -172,7 +172,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() == VmExitStatus.Normal);
         //then
         vmAnalyzer.analyze();
-        verify(auditLogger, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
         verify(vmsMonitoring.getResourceManager()).RemoveAsyncRunningVm(data.dbVm().getId());
         verify(vmsMonitoring.getResourceManager()).runVdsCommand(vdsCommandTypeCaptor.capture(),
@@ -192,7 +192,7 @@ public class VmAnalyzerTest {
         assumeTrue(data.vdsmVm().getVmDynamic().getExitStatus() != VmExitStatus.Normal);
         //then
         vmAnalyzer.analyze();
-        verify(auditLogger, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         verify(vmsMonitoring.getResourceManager(), atLeast(3)).IsVmInAsyncRunningList(data.dbVm().getId());
         verify(vmsMonitoring).addVmDynamicToList(data.dbVm().getDynamicData());
     }
@@ -204,7 +204,7 @@ public class VmAnalyzerTest {
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
         //then
-        verify(auditLogger, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
     }
 
@@ -215,7 +215,7 @@ public class VmAnalyzerTest {
         //when
         assumeNotNull(data.dbVm(), data.vdsmVm());
         //then
-        verify(auditLogger, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
+        verify(auditLogDirector, atLeastOnce()).log(loggableCaptor.capture(), logTypeCaptor.capture());
         assertTrue(logTypeCaptor.getAllValues().contains(AuditLogType.WATCHDOG_EVENT));
     }
 
@@ -358,7 +358,7 @@ public class VmAnalyzerTest {
         // dst VM is in DB under the same Guid
         mockVmInDbForDstVms(vmData);
         // -- end of behaviors --
-        vmAnalyzer = new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring, auditLogger);
+        vmAnalyzer = new VmAnalyzer(vmData.dbVm(), vmData.vdsmVm(), vmsMonitoring, auditLogDirector);
         if (run) {
             vmAnalyzer.analyze();
         }

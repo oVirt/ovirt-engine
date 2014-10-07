@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.Set;
 
+import javax.inject.Inject;
 import javax.validation.ConstraintViolation;
 import javax.validation.Validation;
 import javax.validation.Validator;
@@ -17,6 +18,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.VdcCommandBase;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.ActionGroupDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
@@ -36,6 +38,9 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
     private final P parameters;
     private boolean isInternalExecution = false;
     private final EngineContext engineContext;
+
+    @Inject
+    protected AuditLogDirector auditLogDirector;
 
     public QueriesCommandBase(P parameters) {
         this(parameters, null);

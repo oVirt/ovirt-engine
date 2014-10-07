@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
 
@@ -134,7 +133,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
 
                     AuditLogableBase base = new AuditLogableBase();
                     base.setVds(getVds());
-                    new AuditLogDirector().log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
+                    auditLogDirector.log(base, AuditLogType.KDUMP_FLOW_DETECTED_ON_VDS);
 
                     // set status to Kdumping to prevent Host Monitoring errors and wait until kdump finishes
                     runVdsCommand(VDSCommandType.SetVdsStatus,

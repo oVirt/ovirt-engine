@@ -39,7 +39,7 @@ import org.ovirt.engine.core.common.vdscommands.FullListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirectorDelegator;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
@@ -66,6 +66,7 @@ public class VmsMonitoring {
      * A collection of VMs that has changes in devices.
      */
     private List<Pair<VM, VmInternalData>> vmsWithChangedDevices;
+    private final AuditLogDirector auditLogDirector;
     /**
      * The managers of the monitored VMs in this cycle.
      */
@@ -100,20 +101,22 @@ public class VmsMonitoring {
     private static final Logger log = LoggerFactory.getLogger(VmsMonitoring.class);
 
     /**
-     *
-     * @param vdsManager the host manager related to this cycle.
+     *  @param vdsManager the host manager related to this cycle.
      * @param monitoredVms the vms we want to monitor/analyze/react on. this structure is
      *                     a pair of the persisted (db currently) VM and the running VM which was reported from vdsm.
      *                     Analysis and reactions would be taken on those VMs only.
      * @param vmsWithChangedDevices
+     * @param auditLogDirector
      */
     public VmsMonitoring(
             VdsManager vdsManager,
             List<Pair<VM, VmInternalData>> monitoredVms,
-            List<Pair<VM,  VmInternalData>> vmsWithChangedDevices) {
+            List<Pair<VM, VmInternalData>> vmsWithChangedDevices,
+            AuditLogDirector auditLogDirector) {
         this.vdsManager = vdsManager;
         this.monitoredVms = monitoredVms;
         this.vmsWithChangedDevices = vmsWithChangedDevices;
+        this.auditLogDirector = auditLogDirector;
     }
 
     /**
@@ -171,7 +174,7 @@ public class VmsMonitoring {
                         pair.getFirst(),
                         pair.getSecond(),
                         this,
-                        AuditLogDirectorDelegator.getInstance());
+                        auditLogDirector);
                 vmAnalyzers.add(vmAnalyzer);
                 vmAnalyzer.analyze();
             } else {

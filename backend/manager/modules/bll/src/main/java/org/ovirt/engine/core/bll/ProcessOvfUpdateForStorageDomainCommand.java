@@ -43,7 +43,6 @@ import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandPa
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 import org.ovirt.engine.core.dao.VmAndTemplatesGenerationsDAO;
@@ -262,7 +261,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends ProcessOvfUpdateF
             auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
             auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
             auditLogableBase.addCustomValue("DisksIds", StringUtils.join(failedOvfDisks, ", "));
-            new AuditLogDirector().log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
+            auditLogDirector.log(auditLogableBase, AuditLogType.UPDATE_FOR_OVF_STORES_FAILED);
         }
     }
 

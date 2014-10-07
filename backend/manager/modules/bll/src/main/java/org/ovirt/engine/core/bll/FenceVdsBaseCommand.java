@@ -29,7 +29,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ThreadUtils;
 
@@ -38,7 +37,6 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
     private static final String INTERNAL_FENCE_USER = "Engine";
     private static final String VDSM_STATUS_UNKONWN = "unknown";
     private static final int UNKNOWN_RESULT_ALLOWED = 3;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     protected FenceValidator fenceValidator;
     protected FenceExecutor fenceExecutor;

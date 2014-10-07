@@ -13,7 +13,6 @@ import org.ovirt.engine.core.common.businessentities.QuotaStorage;
 import org.ovirt.engine.core.common.businessentities.QuotaVdsGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
 
@@ -100,7 +99,7 @@ public class UpdateQuotaCommand extends QuotaCRUDCommand {
         if (newSizeUnderCurrentConsumption) {
             AuditLogableBase logable = new AuditLogableBase();
             logable.addCustomValue("QuotaName", getQuotaName());
-            new AuditLogDirector().log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
+            auditLogDirector.log(logable, AuditLogType.QUOTA_STORAGE_RESIZE_LOWER_THEN_CONSUMPTION);
         }
     }
 }

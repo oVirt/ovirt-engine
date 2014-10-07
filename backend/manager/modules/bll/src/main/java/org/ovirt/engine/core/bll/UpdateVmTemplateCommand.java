@@ -37,12 +37,11 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> extends VmTemplateCommand<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+
     private VmTemplate mOldTemplate;
     private List<GraphicsDevice> cachedGraphics;
 

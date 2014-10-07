@@ -71,7 +71,6 @@ import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
@@ -84,7 +83,6 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private static final Base64 BASE_64 = new Base64(0, null);
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private VM oldVm;
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
@@ -462,7 +460,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
     private void addLogMessages(VdcReturnValueBase returnValueBase) {
         if (!returnValueBase.getSucceeded()) {
-            new AuditLogDirector().log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
+            auditLogDirector.log(this, AuditLogType.NUMA_UPDATE_VM_NUMA_NODE_FAILED);
         }
     }
 

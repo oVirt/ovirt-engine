@@ -52,7 +52,6 @@ import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -598,7 +597,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
             params.setShouldBeLogged(false);
             VdcReturnValueBase returnValue = runInternalAction(VdcActionType.HotPlugDiskToVm, params);
             if (!returnValue.getSucceeded()) {
-                new AuditLogDirector().log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
+                auditLogDirector.log(this, AuditLogType.USER_FAILED_HOTPLUG_DISK);
             }
         }
     }

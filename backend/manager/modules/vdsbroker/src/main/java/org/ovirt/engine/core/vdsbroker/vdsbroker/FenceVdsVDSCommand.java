@@ -3,6 +3,8 @@ package org.ovirt.engine.core.vdsbroker.vdsbroker;
 import java.util.HashMap;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
@@ -31,6 +33,9 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
      * VDS which should be fenced
      */
     private VDS targetVds;
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public FenceVdsVDSCommand(P parameters) {
         super(parameters);
@@ -62,7 +67,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getParameters().getTargetVdsID());
         alert.addCustomValue("Reason", reason);
-        AlertDirector.Alert(alert, logType);
+        AlertDirector.Alert(alert, logType, auditLogDirector);
     }
 
     /**
@@ -131,7 +136,7 @@ public class FenceVdsVDSCommand<P extends FenceVdsVDSCommandParameters> extends 
                 (DbFacade.getInstance().getVdsDao().get(getParameters().getTargetVdsID())).getName());
         auditLogable.addCustomValue("AgentStatus", getParameters().getAction().getValue());
         auditLogable.addCustomValue("Operation", getParameters().getAction().toString());
-        new AuditLogDirector().log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
+        auditLogDirector.log(auditLogable, AuditLogType.VDS_ALREADY_IN_REQUESTED_STATUS);
         getVDSReturnValue().setSucceeded(true);
         setReturnValue(fenceStatusReturnValue);
     }

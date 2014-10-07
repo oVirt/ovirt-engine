@@ -9,12 +9,10 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 public class AddExternalEventCommand<T extends AddExternalEventParameters> extends ExternalEventCommandBase<T> {
     private static final String OVIRT="oVirt";
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public AddExternalEventCommand(T parameters) {
         super(parameters);
@@ -49,7 +47,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
                 auditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_ERROR, message);
                 break;
             case ALERT:
-                AlertDirector.Alert(event, AuditLogType.EXTERNAL_ALERT, message);
+                AlertDirector.Alert(event, AuditLogType.EXTERNAL_ALERT, auditLogDirector, message);
                 break;
         }
         AuditLog auditLog = DbFacade.getInstance().getAuditLogDao().getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());

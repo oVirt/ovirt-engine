@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.scheduling.ClusterPolicy;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
 import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
@@ -161,7 +160,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
             AuditLogableBase alb = new AuditLogableBase();
             alb.setVdsGroupId(getVdsGroup().getId());
             alb.setRepeatable(true);
-            new AuditLogDirector().log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
+            auditLogDirector.log(alb, AuditLogType.FENCE_DISABLED_IN_CLUSTER_POLICY);
         }
     }
 }

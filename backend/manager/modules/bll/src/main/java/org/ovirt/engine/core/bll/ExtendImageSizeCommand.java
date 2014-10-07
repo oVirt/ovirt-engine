@@ -26,14 +26,12 @@ import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends BaseImagesCommand<T>
         implements QuotaStorageDependent {
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<PermissionSubject> permissionsList;
     private List<VM> vmsDiskPluggedTo;
 

@@ -8,7 +8,6 @@ import org.ovirt.engine.core.bll.context.EngineContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 
@@ -45,6 +44,6 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("ImportedVmName", machineName);
         logable.addCustomValue("ErrorMessage", errorMessage);
-        new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
+        auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
     }
 }

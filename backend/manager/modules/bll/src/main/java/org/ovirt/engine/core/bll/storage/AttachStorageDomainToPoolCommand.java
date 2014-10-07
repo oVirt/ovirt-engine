@@ -53,7 +53,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.JsonHelper;
 import org.ovirt.engine.core.utils.OvfUtils;
 import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
@@ -66,7 +65,6 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainCommandBase<T> {
     private StoragePoolIsoMap map;
     private List<DiskImage> ovfDisks;
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
 
     public AttachStorageDomainToPoolCommand(T parameters) {
         this(parameters, null);

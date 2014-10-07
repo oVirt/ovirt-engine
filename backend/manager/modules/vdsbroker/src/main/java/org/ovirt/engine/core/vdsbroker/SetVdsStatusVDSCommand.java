@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
@@ -17,6 +19,9 @@ import org.slf4j.LoggerFactory;
 public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
 
     private static final Logger log = LoggerFactory.getLogger(SetVdsStatusVDSCommand.class);
+
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     public SetVdsStatusVDSCommand(P parameters) {
         super(parameters);
@@ -44,7 +49,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
                     if (getParameters().isStopSpmFailureLogged()) {
                         AuditLogableBase base = new AuditLogableBase();
                         base.setVds(vds);
-                        new AuditLogDirector().log(base, AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE);
+                        auditLogDirector.log(base, AuditLogType.VDS_STATUS_CHANGE_FAILED_DUE_TO_STOP_SPM_FAILURE);
                     }
 
                     if (parameters.getStatus() == VDSStatus.PreparingForMaintenance) {

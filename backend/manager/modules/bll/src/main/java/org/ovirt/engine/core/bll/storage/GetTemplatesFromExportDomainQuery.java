@@ -11,7 +11,6 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.queries.GetAllFromExportDomainQueryParameters;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -51,7 +50,7 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("Template", machineName);
         logable.addCustomValue("ErrorMessage", errorMessage);
-        new AuditLogDirector().log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
+        auditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
 
     }
 

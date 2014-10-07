@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute
 public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksParameters> extends VdsCommand<T> {
@@ -46,7 +45,7 @@ public class PersistentSetupNetworksCommand<T extends PersistentSetupNetworksPar
     @Override
     protected void executeCommand() {
         if (getParameters().getShouldBeLogged()) {
-            new AuditLogDirector().log(this, AuditLogType.PERSIST_NETWORK_ON_HOST);
+            auditLogDirector.log(this, AuditLogType.PERSIST_NETWORK_ON_HOST);
         }
 
         VdcReturnValueBase returnValue =  runInternalAction(VdcActionType.SetupNetworks, getParameters(), cloneContextAndDetachFromParent());

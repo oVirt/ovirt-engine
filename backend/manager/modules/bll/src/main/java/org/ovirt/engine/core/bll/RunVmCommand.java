@@ -72,7 +72,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -457,7 +456,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     private void warnIfNotAllDisksPermitSnapshots() {
         for (Disk disk : getVm().getDiskMap().values()) {
             if (!disk.isAllowSnapshot()) {
-                new AuditLogDirector().log(this,
+                auditLogDirector.log(this,
                         AuditLogType.USER_RUN_VM_AS_STATELESS_WITH_DISKS_NOT_ALLOWING_SNAPSHOT);
                 break;
             }

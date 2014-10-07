@@ -24,6 +24,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
@@ -41,6 +42,8 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.AuditLogDAO;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
@@ -75,6 +78,9 @@ public class StartVdsCommandTest extends DbDependentTestBase {
     private BackendInternal backend;
     @Mock
     private VDSBrokerFrontend vdsBrokerFrontend;
+
+    @Mock
+    private AuditLogDirector auditLogDirector;
 
     private StartVdsCommand<FenceVdsActionParameters> command;
 
@@ -136,6 +142,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         command.setFenceExecutor(executor);
         command = spy(command);
         stub(command.getSleepBeforeFirstAttempt()).toReturn(0);
+        command.setAuditLogDirector(auditLogDirector);
         command.setVdsGroupId(FENCECD_HOST_CLUSTER_ID);
     }
 
@@ -250,7 +257,8 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         mockExecutor(agent1, true);
         mockCheckStatus("on");
         command.executeCommand();
-        verify(auditLogDao, times(2)).save(any(AuditLog.class));
+        verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
+
     }
 
     /**
@@ -268,7 +276,7 @@ public class StartVdsCommandTest extends DbDependentTestBase {
         try {
             command.executeCommand();
         } catch (VdcBLLException exception) {
-            verify(auditLogDao, times(2)).save(any(AuditLog.class));
+            verify(auditLogDirector, times(2)).log(any(AuditLogableBase.class), any(AuditLogType.class));
             return;
         }
         fail();

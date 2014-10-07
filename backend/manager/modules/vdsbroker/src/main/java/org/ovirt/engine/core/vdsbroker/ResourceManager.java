@@ -71,6 +71,9 @@ public class ResourceManager {
 
     private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
 
+    @Inject
+    private AuditLogDirector auditLogDirector;
+
     private ResourceManager() {
 
     }
@@ -218,7 +221,7 @@ public class ResourceManager {
     }
 
     public void AddVds(VDS vds, boolean isInternal) {
-        VdsManager vdsManager = VdsManager.buildVdsManager(vds);
+        VdsManager vdsManager = new VdsManager(vds, auditLogDirector);
         if (isInternal) {
             VDSStatus status = vds.getStatus();
             switch (vds.getStatus()) {
@@ -283,7 +286,7 @@ public class ResourceManager {
         // log VM transition to unknown status
         AuditLogableBase logable = new AuditLogableBase();
         logable.setVmId(vm.getId());
-        new AuditLogDirector().log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
+        auditLogDirector.log(logable, AuditLogType.VM_SET_TO_UNKNOWN_STATUS);
 
         storeVm(vm);
 

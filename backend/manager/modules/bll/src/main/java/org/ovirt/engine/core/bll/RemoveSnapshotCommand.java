@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -271,7 +270,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
 
             if (!failedToRemoveDisks.isEmpty()) {
                 addCustomValue("DiskAliases", StringUtils.join(failedToRemoveDisks, ", "));
-                new AuditLogDirector().log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
+                auditLogDirector.log(this, AuditLogType.USER_REMOVE_SNAPSHOT_FINISHED_FAILURE_PARTIAL_SNAPSHOT);
             }
 
             getSnapshotDao().updateStatus(getParameters().getSnapshotId(), SnapshotStatus.OK);

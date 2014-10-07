@@ -22,7 +22,6 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.storage.Disk;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
@@ -33,7 +32,6 @@ import org.slf4j.LoggerFactory;
 public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> extends ImportVmCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     VM vmFromConfiguration;

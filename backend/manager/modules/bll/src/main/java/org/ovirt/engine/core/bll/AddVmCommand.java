@@ -85,7 +85,6 @@ import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
@@ -1003,7 +1002,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
         }
         VdcReturnValueBase returnValueBase = getBackend().runInternalAction(VdcActionType.AddVmNumaNodes, params);
         if (!returnValueBase.getSucceeded()) {
-            new AuditLogDirector().log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
+            auditLogDirector.log(this, AuditLogType.NUMA_ADD_VM_NUMA_NODE_FAILED);
         }
     }
 

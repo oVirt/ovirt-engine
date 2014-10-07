@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.BaseDiskDao;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
@@ -312,13 +311,13 @@ public abstract class ImportVmCommandBase<T extends ImportVmParameters> extends 
 
     }
 
-    private static void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
+    private void logField(VmStatic vmStaticFromOvf, String fieldName, String fieldValue) {
         String vmName = vmStaticFromOvf.getName();
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("FieldName", fieldName);
         logable.addCustomValue("VmName", vmName);
         logable.addCustomValue("FieldValue", fieldValue);
-        new AuditLogDirector().log(logable, AuditLogType.VM_IMPORT_INFO);
+        auditLogDirector.log(logable, AuditLogType.VM_IMPORT_INFO);
     }
 
     protected void addVmInterfaces() {

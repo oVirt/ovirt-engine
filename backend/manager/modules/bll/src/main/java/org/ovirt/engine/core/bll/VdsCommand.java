@@ -3,6 +3,8 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
@@ -28,7 +30,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ThreadUtils;
@@ -38,6 +39,9 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 public abstract class VdsCommand<T extends VdsActionParameters> extends CommandBase<T> {
 
     protected String _failureMessage = null;
+
+    @Inject
+    private PmHealthCheckManager pmHealthCheckManager;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -117,7 +121,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         alert.setVdsId(getVds().getId());
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
-        AlertDirector.Alert(alert, logType);
+        AlertDirector.Alert(alert, logType, auditLogDirector);
     }
 
     /**
@@ -136,7 +140,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         String op = (operation == null) ? getActionType().name(): operation;
         alert.addCustomValue("Operation", op);
         alert.updateCallStackFromThrowable(throwable);
-        AlertDirector.Alert(alert, logType);
+        AlertDirector.Alert(alert, logType, auditLogDirector);
     }
 
     /**
@@ -169,7 +173,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
      */
     protected void testVdsPowerManagementStatus(VdsStatic vdsStatic) {
         if (vdsStatic.isPmEnabled()) {
-            PmHealthCheckManager.getInstance().pmHealthCheck(vdsStatic.getId());
+            pmHealthCheckManager.pmHealthCheck(vdsStatic.getId());
         }
     }
 
@@ -190,7 +194,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     protected void logSettingVmToDown(Guid vdsId, Guid vmId) {
         AuditLogableBase logable = new AuditLogableBase(vdsId, vmId);
-        new AuditLogDirector().log(logable,
+        auditLogDirector.log(logable,
                 AuditLogType.VM_WAS_SET_DOWN_DUE_TO_HOST_REBOOT_OR_MANUAL_FENCE);
     }
 

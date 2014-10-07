@@ -18,7 +18,6 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 
 @NonTransactiveCommandAttribute
@@ -112,7 +111,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
                     addCustomValue("CpuFlags", StringUtils.join(missingFlags, ", "));
                     if (missingFlags.contains("nx")) {
                         AuditLogableBase logable = new AuditLogableBase(getVds().getId());
-                        new AuditLogDirector().log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
+                        auditLogDirector.log(logable, AuditLogType.CPU_FLAGS_NX_IS_MISSING);
                     }
                 }
 

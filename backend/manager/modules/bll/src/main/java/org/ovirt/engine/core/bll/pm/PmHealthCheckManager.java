@@ -1,8 +1,14 @@
 package org.ovirt.engine.core.bll.pm;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
+
+import javax.inject.Inject;
+import javax.inject.Singleton;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.FenceExecutor;
@@ -13,17 +19,17 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
+import org.ovirt.engine.core.common.businessentities.pm.FenceActionType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.vdscommands.VDSFenceReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
-//import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
@@ -33,24 +39,18 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Map.Entry;
-
 /**
  * Responsible for checking PM enabled hosts by sending a status command to each host configured PM agent cards and
  * raise alerts for failed operations.
  */
+@Singleton
 public class PmHealthCheckManager {
 
     private static final Logger log = LoggerFactory.getLogger(PmHealthCheckManager.class);
-    // private static final String AGENT_ID = "AgentId";
-    private static final PmHealthCheckManager instance = new PmHealthCheckManager();
     private boolean active = false;
 
-    private PmHealthCheckManager() {
-        // intentionally empty
-    }
+    @Inject
+    private AuditLogDirector auditLogDirector;
 
     /**
      * Initializes the PM Health Check Manager
@@ -75,7 +75,7 @@ public class PmHealthCheckManager {
         // skip PM health check if previous operation is not completed yet
         if (!active) {
             try {
-                synchronized (instance) {
+                synchronized (this) {
                     log.info("Power Management Health Check started.");
                     active = true;
                     List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
@@ -181,7 +181,7 @@ public class PmHealthCheckManager {
     }
 
     private void addAlert(Guid hostId, AuditLogType auditMessage) {
-        AlertDirector.AddVdsAlert(hostId, auditMessage);
+        AlertDirector.AddVdsAlert(hostId, auditMessage, auditLogDirector);
     }
 
     /**
@@ -312,10 +312,6 @@ public class PmHealthCheckManager {
                 }
             });
         }
-    }
-
-    public static PmHealthCheckManager getInstance() {
-        return instance;
     }
 
     private static class PmHealth {

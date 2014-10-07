@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
@@ -88,7 +87,7 @@ public class EditIscsiBondCommand <T extends EditIscsiBondParameters> extends Ba
         }
         addCustomValue("NetworkNames", StringUtils.join(networkNames, ","));
         addCustomValue("IscsiBondName", getIscsiBond().getName());
-        new AuditLogDirector().log(this, AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING);
+        auditLogDirector.log(this, AuditLogType.USER_ISCSI_BOND_HOST_RESTART_WARNING);
     }
 
     private Set<Guid> updateNetworksIds() {

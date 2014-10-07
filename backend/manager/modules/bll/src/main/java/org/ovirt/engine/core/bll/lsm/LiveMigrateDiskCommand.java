@@ -25,7 +25,6 @@ import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.common.businessentities.storage.ImageStatus;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 
 @NonTransactiveCommandAttribute
 public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends MoveOrCopyDiskCommand<T> implements TaskHandlerCommand<LiveMigrateDiskParameters> {
@@ -181,7 +180,7 @@ public class LiveMigrateDiskCommand<T extends LiveMigrateDiskParameters> extends
         boolean canDoAction = super.canDoAction();
 
         if (!canDoAction) {
-            new AuditLogDirector().log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
+            auditLogDirector.log(this, AuditLogType.USER_MOVED_VM_DISK_FINISHED_FAILURE);
         }
 
         return canDoAction;

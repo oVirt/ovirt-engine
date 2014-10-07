@@ -48,7 +48,7 @@ public abstract class FenceQueryBase<P extends VdcQueryParametersBase> extends Q
         AuditLogableBase alert = new AuditLogableBase();
         alert.setVdsId(getVdsId());
         alert.addCustomValue("Reason", reason);
-        AlertDirector.Alert(alert, logType);
+        AlertDirector.Alert(alert, logType, auditLogDirector);
     }
 
     /**

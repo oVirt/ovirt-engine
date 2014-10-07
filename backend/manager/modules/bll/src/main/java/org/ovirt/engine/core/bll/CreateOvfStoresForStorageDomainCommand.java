@@ -15,7 +15,6 @@ import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfo;
 import org.ovirt.engine.core.common.businessentities.StorageDomainOvfInfoStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dao.StorageDomainOvfInfoDao;
 
 @InternalCommandAttribute
@@ -87,7 +86,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
                         p,
                         getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
                 addCustomValue("DiskId", diskId.toString());
-                new AuditLogDirector().log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
+                auditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             }
         }
 

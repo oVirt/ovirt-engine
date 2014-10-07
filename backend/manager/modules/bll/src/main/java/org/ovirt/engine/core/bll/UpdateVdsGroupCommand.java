@@ -40,7 +40,6 @@ import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 
@@ -318,7 +317,7 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
                             // cannot not be hibernated
                             AuditLogableBase logable = new AuditLogableBase();
                             logable.addCustomValue("VdsGroup", getParameters().getVdsGroup().getName());
-                            new AuditLogDirector().log(logable,
+                            auditLogDirector.log(logable,
                                     AuditLogType.CANNOT_HIBERNATE_RUNNING_VMS_AFTER_CLUSTER_CPU_UPGRADE);
                         }
                     }

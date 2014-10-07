@@ -49,7 +49,6 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVolumeDescriptionVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
@@ -441,7 +440,7 @@ public class UpdateVmDiskCommand<T extends UpdateVmDiskParameters> extends Abstr
         auditLogableBase.addCustomValue("DataCenterName", getStoragePool().getName());
         auditLogableBase.addCustomValue("StorageDomainName", storageDomain.getName());
         auditLogableBase.addCustomValue("DiskName", diskImage.getDiskAlias());
-        new AuditLogDirector().log(auditLogableBase, auditLogType);
+        auditLogDirector.log(auditLogableBase, auditLogType);
     }
 
     private String getJsonDiskDescription() throws IOException {

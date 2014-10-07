@@ -26,7 +26,6 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -113,7 +112,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
                 );
                 AuditLogableBase logable = new AuditLogableBase();
                 logable.addCustomValue("VdsHostName", hostName);
-                new AuditLogDirector().log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
+                auditLogDirector.log(logable, AuditLogType.VDS_REGISTER_EMPTY_ID);
                 return false;
             }
 
@@ -576,7 +575,7 @@ public class RegisterVdsQuery<P extends RegisterVdsParameters> extends QueriesCo
 
     private void writeToAuditLog() {
         try {
-            new AuditLogDirector().log(logable, getAuditLogTypeValue());
+            auditLogDirector.log(logable, getAuditLogTypeValue());
         } catch (RuntimeException ex) {
             log.error("RegisterVdsQuery::WriteToAuditLog: An exception has been thrown.", ex);
         }

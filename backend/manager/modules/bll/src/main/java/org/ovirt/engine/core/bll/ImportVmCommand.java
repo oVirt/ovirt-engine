@@ -88,7 +88,6 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
@@ -106,7 +105,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmComma
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
-    private final AuditLogDirector auditLogDirector = new AuditLogDirector();
     private List<DiskImage> imageList;
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
