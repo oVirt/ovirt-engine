@@ -412,7 +412,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
         StorageDomainPoolParametersBase activateParameters = new StorageDomainPoolParametersBase(getStorageDomain().getId(),
                 getStoragePool().getId());
         getBackend()
-                .runInternalAction(VdcActionType.ActivateStorageDomain, activateParameters);
+                .runInternalAction(VdcActionType.ActivateStorageDomain,
+                        activateParameters,
+                        cloneContext().withoutCompensationContext().withoutExecutionContext());
     }
 
     @Override
