@@ -127,6 +127,11 @@ public enum VdcQueryType implements Serializable {
     GetNetworkLabelsByDataCenterId,
     GetNetworkLabelsByHostNicId,
 
+    // Network Attachments
+    GetNetworkAttachmentById,
+    GetNetworkAttachmentsByHostId,
+    GetNetworkAttachmentsByHostNicId,
+
     // NUMA
     GetVdsNumaNodesByVdsId(VdcQueryAuthType.User),
     GetVmNumaNodesByVmId(VdcQueryAuthType.User),
