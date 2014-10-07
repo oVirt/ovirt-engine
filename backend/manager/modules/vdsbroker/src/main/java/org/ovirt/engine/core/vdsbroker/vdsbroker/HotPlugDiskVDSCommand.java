@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.vdscommands.HotPlugDiskVDSParameters;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.archstrategy.ArchStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.architecture.GetControllerIndices;
@@ -66,6 +67,12 @@ public class HotPlugDiskVDSCommand<P extends HotPlugDiskVDSParameters> extends V
             drive.put(VdsProperties.VolumeId, diskImage.getImageId().toString());
             drive.put(VdsProperties.ImageId, diskImage.getId().toString());
             drive.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString().toLowerCase());
+
+            VmInfoBuilder.handleIoTune(getParameters().getVm(), vmDevice, diskImage,
+                    new HashMap<Guid, Guid>(), new HashMap<Guid, Map<String, Long>>());
+            if (vmDevice.getSpecParams() != null) {
+                drive.put(VdsProperties.SpecParams, vmDevice.getSpecParams());
+            }
         } else {
             LunDisk lunDisk = (LunDisk) disk;
 

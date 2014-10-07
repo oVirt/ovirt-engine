@@ -328,16 +328,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
                             .toLowerCase());
                     struct.put(VdsProperties.PropagateErrors, disk.getPropagateErrors().toString()
                             .toLowerCase());
-                    if (FeatureSupported.storageQoS(vm.getVdsGroupCompatibilityVersion())) {
-                        Map<String, Long> ioTune =
-                                buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
-                        if (ioTune != null) {
-                            if (vmDevice.getSpecParams() == null) {
-                                vmDevice.setSpecParams(new HashMap<String, Object>());
-                            }
-                            vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
-                        }
-                    }
+
+                    handleIoTune(vm, vmDevice, diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
                 } else {
                     LunDisk lunDisk = (LunDisk) disk;
                     struct.put(VdsProperties.Guid, lunDisk.getLun().getLUN_id());
@@ -362,7 +354,29 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         ArchStrategyFactory.getStrategy(vm.getClusterArch()).run(new CreateAdditionalControllers(devices));
     }
 
-    private Map<String, Long> buildIoTune(DiskImage diskImage,
+    /**
+     * Prepare the ioTune limits map and add it to the specParams if supported by the cluster
+     *
+     * @param vm The VM the vmDevice belongs to
+     * @param vmDevice The disk device with QoS limits
+     * @param diskImage The image that backs up the vmDevice
+     * @param diskProfileStorageQosMap Cache object to reuse existing disk profiles entitites when iterating
+     * @param storageQosIoTuneMap Cache object to reuse existing ioTune QoS entitites when iterating
+     */
+    static void handleIoTune(VM vm, VmDevice vmDevice, DiskImage diskImage, Map<Guid, Guid> diskProfileStorageQosMap, Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
+        if (FeatureSupported.storageQoS(vm.getVdsGroupCompatibilityVersion())) {
+            Map<String, Long> ioTune = buildIoTune(diskImage, diskProfileStorageQosMap, storageQosIoTuneMap);
+
+            if (ioTune != null) {
+                if (vmDevice.getSpecParams() == null) {
+                    vmDevice.setSpecParams(new HashMap<String, Object>());
+                }
+                vmDevice.getSpecParams().put(VdsProperties.Iotune, ioTune);
+            }
+        }
+    }
+
+    private static Map<String, Long> buildIoTune(DiskImage diskImage,
             Map<Guid, Guid> diskProfileStorageQosMap,
             Map<Guid, Map<String, Long>> storageQosIoTuneMap) {
         Guid diskProfileId = diskImage.getDiskProfileId();
@@ -388,7 +402,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         return null;
     }
 
-    private Map<String, Long> buildIoTuneMap(StorageQos storageQos) {
+    private static Map<String, Long> buildIoTuneMap(StorageQos storageQos) {
         // build map
         Map<String, Long> ioTuneMap = new HashMap<>();
         if (storageQos.getMaxThroughput() != null) {
