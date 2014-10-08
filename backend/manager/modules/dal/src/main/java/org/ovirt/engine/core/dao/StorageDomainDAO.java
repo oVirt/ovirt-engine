@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -34,13 +35,23 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
     StorageDomain getStorageDomain(Guid poolId, StorageDomainType type);
 
     /**
+     * Retrieves the storage domain for the specified pool, type and status.
+     *
+     * @param storagePoolId The storage pool.
+     * @param type The storage domain type.
+     * @param status The storage domain status.
+     * @return the storage domain for the specified pool, type and status.
+     */
+    StorageDomain getStorageDomain(Guid storagePoolId, StorageDomainType type, StorageDomainStatus status);
+
+    /**
      * Retrieves the master storage domain for the specified pool.
      *
-     * @param pool
+     * @param poolId
      *            the storage pool
      * @return the master storage domain
      */
-    Guid getIsoStorageDomainIdForPool(Guid pool);
+    Guid getIsoStorageDomainIdForPool(Guid poolId, StorageDomainStatus status);
 
     /**
      * Retrieves the storage domain with specified id.

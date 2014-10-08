@@ -13,6 +13,11 @@ public class FixturesTool {
     public static final Guid STORAGE_POOL_NFS = new Guid("72b9e200-f48b-4687-83f2-62828f249a47");
 
     /**
+     * Predefined NFS storage pool with a single inactive ISO domain.
+     */
+    public static final Guid STORAGE_POOL_NFS_INACTIVE_ISO = new Guid("6d849ebf-755f-4552-ad09-9a090cda105c");
+
+    /**
      * Predefined mixed types storage pool.
      */
     public static final Guid STORAGE_POOL_MIXED_TYPES = new Guid("386bffd1-e7ed-4b08-bce9-d7df10f8c9a0");
@@ -66,6 +71,11 @@ public class FixturesTool {
      * Predefined NFS iso storage domain.
      */
     protected static final Guid STORAGE_DOAMIN_NFS_ISO = new Guid("17e7489d-d490-4681-a322-073ca19bd33d");
+
+    /**
+     * Predefined inactive NFS iso storage domain.
+     */
+    protected static final Guid STORAGE_DOMAIN_NFS_INACTIVE_ISO = new Guid("72e3a666-89e1-4005-a7ca-f7548004a9aa");
 
     /**
      * Predefined shared iso storage domain for both the storgae pools

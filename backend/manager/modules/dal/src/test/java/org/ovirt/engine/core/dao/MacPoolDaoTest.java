@@ -99,7 +99,7 @@ public class MacPoolDaoTest extends BaseGenericDaoTestCase<Guid, MacPool, MacPoo
 
     @Override
     protected int getEneitiesTotalCount() {
-        return 3;
+        return 4;
     }
 
 

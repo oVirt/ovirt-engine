@@ -28,16 +28,22 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
 
     @Override
     public StorageDomain getStorageDomain(Guid poolId, StorageDomainType type) {
-        return getCallsHandler().executeRead("Getstorage_domain_by_type_and_storagePoolId",
+        return getStorageDomain(poolId, type, null);
+    }
+
+    public StorageDomain getStorageDomain(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
+        Integer statusNum = status == null ? null : status.getValue();
+        return getCallsHandler().executeRead("Getstorage_domain_by_type_storagePoolId_and_status",
                 StorageDomainRowMapper.instance,
                 getCustomMapSqlParameterSource()
                         .addValue("storage_pool_id", poolId)
-                        .addValue("storage_domain_type", type.getValue()));
+                        .addValue("storage_domain_type", type.getValue())
+                        .addValue("status", statusNum));
     }
 
     @Override
-    public Guid getIsoStorageDomainIdForPool(Guid poolId) {
-        return getStorageDomainId(poolId, StorageDomainType.ISO);
+    public Guid getIsoStorageDomainIdForPool(Guid poolId, StorageDomainStatus status) {
+        return getStorageDomainId(poolId, StorageDomainType.ISO, status);
     }
 
     @Override
@@ -220,8 +226,19 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
      * @return the storage domain id of the given type for the given storage pool id.
      */
     private Guid getStorageDomainId(Guid poolId, StorageDomainType type) {
+        return getStorageDomainId(poolId, type, null);
+    }
+
+    /**
+     * Gets the storage domain id of the given type for the given storage pool id, type and status.
+     *
+     * @param poolId The storage pool id,
+     * @param type The storage domain type.
+     * @return the storage domain id of the given type for the given storage pool id.
+     */
+    private Guid getStorageDomainId(Guid poolId, StorageDomainType type, StorageDomainStatus status) {
         Guid returnValue = Guid.Empty;
-        StorageDomain domain = getStorageDomain(poolId, type);
+        StorageDomain domain = getStorageDomain(poolId, type, status);
         if (domain != null) {
             returnValue = domain.getId();
         }
