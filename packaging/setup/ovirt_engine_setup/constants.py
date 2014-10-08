@@ -341,15 +341,13 @@ class ConfigEnv(object):
     @osetupattrs(
         answerfile=True,
         summary=False,
-        description=_('Configure default datacenter as local'),
     )
     def STORAGE_TYPE(self):
         return 'OVESETUP_CONFIG/storageType'
 
     @osetupattrs(
         answerfile=True,
-        summary=True,
-        description=_('Datacenter storage type'),
+        summary=False,
     )
     def STORAGE_IS_LOCAL(self):
         return 'OVESETUP_CONFIG/storageIsLocal'
