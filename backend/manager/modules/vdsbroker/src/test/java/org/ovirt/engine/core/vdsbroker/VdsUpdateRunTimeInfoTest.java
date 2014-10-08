@@ -30,6 +30,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBalloonInfo;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -344,5 +345,24 @@ public class VdsUpdateRunTimeInfoTest {
         HashMap<Guid, VmInternalData> vms = new HashMap<>();
         vms.put(VM_1, new VmInternalData(vm_1_vdsm.getDynamicData(), null, null, null));
         return vms;
+    }
+
+    @Test
+    public void balloonCheck() {
+        VmBalloonInfo balloonInfo = new VmBalloonInfo();
+        balloonInfo.setBalloonDeviceEnabled(true);
+        balloonInfo.setBalloonMaxMemory(10000L);
+        balloonInfo.setBalloonMinMemory(1000L);
+
+        balloonInfo.setBalloonLastMemory(1000L);
+        balloonInfo.setBalloonTargetMemory(1999L);
+        balloonInfo.setCurrentMemory(2000L);
+        assertTrue(updater.isBalloonWorking(balloonInfo));
+
+        balloonInfo.setBalloonLastMemory(1000L);
+        balloonInfo.setBalloonTargetMemory(1999L);
+        balloonInfo.setCurrentMemory(1000L);
+        assertFalse(updater.isBalloonWorking(balloonInfo));
+
     }
 }
