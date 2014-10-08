@@ -16,6 +16,7 @@
 
 
 import os
+import shlex
 import subprocess
 import sys
 import gettext
@@ -140,6 +141,18 @@ class Daemon(service.Daemon):
             ),
             '-Djboss.modules.write-indexes=false',
         ]
+
+        # Add extra system properties provided in the configuration:
+        for notifierProperty in shlex.split(
+                self._config.get('NOTIFIER_PROPERTIES')
+        ):
+            if not notifierProperty.startswith('-D'):
+                notifierProperty = '-D' + notifierProperty
+            self._engineArgs.append(notifierProperty)
+
+        # Add extra jvm arguments provided in the configuration:
+        for arg in shlex.split(self._config.get('NOTIFIER_JVM_ARGS')):
+            self._engineArgs.append(arg)
 
         debugAddress = self._config.get('NOTIFIER_DEBUG_ADDRESS')
         if debugAddress:

@@ -22,6 +22,32 @@ ENGINE_LOG="@ENGINE_LOG@"
 ENGINE_USR="@ENGINE_USR@"
 
 #
+# Extra system properties to be added to the java virtual machine
+# of the notifier. Properties can be specified using the typical
+# java syntax:
+#
+#   -Dmy.param=my.value
+#   -Dmy.flag
+#
+# If the -D prefix is not used it will be automatically added, so
+# the following is also valid:
+#
+#   my.param=my.value
+#   my.flag
+#
+# If several properties need to be specified they should all go in
+# the same line and separated by spaces:
+#
+#   -Dmy.param=my.value -Dmy.flag -Dyour.param=your.value
+#
+NOTIFIER_PROPERTIES=""
+
+#
+# Extra Java arguments to be added to command-line.
+#
+NOTIFIER_JVM_ARGS=""
+
+#
 # Module path
 #
 # Colon separated list of paths.
