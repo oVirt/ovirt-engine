@@ -11,6 +11,23 @@ public class VmBalloonInfo implements Serializable {
     private Long balloonTargetMemory;
     private Long balloonMinMemory;
     private boolean balloonDeviceEnabled;
+    /* the previous value of currentMemory, we need this to check if the balloon
+     * works properly see: VdsUpdateRuntimeInfo.proceedBalloonCheck()
+     * rhbz#1120197
+     */
+    transient private Long balloonLastMemory;
+
+    public static long getSerialVersionUID() {
+        return serialVersionUID;
+    }
+
+    public Long getBalloonLastMemory() {
+        return balloonLastMemory;
+    }
+
+    public void setBalloonLastMemory(Long balloonLastMemory) {
+        this.balloonLastMemory = balloonLastMemory;
+    }
 
     public Long getCurrentMemory() {
         return currentMemory;

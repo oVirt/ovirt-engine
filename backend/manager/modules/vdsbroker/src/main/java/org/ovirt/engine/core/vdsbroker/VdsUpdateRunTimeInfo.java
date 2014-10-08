@@ -1484,6 +1484,11 @@ public class VdsUpdateRunTimeInfo {
         }
     }
 
+    protected boolean isBalloonWorking(VmBalloonInfo balloonInfo) {
+        return (Math.abs(balloonInfo.getBalloonLastMemory() - balloonInfo.getBalloonTargetMemory())
+                > Math.abs(balloonInfo.getCurrentMemory() - balloonInfo.getBalloonTargetMemory()));
+    }
+
     private void proceedBalloonCheck() {
         if (_vds.isBalloonEnabled()) {
             for (VmInternalData vmInternalData : _runningVms.values()) {
@@ -1493,13 +1498,21 @@ public class VdsUpdateRunTimeInfo {
                     continue; // if vm is unknown - continue
                 }
 
+                if (balloonInfo.getBalloonLastMemory() == 0) { // first time we check, so we don't have enough data yet
+                    balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
+                    continue;
+                }
+
                 if (isBalloonDeviceActiveOnVm(vmInternalData)
                         && (Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonMaxMemory())
-                || !Objects.equals(balloonInfo.getCurrentMemory(), balloonInfo.getBalloonTargetMemory()))) {
+                  || !isBalloonWorking(balloonInfo))) {
                     vmBalloonDriverIsRequestedAndUnavailable(vmId);
                 } else {
                     vmBalloonDriverIsNotRequestedOrAvailable(vmId);
                 }
+
+                // save the current value for the next time we check it
+                balloonInfo.setBalloonLastMemory(balloonInfo.getCurrentMemory());
 
                 if (vmInternalData.getVmStatistics().getusage_mem_percent() != null
                     && vmInternalData.getVmStatistics().getusage_mem_percent() == 0  // guest agent is down
