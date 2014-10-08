@@ -45,7 +45,6 @@ in the user portal and web admin. The border is defined in gwt-common.css */
     position: relative;
     height: 27px;
     overflow: hidden;
-    z-index: 2;
     margin-top: 0;
     left: -5px;
 }
