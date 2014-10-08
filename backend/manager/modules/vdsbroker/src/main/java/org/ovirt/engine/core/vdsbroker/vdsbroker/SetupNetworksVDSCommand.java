@@ -42,6 +42,22 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     private Map<String, Object> generateNetworks() {
         Map<String, Object> networks = new HashMap<String, Object>();
         NetworkQoSDao qosDao = getDbFacade().getNetworkQosDao();
+        VDS host = getParameters().getVds();
+
+        boolean hostNetworkQosSupported = FeatureSupported.hostNetworkQos(host.getVdsGroupCompatibilityVersion());
+
+        Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
+        boolean supportedClusterVersionsAvailable =
+                supportedClusterVersionsSet != null && supportedClusterVersionsSet.isEmpty();
+        if (!supportedClusterVersionsAvailable) {
+            log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
+                    + " will not be sent via the SetupNetworks", host.getName(), host.getId());
+        }
+
+        boolean defaultRouteSupported =
+                supportedClusterVersionsAvailable
+                        && FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet));
+
         for (Network network : getParameters().getNetworks()) {
             Map<String, Object> opts = new HashMap<String, Object>();
             VdsNetworkInterface iface =
@@ -69,20 +85,13 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
                 opts.put(VdsProperties.STP, network.getStp() ? "yes" : "no");
             }
 
-            VDS host = getDbFacade().getVdsDao().get(getParameters().getVdsId());
-            Version version = host.getVdsGroupCompatibilityVersion();
-            if (qosConfiguredOnInterface(iface, network)
-                    && FeatureSupported.hostNetworkQos(version)) {
+            if (hostNetworkQosSupported && qosConfiguredOnInterface(iface, network)) {
                 NetworkQosMapper qosMapper =
                         new NetworkQosMapper(opts, VdsProperties.HOST_QOS_INBOUND, VdsProperties.HOST_QOS_OUTBOUND);
                 qosMapper.serialize(iface.isQosOverridden() ? iface.getQos() : qosDao.get(network.getQosId()));
             }
 
-            Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
-            if (supportedClusterVersionsSet == null || supportedClusterVersionsSet.isEmpty()) {
-                log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
-                        + " will not be sent via the SetupNetworks", host.getName(), host.getId());
-            } else if (FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet))
+            if (defaultRouteSupported
                     && NetworkUtils.isManagementNetwork(network)
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP

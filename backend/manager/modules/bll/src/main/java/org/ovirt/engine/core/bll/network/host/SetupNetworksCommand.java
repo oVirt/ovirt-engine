@@ -113,7 +113,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
 
         T bckndCmdParams = getParameters();
         final SetupNetworksVdsCommandParameters vdsCmdParams = new SetupNetworksVdsCommandParameters(
-                getVdsId(),
+                getVds(),
                 getNetworks(),
                 getRemovedNetworks(),
                 getBonds(),

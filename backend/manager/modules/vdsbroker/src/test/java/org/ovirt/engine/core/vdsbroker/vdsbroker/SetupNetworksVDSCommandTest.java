@@ -73,6 +73,7 @@ public class SetupNetworksVDSCommandTest {
         when(host.getVdsGroupCompatibilityVersion()).thenReturn(version);
         configRule.mockConfigValue(ConfigValues.DefaultRouteSupported, version, Boolean.FALSE);
         configRule.mockConfigValue(ConfigValues.DefaultMTU, 1500);
+        configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, false);
     }
 
     @Test
@@ -82,7 +83,7 @@ public class SetupNetworksVDSCommandTest {
         VdsNetworkInterface vlan = createVlan(nic, net);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                new SetupNetworksVdsCommandParameters(host,
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(nic),
@@ -108,7 +109,7 @@ public class SetupNetworksVDSCommandTest {
         ifaces.add(vlan);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                new SetupNetworksVdsCommandParameters(host,
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
@@ -129,7 +130,7 @@ public class SetupNetworksVDSCommandTest {
         VdsNetworkInterface nic = createNic("eth0", null, NetworkBootProtocol.DHCP, net.getName());
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                new SetupNetworksVdsCommandParameters(host,
                         Collections.singletonList(net),
                         Collections.<String> emptyList(),
                         Collections.<VdsNetworkInterface> emptyList(),
@@ -153,7 +154,7 @@ public class SetupNetworksVDSCommandTest {
         ifaces.add(bond);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                new SetupNetworksVdsCommandParameters(host,
                         Collections.<Network> emptyList(),
                         Collections.<String> emptyList(),
                         Collections.singletonList(bond),
@@ -174,7 +175,7 @@ public class SetupNetworksVDSCommandTest {
         configRule.mockConfigValue(ConfigValues.HostNetworkQosSupported, version, hostNetworkQosSupported);
 
         SetupNetworksVdsCommandParameters parameters =
-                new SetupNetworksVdsCommandParameters(Guid.newGuid(),
+                new SetupNetworksVdsCommandParameters(host,
                         Collections.singletonList(network),
                         Collections.<String> emptyList(),
                         Collections.<VdsNetworkInterface> emptyList(),
@@ -192,6 +193,10 @@ public class SetupNetworksVDSCommandTest {
                 || (expectedQos != null && expectedQos.equalValues(deserialize)));
     }
 
+    private void qos(Network network, VdsNetworkInterface iface, NetworkQoS expectedQos) {
+        qos(network, iface, expectedQos, false);
+    }
+
     @Test
     public void qosNotSupported() {
         Network network = createNetwork(null);
@@ -199,7 +204,7 @@ public class SetupNetworksVDSCommandTest {
 
         when(qosDao.get(any(Guid.class))).thenReturn(createQos());
 
-        qos(network, iface, null, false);
+        qos(network, iface, null);
     }
 
     @Test

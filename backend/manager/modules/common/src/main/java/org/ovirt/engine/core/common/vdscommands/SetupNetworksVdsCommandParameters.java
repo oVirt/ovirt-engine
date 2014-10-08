@@ -6,11 +6,12 @@ import java.util.List;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
-import org.ovirt.engine.core.compat.Guid;
 
 public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParametersBase {
+    private VDS vds;
     private List<Network> networks;
     private List<String> removedNetworks;
     private List<VdsNetworkInterface> bonds;
@@ -22,6 +23,8 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     private int conectivityTimeout;
 
     /**
+     * @param vds
+     *            Host for which the command is sent
      * @param networks
      *            Added networks only
      * @param removedNetworks
@@ -33,13 +36,14 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
      * @param interfaces
      *            Interfaces that are connected to a network or bond
      */
-    public SetupNetworksVdsCommandParameters(Guid vdsId,
+    public SetupNetworksVdsCommandParameters(VDS vds,
             List<Network> networks,
             List<String> removedNetworks,
             List<VdsNetworkInterface> bonds,
             Set<String> removedBonds,
             List<VdsNetworkInterface> interfaces) {
-        super(vdsId);
+        super(vds.getId());
+        this.vds = vds;
         this.networks = (networks == null) ? new ArrayList<Network>() : networks;
         this.removedNetworks = (removedNetworks == null) ? new ArrayList<String>() : removedNetworks;
         this.bonds = (bonds == null) ? new ArrayList<VdsNetworkInterface>() : bonds;
@@ -48,6 +52,10 @@ public class SetupNetworksVdsCommandParameters extends VdsIdVDSCommandParameters
     }
 
     public SetupNetworksVdsCommandParameters() {
+    }
+
+    public VDS getVds() {
+        return vds;
     }
 
     public List<Network> getNetworks() {
