@@ -22,8 +22,8 @@ import org.springframework.jdbc.core.RowMapper;
 public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements StorageDomainDAO {
 
     @Override
-    public Guid getMasterStorageDomainIdForPool(Guid pool) {
-        return getStorageDomainIdForPoolByType(pool, StorageDomainType.Master);
+    public Guid getMasterStorageDomainIdForPool(Guid poolId) {
+        return getStorageDomainId(poolId, StorageDomainType.Master);
     }
 
     @Override
@@ -36,8 +36,8 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     @Override
-    public Guid getIsoStorageDomainIdForPool(Guid pool) {
-        return getStorageDomainIdForPoolByType(pool, StorageDomainType.ISO);
+    public Guid getIsoStorageDomainIdForPool(Guid poolId) {
+        return getStorageDomainId(poolId, StorageDomainType.ISO);
     }
 
     @Override
@@ -213,15 +213,15 @@ public class StorageDomainDAODbFacadeImpl extends BaseDAODbFacade implements Sto
     }
 
     /**
-     * Gets the storage domain id of the given type for the given storage pool
+     * Gets the storage domain id of the given type for the given storage pool id.
      *
-     * @param pool
-     * @param type
-     * @return
+     * @param poolId The storage pool id,
+     * @param type The storage domain type.
+     * @return the storage domain id of the given type for the given storage pool id.
      */
-    private Guid getStorageDomainIdForPoolByType(Guid pool, StorageDomainType type) {
+    private Guid getStorageDomainId(Guid poolId, StorageDomainType type) {
         Guid returnValue = Guid.Empty;
-        StorageDomain domain = getStorageDomain(pool, type);
+        StorageDomain domain = getStorageDomain(poolId, type);
         if (domain != null) {
             returnValue = domain.getId();
         }
