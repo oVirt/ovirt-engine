@@ -32,7 +32,3 @@ screen */
 .gwt-DialogBox .dialogMiddleRight {
         background: url(images/dialog/panel_edge_R.png) !important;
 }
-/* Make sure we can still drag windows */
-.gwt-DialogBox .Caption {
-	z-index: 3 !important;
-}
