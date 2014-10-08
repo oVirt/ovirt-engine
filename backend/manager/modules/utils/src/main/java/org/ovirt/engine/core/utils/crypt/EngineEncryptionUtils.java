@@ -14,17 +14,12 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.commons.codec.binary.Base64;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.uutils.ssh.OpenSSHUtils;
 
 public class EngineEncryptionUtils {
-
-    private static final Log log = LogFactory.getLog(EngineEncryptionUtils.class);
-
     private static final String keystoreType;
     private static final File keystoreFile;
     private static final KeyStore.PasswordProtection keystorePassword;

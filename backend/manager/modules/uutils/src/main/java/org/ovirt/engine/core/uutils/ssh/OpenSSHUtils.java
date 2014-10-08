@@ -9,12 +9,12 @@ import java.security.interfaces.RSAPublicKey;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.codec.binary.Hex;
 import org.apache.commons.codec.digest.DigestUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OpenSSHUtils {
     // The log:
-    private static final Log log = LogFactory.getLog(OpenSSHUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenSSHUtils.class);
 
     // Names of supported algorithms:
     private static final String SSH_RSA = "ssh-rsa";
@@ -45,8 +45,8 @@ public class OpenSSHUtils {
         final byte[] exponentBytes = rsaKey.getPublicExponent().toByteArray();
         final byte[] modulusBytes = rsaKey.getModulus().toByteArray();
         if (log.isDebugEnabled()) {
-            log.debug("Exponent is " + rsaKey.getPublicExponent() + " (" + Hex.encodeHexString(exponentBytes) + ").");
-            log.debug("Modulus is " + rsaKey.getModulus() + " (" + Hex.encodeHexString(exponentBytes) + ").");
+            log.debug("Exponent is {} ({}).", rsaKey.getPublicExponent(), Hex.encodeHexString(exponentBytes));
+            log.debug("Modulus is {} ({}).", rsaKey.getModulus(), Hex.encodeHexString(exponentBytes));
         }
 
         try {
@@ -73,7 +73,7 @@ public class OpenSSHUtils {
             binaryOut.close();
             final byte[] keyBytes = binaryOut.toByteArray();
             if (log.isDebugEnabled()) {
-                log.debug("Key bytes are " + Hex.encodeHexString(keyBytes) + ".");
+                log.debug("Key bytes are {}.", Hex.encodeHexString(keyBytes));
             }
 
             return keyBytes;
@@ -109,7 +109,7 @@ public class OpenSSHUtils {
         final Base64 encoder = new Base64(0);
         final String encoding = encoder.encodeToString(keyBytes);
         if (log.isDebugEnabled()) {
-            log.debug("Key encoding is \"" + encoding + "\".");
+            log.debug("Key encoding is \"{}\".", encoding);
         }
 
         // Return the generated SSH public key:
@@ -124,7 +124,7 @@ public class OpenSSHUtils {
         buffer.append('\n');
         final String keyString = buffer.toString();
         if (log.isDebugEnabled()) {
-            log.debug("Key string is \"" + keyString + "\".");
+            log.debug("Key string is \"{}\".", keyString);
         }
 
         return keyString;
@@ -152,7 +152,7 @@ public class OpenSSHUtils {
         // The fingerprint is a MD5 digest of the key bytes:
         final byte[] fingerprintBytes = DigestUtils.md5(keyBytes);
         if (log.isDebugEnabled()) {
-            log.debug("Fingerprint bytes are " + Hex.encodeHexString(fingerprintBytes) + ".");
+            log.debug("Fingerprint bytes are {}.", Hex.encodeHexString(fingerprintBytes));
         }
 
         return fingerprintBytes;
@@ -186,7 +186,7 @@ public class OpenSSHUtils {
         }
         final String fingerprintString = buffer.toString();
         if (log.isDebugEnabled()) {
-            log.debug("Fingerprint string is \"" + fingerprintString + "\".");
+            log.debug("Fingerprint string is \"{}\".", fingerprintString);
         }
 
         return fingerprintString;
