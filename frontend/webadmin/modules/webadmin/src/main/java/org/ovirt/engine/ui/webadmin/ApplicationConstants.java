@@ -800,7 +800,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Migrate Virtual Machines")
     String clusterPopupMigrateOnError_YesLabel();
 
-    @DefaultStringValue("Migrate only Highly Available Virtual Machines")
+    @DefaultStringValue("Migrate Only Highly Available Virtual Machines")
     String clusterPopupMigrateOnError_HaLabel();
 
     @DefaultStringValue("Do Not Migrate Virtual Machines")
