@@ -25,13 +25,13 @@ public interface StorageDomainDAO extends DAO, SearchDAO<StorageDomain>, AutoRec
     /**
      * Retrieves storage domain for the specified pool by type.
      *
-     * @param pool
+     * @param poolId
      *            the storage pool
      * @param type
      *            the storage domain type
      * @return the master storage domain
      */
-    StorageDomain getStorageDomainByTypeAndPool(Guid pool, StorageDomainType type);
+    StorageDomain getStorageDomain(Guid poolId, StorageDomainType type);
 
     /**
      * Retrieves the master storage domain for the specified pool.

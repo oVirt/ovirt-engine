@@ -56,7 +56,8 @@ public class StorageDomainDAOTest extends BaseDAOTestCase {
 
     @Test
     public void testGetstorage_domain_by_type_for_storagePoolId() {
-        StorageDomain result = dao.getStorageDomainByTypeAndPool(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"), StorageDomainType.Master);
+        StorageDomain result = dao.getStorageDomain(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"),
+                StorageDomainType.Master);
 
         assertNotNull(result);
         assertGetResult(result);
