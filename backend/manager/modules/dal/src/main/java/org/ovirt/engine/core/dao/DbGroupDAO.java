@@ -79,4 +79,6 @@ public interface DbGroupDAO extends DAO, SearchDAO<DbGroup> {
      *            the group id
      */
     void remove(Guid id);
+
+    List<DbGroup> getByUserId(Guid id);
 }

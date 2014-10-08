@@ -111,8 +111,8 @@ import org.ovirt.engine.core.common.queries.GetTagsByUserGroupIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByUserIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVdsIdParameters;
 import org.ovirt.engine.core.common.queries.GetTagsByVmIdParameters;
-import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.GetVmChangedFieldsForNextRunParameters;
+import org.ovirt.engine.core.common.queries.GetVmTemplateParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.InterfaceAndIdQueryParameters;
 import org.ovirt.engine.core.common.queries.MultilevelAdministrationsQueriesParameters;
@@ -650,6 +650,17 @@ public final class AsyncDataProvider {
         Frontend.getInstance().runQuery(VdcQueryType.Search,
                 new SearchParameters("Cluster: name=" + name + " sortby name", SearchType.Cluster), //$NON-NLS-1$ //$NON-NLS-2$
                 aQuery);
+    }
+
+    public static void getDbGroupsByUserId(AsyncQuery aQuery, Guid userId) {
+        aQuery.converterCallback = new IAsyncConverter() {
+            @Override
+            public Object Convert(Object source, AsyncQuery _asyncQuery)
+            {
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetDbGroupsByUserId, new IdQueryParameters(userId), aQuery);
     }
 
     public static void getPoolById(AsyncQuery aQuery, Guid poolId) {

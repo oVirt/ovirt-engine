@@ -1,8 +1,13 @@
 package org.ovirt.engine.ui.uicommonweb.models.users;
 
 import java.util.ArrayList;
+import java.util.Collection;
 
+import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.help.HelpTag;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
@@ -36,13 +41,17 @@ public class UserGroupListModel extends SearchableListModel
 
         if (getEntity() != null)
         {
-            ArrayList<UserGroup> items = new ArrayList<UserGroup>();
-            for (String groupFullName : getEntity().getGroupNames())
-            {
-                items.add(createUserGroup(groupFullName, getEntity().getNamespace(), getEntity().getDomain()));
-            }
+            final ArrayList<UserGroup> items = new ArrayList<UserGroup>();
+            AsyncDataProvider.getDbGroupsByUserId(new AsyncQuery(new INewAsyncCallback() {
 
-            setItems(items);
+                @Override
+                public void onSuccess(Object model, Object returnValue) {
+                    for (DbGroup grp : (Collection<DbGroup>) returnValue) {
+                        items.add(createUserGroup(grp.getName(), grp.getNamespace(), grp.getDomain()));
+                    }
+                    setItems(items);
+                }
+            }), getEntity().getId());
         }
         else
         {
