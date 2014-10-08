@@ -85,6 +85,15 @@ public class DbGroupDAODbFacadeImpl extends BaseDAODbFacade implements DbGroupDA
     }
 
     @Override
+    public List<DbGroup> getByUserId(Guid id) {
+        return getCallsHandler().executeReadList("GetGroupsByUserId",
+                DbGroupRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("id", id));
+
+    }
+
+    @Override
     public void save(DbGroup group) {
         if (Guid.isNullOrEmpty(group.getId())) {
             group.setId(Guid.newGuid());
