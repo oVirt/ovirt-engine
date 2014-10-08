@@ -174,6 +174,21 @@
             <value>7</value>
         </row>
         <row>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
+            <value>10.35.64.25:/export/nfs2</value>
+            <null />
+            <null />
+            <null />
+            <value></value>
+            <value></value>
+            <value>2</value>
+            <value></value>
+            <value>nfs</value>
+            <value>auto</value>
+            <value>42</value>
+            <value>7</value>
+        </row>
+        <row>
             <value>0cc146e8-e5ed-482c-8814-270bc48c2983</value>
             <value>10.35.64.25:/export/nfs3</value>
             <null />
@@ -521,6 +536,18 @@
             <value>2.3</value>
             <value>2010-10-21 03:38:22</value>
             <value>2010-11-29 15:57:10</value>
+        </row>
+        <row>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105c</value>
+            <value>rhel6.iscsi0</value>
+            <value>Pool with a single inactive ISO domain</value>
+            <value>false</value>
+            <value>1</value>
+            <value>1127</value>
+            <value>787c5473-9a82-4191-930b-814db3451531</value>
+            <value>2.3</value>
+            <value>2014-10-14 16:23:00</value>
+            <value>2014-10-14 16:23:00</value>
         </row>
         <row>
             <value>6d849ebf-755f-4552-ad09-9a090cda105e</value>
@@ -3872,6 +3899,17 @@
         <column>last_time_used_as_master</column>
         <column>storage_description</column>
         <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
+            <value>0cc146e8-e5ed-482c-8814-270bc48c2982</value>
+            <value>scale_sd4</value>
+            <value>2</value>
+            <value>1</value>
+            <value>2014-10-14 16:33:00</value>
+            <value>2014-10-14 16:33:00</value>
+            <value>5</value>
+            <value>description0</value>
+        </row>
+        <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>G95OWd-Wvck-vftu-pMq9-9SAC-NF3E-ulDPsQ</value>
             <value>scale_sd5</value>
@@ -3988,6 +4026,12 @@
         <column>available_disk_size</column>
         <column>used_disk_size</column>
         <column>_update_date</column>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
+            <value>196</value>
+            <value>3</value>
+            <null />
+        </row>
         <row>
             <value>72e3a666-89e1-4005-a7ca-f7548004a9ab</value>
             <value>196</value>
@@ -4128,6 +4172,11 @@
             <value>bee623f3-9174-4ffd-aa30-4fb0dc0aa2f5</value>
             <value>386bffd1-e7ed-4b08-bce9-d7df10f8c9a0</value>
             <value>3</value>
+        </row>
+        <row>
+            <value>72e3a666-89e1-4005-a7ca-f7548004a9aa</value>
+            <value>6d849ebf-755f-4552-ad09-9a090cda105c</value>
+            <value>4</value>
         </row>
     </table>
 

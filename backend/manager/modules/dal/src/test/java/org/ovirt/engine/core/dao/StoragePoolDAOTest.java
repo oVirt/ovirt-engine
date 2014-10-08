@@ -151,7 +151,7 @@ public class StoragePoolDAOTest extends BaseDAOTestCase {
     public void testGetAllByStatus() {
         List<StoragePool> result = dao.getAllByStatus(StoragePoolStatus.Up);
         assertNotNull("list of returned pools in status up shouldn't be null", result);
-        assertEquals("wrong number of storage pools returned for up status", 6, result.size());
+        assertEquals("wrong number of storage pools returned for up status", 7, result.size());
 
         result = dao.getAllByStatus(StoragePoolStatus.Maintenance);
         assertNotNull("list of returned pools in maintenance status shouldn't be null", result);

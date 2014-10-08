@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll;
 
 
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.queries.GetImagesListByStoragePoolIdParameters;
 import org.ovirt.engine.core.compat.Guid;
@@ -21,7 +22,8 @@ public class GetImagesListByStoragePoolIdQuery<P extends GetImagesListByStorageP
     @Override
     protected Guid getStorageDomainIdForQuery() {
         if (doesUserHavePermissionsOnStoragePool()) {
-            return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(getStoragePoolId());
+            return getDbFacade().getStorageDomainDao().getIsoStorageDomainIdForPool(
+                    getStoragePoolId(), StorageDomainStatus.Active);
         }
         return null;
     }

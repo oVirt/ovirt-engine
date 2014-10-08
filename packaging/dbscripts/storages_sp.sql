@@ -586,14 +586,15 @@ END; $procedure$
 LANGUAGE plpgsql;
 
 
-Create or replace FUNCTION Getstorage_domain_by_type_and_storagePoolId(v_storage_domain_type INTEGER, v_storage_pool_id UUID)
+Create or replace FUNCTION Getstorage_domain_by_type_storagePoolId_and_status(v_storage_domain_type INTEGER, v_storage_pool_id UUID, v_status INTEGER)
 RETURNS SETOF storage_domains STABLE
    AS $procedure$
 BEGIN
    RETURN QUERY SELECT *
    FROM storage_domains
    WHERE storage_pool_id = v_storage_pool_id
-   AND storage_domain_type = v_storage_domain_type;
+   AND storage_domain_type = v_storage_domain_type
+   AND (v_status IS NULL OR status = v_status);
 END; $procedure$
 LANGUAGE plpgsql;
 
