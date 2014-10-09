@@ -1,123 +1,124 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
- xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
     <display-name>oVirt WebAdmin UI</display-name>
 
     <!-- Application with context parameters -->
     <context-param>
-      <param-name>obrandThemePath</param-name>
-      <param-value>/theme</param-value>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
     </context-param>
     <context-param>
-      <param-name>obrandResourcePath</param-name>
-      <param-value>/theme-resource</param-value>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
     </context-param>
     <context-param>
-      <param-name>obrandApplicationName</param-name>
-      <param-value>webadmin</param-value>
+        <param-name>obrandApplicationName</param-name>
+        <param-value>webadmin</param-value>
     </context-param>
     <context-param>
-      <param-name>contextToRootModifier</param-name>
-      <param-value>..</param-value>
+        <param-name>contextToRootModifier</param-name>
+        <param-value>..</param-value>
     </context-param>
-  <filter>
-    <filter-name>SessionValidationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SessionValidationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>SessionValidationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionValidationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>BasicAuthenticationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
-    <init-param>
-      <param-name>user-name-format</param-name>
-      <param-value>UPN</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>BasicAuthenticationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>BasicAuthenticationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>user-name-format</param-name>
+            <param-value>UPN</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>BasicAuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
- <filter>
-    <filter-name>NegotiationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
-    <init-param>
-      <param-name>capabilities</param-name>
-      <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
-    </init-param>
- </filter>
- <filter-mapping>
-    <filter-name>NegotiationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
- </filter-mapping>
+    <filter>
+        <filter-name>NegotiationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
+        <init-param>
+            <param-name>capabilities</param-name>
+            <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>NegotiationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
- <filter>
-    <filter-name>LoginFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.LoginFilter</filter-class>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.LoginFilter</filter-class>
         <init-param>
             <param-name>login-as-admin</param-name>
             <param-value>true</param-value>
         </init-param>
     </filter>
     <filter-mapping>
-      <filter-name>LoginFilter</filter-name>
-      <url-pattern>/*</url-pattern>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter>
-      <filter-name>SessionMgmtFilter</filter-name>
-      <filter-class>org.ovirt.engine.core.aaa.filters.SessionMgmtFilter</filter-class>
+        <filter-name>SessionMgmtFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SessionMgmtFilter</filter-class>
     </filter>
     <filter-mapping>
-      <filter-name>SessionMgmtFilter</filter-name>
-      <url-pattern>/*</url-pattern>
+        <filter-name>SessionMgmtFilter</filter-name>
+        <url-pattern>/*</url-pattern>
     </filter-mapping>
     <filter-mapping>
-      <filter-name>LocaleFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-      <dispatcher>REQUEST</dispatcher>
-      <dispatcher>ERROR</dispatcher>
+        <filter-name>LocaleFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
     <filter-mapping>
-      <filter-name>BrandingFilter</filter-name>
-      <url-pattern>/*</url-pattern>
-      <dispatcher>REQUEST</dispatcher>
-      <dispatcher>ERROR</dispatcher>
+        <filter-name>BrandingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+        <dispatcher>REQUEST</dispatcher>
+        <dispatcher>ERROR</dispatcher>
     </filter-mapping>
 
-	<filter-mapping>
-		<filter-name>GwtCachingFilter</filter-name>
-		<url-pattern>/*</url-pattern>
-	</filter-mapping>
+    <filter-mapping>
+        <filter-name>GwtCachingFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>HeaderFilter</filter-name>
         <url-pattern>/*</url-pattern>
     </filter-mapping>
 
-	<servlet-mapping>
-		<servlet-name>WebAdminHostPageServlet</servlet-name>
-		<url-pattern>/WebAdmin.html</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>WebAdminHostPageServlet</servlet-name>
+        <url-pattern>/WebAdmin.html</url-pattern>
+    </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>GenericApiServlet</servlet-name>
-		<url-pattern>/GenericApiGWTService</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>GenericApiServlet</servlet-name>
+        <url-pattern>/GenericApiGWTService</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>XsrfTokenServiceServlet</servlet-name>
         <url-pattern>/xsrf</url-pattern>
     </servlet-mapping>
 
-	<servlet-mapping>
-		<servlet-name>PluginResourceServlet</servlet-name>
-		<url-pattern>/plugin/*</url-pattern>
-	</servlet-mapping>
+    <servlet-mapping>
+        <servlet-name>PluginResourceServlet</servlet-name>
+        <url-pattern>/plugin/*</url-pattern>
+    </servlet-mapping>
 
     <servlet-mapping>
         <servlet-name>BrandingServlet</servlet-name>
@@ -139,32 +140,32 @@
         <url-pattern>/405.html</url-pattern>
     </servlet-mapping>
 
-	<!-- Default page to serve -->
-	<welcome-file-list>
-		<welcome-file>WebAdmin.html</welcome-file>
-	</welcome-file-list>
+    <!-- Default page to serve -->
+    <welcome-file-list>
+        <welcome-file>WebAdmin.html</welcome-file>
+    </welcome-file-list>
 
-	<!-- Error page to present -->
-	<error-page>
-		<error-code>404</error-code>
-		<location>/404.html</location>
-	</error-page>
+    <!-- Error page to present -->
+    <error-page>
+        <error-code>404</error-code>
+        <location>/404.html</location>
+    </error-page>
 
-	<error-page>
-		<error-code>405</error-code>
-		<location>/405.html</location>
-	</error-page>
+    <error-page>
+        <error-code>405</error-code>
+        <location>/405.html</location>
+    </error-page>
 
-	<!-- Confidentiality -->
-	<security-constraint>
-		<web-resource-collection>
-			<web-resource-name>everything</web-resource-name>
-			<url-pattern>/*</url-pattern>
-		</web-resource-collection>
-		<user-data-constraint>
-			<transport-guarantee>NONE</transport-guarantee>
-		</user-data-constraint>
-	</security-constraint>
+    <!-- Confidentiality -->
+    <security-constraint>
+        <web-resource-collection>
+            <web-resource-name>everything</web-resource-name>
+            <url-pattern>/*</url-pattern>
+        </web-resource-collection>
+        <user-data-constraint>
+            <transport-guarantee>NONE</transport-guarantee>
+        </user-data-constraint>
+    </security-constraint>
 
     <session-config>
         <cookie-config>

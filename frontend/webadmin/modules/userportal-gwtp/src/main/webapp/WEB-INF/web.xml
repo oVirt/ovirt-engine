@@ -1,77 +1,78 @@
 <web-app xmlns="http://java.sun.com/xml/ns/javaee" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd" version="3.0">
+    xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_3_0.xsd"
+    version="3.0">
 
     <display-name>oVirt UserPortal UI</display-name>
     <!-- Application with context parameters -->
     <context-param>
-      <param-name>obrandThemePath</param-name>
-      <param-value>/theme</param-value>
+        <param-name>obrandThemePath</param-name>
+        <param-value>/theme</param-value>
     </context-param>
     <context-param>
-      <param-name>obrandResourcePath</param-name>
-      <param-value>/theme-resource</param-value>
+        <param-name>obrandResourcePath</param-name>
+        <param-value>/theme-resource</param-value>
     </context-param>
     <context-param>
-      <param-name>obrandApplicationName</param-name>
-      <param-value>userportal</param-value>
+        <param-name>obrandApplicationName</param-name>
+        <param-value>userportal</param-value>
     </context-param>
     <context-param>
-      <param-name>contextToRootModifier</param-name>
-      <param-value>..</param-value>
+        <param-name>contextToRootModifier</param-name>
+        <param-value>..</param-value>
     </context-param>
 
-   <filter>
-    <filter-name>SessionValidationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SessionValidationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>SessionValidationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionValidationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>BasicAuthenticationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
-    <init-param>
-      <param-name>user-name-format</param-name>
-      <param-value>UPN</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>BasicAuthenticationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>BasicAuthenticationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.BasicAuthenticationFilter</filter-class>
+        <init-param>
+            <param-name>user-name-format</param-name>
+            <param-value>UPN</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>BasicAuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
-  <filter>
-    <filter-name>NegotiationFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
-    <init-param>
-      <param-name>capabilities</param-name>
-      <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
-    </init-param>
-  </filter>
-  <filter-mapping>
-    <filter-name>NegotiationFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>NegotiationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.NegotiationFilter</filter-class>
+        <init-param>
+            <param-name>capabilities</param-name>
+            <param-value>AUTHENTICATE_NEGOTIATE_INTERACTIVE | AUTHENTICATE_NEGOTIATE_NON_INTERACTIVE</param-value>
+        </init-param>
+    </filter>
+    <filter-mapping>
+        <filter-name>NegotiationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
- <filter>
-    <filter-name>LoginFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.LoginFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>LoginFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>LoginFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.LoginFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>LoginFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
- <filter>
-    <filter-name>SessionMgmtFilter</filter-name>
-    <filter-class>org.ovirt.engine.core.aaa.filters.SessionMgmtFilter</filter-class>
-  </filter>
-  <filter-mapping>
-    <filter-name>SessionMgmtFilter</filter-name>
-    <url-pattern>/*</url-pattern>
-  </filter-mapping>
+    <filter>
+        <filter-name>SessionMgmtFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.SessionMgmtFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>SessionMgmtFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
 
     <filter-mapping>
         <filter-name>LocaleFilter</filter-name>
