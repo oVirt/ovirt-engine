@@ -27,7 +27,6 @@ limitations under the License.
     <module name="javax.ws.rs.api"/>
     <module name="javax.xml.bind.api"/>
     <module name="org.apache.commons.lang"/>
-    <module name="org.apache.log4j"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.jboss.resteasy.resteasy-jaxb-provider"/>
     <module name="org.jboss.resteasy.resteasy-jaxrs"/>

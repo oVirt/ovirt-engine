@@ -24,7 +24,6 @@ import javax.naming.InitialContext;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.api.common.invocation.Current;
 import org.ovirt.engine.api.restapi.logging.MessageBundle;
 import org.ovirt.engine.api.restapi.logging.Messages;
@@ -66,11 +65,13 @@ import org.ovirt.engine.api.restapi.security.auth.SessionProcessor;
 import org.ovirt.engine.api.restapi.types.MappingLocator;
 import org.ovirt.engine.api.restapi.util.SessionHelper;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @ApplicationPath("/")
 public class BackendApplication extends Application {
     // The log:
-    private static final Logger logger = Logger.getLogger(BackendApplication.class);
+    private static final Logger log = LoggerFactory.getLogger(BackendApplication.class);
 
     // The messages bundle:
     private final MessageBundle messageBundle;
@@ -110,7 +111,7 @@ public class BackendApplication extends Application {
             backend = (BackendLocal) initial.lookup("java:global/engine/bll/Backend!org.ovirt.engine.core.common.interfaces.BackendLocal");
         }
         catch (Exception exception) {
-            logger.error("Can't find reference to backend bean.", exception);
+            log.error("Can't find reference to backend bean.", exception);
             throw exception;
         }
 
