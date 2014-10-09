@@ -22,6 +22,7 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
     private Boolean soundDeviceEnabled;
     private Boolean consoleEnabled;
     private Boolean virtioScsiEnabled;
+    private boolean balloonEnabled;
     private VmRngDevice rngDevice;
 
     public AddVmPoolWithVmsParameters() {
@@ -86,5 +87,13 @@ public class AddVmPoolWithVmsParameters extends VmPoolOperationParameters {
 
     public void setRngDevice(VmRngDevice rngDevice) {
         this.rngDevice = rngDevice;
+    }
+
+    public boolean isBalloonEnabled() {
+        return balloonEnabled;
+    }
+
+    public void setBalloonEnabled(boolean isBallonEnabled) {
+        this.balloonEnabled = isBallonEnabled;
     }
 }

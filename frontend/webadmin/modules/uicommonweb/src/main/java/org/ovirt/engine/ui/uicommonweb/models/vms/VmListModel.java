@@ -1397,6 +1397,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         addVmTemplateParameters.setDiskInfoDestinationMap(
                 model.getDisksAllocationModel().getImageToDestinationDomainMap());
         addVmTemplateParameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        addVmTemplateParameters.setBalloonEnabled(balloonEnabled(model));
         addVmTemplateParameters.setCopyVmPermissions(model.getCopyPermissions().getEntity());
         model.startProgress(null);
         addVmTemplateParameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());

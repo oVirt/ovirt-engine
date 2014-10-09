@@ -454,6 +454,7 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
 
                         VM vm = buildVmOnSave(model);
                         vm.setVmInit(model.getVmInitModel().buildCloudInitParameters(model));
+                        vm.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
 
                         vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
                         vm.setStateless(false);
@@ -472,6 +473,8 @@ public class PoolListModel extends ListWithDetailsModel implements ISupportSyste
                         param.setRngDevice(model.getIsRngEnabled().getEntity() ? model.generateRngDevice() : null);
 
                         param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                        param.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
+
                         if (model.getQuota().getSelectedItem() != null) {
                             vm.setQuotaId(model.getQuota().getSelectedItem().getId());
                         }

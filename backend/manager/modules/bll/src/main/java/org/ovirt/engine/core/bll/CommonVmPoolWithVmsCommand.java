@@ -186,6 +186,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
                 : VmType.Desktop == getParameters().getVmStaticData().getVmType());
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+        parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
 
         VmRngDevice rngDevice = getParameters().getRngDevice();
         if (rngDevice != null) {
