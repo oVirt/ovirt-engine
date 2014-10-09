@@ -23,12 +23,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This servlet serves the help tag JSON files for easy consumption by GWT. It can merge
@@ -36,7 +37,7 @@ import org.ovirt.engine.core.utils.servlet.ServletUtils;
  */
 public class HelpTagJsonServlet extends HttpServlet {
     private static final long serialVersionUID = -3938947636590096259L;
-    private static final Logger log = Logger.getLogger(HelpTagJsonServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(HelpTagJsonServlet.class);
 
     private static final String CONFIG_FILE = "configFile"; //$NON-NLS-1$
 
@@ -69,7 +70,10 @@ public class HelpTagJsonServlet extends HttpServlet {
                 properties = p.entrySet();
             }
             catch (IOException e) {
-                log.error("problem parsing Properties file: " + configFile.getAbsolutePath(), e); //$NON-NLS-1$
+                log.error("Problem parsing Properties file '{}': {}", //$NON-NLS-1$
+                        configFile.getAbsolutePath(),
+                        e.getMessage());
+                log.debug("Exception", e); //$NON-NLS-1$
             }
         }
 
@@ -92,7 +96,10 @@ public class HelpTagJsonServlet extends HttpServlet {
                             nodes.add(mapper.readTree(reader));
                         }
                         catch (IOException e) {
-                            log.error("problem parsing documentation mapping file: " + file.getAbsolutePath(), e); //$NON-NLS-1$
+                            log.error("Problem parsing documentation mapping file '{}': {}", //$NON-NLS-1$
+                                    file.getAbsolutePath(),
+                                    e.getMessage());
+                            log.debug("Exception", e); //$NON-NLS-1$
                         }
                     }
                 }
