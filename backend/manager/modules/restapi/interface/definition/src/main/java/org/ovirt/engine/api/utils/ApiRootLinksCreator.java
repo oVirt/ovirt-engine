@@ -60,6 +60,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("macpools", baseUri));
         links.add(createLink("operatingsystems", baseUri));
         links.add(createLink("externalhostproviders", baseUri));
+        links.add(createLink("openstackimageproviders", baseUri));
         return links;
     }
 

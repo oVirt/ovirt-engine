@@ -72,6 +72,8 @@ import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
+import org.ovirt.engine.api.model.OpenStackImage;
+import org.ovirt.engine.api.model.OpenStackImageProvider;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
@@ -242,6 +244,10 @@ import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHooksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumeResource;
 import org.ovirt.engine.api.resource.gluster.GlusterVolumesResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
 
 /**
  * Contains a static addLinks() method which constructs any href attributes
@@ -518,6 +524,14 @@ public class LinkHelper {
         map = new ParentToCollectionMap(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class);
         map.add(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class, ExternalHostProvider.class);
         TYPES.put(ExternalComputeResource.class, map);
+
+        // OpenStack image providers:
+        map = new ParentToCollectionMap(OpenStackImageProviderResource.class, OpenStackImageProvidersResource.class);
+        TYPES.put(OpenStackImageProvider.class, map);
+
+        map = new ParentToCollectionMap(OpenStackImageResource.class, OpenStackImagesResource.class);
+        map.add(OpenStackImageResource.class, OpenStackImagesResource.class, OpenStackImageProvider.class);
+        TYPES.put(OpenStackImage.class, map);
     }
 
     /**

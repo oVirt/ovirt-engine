@@ -94,6 +94,7 @@ public class FeaturesHelper {
         }
         if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_6)) {
             addExternalHostProvidersFeature(features);
+            addOpenStackImageProvidersFeature(features);
         }
         return features;
     }
@@ -526,6 +527,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("External Host Providers");
         feature.setDescription("Add/modify/remove external host providers.");
+        features.getFeature().add(feature);
+    }
+
+    private void addOpenStackImageProvidersFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("OpenStack Image Providers");
+        feature.setDescription("Add/modify/remove OpenStack image providers.");
         features.getFeature().add(feature);
     }
 }

@@ -6347,3 +6347,149 @@ actions:
     urlparams: {}
     headers: {}
 
+- name: /openstackimageproviders|rel=get
+  description: get the list of all OpenStack image providers in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}|rel=get
+  description: get the details of the specified OpenStack image provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}|rel=delete
+  description: delete the specified OpenStack image provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackimageproviders/{openstackimageprovider:id}|rel=update
+  description: update the specified OpenStack image provider in the system
+  request:
+    body:
+      parameterType: OpenStackImageProvider
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          openstack_image_provider.name: xs:string
+          openstack_image_provider.description: xs:string
+          openstack_image_provider.requires_authentication: xs:boolean
+          openstack_image_provider.username: xs:string
+          openstack_image_provider.password: xs:string
+          openstack_image_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: update the specified OpenStack image provider in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackimageproviders|rel=add
+  description: add a new OpenStack image provider to the system
+  request:
+    body:
+      parameterType: OpenStackImageProvider
+      signatures:
+      - mandatoryArguments:
+          openstack_image_provider.name: xs:string
+        optionalArguments:
+          openstack_image_provider.description: xs:string
+          openstack_image_provider.url: xs:string
+          openstack_image_provider.requires_authentication: xs:boolean
+          openstack_image_provider.username: xs:string
+          openstack_image_provider.password: xs:string
+          openstack_image_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: add a new OpenStack image provider to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackimageproviders/{openstackimageprovider:id}/images|rel=get
+  description: get the list of images from the OpenStack image provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}/images/{image:id}|rel=get
+  description: get the details of the specified image from the OpenStack image provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}/certificates|rel=get
+  description: get the list of certificates of the OpenStack image provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}/certificates/{certificate:id}|rel=get
+  description: get the details of the specified certificate of the OpenStack image provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstackimageproviders/{openstackimageprovider:id}/testconnectivity|rel=testconnectivity
+  description: test the connectivity to the external OpenStack imageprovider
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackimageproviders/{openstackimageprovider:id}/importcertificates|rel=importcertificates
+  description: import the SSL certificates of the OpenStack image provider
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstackimageproviders/{openstackimageprovider:id}/images/{images:id}/import|rel=import
+  description: imports the OpenStack image
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments:
+          action.storagedomain.id|name: xs:string
+        optionalArguments:
+          action.async: xs:boolean
+          action.grace_period.expiry: xs:long
+          action.import_as_template: xs:boolean
+          action.cluster.id|name: xs:string
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}

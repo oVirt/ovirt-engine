@@ -5169,4 +5169,61 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- OpenStack image providers: -->
+  <xs:element name="openstack_image_provider" type="OpenStackImageProvider"/>
+
+  <xs:complexType name="OpenStackImageProvider">
+    <xs:complexContent>
+      <xs:extension base="OpenStackProvider"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="openstack_image_providers" type="OpenStackImageProviders"/>
+
+  <xs:complexType name="OpenStackImageProviders">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_image_provider" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackImageProviders"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="openstack_image" type="OpenStackImage"/>
+
+  <xs:element name="openstack_images" type="OpenStackImages"/>
+
+  <xs:complexType name="OpenStackImage">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="openstack_image_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="OpenStackImages">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_image" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackImages"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
