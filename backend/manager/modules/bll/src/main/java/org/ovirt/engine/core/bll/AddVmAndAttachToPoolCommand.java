@@ -76,6 +76,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());
         parameters.setConsoleEnabled(getParameters().isConsoleEnabled());
         parameters.setVirtioScsiEnabled(getParameters().isVirtioScsiEnabled());
+        parameters.setBalloonEnabled(getParameters().isBalloonEnabled());
 
         if (getParameters().isUpdateRngDevice()) {
             parameters.setUpdateRngDevice(true);
