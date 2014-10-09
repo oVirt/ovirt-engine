@@ -4955,4 +4955,19 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- External providers: -->
+  <xs:complexType name="ExternalProvider">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="requires_authentication" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="properties" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
