@@ -4970,4 +4970,163 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- External host providers: -->
+  <xs:element name="external_host_provider" type="ExternalHostProvider"/>
+
+  <xs:complexType name="ExternalHostProvider">
+    <xs:complexContent>
+      <xs:extension base="ExternalProvider"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="external_host_providers" type="ExternalHostProviders"/>
+
+  <xs:complexType name="ExternalHostProviders">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="External_HostProviders"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="external_host" type="ExternalHost"/>
+
+  <xs:element name="external_hosts" type="ExternalHosts"/>
+
+  <xs:complexType name="ExternalHost">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalHosts">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="external_host" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="ExternalHosts"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="external_discovered_host" type="ExternalDiscoveredHost"/>
+
+  <xs:element name="external_discovered_hosts" type="ExternalDiscoveredHosts"/>
+
+  <xs:complexType name="ExternalDiscoveredHost">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="ip" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="mac" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="subnet_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="last_report" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalDiscoveredHosts">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="external_discovered_host" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="ExternalDiscoveredHosts"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="external_host_group" type="ExternalHostGroup"/>
+
+  <xs:element name="external_host_groups" type="ExternalHostGroups"/>
+
+  <xs:complexType name="ExternalHostGroup">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="architecture_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="operating_system_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="domain_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="subnet_name" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalHostGroups">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="external_host_group" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="ExternalHostGroups"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="external_compute_resource" type="ExternalComputeResource"/>
+
+  <xs:element name="external_compute_resources" type="ExternalComputeResources"/>
+
+  <xs:complexType name="ExternalComputeResource">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="provider" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="user" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="url" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="external_host_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="ExternalComputeResources">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="external_compute_resource" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="ExternalComputeResources"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>

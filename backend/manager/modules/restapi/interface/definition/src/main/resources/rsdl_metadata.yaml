@@ -6159,3 +6159,179 @@ actions:
       signatures: []
     urlparams: {}
     headers: {}
+
+- name: /externalhostproviders|rel=get
+  description: get the list of all external host providers in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}|rel=get
+  description: get the details of the specified external host provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}|rel=delete
+  description: delete the specified external host provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /externalhostproviders/{externalhostprovider:id}|rel=update
+  description: update the specified external host provider in the system
+  request:
+    body:
+      parameterType: ExternalHostProvider
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          external_host_provider.name: xs:string
+          external_host_provider.description: xs:string
+          external_host_provider.requires_authentication: xs:boolean
+          external_host_provider.username: xs:string
+          external_host_provider.password: xs:string
+        description: update the specified external host provider in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /externalhostproviders|rel=add
+  description: add a new external host provider to the system
+  request:
+    body:
+      parameterType: ExternalHostProvider
+      signatures:
+      - mandatoryArguments:
+          external_host_provider.name: xs:string
+        optionalArguments:
+          external_host_provider.description: xs:string
+          external_host_provider.url: xs:string
+          external_host_provider.requires_authentication: xs:boolean
+          external_host_provider.username: xs:string
+          external_host_provider.password: xs:string
+        description: add a new external host provider to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /externalhostproviders/{externalhostprovider:id}/testconnectivity|rel=testconnectivity
+  description: test the connectivity to the external external host provider
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /externalhostproviders/{externalhostprovider:id}/importcertificates|rel=importcertificates
+  description: import the SSL certificates of the external host provider
+  request:
+    body:
+      parameterType: Action
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments: {}
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /externalhostproviders/{externalhostprovider:id}/certificates|rel=get
+  description: get the list of certificates of the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/certificates/{certificate:id}|rel=get
+  description: get the details of the specified certificate of the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/hosts|rel=get
+  description: get the list of hosts from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/hosts/{host:id}|rel=get
+  description: get the details of the specified host from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/discoveredhosts|rel=get
+  description: get the list of discovered hosts from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/discoveredhosts/{discoveredhost:id}|rel=get
+  description: get the details of the specified discovered host from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/hostgroups|rel=get
+  description: get the list of host groups from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/hostgroups/{hostgroup:id}|rel=get
+  description: get the details of the specified host group from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/computeresources|rel=get
+  description: get the list of compute resources from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /externalhostproviders/{externalhostprovider:id}/computeresources/{computeresource:id}|rel=get
+  description: get the details of the specified compute resource from the external host provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+

@@ -45,6 +45,11 @@ import org.ovirt.engine.api.model.DiskProfile;
 import org.ovirt.engine.api.model.DiskSnapshot;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.Event;
+import org.ovirt.engine.api.model.ExternalComputeResource;
+import org.ovirt.engine.api.model.ExternalDiscoveredHost;
+import org.ovirt.engine.api.model.ExternalHost;
+import org.ovirt.engine.api.model.ExternalHostGroup;
+import org.ovirt.engine.api.model.ExternalHostProvider;
 import org.ovirt.engine.api.model.File;
 import org.ovirt.engine.api.model.Filter;
 import org.ovirt.engine.api.model.GlusterBrick;
@@ -138,9 +143,7 @@ import org.ovirt.engine.api.resource.HostNicResource;
 import org.ovirt.engine.api.resource.HostNicsResource;
 import org.ovirt.engine.api.resource.HostNumaNodeResource;
 import org.ovirt.engine.api.resource.HostNumaNodesResource;
-import org.ovirt.engine.api.resource.HostResource;
 import org.ovirt.engine.api.resource.HostStorageResource;
-import org.ovirt.engine.api.resource.HostsResource;
 import org.ovirt.engine.api.resource.ImageResource;
 import org.ovirt.engine.api.resource.ImagesResource;
 import org.ovirt.engine.api.resource.InstanceTypeResource;
@@ -223,6 +226,16 @@ import org.ovirt.engine.api.resource.aaa.GroupResource;
 import org.ovirt.engine.api.resource.aaa.GroupsResource;
 import org.ovirt.engine.api.resource.aaa.UserResource;
 import org.ovirt.engine.api.resource.aaa.UsersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourceResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourcesResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostsResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostGroupResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostGroupsResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProvidersResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostResource;
+import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBrickResource;
 import org.ovirt.engine.api.resource.gluster.GlusterBricksResource;
 import org.ovirt.engine.api.resource.gluster.GlusterHookResource;
@@ -301,7 +314,7 @@ public class LinkHelper {
         map = new ParentToCollectionMap(DiskSnapshotResource.class, DiskSnapshotsResource.class, StorageDomain.class);
         TYPES.put(DiskSnapshot.class, map);
 
-        map = new ParentToCollectionMap(HostResource.class, HostsResource.class);
+        map = new ParentToCollectionMap(org.ovirt.engine.api.resource.HostResource.class, org.ovirt.engine.api.resource.HostsResource.class);
         TYPES.put(Host.class, map);
 
         map = new ParentToCollectionMap(HostNicResource.class, HostNicsResource.class, Host.class);
@@ -485,6 +498,26 @@ public class LinkHelper {
         // Operating systems:
         map = new ParentToCollectionMap(OperatingSystemResource.class, OperatingSystemsResource.class);
         TYPES.put(OperatingSystemInfo.class, map);
+
+        // External host providers:
+        map = new ParentToCollectionMap(ExternalHostProviderResource.class, ExternalHostProvidersResource.class);
+        TYPES.put(ExternalHostProvider.class, map);
+
+        map = new ParentToCollectionMap(ExternalHostResource.class, ExternalHostsResource.class);
+        map.add(ExternalHostResource.class, ExternalHostsResource.class, ExternalHostProvider.class);
+        TYPES.put(ExternalHost.class, map);
+
+        map = new ParentToCollectionMap(ExternalDiscoveredHostResource.class, ExternalHostsResource.class);
+        map.add(ExternalDiscoveredHostResource.class, ExternalDiscoveredHostsResource.class, ExternalHostProvider.class);
+        TYPES.put(ExternalDiscoveredHost.class, map);
+
+        map = new ParentToCollectionMap(ExternalHostGroupResource.class, ExternalHostGroupsResource.class);
+        map.add(ExternalHostGroupResource.class, ExternalHostGroupsResource.class, ExternalHostProvider.class);
+        TYPES.put(ExternalHostGroup.class, map);
+
+        map = new ParentToCollectionMap(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class);
+        map.add(ExternalComputeResourceResource.class, ExternalComputeResourcesResource.class, ExternalHostProvider.class);
+        TYPES.put(ExternalComputeResource.class, map);
     }
 
     /**

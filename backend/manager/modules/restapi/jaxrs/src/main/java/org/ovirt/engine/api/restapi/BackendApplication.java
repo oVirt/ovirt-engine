@@ -57,6 +57,7 @@ import org.ovirt.engine.api.restapi.resource.BackendVnicProfilesResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendDomainsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendGroupsResource;
 import org.ovirt.engine.api.restapi.resource.aaa.BackendUsersResource;
+import org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource;
 import org.ovirt.engine.api.restapi.resource.validation.IOExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.JsonExceptionMapper;
 import org.ovirt.engine.api.restapi.resource.validation.MalformedIdExceptionMapper;
@@ -148,6 +149,7 @@ public class BackendApplication extends Application {
         addResource(new BackendDiskProfilesResource());
         addResource(new BackendCpuProfilesResource());
         addResource(new BackendOperatingSystemsResource());
+        addResource(new BackendExternalHostProvidersResource());
 
         final SessionProcessor processor = new SessionProcessor();
         processor.setBackend(backend);

@@ -92,6 +92,9 @@ public class FeaturesHelper {
             addDiskProfilesFeature(features);
             addCpuProfilesFeature(features);
         }
+        if (VersionUtils.greaterOrEqual(version, BackendCapabilitiesResource.VERSION_3_6)) {
+            addExternalHostProvidersFeature(features);
+        }
         return features;
     }
 
@@ -516,6 +519,13 @@ public class FeaturesHelper {
         Feature feature = new Feature();
         feature.setName("Manage iSCSI Bonds");
         feature.setDescription("Add/modify/remove iSCSI Bonds.");
+        features.getFeature().add(feature);
+    }
+
+    private void addExternalHostProvidersFeature(Features features) {
+        Feature feature = new Feature();
+        feature.setName("External Host Providers");
+        feature.setDescription("Add/modify/remove external host providers.");
         features.getFeature().add(feature);
     }
 }

@@ -250,17 +250,17 @@ public class BaseBackendResource {
         if ((e instanceof EntityNotFoundException) && (notFoundAs404)) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
-            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage());
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, e.getMessage()));
             BackendFailureException e2 = (BackendFailureException) e;
             throw new WebFaultException(null, e.getMessage(), e2.getHttpStatus() != null ? e2.getHttpStatus()
                     : Response.Status.BAD_REQUEST);
         } else if (e instanceof WebFaultException) {
             WebFaultException e2 = (WebFaultException) e;
-            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e2.getMessage());
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, e2.getMessage()));
             log.error("Exception", e2);
             throw e2;
         } else {
-            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage());
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE, e.getMessage()));
             log.error("Exception", e);
             throw new WebFaultException(e, detail(e), Response.Status.INTERNAL_SERVER_ERROR);
         }
