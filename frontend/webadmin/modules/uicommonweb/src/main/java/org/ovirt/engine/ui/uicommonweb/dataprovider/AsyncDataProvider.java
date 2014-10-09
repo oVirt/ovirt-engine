@@ -3016,7 +3016,7 @@ public class AsyncDataProvider {
                 return source;
             }
         };
-        Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChain, new ProviderQueryParameters(provider), aQuery);
+        Frontend.getInstance().runQuery(VdcQueryType.GetProviderCertificateChainText, new ProviderQueryParameters(provider), aQuery);
     }
 
     private void getAllChildVlanInterfaces(Guid vdsID,
