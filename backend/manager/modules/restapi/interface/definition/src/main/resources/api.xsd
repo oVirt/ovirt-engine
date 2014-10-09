@@ -1779,11 +1779,34 @@
 
   <xs:element name="certificate" type="Certificate"/>
 
+  <xs:element name="certificates" type="Certificates"/>
+
   <xs:complexType name="Certificate">
-    <xs:sequence>
-      <xs:element name="organization" type="xs:string" minOccurs="0" maxOccurs="1"/>
-      <xs:element name="subject" type="xs:string" minOccurs="0" maxOccurs="1"/>
-    </xs:sequence>
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="organization" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="subject" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="content" type="xs:string" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="Certificates">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="certificate" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="Certificates"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
   </xs:complexType>
 
   <xs:element name="selinux" type="SELinux" />
