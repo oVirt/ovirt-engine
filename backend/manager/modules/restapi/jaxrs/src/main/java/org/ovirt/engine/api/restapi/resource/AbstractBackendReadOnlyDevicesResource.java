@@ -3,8 +3,10 @@ package org.ovirt.engine.api.restapi.resource;
 import java.lang.reflect.Method;
 import java.util.List;
 
+import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.ovirt.engine.api.model.BaseDevice;
 import org.ovirt.engine.api.model.BaseDevices;
 import org.ovirt.engine.api.model.VM;
@@ -40,7 +42,15 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
 
     @Override
     public C list() {
-        return mapCollection(getBackendCollection(queryType, queryParams));
+        // This query is loading the collection of containers of the devices, not the devices themselves. For example,
+        // when requesting the CDROMs of a VM this query will actually load a collection contain the VM, not the CDROMs.
+        // The result will be null if there is no such VM (if the user provided an incorrect id, or if the VM has been
+        // removed) and in that case we need to respond with the 404 error code.
+        List<Q> collection = getBackendCollection(queryType, queryParams);
+        if (CollectionUtils.isEmpty(collection)) {
+            throw new WebApplicationException(Response.Status.NOT_FOUND);
+        }
+        return mapCollection(collection);
     }
 
     @Override
