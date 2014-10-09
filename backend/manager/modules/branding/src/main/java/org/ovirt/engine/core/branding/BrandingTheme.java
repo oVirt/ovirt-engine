@@ -18,8 +18,9 @@ import java.util.MissingResourceException;
 import java.util.Properties;
 import java.util.ResourceBundle;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represents the components of an available theme. There are
@@ -34,7 +35,7 @@ public class BrandingTheme {
     /**
      * The logger.
      */
-    private static final Logger log = Logger.getLogger(BrandingTheme.class);
+    private static final Logger log = LoggerFactory.getLogger(BrandingTheme.class);
 
     /**
      * The key for the messages resource bundle name.
@@ -138,8 +139,9 @@ public class BrandingTheme {
             brandingProperties.load(propertiesFile);
             available = supportedBrandingVersion == getVersion(brandingProperties);
             if (!available) {
-                log.warn("Unable to load branding theme, mismatched version: " //$NON-NLS-1$
-                    + getVersion(brandingProperties) + " wanted version: " + supportedBrandingVersion); //$NON-NLS-1$
+                log.warn("Unable to load branding theme, mismatched version '{}' wanted version '{}'", //$NON-NLS-1$
+                        getVersion(brandingProperties),
+                        supportedBrandingVersion);
             } else {
                 available = verifyPropertyValues(brandingProperties);
                 if (!available) {
@@ -148,9 +150,9 @@ public class BrandingTheme {
             }
         } catch (IOException e) {
             // Unable to load properties file, disable theme.
-            log.warn("Unable to load properties file for " //$NON-NLS-1$
-                    + "theme located here:"//$NON-NLS-1$
-                    + propertiesFileName, e);
+            log.warn("Unable to load properties file for theme located here '{}'", //$NON-NLS-1$
+                    propertiesFileName,
+                    e);
         }
         return available;
     }
@@ -164,7 +166,7 @@ public class BrandingTheme {
         if (brandingProperties.getProperty(REPLACE_TEMPLATE_KEY) != null &&
             !Arrays.asList(TEMPLATE_REPLACE_VALUES).contains(
                     brandingProperties.getProperty(REPLACE_TEMPLATE_KEY).toLowerCase())) {
-            log.warn(REPLACE_TEMPLATE_KEY + " value is not true or false"); //$NON-NLS-1$
+            log.warn("'{}' value is not true or false", REPLACE_TEMPLATE_KEY); //$NON-NLS-1$
             result = false;
         }
         return result;
@@ -258,16 +260,17 @@ public class BrandingTheme {
                     result.add(ResourceBundle.getBundle(bundleName, locale, urlLoader));
                 }
             } else {
-                log.warn("Theme " + this.getPath() + " has no property defined for key " //$NON-NLS-1$ //$NON-NLS-2$
-                        + name);
+                log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
+                        this.getPath(),
+                        name);
             }
         } catch (IOException e) {
             // Unable to load messages resource bundle.
-            log.warn("Unable to read resources resource " //$NON-NLS-1$
-                    + "bundle, returning null", e); //$NON-NLS-1$
+            log.warn("Unable to read resources resource bundle, returning null", e); //$NON-NLS-1$
         } catch (MissingResourceException mre) {
-            log.warn("Theme " + this.getPath() + " is missing ResourceBundle " //$NON-NLS-1$ //$NON-NLS-2$
-                    + lastProcessedBundle);
+            log.warn("Theme '{}' is missing ResourceBundle '{}'", //$NON-NLS-1$
+                    this.getPath(),
+                    lastProcessedBundle);
         }
 
         return result;

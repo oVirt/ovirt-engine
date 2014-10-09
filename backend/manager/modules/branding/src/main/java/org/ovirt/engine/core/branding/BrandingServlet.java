@@ -8,8 +8,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.servlet.ServletUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class serves files from the branding themes to the browser. This
@@ -23,7 +24,7 @@ public class BrandingServlet extends HttpServlet {
     /**
      * The logger object.
      */
-    private static final Logger log = Logger.getLogger(BrandingServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(BrandingServlet.class);
 
     /**
      * The branding manager, it resolves relative paths to the Servlet into
@@ -64,7 +65,7 @@ public class BrandingServlet extends HttpServlet {
             // Return a result relative to the branding root path.
             result = new File(mergedPath);
         } else {
-            log.error("The path \"" + mergedPath + "\" is not sane"); //$NON-NLS-1$ //$NON-NLS-2$
+            log.error("The path '{}' is not sane", mergedPath); //$NON-NLS-1$
         }
         return result;
     }

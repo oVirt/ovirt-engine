@@ -25,10 +25,10 @@ limitations under the License.
   <dependencies>
     <module name="javax.api"/>
     <module name="javax.servlet.api"/>
-    <module name="org.apache.log4j"/>
     <module name="org.codehaus.jackson.jackson-core-asl"/>
     <module name="org.codehaus.jackson.jackson-mapper-asl"/>
     <module name="org.ovirt.engine.core.utils"/>
+    <module name="org.slf4j"/>
   </dependencies>
 
 </module>

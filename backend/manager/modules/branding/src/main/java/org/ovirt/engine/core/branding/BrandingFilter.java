@@ -14,8 +14,9 @@ import javax.servlet.ServletResponse;
 import javax.servlet.jsp.jstl.core.Config;
 import javax.servlet.jsp.jstl.fmt.LocalizationContext;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.servlet.LocaleFilter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The branding filter adds the appropriate attributes to the {@code HttpServletRequest} for the Servlet to be
@@ -26,7 +27,7 @@ public class BrandingFilter implements Filter {
     /**
      * Logger.
      */
-    private static final Logger log = Logger.getLogger(BrandingFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(BrandingFilter.class);
 
     /**
      * A blank string.
@@ -58,7 +59,7 @@ public class BrandingFilter implements Filter {
             throws IOException, ServletException {
         Locale userLocale = (Locale) request.getAttribute(LocaleFilter.LOCALE);
         if (userLocale == null) {
-            log.warn("Detected Locale is null, setting to default: " + LocaleFilter.DEFAULT_LOCALE);
+            log.warn("Detected Locale is null, setting to default '{}'", LocaleFilter.DEFAULT_LOCALE);
             userLocale = LocaleFilter.DEFAULT_LOCALE;
         }
         List<BrandingTheme> brandingThemes = brandingManager.getBrandingThemes();
