@@ -11,8 +11,9 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This Servlet is used to forward requests from one context to another context. You can define the target context
@@ -42,7 +43,7 @@ public class ForwardServlet extends HttpServlet {
     /**
      * The logger instance.
      */
-    private static final Logger log = Logger.getLogger(ForwardServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(ForwardServlet.class);
 
     /**
      * serialVersionUID.

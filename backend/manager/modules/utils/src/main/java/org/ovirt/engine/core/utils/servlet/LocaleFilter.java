@@ -17,9 +17,10 @@ import javax.servlet.http.Cookie;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.LocaleUtils;
 import org.ovirt.engine.core.utils.ResourceUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This filter attempts to detect the locale of the user based on the following criteria.
@@ -34,7 +35,7 @@ public class LocaleFilter implements Filter {
     /**
      * The logger.
      */
-    private static final Logger log = Logger.getLogger(LocaleFilter.class);
+    private static final Logger log = LoggerFactory.getLogger(LocaleFilter.class);
 
     /**
      * Constant for parameter and cookie name.
@@ -108,8 +109,8 @@ public class LocaleFilter implements Filter {
             locale = DEFAULT_LOCALE;
         }
         Locale resolvedLocale = lookupSupportedLocale(locale, getLocaleKeys());
-        log.debug(String.format("Incoming locale: %s. Filter determined locale to be: %s",
-                locale.toLanguageTag(), resolvedLocale.toLanguageTag()));
+        log.debug("Incoming locale '{}'. Filter determined locale to be '{}'",
+                locale.toLanguageTag(), resolvedLocale.toLanguageTag());
         return resolvedLocale;
     }
 

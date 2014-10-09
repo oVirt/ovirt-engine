@@ -11,11 +11,12 @@ import javax.activation.MimetypesFileTypeMap;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ServletUtils {
     // The log:
-    private static final Logger log = Logger.getLogger(ServletUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ServletUtils.class);
 
     // Map of MIME types:
     private static MimetypesFileTypeMap mimeMap;
@@ -90,8 +91,9 @@ public class ServletUtils {
         // response if it doesn't:
         if (!canReadFile(file)) {
             if (required) {
-                log.error("Can't read file \"" + (file != null ? file.getAbsolutePath() : "") + "\" for request \""
-                        + request.getRequestURI() + "\", will send a 404 error response.");
+                log.error("Can't read file '{}' for request '{}', will send a 404 error response.",
+                        file != null ? file.getAbsolutePath() : "",
+                        request.getRequestURI());
             }
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
         }
@@ -157,7 +159,7 @@ public class ServletUtils {
             }
         }
         catch (IOException exception) {
-            final String message = "Error sending file \"" + file.getAbsolutePath() + "\".";
+            final String message = "Error sending file '" + file.getAbsolutePath() + "'.";
             log.error(message, exception);
             throw new IOException(message, exception);
         }
@@ -177,7 +179,10 @@ public class ServletUtils {
         // Advice against large files:
         final long length = file.length();
         if (length > LARGE) {
-            log.warn("File \"" + file.getAbsolutePath() + " is " + length + " bytes long. Please reconsider using this servlet for files larger than " + LARGE + " bytes.");
+            log.warn("File '{}' is {} bytes long. Please reconsider using this servlet for files larger than {} bytes.",
+                    file.getAbsolutePath(),
+                    length,
+                    LARGE);
         }
         return length;
     }
@@ -195,7 +200,10 @@ public class ServletUtils {
         // Check that the path is not too long:
         final int length = path.length();
         if (length > PATH_MAX) {
-            log.error("The path is " + length + " characters long, which is longer than the maximum allowed " + PATH_MAX + ".");
+            log.error("The path '{}' is {} characters long, which is longer than the maximum allowed {}.",
+                    path,
+                    length,
+                    PATH_MAX);
             return false;
         }
 
@@ -226,7 +234,7 @@ public class ServletUtils {
             file = base;
         }
         else if (!isSane(path)) {
-            log.error("The path \"" + path + "\" is not sane, will return null.");
+            log.error("The path '{}' is not sane, will return null.", path);
         }
         else {
             file = new File(base, path);

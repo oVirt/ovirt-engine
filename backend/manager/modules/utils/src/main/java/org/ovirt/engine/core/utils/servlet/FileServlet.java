@@ -10,8 +10,9 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This is a very simple servlet that receives a mime type and a file name as
@@ -54,7 +55,7 @@ public class FileServlet extends HttpServlet {
     private static final long serialVersionUID = -1794616863361641804L;
 
     // The log:
-    private static final Logger log = Logger.getLogger(FileServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(FileServlet.class);
 
     // The names of the parameters:
     private static final String CACHE = "cache";
@@ -129,7 +130,7 @@ public class FileServlet extends HttpServlet {
         // corresponding index page (if it exists):
         if (file != null && file.isDirectory()) {
             File index = new File(file, INDEX);
-            log.info("Index is \"" + index.getAbsolutePath() + "\".");
+            log.info("Index is '{}'.", index.getAbsolutePath());
             if (index.isFile()) {
                 String redirect = null;
                 if (path == null) {
@@ -142,7 +143,8 @@ public class FileServlet extends HttpServlet {
                 file = new File(file, INDEX);
             }
             else {
-                log.error("There is no index page for directory \"" + file.getAbsolutePath() + "\", will send a 404 error response.");
+                log.error("There is no index page for directory '{}', will send a 404 error response.",
+                        file.getAbsolutePath());
                 file = null;
             }
         }

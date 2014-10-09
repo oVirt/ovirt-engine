@@ -5,12 +5,13 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.LocaleUtils;
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UnsupportedLocaleHelper {
-    private static final Logger log = Logger.getLogger(UnsupportedLocaleHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(UnsupportedLocaleHelper.class);
 
     public static List<String> getDisplayedLocales(List<String> allLocales) {
         return getDisplayedLocales(allLocales, getLocalesKeys(ConfigValues.UnsupportedLocalesFilterOverrides),
@@ -63,7 +64,7 @@ public class UnsupportedLocaleHelper {
                     result.add(underScoredLocaleKey);
                 } catch (IllegalArgumentException iae) {
                     //The locale passed in is not valid, don't add it to the list.
-                    log.info("Invalid locale found in configuration: " + localeKey); //$NON-NLS-1$
+                    log.info("Invalid locale found in configuration '{}'", localeKey); //$NON-NLS-1$
                 }
             }
         }
