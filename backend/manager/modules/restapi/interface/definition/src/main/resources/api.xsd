@@ -5129,4 +5129,17 @@
     </xs:complexContent>
   </xs:complexType>
 
+  <!-- OpenStack providers: -->
+  <xs:element name="openstack_provider" type="OpenStackProvider"/>
+
+  <xs:complexType name="OpenStackProvider">
+    <xs:complexContent>
+      <xs:extension base="ExternalProvider">
+        <xs:sequence>
+          <xs:element name="tenant_name" type="xs:string"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
