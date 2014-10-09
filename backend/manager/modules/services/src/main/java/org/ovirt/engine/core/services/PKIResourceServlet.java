@@ -10,13 +10,13 @@ import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
-import org.apache.log4j.Logger;
-
 import org.ovirt.engine.core.utils.PKIResources;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PKIResourceServlet extends HttpServlet {
 
-    private static final Logger log = Logger.getLogger(PKIResourceServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(PKIResourceServlet.class);
 
     private static Map<String, PKIResources.Resource> resources;
     private static Map<String, PKIResources.Format> formats;
@@ -75,14 +75,8 @@ public class PKIResourceServlet extends HttpServlet {
             }
         }
         catch(Exception e) {
-            log.error(
-                String.format(
-                    "Cannot send public key resource '%1$s' format '%2$s'",
-                    resourceStr,
-                    formatStr
-                ),
-                e
-            );
+            log.error("Cannot send public key resource '{}' format '{}': {}", resourceStr, formatStr, e.getMessage());
+            log.debug("Exception", e);
             response.sendError(HttpServletResponse.SC_BAD_REQUEST, e.getMessage());
         }
     }
