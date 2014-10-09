@@ -7,11 +7,12 @@ import javax.servlet.annotation.WebListener;
 import javax.servlet.http.HttpSessionEvent;
 import javax.servlet.http.HttpSessionListener;
 
-import org.apache.log4j.Logger;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @WebListener
 public class XsrfTokenGeneratorHttpSessionListener implements HttpSessionListener {
-    private static final Logger log = Logger.getLogger(XsrfTokenGeneratorHttpSessionListener.class);
+    private static final Logger log = LoggerFactory.getLogger(XsrfTokenGeneratorHttpSessionListener.class);
 
     /**
      * The number of bytes in the token.

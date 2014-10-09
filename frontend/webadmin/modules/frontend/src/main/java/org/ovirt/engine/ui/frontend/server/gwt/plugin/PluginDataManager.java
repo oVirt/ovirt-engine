@@ -11,13 +11,14 @@ import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicReference;
 
-import org.apache.log4j.Logger;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.JsonParser;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.node.ObjectNode;
 import org.ovirt.engine.core.common.config.ConfigUtil;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Reads, validates and stores UI plugin descriptor/configuration data.
@@ -38,7 +39,7 @@ public class PluginDataManager {
 
     private static final long MISSING_FILE_LAST_MODIFIED = -1L;
 
-    private static final Logger logger = Logger.getLogger(PluginDataManager.class);
+    private static final Logger log = LoggerFactory.getLogger(PluginDataManager.class);
 
     /**
      * Returns UI plugin <em>data path</em>, under which UI plugin descriptor (JSON) files are placed.
@@ -124,7 +125,7 @@ public class PluginDataManager {
         });
 
         if (descriptorFiles == null) {
-            logger.warn("Cannot list UI plugin descriptor files in [" + pluginDataDir.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+            log.warn("Cannot list UI plugin descriptor files in '{}'", pluginDataDir.getAbsolutePath()); //$NON-NLS-1$
             return;
         }
 
@@ -133,7 +134,7 @@ public class PluginDataManager {
 
         // Apply changes through reference assignment
         if (!dataMapRef.compareAndSet(currentDataMapSnapshot, currentDataMapCopy)) {
-            logger.warn("It seems that UI plugin data has changed, please reload WebAdmin application"); //$NON-NLS-1$
+            log.warn("It seems that UI plugin data has changed, please reload WebAdmin application"); //$NON-NLS-1$
         }
     }
 
@@ -174,28 +175,28 @@ public class PluginDataManager {
             // Read descriptor data
             JsonNode descriptorNode = currentData != null ? currentData.getDescriptorNode() : null;
             if (reloadDescriptor) {
-                logger.info("Reading UI plugin descriptor [" + df.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                log.info("Reading UI plugin descriptor '{}'", df.getAbsolutePath()); //$NON-NLS-1$
                 descriptorNode = readJsonNode(df);
                 if (descriptorNode == null) {
                     // Failed to read descriptor data, nothing we can do about it
                     continue;
                 }
             } else if (descriptorNode == null) {
-                logger.warn("UI plugin descriptor node is null for [" + df.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                log.warn("UI plugin descriptor node is null for '{}'", df.getAbsolutePath()); //$NON-NLS-1$
                 continue;
             }
 
             // Read configuration data
             JsonNode configurationNode = currentData != null ? currentData.getConfigurationNode() : null;
             if (reloadConfiguration) {
-                logger.info("Reading UI plugin configuration [" + cf.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                log.info("Reading UI plugin configuration '{}'", cf.getAbsolutePath()); //$NON-NLS-1$
                 configurationNode = readConfigurationNode(cf);
                 if (configurationNode == null) {
                     // Failed to read configuration data, use empty object
                     configurationNode = createEmptyObjectNode();
                 }
             } else if (configurationNode == null) {
-                logger.warn("UI plugin configuration node is null for [" + cf.getAbsolutePath() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+                log.warn("UI plugin configuration node is null for '{}'", cf.getAbsolutePath()); //$NON-NLS-1$
                 continue;
             }
 
@@ -208,12 +209,12 @@ public class PluginDataManager {
                 boolean dataValid = newData.validate(new PluginData.ValidationCallback() {
                     @Override
                     public void descriptorError(String message) {
-                        logger.warn("Validation error in [" + df.getAbsolutePath() + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
+                        log.warn("Validation error in '{}': {}", df.getAbsolutePath(), message); //$NON-NLS-1$
                     }
 
                     @Override
                     public void configurationError(String message) {
-                        logger.warn("Validation error in [" + cf.getAbsolutePath() + "]: " + message); //$NON-NLS-1$ //$NON-NLS-2$
+                        log.warn("Validation error in '{}': {}", cf.getAbsolutePath(), message); //$NON-NLS-1$
                     }
                 });
                 if (!dataValid) {
@@ -251,7 +252,8 @@ public class PluginDataManager {
         try {
             node = mapper.readValue(file, JsonNode.class);
         } catch (IOException e) {
-            logger.warn("Cannot read/parse JSON file [" + file.getAbsolutePath() + "]", e); //$NON-NLS-1$ //$NON-NLS-2$
+            log.warn("Cannot read/parse JSON file '{}': {}", file.getAbsolutePath(), e.getMessage()); //$NON-NLS-1$
+            log.debug("Exception", e); // $NON-NLS-1$
         }
         return node;
     }

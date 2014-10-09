@@ -7,7 +7,6 @@ import javax.ejb.EJB;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.action.LoginUserParameters;
 import org.ovirt.engine.core.common.action.LogoutUserParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
@@ -23,6 +22,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.frontend.gwtservices.GenericApiGWTService;
 
 import com.google.gwt.user.client.rpc.SerializationException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements GenericApiGWTService {
 
@@ -31,7 +32,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     static Random r = new Random();
     boolean noBackend = false;
 
-    private static final Logger log = Logger.getLogger(GenericApiGWTServiceImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(GenericApiGWTServiceImpl.class);
 
     private static final String UI_PREFIX = "UI_"; //$NON-NLS-1$
 
@@ -59,7 +60,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     @Override
     public VdcQueryReturnValue runPublicQuery(VdcQueryType queryType,
             VdcQueryParametersBase params) {
-        log.debug("Server: runPublicQuery invoked! " + queryType); //$NON-NLS-1$
+        log.debug("Server: runPublicQuery invoked! '{}'", queryType); //$NON-NLS-1$
         debugQuery(queryType, params);
         return getBackend().runPublicQuery(queryType, params);
     }
@@ -69,7 +70,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
             ArrayList<VdcQueryType> queryTypeList,
             ArrayList<VdcQueryParametersBase> queryParamsList) {
         int size = queryTypeList == null ? 0 : queryTypeList.size();
-        log.debug("Server: RunMultipleQuery invoked! [amount of queries: " + size + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        log.debug("Server: RunMultipleQuery invoked! [amount of queries: {}]", size); //$NON-NLS-1$
         ArrayList<VdcQueryReturnValue> ret = new ArrayList<VdcQueryReturnValue>();
 
         if (queryTypeList == null || queryParamsList == null) {
@@ -89,10 +90,10 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         }
 
         for (VdcQueryReturnValue vqrv : ret) {
-            log.debug("VdcQueryReturnValue: " + vqrv); //$NON-NLS-1$
+            log.debug("VdcQueryReturnValue '{}'", vqrv); //$NON-NLS-1$
         }
 
-        log.debug("Server: RunMultipleQuery result [amount of queries: " + ret.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        log.debug("Server: RunMultipleQuery result [amount of queries: {}]", ret.size()); //$NON-NLS-1$
 
         return ret;
     }
@@ -106,7 +107,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     @Override
     public ArrayList<VdcReturnValueBase> runMultipleActions(VdcActionType actionType,
             ArrayList<VdcActionParametersBase> multipleParams, boolean isRunOnlyIfAllCanDoPass, boolean isWaitForResult) {
-        log.debug("Server: RunMultipleAction invoked! [amount of actions: " + multipleParams.size() + "]"); //$NON-NLS-1$ //$NON-NLS-2$
+        log.debug("Server: RunMultipleAction invoked! [amount of actions: {}]", multipleParams.size()); //$NON-NLS-1$
 
         for (VdcActionParametersBase params : multipleParams) {
             params.setSessionId(getEngineSessionId());
@@ -192,7 +193,7 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
         HttpServletRequest request = this.getThreadLocalRequest();
         HttpSession session = request.getSession();
 
-        log.debug("IP [" + request.getRemoteAddr() + "], Session ID [" + session.getId() + "]"); //$NON-NLS-1$ //$NON-NLS-2$ //$NON-NLS-3$
+        log.debug("IP '{}', Session ID '{}'", request.getRemoteAddr(), session.getId()); //$NON-NLS-1$
 
         return session;
     }
@@ -242,25 +243,11 @@ public class GenericApiGWTServiceImpl extends XsrfProtectedRpcServlet implements
     }
 
     private void debugQuery(VdcQueryType queryType, VdcQueryParametersBase parameters) {
-        if (log.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Query type: "); //$NON-NLS-1$
-            builder.append(queryType);
-            builder.append(", Parameters: "); //$NON-NLS-1$
-            builder.append(parameters);
-            log.debug(builder.toString());
-        }
+        log.debug("Query type '{}', Parameters '{}'", queryType, parameters); //$NON-NLS-1$
     }
 
     private void debugAction(VdcActionType actionType, VdcActionParametersBase params) {
-        if (log.isDebugEnabled()) {
-            StringBuilder builder = new StringBuilder();
-            builder.append("Action type: "); //$NON-NLS-1$
-            builder.append(actionType);
-            builder.append(", Parameters: "); //$NON-NLS-1$
-            builder.append(params);
-            log.debug(builder.toString());
-        }
+        log.debug("Action type '{}', Parameters '{}'", actionType, params); //$NON-NLS-1$
     }
 
 }
