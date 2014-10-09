@@ -14,7 +14,6 @@ import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.network.ExternalSubnet;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
@@ -22,45 +21,23 @@ import org.ovirt.engine.core.compat.Guid;
 
 @NonTransactiveCommandAttribute
 public class AddSubnetToProviderCommand<T extends AddExternalSubnetParameters> extends CommandBase<T> {
-
-    private Provider<?> provider;
-
-    private ProviderNetwork externalNetwork;
-
     public AddSubnetToProviderCommand(T parameters) {
         super(parameters);
     }
 
     private Provider<?> getProvider() {
-        if (provider == null && getExternalNetwork() != null) {
-            provider = getDbFacade().getProviderDao().get(getExternalNetwork().getProviderId());
-        }
-
-        return provider;
+        return getDbFacade().getProviderDao().get(getParameters().getProviderId());
     }
 
     private ProviderNetwork getExternalNetwork() {
-        if (externalNetwork == null) {
-            Network network = getNetworkDAO().get(getParameters().getNetworkId());
-
-            if (network != null) {
-                externalNetwork = network.getProvidedBy();
-            }
-        }
-
-        return externalNetwork;
-    }
-
-    public String getProviderName() {
-        return getProvider().getName();
+        ProviderNetwork providerNetwork = new ProviderNetwork();
+        providerNetwork.setProviderId(getParameters().getProviderId());
+        providerNetwork.setExternalId(getParameters().getNetworkId());
+        return providerNetwork;
     }
 
     private ExternalSubnet getSubnet() {
         return getParameters().getSubnet();
-    }
-
-    public String getSubnetName() {
-        return getSubnet().getName();
     }
 
     @Override

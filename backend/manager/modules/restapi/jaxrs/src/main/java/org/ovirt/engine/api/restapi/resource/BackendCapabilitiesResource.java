@@ -53,7 +53,11 @@ import org.ovirt.engine.api.model.InheritableBooleans;
 import org.ovirt.engine.api.model.IpVersions;
 import org.ovirt.engine.api.model.KdumpStates;
 import org.ovirt.engine.api.model.KdumpStatus;
+import org.ovirt.engine.api.model.MessageBrokerType;
+import org.ovirt.engine.api.model.MessageBrokerTypes;
 import org.ovirt.engine.api.model.MigrateOnError;
+import org.ovirt.engine.api.model.NetworkPluginType;
+import org.ovirt.engine.api.model.NetworkPluginTypes;
 import org.ovirt.engine.api.model.NetworkStates;
 import org.ovirt.engine.api.model.NetworkStatus;
 import org.ovirt.engine.api.model.NfsVersion;
@@ -284,6 +288,9 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addRngSources(version, RngSource.values());
         addPolicyUnitTypes(version, PolicyUnitType.values());
         addSpmStates(version, SpmState.values());
+        addNetworkPluginTypes(version, NetworkPluginType.values());
+        addMessageBrokerTypes(version, MessageBrokerType.values());
+
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
         addInheritableBooleans(version, InheritableBoolean.values());
@@ -929,6 +936,26 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
             for (InheritableBoolean bool : values) {
                 version.getInheritableBooleans().getInheritableBooleans().add(bool.value());
             }
+        }
+    }
+
+    private void addNetworkPluginTypes(VersionCaps version, NetworkPluginType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            NetworkPluginTypes types = new NetworkPluginTypes();
+            for (NetworkPluginType type : values) {
+                types.getNetworkPluginTypes().add(type.value());
+            }
+            version.setNetworkPluginTypes(types);
+        }
+    }
+
+    private void addMessageBrokerTypes(VersionCaps version, MessageBrokerType[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            MessageBrokerTypes types = new MessageBrokerTypes();
+            for (MessageBrokerType type : values) {
+                types.getMessageBrokerTypes().add(type.value());
+            }
+            version.setMessageBrokerTypes(types);
         }
     }
 

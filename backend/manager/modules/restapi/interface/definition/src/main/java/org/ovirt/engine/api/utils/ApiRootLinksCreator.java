@@ -61,6 +61,7 @@ public class ApiRootLinksCreator {
         links.add(createLink("operatingsystems", baseUri));
         links.add(createLink("externalhostproviders", baseUri));
         links.add(createLink("openstackimageproviders", baseUri));
+        links.add(createLink("openstacknetworkproviders", baseUri));
         return links;
     }
 

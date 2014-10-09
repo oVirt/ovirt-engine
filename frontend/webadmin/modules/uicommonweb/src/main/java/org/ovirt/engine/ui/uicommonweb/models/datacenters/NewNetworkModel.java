@@ -193,12 +193,13 @@ public class NewNetworkModel extends NetworkModel {
 
         Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
 
-        if ((Boolean) getExport().getEntity() && (Boolean) getCreateSubnet().getEntity()) {
-            getSubnetModel().setExternalNetwork(getNetwork().getProvidedBy());
+        ProviderNetwork providedBy = getNetwork().getProvidedBy();
+        if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
+            getSubnetModel().setExternalNetwork(providedBy);
             getSubnetModel().flush();
 
             Frontend.getInstance().runAction(VdcActionType.AddSubnetToProvider,
-                    new AddExternalSubnetParameters(getSubnetModel().getSubnet(), networkId));
+                    new AddExternalSubnetParameters(getSubnetModel().getSubnet(), providedBy.getProviderId(), providedBy.getExternalId()));
         }
     }
 

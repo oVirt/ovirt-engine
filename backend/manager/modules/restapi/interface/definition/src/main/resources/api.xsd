@@ -658,6 +658,8 @@
           <xs:element ref="scheduling_policy_unit_types" minOccurs="0" />
           <xs:element ref="qos_types" minOccurs="0" />
           <xs:element ref="inheritable_booleans" minOccurs="0" maxOccurs="1" />
+          <xs:element ref="network_plugin_types" minOccurs="0"/>
+          <xs:element ref="message_broker_types" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1100,6 +1102,34 @@
         <xs:annotation>
           <xs:appinfo>
             <jaxb:property name="SpmStates"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="network_plugin_types" type="NetworkPluginTypes"/>
+
+  <xs:complexType name="NetworkPluginTypes">
+    <xs:sequence>
+      <xs:element name="network_plugin_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="NetworkPluginTypes"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="message_broker_types" type="MessageBrokerTypes"/>
+
+  <xs:complexType name="MessageBrokerTypes">
+    <xs:sequence>
+      <xs:element name="message_broker_type" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="MessageBrokerTypes"/>
           </xs:appinfo>
         </xs:annotation>
       </xs:element>
@@ -5255,6 +5285,129 @@
             <xs:annotation>
               <xs:appinfo>
                 <jaxb:property name="OpenStackImages"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <!-- OpenStack network providers: -->
+  <xs:element name="openstack_network_provider" type="OpenStackNetworkProvider"/>
+
+  <xs:complexType name="OpenStackNetworkProvider">
+    <xs:complexContent>
+      <xs:extension base="OpenStackProvider">
+        <xs:sequence>
+          <xs:element name="plugin_type" type="xs:string" minOccurs="1" maxOccurs="1"/>
+          <xs:element ref="agent_configuration" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="agent_configuration" type="AgentConfiguration"/>
+
+  <xs:complexType name="AgentConfiguration">
+    <xs:sequence>
+      <xs:element name="network_mappings" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="broker_type" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="address" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="port" type="xs:int" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="username" type="xs:string" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="password" type="xs:string" minOccurs="0" maxOccurs="1"/>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:element name="openstack_network_providers" type="OpenStackNetworkProviders"/>
+
+  <xs:complexType name="OpenStackNetworkProviders">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_network_provider" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackNetworkProviders"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="openstack_network" type="OpenStackNetwork"/>
+
+  <xs:element name="openstack_networks" type="OpenStackNetworks"/>
+
+  <xs:complexType name="OpenStackNetwork">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element ref="openstack_network_provider" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="OpenStackNetworks">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_network" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackNetworks"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:element name="openstack_subnet" type="OpenStackSubnet"/>
+
+  <xs:element name="openstack_subnets" type="OpenStackSubnets"/>
+
+  <xs:element name="dns_servers" type="DnsServers"/>
+
+  <xs:complexType name="DnsServers">
+    <xs:sequence>
+      <xs:element name="dns_server" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="DnsServers"/>
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+
+  <xs:complexType name="OpenStackSubnet">
+    <xs:complexContent>
+      <xs:extension base="BaseResource">
+        <xs:sequence>
+          <xs:element name="cidr" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="ip_version" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element name="gateway" type="xs:string" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="dns_servers" minOccurs="0" maxOccurs="1"/>
+          <xs:element ref="openstack_network" minOccurs="0" maxOccurs="1"/>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="OpenStackSubnets">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="openstack_subnet" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OpenStackSubnets"/>
               </xs:appinfo>
             </xs:annotation>
           </xs:element>

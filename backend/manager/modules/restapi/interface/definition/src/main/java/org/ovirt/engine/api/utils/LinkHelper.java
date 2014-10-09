@@ -74,6 +74,9 @@ import org.ovirt.engine.api.model.NumaNode;
 import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.OpenStackImage;
 import org.ovirt.engine.api.model.OpenStackImageProvider;
+import org.ovirt.engine.api.model.OpenStackNetwork;
+import org.ovirt.engine.api.model.OpenStackNetworkProvider;
+import org.ovirt.engine.api.model.OpenStackSubnet;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
@@ -248,6 +251,12 @@ import org.ovirt.engine.api.resource.openstack.OpenStackImageProviderResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageProvidersResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackImageResource;
 import org.ovirt.engine.api.resource.openstack.OpenStackImagesResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProviderResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackNetworkProvidersResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackNetworkResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackNetworksResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackSubnetResource;
+import org.ovirt.engine.api.resource.openstack.OpenStackSubnetsResource;
 
 /**
  * Contains a static addLinks() method which constructs any href attributes
@@ -532,6 +541,18 @@ public class LinkHelper {
         map = new ParentToCollectionMap(OpenStackImageResource.class, OpenStackImagesResource.class);
         map.add(OpenStackImageResource.class, OpenStackImagesResource.class, OpenStackImageProvider.class);
         TYPES.put(OpenStackImage.class, map);
+
+        // OpenStack network providers:
+        map = new ParentToCollectionMap(OpenStackNetworkProviderResource.class, OpenStackNetworkProvidersResource.class);
+        TYPES.put(OpenStackNetworkProvider.class, map);
+
+        map = new ParentToCollectionMap(OpenStackNetworkResource.class, OpenStackNetworksResource.class);
+        map.add(OpenStackNetworkResource.class, OpenStackNetworksResource.class, OpenStackNetworkProvider.class);
+        TYPES.put(OpenStackNetwork.class, map);
+
+        map = new ParentToCollectionMap(OpenStackSubnetResource.class, OpenStackSubnetsResource.class);
+        map.add(OpenStackSubnetResource.class, OpenStackSubnetsResource.class, OpenStackNetwork.class);
+        TYPES.put(OpenStackSubnet.class, map);
     }
 
     /**

@@ -6516,3 +6516,109 @@ actions:
     headers:
       Content-Type: {value: application/xml|json, required: true}
       Correlation-Id: {value: 'any string', required: false}
+
+- name: /openstacknetworkproviders|rel=get
+  description: get the list of all OpenStack network providers in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=get
+  description: get the details of the specified OpenStack network provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=delete
+  description: delete the specified OpenStack network provider in the system
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      async: {context: matrix, type: 'xs:boolean', value: true|false, required: false}
+    headers:
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}|rel=update
+  description: update the specified OpenStack network provider in the system
+  request:
+    body:
+      parameterType: OpenStackNetworkProvider
+      signatures:
+      - mandatoryArguments: {}
+        optionalArguments:
+          openstack_network_provider.name: xs:string
+          openstack_network_provider.description: xs:string
+          openstack_network_provider.requires_authentication: xs:boolean
+          openstack_network_provider.username: xs:string
+          openstack_network_provider.password: xs:string
+          openstack_network_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: update the specified OpenStack network provider in the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstacknetworkproviders|rel=add
+  description: add a new OpenStack network provider to the system
+  request:
+    body:
+      parameterType: OpenStackNetworkProvider
+      signatures:
+      - mandatoryArguments:
+          openstack_network_provider.name: xs:string
+        optionalArguments:
+          openstack_network_provider.description: xs:string
+          openstack_network_provider.url: xs:string
+          openstack_network_provider.requires_authentication: xs:boolean
+          openstack_network_provider.username: xs:string
+          openstack_network_provider.password: xs:string
+          openstack_network_provider.properties.property--COLLECTION:
+            property.name: xs:string
+            property.value: xs:string
+        description: add a new OpenStack network provider to the system
+    urlparams: {}
+    headers:
+      Content-Type: {value: application/xml|json, required: true}
+      Expect: {value: 201-created, required: false}
+      Correlation-Id: {value: 'any string', required: false}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks|rel=get
+  description: get the list of networks from the OpenStack network provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}|rel=get
+  description: get the details of the specified network from the OpenStack network provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}/subnets|rel=get
+  description: get the list of sub-networks from the OpenStack network provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams:
+      max: {context: matrix, type: 'xs:int', value: 'max results', required: false}
+    headers: {}
+- name: /openstacknetworkproviders/{openstacknetworkprovider:id}/networks/{network:id}/subnets/{subnet:id}|rel=get
+  description: get the details of the specified sub-network from the OpenStack network provider
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
