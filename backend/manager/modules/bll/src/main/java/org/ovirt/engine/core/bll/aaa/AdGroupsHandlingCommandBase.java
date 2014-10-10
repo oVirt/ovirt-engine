@@ -3,20 +3,15 @@ package org.ovirt.engine.core.bll.aaa;
 import java.util.Collections;
 import java.util.List;
 
-import org.ovirt.engine.api.extensions.aaa.Authz;
-import org.ovirt.engine.core.aaa.DirectoryGroup;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.IdParameters;
 import org.ovirt.engine.core.common.businessentities.aaa.DbGroup;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
 
 public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extends CommandBase<T> {
-    private DirectoryGroup mGroup;
+    private DbGroup mGroup;
     private String mGroupName;
 
     /**
@@ -36,39 +31,23 @@ public abstract class AdGroupsHandlingCommandBase<T extends IdParameters> extend
         return getParameters().getId();
     }
 
-    public String getAdGroupName() {
-        if (mGroupName == null && getAdGroup() != null) {
-            mGroupName = getAdGroup().getName();
+    public String getGroupName() {
+        if (mGroupName == null && getGroup() != null) {
+            mGroupName = getGroup().getName();
         }
         return mGroupName;
     }
 
-    protected DirectoryGroup getAdGroup() {
+    protected DbGroup getGroup() {
         if (mGroup == null && !getGroupId().equals(Guid.Empty)) {
-            DbGroup dbGroup = DbFacade.getInstance().getDbGroupDao().get(getGroupId());
-            if (dbGroup != null) {
-                ExtensionProxy authz = EngineExtensionsManager.getInstance().getExtensionByName(dbGroup.getDomain());
-                if (authz != null) {
-                    for (String namespace : authz.getContext().<List<String>> get(Authz.ContextKeys.AVAILABLE_NAMESPACES)) {
-                        mGroup =
-                                DirectoryUtils.findDirectoryGroupById(authz,
-                                        namespace,
-                                        dbGroup.getExternalId(),
-                                        false,
-                                        false);
-                        if (mGroup != null) {
-                            break;
-                        }
-                    }
-                }
-            }
+            mGroup = getAdGroupDAO().get(getParameters().getId());
         }
         return mGroup;
     }
 
     @Override
     protected String getDescription() {
-        return getAdGroupName();
+        return getGroupName();
     }
 
     // TODO to be removed
