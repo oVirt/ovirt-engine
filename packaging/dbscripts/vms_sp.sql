@@ -851,12 +851,17 @@ LANGUAGE plpgsql;
 Create or replace FUNCTION GetAllFromVms(v_user_id UUID, v_is_filtered boolean) RETURNS SETOF vms STABLE
    AS $procedure$
 BEGIN
-RETURN QUERY SELECT DISTINCT vms.*
-   FROM vms
-   WHERE (NOT v_is_filtered OR EXISTS (SELECT 1
-                                       FROM user_vm_permissions_view
-                                       WHERE user_id = v_user_id AND entity_id = vm_guid))
-   ORDER BY vm_guid;
+IF v_is_filtered THEN
+   RETURN QUERY SELECT vms.*
+      FROM vms INNER JOIN user_vm_permissions_view ON vms.vm_guid = user_vm_permissions_view.entity_id
+      WHERE user_id = v_user_id
+      ORDER BY vm_guid;
+ELSE
+   RETURN QUERY SELECT DISTINCT vms.*
+      FROM vms
+      ORDER BY vm_guid;
+END IF;
+
 END; $procedure$
 LANGUAGE plpgsql;
 
