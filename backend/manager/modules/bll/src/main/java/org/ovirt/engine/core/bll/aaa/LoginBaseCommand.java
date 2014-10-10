@@ -56,6 +56,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         auditLogMap.put(Authn.AuthResult.ACCOUNT_LOCKED, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
         auditLogMap.put(Authn.AuthResult.ACCOUNT_DISABLED, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
         auditLogMap.put(Authn.AuthResult.TIMED_OUT, AuditLogType.USER_ACCOUNT_DISABLED_OR_LOCKED);
+        auditLogMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, AuditLogType.USER_ACCOUNT_EXPIRED);
 
         vdcBllMessagesMap.put(Authn.AuthResult.GENERAL_ERROR, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
         vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_INVALID,
@@ -64,6 +65,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_WRONG_USERNAME_OR_PASSWORD);
         vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_LOCKED, VdcBllMessages.USER_ACCOUNT_DISABLED);
         vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_DISABLED, VdcBllMessages.USER_ACCOUNT_DISABLED);
+        vdcBllMessagesMap.put(Authn.AuthResult.ACCOUNT_EXPIRED, VdcBllMessages.USER_ACCOUNT_EXPIRED);
+
         vdcBllMessagesMap.put(Authn.AuthResult.TIMED_OUT, VdcBllMessages.USER_FAILED_TO_AUTHENTICATE_TIMED_OUT);
         vdcBllMessagesMap.put(Authn.AuthResult.CREDENTIALS_EXPIRED, VdcBllMessages.USER_PASSWORD_EXPIRED);
     }

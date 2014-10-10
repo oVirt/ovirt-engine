@@ -1162,6 +1162,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot Login. User Account is Disabled or Locked, Please contact your system administrator.")
     String USER_ACCOUNT_DISABLED();
 
+    @DefaultStringValue("Cannot Login. User Account has expired, Please contact your system administrator.")
+    String USER_ACCOUNT_EXPIRED();
+
     @DefaultStringValue("Permission denied. Engine Administrator permission is required.")
     String USER_PERMISSION_DENIED();
 
