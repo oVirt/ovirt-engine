@@ -2189,31 +2189,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             {
                 model.startProgress(null);
 
-                AsyncQuery _asyncQuery = new AsyncQuery();
-                _asyncQuery.setModel(this);
-                _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object model1, Object result1)
-                    {
-                        VmListModel vmListModel = (VmListModel) model1;
-                        UnitVmModel unitVmModel = (UnitVmModel) vmListModel.getWindow();
+                VM vm = getcurrentVm();
+                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                        VM vm = vmListModel.getcurrentVm();
-                        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
+                AddVmParameters param = new AddVmParameters(vm);
+                param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                param.setBalloonEnabled(balloonEnabled(model));
+                param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+                setRngDeviceToParams(model, param);
 
-                        AddVmParameters param = new AddVmParameters(vm);
-                        param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
-                        param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                        param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                        param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                        param.setBalloonEnabled(balloonEnabled(model));
-                        param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-                        setRngDeviceToParams(model, param);
-
-                        Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), vmListModel);
-                    }
-                };
-                AsyncDataProvider.getInstance().getTemplateDiskList(_asyncQuery, getcurrentVm().getVmtGuid());
+                Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
             }
             else
             {

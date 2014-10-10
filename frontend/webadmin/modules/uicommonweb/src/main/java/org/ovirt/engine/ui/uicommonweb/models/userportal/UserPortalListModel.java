@@ -1106,30 +1106,18 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
 
                 if (model.getProvisioning().getEntity())
                 {
-                    AsyncQuery _asyncQuery = new AsyncQuery();
-                    _asyncQuery.setModel(this);
-                    _asyncQuery.asyncCallback = new INewAsyncCallback() {
-                        @Override
-                        public void onSuccess(Object model, Object result)
-                        {
-                            UserPortalListModel userPortalListModel1 = (UserPortalListModel) model;
-                            final UnitVmModel unitVmModel = (UnitVmModel) userPortalListModel1.getWindow();
+                    VM vm = gettempVm();
+                    vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                            VM vm = gettempVm();
-                            vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(unitVmModel.getTemplate().getSelectedItem().getTemplateVersionName()));
+                    AddVmParameters param = new AddVmParameters(vm);
+                    param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+                    param.setMakeCreatorExplicitOwner(true);
+                    param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
 
-                            AddVmParameters param = new AddVmParameters(vm);
-                            param.setDiskInfoDestinationMap(unitVmModel.getDisksAllocationModel().getImageToDestinationDomainMap());
-                            param.setMakeCreatorExplicitOwner(true);
-                            param.setCopyTemplatePermissions(unitVmModel.getCopyPermissions().getEntity());
-
-                            param.setSoundDeviceEnabled(unitVmModel.getIsSoundcardEnabled().getEntity());
-                            param.setConsoleEnabled(unitVmModel.getIsConsoleDeviceEnabled().getEntity());
-                            setRngDeviceToParams(unitVmModel, param);
-                            Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(unitVmModel, defaultNetworkCreatingManager), this);
-                        }
-                    };
-                    AsyncDataProvider.getInstance().getTemplateDiskList(_asyncQuery, gettempVm().getVmtGuid());
+                    param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+                    param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+                    setRngDeviceToParams(model, param);
+                    Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
                 }
                 else
                 {
