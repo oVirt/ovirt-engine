@@ -231,7 +231,7 @@
         }
 
         .policyOverrideLabel {
-            max-width: 50%;
+            max-width: 80%;
             line-height: 1.2em;
             display: inline-block;
         }
