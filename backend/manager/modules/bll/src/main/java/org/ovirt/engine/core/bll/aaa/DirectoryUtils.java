@@ -4,8 +4,9 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
-import java.util.LinkedList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import org.ovirt.engine.api.extensions.ExtKey;
 import org.ovirt.engine.api.extensions.ExtMap;
@@ -33,8 +34,8 @@ public class DirectoryUtils {
         dbUser = new DbUser(mapPrincipalRecordToDirectoryUser(authz, principal));
         dbUser.setId(userId);
         DbGroupDAO dao = DbFacade.getInstance().getDbGroupDao();
-        LinkedList<Guid> groupIds = new LinkedList<Guid>();
-        LinkedList<String> groupsNames = new LinkedList<String>();
+        Set<Guid> groupIds = new HashSet<Guid>();
+        Set<String> groupsNames = new HashSet<String>();
         for (ExtMap group : principal.get(PrincipalRecord.GROUPS, Collections.<ExtMap> emptyList())) {
             DbGroup dbGroup = dao.getByExternalId(authz, group.<String> get(GroupRecord.ID));
             if (dbGroup != null) {

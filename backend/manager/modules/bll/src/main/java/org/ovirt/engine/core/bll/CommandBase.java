@@ -923,7 +923,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      * @return <code>true</code> if the current user is authorized to run the action, <code>false</code> otherwise
      */
     protected boolean checkUserAndGroupsAuthorization(Guid userId,
-            List<Guid> groupIds,
+            Collection<Guid> groupIds,
             final ActionGroup actionGroup,
             final Guid object,
             final VdcObjectType type,

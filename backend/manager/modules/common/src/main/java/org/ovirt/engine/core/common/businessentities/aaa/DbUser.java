@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
-import java.util.LinkedList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashSet;
 
 import javax.validation.constraints.Size;
 
@@ -65,20 +67,20 @@ public class DbUser extends IVdcQueryable {
      */
     private boolean isAdmin;
 
-    private LinkedList<String> groupNames;
+    private Collection<String> groupNames;
 
     /**
      * Comma delimited list of group identifiers.
      */
-    private LinkedList<Guid> groupIds;
+    private Collection<Guid> groupIds;
 
     public DbUser() {
         loginName = "";
         firstName = "";
         lastName = "";
         department = "";
-        groupNames = new LinkedList<String>();
-        groupIds = new LinkedList<Guid>();
+        groupNames = Collections.emptyList();
+        groupIds = Collections.emptyList();
         role = "";
         note = "";
     }
@@ -95,7 +97,7 @@ public class DbUser extends IVdcQueryable {
         active = true;
         role = "";
         note = "";
-        groupNames = new LinkedList<String>();
+        groupNames = new HashSet<String>();
         for (DirectoryGroup directoryGroup : directoryUser.getGroups()) {
             groupNames.add(directoryGroup.getName());
         }
@@ -173,12 +175,12 @@ public class DbUser extends IVdcQueryable {
         email = value;
     }
 
-    public LinkedList<String> getGroupNames() {
-        return groupNames;
+    public Collection<String> getGroupNames() {
+        return Collections.unmodifiableCollection(groupNames);
     }
 
-    public void setGroupNames(LinkedList<String> value) {
-        groupNames = value;
+    public void setGroupNames(Collection<String> value) {
+        groupNames = new HashSet<String>(value);
     }
 
     public String getNote() {
@@ -222,15 +224,15 @@ public class DbUser extends IVdcQueryable {
         return isAdmin;
     }
 
-    public void setGroupIds(LinkedList<Guid> groupIds) {
-        this.groupIds = groupIds;
+    public void setGroupIds(Collection<Guid> groupIds) {
+        this.groupIds = new HashSet<Guid>(groupIds);
     }
 
-    public LinkedList<Guid> getGroupIds() {
+    public Collection<Guid> getGroupIds() {
         if (groupIds == null) {
-            groupIds = new LinkedList<Guid>();
+            groupIds = Collections.emptyList();
         }
-        return groupIds;
+        return Collections.unmodifiableCollection(groupIds);
     }
 
     @Override
