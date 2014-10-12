@@ -581,10 +581,10 @@ public class ClusterPopupView extends AbstractModelBoundPopupView<ClusterModel> 
         fencingEnabledCheckBox.getContentWidgetContainer().setWidth("150px"); //$NON-NLS-1$
 
         skipFencingIfSDActiveCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("350px"); //$NON-NLS-1$
+        skipFencingIfSDActiveCheckBox.getContentWidgetContainer().setWidth("450px"); //$NON-NLS-1$
 
         skipFencingIfConnectivityBrokenCheckBox = new EntityModelCheckBoxEditor(Align.RIGHT);
-        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("355px"); //$NON-NLS-1$
+        skipFencingIfConnectivityBrokenCheckBox.getContentWidgetContainer().setWidth("420px"); //$NON-NLS-1$
     }
 
     private void initInfoIcons(ApplicationResources resources, ApplicationConstants constants, ApplicationTemplates templates) {
