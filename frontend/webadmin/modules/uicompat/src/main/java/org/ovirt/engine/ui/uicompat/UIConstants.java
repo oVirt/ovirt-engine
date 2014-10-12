@@ -1449,7 +1449,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
             "Do you wish to continue anyway?")
     String theFollowingTemplatesAreMissingOnTargetExportDomainForTemplateVersionsMsg();
 
-    @DefaultStringValue("There are no active Data-Centers in the system.")
+    @DefaultStringValue("There are no active Data Centers in the system.")
     String noActiveDataCenters();
 
     @DefaultStringValue("There are no active Storage Domains that you have permissions to create a disk on in the relevant Data-Center.")
