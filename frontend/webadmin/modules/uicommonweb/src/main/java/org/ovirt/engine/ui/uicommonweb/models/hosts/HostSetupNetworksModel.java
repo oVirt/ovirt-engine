@@ -27,6 +27,7 @@ import org.ovirt.engine.core.common.queries.ConfigurationValues;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -390,13 +391,33 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
             networkDialogModel.setStaticIpChangeAllowed(!getEntity().getHostName().equals(entity.getAddress()));
             networkDialogModel.getBondingOptions().setIsAvailable(false);
             networkDialogModel.setBootProtocol(entity.getBootProtocol());
+
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.HostNetworkQosSupported,
                     version)) {
                 networkDialogModel.getQosOverridden().setIsAvailable(true);
                 networkDialogModel.getQosModel().setIsAvailable(true);
                 networkDialogModel.getQosOverridden().setEntity(entity.isQosOverridden());
-                networkDialogModel.getQosModel().init(entity.getQos());
+                if (entity.isQosOverridden()) {
+                    networkDialogModel.getQosModel().init(entity.getQos());
+                } else {
+                    Guid qosId = logicalNetwork.getEntity().getQosId();
+                    if (qosId != null) {
+                        networkDialogModel.startProgress(null);
+                        Frontend.getInstance().runQuery(VdcQueryType.GetQosById,
+                                new IdQueryParameters(qosId),
+                                new AsyncQuery(new INewAsyncCallback() {
+
+                                    @Override
+                                    public void onSuccess(Object model, Object returnValue) {
+                                        networkDialogModel.getQosModel()
+                                                .init((HostNetworkQos) ((VdcQueryReturnValue) returnValue).getReturnValue());
+                                        networkDialogModel.stopProgress();
+                                    }
+                                }));
+                    }
+                }
             }
+
             if ((Boolean) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.NetworkCustomPropertiesSupported,
                     version)) {
                 KeyValueModel customPropertiesModel = networkDialogModel.getCustomPropertiesModel();
@@ -414,6 +435,7 @@ public class HostSetupNetworksModel extends EntityModel<VDS> {
                 customPropertiesModel.setKeyValueMap(validProperties);
                 customPropertiesModel.deserialize(KeyValueModel.convertProperties(entity.getCustomProperties()));
             }
+
             networkDialogModel.getIsToSync().setIsChangable(!logicalNetwork.isInSync());
             networkDialogModel.getIsToSync()
                     .setEntity(networksToSync.contains(logicalNetwork.getName()));
