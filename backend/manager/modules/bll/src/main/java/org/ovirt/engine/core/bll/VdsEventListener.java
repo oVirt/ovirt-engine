@@ -180,6 +180,10 @@ public class VdsEventListener implements IVdsEventListener {
 
     @Override
     public void processOnVmStop(final Collection<Guid> vmIds) {
+        if (vmIds.isEmpty()) {
+            return;
+        }
+
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
