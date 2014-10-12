@@ -56,6 +56,9 @@ public abstract class BaseEntityModelCheckboxEditor<T> extends AbstractValidated
         // patternfly hacks
         getContentWidgetElement().addClassName("cbe_checkbox_pfly_fix"); //$NON-NLS-1$
         getInternalLabelElement().addClassName("cbe_label_pfly_fix"); //$NON-NLS-1$
+        if (!useCheckBoxWidgetLabel) {
+            addWrapperStyleName("cbe_right_of_label_pfly_fix"); //$NON-NLS-1$
+        }
 
     }
 
