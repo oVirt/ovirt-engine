@@ -67,12 +67,12 @@ class Plugin(plugin.PluginBase):
 
         def _ssh_get_port(self):
             port_valid = False
-            port = None
+            key = osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_SSH_PORT
+            port = self.environment[key]
             interactive = False
             while not port_valid:
                 try:
-                    key = osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_SSH_PORT
-                    if self.environment[key] is None:
+                    if port is None:
                         interactive = True
                         port = int(
                             self.dialog.queryString(
@@ -237,8 +237,13 @@ class Plugin(plugin.PluginBase):
             )
             sf = self._client.open_sftp()
             res = None
-            with sf.open(file_name, 'r') as f:
+            f = None
+            try:
+                f = sf.open(file_name, 'r')
                 res = f.read()
+            finally:
+                if f:
+                    f.close()
             return res
 
         def copy_to_engine(
@@ -255,8 +260,13 @@ class Plugin(plugin.PluginBase):
                 )
             )
             sf = self._client.open_sftp()
-            with sf.open(file_name, 'w') as f:
+            f = None
+            try:
+                f = sf.open(file_name, 'w')
                 f.write(content)
+            finally:
+                if f:
+                    f.close()
 
         def cleanup(self):
             if self._client:
