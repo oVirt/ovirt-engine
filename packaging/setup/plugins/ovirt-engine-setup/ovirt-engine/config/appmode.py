@@ -98,9 +98,9 @@ class Plugin(plugin.PluginBase):
                 note=_('Application mode (@VALUES@) [@DEFAULT@]: '),
                 prompt=True,
                 validValues=(
-                    'Both',
                     'Virt',
                     'Gluster',
+                    'Both',
                 ),
                 caseSensitive=False,
                 default=(
