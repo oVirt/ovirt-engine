@@ -454,7 +454,7 @@ public class VmMapper {
             pool.setId(entity.getVmPoolId().toString());
             model.setVmPool(pool);
         }
-        if (entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
+        if (entity.getDynamicData() != null && !entity.getStatus().isNotRunning()) {
             if (model.getOs() != null && entity.getBootSequence() != null) {
                 for (Boot boot : map(entity.getBootSequence(), null)) {
                     model.getOs().getBoot().add(boot);
