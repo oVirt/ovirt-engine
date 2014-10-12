@@ -1452,10 +1452,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are no active Data Centers in the system.")
     String noActiveDataCenters();
 
-    @DefaultStringValue("There are no active Storage Domains that you have permissions to create a disk on in the relevant Data-Center.")
+    @DefaultStringValue("There are no active Storage Domains that you have permissions to create a disk on in the relevant Data Center.")
     String noActiveStorageDomainsInDC();
 
-    @DefaultStringValue("The relevant Data-Center is not active.")
+    @DefaultStringValue("The relevant Data Center is not active.")
     String relevantDCnotActive();
 
     @DefaultStringValue("Host name can't contain blanks or special characters, must be at least one character long, and contain 'a-z', '0-9', '_' or '.' characters.")
