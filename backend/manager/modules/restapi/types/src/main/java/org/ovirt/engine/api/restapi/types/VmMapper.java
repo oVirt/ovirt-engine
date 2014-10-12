@@ -328,7 +328,7 @@ public class VmMapper extends VmBaseMapper {
         }
 
         // fill dynamic data
-        if (entity.getDynamicData() != null && entity.getStatus().isRunningOrPaused()) {
+        if (entity.getDynamicData() != null && !entity.getStatus().isNotRunning()) {
             if(entity.getRunOnVds() != null) {
                 model.setHost(new Host());
                 model.getHost().setId(entity.getRunOnVds().toString());
