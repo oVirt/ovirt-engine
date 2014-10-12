@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.lang.reflect.Field;
 import java.util.Collections;
 import java.util.HashMap;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.AddVmAndAttachToPoolParameters;
@@ -60,9 +59,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         super(parameters, cmdContext);
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
 
-        // vm should be filled in end action
-        if (parameters.getVm() != null) {
-            setVmTemplateId(parameters.getVm().getVmtGuid());
+        if (getVm() != null) {
+            VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid());
+            if (latest != null) {
+                setVmTemplate(latest);
+            }
         }
     }
 
@@ -235,15 +236,11 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
     @Override
     protected Map<String, Pair<String, String>> getSharedLocks() {
         // take shared lock on latest template, since we will add vm from it
-        if (getVm() != null) {
-            VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid());
-            if (latest != null) {
-                setVmTemplateId(latest.getId());
-                setVmTemplate(latest);
-                return Collections.singletonMap(latest.getId().toString(),
-                        LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
-            }
+        if (getVmTemplateId() != null) {
+            return Collections.singletonMap(getVmTemplateId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.TEMPLATE, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
         }
+
         return null;
     }
 
