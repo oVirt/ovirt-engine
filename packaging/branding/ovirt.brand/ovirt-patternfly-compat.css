@@ -120,6 +120,14 @@ label {
     position: relative;
     top: 2px;
 }
+
+.cbe_right_of_label_pfly_fix {
+}
+
+.cbe_right_of_label_pfly_fix .cbe_checkbox_pfly_fix {
+    top: -2px;
+}
+
 .cbe_label_pfly_fix {
     padding-left: 5px;
 }
