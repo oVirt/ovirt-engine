@@ -1,6 +1,5 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
-import java.security.GeneralSecurityException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,7 +11,6 @@ import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
@@ -88,12 +86,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
 
     protected void setUserDomainCredentials(String domain) {
         setLoginName(configuration.getProperty("config.AdUserName"));
-        try {
-            setPassword(EngineEncryptionUtils.decrypt(configuration.getProperty("config.AdUserPassword")));
-        } catch (GeneralSecurityException e) {
-            log.error(String.format("Error decrypting password. Message is: %1$s", e.getMessage()));
-            throw new RuntimeException(e);
-        }
+        setPassword(configuration.getProperty("config.AdUserPassword"));
         if (getLoginName().contains("@")) {
             String userDomain = getLoginName().split("@")[1].toLowerCase();
             setAuthenticationDomain(userDomain);

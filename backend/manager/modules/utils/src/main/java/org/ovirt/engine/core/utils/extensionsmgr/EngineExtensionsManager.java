@@ -21,8 +21,9 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.extensions.mgr.ExtensionsManager;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.slf4j.LoggerFactory;
+import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EngineExtensionsManager extends ExtensionsManager {
 
@@ -220,9 +221,16 @@ public class EngineExtensionsManager extends ExtensionsManager {
     }
 
     private void attachConfigValueFromDb(String domain, Properties props, ConfigValues... keys) {
-        for (ConfigValues key : keys) {
-            String value = multipleValuesKeys.contains(key.name()) ? getValue(domain, Config.getValue(key).toString()): Config.getValue(key).toString();
-            props.put("config." + key.name(), value);
+        try {
+            for (ConfigValues key : keys) {
+                String value = multipleValuesKeys.contains(key.name()) ? getValue(domain, Config.getValue(key).toString()): Config.getValue(key).toString();
+                if (ConfigValues.AdUserPassword == key) {
+                    value = EngineEncryptionUtils.decrypt(value);
+                }
+                props.put("config." + key.name(), value);
+            }
+        } catch(Exception e) {
+            throw new RuntimeException(e);
         }
     }
 
