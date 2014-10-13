@@ -116,6 +116,15 @@ public abstract class NetworkInterface<T extends NetworkStatistics> extends IVdc
     }
 
     /**
+     * Returns whether the network device has non-zero speed.
+     *
+     * @return true iff the speed is set and is non-zero.
+     */
+    public boolean hasSpeed() {
+        return speed != null && speed != 0;
+    }
+
+    /**
      * Sets the type of network device.
      *
      * @param type

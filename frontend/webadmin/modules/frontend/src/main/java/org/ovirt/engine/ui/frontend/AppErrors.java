@@ -3113,6 +3113,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. All or none of the networks attached to an interface must have QoS configured, but on the following interface(s) some of the networks are missing QoS: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Speed must be properly reported for interfaces where QoS is configured, but is reported as missing or zero for the following interfaces: ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. The overall committed rate on a single interface must not exceed ${commitmentThreshold}% of the interface's speed, but exceeds this threshold on the following interface(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT_LIST}.")
+    String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT();
+
     @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
     String ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES();
 

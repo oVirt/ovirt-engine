@@ -50,9 +50,17 @@ public class SetupNetworksHelperTest {
 
     private static final String BOND_NAME = "bond0";
     private static final String MANAGEMENT_NETWORK_NAME = "management";
+    private static final String BOND_MODE_0 = "mode=0 miimon=100";
+    private static final String BOND_MODE_1 = "mode=1 miimon=100";
+    private static final String BOND_MODE_2 = "mode=2 miimon=100";
+    private static final String BOND_MODE_3 = "mode=3 miimon=100";
+    private static final String BOND_MODE_4 = "mode=4 miimon=100";
+    private static final String BOND_MODE_5 = "mode=5 miimon=100";
+    private static final String BOND_MODE_6 = "mode=6 miimon=100";
     private static final int DEFAULT_MTU = 1500;
     private static final int LOW_BANDWIDTH = 500;
     private static final int HIGH_BANDWIDTH = 2000;
+    private static final int DEFAULT_SPEED = 1000;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.ManagementNetwork,
@@ -417,7 +425,13 @@ public class SetupNetworksHelperTest {
         validateAndAssertNetworkModified(helper, network);
     }
 
-    private SetupNetworksHelper setupCompositeQosConfiguration(String nicName, boolean qosOnAll) {
+    private SetupNetworksHelper setupCompositeQosConfiguration(boolean constructBond,
+            boolean qosOnAll,
+            HostNetworkQos qos,
+            Integer slaveSpeed,
+            Integer masterSpeed,
+            String bondOptions) {
+
         Network net1 = createNetwork("net1");
         net1.setVlanId(100);
         Network net2 = createNetwork("net2");
@@ -425,24 +439,53 @@ public class SetupNetworksHelperTest {
         Network net3 = createNetwork("net3");
         net3.setVmNetwork(false);
 
+        VdsNetworkInterface master = createNic(BOND_NAME, net3.getName());
+        master.setSpeed(masterSpeed);
+        VdsNetworkInterface vlan1 = createVlan(master.getName(), net1.getVlanId(), net1.getName());
+        VdsNetworkInterface vlan2 = createVlan(master.getName(), net2.getVlanId(), net2.getName());
+
+        vlan1.setQosOverridden(true);
+        vlan1.setQos(qos);
         Guid qosId = Guid.newGuid();
-        when(qosDao.get(qosId)).thenReturn(createQos());
-        net1.setQosId(qosId);
+        when(qosDao.get(qosId)).thenReturn(qos);
         net2.setQosId(qosId);
         net3.setQosId(qosOnAll ? qosId : null);
 
-        VdsNetworkInterface nic = createNic(nicName, net3.getName());
-        VdsNetworkInterface vlan1 = createVlan(nic.getName(), net1.getVlanId(), net1.getName());
-        VdsNetworkInterface vlan2 = createVlan(nic.getName(), net2.getVlanId(), net2.getName());
-
         mockExistingNetworks(net1, net2, net3);
-        mockExistingIfaces(nic);
 
-        return createHelper(createParametersForNics(nic, vlan1, vlan2), Version.v3_4);
+        if (constructBond) {
+            master.setBonded(true);
+            VdsNetworkInterface slave1 = createNic("nic1", null);
+            VdsNetworkInterface slave2 = createNic("nic2", null);
+            slave2.setSpeed(slaveSpeed);
+            master.setBondOptions(bondOptions);
+            mockExistingIfaces(master, slave1, slave2);
+            slave1.setBondName(master.getName());
+            slave2.setBondName(master.getName());
+            return createHelper(createParametersForNics(master, slave1, slave2, vlan1, vlan2), Version.v3_4);
+        } else {
+            mockExistingIfaces(master);
+            return createHelper(createParametersForNics(master, vlan1, vlan2), Version.v3_4);
+        }
+    }
+
+    private SetupNetworksHelper setupCompositeQosConfiguration(boolean constructBond,
+            boolean qosOnAll,
+            HostNetworkQos qos,
+            Integer nicSpeed) {
+        return setupCompositeQosConfiguration(constructBond, qosOnAll, qos, null, nicSpeed, null);
+    }
+
+    private SetupNetworksHelper setupCompositeQosConfiguration(boolean qosOnAll,
+            HostNetworkQos qos,
+            Integer slaveSpeed,
+            Integer bondSpeed,
+            String bondOptions) {
+        return setupCompositeQosConfiguration(true, qosOnAll, qos, slaveSpeed, bondSpeed, bondOptions);
     }
 
     private SetupNetworksHelper setupCompositeQosConfiguration(boolean qosOnAll) {
-        return setupCompositeQosConfiguration("nic0", qosOnAll);
+        return setupCompositeQosConfiguration(qosOnAll, createQos(), null, DEFAULT_SPEED, BOND_MODE_4);
     }
 
     @Test
@@ -453,11 +496,154 @@ public class SetupNetworksHelperTest {
 
     @Test
     public void qosNotConfiguredOnAllNetworks() {
-        String nicName = "nic0";
-        SetupNetworksHelper helper = setupCompositeQosConfiguration(nicName, false);
+        SetupNetworksHelper helper = setupCompositeQosConfiguration(false);
         validateAndExpectViolation(helper,
                 VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS,
-                nicName);
+                BOND_NAME);
+    }
+
+    private SetupNetworksHelper qosCommitmentSetup(boolean constructBond,
+            int totalCommitment,
+            Integer slaveSpeed,
+            Integer masterSpeed,
+            String bondOptions) {
+
+        HostNetworkQos qos = new HostNetworkQos();
+        qos.setOutAverageLinkshare(10);
+        qos.setOutAverageRealtime(totalCommitment / 3);
+        return constructBond ? setupCompositeQosConfiguration(true, qos, slaveSpeed, masterSpeed, bondOptions)
+                : setupCompositeQosConfiguration(false, true, qos, masterSpeed);
+    }
+
+    private SetupNetworksHelper qosCommitmentNicSetup(int totalCommitment, Integer nicSpeed) {
+        return qosCommitmentSetup(false, totalCommitment, null, nicSpeed, null);
+    }
+
+    @Test
+    public void qosValidCommitmentReportedNicSpeed() {
+        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED / 2, DEFAULT_SPEED);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosOverCommitmentReportedNicSpeed() {
+        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED, DEFAULT_SPEED);
+        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+    }
+
+    @Test
+    public void qosCommitmentMissingNicSpeed() {
+        SetupNetworksHelper helper = qosCommitmentNicSetup(DEFAULT_SPEED / 2, null);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                BOND_NAME);
+    }
+
+    private SetupNetworksHelper qosCommitmentBondSetup(int totalCommitment,
+            Integer slaveSpeed,
+            Integer bondSpeed,
+            String bondOptions) {
+        return qosCommitmentSetup(true, totalCommitment, slaveSpeed, bondSpeed, bondOptions);
+    }
+
+    private SetupNetworksHelper qosCommitmentReportedBondSpeed(int totalCommitment) {
+        return qosCommitmentBondSetup(totalCommitment, null, DEFAULT_SPEED, BOND_MODE_4);
+    }
+
+    @Test
+    public void qosValidCommitmentReportedBondSpeed() {
+        SetupNetworksHelper helper = qosCommitmentReportedBondSpeed(DEFAULT_SPEED / 2);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosOverCommitmentReportedBondSpeed() {
+        SetupNetworksHelper helper = qosCommitmentReportedBondSpeed(DEFAULT_SPEED);
+        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+    }
+
+    private SetupNetworksHelper qosCommitmendMissingBondSpeed(String bondOptions) {
+        return qosCommitmentBondSetup(DEFAULT_SPEED, DEFAULT_SPEED, null, bondOptions);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode0() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_0);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode2() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_2);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode4() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_4);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode5() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_5);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode6() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_6);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode1() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_1);
+        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+    }
+
+    @Test
+    public void qosCommitmentMissingBondSpeedMode3() {
+        SetupNetworksHelper helper = qosCommitmendMissingBondSpeed(BOND_MODE_3);
+        validateAndExpectViolation(helper, VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, BOND_NAME);
+    }
+
+    private SetupNetworksHelper qosBondSpeedSetup(Integer slaveSpeed, Integer bondSpeed) {
+        return setupCompositeQosConfiguration(true, createQos(), slaveSpeed, bondSpeed, BOND_MODE_4);
+    }
+
+    @Test
+    public void qosBondSpeedReported() {
+        SetupNetworksHelper helper = qosBondSpeedSetup(DEFAULT_SPEED, null);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosBondSpeedMissing() {
+        SetupNetworksHelper helper = qosBondSpeedSetup(null, DEFAULT_SPEED);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosBondSpeedZero() {
+        SetupNetworksHelper helper = qosBondSpeedSetup(0, DEFAULT_SPEED);
+        validateAndExpectNoViolations(helper);
+    }
+
+    @Test
+    public void qosBondAndSlaveSpeedsMissing() {
+        SetupNetworksHelper helper = qosBondSpeedSetup(null, null);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                BOND_NAME);
+    }
+
+    @Test
+    public void qosBondAndSlaveSpeedsZero() {
+        SetupNetworksHelper helper = qosBondSpeedSetup(0, 0);
+        validateAndExpectViolation(helper,
+                VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED,
+                BOND_NAME);
     }
 
     @Test
@@ -1747,7 +1933,8 @@ public class SetupNetworksHelperTest {
             boolean bridged,
             String address,
             boolean qosOverridden,
-            Set<String> labels) {
+            Set<String> labels,
+            Integer speed) {
         VdsNetworkInterface iface = new VdsNetworkInterface();
         iface.setId(id);
         iface.setName(name);
@@ -1760,6 +1947,7 @@ public class SetupNetworksHelperTest {
         iface.setAddress(address);
         iface.setQosOverridden(qosOverridden);
         iface.setLabels(labels);
+        iface.setSpeed(speed);
         return iface;
     }
 
@@ -1771,7 +1959,18 @@ public class SetupNetworksHelperTest {
      * @return {@link VdsNetworkInterface} representing a regular NIC with the given parameters.
      */
     private VdsNetworkInterface createNic(String nicName, String networkName) {
-        return createVdsInterface(Guid.newGuid(), nicName, false, null, null, null, networkName, true, null, false, null);
+        return createVdsInterface(Guid.newGuid(),
+                nicName,
+                false,
+                null,
+                null,
+                null,
+                networkName,
+                true,
+                null,
+                false,
+                null,
+                DEFAULT_SPEED);
     }
 
     /**
@@ -1807,7 +2006,8 @@ public class SetupNetworksHelperTest {
                 network.isVmNetwork(),
                 network.getAddr(),
                 false,
-                null);
+                null,
+                DEFAULT_SPEED);
         return nic;
     }
 
@@ -1833,7 +2033,18 @@ public class SetupNetworksHelperTest {
      * @return Bond with the given parameters.
      */
     private VdsNetworkInterface createBond(String name, String networkName) {
-        return createVdsInterface(Guid.newGuid(), name, true, null, null, null, networkName, true, null, false, null);
+        return createVdsInterface(Guid.newGuid(),
+                name,
+                true,
+                null,
+                null,
+                null,
+                networkName,
+                true,
+                null,
+                false,
+                null,
+                DEFAULT_SPEED);
     }
 
     /**
@@ -1856,7 +2067,8 @@ public class SetupNetworksHelperTest {
                 true,
                 null,
                 false,
-                null);
+                null,
+                DEFAULT_SPEED);
     }
 
     /**
@@ -1869,7 +2081,18 @@ public class SetupNetworksHelperTest {
      * @return NIC from given NIC which is either enslaved or freed.
      */
     private VdsNetworkInterface enslaveOrReleaseNIC(VdsNetworkInterface iface, String bondName) {
-        return createVdsInterface(iface.getId(), iface.getName(), false, bondName, null, null, null, true, null, false, null);
+        return createVdsInterface(iface.getId(),
+                iface.getName(),
+                false,
+                bondName,
+                null,
+                null,
+                null,
+                true,
+                null,
+                false,
+                null,
+                DEFAULT_SPEED);
     }
 
     /**
@@ -2008,7 +2231,8 @@ public class SetupNetworksHelperTest {
                     nics[i].isBridged(),
                     nics[i].getAddress(),
                     nics[i].isQosOverridden(),
-                    nics[i].getLabels()));
+                    nics[i].getLabels(),
+                    nics[i].getSpeed()));
         }
         when(interfaceDAO.getAllInterfacesForVds(any(Guid.class))).thenReturn(existingIfaces);
     }

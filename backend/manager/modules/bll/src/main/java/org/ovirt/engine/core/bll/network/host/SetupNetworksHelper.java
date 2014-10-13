@@ -7,7 +7,10 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.ObjectUtils;
@@ -20,6 +23,7 @@ import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.HostNetworkQos;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkBootProtocol;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
@@ -35,6 +39,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
+    private static final Pattern BOND_OPTS_MODE_CAPTURE = Pattern.compile("mode=(\\d)");
+    private static final float QOS_OVERCOMMITMENT_THRESHOLD = 0.75f;
     protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
@@ -49,11 +55,13 @@ public class SetupNetworksHelper {
     private Map<String, VdsNetworkInterface> removedBonds = new HashMap<String, VdsNetworkInterface>();
     private List<VdsNetworkInterface> modifiedInterfaces = new ArrayList<>();
 
-    /** All interface`s names that were processed by the helper. */
-    private Set<String> ifaceNames = new HashSet<String>();
+    /** All interfaces that were processed by the helper. */
+    private Map<String, VdsNetworkInterface> ifaceByNames = new HashMap<>();
 
     /** Map of all bonds which were processed by the helper. Key = bond name, Value = list of slave NICs. */
     private Map<String, List<VdsNetworkInterface>> bonds = new HashMap<String, List<VdsNetworkInterface>>();
+
+    private Map<String, Integer> ifaceSpeeds = new HashMap<>();
 
     /** All network`s names that are attached to some sort of interface. */
     private Set<String> attachedNetworksNames = new HashSet<String>();
@@ -248,6 +256,7 @@ public class SetupNetworksHelper {
     private void validateNetworkQos() {
         validateQosOverriddenInterfaces();
         validateQosNotPartiallyConfigured();
+        validateQosCommitment();
     }
 
     /**
@@ -305,6 +314,108 @@ public class SetupNetworksHelper {
                 addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INTERFACES_WITHOUT_QOS, ifaceName);
             }
         }
+    }
+
+    private void validateQosCommitment() {
+        Map<String, Float> relativeCommitmentByBaseInterface = new HashMap<>();
+
+        // first accumulate the commitment on all base interfaces by sub-interfaces
+        for (VdsNetworkInterface iface : params.getInterfaces()) {
+            String networkName = iface.getNetworkName();
+            Network network = getExistingClusterNetworks().get(networkName);
+            if (NetworkUtils.qosConfiguredOnInterface(iface, network)) {
+                String baseIfaceName = NetworkUtils.stripVlan(iface);
+                Integer speed = computeInterfaceSpeed(baseIfaceName);
+
+                // if effective interface speed can't be figured out, no need to consider it now (fail later)
+                if (speed == null) {
+                    continue;
+                }
+
+                Float baseInterfaceCommitment = relativeCommitmentByBaseInterface.get(baseIfaceName);
+                if (baseInterfaceCommitment == null) {
+                    baseInterfaceCommitment = 0f;
+                }
+
+                HostNetworkQos qos =
+                        iface.isQosOverridden() ? iface.getQos() : getDbFacade().getHostNetworkQosDao()
+                                .get(network.getQosId());
+                Integer subInterfaceCommitment = qos.getOutAverageRealtime();
+                if (subInterfaceCommitment != null) {
+                    baseInterfaceCommitment += (float) subInterfaceCommitment / speed;
+                }
+
+                relativeCommitmentByBaseInterface.put(baseIfaceName, baseInterfaceCommitment);
+            }
+        }
+
+        // if any base interface speed couldn't be figured out be protective - add a violation
+        for (Entry<String, Integer> entry : ifaceSpeeds.entrySet()) {
+            if (entry.getValue() == null) {
+                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_INVALID_INTERFACE_SPEED, entry.getKey());
+            }
+        }
+
+        // if any base interface is over-committed - add a violation
+        for (Entry<String, Float> entry : relativeCommitmentByBaseInterface.entrySet()) {
+            if (entry.getValue() > QOS_OVERCOMMITMENT_THRESHOLD) {
+                addViolation(VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT, entry.getKey());
+            }
+        }
+    }
+
+    /**
+     * Computes the effective speed of an interface, using the following algorithm:
+     *
+     * <li>If vdsm reported a non-zero speed for the interface, use that.</li>
+     *
+     * <li>Else, if the interface is a newly-created bond and all its slaves have non-zero speed reported by vdsm,
+     * compute the effective bond speed according to bonding mode.</li>
+     *
+     * <li>Else, return null.
+     *
+     * @param ifaceName
+     *            the interface whose effective speed is to be computed.
+     * @return the effective interface speed based on vdsm report, or null in case reported speeds are missing or zero.
+     */
+    private Integer computeInterfaceSpeed(String ifaceName) {
+        VdsNetworkInterface iface = ifaceByNames.get(ifaceName);
+        if (ifaceSpeeds.containsKey(ifaceName)) {
+            return ifaceSpeeds.get(ifaceName);
+        } else {
+            Integer speed = null;
+            if (iface.hasSpeed()) {
+                // vdsm reported some speed for this interface, use it
+                speed = iface.getSpeed();
+            } else {
+                // vdsm didn't report any speed - if this is a new bond, calculate its speed
+                Iterable<VdsNetworkInterface> slaves = bonds.get(ifaceName);
+                if (slaves != null) {
+                    boolean chooseMinimum = isBondModeFailover(iface.getBondOptions());
+                    speed = chooseMinimum ? Integer.MAX_VALUE : 0;
+                    for (VdsNetworkInterface slave : slaves) {
+                        if (!slave.hasSpeed()) {
+                            speed = null;
+                            break;
+                        }
+
+                        speed = chooseMinimum ? Math.min(speed, slave.getSpeed()) : speed + slave.getSpeed();
+                    }
+                }
+            }
+
+            // cache the speed for future reference
+            ifaceSpeeds.put(ifaceName, speed);
+
+            return speed;
+        }
+    }
+
+    private boolean isBondModeFailover(String bondOptions) {
+        Matcher matcher = BOND_OPTS_MODE_CAPTURE.matcher(bondOptions);
+        matcher.find();
+        int bondMode = Integer.parseInt(matcher.group(1));
+        return bondMode == 1 || bondMode == 3;
     }
 
     private void validateCustomProperties() {
@@ -375,6 +486,9 @@ public class SetupNetworksHelper {
             violationMessages.add(MessageFormat.format(VIOLATING_ENTITIES_LIST_FORMAT,
                     violationName,
                     StringUtils.join(v.getValue(), ", ")));
+            if (v.getKey() == VdcBllMessages.ACTION_TYPE_FAILED_HOST_NETWORK_QOS_OVERCOMMITMENT) {
+                violationMessages.add("$commitmentThreshold " + (int) (100 * QOS_OVERCOMMITMENT_THRESHOLD));
+            }
         }
 
         return violationMessages;
@@ -388,12 +502,12 @@ public class SetupNetworksHelper {
      * @return <code>true</code> if interface wasn't in the list and was added to it, otherwise <code>false</code>.
      */
     private boolean addInterfaceToProcessedList(VdsNetworkInterface iface) {
-        if (ifaceNames.contains(iface.getName())) {
+        if (ifaceByNames.containsKey(iface.getName())) {
             addViolation(VdcBllMessages.NETWORK_INTERFACES_ALREADY_SPECIFIED, iface.getName());
             return false;
         }
 
-        ifaceNames.add(iface.getName());
+        ifaceByNames.put(iface.getName(), iface);
         return true;
     }
 
