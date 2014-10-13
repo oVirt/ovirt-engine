@@ -132,3 +132,16 @@ BEGIN
     WHERE vm_id = v_vm_id;
 END; $procedure$
 LANGUAGE plpgsql;
+
+-- Get All positive enforcing Affinity Groups which contain VMs running on given host id
+Create or replace FUNCTION getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(v_vds_id UUID) RETURNS SETOF affinity_groups_view STABLE
+AS $procedure$
+BEGIN
+    RETURN QUERY
+    SELECT DISTINCT affinity_groups_view.* FROM affinity_groups_view
+    INNER JOIN affinity_group_members ON id = affinity_group_members.affinity_group_id
+    INNER JOIN vm_dynamic ON affinity_group_members.vm_id = vm_dynamic.vm_guid AND vm_dynamic.run_on_vds = v_vds_id
+    WHERE positive AND enforcing;
+END; $procedure$
+LANGUAGE plpgsql;
+

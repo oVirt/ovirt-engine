@@ -9,7 +9,6 @@ import java.util.Set;
 
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.AffinityGroup;
@@ -71,19 +70,12 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         for (VM iter : getVmDao().getAllRunningByCluster(vm.getVdsGroupId())) {
             runningVMsMap.put(iter.getId(), iter);
         }
-        Map<Guid, VDS> hostMap = new HashMap<>();
-        for (VDS host : hosts) {
-            hostMap.put(host.getId(), host);
-        }
 
         Set<Guid> acceptableHosts = new HashSet<>();
         // Group all hosts for VMs with positive affinity
         for (Guid id : allVmIdsPositive) {
             VM runVm = runningVMsMap.get(id);
-            if (runVm != null && runVm.getRunOnVds() != null && hostMap.get(runVm.getRunOnVds()) != null
-                    // when a host preparing for maintenance, we should ignore the positive affinity (without that we
-                    // can't migrate).
-                    && hostMap.get(runVm.getRunOnVds()).getStatus() != VDSStatus.PreparingForMaintenance) {
+            if (runVm != null && runVm.getRunOnVds() != null) {
                 acceptableHosts.add(runVm.getRunOnVds());
             }
         }
@@ -95,6 +87,11 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
             if (runVm != null && runVm.getRunOnVds() != null) {
                 unacceptableHosts.add(runVm.getRunOnVds());
             }
+        }
+
+        Map<Guid, VDS> hostMap = new HashMap<>();
+        for (VDS host : hosts) {
+            hostMap.put(host.getId(), host);
         }
 
         // Compute the intersection of hosts with positive and negative affinity and report that
