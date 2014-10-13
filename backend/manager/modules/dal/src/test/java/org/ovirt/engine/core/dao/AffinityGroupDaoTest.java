@@ -142,4 +142,22 @@ public class AffinityGroupDaoTest extends BaseDAOTestCase {
         dao.removeVmFromAffinityGroups(FixturesTool.VM_RHEL5_POOL_50);
         assertTrue(dao.getAllAffinityGroupsByVmId(FixturesTool.VM_RHEL5_POOL_50).isEmpty());
     }
+
+    @Test
+    public void testEmptyGetAffinityGroupByVdsId() {
+        getAffinityGroupByVdsIdHelper(Guid.Empty, 0);
+    }
+
+    @Test
+    public void testGetAffinityGroupByVdsId() {
+        getAffinityGroupByVdsIdHelper(FixturesTool.VDS_RHEL6_NFS_SPM, 1);
+    }
+
+    private void getAffinityGroupByVdsIdHelper(Guid vdsId, int count) {
+        List<AffinityGroup> affinityGroups =
+                dao.getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
+
+        assertNotNull(affinityGroups);
+        assertEquals(count, affinityGroups.size());
+    }
 }

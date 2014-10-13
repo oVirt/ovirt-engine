@@ -61,6 +61,13 @@ public class AffinityGroupDaoImpl extends DefaultGenericDaoDbFacade<AffinityGrou
     }
 
     @Override
+    public List<AffinityGroup> getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(Guid vdsId) {
+        return getCallsHandler().executeReadList("getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId",
+                createEntityRowMapper(),
+                getCustomMapSqlParameterSource().addValue("vds_id", vdsId));
+    }
+
+    @Override
     protected MapSqlParameterSource createFullParametersMapper(AffinityGroup entity) {
         return createIdParameterMapper(entity.getId())
                 .addValue("name", entity.getName())

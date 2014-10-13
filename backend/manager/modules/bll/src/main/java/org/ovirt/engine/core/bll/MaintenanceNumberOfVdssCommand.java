@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -12,6 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -31,11 +30,13 @@ import org.ovirt.engine.core.common.businessentities.VdsSpmStatus;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
+import org.ovirt.engine.core.common.scheduling.AffinityGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.utils.ReplacementUtils;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CancelMigrationVDSParameters;
 
 @InternalCommandAttribute
@@ -246,6 +247,8 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                                 getAsyncTaskDao().getAsyncTaskIdsByStoragePoolId(vds.getStoragePoolId()).size() > 0) {
                             addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_SPM_WITH_RUNNING_TASKS);
                             result = false;
+                        } else {
+                            result = handlePositiveEnforcingAffinityGroup(vdsId, vms);
                         }
                     }
                 }
@@ -311,6 +314,45 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
             }
         }
         return result;
+    }
+
+    // Currently we cannot guarantee that migrating VM with positive enforcing affinity will
+    // migrate to the same target host, user will have to manually fix it before maintenancing the host.
+    private boolean handlePositiveEnforcingAffinityGroup(Guid vdsId, List<VM> runningVms) {
+        // less than 2 VMs in host means no positive affinity to worry about
+        if (runningVms.size() > 1) {
+            List<AffinityGroup> affinityGroups =
+                    getDbFacade().getAffinityGroupDao()
+                            .getPositiveEnforcingAffinityGroupsByRunningVmsOnVdsId(vdsId);
+            if (!affinityGroups.isEmpty()) {
+                List<Object> items = new ArrayList<>();
+                for (AffinityGroup affinityGroup : affinityGroups) {
+                    // affinity group has less than 2 vms (trivial)
+                    if (affinityGroup.getEntityIds().size() < 2) {
+                        continue;
+                    }
+                    int count = 0; // counter for running VMs in affinity group
+                    for (VM vm : runningVms) {
+                        if (affinityGroup.getEntityIds().contains(vm.getId())) {
+                            count++;
+                        }
+                    }
+                    if (count > 1) {
+                        items.add(String.format("%1$s (%2$s)",
+                                affinityGroup.getName(),
+                                StringUtils.join(affinityGroup.getEntityNames(), " ,")));
+                    }
+                }
+                if (!items.isEmpty()) {
+                    addCanDoActionMessage(VdcBllMessages.VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS);
+                    getReturnValue().getCanDoActionMessages()
+                            .addAll(ReplacementUtils.replaceWith("AFFINITY_GROUPS_VMS", items));
+                    return false;
+                }
+            }
+        }
+
+        return true;
     }
 
     private void addSharedLockEntry(VDS vds) {

@@ -175,6 +175,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot switch Host to Maintenance mode. Host is already in Maintenance mode.")
     String VDS_CANNOT_MAINTENANCE_VDS_IS_IN_MAINTENANCE();
 
+    @DefaultStringValue("Cannot switch Host(s) to Maintenance mode.\nThe following Enforcing Affinity Group(s) have running VMs and can break the affinity rule.\n${AFFINITY_GROUPS_VMS}\nPlease manually migrate the VMs, or change Affinity Group's enforcing to false.")
+    String VDS_CANNOT_MAINTENANCE_VDS_HAS_AFFINITY_VMS();
+
     @DefaultStringValue("Host CPU type is not supported in this cluster compatibility version or is not supported at all.")
     String CPU_TYPE_UNSUPPORTED_IN_THIS_CLUSTER_VERSION();
 
