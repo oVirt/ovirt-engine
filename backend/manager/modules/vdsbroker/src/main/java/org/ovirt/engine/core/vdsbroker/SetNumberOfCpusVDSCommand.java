@@ -36,5 +36,10 @@ public class SetNumberOfCpusVDSCommand<P extends SetNumberOfCpusVDSCommand.Param
         public int getNumberOfCpus() {
             return numberOfCpus;
         }
+
+        @Override
+        public String toString() {
+            return String.format("%s, numberOfCpus=%s", super.toString(), getNumberOfCpus());
+        }
     }
 }
