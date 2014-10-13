@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -28,7 +27,7 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
         updateNetConfigDirtyFlag();
         hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(getVds(),
                 skipManagementNetwork(),
-                Entities.entitiesByName(getParameters().getInterfaces()));
+                getParameters().getInterfaces());
     }
 
     /**

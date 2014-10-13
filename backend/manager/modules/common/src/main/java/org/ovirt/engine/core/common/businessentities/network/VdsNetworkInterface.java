@@ -407,6 +407,18 @@ public class VdsNetworkInterface extends NetworkInterface<VdsNetworkStatistics> 
         this.customProperties = customProperties;
     }
 
+    /**
+     * Preserves nic attributes which are managed by the engine
+     *
+     * @param sourceNic
+     *            the given nic which its attributes should override the one's of the nic
+     */
+    public void overrideEngineManagedAttributes(VdsNetworkInterface sourceNic) {
+        setLabels(sourceNic.getLabels());
+        setQosOverridden(sourceNic.isQosOverridden());
+        setCustomProperties(sourceNic.getCustomProperties());
+    }
+
     @Override
     public String toString() {
         StringBuilder builder = new StringBuilder();

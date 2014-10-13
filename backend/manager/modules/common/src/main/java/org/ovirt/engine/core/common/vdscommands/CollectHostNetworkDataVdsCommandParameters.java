@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.vdscommands;
 
+import java.util.Collections;
 import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -14,6 +15,7 @@ public class CollectHostNetworkDataVdsCommandParameters extends VdsIdAndVdsVDSCo
 
     public CollectHostNetworkDataVdsCommandParameters(VDS vds) {
         super(vds);
+        nics = Collections.emptyList();
     }
 
     public CollectHostNetworkDataVdsCommandParameters(VDS vds, List<VdsNetworkInterface> nics) {

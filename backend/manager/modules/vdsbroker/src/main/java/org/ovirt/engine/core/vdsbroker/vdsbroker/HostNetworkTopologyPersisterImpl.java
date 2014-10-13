@@ -4,6 +4,7 @@ import static org.ovirt.engine.core.common.businessentities.network.NetworkStatu
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -22,7 +23,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
@@ -46,11 +46,10 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
     @Override
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
                                                                    boolean skipManagementNetwork,
-                                                                   Map<String, VdsNetworkInterface> nicsByName) {
+                                                                   List<VdsNetworkInterface> userConfiguredNics) {
         List<VdsNetworkInterface> dbIfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(host.getId());
-        persistTopology(host.getInterfaces(), dbIfaces, nicsByName);
-
+        persistTopology(host.getInterfaces(), dbIfaces, userConfiguredNics);
         return enforceNetworkCompliance(host, skipManagementNetwork, dbIfaces);
     }
 
@@ -98,7 +97,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
 
     @Override
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host) {
-        return persistAndEnforceNetworkCompliance(host, false, null);
+        return persistAndEnforceNetworkCompliance(host, false, Collections.<VdsNetworkInterface> emptyList());
     }
 
     private void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
@@ -203,61 +202,32 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
         }
     }
 
+    /**
+     * Persists the network topology as reported by vdsm, with respect to the following:
+     * <ul>
+     * <li>Pre-configured provided interfaces will maintain their settings (labels, properties and QoS)</li>
+     * <li>Network attachments will be created for nics without it and on which a known network is configured</li>
+     * <li>A nic which existed on db and wasn't reported will be removed with its network attachment</li>
+     * </ul>
+     *
+     * @param reportedNics
+     *            network interfaces reported by vdsm
+     * @param dbNics
+     *            network interfaces from the database prior to vdsm report
+     * @param userConfiguredNics
+     *            network interfaces that should preserve their configuration
+     */
     private void persistTopology(List<VdsNetworkInterface> reportedNics,
-                                 List<VdsNetworkInterface> dbNics,
-                                 Map<String, VdsNetworkInterface> nicsByName) {
-        InterfaceDao interfaceDAO = DbFacade.getInstance().getInterfaceDao();
-        List<String> updatedIfaces = new ArrayList<>();
-        List<VdsNetworkInterface> dbIfacesToBatch = new ArrayList<>();
-        Map<String, VdsNetworkInterface> hostNicsByNames = Entities.entitiesByName(reportedNics);
+            List<VdsNetworkInterface> dbNics,
+            List<VdsNetworkInterface> userConfiguredNics) {
 
-        // First we check what interfaces need to update/delete
-        for (VdsNetworkInterface dbIface : dbNics) {
-            if (hostNicsByNames.containsKey(dbIface.getName())) {
-                VdsNetworkInterface vdsIface = hostNicsByNames.get(dbIface.getName());
+        final HostNetworkInterfacesPersister networkInterfacesPersister =
+                new HostNetworkInterfacesPersisterImpl(DbFacade.getInstance().getInterfaceDao(),
+                        reportedNics,
+                        dbNics,
+                        userConfiguredNics);
 
-                // we preserve only the ID and the labels from the Database
-                // everything else is what we got from getVdsCapabilities
-                vdsIface.setId(dbIface.getId());
-                vdsIface.setLabels(dbIface.getLabels());
-                vdsIface.setQosOverridden(dbIface.isQosOverridden());
-                vdsIface.setCustomProperties(dbIface.getCustomProperties());
-                dbIfacesToBatch.add(vdsIface);
-                updatedIfaces.add(vdsIface.getName());
-            } else {
-                interfaceDAO.removeInterfaceFromVds(dbIface.getId());
-                interfaceDAO.removeStatisticsForVds(dbIface.getId());
-            }
-        }
-
-        if (nicsByName != null) {
-            updateInterfacesWithUserConfiguration(dbIfacesToBatch, nicsByName);
-            updateInterfacesWithUserConfiguration(reportedNics, nicsByName);
-        }
-
-        if (!dbIfacesToBatch.isEmpty()) {
-            interfaceDAO.massUpdateInterfacesForVds(dbIfacesToBatch);
-        }
-
-        // now all that left is add the interfaces that not exists in the Database
-        for (VdsNetworkInterface vdsIface : reportedNics) {
-            if (!updatedIfaces.contains(vdsIface.getName())) {
-                interfaceDAO.saveInterfaceForVds(vdsIface);
-                interfaceDAO.saveStatisticsForVds(vdsIface.getStatistics());
-            }
-        }
-    }
-
-    private void updateInterfacesWithUserConfiguration(List<VdsNetworkInterface> nicsForUpdate,
-                                                       Map<String, VdsNetworkInterface> nicsByName) {
-        for (VdsNetworkInterface nicForUpdate : nicsForUpdate) {
-            if (nicsByName.containsKey(nicForUpdate.getName())) {
-                VdsNetworkInterface nic = nicsByName.get(nicForUpdate.getName());
-                nicForUpdate.setLabels(nic.getLabels());
-                nicForUpdate.setQosOverridden(nic.isQosOverridden());
-                nicForUpdate.setCustomProperties(nic.getCustomProperties());
-            }
-        }
+        networkInterfacesPersister.persistTopology();
     }
 
     private String getVmNetworksImplementedAsBridgeless(VDS host, List<Network> clusterNetworks) {

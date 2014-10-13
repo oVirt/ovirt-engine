@@ -1,6 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import java.util.Map;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -20,13 +20,13 @@ public interface HostNetworkTopologyPersister {
      * @param skipManagementNetwork
      *            if <code>true</code> skip validations for the management network (existence on the host or configured
      *            properly)
-     * @param nicsByName
-     *            a map of names to their network interfaces. Those nics engine-side properties will not be changed.
+     * @param userConfiguredNics
+     *            a list network interfaces, for which engine managed properties will be preserved.
      * @return The reason for non-operability of the host or <code>NonOperationalReason.NONE</code>
      */
     NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
-                                                            boolean skipManagementNetwork,
-                                                            Map<String, VdsNetworkInterface> nicsByName);
+            boolean skipManagementNetwork,
+            List<VdsNetworkInterface> userConfiguredNics);
 
     NonOperationalReason persistAndEnforceNetworkCompliance(VDS host);
 
