@@ -23,7 +23,7 @@ public class InternalAuthz implements Extension {
 
     private ExtMap adminUser;
 
-    private String userName;
+    private Properties configuration;
 
     private static class Opaque {
 
@@ -81,9 +81,12 @@ public class InternalAuthz implements Extension {
     private boolean doQueryOpenImpl(ExtMap filter) {
         boolean found = false;
         if (filter.<Integer> get(Authz.QueryFilterRecord.OPERATOR) == Authz.QueryFilterOperator.EQ) {
-            if (filter.<ExtKey> get(Authz.QueryFilterRecord.KEY).equals(Authz.PrincipalRecord.NAME)) {
+            ExtKey extKey = filter.<ExtKey> get(Authz.QueryFilterRecord.KEY);
+            if (extKey.equals(Authz.PrincipalRecord.NAME)) {
                 String name = filter.<String> get(Authz.PrincipalRecord.NAME);
-                found = userName.matches(name.replace("*", ".*"));
+                found = configuration.getProperty("config.authz.user.name").matches(name.replace("*", ".*"));
+            } else if (extKey.equals(Authz.PrincipalRecord.ID)) {
+                found = filter.<String>get(Authz.PrincipalRecord.ID).equals(configuration.getProperty("config.authz.user.id"));
             } else {
                 found = false;
             }
@@ -113,7 +116,7 @@ public class InternalAuthz implements Extension {
 
     private void doLoad(ExtMap input, ExtMap output) {
         context = input.<ExtMap> get(Base.InvokeKeys.CONTEXT);
-        Properties configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
+        configuration = context.<Properties> get(Base.ContextKeys.CONFIGURATION);
         context.mput(
                 Base.ContextKeys.AUTHOR,
                 "The oVirt Project"
@@ -141,21 +144,20 @@ public class InternalAuthz implements Extension {
                         Authz.ContextKeys.AVAILABLE_NAMESPACES,
                         Arrays.asList(NAMESPACE)
                         );
-        userName = configuration.getProperty("config.authz.user.name");
         adminUser = new ExtMap().mput(
                 Authz.PrincipalRecord.NAMESPACE,
                 NAMESPACE
                 ).mput(
                         Authz.PrincipalRecord.NAME,
-                        userName
+                        configuration.getProperty("config.authz.user.name")
                 ).mput(
                         Authz.PrincipalRecord.FIRST_NAME,
-                        userName
+                        configuration.getProperty("config.authz.user.name")
                 ).mput(
                         Authz.PrincipalRecord.ID,
                         configuration.getProperty("config.authz.user.id")
                 ).mput(Authz.PrincipalRecord.PRINCIPAL,
-                        userName
+                        configuration.getProperty("config.authz.user.name")
                 );
 
     }
