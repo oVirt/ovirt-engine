@@ -242,6 +242,22 @@ public final class ImagesHandler {
     }
 
     /**
+     * Returns a collection of image IDs by a specified DiskImages collection
+     *
+     * @param diskImages collection of DiskImages
+     * @return list of image IDs
+     */
+    public static Collection<Guid> getDiskImageIds(Collection<DiskImage> diskImages) {
+        Collection<Guid> result = new ArrayList<>();
+        if (diskImages != null) {
+            for (DiskImage diskImage : diskImages) {
+                result.add(diskImage.getImageId());
+            }
+        }
+        return result;
+    }
+
+    /**
      * Adds a disk image (Adds image, disk, and relevant entities , but not VmDevice) This may be useful for Clone VMs,
      * where besides adding images it is required to copy all vm devices (VmDeviceUtils.copyVmDevices) from the source
      * VM
@@ -608,7 +624,7 @@ public final class ImagesHandler {
         return retVal;
     }
 
-    private static void sortImageList(List<DiskImage> images) {
+    public static void sortImageList(List<DiskImage> images) {
         List<DiskImage> hold = new ArrayList<DiskImage>();
         DiskImage curr = null;
 
