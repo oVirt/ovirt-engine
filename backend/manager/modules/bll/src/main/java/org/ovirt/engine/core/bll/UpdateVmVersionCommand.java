@@ -28,7 +28,6 @@ import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
-import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -48,10 +47,9 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends VmCommand<T> {
 
     private static final Log log = LogFactory.getLog(UpdateVmVersionCommand.class);
+
     /**
      * Constructor for command creation when compensation is applied on startup
-     *
-     * @param commandId
      */
     protected UpdateVmVersionCommand(Guid commandId) {
         super(commandId);
@@ -62,10 +60,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         parameters.setEntityInfo(new EntityInfo(VdcObjectType.VM, parameters.getVmId()));
 
         if (getVm() != null) {
-            VmTemplate latest = getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid());
-            if (latest != null) {
-                setVmTemplate(latest);
-            }
+            setVmTemplate(getVmTemplateDAO().getTemplateWithLatestVersionInChain(getVm().getVmtGuid()));
         }
     }
 
@@ -92,7 +87,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
-        if (getVm().getVmtGuid().equals(getVmTemplate().getId())) {
+        if (getVmTemplateId().equals(getVm().getVmtGuid())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_ALREADY_IN_LATEST_VERSION);
         }
 
@@ -118,11 +113,10 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
         if (getVm().getVmPoolId() != null) {
             getParameters().setVmPoolId(getVm().getVmPoolId());
-            RemoveVmFromPoolParameters removeVmFromPoolParas = new RemoveVmFromPoolParameters(getVmId(), false);
-            removeVmFromPoolParas.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+
             VdcReturnValueBase result = runInternalActionWithTasksContext(
                     VdcActionType.RemoveVmFromPool,
-                    removeVmFromPoolParas,
+                    buildRemoveVmFromPoolParameters(),
                     getLock());
             if (!result.getSucceeded()) {
                 log.errorFormat("Could not detach vm {0} ({1}) from vm-pool {2}.",
@@ -133,11 +127,10 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             }
         }
 
-        RemoveVmParameters removeParams = new RemoveVmParameters(getVmId(), false);
-        removeParams.setParentCommand(getActionType());
-        removeParams.setParentParameters(getParameters());
-        removeParams.setEntityInfo(getParameters().getEntityInfo());
-        VdcReturnValueBase result = runInternalActionWithTasksContext(VdcActionType.RemoveVm, removeParams, getLock());
+        VdcReturnValueBase result = runInternalActionWithTasksContext(
+                VdcActionType.RemoveVm,
+                buildRemoveVmParameters(),
+                getLock());
 
         if (result.getSucceeded()) {
             if (result.getHasAsyncTasks()) {
@@ -163,19 +156,37 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         return perms.iterator().next().getad_element_id();
     }
 
+    private RemoveVmFromPoolParameters buildRemoveVmFromPoolParameters() {
+        RemoveVmFromPoolParameters parameters = new RemoveVmFromPoolParameters(getVmId(), false);
+        parameters.setTransactionScopeOption(TransactionScopeOption.RequiresNew);
+        return parameters;
+    }
+
+    private RemoveVmParameters buildRemoveVmParameters() {
+        RemoveVmParameters parameters = new RemoveVmParameters(getVmId(), false);
+        parameters.setParentCommand(getActionType());
+        parameters.setParentParameters(getParameters());
+        parameters.setEntityInfo(getParameters().getEntityInfo());
+        return parameters;
+    }
+
     private void addUpdatedVm() {
+        VdcActionType action = getParameters().getVmPoolId() == null ? VdcActionType.AddVm : VdcActionType.AddVmAndAttachToPool;
+        runInternalAction(action,
+                buildAddVmParameters(action),
+                ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
+    }
+
+    private AddVmParameters buildAddVmParameters(VdcActionType action) {
         AddVmParameters addVmParams;
-        VdcActionType action;
-        if (getParameters().getVmPoolId() != null) {
-            addVmParams =
-                    new AddVmAndAttachToPoolParameters(getParameters().getVmStaticData(),
-                            getParameters().getVmPoolId(),
-                            getParameters().getVmStaticData().getName(),
-                            new HashMap<Guid, DiskImage>());
-            action = VdcActionType.AddVmAndAttachToPool;
-        } else {
+        if (action == VdcActionType.AddVmAndAttachToPool) {
+            addVmParams = new AddVmAndAttachToPoolParameters(getParameters().getVmStaticData(),
+                    getParameters().getVmPoolId(),
+                    getParameters().getVmStaticData().getName(),
+                    new HashMap<Guid, DiskImage>());
+        }
+        else {
             addVmParams = new AddVmParameters(getParameters().getVmStaticData());
-            action = VdcActionType.AddVm;
         }
 
         addVmParams.setDiskInfoDestinationMap(new HashMap<Guid, DiskImage>());
@@ -208,8 +219,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
         addVmParams.setDiskOperatorAuthzPrincipalDbId(getParameters().getPreviousDiskOperatorAuthzPrincipalDbId());
 
-        runInternalAction(action, addVmParams,
-                ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
+        return addVmParams;
     }
 
     /**
@@ -249,8 +259,12 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected Map<String, Pair<String, String>> getExclusiveLocks() {
-        return Collections.singletonMap(getVmId().toString(),
-                LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        if (getVmId() != null) {
+            return Collections.singletonMap(getVmId().toString(),
+                    LockMessagesMatchUtil.makeLockingPair(LockingGroup.VM, VdcBllMessages.ACTION_TYPE_FAILED_OBJECT_LOCKED));
+        }
+
+        return null;
     }
 
     @Override
