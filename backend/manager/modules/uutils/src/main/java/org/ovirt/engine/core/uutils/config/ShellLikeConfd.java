@@ -19,8 +19,8 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Shell like configuration file parsing.
@@ -44,7 +44,7 @@ import org.apache.commons.logging.LogFactory;
  * </pre>{@code}
  */
 public class ShellLikeConfd {
-    private static final Log log = LogFactory.getLog(ShellLikeConfd.class);
+    private static final Logger log = LoggerFactory.getLogger(ShellLikeConfd.class);
 
     private static final String SENSITIVE_KEYS = "SENSITIVE_KEYS";
 
@@ -144,7 +144,7 @@ public class ShellLikeConfd {
                 if (!sensitiveKeys.contains(key)) {
                     value = values.get(key);
                 }
-                log.info("Value of property \"" + key + "\" is \"" + value + "\".");
+                log.info("Value of property '{}' is '{}'.", key, value);
             }
         }
     }
@@ -159,7 +159,7 @@ public class ShellLikeConfd {
     private void loadProperties(File file) throws IOException {
         // Do nothing if the file doesn't exist or isn't readable:
         if (!file.canRead()) {
-            log.info("The file \"" + file.getAbsolutePath() + "\" doesn't exist or isn't readable. Will return an empty set of properties.");
+            log.info("The file '{}' doesn't exist or isn't readable. Will return an empty set of properties.", file.getAbsolutePath());
             return;
         }
 
@@ -173,7 +173,7 @@ public class ShellLikeConfd {
                 index++;
                 loadLine(line);
             }
-            log.info("Loaded file \"" + file.getAbsolutePath() + "\".");
+            log.info("Loaded file '{}'.", file.getAbsolutePath());
         }
         catch (Exception e) {
             String msg = String.format(

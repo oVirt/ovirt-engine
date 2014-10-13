@@ -6,7 +6,6 @@ package org.ovirt.engine.core.uutils.ssh;
  *
  * Standalone testing:
  *  $ mkdir t
- *  $ cp ~/.m2/repository/commons-logging/commons-logging/1.1.1/commons-logging-1.1.1.jar
  *  $ cp ~/.m2/repository/junit/junit/4.8.1/junit-4.8.1.jar t/
  *  $ cp ~/.m2/repository/org/apache/mina/mina-core/2.0.4/mina-core-2.0.4.jar t/
  *  $ cp ~/.m2/repository/org/apache/sshd/sshd-core/0.7.0/sshd-core-0.7.0.jar t/

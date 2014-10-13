@@ -11,7 +11,6 @@
     <module name="javax.servlet.api"/>
     <module name="org.apache.commons.codec"/>
     <module name="org.apache.commons.lang"/>
-    <module name="org.apache.commons.logging"/>
     <module name="org.apache.sshd"/>
     <module name="org.slf4j"/>
   </dependencies>

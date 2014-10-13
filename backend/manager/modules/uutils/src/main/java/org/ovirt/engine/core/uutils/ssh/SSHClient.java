@@ -25,8 +25,8 @@ import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.codec.DecoderException;
 import org.apache.commons.codec.binary.Hex;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import org.apache.sshd.ClientChannel;
 import org.apache.sshd.ClientSession;
@@ -43,7 +43,7 @@ public class SSHClient implements Closeable {
     private static final int THREAD_JOIN_WAIT_TIME = 2000;
     private static final int DEFAULT_SSH_PORT = 22;
 
-    private static final Log log = LogFactory.getLog(SSHClient.class);
+    private static final Logger log = LoggerFactory.getLogger(SSHClient.class);
 
     private SshClient _client;
     private ClientSession _session;
@@ -260,7 +260,7 @@ public class SSHClient implements Closeable {
      */
     public void connect() throws Exception {
 
-        log.debug(String.format("Connecting: '%1$s'", this.getDisplayHost()));
+        log.debug("Connecting '{}'", this.getDisplayHost());
 
         try {
             _client = _createSshClient();
@@ -327,7 +327,7 @@ public class SSHClient implements Closeable {
             throw e;
         }
 
-        log.debug(String.format("Connected: '%1$s'", this.getDisplayHost()));
+        log.debug("Connected: '{}'", this.getDisplayHost());
     }
 
     /**
@@ -335,7 +335,7 @@ public class SSHClient implements Closeable {
      */
     public void authenticate() throws Exception {
 
-        log.debug(String.format("Authenticating: '%1$s'", this.getDisplayHost()));
+        log.debug("Authenticating: '{}'", this.getDisplayHost());
 
         try {
             AuthFuture afuture;
@@ -380,7 +380,7 @@ public class SSHClient implements Closeable {
             throw e;
         }
 
-        log.debug(String.format("Authenticated: '%1$s'", this.getDisplayHost()));
+        log.debug("Authenticated: '{}'", this.getDisplayHost());
     }
 
     /**
@@ -419,7 +419,7 @@ public class SSHClient implements Closeable {
         OutputStream err
     ) throws Exception {
 
-        log.debug(String.format("Executing: '%1$s'", command));
+        log.debug("Executing: '{}'", command);
 
         InputStream _xin = null;
         OutputStream _xout = null;
@@ -571,7 +571,7 @@ public class SSHClient implements Closeable {
             }
         }
 
-        log.debug(String.format("Executed: '%1$s'", command));
+        log.debug("Executed: '{}'", command);
     }
 
     /**
@@ -592,7 +592,7 @@ public class SSHClient implements Closeable {
         String file2
     ) throws Exception {
 
-        log.debug(String.format("Sending: '%1$s' '%2$s", file1, file2));
+        log.debug("Sending: '{}' '{}'", file1, file2);
 
         _remoteFileName(file2);
 
@@ -654,7 +654,7 @@ public class SSHClient implements Closeable {
             }
         }
 
-        log.debug(String.format("Sent: '%1$s' '%2$s", file1, file2));
+        log.debug("Sent: '{}' '{}'", file1, file2);
     }
 
     /**
@@ -674,7 +674,7 @@ public class SSHClient implements Closeable {
         String file2
     ) throws Exception {
 
-        log.debug(String.format("Receiving: '%1$s' '%2$s", file1, file2));
+        log.debug("Receiving: '{}' '{}'", file1, file2);
 
         _remoteFileName(file1);
 
@@ -737,6 +737,6 @@ public class SSHClient implements Closeable {
             }
         }
 
-        log.debug(String.format("Received: '%1$s' '%2$s", file1, file2));
+        log.debug("Received: '{}' '{}'", file1, file2);
     }
 }

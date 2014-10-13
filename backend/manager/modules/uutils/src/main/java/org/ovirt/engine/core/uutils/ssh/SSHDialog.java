@@ -16,8 +16,8 @@ import java.util.Collections;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * SSH dialog to be used with SSHClient class.
@@ -77,7 +77,7 @@ public class SSHDialog implements Closeable {
         public void stop();
     }
 
-    private static final Log log = LogFactory.getLog(SSHDialog.class);
+    private static final Logger log = LoggerFactory.getLogger(SSHDialog.class);
 
     private String _host;
     private int _port;
@@ -219,17 +219,13 @@ public class SSHDialog implements Closeable {
      * After connection host fingerprint can be acquired.
      */
     public void connect() throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug(
-                String.format(
-                    "connect enter (%1$s:%2$s, %3$d, %4$d)",
-                    _host,
-                    _port,
-                    _hardTimeout,
-                    _softTimeout
-                )
-            );
-        }
+        log.debug(
+            "connect enter ({}:{}, {}, {})",
+            _host,
+            _port,
+            _hardTimeout,
+            _softTimeout
+        );
 
         try {
             if (_client != null) {
@@ -250,12 +246,10 @@ public class SSHDialog implements Closeable {
         }
         catch(Exception e) {
             log.debug(
-                String.format(
-                    "Could not connect to host %1$s",
-                    _client.getDisplayHost()
-                ),
-                e
+                "Could not connect to host '{}'",
+                _client.getDisplayHost()
             );
+            log.debug("Exception", e);
             throw e;
         }
     }
@@ -282,7 +276,7 @@ public class SSHDialog implements Closeable {
         InputStream initial[]
     ) throws Exception {
 
-        log.info(String.format("SSH execute %1$s '%2$s'", _client.getDisplayHost(), command));
+        log.info("SSH execute '{}' '{}'", _client.getDisplayHost(), command);
 
         try (
             final PipedInputStream pinStdin = new PipedInputStream(BUFFER_SIZE);
@@ -345,13 +339,12 @@ public class SSHDialog implements Closeable {
             }
             catch (Exception e) {
                 log.error(
-                    String.format(
-                        "SSH error running command %1$s:'%2$s'",
-                        _client.getDisplayHost(),
-                        command
-                    ),
-                    e
+                    "SSH error running command {}:'{}': {}",
+                    _client.getDisplayHost(),
+                    command,
+                    e.getMessage()
                 );
+                log.error("Exception", e);
                 throw e;
             }
             finally {
