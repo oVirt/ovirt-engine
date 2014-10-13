@@ -8,8 +8,9 @@ import java.util.List;
 import java.util.Properties;
 
 import org.apache.commons.lang.StringUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.LdapServersOrderingAlgorithmFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
@@ -19,7 +20,7 @@ public class DirectorySearcher {
     private String explicitBaseDN;
     private Properties configuration;
 
-    private static final Log log = LogFactory.getLog(DirectorySearcher.class);
+    private static final Logger log = LoggerFactory.getLogger(DirectorySearcher.class);
 
     private final LdapCredentials ldapCredentials;
     private Exception ex;
@@ -60,9 +61,7 @@ public class DirectorySearcher {
         List<String> ldapServerURIs =
                 Arrays.asList(configuration.getProperty("config.LdapServers").split(";"));
         List<String> editableLdapServerURIs = new ArrayList<>(ldapServerURIs);
-        if (log.isDebugEnabled()) {
-            log.debug("Ldap server list: " + StringUtils.join(ldapServerURIs, ", "));
-        }
+        log.debug("Ldap server list: {}", ldapServerURIs);
         List<?> response = null;
 
         for (Iterator<String> iterator = ldapServerURIs.iterator(); iterator.hasNext();) {
@@ -85,9 +84,7 @@ public class DirectorySearcher {
             String domainName,
             long resultCount,
             List<String> modifiedLdapServersURIs) throws Exception {
-        if (log.isDebugEnabled()) {
-            log.debug("Using Ldap server " + ldapURI);
-        }
+        log.debug("Using Ldap server {}", ldapURI);
         try {
             setException(null);
             GetRootDSETask getRootDSETask = new GetRootDSETask(configuration, this, domainName, ldapURI);
@@ -102,9 +99,12 @@ public class DirectorySearcher {
                 setExplicitBaseDN(queryExecution.getBaseDN());
             }
 
-            log.debug("find() : LDAP filter = " + queryExecution.getFilter() +
-                      ", baseDN = " + queryExecution.getBaseDN() +
-                      ", explicitBaseDN = " + explicitBaseDN + ", domain = " + queryExecution.getDomain() );
+            log.debug("find() : LDAP filter='{}', baseDN='{}', explicitBaseDN='{}', domain='{}'",
+                    queryExecution.getFilter(),
+                    queryExecution.getBaseDN(),
+                    explicitBaseDN,
+                    queryExecution.getDomain()
+            );
 
             LDAPTemplateWrapper ldapTemplate = prepareLdapConnectionTask.call();
             if (ldapTemplate == null) {
@@ -116,12 +116,12 @@ public class DirectorySearcher {
             Exception translatedException = handlingResponse.getTranslatedException();
             setException(translatedException);
             LdapServersOrderingAlgorithmFactory.getInstance().getOrderingAlgorithm(handlingResponse.getOrderingAlgorithm()).reorder(ldapURI, modifiedLdapServersURIs);
-            log.errorFormat("Failed ldap search server {0} using user {1} due to {2}. We {3} try the next server",
+            log.error("Failed ldap search server {} using user {} due to {}. We {} try the next server",
                     ldapURI,
                     ldapCredentials.getUserName(),
                     LdapBrokerUtils.getFriendlyExceptionMessage(translatedException),
                     handlingResponse.isTryNextServer() ? "should" : "should not");
-            log.debugFormat("Failed ldap search server {0} using user {1} due to {2}. We {3} try the next server",
+            log.debug("Failed ldap search server {} using user {} due to {}. We {} try the next server",
                     ldapURI,
                     ldapCredentials.getUserName(),
                     translatedException,

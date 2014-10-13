@@ -5,8 +5,8 @@ import java.lang.reflect.InvocationTargetException;
 import java.util.HashMap;
 import java.util.Properties;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.support.LdapContextSource;
 
 /**
@@ -18,7 +18,7 @@ public class LDAPTemplateWrapperFactory {
 
     private static HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>> classesOfLDAPTemplateWrappers =
             new HashMap<LDAPSecurityAuthentication, Class<? extends LDAPTemplateWrapper>>();
-    private static final Log log = LogFactory.getLog(LDAPTemplateWrapperFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(LDAPTemplateWrapperFactory.class);
 
     static {
         registerClass(LDAPSecurityAuthentication.GSSAPI, GSSAPILdapTemplateWrapper.class);
@@ -46,8 +46,7 @@ public class LDAPTemplateWrapperFactory {
             return constructor.newInstance(configuration, contextSource, userName, password, domain);
         } catch (IllegalAccessException | IllegalArgumentException | InstantiationException |
                 InvocationTargetException | NoSuchMethodException | SecurityException e) {
-            log.error("Failed to get LDAPTemplateWrapper for security authentication "
-                    + ldapSecurityAuthentication.toString());
+            log.error("Failed to get LDAPTemplateWrapper for security authentication {}", ldapSecurityAuthentication);
             return null;
         }
     }

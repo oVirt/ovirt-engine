@@ -1,20 +1,22 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.lang.reflect.Constructor;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.core.utils.ReflectionUtils;
 
 public abstract class LdapBrokerBase implements LdapBroker {
     private static final String CommandsContainerAssemblyName = LdapBrokerBase.class.getPackage().getName();
     private static final String CommandPrefix = "Command";
 
-    private static final Log log = LogFactory.getLog(LdapBrokerBase.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapBrokerBase.class);
 
     protected abstract String getBrokerType();
 
     public LdapReturnValueBase runAdAction(AdActionType actionType, LdapBrokerBaseParameters parameters) {
-        log.debug("runAdAction Entry, actionType=" + actionType.toString());
+        log.debug("runAdAction Entry, actionType={}", actionType);
         BrokerCommandBase command = CreateCommand(actionType, parameters);
         return command.execute();
     }
@@ -28,7 +30,7 @@ public abstract class LdapBrokerBase implements LdapBroker {
         }
 
         catch (Exception e) {
-            log.errorFormat("LdapBrokerCommandBase: Failed to get type information using reflection for Action: {0}",
+            log.error("LdapBrokerCommandBase: Failed to get type information using reflection for Action: {}",
                     action);
             return null;
         }

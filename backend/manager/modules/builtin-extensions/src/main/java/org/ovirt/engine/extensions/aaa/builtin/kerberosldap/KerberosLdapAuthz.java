@@ -17,16 +17,12 @@ import org.ovirt.engine.api.extensions.aaa.Authz;
 import org.ovirt.engine.api.extensions.aaa.Authz.QueryFilterRecord;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * This directory implementation is a bridge between the new directory interfaces and the existing LDAP infrastructure.
  * It will exist only while the engine is migrated to use the new directory interfaces, then it will be removed.
  */
 public class KerberosLdapAuthz implements Extension {
-
-    private static final Log log = LogFactory.getLog(KerberosLdapAuthz.class);
 
     private static final String NAMESPACE = "*";
 

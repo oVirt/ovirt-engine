@@ -2,8 +2,8 @@ package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
 import java.io.File;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Manage the container's Kerberos initialization.
@@ -11,7 +11,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class KerberosManager {
 
-    private static final Log log = LogFactory.getLog(KerberosManager.class);
+    private static final Logger log = LoggerFactory.getLogger(KerberosManager.class);
     private static volatile KerberosManager instance = null;
 
 

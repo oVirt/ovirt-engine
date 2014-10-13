@@ -5,15 +5,14 @@ import static org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerbero
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 public class OpenLdapUserContextMapper implements ContextMapper {
 
-    private static final Log log = LogFactory.getLog(OpenLdapUserContextMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(OpenLdapUserContextMapper.class);
 
     @Override
     public Object mapFromContext(Object ctx) {

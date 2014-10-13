@@ -10,15 +10,16 @@ import javax.naming.NamingEnumeration;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
+import org.ovirt.engine.core.compat.Guid;
+
 public class IPAGroupContextMapper implements ContextMapper {
 
-    private static final Log log = LogFactory.getLog(LdapBrokerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapBrokerImpl.class);
 
     static final String[] GROUP_ATTRIBUTE_FILTER = { memberof.name(), ipaUniqueId.name() };
 

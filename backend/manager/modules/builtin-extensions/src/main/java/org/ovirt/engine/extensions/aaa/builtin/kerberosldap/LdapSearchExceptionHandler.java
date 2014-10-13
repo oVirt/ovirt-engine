@@ -6,16 +6,17 @@ import javax.naming.OperationNotSupportedException;
 import javax.security.sasl.SaslException;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.AuthenticationException;
 import org.springframework.ldap.CommunicationException;
 
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.serverordering.OrderingAlgorithmType;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
+
 public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchExceptionHandlingResponse, LdapCredentials> {
 
-    private static final Log log = LogFactory.getLog(LdapSearchExceptionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapSearchExceptionHandler.class);
 
     @Override
     public LdapSearchExceptionHandlingResponse handle(Exception e, LdapCredentials params) {
@@ -76,12 +77,12 @@ public class LdapSearchExceptionHandler implements ExceptionHandler<LdapSearchEx
     }
 
     private void handleCommunicationException(LdapSearchExceptionHandlingResponse response, Throwable cause) {
-        log.error("Error in communicating with LDAP server " + cause.getMessage());
+        log.error("Error in communicating with LDAP server: {}", cause.getMessage());
         response.setOrderingAlgorithm(OrderingAlgorithmType.PUT_LAST).setTryNextServer(true).setTranslatedException((Exception) cause);
     }
 
     private void handleAuthenticationException(LdapSearchExceptionHandlingResponse response) {
-        log.error("Ldap authentication failed. Please check that the login name , password and path are correct. ");
+        log.error("Ldap authentication failed. Please check that the login name, password and path are correct.");
         AuthenticationResultException ex =
                 new AuthenticationResultException(AuthenticationResult.OTHER);
         response.setOrderingAlgorithm(OrderingAlgorithmType.NO_OP)

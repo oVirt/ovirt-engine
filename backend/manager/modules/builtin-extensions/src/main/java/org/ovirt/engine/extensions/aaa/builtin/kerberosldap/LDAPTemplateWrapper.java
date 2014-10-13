@@ -5,9 +5,9 @@ import java.util.Properties;
 
 import javax.naming.directory.SearchControls;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
+import com.sun.jndi.ldap.LdapCtxFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.control.PagedResultsCookie;
 import org.springframework.ldap.control.PagedResultsDirContextProcessor;
 import org.springframework.ldap.core.LdapTemplate;
@@ -16,11 +16,11 @@ import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 import org.springframework.ldap.core.support.LdapContextSource;
 import org.springframework.ldap.core.support.SingleContextSource;
 
-import com.sun.jndi.ldap.LdapCtxFactory;
+import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 public abstract class LDAPTemplateWrapper {
 
-    private static final Log log = LogFactory.getLog(LDAPTemplateWrapper.class);
+    private static final Logger log = LoggerFactory.getLogger(LDAPTemplateWrapper.class);
 
     protected LdapTemplate ldapTemplate;
     protected LdapContextSource contextSource;
@@ -114,9 +114,7 @@ public abstract class LDAPTemplateWrapper {
         try {
             ldapTemplate.setContextSource(singleContextSource);
 
-            if (log.isDebugEnabled()) {
-                log.debugFormat("LDAP query is {0}", displayFilter);
-            }
+            log.debug("LDAP query is {}", displayFilter);
             int ldapPageSize = Integer.parseInt(configuration.getProperty("config.LdapQueryPageSize"));
             PagedResultsDirContextProcessor requestControl = new PagedResultsDirContextProcessor(ldapPageSize);
             ldapTemplate.search(baseDN, filter, searchControls, handler, requestControl);
@@ -133,13 +131,11 @@ public abstract class LDAPTemplateWrapper {
 
         } catch (Exception ex) {
             ex.printStackTrace();
-            log.errorFormat("Error in running LDAP query. BaseDN is {0}, filter is {1}. Exception message is: {2}",
+            log.error("Error in running LDAP query. BaseDN is {}, filter is {}. Exception message is: {}",
                     baseDN,
                     displayFilter,
                     ex.getMessage());
-            if (log.isDebugEnabled()) {
-                log.debug("Exception stacktrace: ", ex);
-            }
+            log.debug("Exception stacktrace: ", ex);
             handleException(ex);
         } finally {
             singleContextSource.destroy();

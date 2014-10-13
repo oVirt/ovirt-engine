@@ -1,13 +1,16 @@
 package org.ovirt.engine.extensions.aaa.builtin.kerberosldap;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.api.extensions.ExtMap;
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
+
+    private static final Logger log = LoggerFactory.getLogger(LdapAuthenticateUserCommand.class);
 
     public LdapAuthenticateUserCommand(LdapUserPasswordBaseParameters parameters) {
         super(parameters);
@@ -51,7 +54,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
 
 
         if (searchResult == null) {
-            log.errorFormat("Failed authenticating user: {0} to domain {1}. Ldap Query Type is {2}",
+            log.error("Failed authenticating user: {} to domain {}. Ldap Query Type is {}",
                     getLoginName(),
                     getAuthenticationDomain(),
                     queryData.getLdapQueryType().name());
@@ -72,7 +75,7 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
                                         )));
                 setSucceeded(true);
             } else {
-                log.errorFormat("Failed authenticating. Domain is {0}. User is {1}. The user doesn't have a UPN",
+                log.error("Failed authenticating. Domain is {}. User is {}. The user doesn't have a UPN",
                         getAuthenticationDomain(),
                         getLoginName());
                 output.put(Authn.InvokeKeys.RESULT, Authn.AuthResult.CREDENTIALS_INCORRECT);
@@ -99,6 +102,4 @@ public class LdapAuthenticateUserCommand extends LdapBrokerCommandBase {
     private String constructPrincipalName(String username, String domain) {
         return username + '@' + domain.toUpperCase();
     }
-
-    private static final Log log = LogFactory.getLog(LdapAuthenticateUserCommand.class);
 }

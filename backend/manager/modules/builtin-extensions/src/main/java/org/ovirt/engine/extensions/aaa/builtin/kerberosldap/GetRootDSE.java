@@ -12,8 +12,9 @@ import javax.naming.directory.InitialDirContext;
 import javax.naming.directory.SearchControls;
 import javax.naming.directory.SearchResult;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
 /**
@@ -27,7 +28,7 @@ public class GetRootDSE {
 
     private Properties configuration;
 
-    private final static Log log = LogFactory.getLog(GetRootDSE.class);
+    private final static Logger log = LoggerFactory.getLogger(GetRootDSE.class);
 
     public GetRootDSE(Properties configuration, String ldapURI) {
         this.ldapURI = ldapURI;
@@ -74,7 +75,7 @@ public class GetRootDSE {
         } catch (NamingException e) {
             String message = LdapBrokerUtils.getFriendlyExceptionMessage(e);
 
-            log.errorFormat("Failed to query rootDSE for LDAP server {0} due to {1}", ldapURI, message);
+            log.error("Failed to query rootDSE for LDAP server {} due to {}", ldapURI, message);
 
             throw new DirectoryServiceException(e);
         } finally {

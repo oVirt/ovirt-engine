@@ -7,15 +7,18 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.api.extensions.aaa.Authn;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapGroup;
 import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 
 public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
+
+    private static final Logger log = LoggerFactory.getLogger(LdapBrokerCommandBase.class);
 
     protected static final Map<AuthenticationResult, Integer> resultsMap = new HashMap<>();
 
@@ -99,7 +102,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     public LdapReturnValueBase execute() {
         boolean exceptionOccurred = true;
         try {
-            log.debugFormat("Running LDAP command: {0}", getClass().getName());
+            log.debug("Running LDAP command: {}", getClass().getName());
             String loginNameForKerberos =
                     LdapBrokerUtils.modifyLoginNameForKerberos(getLoginName(), getAuthenticationDomain(), configuration);
             LdapCredentials ldapCredentials = new LdapCredentials(loginNameForKerberos, getPassword());
@@ -109,8 +112,8 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         }
  finally {
             if (exceptionOccurred) {
-                log.error(String.format("Failed to run command %s. Domain is %s. User is %s.",
-                        getClass().getSimpleName(), getDomain(), getLoginName()));
+                log.error("Failed to run command {}. Domain is {}. User is {}.",
+                        getClass().getSimpleName(), getDomain(), getLoginName());
                 _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
                 _ldapReturnValue.setSucceeded(false);
             }
@@ -183,7 +186,7 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
                 }
             }
         } catch (RuntimeException e) {
-            log.infoFormat("populateGroup failed. Exception: {0}", e);
+            log.info("populateGroup failed. Exception: {}", e);
         }
     }
 
@@ -226,6 +229,4 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
         GroupsDNQueryGenerator generator = new GroupsDNQueryGenerator(new HashSet<String>(dnsList));
         return generator;
     }
-
-    private static final Log log = LogFactory.getLog(LdapBrokerCommandBase.class);
 }

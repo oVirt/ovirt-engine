@@ -10,10 +10,11 @@ import javax.naming.InvalidNameException;
 import javax.naming.ldap.LdapName;
 import javax.naming.ldap.Rdn;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 
 /**
  * Helper class for AD issues
@@ -21,8 +22,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class LdapBrokerUtils {
 
-    private static final Log log = LogFactory.getLog(LdapBrokerUtils.class);
-
+    private static final Logger log = LoggerFactory.getLogger(LdapBrokerUtils.class);
 
     /**
      * This method should parse a string in the following format: CN=groupname,OU=ouSub,OU=ouMain,DC=qumranet,DC=com to
@@ -97,7 +97,7 @@ public class LdapBrokerUtils {
 
             return searchResults;
         } catch (DomainNotConfiguredException ex) {
-            log.errorFormat("User {0} from domain {1} is a member of a group from {2} which is not configured. Please use the manage domains utility if you wish to add this domain.",
+            log.error("User {} from domain {} is a member of a group from {} which is not configured. Please use the manage domains utility if you wish to add this domain.",
                     loginName,
                     domainName,
                     queryData.getDomain());

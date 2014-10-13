@@ -6,8 +6,9 @@ import java.util.concurrent.Callable;
 import javax.naming.NamingException;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.ldap.LdapProviderType;
 
@@ -18,7 +19,7 @@ public class GetRootDSETask implements Callable<Boolean> {
     private final String ldapURI;
     private final Properties configuration;
 
-    private static final Log log = LogFactory.getLog(GetRootDSETask.class);
+    private static final Logger log = LoggerFactory.getLogger(GetRootDSETask.class);
 
     public GetRootDSETask(Properties configuration, DirectorySearcher searcher, String domainName, String ldapURI) {
         super();
@@ -60,7 +61,7 @@ public class GetRootDSETask implements Callable<Boolean> {
                             setRootDSE(ldapProviderType, rootDseRecords);
                             baseDNExist = true;
                         } else {
-                            log.errorFormat("Couldn't deduce provider type for domain {0}", domainName);
+                            log.error("Couldn't deduce provider type for domain {}", domainName);
                             throw new AuthenticationResultException(AuthenticationResult.CONNECTION_ERROR,
                                     "Failed to get rootDSE record for server " + ldapURI);
                         }

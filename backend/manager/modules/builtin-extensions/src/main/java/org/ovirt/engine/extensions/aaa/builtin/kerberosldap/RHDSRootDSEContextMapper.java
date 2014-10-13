@@ -6,14 +6,14 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
 public class RHDSRootDSEContextMapper implements ContextMapper {
 
-    private static final Log log = LogFactory.getLog(RHDSRootDSEContextMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(RHDSRootDSEContextMapper.class);
     protected static final String RHDS_NAMING_CONTEXT = "o=netscaperoot";
     static final String[] ROOTDSE_ATTRIBUTE_FILTER = { namingContexts.name() };
 

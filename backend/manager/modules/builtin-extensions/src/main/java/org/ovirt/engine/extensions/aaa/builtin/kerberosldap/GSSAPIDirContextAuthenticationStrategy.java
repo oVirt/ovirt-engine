@@ -16,11 +16,12 @@ import javax.security.auth.kerberos.KerberosTicket;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
+
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.AuthenticationResult;
 import org.ovirt.engine.extensions.aaa.builtin.kerberosldap.utils.kerberos.KerberosReturnCodeParser;
-import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 
 /**
  *
@@ -32,7 +33,7 @@ import org.springframework.ldap.core.support.DirContextAuthenticationStrategy;
 public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthenticationStrategy {
 
     private static final String GSS_API_AUTHENTICATION = "GSSAPI";
-    private static final Log log = LogFactory.getLog(GSSAPIDirContextAuthenticationStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(GSSAPIDirContextAuthenticationStrategy.class);
     private LoginContext loginContext;
     private String password;
     private String userName;
@@ -96,9 +97,7 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
         try {
             loginContext = new LoginContext(configuration.getProperty("config.JAASLoginContext"), callbackHandler);
             loginContext.login();
-            if (log.isDebugEnabled()) {
-                log.debug("Successful login for user " + userName);
-            }
+            log.debug("Successful login for user '{}'", userName);
         } catch (LoginException ex) {
 
             // JAAS throws login exception due to various reasons.
@@ -109,10 +108,8 @@ public class GSSAPIDirContextAuthenticationStrategy implements DirContextAuthent
             loginContext = null;
             KerberosReturnCodeParser parser = new KerberosReturnCodeParser();
             AuthenticationResult result = parser.parse(ex.getMessage());
-            log.error("Kerberos error: " + ex.getMessage());
-            if (log.isDebugEnabled()) {
-                log.debug("Kerberos error stacktrace: ", ex);
-            }
+            log.error("Kerberos error: {}", ex.getMessage());
+            log.debug("Kerberos error stacktrace: ", ex);
             if (result != AuthenticationResult.OTHER) {
                 log.error(result.getDetailedMessage());
             }

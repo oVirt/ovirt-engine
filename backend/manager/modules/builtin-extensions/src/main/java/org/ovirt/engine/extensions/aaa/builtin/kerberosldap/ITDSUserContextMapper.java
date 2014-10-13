@@ -12,16 +12,17 @@ import javax.naming.NamingException;
 import javax.naming.directory.Attribute;
 import javax.naming.directory.Attributes;
 
-import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
-import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.ldap.core.ContextMapper;
 import org.springframework.ldap.core.DirContextAdapter;
 
+import org.ovirt.engine.core.common.businessentities.aaa.LdapUser;
+import org.ovirt.engine.core.compat.Guid;
+
 public class ITDSUserContextMapper implements ContextMapper {
 
-    private static final Log log = LogFactory.getLog(LdapBrokerImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(LdapBrokerImpl.class);
 
     static final String[] USERS_ATTRIBUTE_FILTER = { uniqueIdentifier.name(), uid.name(),
         givenname.name(), department.name(), title.name(), mail.name(), sn.name() };
