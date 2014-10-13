@@ -770,7 +770,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are No Data Centers to which the Storage Domain can be attached")
     String thereAreNoDataCenterStorageDomainAttachedMsg();
 
-    @DefaultStringValue("Are you sure you want to Detach storage from the following Data Center(s)?")
+    @DefaultStringValue("Are you sure you want to Detach Storage from the following Data Center?")
     String areYouSureYouWantDetachStorageFromDcsMsg();
 
     @DefaultStringValue("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.")
