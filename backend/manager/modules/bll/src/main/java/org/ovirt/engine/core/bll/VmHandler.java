@@ -157,8 +157,8 @@ public class VmHandler {
         return mUpdateVmsStatic.IsFieldUpdatable(status, fieldName, null);
     }
 
-    public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination) {
-        return mUpdateVmsStatic.copyNonEditableFieldsToDestination(source, destination);
+    public static boolean copyNonEditableFieldsToDestination(VmStatic source, VmStatic destination, boolean hotSetEnabled) {
+        return mUpdateVmsStatic.copyNonEditableFieldsToDestination(source, destination, hotSetEnabled);
     }
 
     /**

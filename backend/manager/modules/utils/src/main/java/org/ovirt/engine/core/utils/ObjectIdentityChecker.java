@@ -94,6 +94,10 @@ public class ObjectIdentityChecker {
         return permitted.contains(name);
     }
 
+    public final boolean isHotSetField(String name) {
+        return hotsetAllowedFields.contains(name);
+    }
+
     public boolean IsFieldUpdatable(Enum<?> status, String name, Object fieldContainer) {
         return IsFieldUpdatable(status, name, fieldContainer, false);
     }
@@ -110,7 +114,7 @@ public class ObjectIdentityChecker {
 
                 // if field is not updateable in this status, check if hotset request and its an hotset allowed field
                 if (!returnValue && hotsetEnabled) {
-                    returnValue = hotsetAllowedFields.contains(name);
+                    returnValue = isHotSetField(name);
                 }
             }
             if (!returnValue) {
@@ -126,12 +130,15 @@ public class ObjectIdentityChecker {
      * @param source object that has values of non editable fields
      * @param destination object to copy the non editable to it
      */
-    public boolean copyNonEditableFieldsToDestination(Object source, Object destination) {
+    public boolean copyNonEditableFieldsToDestination(Object source, Object destination, boolean hotSetEnabled) {
         Class<?> cls = source.getClass();
         while (!cls.equals(Object.class)) {
             for (Field srcFld : cls.getDeclaredFields()) {
                 try {
-                    if (!Modifier.isFinal(srcFld.getModifiers()) && !IsFieldUpdatable(srcFld.getName())) {
+                    // copy fields that are non final, and not-editable and not a hotset field or it is but this is not hotset case
+                    if (!Modifier.isFinal(srcFld.getModifiers()) &&
+                            !IsFieldUpdatable(srcFld.getName()) &&
+                            (!isHotSetField(srcFld.getName()) || !hotSetEnabled)) {
                         srcFld.setAccessible(true);
 
                         Field dstFld = cls.getDeclaredField(srcFld.getName());

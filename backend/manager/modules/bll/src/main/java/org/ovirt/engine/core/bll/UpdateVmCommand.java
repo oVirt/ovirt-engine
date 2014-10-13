@@ -139,7 +139,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
 
         if (getVm().isRunningOrPaused()) {
-            if (!VmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic)) {
+            if (!VmHandler.copyNonEditableFieldsToDestination(oldVm.getStaticData(), newVmStatic, isHotSetEnabled())) {
                 // fail update vm if some fields could not be copied
                 throw new VdcBLLException(VdcBllErrors.FAILED_UPDATE_RUNNING_VM);
             }
@@ -148,7 +148,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
 
         UpdateVmNetworks();
         updateVmNumaNodes();
-        if (!getParameters().isApplyChangesLater()) {
+        if (isHotSetEnabled()) {
             hotSetCpus(cpuPerSocket, numOfSockets);
         }
         getVmStaticDAO().update(newVmStatic);
@@ -670,8 +670,12 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
                 !VmHandler.isUpdateValid(getVm().getStaticData(),
                         getParameters().getVmStaticData(),
                         getVm().getStatus(),
-                        !getParameters().isApplyChangesLater()) ||
+                        isHotSetEnabled()) ||
                 !VmHandler.isUpdateValidForVmDevices(getVmId(), getVm().getStatus(), getParameters());
+    }
+
+    private boolean isHotSetEnabled() {
+        return !getParameters().isApplyChangesLater();
     }
 
     @Override
