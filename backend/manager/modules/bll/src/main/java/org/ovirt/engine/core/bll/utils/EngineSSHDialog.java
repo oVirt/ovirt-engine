@@ -5,8 +5,6 @@ import java.net.ConnectException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
@@ -17,7 +15,6 @@ import org.ovirt.engine.core.uutils.ssh.SSHDialog;
  */
 public class EngineSSHDialog extends SSHDialog {
 
-    private static final Log log = LogFactory.getLog(EngineSSHDialog.class);
     VDS _vds;
 
     protected SSHClient _getSSHClient() {

@@ -8,9 +8,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
 
@@ -18,8 +15,6 @@ import org.apache.commons.compress.archivers.tar.TarArchiveOutputStream;
  * A simple recursive tar based on javatar.
  */
 public class Tar {
-
-    private static final Log log = LogFactory.getLog(Tar.class);
 
     private static void _recurse(
         TarArchiveOutputStream archive,
@@ -51,29 +46,11 @@ public class Tar {
                 entry.setMode(0600);
             }
             archive.putArchiveEntry(entry);
-            InputStream is = null;
-            try {
-                is = new FileInputStream(entry.getFile());
+            try (InputStream is = new FileInputStream(entry.getFile())) {
                 byte buffer[] = new byte[8192];
                 int n;
                 while ((n = is.read(buffer)) != -1) {
                     archive.write(buffer, 0, n);
-                }
-            }
-            finally {
-                if (is != null) {
-                    try {
-                        is.close();
-                    }
-                    catch(IOException e) {
-                        log.error(
-                            String.format(
-                                "Cannot close file '%1$s'",
-                                entry.getFile().getAbsolutePath()
-                            ),
-                            e
-                        );
-                    }
                 }
             }
             archive.closeArchiveEntry();
@@ -102,41 +79,16 @@ public class Tar {
             );
         }
 
-        TarArchiveOutputStream archive = null;
-        try {
-            archive = new TarArchiveOutputStream(os);
+        try (TarArchiveOutputStream archive = new TarArchiveOutputStream(os)) {
             // TODO: use LONGFILE_POSIX in newer version of commons-compress
             archive.setLongFileMode(TarArchiveOutputStream.LONGFILE_GNU);
             _recurse(archive, base, "./");
         }
-        finally {
-            if (archive != null) {
-                try {
-                    archive.close();
-                }
-                catch(IOException e) {
-                    log.error(
-                        String.format("Cannot close tar stream"),
-                        e
-                    );
-                }
-            }
-        }
     }
 
     public static void main(String args[]) throws Exception {
-        FileOutputStream os = null;
-        try {
-            os = new FileOutputStream(args[0]);
+        try (OutputStream os = new FileOutputStream(args[0])) {
             Tar.doTar(os, new File(args[1]));
-        }
-        finally {
-            if (os != null) {
-                try {
-                    os.close();
-                }
-                catch(IOException e) {}
-            }
         }
     }
 }

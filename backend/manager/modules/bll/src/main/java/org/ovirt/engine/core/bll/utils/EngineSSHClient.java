@@ -5,9 +5,6 @@ import java.security.GeneralSecurityException;
 import java.security.KeyPair;
 import java.security.KeyStore;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -22,7 +19,6 @@ import org.ovirt.engine.core.uutils.ssh.SSHClient;
  */
 public class EngineSSHClient extends SSHClient {
 
-    private static final Log log = LogFactory.getLog(EngineSSHDialog.class);
     private VDS _vds;
 
     /**

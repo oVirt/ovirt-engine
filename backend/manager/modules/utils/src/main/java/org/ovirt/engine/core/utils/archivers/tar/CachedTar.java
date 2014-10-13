@@ -5,8 +5,9 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 
@@ -18,7 +19,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
  */
 public class CachedTar {
 
-    private static final Log log = LogFactory.getLog(CachedTar.class);
+    private static final Logger log = LoggerFactory.getLogger(CachedTar.class);
 
     private long refreshInterval = 10000;
     private long nextCheckTime = 0;
@@ -27,39 +28,21 @@ public class CachedTar {
     private File dir;
 
     private void create(long timestamp) throws IOException {
-        File temp = null;
-        OutputStream os = null;
+        // must create within same directory
+        // so rename be atomic
+        File temp = File.createTempFile(
+            this.archive.getName(),
+            "tmp",
+            this.archive.getParentFile()
+        );
         try {
-            // must create within same directory
-            // so rename be atomic
-            temp = File.createTempFile(
-                this.archive.getName(),
-                "tmp",
-                this.archive.getParentFile()
-            );
-            os = new FileOutputStream(temp);
-            Tar.doTar(os, this.dir);
-        }
-        catch(IOException e) {
-            String message = String.format("Cannot create tarball '%1$s'", this.archive);
-            log.error(message, e);
-            throw new IOException(message, e);
-        }
-        finally {
-            try {
-                if (os != null) {
-                    os.close();
-                }
+            try (OutputStream os = new FileOutputStream(temp)) {
+                Tar.doTar(os, this.dir);
             }
             catch(IOException e) {
-                log.error(
-                    String.format("Cannot close '%1$s'", temp),
-                    e
-                );
+                throw new IOException(String.format("Cannot create tarball '%1$s'", this.archive), e);
             }
-        }
 
-        try {
             if (!temp.setLastModified(timestamp)) {
                 throw new IOException(
                     String.format(
@@ -83,12 +66,12 @@ public class CachedTar {
             temp = null;
         }
         catch(IOException e) {
-            log.error(e);
+            log.error("Exception", e);
             throw e;
         }
         finally {
             if (temp != null && !temp.delete()) {
-                log.error(String.format("Cannot delete '%1$s'", temp.getAbsolutePath()));
+                log.error("Cannot delete '{}'", temp.getAbsolutePath());
             }
         }
     }
@@ -96,10 +79,8 @@ public class CachedTar {
     private void ensure() throws IOException {
         if (!this.archive.exists()) {
             log.info(
-                String.format(
-                    "Tarball '%1$s' is missing, creating",
-                    this.archive.getAbsolutePath()
-                )
+                "Tarball '{}' is missing, creating",
+                this.archive.getAbsolutePath()
             );
             this.nextCheckTime = System.currentTimeMillis() + this.refreshInterval;
             create(getTimestampRecursive(this.dir));
@@ -110,10 +91,8 @@ public class CachedTar {
             long treeTimestamp = getTimestampRecursive(this.dir);
             if (archive.lastModified() != treeTimestamp) {
                 log.info(
-                    String.format(
-                        "Tarball '%1$s' is out of date, re-creating",
-                        this.archive.getAbsolutePath()
-                    )
+                    "Tarball '{}' is out of date, re-creating",
+                    this.archive.getAbsolutePath()
                 );
                 create(treeTimestamp);
             }
