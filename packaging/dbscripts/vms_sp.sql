@@ -550,7 +550,8 @@ Create or replace FUNCTION InsertVmStatic(v_description VARCHAR(4000),
     v_custom_emulated_machine VARCHAR(40),
     v_custom_cpu_name VARCHAR(40),
     v_small_icon_id UUID,
-    v_large_icon_id UUID)
+    v_large_icon_id UUID,
+    v_console_disconnect_action VARCHAR(64))
   RETURNS VOID
    AS $procedure$
 DECLARE
@@ -625,7 +626,8 @@ INSERT INTO vm_static(description,
                       custom_emulated_machine,
                       custom_cpu_name,
                       small_icon_id,
-                      large_icon_id)
+                      large_icon_id,
+                      console_disconnect_action)
 	VALUES(v_description,
            v_free_text_comment,
            v_mem_size_mb,
@@ -692,7 +694,8 @@ INSERT INTO vm_static(description,
            v_custom_emulated_machine,
            v_custom_cpu_name,
            v_small_icon_id,
-           v_large_icon_id);
+           v_large_icon_id,
+           v_console_disconnect_action);
 
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vm_guid;
@@ -855,7 +858,8 @@ v_custom_emulated_machine VARCHAR(40),
 v_custom_cpu_name VARCHAR(40),
 v_small_icon_id UUID,
 v_large_icon_id UUID,
-v_provider_id UUID)
+v_provider_id UUID,
+v_console_disconnect_action VARCHAR(64))
 
 RETURNS VOID
 
@@ -896,7 +900,8 @@ BEGIN
       custom_cpu_name = v_custom_cpu_name,
       small_icon_id = v_small_icon_id,
       large_icon_id = v_large_icon_id,
-      provider_id = v_provider_id
+      provider_id = v_provider_id,
+      console_disconnect_action = v_console_disconnect_action
       WHERE vm_guid = v_vm_guid
       AND   entity_type = 'VM';
 END; $procedure$

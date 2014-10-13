@@ -1907,4 +1907,12 @@ public class VM extends IVdcQueryable implements Serializable, BusinessEntityWit
     public void setProviderId(Guid providerId) {
         vmStatic.setProviderId(providerId);
     }
+    public ConsoleDisconnectAction getConsoleDisconnectAction() {
+        return vmStatic.getConsoleDisconnectAction();
+    }
+
+    public void setConsoleDisconnectAction(ConsoleDisconnectAction consoleDisconnectAction) {
+        vmStatic.setConsoleDisconnectAction(consoleDisconnectAction);
+    }
+
 }

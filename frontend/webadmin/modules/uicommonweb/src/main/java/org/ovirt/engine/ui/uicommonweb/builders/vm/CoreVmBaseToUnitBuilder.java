@@ -54,6 +54,8 @@ public class CoreVmBaseToUnitBuilder extends CompositeBuilder<VmBase, UnitVmMode
         if (supported(ConfigurationValues.MigrationCompressionSupported, model)) {
             model.getMigrateCompressed().setSelectedItem(vm.getMigrateCompressed());
         }
+
+        model.getConsoleDisconnectAction().setSelectedItem(vm.getConsoleDisconnectAction());
     }
 
     protected boolean supported(ConfigurationValues feature, UnitVmModel model) {

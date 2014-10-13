@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
 import org.ovirt.engine.api.model.BootProtocol;
 import org.ovirt.engine.api.model.ConfigurationType;
+import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.CpuTune;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.GuestNicConfiguration;
@@ -105,6 +106,7 @@ public class VmMapperTest extends
         from.getDisplay().setCopyPasteEnabled(true);
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
         from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
+        from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         return from;
     }
 
@@ -159,6 +161,7 @@ public class VmMapperTest extends
         assertEquals(model.isStartPaused(), transform.isStartPaused());
         assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
         assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
+        assertEquals(model.getDisplay().getDisconnectAction(), transform.getDisplay().getDisconnectAction());
     }
 
     @Test

@@ -98,6 +98,8 @@ public class TemplateMapper extends VmBaseMapper {
             model.getCpu().setArchitecture(CPUMapper.map(entity.getClusterArch(), null));
         }
         model.setDisplay(DisplayMapper.map(entity, null));
+        model.getDisplay().setDisconnectAction(map(entity.getConsoleDisconnectAction(), null).toString());
+
         // if this is not a base template, that means this is a template version
         // so need to populate template version properties
         if (!entity.isBaseTemplate()) {

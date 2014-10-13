@@ -673,6 +673,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("USB Support")
     String usbPolicyVmPopup();
 
+    @DefaultStringValue("Console Disconnect Action")
+    String consoleDisconnectActionVmPopup();
+
     @DefaultStringValue("Monitors")
     String monitorsVmPopup();
 

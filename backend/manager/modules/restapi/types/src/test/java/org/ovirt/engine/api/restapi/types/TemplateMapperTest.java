@@ -2,6 +2,7 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Boot;
 import org.ovirt.engine.api.model.BootDevice;
+import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.InheritableBoolean;
 import org.ovirt.engine.api.model.SerialNumberPolicy;
 import org.ovirt.engine.api.model.Template;
@@ -40,6 +41,7 @@ public class TemplateMapperTest
         from.getSerialNumber().setPolicy(SerialNumberPolicy.CUSTOM.value());
         from.getMigration().setAutoConverge(InheritableBoolean.TRUE.value());
         from.getMigration().setCompressed(InheritableBoolean.TRUE.value());
+        from.getDisplay().setDisconnectAction(DisplayDisconnectAction.LOCK_SCREEN.toString());
         return from;
     }
 
@@ -91,5 +93,6 @@ public class TemplateMapperTest
         assertEquals(model.isStartPaused(), transform.isStartPaused());
         assertEquals(model.getMigration().getAutoConverge(), transform.getMigration().getAutoConverge());
         assertEquals(model.getMigration().getCompressed(), transform.getMigration().getCompressed());
+        assertEquals(model.getDisplay().getDisconnectAction(), transform.getDisplay().getDisconnectAction());
     }
 }

@@ -137,6 +137,7 @@ actions:
           vm.display.file_transfer_enabled: xs:boolean
           vm.display.copy_paste_enabled: xs:boolean
           vm.display.keyboard_layout: xs:string
+          vm.display.disconnect_action: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.cpu.architecture: xs:string
@@ -205,6 +206,7 @@ actions:
           vm.display.file_transfer_enabled: xs:boolean
           vm.display.copy_paste_enabled: xs:boolean
           vm.display.keyboard_layout: xs:string
+          vm.display.disconnect_action: xs:string
           vm.os.cmdline: xs:string
           vm.cpu.topology.cores: xs:int
           vm.cpu_shares: xs:int
@@ -266,6 +268,7 @@ actions:
                 vm.display.file_transfer_enabled: xs:boolean
                 vm.display.copy_paste_enabled: xs:boolean
                 vm.display.keyboard_layout: xs:string
+                vm.display.disconnect_action: xs:string
                 vm.os.cmdline: xs:string
                 vm.cpu.topology.cores: xs:int
                 vm.memory: xs:long
@@ -2340,6 +2343,7 @@ actions:
           vm.display.file_transfer_enabled: xs:boolean
           vm.display.copy_paste_enabled: xs:boolean
           template.display.keyboard_layout: xs:string
+          template.display.disconnect_action: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string
@@ -2401,6 +2405,7 @@ actions:
           template.display.file_transfer_enabled: xs:boolean
           template.display.copy_paste_enabled: xs:boolean
           template.display.keyboard_layout: xs:string
+          template.display.disconnect_action: xs:string
           template.os.initRd: xs:string
           template.usb.enabled: xs:boolean
           template.usb.type: xs:string

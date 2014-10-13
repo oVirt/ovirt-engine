@@ -13,6 +13,7 @@ import java.util.List;
 
 import org.apache.commons.lang.NotImplementedException;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -521,5 +522,18 @@ public class VmStaticDAOTest extends BaseDAOTestCase {
             allValues &= ObjectUtils.objectsEqual(vmStatic.getCpuProfileId(), cpuProfileId);
         }
         assertEquals(isAllNull, allValues);
+    }
+
+    @Test
+    public void testConsoleDisconnectActionDefault() {
+        assertEquals(newVmStatic.getConsoleDisconnectAction(), ConsoleDisconnectAction.LOCK_SCREEN);
+    }
+
+    @Test
+    public void testConsoleDisconnectActionSaved() {
+        newVmStatic.setConsoleDisconnectAction(ConsoleDisconnectAction.REBOOT);
+        dao.save(newVmStatic);
+        VmStatic loaded = dao.get(newVmStatic.getId());
+        assertEquals(loaded.getConsoleDisconnectAction(), ConsoleDisconnectAction.REBOOT);
     }
 }

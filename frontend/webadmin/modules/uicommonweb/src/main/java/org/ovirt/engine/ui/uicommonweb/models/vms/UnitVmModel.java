@@ -12,6 +12,7 @@ import java.util.Set;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.GraphicsType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
@@ -277,6 +278,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getDisplayType().setIsChangeable(false);
             getGraphicsType().setIsChangeable(false);
             getUsbPolicy().setIsChangeable(false);
+            getConsoleDisconnectAction().setIsChangeable(false);
             getNumOfMonitors().setIsChangeable(false);
             getIsSingleQxlEnabled().setIsChangeable(false);
             getIsSmartcardEnabled().setIsChangeable(false);
@@ -630,6 +632,18 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
     private void setUsbPolicy(NotChangableForVmInPoolListModel<UsbPolicy> value)
     {
         privateUsbPolicy = value;
+    }
+
+    private NotChangableForVmInPoolListModel<ConsoleDisconnectAction> consoleDisconnectAction;
+
+    public ListModel<ConsoleDisconnectAction> getConsoleDisconnectAction()
+    {
+        return consoleDisconnectAction;
+    }
+
+    private void setConsoleDisconnectAction(NotChangableForVmInPoolListModel<ConsoleDisconnectAction> value)
+    {
+        consoleDisconnectAction = value;
     }
 
     private NotChangableForVmInPoolListModel<TimeZoneModel> privateTimeZone;
@@ -1503,6 +1517,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         setComment(new NotChangableForVmInPoolEntityModel<String>());
         setMinAllocatedMemory(new NotChangableForVmInPoolEntityModel<Integer>());
         setUsbPolicy(new NotChangableForVmInPoolListModel<UsbPolicy>());
+        setConsoleDisconnectAction(new NotChangableForVmInPoolListModel<ConsoleDisconnectAction>());
         setIsStateless(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsRunAndPause(new NotChangableForVmInPoolEntityModel<Boolean>());
         setIsSmartcardEnabled(new NotChangableForVmInPoolEntityModel<Boolean>());
@@ -1794,6 +1809,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
         initAllowConsoleReconnect();
         initMigrationMode();
         initVncKeyboardLayout();
+        initConsoleDisconnectAction();
 
         behavior.initialize(SystemTreeSelectedItem);
     }
@@ -1992,6 +2008,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
     protected void initAllowConsoleReconnect() {
         getAllowConsoleReconnect().setEntity(getVmType().getSelectedItem() == VmType.Server);
+    }
+
+    private void initConsoleDisconnectAction() {
+        getConsoleDisconnectAction().setItems(Arrays.asList(ConsoleDisconnectAction.values()));
     }
 
     private void initUsbPolicy() {

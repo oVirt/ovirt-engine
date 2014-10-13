@@ -144,6 +144,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setCustomProperties(entity.getCustomProperties());
         staticVm.setCustomEmulatedMachine(entity.getCustomEmulatedMachine());
         staticVm.setCustomCpuName(entity.getCustomCpuName());
+        staticVm.setConsoleDisconnectAction(entity.getConsoleDisconnectAction());
         return doMapVmBaseHwPartToVmStatic(entity, staticVm);
     }
 
@@ -425,6 +426,8 @@ public class VmMapper extends VmBaseMapper {
         model.getDisplay().setFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         model.getDisplay().setCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         model.getDisplay().setProxy(getEffectiveSpiceProxy(entity));
+        model.getDisplay().setDisconnectAction(map(entity.getConsoleDisconnectAction(), null).toString());
+
         model.setStateless(entity.isStateless());
         model.setDeleteProtected(entity.isDeleteProtected());
         model.setSso(SsoMapper.map(entity.getSsoMethod(), null));

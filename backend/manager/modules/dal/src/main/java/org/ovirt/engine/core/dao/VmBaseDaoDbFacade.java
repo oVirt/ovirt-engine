@@ -4,6 +4,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
@@ -84,7 +85,8 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("custom_emulated_machine", entity.getCustomEmulatedMachine())
                 .addValue("custom_cpu_name", entity.getCustomCpuName())
                 .addValue(SMALL_ICON_ID_COLUMN, entity.getSmallIconId())
-                .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId());
+                .addValue(LARGE_ICON_ID_COLUMN, entity.getLargeIconId())
+                .addValue("console_disconnect_action", entity.getConsoleDisconnectAction().toString());
     }
 
     /**
@@ -153,6 +155,7 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setCustomCpuName(rs.getString("custom_cpu_name"));
             entity.setSmallIconId(getGuid(rs, SMALL_ICON_ID_COLUMN));
             entity.setLargeIconId(getGuid(rs, LARGE_ICON_ID_COLUMN));
+            entity.setConsoleDisconnectAction(ConsoleDisconnectAction.fromDbString(rs.getString("console_disconnect_action")));
         }
     }
 }

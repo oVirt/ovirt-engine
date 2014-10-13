@@ -7,6 +7,7 @@ import static org.mockito.Mockito.when;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -54,6 +55,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         vm.setLargeIconId(LARGE_ICON_ID);
         vm.setSmallIconId(SMALL_ICON_ID);
         vm.setNumOfIoThreads(NUM_OF_IO_THREADS);
+        vm.setConsoleDisconnectAction(ConsoleDisconnectAction.LOCK_SCREEN);
     }
 
     @Before
@@ -162,6 +164,7 @@ public abstract class BaseVmModelBehaviorTest extends BaseVmTest {
         assertTrue(model.getMigrateCompressed().getSelectedItem());
         assertEquals(LARGE_ICON_DATA, model.getIcon().getEntity().getIcon());
         assertEquals(LARGE_OS_DEFAULT_ICON_DATA, model.getIcon().getEntity().getOsDefaultIcon());
+        assertEquals(model.getConsoleDisconnectAction().getSelectedItem(), ConsoleDisconnectAction.LOCK_SCREEN);
     }
 
     /** Verifies {@link org.ovirt.engine.ui.uicommonweb.builders.vm.SerialNumberPolicyVmBaseToUnitBuilder} */

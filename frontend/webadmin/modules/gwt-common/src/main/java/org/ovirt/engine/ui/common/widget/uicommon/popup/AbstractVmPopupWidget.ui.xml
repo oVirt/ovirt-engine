@@ -578,6 +578,7 @@
                         <e:ListModelListBoxEditor ui:field="graphicsTypeEditor" />
                         <e:ListModelListBoxEditor ui:field="vncKeyboardLayoutEditor" />
                         <e:ListModelListBoxEditor ui:field="usbSupportEditor" />
+                        <e:ListModelListBoxEditor ui:field="consoleDisconnectActionEditor" />
                         <g:FlowPanel width="100%">
                               <g:FlowPanel addStyleNames="{style.monitorPanel}">
                                  <g:HorizontalPanel verticalAlignment="middle">

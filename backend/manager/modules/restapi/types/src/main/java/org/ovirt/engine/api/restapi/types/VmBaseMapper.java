@@ -5,6 +5,7 @@ import org.ovirt.engine.api.model.Bios;
 import org.ovirt.engine.api.model.BootMenu;
 import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
+import org.ovirt.engine.api.model.DisplayDisconnectAction;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
 import org.ovirt.engine.api.model.CustomProperties;
@@ -17,6 +18,7 @@ import org.ovirt.engine.api.model.VmType;
 import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 
 import static org.ovirt.engine.api.restapi.types.IntegerMapper.mapMinusOneToNull;
@@ -30,7 +32,7 @@ public class VmBaseMapper {
             entity.setName(model.getName());
         }
         if (model.isSetMemory()) {
-            entity.setMemSizeMb((int)(model.getMemory() / BYTES_PER_MB));
+            entity.setMemSizeMb((int) (model.getMemory() / BYTES_PER_MB));
         }
         if (model.isSetId()) {
             entity.setId(GuidUtils.asGuid(model.getId()));
@@ -113,6 +115,10 @@ public class VmBaseMapper {
             }
             if (model.getDisplay().isSetCopyPasteEnabled()) {
                 entity.setSpiceCopyPasteEnabled(model.getDisplay().isCopyPasteEnabled());
+            }
+            if (model.getDisplay().isSetDisconnectAction()) {
+                DisplayDisconnectAction action = DisplayDisconnectAction.fromValue(model.getDisplay().getDisconnectAction());
+                entity.setConsoleDisconnectAction(map(action, null));
             }
         }
         if (model.isSetTimezone()) {
@@ -257,6 +263,48 @@ public class VmBaseMapper {
 
         if (entity.getCustomCpuName() != null) {
             model.setCustomCpuModel(entity.getCustomCpuName());
+        }
+    }
+
+    @Mapping(from = DisplayDisconnectAction.class, to = ConsoleDisconnectAction.class)
+    public static ConsoleDisconnectAction map(DisplayDisconnectAction action, ConsoleDisconnectAction incoming) {
+        if (action == null) {
+            return ConsoleDisconnectAction.LOCK_SCREEN;
+        }
+        switch (action) {
+            case NONE:
+                return ConsoleDisconnectAction.NONE;
+            case LOCK_SCREEN:
+                return ConsoleDisconnectAction.LOCK_SCREEN;
+            case LOGOUT:
+                return ConsoleDisconnectAction.LOGOUT;
+            case REBOOT:
+                return ConsoleDisconnectAction.REBOOT;
+            case SHUTDOWN:
+                return ConsoleDisconnectAction.SHUTDOWN;
+            default:
+                return null;
+        }
+    }
+
+    @Mapping(from = ConsoleDisconnectAction.class, to = DisplayDisconnectAction.class)
+    public static DisplayDisconnectAction map(ConsoleDisconnectAction action, DisplayDisconnectAction incoming) {
+        if (action == null) {
+            return DisplayDisconnectAction.LOCK_SCREEN;
+        }
+        switch (action) {
+            case NONE:
+                return DisplayDisconnectAction.NONE;
+            case LOCK_SCREEN:
+                return DisplayDisconnectAction.LOCK_SCREEN;
+            case LOGOUT:
+                return DisplayDisconnectAction.LOGOUT;
+            case REBOOT:
+                return DisplayDisconnectAction.REBOOT;
+            case SHUTDOWN:
+                return DisplayDisconnectAction.SHUTDOWN;
+            default:
+                return null;
         }
     }
 

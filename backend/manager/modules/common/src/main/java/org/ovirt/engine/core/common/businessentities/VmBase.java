@@ -278,6 +278,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableOnTemplate
     private String customProperties;
 
+    @CopyOnNewVersion
+    @EditableField
+    private ConsoleDisconnectAction consoleDisconnectAction;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
@@ -302,6 +306,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vNumaNodeList = new ArrayList<VmNumaNode>();
         customProperties = "";
+        consoleDisconnectAction = ConsoleDisconnectAction.LOCK_SCREEN;
     }
 
     @EditableField
@@ -460,7 +465,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getCustomCpuName(),
                 vmBase.getSmallIconId(),
                 vmBase.getLargeIconId(),
-                vmBase.getNumOfIoThreads());
+                vmBase.getNumOfIoThreads(),
+                vmBase.getConsoleDisconnectAction());
     }
 
     public VmBase(
@@ -522,7 +528,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             String customCpuName,
             Guid smallIconId,
             Guid largeIconId,
-            int numOfIoThreads) {
+            int numOfIoThreads,
+            ConsoleDisconnectAction consoleDisconnectAction) {
         this();
         this.name = name;
         this.id = id;
@@ -583,6 +590,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.smallIconId = smallIconId;
         this.largeIconId = largeIconId;
         this.numOfIoThreads = numOfIoThreads;
+        this.consoleDisconnectAction = consoleDisconnectAction;
     }
 
     public long getDbGeneration() {
@@ -958,6 +966,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((customCpuName== null) ? 0 : customCpuName.hashCode());
         result = prime * result + ((smallIconId == null) ? 0 : smallIconId.hashCode());
         result = prime * result + ((largeIconId == null) ? 0 : largeIconId.hashCode());
+        result = prime * result + ((consoleDisconnectAction == null) ? 0 : consoleDisconnectAction.hashCode());
         return result;
     }
 
@@ -1023,7 +1032,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(customEmulatedMachine, other.customEmulatedMachine)
                 && ObjectUtils.objectsEqual(customCpuName, other.customCpuName)
                 && Objects.equals(smallIconId, other.smallIconId)
-                && Objects.equals(largeIconId, other.largeIconId);
+                && Objects.equals(largeIconId, other.largeIconId)
+                && ObjectUtils.objectsEqual(consoleDisconnectAction, other.consoleDisconnectAction);
     }
 
     public Guid getQuotaId() {
@@ -1096,6 +1106,14 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setTunnelMigration(Boolean value) {
         tunnelMigration = value;
+    }
+
+    public ConsoleDisconnectAction getConsoleDisconnectAction() {
+        return consoleDisconnectAction;
+    }
+
+    public void setConsoleDisconnectAction(ConsoleDisconnectAction consoleDisconnectAction) {
+        this.consoleDisconnectAction = consoleDisconnectAction;
     }
 
     @Override

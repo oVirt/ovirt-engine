@@ -65,6 +65,7 @@ public class InstanceTypesPopupWidget extends AbstractVmPopupWidget {
                 putOne(startRunningOnPanel, hiddenField()).
                 putOne(spiceCopyPasteEnabledEditor, hiddenField()).
                 putOne(spiceFileTransferEnabledEditor, hiddenField()).
-                putOne(iconTab, hiddenField());
+                putOne(iconTab, hiddenField()).
+                putOne(consoleDisconnectActionEditor, hiddenField());
     }
 }

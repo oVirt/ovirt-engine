@@ -15,6 +15,7 @@ import org.ovirt.engine.api.model.CPUs;
 import org.ovirt.engine.api.model.Capabilities;
 import org.ovirt.engine.api.model.ConfigurationType;
 import org.ovirt.engine.api.model.ConfigurationTypes;
+import org.ovirt.engine.api.model.DisplayDisconnectActions;
 import org.ovirt.engine.api.model.ContentTypes;
 import org.ovirt.engine.api.model.CpuMode;
 import org.ovirt.engine.api.model.CpuModes;
@@ -147,6 +148,7 @@ import org.ovirt.engine.api.restapi.utils.VersionUtils;
 import org.ovirt.engine.api.utils.LinkHelper;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
 import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.businessentities.VmPauseStatus;
@@ -296,6 +298,7 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         addSpmStates(version, SpmState.values());
         addNetworkPluginTypes(version, NetworkPluginType.values());
         addMessageBrokerTypes(version, MessageBrokerType.values());
+        addConsoleDisconnectActions(version, ConsoleDisconnectAction.values());
 
         // External tasks types
         addStepEnumTypes(version, StepEnum.values());
@@ -313,6 +316,15 @@ public class BackendCapabilitiesResource extends BackendResource implements Capa
         LinkHelper.<VersionCaps> addLinks(getUriInfo(), version);
 
         return version;
+    }
+
+    private void addConsoleDisconnectActions(VersionCaps version, ConsoleDisconnectAction[] values) {
+        if (VersionUtils.greaterOrEqual(version, VERSION_3_6)) {
+            version.setDisplayDisconnectActions(new DisplayDisconnectActions());
+            for (ConsoleDisconnectAction value : values) {
+                version.getDisplayDisconnectActions().getDisplayDisconnectActions().add(value.toString());
+            }
+        }
     }
 
     private void addArchitectureCapabilities(VersionCaps version) {

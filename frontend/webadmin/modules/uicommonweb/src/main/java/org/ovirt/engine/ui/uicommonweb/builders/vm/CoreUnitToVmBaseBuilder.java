@@ -45,5 +45,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setAutoConverge(model.getAutoConverge().getSelectedItem());
         vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
         vm.setCustomProperties(model.getCustomPropertySheet().serialize());
+        vm.setConsoleDisconnectAction(model.getConsoleDisconnectAction().getSelectedItem());
     }
 }

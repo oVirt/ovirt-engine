@@ -8,6 +8,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.After;
 import org.junit.Before;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
 import org.ovirt.engine.core.common.businessentities.Quota;
@@ -98,6 +99,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         when(model.getIcon().getEntity()).thenReturn(new IconWithOsDefault(LARGE_ICON_DATA, LARGE_OS_DEFAULT_ICON_DATA, SMALL_ICON_ID));
         when(model.getNumOfIoThreads().getEntity()).thenReturn(NUM_OF_IO_THREADS);
         when(model.getIoThreadsEnabled().getEntity()).thenReturn(true);
+        when(model.getConsoleDisconnectAction().getSelectedItem()).thenReturn(ConsoleDisconnectAction.REBOOT);
     }
 
     protected void setUpOrigVm(VM origVm) {
@@ -141,6 +143,7 @@ public class BaseVmListModelTest extends BaseVmTest {
         assertEquals(LARGE_ICON_ID, vm.getLargeIconId());
         assertEquals(SMALL_ICON_ID, vm.getSmallIconId());
         assertEquals(NUM_OF_IO_THREADS.intValue(), vm.getNumOfIoThreads());
+        assertEquals(vm.getConsoleDisconnectAction(), ConsoleDisconnectAction.REBOOT);
     }
 
     /**

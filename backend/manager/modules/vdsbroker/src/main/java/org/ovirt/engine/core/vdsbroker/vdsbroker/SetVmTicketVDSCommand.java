@@ -51,6 +51,7 @@ public class SetVmTicketVDSCommand<P extends SetVmTicketVDSCommandParameters> ex
         devStruct.put("password", getParameters().getTicket());
         devStruct.put("ttl", getParameters().getValidTime());
         devStruct.put("existingConnAction", connectionAction);
+        devStruct.put("disconnectAction", getParameters().getDisconnectAction());
 
         if (includeUserData) {
             devStruct.put("params", getUidParams());

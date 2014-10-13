@@ -668,6 +668,7 @@
           <xs:element ref="inheritable_booleans" minOccurs="0" maxOccurs="1" />
           <xs:element ref="network_plugin_types" minOccurs="0"/>
           <xs:element ref="message_broker_types" minOccurs="0"/>
+          <xs:element ref="display_disconnect_actions" minOccurs="0" />
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
@@ -1217,6 +1218,19 @@
     </xs:sequence>
   </xs:complexType>
 
+  <xs:element name="display_disconnect_actions" type="DisplayDisconnectActions" />
+
+  <xs:complexType name="DisplayDisconnectActions">
+    <xs:sequence>
+      <xs:element name="display_disconnect_action" type="xs:string" minOccurs="0" maxOccurs="unbounded">
+        <xs:annotation>
+          <xs:appinfo>
+            <jaxb:property name="DisplayDisconnectActions" />
+          </xs:appinfo>
+        </xs:annotation>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
 
   <xs:element name="selinux_modes" type="SELinuxModes" />
 
@@ -3043,6 +3057,7 @@
       <xs:element name="proxy" type="xs:string" minOccurs="0" maxOccurs="1"/>
       <xs:element name="file_transfer_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
       <xs:element name="copy_paste_enabled" type="xs:boolean" minOccurs="0" maxOccurs="1"/>
+      <xs:element name="disconnect_action" type="xs:string" minOccurs="0" maxOccurs="1"/>
     </xs:sequence>
   </xs:complexType>
 

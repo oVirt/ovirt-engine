@@ -1119,4 +1119,14 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String NumaTuneMode___INTERLEAVE();
 
     String ImportSource___EXPORT_DOMAIN();
+
+    String ConsoleDisconnectAction___NONE();
+
+    String ConsoleDisconnectAction___LOCK_SCREEN();
+
+    String ConsoleDisconnectAction___LOGOUT();
+
+    String ConsoleDisconnectAction___SHUTDOWN();
+
+    String ConsoleDisconnectAction___REBOOT();
 }

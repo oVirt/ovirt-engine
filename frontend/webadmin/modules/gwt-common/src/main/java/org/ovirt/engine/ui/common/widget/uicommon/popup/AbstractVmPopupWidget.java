@@ -11,6 +11,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.BootSequence;
+import org.ovirt.engine.core.common.businessentities.ConsoleDisconnectAction;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
@@ -484,6 +485,11 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @Path(value = "usbPolicy.selectedItem")
     @WithElementId("usbPolicy")
     public ListModelListBoxEditor<UsbPolicy> usbSupportEditor;
+
+    @UiField(provided = true)
+    @Path(value = "consoleDisconnectAction.selectedItem")
+    @WithElementId("consoleDisconnectAction")
+    public ListModelListBoxEditor<ConsoleDisconnectAction> consoleDisconnectActionEditor;
 
     @UiField(provided = true)
     @Path(value = "numOfMonitors.selectedItem")
@@ -1336,6 +1342,9 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
         usbSupportEditor =
                 new ListModelListBoxEditor<UsbPolicy>(new EnumRenderer<UsbPolicy>(), new ModeSwitchingVisibilityRenderer());
+        consoleDisconnectActionEditor =
+                new ListModelListBoxEditor<ConsoleDisconnectAction>(new EnumRenderer<ConsoleDisconnectAction>(), new ModeSwitchingVisibilityRenderer());
+
         numOfMonitorsEditor = new ListModelListBoxEditor<Integer>(new NullSafeRenderer<Integer>() {
             @Override
             public String renderNullSafe(Integer object) {
@@ -1481,6 +1490,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         graphicsTypeEditor.setLabel(constants.graphicsProtocol());
         vncKeyboardLayoutEditor.setLabel(constants.vncKeyboardLayoutVmPopup());
         usbSupportEditor.setLabel(constants.usbPolicyVmPopup());
+        consoleDisconnectActionEditor.setLabel(constants.consoleDisconnectActionVmPopup());
         numOfMonitorsEditor.setLabel(constants.monitorsVmPopup());
         allowConsoleReconnectEditor.setLabel(constants.allowConsoleReconnect());
         isSoundcardEnabledEditor.setLabel(constants.soundcardEnabled());
@@ -1972,6 +1982,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         graphicsTypeEditor.setTabIndex(nextTabIndex++);
         vncKeyboardLayoutEditor.setTabIndex(nextTabIndex++);
         usbSupportEditor.setTabIndex(nextTabIndex++);
+        consoleDisconnectActionEditor.setTabIndexes(nextTabIndex++);
         isSingleQxlEnabledEditor.setTabIndex(nextTabIndex++);
         numOfMonitorsEditor.setTabIndex(nextTabIndex++);
         isSmartcardEnabledEditor.setTabIndex(nextTabIndex++);
@@ -2070,6 +2081,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 displayTypeEditor,
                 graphicsTypeEditor,
                 usbSupportEditor,
+                consoleDisconnectActionEditor,
                 isSmartcardEnabledEditor,
                 nativeUsbWarningMessage,
                 expander,
@@ -2149,6 +2161,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
                 // console tab
                 usbSupportEditor,
+                consoleDisconnectActionEditor,
                 numOfMonitorsLabel,
                 numOfMonitorsEditor,
                 isSingleQxlEnabledEditor,
