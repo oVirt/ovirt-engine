@@ -35,6 +35,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeP
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeProfileStatisticsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.gluster.VolumeRebalanceStatusPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -174,30 +175,12 @@ public class VolumeModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Permissions, VolumeListModel, PermissionListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                VolumeListModel.class,
-                PermissionListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getAddCommand()) {
-                    return popupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+        return new PermissionModelProvider<VolumeListModel>(eventBus,
+                defaultConfirmPopupProvider,
+                removeConfirmPopupProvider,
+                popupProvider,
+                VolumeListModel.class);
     }
 
     @Provides

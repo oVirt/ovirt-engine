@@ -46,6 +46,7 @@ import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.guide.GuidePopu
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.host.MultipleHostsPopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.profile.CpuProfilePopupPresenterWidget;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.popup.scheduling.AffinityGroupPopupPresenterWidget;
+import org.ovirt.engine.ui.webadmin.uicommon.model.PermissionModelProvider;
 
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.inject.client.AbstractGinModule;
@@ -270,30 +271,12 @@ public class ClusterModule extends AbstractGinModule {
             Provider<DefaultConfirmationPopupPresenterWidget> defaultConfirmPopupProvider,
             final Provider<PermissionsPopupPresenterWidget> popupProvider,
             final Provider<RolePermissionsRemoveConfirmationPopupPresenterWidget> removeConfirmPopupProvider) {
-        return new SearchableDetailTabModelProvider<Permissions, ClusterListModel, PermissionListModel>(
-                eventBus, defaultConfirmPopupProvider,
-                ClusterListModel.class,
-                PermissionListModel.class) {
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends Model, ?> getModelPopup(PermissionListModel source,
-                    UICommand lastExecutedCommand, Model windowModel) {
-                if (lastExecutedCommand == getModel().getAddCommand()) {
-                    return popupProvider.get();
-                } else {
-                    return super.getModelPopup(source, lastExecutedCommand, windowModel);
-                }
-            }
 
-            @Override
-            public AbstractModelBoundPopupPresenterWidget<? extends ConfirmationModel, ?> getConfirmModelPopup(PermissionListModel source,
-                    UICommand lastExecutedCommand) {
-                if (lastExecutedCommand == getModel().getRemoveCommand()) {
-                    return removeConfirmPopupProvider.get();
-                } else {
-                    return super.getConfirmModelPopup(source, lastExecutedCommand);
-                }
-            }
-        };
+        return new PermissionModelProvider<ClusterListModel>(eventBus,
+                defaultConfirmPopupProvider,
+                removeConfirmPopupProvider,
+                popupProvider,
+                ClusterListModel.class);
     }
 
     @Provides
