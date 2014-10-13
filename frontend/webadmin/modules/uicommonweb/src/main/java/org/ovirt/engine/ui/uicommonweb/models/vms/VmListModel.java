@@ -440,6 +440,19 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
             });
 
+    VmInterfaceCreatingManager addVmFromBlankTemplateNetworkManager =
+            new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
+                @Override
+                public void vnicCreated(Guid vmId) {
+                    // do nothing
+                }
+
+                @Override
+                public void queryFailed() {
+                    // do nothing
+                }
+            });
+
     public VmListModel()
     {
         setTitle(ConstantsManager.getInstance().getConstants().virtualMachinesTitle());
@@ -2128,40 +2141,35 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
     }
 
     private void saveNewVm(final UnitVmModel model) {
-        if (getcurrentVm().getVmtGuid().equals(Guid.Empty))
-        {
-            if (model.getProgress() != null)
-            {
-                return;
-            }
+        if (model.getProgress() != null) {
+            return;
+        }
 
-            VmInterfaceCreatingManager addVmFromScratchNetworkManager =
-                    new VmInterfaceCreatingManager(new VmInterfaceCreatingManager.PostVnicCreatedCallback() {
-                        @Override
-                        public void vnicCreated(Guid vmId) {
-                            // do nothing
-                        }
+        model.startProgress(null);
 
-                        @Override
-                        public void queryFailed() {
-                            // do nothing
-                        }
-                    });
+        VM vm = getcurrentVm();
+        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-            model.startProgress(null);
+        AddVmParameters parameters = new AddVmParameters(vm);
+        parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        parameters.setBalloonEnabled(balloonEnabled(model));
+        parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        setVmWatchdogToParams(model, parameters);
+        setRngDeviceToParams(model, parameters);
 
-            AddVmParameters parameters = new AddVmParameters(getcurrentVm());
-            parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-            parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-            parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-            parameters.setBalloonEnabled(balloonEnabled(model));
+        Frontend.getInstance().runAction(
+                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
+                parameters,
+                createUnitVmModelNetworkAsyncCallback(vm, model),
+                this);
+    }
 
-            setVmWatchdogToParams(model, parameters);
-            setRngDeviceToParams(model, parameters);
-
-            Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch,
-                    parameters,
-                    new UnitVmModelNetworkAsyncCallback(model, addVmFromScratchNetworkManager) {
+    private UnitVmModelNetworkAsyncCallback createUnitVmModelNetworkAsyncCallback(VM vm, UnitVmModel model) {
+        if (vm.getVmtGuid().equals(Guid.Empty)) {
+            return new UnitVmModelNetworkAsyncCallback(model, addVmFromBlankTemplateNetworkManager) {
                 @Override
                 public void executed(FrontendActionAsyncResult result) {
                     getWindow().stopProgress();
@@ -2176,58 +2184,10 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                     }
                     super.executed(result);
                 }
-            }, this);
+            };
         }
-        else
-        {
-            if (model.getProgress() != null)
-            {
-                return;
-            }
 
-            if (model.getProvisioning().getEntity())
-            {
-                model.startProgress(null);
-
-                VM vm = getcurrentVm();
-                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                AddVmParameters param = new AddVmParameters(vm);
-                param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                param.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                param.setBalloonEnabled(balloonEnabled(model));
-                param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-                setRngDeviceToParams(model, param);
-
-                Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-            }
-            else
-            {
-                if (model.getProgress() != null)
-                {
-                    return;
-                }
-
-                model.startProgress(null);
-
-                VM vm = getcurrentVm();
-                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                AddVmParameters params = new AddVmParameters(vm);
-                params.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                params.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                params.setBalloonEnabled(balloonEnabled(model));
-                params.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-                params.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                params.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
-                setVmWatchdogToParams(model, params);
-                setRngDeviceToParams(model, params);
-
-                Frontend.getInstance().runAction(VdcActionType.AddVm, params, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-            }
-        }
+        return new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager);
     }
 
     protected static void buildVmOnSave(UnitVmModel model, VM vm) {

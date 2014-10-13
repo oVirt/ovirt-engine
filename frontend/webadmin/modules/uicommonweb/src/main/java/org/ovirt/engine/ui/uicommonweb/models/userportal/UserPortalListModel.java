@@ -1135,46 +1135,24 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
     }
 
     private void saveNewVm(final UnitVmModel model) {
-        if (gettempVm().getVmtGuid().equals(Guid.Empty)) {
-            AddVmParameters parameters = new AddVmParameters(gettempVm());
-            parameters.setMakeCreatorExplicitOwner(true);
-            parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-            parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-            setRngDeviceToParams(model, parameters);
-            Frontend.getInstance().runAction(VdcActionType.AddVmFromScratch, parameters, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-        }
-        else {
-            setstorageDomain(model.getStorageDomain().getSelectedItem());
+        setstorageDomain(model.getStorageDomain().getSelectedItem());
 
-            if (model.getProvisioning().getEntity()) {
-                VM vm = gettempVm();
-                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
+        VM vm = gettempVm();
+        vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
 
-                AddVmParameters param = new AddVmParameters(vm);
-                param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                param.setMakeCreatorExplicitOwner(true);
-                param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+        AddVmParameters parameters = new AddVmParameters(vm);
+        parameters.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
+        parameters.setMakeCreatorExplicitOwner(true);
+        parameters.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
+        parameters.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
+        parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
+        setRngDeviceToParams(model, parameters);
 
-                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                setRngDeviceToParams(model, param);
-                Frontend.getInstance().runAction(VdcActionType.AddVmFromTemplate, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-            }
-            else {
-                VM vm = gettempVm();
-                vm.setUseLatestVersion(constants.latestTemplateVersionName().equals(model.getTemplate().getSelectedItem().getTemplateVersionName()));
-
-                AddVmParameters param = new AddVmParameters(vm);
-                param.setDiskInfoDestinationMap(model.getDisksAllocationModel().getImageToDestinationDomainMap());
-                param.setMakeCreatorExplicitOwner(true);
-                param.setCopyTemplatePermissions(model.getCopyPermissions().getEntity());
-
-                param.setSoundDeviceEnabled(model.getIsSoundcardEnabled().getEntity());
-                param.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
-                setRngDeviceToParams(model, param);
-                Frontend.getInstance().runAction(VdcActionType.AddVm, param, new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager), this);
-            }
-        }
+        Frontend.getInstance().runAction(
+                model.getProvisioning().getEntity() ? VdcActionType.AddVmFromTemplate : VdcActionType.AddVm,
+                        parameters,
+                        new UnitVmModelNetworkAsyncCallback(model, defaultNetworkCreatingManager),
+                        this);
     }
 
     private void updateExistingVm(UserPortalListModel userPortalListModel, final boolean applyCpuChangesLater) {
