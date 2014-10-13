@@ -167,6 +167,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
     protected List<SPMAsyncTaskHandler> initTaskHandlers() {
         List<SPMAsyncTaskHandler> taskHandlers = new ArrayList<>();
 
+        // Sort images from parent to leaf (active) - needed only on first task handler
+        // as the sorted list is being saved in the parameters.
+        if (isFirstTaskHandler()) {
+            ImagesHandler.sortImageList(getImages());
+            getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(getImages())));
+        }
+
         for (Guid imageId : getParameters().getImageIds()) {
             taskHandlers.add(new RemoveDiskSnapshotTaskHandler(this, imageId, getImageGroupId(), getVmId()));
         }
