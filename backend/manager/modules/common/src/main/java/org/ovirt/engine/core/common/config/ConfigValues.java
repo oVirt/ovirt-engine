@@ -1121,10 +1121,8 @@ public enum ConfigValues {
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute(
         "umask 0077; " +
-        "MYTMP=\"$(TMPDIR=\"${OVIRT_TMPDIR}\" mktemp -t ovirt-XXXXXXXXXX)\"; " +
+        "MYTMP=\"$(TMPDIR=\"${OVIRT_TMPDIR}\" mktemp -d ovirt-XXXXXXXXXX)\"; " +
         "trap \"chmod -R u+rwX \\\"${MYTMP}\\\" > /dev/null 2>&1; rm -fr \\\"${MYTMP}\\\" > /dev/null 2>&1\" 0; " +
-        "rm -fr \"${MYTMP}\" && " +
-        "mkdir \"${MYTMP}\" && " +
         "tar --warning=no-timestamp -C \"${MYTMP}\" -x && " +
         "@ENVIRONMENT@ \"${MYTMP}\"/setup DIALOG/dialect=str:machine DIALOG/customization=bool:True"
     )
