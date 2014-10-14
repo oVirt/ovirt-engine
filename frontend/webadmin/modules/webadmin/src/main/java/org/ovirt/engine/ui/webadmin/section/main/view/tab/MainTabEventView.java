@@ -45,6 +45,10 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
 
     private final ApplicationConstants constants;
 
+    private static final String BASIC_VIEW_MSG_COLUMN_WIDTH = "600px"; //$NON-NLS-1$
+    private static final String ADV_VIEW_MSG_COLUMN_WIDTH = "150px"; //$NON-NLS-1$
+    private TextColumnWithTooltip<AuditLog> messageColumn;
+
     @Inject
     public MainTabEventView(MainModelProvider<AuditLog, EventListModel> modelProvider,
             ApplicationConstants constants) {
@@ -104,6 +108,9 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         getTable().ensureColumnPresent(AdvancedViewColumns.customEventIdColumn, constants.eventCustomEventId(),
                 advancedViewEnabled,
                 "100px"); //$NON-NLS-1$
+
+        getTable().setColumnWidth(messageColumn,
+                advancedViewEnabled ? ADV_VIEW_MSG_COLUMN_WIDTH : BASIC_VIEW_MSG_COLUMN_WIDTH);
     }
 
     void initTable() {
@@ -120,14 +127,14 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
         getTable().addColumn(logTimeColumn, constants.timeEvent(), "150px"); //$NON-NLS-1$
 
-        TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
+        messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
                 return object.getmessage();
             }
         };
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);
-        getTable().addColumn(messageColumn, constants.messageEvent(), "150px"); //$NON-NLS-1$
+        getTable().addColumn(messageColumn, constants.messageEvent(), BASIC_VIEW_MSG_COLUMN_WIDTH);
 
         getTable().addActionButton(new WebAdminButtonDefinition<AuditLog>(constants.details(),
                 CommandLocation.OnlyFromContext) {
