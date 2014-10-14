@@ -137,10 +137,18 @@
         <artifactId>xmlrpc-client</artifactId>
     </dependency>
 
-    <!-- logging implementation used for unit tests -->
+    <!-- JUL is used as logging backend for tests -->
     <dependency>
       <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Needed until slf4j will be used as logging frontend in the whole project -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
       <scope>test</scope>
     </dependency>
 
@@ -166,26 +174,6 @@
   </dependencies>
 
   <build>
-
-   <testResources>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>true</filtering>
- 	 <includes>
-          <include>log4j.xml</include>
-        </includes>
-      </testResource>
-      <testResource>
-        <directory>src/test/resources</directory>
-        <filtering>false</filtering>
-        <excludes>
-          <exclude>log4j.xml</exclude>
-        </excludes>
-      </testResource>
-
-    </testResources>
-
-
     <plugins>
       <plugin>
         <artifactId>maven-resources-plugin</artifactId>
@@ -212,16 +200,11 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
-          <systemProperties>
-            <property>
-	      <name>jboss.server.log.dir</name>
-	      <value>${project.build.directory}/logs/engine/</value>
-            </property>
-	    <property>
-              <name>postgres.schema.name</name>
-              <value>${engine.schema}</value>
-            </property>
-	 </systemProperties>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+            <jboss.server.log.dir>${project.build.directory}/logs/engine/</jboss.server.log.dir>
+            <postgres.schema.name>${engine.schema}</postgres.schema.name>
+          </systemPropertyVariables>
 
          <!-- These environment variables are needed to run the tests
               using an alternative configuration that disables retries
