@@ -444,6 +444,10 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
 
+        if (getStoragePool() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
+        }
+
         if (getVmTemplate().isDisabled()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_IS_DISABLED);
         }
