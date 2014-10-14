@@ -6,12 +6,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.TemplateProvisioningMethod;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.compat.Guid;
 
 public class AddVmParameters extends VmManagementParametersBase {
     private static final long serialVersionUID = 8641610721114989096L;
 
     private ArrayList<DiskImage> diskInfoList;
     private TemplateProvisioningMethod templateProvisioningMethod = TemplateProvisioningMethod.THIN;
+    private Guid diskOperatorAuthzPrincipalDbId;
 
     public AddVmParameters() {
     }
@@ -39,5 +41,13 @@ public class AddVmParameters extends VmManagementParametersBase {
 
     public void setTemplateProvisioningMethod(TemplateProvisioningMethod templateProvisioningMethod) {
         this.templateProvisioningMethod = templateProvisioningMethod;
+    }
+
+    public Guid getDiskOperatorAuthzPrincipalDbId() {
+        return diskOperatorAuthzPrincipalDbId;
+    }
+
+    public void setDiskOperatorAuthzPrincipalDbId(Guid diskOperatorAuthzPrincipalDbId) {
+        this.diskOperatorAuthzPrincipalDbId = diskOperatorAuthzPrincipalDbId;
     }
 }

@@ -60,6 +60,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         parameters.setStorageDomainId(getParameters().getStorageDomainId());
         parameters.setSessionId(getParameters().getSessionId());
         parameters.setDontAttachToDefaultTag(true);
+        parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         return runInternalActionWithTasksContext(VdcActionType.AddVmFromScratch, parameters);
     }
 
@@ -70,6 +71,7 @@ public class AddVmAndAttachToPoolCommand<T extends AddVmAndAttachToPoolParameter
         } else {
             parameters.setSessionId(getParameters().getSessionId());
         }
+        parameters.setDiskOperatorAuthzPrincipalDbId(getParameters().getDiskOperatorAuthzPrincipalDbId());
         parameters.setDontAttachToDefaultTag(true);
         parameters.setDiskInfoDestinationMap(diskInfoDestinationMap);
         parameters.setSoundDeviceEnabled(getParameters().isSoundDeviceEnabled());

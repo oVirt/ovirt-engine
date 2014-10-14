@@ -19,10 +19,11 @@ import org.ovirt.engine.core.common.action.RemoveVmParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.asynctasks.EntityInfo;
 import org.ovirt.engine.core.common.businessentities.CopyOnNewVersion;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
+import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
@@ -111,6 +112,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         if (!copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
+
+        getParameters().setPreviousDiskOperatorAuthzPrincipalDbId(getIdOfDiskOperator());
         getParameters().setVmStaticData(getVm().getStaticData());
 
         if (getVm().getVmPoolId() != null) {
@@ -146,8 +149,22 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         }
     }
 
+    private Guid getIdOfDiskOperator() {
+        List<Disk> diskIds = getDbFacade().getDiskDao().getAllForVm(getVmId());
+        if (diskIds.isEmpty()) {
+            return null;
+        }
+
+        List<Permissions> perms = getPermissionDAO().getAllForRoleAndObject(PredefinedRoles.DISK_OPERATOR.getId(), diskIds.iterator().next().getId());
+        if (perms.isEmpty()) {
+            return null;
+        }
+
+        return perms.iterator().next().getad_element_id();
+    }
+
     private void addUpdatedVm() {
-        VmManagementParametersBase addVmParams;
+        AddVmParameters addVmParams;
         VdcActionType action;
         if (getParameters().getVmPoolId() != null) {
             addVmParams =
@@ -189,6 +206,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         } else {
             addVmParams.setSessionId(getParameters().getSessionId());
         }
+        addVmParams.setDiskOperatorAuthzPrincipalDbId(getParameters().getPreviousDiskOperatorAuthzPrincipalDbId());
+
         runInternalAction(action, addVmParams,
                 ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));
     }
