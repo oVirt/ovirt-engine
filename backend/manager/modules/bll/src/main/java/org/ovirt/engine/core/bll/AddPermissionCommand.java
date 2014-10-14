@@ -212,7 +212,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (dbUser.getDomain() != null && dbUser.getExternalId() != null) {
             AddUserParameters parameters = new AddUserParameters(dbUser);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddUser, parameters, cloneContextAndDetachFromParent());
-            if (result.getCanDoAction()) {
+            if (result.getSucceeded()) {
                 Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
                     return getDbUserDAO().get(id);
@@ -229,7 +229,7 @@ public class AddPermissionCommand<T extends PermissionsOperationsParameters> ext
         if (groupToAdd.getDomain() != null && groupToAdd.getExternalId() != null) {
             AddGroupParameters parameters = new AddGroupParameters(groupToAdd);
             VdcReturnValueBase result = runInternalAction(VdcActionType.AddGroup, parameters, cloneContextAndDetachFromParent());
-            if (result.getCanDoAction()) {
+            if (result.getSucceeded()) {
                 Guid id = (Guid) result.getActionReturnValue();
                 if (id != null) {
                     return getAdGroupDAO().get(id);
