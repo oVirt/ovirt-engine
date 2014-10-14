@@ -58,9 +58,11 @@ public class SearchPanelView extends AbstractView implements SearchPanelPresente
     FocusPanel searchBoxClear;
 
     @UiField
+    @WithElementId("bookmarkButton")
     FocusPanel searchBoxBookmark;
 
     @UiField
+    @WithElementId("searchButton")
     FocusPanel searchBoxSearch;
 
     @UiField(provided = true)
