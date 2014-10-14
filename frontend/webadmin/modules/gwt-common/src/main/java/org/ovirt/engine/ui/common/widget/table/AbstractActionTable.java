@@ -541,7 +541,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
         getDataProvider().goForward();
     }
 
-    void setColumnWidth(Column<T, ?> column, String width) {
+    public void setColumnWidth(Column<T, ?> column, String width) {
         table.setColumnWidth(column, width);
         tableHeader.setColumnWidth(column, width);
     }
