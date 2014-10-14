@@ -5,6 +5,7 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkQoS;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.BaseDAOTestCase;
 import org.ovirt.engine.core.dao.FixturesTool;
+import org.springframework.dao.DuplicateKeyException;
 
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
@@ -120,4 +121,23 @@ public class NetworkQosDaoTest extends BaseDAOTestCase {
         assertTrue(dao.getAllForStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES).size() == 2);
     }
 
+    @Test
+    public void testCheckNullNameNotUnique() {
+        checkNameUniquness(null);
+    }
+
+    @Test(expected = DuplicateKeyException.class)
+    public void testCheckNameUniquness() {
+        checkNameUniquness("SomeName");
+    }
+
+    public void checkNameUniquness(String name) {
+        NetworkQoS entity = new NetworkQoS();
+        entity.setId(Guid.newGuid());
+        entity.setName(name);
+        entity.setStoragePoolId(FixturesTool.STORAGE_POOL_MIXED_TYPES);
+        dao.save(entity);
+        entity.setId(Guid.newGuid());
+        dao.save(entity);
+    }
 }
