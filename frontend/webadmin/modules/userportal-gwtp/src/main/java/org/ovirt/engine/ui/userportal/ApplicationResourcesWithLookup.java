@@ -87,6 +87,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/large/ubuntu_13_10.png")
     ImageResource ubuntu_13_10LargeImage();
 
+    @Source("images/os/large/ubuntu_14_04.jpg")
+    ImageResource ubuntu_14_04LargeImage();
+
     @Source("images/os/large/debian_7.png")
     ImageResource debian_7LargeImage();
 
@@ -103,6 +106,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/large/sles_11.png")
     ImageResource sles_11_ppc64LargeImage();
+
+    @Source("images/os/large/ubuntu_14_04.jpg")
+    ImageResource ubuntu_14_04_ppc64LargeImage();
 
     @Source("images/os/large/freebsd.png")
     ImageResource freebsdLargeImage();
@@ -194,6 +200,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
     @Source("images/os/ubuntu_13_10.png")
     ImageResource ubuntu_13_10SmallImage();
 
+    @Source("images/os/ubuntu_14_04.jpg")
+    ImageResource ubuntu_14_04SmallImage();
+
     @Source("images/os/debian_7.png")
     ImageResource debian_7SmallImage();
 
@@ -210,6 +219,9 @@ public interface ApplicationResourcesWithLookup extends ClientBundleWithLookup {
 
     @Source("images/os/sles_11.png")
     ImageResource sles_11_ppc64SmallImage();
+
+    @Source("images/os/ubuntu_14_04.jpg")
+    ImageResource ubuntu_14_04_ppc64SmallImage();
 
     @Source("images/os/freebsd.png")
     ImageResource freebsdSmallImage();
