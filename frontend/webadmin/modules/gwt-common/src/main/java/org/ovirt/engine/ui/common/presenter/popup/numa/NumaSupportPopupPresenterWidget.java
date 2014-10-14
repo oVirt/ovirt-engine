@@ -80,6 +80,7 @@ public class NumaSupportPopupPresenterWidget extends AbstractModelBoundPopupPres
 
     @Override
     protected void onBind() {
+        super.onBind();
         registerHandler(getEventBus().addHandler(UpdatedVnumaEvent.getType(),
                 new UpdatedVnumaEvent.UpdatedVnumaHandler() {
 
