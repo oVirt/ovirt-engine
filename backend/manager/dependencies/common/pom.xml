@@ -351,6 +351,39 @@
        <groupId>org.antlr</groupId>
        <artifactId>antlr4-runtime</artifactId>
     </dependency>
+
+    <!-- This version of Jackson is needed in order to avoid issues
+         with the OpenStack Java SDK, refer to the following bug:
+
+         https://bugzilla.redhat.com/1064231
+
+         Note that won't be fixed by WildFly, as it includes version
+         2.x of Jackson, which won't probably be supported by the
+         OpenStack Java SDK. -->
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-core-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-jaxrs</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-mapper-asl</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.codehaus.jackson</groupId>
+      <artifactId>jackson-xc</artifactId>
+      <version>${jackson.version}</version>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -686,6 +719,30 @@
                 <groupId>org.antlr</groupId>
                 <artifactId>antlr4-runtime</artifactId>
                 <moduleName>org.antlr.antlr4-runtime</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-core-asl</artifactId>
+                <moduleName>org.codehaus.jackson.jackson-core-asl</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-jaxrs</artifactId>
+                <moduleName>org.codehaus.jackson.jackson-jaxrs</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-mapper-asl</artifactId>
+                <moduleName>org.codehaus.jackson.jackson-mapper-asl</moduleName>
+              </module>
+
+              <module>
+                <groupId>org.codehaus.jackson</groupId>
+                <artifactId>jackson-xc</artifactId>
+                <moduleName>org.codehaus.jackson.jackson-xc</moduleName>
               </module>
 
             </modules>

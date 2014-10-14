@@ -23,19 +23,19 @@
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-jaxrs</artifactId>
-      <version>${jackson-core-asl.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-mapper-asl</artifactId>
-      <version>${jackson-core-asl.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>
       <groupId>org.codehaus.jackson</groupId>
       <artifactId>jackson-xc</artifactId>
-      <version>${jackson-core-asl.version}</version>
+      <version>${jackson.version}</version>
     </dependency>
 
     <dependency>

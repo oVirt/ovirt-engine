@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!-- This module is needed because the OpenStack Java SDK requires a newer
+     version (1.9.9) of Jackson than what is required by the application
+     server (1.9.2). -->
+
+<module xmlns="urn:jboss:module:1.1" name="org.codehaus.jackson.jackson-mapper-asl">
+
+  <resources>
+    <resource-root path="jackson-mapper-asl.jar"/>
+  </resources>
+
+  <dependencies>
+    <module name="javax.api"/>
+    <module name="org.codehaus.jackson.jackson-core-asl"/>
+    <module name="org.joda.time"/>
+  </dependencies>
+
+</module>
