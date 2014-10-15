@@ -38,9 +38,11 @@ public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<C
     }
 
     /**
-     * Update the {@link VdsDynamic#getnet_config_dirty()} field in the DB.<br>
+     * Update the {@link org.ovirt.engine.core.common.businessentities.VdsDynamic#getnet_config_dirty()} field in the
+     * DB.<br>
      * The update is done in a new transaction since we don't care if afterwards something goes wrong, but we would like
-     * to minimize races with other command that update the {@link VdsDynamic} entity in the DB.
+     * to minimize races with other command that update the
+     * {@link org.ovirt.engine.core.common.businessentities.VdsDynamic} entity in the DB.
      */
     private void updateNetConfigDirtyFlag() {
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {

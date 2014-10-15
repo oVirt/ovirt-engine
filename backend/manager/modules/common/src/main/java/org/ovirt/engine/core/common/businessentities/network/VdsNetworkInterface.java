@@ -16,7 +16,8 @@ import org.ovirt.engine.core.common.validation.annotation.ValidNetworkLabelForma
 import org.ovirt.engine.core.compat.Guid;
 
 /**
- * <code>VdsNetworkInterface</code> defines a type of {@link BaseNetworkInterface} for instances of {@link VDS}.
+ * <code>VdsNetworkInterface</code> defines a type of {@link NetworkInterface} for instances of
+ * {@link org.ovirt.engine.core.common.businessentities.VDS}.
  *
  */
 @ValidNetworkConfiguration
