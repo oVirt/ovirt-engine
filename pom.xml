@@ -88,7 +88,6 @@
     <commons-jxpath.version>1.3</commons-jxpath.version>
     <jaxb-impl.version>2.2.7</jaxb-impl.version>
     <jbosssx-bare.version>2.0.4</jbosssx-bare.version>
-    <log4j.version>1.2.16</log4j.version>
     <infinispan.version>5.2.5.Final</infinispan.version>
     <snakeyaml.version>1.8</snakeyaml.version>
     <ws-commons-util.version>1.0.2</ws-commons-util.version>
@@ -271,11 +270,6 @@
         <artifactId>jackson-mapper-asl</artifactId>
         <version>${jackson-mapper-asl.version}</version>
       </dependency>
-      <dependency>
-        <groupId>log4j</groupId>
-        <artifactId>log4j</artifactId>
-        <version>${log4j.version}</version>
-      </dependency>
       <!--GWT dependencies-->
       <dependency>
         <groupId>com.google.gwt</groupId>
@@ -314,11 +308,6 @@
       <dependency>
         <groupId>org.slf4j</groupId>
         <artifactId>slf4j-api</artifactId>
-        <version>${slf4j.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.slf4j</groupId>
-        <artifactId>slf4j-log4j12</artifactId>
         <version>${slf4j.version}</version>
       </dependency>
       <dependency>

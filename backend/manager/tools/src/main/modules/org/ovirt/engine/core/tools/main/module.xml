@@ -13,7 +13,6 @@
     <module name="org.apache.commons.configuration"/>
     <module name="org.apache.commons.lang"/>
     <module name="org.apache.commons.logging"/>
-    <module name="org.apache.log4j"/>
     <module name="org.ovirt.engine.core.common"/>
     <module name="org.ovirt.engine.core.compat"/>
     <module name="org.ovirt.engine.core.utils"/>
