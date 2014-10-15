@@ -48,6 +48,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
+import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
@@ -86,6 +87,7 @@ public class AddVmCommandTest {
     private static final Guid STORAGE_POOL_ID = Guid.newGuid();
     private VmTemplate vmTemplate = null;
     private VDSGroup vdsGroup = null;
+    private StoragePool storagePool = null;
     protected StorageDomainValidator storageDomainValidator;
 
     private static final Map<String, String> migrationMap = new HashMap<>();
@@ -148,6 +150,7 @@ public class AddVmCommandTest {
         mockStorageDomainDaoGetAllStoragesForPool(AVAILABLE_SPACE_GB);
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
+        doReturn(createStoragePool()).when(cmd).getStoragePool();
         assertFalse("If the disk is too big, canDoAction should fail", cmd.canDoAction());
         assertTrue("canDoAction failed for the wrong reason",
                 cmd.getReturnValue()
@@ -228,6 +231,7 @@ public class AddVmCommandTest {
         doReturn(true).when(cmd).checkCpuSockets();
 
         doReturn(vdsGroup).when(cmd).getVdsGroup();
+        doReturn(createStoragePool()).when(cmd).getStoragePool();
         cmd.getParameters().setVirtioScsiEnabled(true);
         when(osRepository.getArchitectureFromOS(any(Integer.class))).thenReturn(ArchitectureType.x86_64);
         when(osRepository.getDiskInterfaces(any(Integer.class), any(Version.class))).thenReturn(
@@ -299,6 +303,7 @@ public class AddVmCommandTest {
         mockUninterestingMethods(cmd);
         mockGetAllSnapshots(cmd);
         when(osRepository.getArchitectureFromOS(0)).thenReturn(ArchitectureType.x86_64);
+        doReturn(createStoragePool()).when(cmd).getStoragePool();
 
         // prepare the mock values
         HashMap<Pair<Integer, Version>, Set<String>> unsupported = new HashMap<>();
@@ -414,6 +419,7 @@ public class AddVmCommandTest {
         AddVmCommand<AddVmParameters> cmd = createCommand(vm);
         initCommandMethods(cmd);
         doReturn(createVmTemplate()).when(cmd).getVmTemplate();
+        doReturn(createStoragePool()).when(cmd).getStoragePool();
         return cmd;
     }
 
@@ -504,6 +510,15 @@ public class AddVmCommandTest {
 
         return vdsGroup;
     }
+
+    private StoragePool createStoragePool() {
+        if (storagePool == null) {
+            storagePool = new StoragePool();
+            storagePool.setId(STORAGE_POOL_ID);
+        }
+        return storagePool;
+    }
+
 
     private static DiskImage createDiskImageTemplate() {
         DiskImage i = new DiskImage();
@@ -701,5 +716,19 @@ public class AddVmCommandTest {
         assertTrue(cmd.getReturnValue()
                 .getCanDoActionMessages()
                 .contains(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH.toString()));
+    }
+
+    @Test
+    public void testStoragePoolDoesntExist() {
+        final int domainSizeGB = 20;
+        final int sizeRequired = 5;
+        AddVmCommand<AddVmParameters> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
+
+        doReturn(null).when(cmd).getStoragePool();
+
+        assertFalse(cmd.canDoAction());
+        assertTrue(cmd.getReturnValue()
+                .getCanDoActionMessages()
+                .contains(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST.toString()));
     }
 }
