@@ -50,6 +50,9 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
 
             setSucceeded(restoreInitialState());
         }
+        else {
+            setSucceeded(result.getSucceeded());
+        }
     }
 
     private boolean restoreInitialState() {
