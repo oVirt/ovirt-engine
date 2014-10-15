@@ -8,7 +8,7 @@
   <parent>
     <groupId>org.ovirt.engine.core</groupId>
     <artifactId>manager</artifactId>
-    <version>3.5.0.1-SNAPSHOT</version>
+    <version>3.5.0.1</version>
   </parent>
 
   <artifactId>dependencies</artifactId>
