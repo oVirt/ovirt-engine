@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
@@ -7,11 +9,11 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 
 public class CollectVdsNetworkDataVDSCommand extends GetCapabilitiesVDSCommand<CollectHostNetworkDataVdsCommandParameters> {
 
-    private final HostNetworkTopologyPersister hostNetworkTopologyPersister;
+    @Inject
+    private HostNetworkTopologyPersister hostNetworkTopologyPersister;
 
     public CollectVdsNetworkDataVDSCommand(CollectHostNetworkDataVdsCommandParameters parameters) {
         super(parameters);
-        hostNetworkTopologyPersister = HostNetworkTopologyPersisterImpl.getInstance();
     }
 
     @Override

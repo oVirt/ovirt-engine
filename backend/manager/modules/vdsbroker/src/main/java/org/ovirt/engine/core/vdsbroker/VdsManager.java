@@ -40,6 +40,7 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
@@ -53,7 +54,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
-import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersisterImpl;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
@@ -70,7 +70,6 @@ public class VdsManager {
     private final AtomicInteger mUnrespondedAttempts;
     private final Guid vdsId;
     private final VdsMonitor vdsMonitor = new VdsMonitor();
-    private final HostNetworkTopologyPersister hostNetworkTopologyPersister;
     private VDS cachedVds;
     private long lastUpdate;
     private long updateStartTime;
@@ -96,8 +95,7 @@ public class VdsManager {
         mUnrespondedAttempts = new AtomicInteger();
         mFailedToRunVmAttempts = new AtomicInteger();
         monitoringLock = new EngineLock(Collections.singletonMap(vdsId.toString(),
-                new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
-        hostNetworkTopologyPersister = HostNetworkTopologyPersisterImpl.getInstance();
+                new Pair<>(LockingGroup.VDS_INIT.name(), "")), null);
 
         handlePreviousStatus();
         handleSecureSetup();
@@ -621,7 +619,7 @@ public class VdsManager {
 
             VDSStatus returnStatus = vds.getStatus();
             NonOperationalReason nonOperationalReason =
-                    hostNetworkTopologyPersister.persistAndEnforceNetworkCompliance(vds);
+                    getHostNetworkTopologyPersister().persistAndEnforceNetworkCompliance(vds);
 
             if (nonOperationalReason != NonOperationalReason.NONE) {
                 setIsSetNonOperationalExecuted(true);
@@ -660,6 +658,10 @@ public class VdsManager {
             log.error("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
             throw new RuntimeException(caps.getExceptionString());
         }
+    }
+
+    private HostNetworkTopologyPersister getHostNetworkTopologyPersister() {
+        return Injector.get(HostNetworkTopologyPersister.class);
     }
 
     private long calcTimeoutToFence(int vmCount, VdsSpmStatus spmStatus) {

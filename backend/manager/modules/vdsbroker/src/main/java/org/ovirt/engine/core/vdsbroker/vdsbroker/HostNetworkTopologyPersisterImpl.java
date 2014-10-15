@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
-import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
-
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -10,7 +8,12 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
+
 import org.apache.commons.lang.StringUtils;
+import org.apache.commons.lang.Validate;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -20,36 +23,58 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface.NetworkImplementationDetails;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
+import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.DisplayInterfaceEqualityPredicate;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.predicates.IsNetworkOnInterfacePredicate;
 
-public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersister {
+import static org.ovirt.engine.core.common.businessentities.network.NetworkStatus.OPERATIONAL;
 
-    private static final HostNetworkTopologyPersister instance = new HostNetworkTopologyPersisterImpl();
+@Singleton
+final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersister {
 
-    // TODO: replace with CDI + make the class package protected
-    public static HostNetworkTopologyPersister getInstance() {
-        return instance;
-    }
+    private final VmDynamicDAO vmDynamicDao;
+    private final InterfaceDao interfaceDao;
+    private final NetworkDao networkDao;
+    private final HostNetworkQosDao hostNetworkQosDao;
+    private final ResourceManager resourceManager;
+    private final ManagementNetworkUtil managementNetworkUtil;
 
-    // Don't new me - use getInstance method
-    private HostNetworkTopologyPersisterImpl() {
+    @Inject
+    HostNetworkTopologyPersisterImpl(VmDynamicDAO vmDynamicDao,
+                                     InterfaceDao interfaceDao,
+                                     NetworkDao networkDao,
+                                     HostNetworkQosDao hostNetworkQosDao,
+                                     ResourceManager resourceManager,
+                                     ManagementNetworkUtil managementNetworkUtil) {
+        Validate.notNull(networkDao, "networkDao can not be null");
+        Validate.notNull(interfaceDao, "interfaceDao can not be null");
+        Validate.notNull(vmDynamicDao, "vmDynamicDao can not be null");
+        Validate.notNull(hostNetworkQosDao, "hostNetworkQosDao can not be null");
+        Validate.notNull(resourceManager, "resourceManager can not be null");
+        Validate.notNull(managementNetworkUtil, "managementNetworkUtil can not be null");
+
+        this.vmDynamicDao = vmDynamicDao;
+        this.interfaceDao = interfaceDao;
+        this.networkDao = networkDao;
+        this.hostNetworkQosDao = hostNetworkQosDao;
+        this.resourceManager = resourceManager;
+        this.managementNetworkUtil = managementNetworkUtil;
     }
 
     @Override
     public NonOperationalReason persistAndEnforceNetworkCompliance(VDS host,
                                                                    boolean skipManagementNetwork,
                                                                    List<VdsNetworkInterface> userConfiguredNics) {
-        List<VdsNetworkInterface> dbIfaces =
-                DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(host.getId());
-        List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao().getAllForCluster(host.getVdsGroupId());
+        List<VdsNetworkInterface> dbIfaces = interfaceDao.getAllInterfacesForVds(host.getId());
+        List<Network> clusterNetworks = networkDao.getAllForCluster(host.getVdsGroupId());
 
         persistTopology(host.getInterfaces(), dbIfaces, userConfiguredNics);
         NonOperationalReason nonOperationalReason =
@@ -132,7 +157,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
                                           Collection<VdsNetworkInterface> engineInterfaces) {
 
         if (isVmRunningOnHost(host.getId())) {
-            final Network engineDisplayNetwork = findDisplayNetwork(engineHostNetworks);
+            final Network engineDisplayNetwork = findDisplayNetwork(host.getVdsGroupId(), engineHostNetworks);
 
             if (engineDisplayNetwork == null) {
                 return;
@@ -157,7 +182,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
     }
 
     private boolean isVmRunningOnHost(Guid hostId) {
-        return !DbFacade.getInstance().getVmDynamicDao().getAllRunningForVds(hostId).isEmpty();
+        return !vmDynamicDao.getAllRunningForVds(hostId).isEmpty();
     }
 
     private Collection<Network> findNetworksOnInterfaces(Collection<VdsNetworkInterface> ifaces,
@@ -173,13 +198,13 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
         return networks;
     }
 
-    private Network findDisplayNetwork(Collection<Network> networks) {
+    private Network findDisplayNetwork(Guid clusterId, Collection<Network> networks) {
         Network managementNetwork = null;
         for (Network network : networks) {
             if (network.getCluster().isDisplay()) {
                 return network;
             }
-            if (NetworkUtils.isManagementNetwork(network)) {
+            if (managementNetworkUtil.isManagementNetwork(network.getId(), clusterId)) {
                 managementNetwork = network;
             }
         }
@@ -189,13 +214,12 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
 
     private void logUnsynchronizedNetworks(VDS host, Map<String, Network> networks) {
         List<String> networkNames = new ArrayList<>();
-        HostNetworkQosDao qosDao = DbFacade.getInstance().getHostNetworkQosDao();
 
         for (VdsNetworkInterface iface : host.getInterfaces()) {
             Network network = networks.get(iface.getNetworkName());
             NetworkImplementationDetails networkImplementationDetails =
                     NetworkUtils.calculateNetworkImplementationDetails(network,
-                            network == null ? null : qosDao.get(network.getQosId()),
+                            network == null ? null : hostNetworkQosDao.get(network.getQosId()),
                             iface);
 
             if (networkImplementationDetails != null
@@ -232,10 +256,7 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
             List<VdsNetworkInterface> userConfiguredNics) {
 
         final HostNetworkInterfacesPersister networkInterfacesPersister =
-                new HostNetworkInterfacesPersisterImpl(DbFacade.getInstance().getInterfaceDao(),
-                        reportedNics,
-                        dbNics,
-                        userConfiguredNics);
+                new HostNetworkInterfacesPersisterImpl(interfaceDao, reportedNics, dbNics, userConfiguredNics);
 
         networkInterfacesPersister.persistTopology();
     }
@@ -271,8 +292,6 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
     }
 
     private void setNonOperational(VDS host, NonOperationalReason reason, Map<String, String> customLogValues) {
-        ResourceManager.getInstance()
-                .getEventListener()
-                .vdsNonOperational(host.getId(), reason, true, Guid.Empty, customLogValues);
+        resourceManager.getEventListener().vdsNonOperational(host.getId(), reason, true, Guid.Empty, customLogValues);
     }
 }

@@ -6,6 +6,9 @@ import javax.enterprise.inject.spi.InjectionPoint;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
+import org.ovirt.engine.core.dao.VmDynamicDAO;
+import org.ovirt.engine.core.dao.network.HostNetworkQosDao;
+import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.slf4j.Logger;
@@ -64,6 +67,21 @@ public class BllCDIAdapter {
     @Produces
     private StoragePoolDAO produceStoragePoolDAO(DbFacade dbFacade) {
         return dbFacade.getStoragePoolDao();
+    }
+
+    @Produces
+    private VmDynamicDAO produceVmDynamicDAO(DbFacade dbFacade) {
+        return dbFacade.getVmDynamicDao();
+    }
+
+    @Produces
+    private InterfaceDao produceInterfaceDao(DbFacade dbFacade) {
+        return dbFacade.getInterfaceDao();
+    }
+
+    @Produces
+    private HostNetworkQosDao produceHostNetworkQosDao(DbFacade dbFacade) {
+        return dbFacade.getHostNetworkQosDao();
     }
 
     private BllCDIAdapter() {
