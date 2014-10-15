@@ -62,14 +62,25 @@
       <artifactId>spring-test</artifactId>
     </dependency>
     <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>slf4j-log4j12</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>javax.transaction</groupId>
       <artifactId>jta</artifactId>
     </dependency>
+
+    <!-- JUL is used as logging backend for tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- Needed until slf4j will be used as logging frontend in the whole project -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>jcl-over-slf4j</artifactId>
+      <version>${slf4j.version}</version>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
   <build>
     <filters>
@@ -126,6 +137,9 @@
             <exclude>**/DBConfigUtilsTest.java</exclude>
             <exclude>**/BatchProcedureCallTest.java</exclude>
           </excludes>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+          </systemPropertyVariables>
         </configuration>
       </plugin>
 
@@ -147,6 +161,7 @@
             <configuration combine.self="override">
               <excludes/>
               <systemPropertyVariables>
+                <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
                 <ovirt-engine.config.defaults>src/test/resources/engine.conf</ovirt-engine.config.defaults>
                 <ovirt-engine.config.vars>/dev/null</ovirt-engine.config.vars>
                 <ovirt-engine.config.base>${basedir}/src/test/resources</ovirt-engine.config.base>
