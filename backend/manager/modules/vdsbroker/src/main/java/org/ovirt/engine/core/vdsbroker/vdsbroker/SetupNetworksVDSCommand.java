@@ -7,7 +7,10 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.network.Network;
@@ -29,6 +32,9 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     private static final String DEFAULT_ROUTE = "defaultRoute";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
     private static final Logger log = LoggerFactory.getLogger(SetupNetworksVDSCommand.class);
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
 
     public SetupNetworksVDSCommand(T parameters) {
         super(parameters);
@@ -91,7 +97,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
             }
 
             if (defaultRouteSupported
-                    && NetworkUtils.isManagementNetwork(network)
+                    && managementNetworkUtil.isManagementNetwork(network.getId(), host.getVdsGroupId())
                     && (iface.getBootProtocol() == NetworkBootProtocol.DHCP
                     || (iface.getBootProtocol() == NetworkBootProtocol.STATIC_IP
                     && StringUtils.isNotEmpty(iface.getGateway())))) {
