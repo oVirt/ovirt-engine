@@ -117,7 +117,7 @@
         </g:HTMLPanel>
         <g:SimplePanel ui:field="tableOverhead" addStyleNames="{style.tableOverhead}" />
         <g:SimplePanel ui:field="tableHeaderContainer" addStyleNames="{style.headerContainer}" />
-        <g:SimplePanel ui:field="tableContainer" addStyleNames="{style.content}" />
+        <g:ScrollPanel ui:field="tableContainer" addStyleNames="{style.content}" />
     </g:FlowPanel>
 
 </ui:UiBinder>

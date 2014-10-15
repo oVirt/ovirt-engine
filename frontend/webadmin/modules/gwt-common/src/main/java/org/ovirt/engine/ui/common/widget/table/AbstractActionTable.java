@@ -35,6 +35,7 @@ import com.google.gwt.event.dom.client.KeyDownHandler;
 import com.google.gwt.event.dom.client.ScrollEvent;
 import com.google.gwt.event.dom.client.ScrollHandler;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.event.shared.HandlerRegistration;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.uibinder.client.UiHandler;
 import com.google.gwt.user.cellview.client.CellTable.Resources;
@@ -50,6 +51,7 @@ import com.google.gwt.user.client.Window;
 import com.google.gwt.user.client.ui.ButtonBase;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.PopupPanel;
+import com.google.gwt.user.client.ui.ScrollPanel;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.Widget;
 import com.google.gwt.view.client.CellPreviewEvent;
@@ -82,7 +84,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     public ButtonBase nextPageButton;
 
     @UiField
-    public SimplePanel tableContainer;
+    public ScrollPanel tableContainer;
 
     @UiField
     public SimplePanel tableHeaderContainer;
@@ -100,10 +102,15 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     private boolean multiSelectionDisabled;
     private final int[] mousePosition = new int[2];
 
+    private HandlerRegistration scrollHandlerRegistration;
+    private HandlerRegistration selectionModelScrollHandlerRegistration;
+
     // Table container's horizontal scroll position, used to align table header with main table
     private int tableContainerHorizontalScrollPosition = 0;
 
     private boolean doAutoSelect;
+
+    private int scrollOffset = 0;
 
     public AbstractActionTable(final SearchableTableModelProvider<T, ?> dataProvider,
             Resources resources, Resources headerResources, EventBus eventBus, ClientStorage clientStorage) {
@@ -120,11 +127,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     selectionModel.setMultiSelectEnabled(event.getCtrlKey());
                     selectionModel.setMultiRangeSelectEnabled(event.getShiftKey());
                 }
-
                 // Remove focus from the table so refreshes won't try to focus on the
                 // selected row. This is important when the user has scrolled the selected
                 // row off the screen, we don't want the browser to scroll back.
                 table.setFocus(false);
+
                 super.onBrowserEvent2(event);
             }
 
@@ -167,13 +174,13 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
                     doAutoSelect = false;
                 }
                 updateTableControls();
+                enforceScrollPosition();
             }
 
             @Override
             protected void onLoadingStateChanged(LoadingState state) {
                 super.onLoadingStateChanged(state);
                 enforceScrollPosition();
-
                 if (state == LoadingState.LOADING) {
                     Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                         @Override
@@ -251,6 +258,39 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
             table.enableColumnWidthPersistence(clientStorage, dataProvider.getModel());
         }
         addModelSearchStringChangeListener(dataProvider.getModel());
+        addScrollSelectionModelChangeListener();
+    }
+
+    private void addScrollSelectionModelChangeListener() {
+        if (selectionModelScrollHandlerRegistration != null) {
+            selectionModelScrollHandlerRegistration.removeHandler();
+        }
+        selectionModelScrollHandlerRegistration = selectionModel.addSelectionChangeHandler(
+                new SelectionChangeEvent.Handler() {
+
+            @Override
+            public void onSelectionChange(SelectionChangeEvent event) {
+                if (selectionModel.getSelectedList().isEmpty()) {
+                    scrollOffset = 0;
+                } else {
+                    updateScrollPosition();
+                }
+                enforceScrollPosition();
+            }
+
+        });
+    }
+    private void addScrollListener() {
+        if (scrollHandlerRegistration != null) {
+            scrollHandlerRegistration.removeHandler();
+        }
+        scrollHandlerRegistration = tableContainer.addScrollHandler(new ScrollHandler() {
+
+            @Override
+            public void onScroll(ScrollEvent event) {
+                updateScrollPosition();
+            }
+        });
     }
 
     void addModelSearchStringChangeListener(final SearchableListModel<?> model) {
@@ -331,6 +371,7 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     protected void initWidget(Widget widget) {
         super.initWidget(widget);
         initTable();
+        addScrollListener();
     }
 
     /**
@@ -476,6 +517,9 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
     void enforceScrollPosition() {
         tableContainer.getElement().setScrollLeft(tableContainerHorizontalScrollPosition);
         updateTableHeaderPosition();
+        if (table.getParent() != null && table.getParent().getElement() != null) {
+            table.getParent().getElement().setScrollTop(scrollOffset);
+        }
     }
 
     void updateTableHeaderPosition() {
@@ -672,5 +716,11 @@ public abstract class AbstractActionTable<T> extends AbstractActionPanel<T> impl
 
     public String getColumnWidth(Column<T, ?> column) {
         return table.getColumnWidth(column);
+    }
+
+    private void updateScrollPosition() {
+        if (tableContainer.getMaximumVerticalScrollPosition() > 0) {
+            scrollOffset = tableContainer.getVerticalScrollPosition();
+        }
     }
 }
