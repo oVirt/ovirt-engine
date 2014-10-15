@@ -60,6 +60,13 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- JUL is used as logging backend for tests -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-jdk14</artifactId>
+      <scope>test</scope>
+    </dependency>
+
   </dependencies>
 
   <build>
@@ -67,6 +74,9 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <systemPropertyVariables>
+            <java.util.logging.config.file>src/test/resources/logging.properties</java.util.logging.config.file>
+          </systemPropertyVariables>
           <additionalClasspathElements>
             <additionalClasspathElement>${basedir}/**/src/test/java</additionalClasspathElement>
           </additionalClasspathElements>
