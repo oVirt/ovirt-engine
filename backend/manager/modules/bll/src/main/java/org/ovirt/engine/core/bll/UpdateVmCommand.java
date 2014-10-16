@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
@@ -8,6 +9,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
@@ -76,6 +78,7 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 
 public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmManagementCommandBase<T>
         implements QuotaVdsDependent, RenamedEntityInfoProvider{
+    private static final Base64 BASE_64 = new Base64(0, null);
     private VM oldVm;
     private boolean quotaSanityOnly = false;
     private VmStatic newVmStatic;
@@ -545,7 +548,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
             // we save the content in base64 string
             for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
-                entry.setValue(Base64.encodeBase64String(entry.getValue().getBytes()));
+                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), Charset.forName(CharEncoding.UTF_8)));
             }
         }
 

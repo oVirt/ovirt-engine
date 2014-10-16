@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.vdsbroker.vdsbroker;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashMap;
@@ -7,6 +8,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -55,7 +58,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
     private static final String CLOUD_INIT_VOL_ID = "config-2";
-
+    private static final Base64 BASE_64 = new Base64(0, null);
     private final List<Map<String, Object>> devices = new ArrayList<Map<String, Object>>();
     private List<VmDevice> managedDevices = null;
     private final boolean hasNonDefaultBootOrder;
@@ -540,7 +543,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
         VmPayload vmPayload = new VmPayload();
         vmPayload.setDeviceType(VmDeviceType.FLOPPY);
-        vmPayload.getFiles().put(SYSPREP_FILE_NAME, Base64.encodeBase64String(sysPrepContent.getBytes()));
+        vmPayload.getFiles().put(SYSPREP_FILE_NAME, new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
 
         VmDevice vmDevice =
                 new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),
@@ -566,7 +569,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         vmPayload.setDeviceType(VmDeviceType.CDROM);
         vmPayload.setVolumeId(CLOUD_INIT_VOL_ID);
         for (Map.Entry<String, byte[]> entry : cloudInitContent.entrySet()) {
-            vmPayload.getFiles().put(entry.getKey(), Base64.encodeBase64String(entry.getValue()));
+            vmPayload.getFiles().put(entry.getKey(), new String(BASE_64.encode(entry.getValue()), Charset.forName(CharEncoding.UTF_8)));
         }
 
         VmDevice vmDevice =
