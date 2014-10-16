@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll;
 
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -8,6 +9,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
@@ -99,6 +101,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommandBase<T>
         implements QuotaStorageDependent, QuotaVdsDependent {
 
+    private static final Base64 BASE_64 = new Base64(0, null);
     protected HashMap<Guid, DiskImage> diskInfoDestinationMap;
     protected Map<Guid, StorageDomain> destStorages = new HashMap<Guid, StorageDomain>();
     protected Map<Guid, List<DiskImage>> storageToDisksMap;
@@ -508,7 +511,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
 
             // otherwise, we save the content in base64 string
             for (Map.Entry<String, String> entry : getParameters().getVmPayload().getFiles().entrySet()) {
-                entry.setValue(Base64.encodeBase64String(entry.getValue().getBytes()));
+                entry.setValue(new String(BASE_64.encode(entry.getValue().getBytes()), Charset.forName(CharEncoding.UTF_8)));
             }
         }
 
