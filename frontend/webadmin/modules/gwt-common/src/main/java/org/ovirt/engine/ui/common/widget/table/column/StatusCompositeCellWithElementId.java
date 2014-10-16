@@ -1,17 +1,18 @@
 package org.ovirt.engine.ui.common.widget.table.column;
 
+import java.util.List;
+
+import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+
 import com.google.gwt.cell.client.Cell;
-import com.google.gwt.cell.client.CompositeCell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import org.ovirt.engine.core.common.businessentities.VM;
 
-import java.util.List;
-
-public class StatusCompositeCell extends CompositeCell<VM> {
+public class StatusCompositeCellWithElementId extends CompositeCellWithElementId<VM> implements CellWithElementId<VM>{
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -25,7 +26,7 @@ public class StatusCompositeCell extends CompositeCell<VM> {
     private final StatusCompositeCellCss style;
     private final List<HasCell<VM, ?>> hasCells;
 
-    public StatusCompositeCell(List<HasCell<VM, ?>> hasCells) {
+    public StatusCompositeCellWithElementId(List<HasCell<VM, ?>> hasCells) {
         super(hasCells);
         this.hasCells = hasCells;
         style = RESOURCES.statusCompositeCellCss();
@@ -34,9 +35,15 @@ public class StatusCompositeCell extends CompositeCell<VM> {
 
     @Override
     public void render(Cell.Context context, VM value, SafeHtmlBuilder sb) {
+        sb.appendHtmlConstant("<div id=\""); //$NON-NLS-1$
+        sb.appendEscaped(ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context));
+        sb.appendHtmlConstant("\">"); //$NON-NLS-1$
+
         for (HasCell<VM, ?> hasCell : hasCells) {
             render(context, value, sb, hasCell);
         }
+
+        sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
     protected <T> void render(Cell.Context context, VM value,

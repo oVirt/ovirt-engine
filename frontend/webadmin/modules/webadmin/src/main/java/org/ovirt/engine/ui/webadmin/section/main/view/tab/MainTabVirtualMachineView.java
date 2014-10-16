@@ -4,8 +4,6 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-import com.google.gwt.cell.client.CompositeCell;
-import com.google.gwt.cell.client.HasCell;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -15,9 +13,10 @@ import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.MainModelProvider;
 import org.ovirt.engine.ui.common.widget.action.ActionButtonDefinition;
 import org.ovirt.engine.ui.common.widget.action.CommandLocation;
+import org.ovirt.engine.ui.common.widget.table.column.CellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.EnumColumn;
-import org.ovirt.engine.ui.common.widget.table.column.SortableColumn;
-import org.ovirt.engine.ui.common.widget.table.column.StatusCompositeCell;
+import org.ovirt.engine.ui.common.widget.table.column.SortableColumnWithElementId;
+import org.ovirt.engine.ui.common.widget.table.column.StatusCompositeCellWithElementId;
 import org.ovirt.engine.ui.common.widget.table.column.TextColumnWithTooltip;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -43,6 +42,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.UptimeColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmStatusColumn;
 import org.ovirt.engine.ui.webadmin.widget.table.column.VmTypeColumn;
 
+import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.inject.Inject;
 
@@ -205,12 +205,12 @@ public class MainTabVirtualMachineView extends AbstractMainTabWithDetailsTableVi
 
         ReasonColumn<VM> reasonColumn = new ReasonColumn<VM>();
 
-        CompositeCell<VM> compositeCell = new StatusCompositeCell(
+        CellWithElementId<VM> compositeCell = new StatusCompositeCellWithElementId(
                 new ArrayList<HasCell<VM, ?>>(Arrays.asList(
                         statusColumn,
                         reasonColumn)));
 
-        SortableColumn<VM, VM> statusTextColumn = new SortableColumn<VM, VM>(compositeCell) {
+        SortableColumnWithElementId<VM, VM> statusTextColumn = new SortableColumnWithElementId<VM, VM>(compositeCell) {
             @Override
             public VM getValue(VM object) {
                 return object;
