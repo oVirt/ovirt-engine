@@ -2,8 +2,6 @@ package org.ovirt.engine.core.vdsbroker.jsonrpc;
 
 import java.io.IOException;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
 import org.ovirt.vdsm.jsonrpc.client.internal.ResponseWorker;
@@ -13,9 +11,11 @@ import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorClient;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorFactory;
 import org.ovirt.vdsm.jsonrpc.client.reactors.ReactorType;
 import org.ovirt.vdsm.jsonrpc.client.utils.retry.RetryPolicy;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JsonRpcUtils {
-    private static Log log = LogFactory.getLog(JsonRpcUtils.class);
+    private static Logger log = LoggerFactory.getLogger(JsonRpcUtils.class);
 
     public static JsonRpcClient createStompClient(String hostname, int port, int connectionTimeout,
             int clientTimeout, int connectionRetry, int heartbeat, boolean isSecure) {

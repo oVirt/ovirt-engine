@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.dal.dbbroker.auditloghandling;
 
+import java.text.MessageFormat;
 import java.util.EnumMap;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -160,7 +161,7 @@ public final class AuditLogDirector {
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             String logMessage;
             if (!"".equals(loggerString)) {
-                logMessage = log.transform(loggerString, resolvedMessage);
+                logMessage = MessageFormat.format(loggerString.replaceAll("'", ""), resolvedMessage);
             } else {
                 logMessage = auditLog.toStringForLogging();
             }

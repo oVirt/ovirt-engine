@@ -2,11 +2,14 @@ package org.ovirt.engine.core.searchbackend;
 
 import java.util.HashMap;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.businessentities.Identifiable;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EnumValueAutoCompleter extends BaseAutoCompleter implements IConditionValueAutoCompleter {
+
+    private static final Logger log = LoggerFactory.getLogger(EnumValueAutoCompleter.class);
+
     private final HashMap<String, Integer> mEnumValues = new HashMap<String, Integer>();
 
     public <E extends Enum<E> & Identifiable> EnumValueAutoCompleter(Class<E> enumerationType) {
@@ -17,7 +20,8 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
                 mEnumValues.put(ValName, val.getValue());
                 mVerbs.add(ValName);
             } catch (RuntimeException e) {
-                log.error("EnumValueAutoCompleter. Failed to add " + ValName + " .Exception : " + e.getMessage(), e);
+                log.error("EnumValueAutoCompleter. Failed to add '{}': {}", ValName, e.getMessage());
+                log.debug("Exception", e);
             }
 
         }
@@ -31,6 +35,4 @@ public class EnumValueAutoCompleter extends BaseAutoCompleter implements ICondit
         }
         return retval;
     }
-
-    private static final Log log = LogFactory.getLog(EnumValueAutoCompleter.class);
 }

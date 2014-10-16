@@ -2,12 +2,12 @@ package org.ovirt.engine.core.compat.backendcompat;
 
 import java.beans.PropertyDescriptor;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //This will be a wrapper for import java.beans.PropertyDescriptor;
 public class PropertyInfo {
-    private static final Log log = LogFactory.getLog(PropertyInfo.class);
+    private static final Logger log = LoggerFactory.getLogger(PropertyInfo.class);
 
     private PropertyDescriptor pd;
 
@@ -24,8 +24,9 @@ public class PropertyInfo {
         try {
             returnValue = pd.getReadMethod().invoke(obj);
         } catch (Exception e) {
-            log.warn("Unable to get value of property: " + pd.getDisplayName() + " for class "
-                    + obj.getClass().getName());
+            log.warn("Unable to get value of property: '{}' for class {}: {}",
+                    pd.getDisplayName(), obj.getClass().getName(), e.getMessage());
+            log.debug("Exception", e);
         }
         return returnValue == null ? defaultValue : returnValue;
     }

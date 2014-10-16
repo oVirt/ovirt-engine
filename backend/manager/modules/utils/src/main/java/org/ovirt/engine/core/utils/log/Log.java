@@ -4,110 +4,85 @@ import java.text.MessageFormat;
 
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
 
-public class Log implements org.apache.commons.logging.Log {
+public class Log {
     private static final String CORRELATION_ID_MESSAGE_FORMAT = "[%s] %s";
-    private final org.apache.commons.logging.Log log;
 
-    public Log(org.apache.commons.logging.Log log) {
+    private final org.slf4j.Logger log;
+
+    protected Log(org.slf4j.Logger log) {
         this.log = log;
     }
 
-    @Override
-    public void debug(Object arg0) {
+    public void debug(Object msg) {
         if (isDebugEnabled()) {
-            log.debug(addPrefixToLogMessage(arg0));
+            log.debug(addPrefixToLogMessage(msg));
         }
     }
 
-    @Override
-    public void debug(Object arg0, Throwable arg1) {
+    public void debug(Object msg, Throwable t) {
         if (isDebugEnabled()) {
-            log.debug(addPrefixToLogMessage(arg0), arg1);
+            log.debug(addPrefixToLogMessage(msg), t);
         }
     }
 
-    @Override
-    public void error(Object arg0) {
-        log.error(addPrefixToLogMessage(arg0));
+    public void error(Object msg) {
+        log.error(addPrefixToLogMessage(msg));
     }
 
-    @Override
-    public void error(Object arg0, Throwable arg1) {
-        log.error(addPrefixToLogMessage(arg0), arg1);
+    public void error(Object msg, Throwable t) {
+        log.error(addPrefixToLogMessage(msg), t);
     }
 
-    @Override
-    public void fatal(Object arg0) {
-        log.fatal(addPrefixToLogMessage(arg0));
+    public void info(Object msg) {
+        log.info(addPrefixToLogMessage(msg));
     }
 
-    @Override
-    public void fatal(Object arg0, Throwable arg1) {
-        log.fatal(addPrefixToLogMessage(arg0), arg1);
+    public void info(Object msg, Throwable t) {
+        log.info(addPrefixToLogMessage(msg), t);
     }
 
-    @Override
-    public void info(Object arg0) {
-        log.info(addPrefixToLogMessage(arg0));
-    }
-
-    @Override
-    public void info(Object arg0, Throwable arg1) {
-        log.info(addPrefixToLogMessage(arg0), arg1);
-    }
-
-    @Override
     public boolean isDebugEnabled() {
         return log.isDebugEnabled();
     }
 
-    @Override
     public boolean isErrorEnabled() {
         return log.isErrorEnabled();
     }
 
-    @Override
     public boolean isFatalEnabled() {
-        return log.isFatalEnabled();
+        return log.isErrorEnabled();
     }
 
-    @Override
     public boolean isInfoEnabled() {
         return log.isInfoEnabled();
     }
 
-    @Override
     public boolean isTraceEnabled() {
         return log.isTraceEnabled();
     }
 
-    @Override
     public boolean isWarnEnabled() {
         return log.isWarnEnabled();
     }
 
-    @Override
-    public void trace(Object arg0) {
+    public void trace(Object msg) {
         if (log.isTraceEnabled()) {
-            log.trace(addPrefixToLogMessage(arg0));
+            log.trace(addPrefixToLogMessage(msg));
         }
     }
 
-    @Override
-    public void trace(Object arg0, Throwable arg1) {
+    public void trace(Object msg, Throwable t) {
         if (log.isTraceEnabled()) {
-            log.trace(addPrefixToLogMessage(arg0), arg1);
+            log.trace(addPrefixToLogMessage(msg), t);
         }
     }
 
-    @Override
-    public void warn(Object arg0) {
-        log.warn(addPrefixToLogMessage(arg0));
+    public void warn(Object msg) {
+        log.warn(addPrefixToLogMessage(msg));
     }
 
-    @Override
-    public void warn(Object arg0, Throwable arg1) {
-        log.warn(addPrefixToLogMessage(arg0), arg1);
+    public void warn(Object msg, Throwable t) {
+        log.warn(addPrefixToLogMessage(msg), t);
     }
 
     public void traceFormat(String formatString, Object... args) {
@@ -154,20 +129,23 @@ public class Log implements org.apache.commons.logging.Log {
             error(transform(formatString, args));
     }
 
+    public void fatal(Object msg) {
+        error(msg);
+    }
+
+    public void fatal(Object msg, Throwable t) {
+        error(msg, t);
+    }
+
     public void fatalFormat(String formatString, Object... args) {
-        Throwable throwable = extractException(args);
-        if (throwable != null)
-            error(transform(formatString, args), throwable);
-        else
-            error(transform(formatString, args));
+        errorFormat(formatString, args);
     }
 
-    public String transform(String formatString, Object... args) {
-        formatString = formatString.replaceAll("'", "");
-        return MessageFormat.format(formatString, args);
+    protected String transform(String formatString, Object... args) {
+        return MessageFormat.format(formatString.replaceAll("'", ""), args);
     }
 
-    public Throwable extractException(Object... args) {
+    private Throwable extractException(Object... args) {
         for (Object arg : args) {
             if (arg instanceof Throwable)
                 return (Throwable) arg;
@@ -176,10 +154,14 @@ public class Log implements org.apache.commons.logging.Log {
         return null;
     }
 
-    private Object addPrefixToLogMessage(Object logMessage) {
+    private String addPrefixToLogMessage(Object logMessage) {
         String correlationId = ThreadLocalParamsContainer.getCorrelationId();
         if (correlationId == null) {
-            return logMessage;
+            if (logMessage == null) {
+                return null;
+            } else {
+                return logMessage.toString();
+            }
         }
         return String.format(CORRELATION_ID_MESSAGE_FORMAT, correlationId, logMessage);
     }

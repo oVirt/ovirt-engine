@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // This will wrap java beans introspection
 public class TypeCompat {
 
     private static final String CLASS = "class";
-    private static final Log log = LogFactory.getLog(TypeCompat.class);
+    private static final Logger log = LoggerFactory.getLogger(TypeCompat.class);
 
     public static List<PropertyInfo> getProperties(Class<?> type) {
         List<PropertyInfo> returnValue = new ArrayList<PropertyInfo>();
@@ -53,8 +53,9 @@ public class TypeCompat {
                             String stringValue = value != null ? value.toString() : null;
                             values.put(propertyName, stringValue);
                         } catch (Exception e) {
-                            log.warn("Unable to get value of property: " + pd.getDisplayName() + " for class "
-                                    + obj.getClass().getName());
+                            log.warn("Unable to get value of property: '{}' for class {}: {}",
+                                    pd.getDisplayName(), obj.getClass().getName(), e.getMessage());
+                            log.debug("Exception", e);
                         }
                     }
                     if (hitCount == properties.size()) {

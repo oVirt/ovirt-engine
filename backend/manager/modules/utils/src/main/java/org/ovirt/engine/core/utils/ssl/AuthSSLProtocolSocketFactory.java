@@ -52,8 +52,8 @@ import javax.net.ssl.X509TrustManager;
 import org.apache.commons.httpclient.ConnectTimeoutException;
 import org.apache.commons.httpclient.params.HttpConnectionParams;
 import org.apache.commons.httpclient.protocol.SecureProtocolSocketFactory;
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * <p>
@@ -186,7 +186,7 @@ import org.apache.commons.logging.LogFactory;
 public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory {
 
     /** Log object for this class. */
-    private static final Log LOG = LogFactory.getLog(AuthSSLProtocolSocketFactory.class);
+    private static final Logger log = LoggerFactory.getLogger(AuthSSLProtocolSocketFactory.class);
 
     private final SSLContext sslcontext;
 
@@ -216,7 +216,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
     }
 
     private static TrustManager[] createTrustManagers(TrustManager[] trustmanagers) throws GeneralSecurityException {
-        LOG.debug("Initializing trust manager");
+        log.debug("Initializing trust manager");
         for (int i = 0; i < trustmanagers.length; i++) {
             if (trustmanagers[i] instanceof X509TrustManager) {
                 trustmanagers[i] = new AuthSSLX509TrustManager((X509TrustManager) trustmanagers[i]);
@@ -232,13 +232,13 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             sslcontext.init(keymanagers, trustmanagers, null);
             return sslcontext;
         } catch (NoSuchAlgorithmException e) {
-            LOG.error(e.getMessage(), e);
+            log.error("Exception", e);
             throw new AuthSSLInitializationException("Unsupported algorithm exception: " + e.getMessage());
         } catch (KeyStoreException e) {
-            LOG.error(e.getMessage(), e);
+            log.error("Exception", e);
             throw new AuthSSLInitializationException("Keystore exception: " + e.getMessage());
         } catch (GeneralSecurityException e) {
-            LOG.error(e.getMessage(), e);
+            log.error("Exception", e);
             throw new AuthSSLInitializationException("Key management exception: " + e.getMessage());
         }
     }

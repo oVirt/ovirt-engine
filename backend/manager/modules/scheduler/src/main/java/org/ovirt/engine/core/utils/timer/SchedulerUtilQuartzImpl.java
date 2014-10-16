@@ -22,8 +22,6 @@ import javax.ejb.Startup;
 import javax.ejb.TransactionAttribute;
 import javax.ejb.TransactionAttributeType;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
@@ -37,6 +35,8 @@ import org.quartz.SchedulerFactory;
 import org.quartz.Trigger;
 import org.quartz.TriggerKey;
 import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // Here we use a Singleton bean, names Scheduler.
 // The @Startup annotation is to make sure the bean is initialized on startup.
@@ -62,7 +62,7 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
     private static final String TRIGGER_PREFIX = "trigger";
 
     // members
-    private final Log log = LogFactory.getLog(SchedulerUtilQuartzImpl.class);
+    private final Logger log = LoggerFactory.getLogger(SchedulerUtilQuartzImpl.class);
     private Scheduler sched;
 
     private final AtomicLong sequenceNumber = new AtomicLong(Long.MIN_VALUE);
@@ -86,7 +86,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
             sched.start();
             sched.getListenerManager().addJobListener(new FixedDelayJobListener(this), jobGroupEquals(Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
-            log.error("there is a problem with the underlying Scheduler.", se);
+            log.error("there is a problem with the underlying Scheduler: {}", se.getMessage());
+            log.debug("Exception", se);
         }
     }
 
@@ -97,7 +98,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
                 sched.shutdown();
             }
         } catch (SchedulerException e) {
-            log.error("Failed to shutdown Quartz service", e);
+            log.error("Failed to shutdown Quartz service: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -147,7 +149,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         try {
             sched.scheduleJob(job, trigger);
         } catch (SchedulerException se) {
-            log.error("failed to schedule job", se);
+            log.error("failed to schedule job: {}", se.getMessage());
+            log.debug("Exception", se);
         }
     }
 
@@ -298,7 +301,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
                 .build();
             sched.scheduleJob(job, trigger);
         } catch (Exception se) {
-            log.error("failed to schedule job", se);
+            log.error("failed to schedule job: {}", se.getMessage());
+            log.debug("Exception", se);
         }
 
         return job.getKey().getName();
@@ -332,7 +336,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
                 sched.rescheduleJob(triggerKey(oldTriggerName, oldTriggerGroup), newTrigger);
             }
         } catch (SchedulerException se) {
-            log.error("failed to reschedule the job", se);
+            log.error("failed to reschedule the job: {}", se.getMessage());
+            log.debug("Exception", se);
         }
     }
 
@@ -347,7 +352,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         try {
             sched.pauseJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
-            log.error("failed to pause a job with id=" + jobId, se);
+            log.error("failed to pause a job with id={}: {}", jobId, se.getMessage());
+            log.debug("Exception", se);
         }
 
     }
@@ -363,7 +369,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         try {
             sched.deleteJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
-            log.error("failed to delete a job with id=" + jobId, se);
+            log.error("failed to delete a job with id={}: {}", jobId, se.getMessage());
+            log.debug("Exception", se);
         }
 
     }
@@ -379,7 +386,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         try {
             sched.resumeJob(jobKey(jobId, Scheduler.DEFAULT_GROUP));
         } catch (SchedulerException se) {
-            log.error("failed to pause a job with id=" + jobId, se);
+            log.error("failed to pause a job with id={}: {}", jobId, se.getMessage());
+            log.debug("Exception", se);
         }
 
     }
@@ -400,10 +408,11 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
 
                 rescheduleAJob(oldTriggerKey.getName(), oldTriggerKey.getGroup(), newTrigger);
             } else {
-                log.error("failed to trigger a job with id=" + jobId + ", job has no trigger");
+                log.error("failed to trigger a job with id={}, job has no trigger", jobId);
             }
         } catch (SchedulerException se) {
-            log.error("failed to trigger a job with id=" + jobId, se);
+            log.error("failed to trigger a job with id={}: {}", jobId, se.getMessage());
+            log.debug("Exception", se);
         }
     }
 
@@ -418,7 +427,8 @@ public class SchedulerUtilQuartzImpl implements SchedulerUtil {
         try {
             sched.shutdown(true);
         } catch (SchedulerException se) {
-            log.error("failed to shut down the scheduler", se);
+            log.error("failed to shut down the scheduler: {}", se.getMessage());
+            log.debug("Exception", se);
         }
     }
 

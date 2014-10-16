@@ -4,12 +4,12 @@ import java.lang.reflect.Method;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.quartz.Job;
 import org.quartz.JobDataMap;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The JobWrapper gives 2 functionalities: 1. Enable running a method within an
@@ -20,7 +20,7 @@ public class JobWrapper implements Job {
 
     // static data members
     private static Map<String, Method> cachedMethods = new HashMap<String, Method>();
-    private final Log log = LogFactory.getLog(SchedulerUtilQuartzImpl.class);
+    private final Logger log = LoggerFactory.getLogger(SchedulerUtilQuartzImpl.class);
 
     /**
      * execute a method within an instance. The instance and the method name are
@@ -48,8 +48,8 @@ public class JobWrapper implements Job {
                     } else {
                         methodToRun = getMethodToRun(instance, methodName);
                         if (methodToRun == null) {
-                            log.error("could not find the required method " + methodName + " on instance of "
-                                    + instance.getClass().getSimpleName());
+                            log.error("could not find the required method '{}' on instance of {}",
+                                    methodName, instance.getClass().getSimpleName());
                             return;
                         }
 
@@ -59,7 +59,8 @@ public class JobWrapper implements Job {
             }
             methodToRun.invoke(instance, methodParams);
         } catch (Exception e) {
-            log.error("Failed to invoke scheduled method " + methodName, e);
+            log.error("Failed to invoke scheduled method {}: {}", methodName, e.getMessage());
+            log.debug("Exception", e);
             JobExecutionException jee = new JobExecutionException("failed to execute job");
             jee.setStackTrace(e.getStackTrace());
             throw jee;

@@ -43,7 +43,6 @@
     <animal.sniffer.signature>java17</animal.sniffer.signature>
 
     <!-- Dependencies Versions -->
-    <commons-logging.version>1.1</commons-logging.version>
     <junit.version>4.11</junit.version>
     <commons-codec.version>1.4</commons-codec.version>
     <commons-lang.version>2.6</commons-lang.version>
@@ -342,9 +341,9 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>commons-logging</groupId>
-      <artifactId>commons-logging</artifactId>
-      <version>${commons-logging.version}</version>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>${slf4j.version}</version>
       <scope>provided</scope>
     </dependency>
   </dependencies>
@@ -495,7 +494,7 @@
                 <addClasspath>false</addClasspath>
               </manifest>
               <manifestEntries>
-                <Dependencies>org.apache.commons.logging,javax.api</Dependencies>
+                <Dependencies>org.slf4j,javax.api</Dependencies>
               </manifestEntries>
             </archive>
           </configuration>

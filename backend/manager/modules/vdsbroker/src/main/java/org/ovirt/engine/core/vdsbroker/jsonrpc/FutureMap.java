@@ -11,8 +11,6 @@ import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
 import org.ovirt.vdsm.jsonrpc.client.ClientConnectionException;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcClient;
@@ -20,6 +18,8 @@ import org.ovirt.vdsm.jsonrpc.client.JsonRpcRequest;
 import org.ovirt.vdsm.jsonrpc.client.JsonRpcResponse;
 import org.ovirt.vdsm.jsonrpc.client.ResponseDecomposer;
 import org.ovirt.vdsm.jsonrpc.client.utils.LockWrapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides asynchronous behavior to synchronous engine code. Request is sent during construction of this map but it
@@ -32,7 +32,7 @@ public class FutureMap implements Map<String, Object> {
     private final static String STATUS = "status";
     private final static String DEFAULT_KEY = "info";
     private final static long DEFAULT_RESPONSE_WAIT = 1;
-    private static Log log = LogFactory.getLog(FutureMap.class);
+    private static Logger log = LoggerFactory.getLogger(FutureMap.class);
     private final Lock lock = new ReentrantLock();
     private Future<JsonRpcResponse> response;
     private Map<String, Object> responseMap = new HashMap<String, Object>();

@@ -144,14 +144,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Needed until slf4j will be used as logging frontend in the whole project -->
-    <dependency>
-      <groupId>org.slf4j</groupId>
-      <artifactId>jcl-over-slf4j</artifactId>
-      <version>${slf4j.version}</version>
-      <scope>test</scope>
-    </dependency>
-
     <dependency>
       <groupId>commons-configuration</groupId>
       <artifactId>commons-configuration</artifactId>

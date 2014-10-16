@@ -9,8 +9,6 @@ import java.util.List;
 import java.util.ListIterator;
 import java.util.Map;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.SqlInjectionException;
@@ -19,10 +17,14 @@ import org.ovirt.engine.core.compat.RefObject;
 import org.ovirt.engine.core.compat.Regex;
 import org.ovirt.engine.core.compat.StringFormat;
 import org.ovirt.engine.core.compat.StringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SyntaxChecker implements ISyntaxChecker {
 
     public static final String TAG_COLUMN_NAME_IN_CRITERIA = "tag_name";
+
+    private static final Logger log = LoggerFactory.getLogger(SyntaxChecker.class);
 
     public static final String SORTBY = "SORTBY";
     public static final String SORTDIR_ASC = "ASC";
@@ -95,7 +97,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             sqlInjectionChecker = getSqlInjectionChecker();
         } catch (Exception e) {
-            log.debug("Failed to load Sql Injection Checker. " + e.getMessage());
+            log.debug("Failed to load Sql Injection Checker: {}", e.getMessage());
         }
     }
 
@@ -940,7 +942,7 @@ public class SyntaxChecker implements ISyntaxChecker {
                     throw new SqlInjectionException();
                 }
             }
-            log.trace("Search: " + retval);
+            log.trace("Search: {}", retval);
         }
         return retval;
     }
@@ -984,7 +986,7 @@ public class SyntaxChecker implements ISyntaxChecker {
         try {
             type = PagingType.valueOf(val);
         } catch (Exception e) {
-            log.error("Unknown paging type " + val);
+            log.error("Unknown paging type '{}'", val);
         }
 
         return type;
@@ -1180,8 +1182,6 @@ public class SyntaxChecker implements ISyntaxChecker {
         }
         return conditionData;
     }
-
-    private static final Log log = LogFactory.getLog(SyntaxChecker.class);
 
     private static enum PgMajorRelease {
         PG8(8),

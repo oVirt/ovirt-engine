@@ -1,16 +1,16 @@
 package org.ovirt.engine.core.bll.scheduling;
 
-import org.apache.commons.logging.Log;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VdsFreeMemoryChecker {
 
     private RunVmDelayer delayer;
 
-    private static final Log log = LogFactory.getLog(VdsFreeMemoryChecker.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsFreeMemoryChecker.class);
 
     public VdsFreeMemoryChecker(RunVmDelayer delayer) {
         this.delayer = delayer;
@@ -25,9 +25,8 @@ public class VdsFreeMemoryChecker {
                 return false;
             }
 
-            if (log.isDebugEnabled()) {
-                log.debug("not enough memory on host. throttling...");
-            }
+            log.debug("not enough memory on host. throttling...");
+
             // not enough memory to run the vm. delay execution to free up pending memory.
             delayer.delay(vds.getId());
 

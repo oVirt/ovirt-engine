@@ -6,8 +6,6 @@ import static org.junit.Assert.assertTrue;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import org.apache.commons.logging.Log;
-import org.apache.commons.logging.LogFactory;
 import org.jgroups.util.UUID;
 import org.junit.After;
 import org.junit.Before;
@@ -18,10 +16,12 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /** A test case for the {@link QueriesCommandBase} class. */
 public class QueriesCommandBaseTest {
-    private static final Log log = LogFactory.getLog(QueriesCommandBaseTest.class);
+    private static final Logger log = LoggerFactory.getLogger(QueriesCommandBaseTest.class);
 
     /* Getters and Setters tests */
 
@@ -74,7 +74,7 @@ public class QueriesCommandBaseTest {
                             shouldBeAbleToRunQuery = isInternalExecution || isUserAdmin;
                         }
 
-                        log.debug("Running on query: " + toString());
+                        log.debug("Running on query: {}", this);
 
                         String sessionId = getClass().getSimpleName();
 
