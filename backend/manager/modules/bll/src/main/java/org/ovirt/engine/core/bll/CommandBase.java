@@ -93,7 +93,7 @@ import org.ovirt.engine.core.dao.VdsSpmIdMapDAO;
 import org.ovirt.engine.core.utils.Deserializer;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
@@ -2139,7 +2139,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     public void setCorrelationId(String correlationId) {
         // correlation ID thread local variable is set for non multi-action
         if (!_parameters.getMultipleAction()) {
-            ThreadLocalParamsContainer.setCorrelationId(correlationId);
+            CorrelationIdTracker.setCorrelationId(correlationId);
         }
         super.setCorrelationId(correlationId);
     }

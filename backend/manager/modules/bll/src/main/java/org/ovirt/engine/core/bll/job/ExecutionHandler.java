@@ -27,7 +27,7 @@ import org.ovirt.engine.core.common.validation.group.PreRun;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -729,7 +729,7 @@ public class ExecutionHandler {
         VdcReturnValueBase returnValue = null;
         String correlationId = parameters.getCorrelationId();
         if (StringUtils.isEmpty(correlationId)) {
-            correlationId = ThreadLocalParamsContainer.getCorrelationId();
+            correlationId = CorrelationIdTracker.getCorrelationId();
             if (StringUtils.isEmpty(correlationId)) {
                 correlationId = LoggedUtils.getObjectId(parameters);
             }

@@ -9,7 +9,7 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
@@ -74,7 +74,7 @@ public class MultipleActionsRunner {
             }
 
             if (getCommands().size() == 1) {
-                ThreadLocalParamsContainer.setCorrelationId(getCommands().get(0).getCorrelationId());
+                CorrelationIdTracker.setCorrelationId(getCommands().get(0).getCorrelationId());
                 returnValues.add(getCommands().get(0).canDoActionOnly());
             } else {
                 checkCanDoActionsAsynchronously(returnValues);
@@ -137,7 +137,7 @@ public class MultipleActionsRunner {
     protected VdcReturnValueBase runCanDoActionOnly(final int currentCanDoActionId, final int totalSize) {
         CommandBase<?> command = getCommands().get(currentCanDoActionId);
         String actionType = command.getActionType().toString();
-        ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
+        CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         try {
             log.infoFormat("Start running CanDoAction for command number {0}/{1} (Command type: {2})",
                     currentCanDoActionId + 1,
@@ -186,7 +186,7 @@ public class MultipleActionsRunner {
                     command.getActionType(),
                     command.isInternalExecution());
         }
-        ThreadLocalParamsContainer.setCorrelationId(command.getCorrelationId());
+        CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         command.insertAsyncTaskPlaceHolders();
         command.executeAction();
     }

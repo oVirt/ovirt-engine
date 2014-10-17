@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -136,7 +136,7 @@ public class QueriesCommandBaseTest {
     @Before
     @After
     public void clearSession() {
-        ThreadLocalParamsContainer.clean();
+        CorrelationIdTracker.clean();
     }
 
     /** A stub class that will cause the {@link VdcQueryType#Unknown} to be used */

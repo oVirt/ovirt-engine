@@ -29,7 +29,7 @@ import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.attestationbroker.AttestThread;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
-import org.ovirt.engine.core.bll.interceptors.ThreadLocalSessionCleanerInterceptor;
+import org.ovirt.engine.core.bll.interceptors.CorrelationIdTrackerInterceptor;
 import org.ovirt.engine.core.bll.interfaces.BackendCommandObjectsHandler;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -93,7 +93,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 // of the singleton is synchronized across all clients.
 @DependsOn("Scheduler")
 @Local({ BackendLocal.class, BackendInternal.class, BackendCommandObjectsHandler.class })
-@Interceptors({ ThreadLocalSessionCleanerInterceptor.class })
+@Interceptors({ CorrelationIdTrackerInterceptor.class })
 @Singleton
 @Startup
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)

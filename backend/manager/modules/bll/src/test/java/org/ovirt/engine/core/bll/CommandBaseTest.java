@@ -34,7 +34,7 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.BusinessEntitySnapshotDAO;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.MockEJBStrategyRule;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 
 /** A test case for {@link CommandBase} */
 public class CommandBaseTest {
@@ -95,7 +95,7 @@ public class CommandBaseTest {
     @Before
     @After
     public void clearEnvironment() {
-        ThreadLocalParamsContainer.clean();
+        CorrelationIdTracker.clean();
         SessionDataContainer.getInstance().removeSessionOnLogout(session);
     }
 

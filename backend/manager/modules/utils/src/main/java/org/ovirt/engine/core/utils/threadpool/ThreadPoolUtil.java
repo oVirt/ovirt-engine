@@ -16,7 +16,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 
@@ -61,7 +61,7 @@ public class ThreadPoolUtil {
         @Override
         protected void afterExecute(Runnable r, Throwable t) {
             super.afterExecute(r, t);
-            ThreadLocalParamsContainer.clean();
+            CorrelationIdTracker.clean();
         }
 
         @Override
@@ -86,7 +86,7 @@ public class ThreadPoolUtil {
 
         @Override
         public void run() {
-            ThreadLocalParamsContainer.setCorrelationId(correlationId);
+            CorrelationIdTracker.setCorrelationId(correlationId);
             job.run();
         }
 
@@ -103,12 +103,12 @@ public class ThreadPoolUtil {
 
         public InternalCallable(Callable<V> job) {
             this.job = job;
-            this.correlationId = ThreadLocalParamsContainer.getCorrelationId();
+            this.correlationId = CorrelationIdTracker.getCorrelationId();
         }
 
         @Override
         public V call() throws Exception {
-            ThreadLocalParamsContainer.setCorrelationId(correlationId);
+            CorrelationIdTracker.setCorrelationId(correlationId);
             return job.call();
         }
     }
@@ -152,7 +152,7 @@ public class ThreadPoolUtil {
     public static void execute(Runnable command) {
         try {
             es.submit(new InternalWrapperRunnable(command,
-                    ThreadLocalParamsContainer.getCorrelationId()));
+                    CorrelationIdTracker.getCorrelationId()));
         } catch (RejectedExecutionException e) {
             log.warn("The thread pool is out of limit. A submitted task was rejected");
             throw e;

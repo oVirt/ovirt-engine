@@ -2,10 +2,8 @@ package org.ovirt.engine.core.utils.log;
 
 import java.text.MessageFormat;
 
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
-
+@Deprecated
 public class Log {
-    private static final String CORRELATION_ID_MESSAGE_FORMAT = "[%s] %s";
 
     private final org.slf4j.Logger log;
 
@@ -14,31 +12,27 @@ public class Log {
     }
 
     public void debug(Object msg) {
-        if (isDebugEnabled()) {
-            log.debug(addPrefixToLogMessage(msg));
-        }
+        log.debug(convertToString(msg));
     }
 
     public void debug(Object msg, Throwable t) {
-        if (isDebugEnabled()) {
-            log.debug(addPrefixToLogMessage(msg), t);
-        }
+        log.debug(convertToString(msg), t);
     }
 
     public void error(Object msg) {
-        log.error(addPrefixToLogMessage(msg));
+        log.error(convertToString(msg));
     }
 
     public void error(Object msg, Throwable t) {
-        log.error(addPrefixToLogMessage(msg), t);
+        log.error(convertToString(msg), t);
     }
 
     public void info(Object msg) {
-        log.info(addPrefixToLogMessage(msg));
+        log.info(convertToString(msg));
     }
 
     public void info(Object msg, Throwable t) {
-        log.info(addPrefixToLogMessage(msg), t);
+        log.info(convertToString(msg), t);
     }
 
     public boolean isDebugEnabled() {
@@ -66,23 +60,19 @@ public class Log {
     }
 
     public void trace(Object msg) {
-        if (log.isTraceEnabled()) {
-            log.trace(addPrefixToLogMessage(msg));
-        }
+        log.trace(convertToString(msg));
     }
 
     public void trace(Object msg, Throwable t) {
-        if (log.isTraceEnabled()) {
-            log.trace(addPrefixToLogMessage(msg), t);
-        }
+        log.trace(convertToString(msg), t);
     }
 
     public void warn(Object msg) {
-        log.warn(addPrefixToLogMessage(msg));
+        log.warn(convertToString(msg));
     }
 
     public void warn(Object msg, Throwable t) {
-        log.warn(addPrefixToLogMessage(msg), t);
+        log.warn(convertToString(msg), t);
     }
 
     public void traceFormat(String formatString, Object... args) {
@@ -154,16 +144,8 @@ public class Log {
         return null;
     }
 
-    private String addPrefixToLogMessage(Object logMessage) {
-        String correlationId = ThreadLocalParamsContainer.getCorrelationId();
-        if (correlationId == null) {
-            if (logMessage == null) {
-                return null;
-            } else {
-                return logMessage.toString();
-            }
-        }
-        return String.format(CORRELATION_ID_MESSAGE_FORMAT, correlationId, logMessage);
+    private String convertToString(Object logMessage) {
+        return logMessage == null ? null : logMessage.toString();
     }
 
 }

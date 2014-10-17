@@ -32,7 +32,7 @@ import org.apache.xmlrpc.client.util.ClientFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.utils.ThreadLocalParamsContainer;
+import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
@@ -186,7 +186,7 @@ public class XmlRpcUtils {
                         new FutureTask<Object>(createCallable(obj,
                                 getMethod(m, annotation, proxy),
                                 args,
-                                ThreadLocalParamsContainer.getCorrelationId()));
+                                CorrelationIdTracker.getCorrelationId()));
                 ThreadPoolUtil.execute(future);
                 return future;
             } else {
@@ -194,7 +194,7 @@ public class XmlRpcUtils {
                         new FutureTask<Object>(createCallable(obj,
                                 m,
                                 args,
-                                ThreadLocalParamsContainer.getCorrelationId()));
+                                CorrelationIdTracker.getCorrelationId()));
                 ThreadPoolUtil.execute(future);
                 try {
                     result = future.get(timeoutInMilisec, TimeUnit.MILLISECONDS);
@@ -238,7 +238,7 @@ public class XmlRpcUtils {
             @Override
             public Object call() throws Exception {
                 try {
-                    ThreadLocalParamsContainer.setCorrelationId(correlationId);
+                    CorrelationIdTracker.setCorrelationId(correlationId);
                     return m.invoke(obj, args);
                 } catch (Exception e) {
                     throw e;
@@ -264,7 +264,7 @@ public class XmlRpcUtils {
         protected void initHttpHeaders(XmlRpcRequest pRequest) throws XmlRpcClientException {
             super.initHttpHeaders(pRequest);
 
-            String correlationId = ThreadLocalParamsContainer.getCorrelationId();
+            String correlationId = CorrelationIdTracker.getCorrelationId();
             if (StringUtils.isNotBlank(correlationId)) {
                 method.setRequestHeader(FLOW_ID_HEADER_NAME, correlationId);
             }

@@ -80,7 +80,7 @@
       <file-handler name="ENGINE" autoflush="true">
         <level name="INFO"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
         </formatter>
         <file path="$getstring('ENGINE_LOG')/engine.log"/>
         <append value="true"/>
@@ -90,7 +90,7 @@
       <console-handler name="CONSOLE" autoflush="true">
         <level name="INFO"/>
         <formatter>
-          <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
+          <pattern-formatter pattern="%d %-5p [%c] (%t) [%X{ovirtCorrelationId}] %s%E%n"/>
         </formatter>
       </console-handler>
 

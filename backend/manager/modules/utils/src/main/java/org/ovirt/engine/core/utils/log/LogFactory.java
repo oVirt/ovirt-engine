@@ -5,6 +5,7 @@ import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.slf4j.LoggerFactory;
 
+@Deprecated
 public class LogFactory {
 
     public static Log getLog(Class<?> loggedClass) {
