@@ -14,12 +14,12 @@ import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SyncUsers {
 
-    private static final Log log = LogFactory.getLog(SyncUsers.class);
+    private static final Logger log = LoggerFactory.getLogger(SyncUsers.class);
 
     public static DbUser sync(DbUser dbUser) {
         List<DbUser> synchedUsers = sync(Arrays.asList(dbUser));
@@ -63,13 +63,13 @@ public class SyncUsers {
                         if (!activeUser.equals(dbUser)) {
                             activeUser.setId(dbUser.getId());
                             activeUser.setAdmin(dbUser.isAdmin());
-                            log.infoFormat("Principal {0}::{1} synchronized",
+                            log.info("Principal {}::{} synchronized",
                                     activeUser.getLoginName(),
                                     activeUser.getDomain());
                             usersToUpdate.add(activeUser);
                         }
                     } else {
-                        log.infoFormat("Deactivating non existing principal {0}::{1}",
+                        log.info("Deactivating non existing principal {}::{}",
                                 dbUser.getLoginName(),
                                 dbUser.getDomain());
                         dbUser.setActive(false);
@@ -77,9 +77,9 @@ public class SyncUsers {
                     }
                 }
             } catch (Exception ex) {
-                log.errorFormat("Error during user synchronization of extension {0}. Exception message is {1}",
+                log.error("Error during user synchronization of extension '{}': {}",
                         authz, ex.getMessage());
-                log.debug("", ex);
+                log.debug("Exception", ex);
             }
         }
         return usersToUpdate;

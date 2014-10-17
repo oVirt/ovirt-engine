@@ -38,12 +38,12 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.extensions.mgr.ExtensionProxy;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class LoginBaseCommand<T extends LoginUserParameters> extends CommandBase<T> {
-    protected static final Log log = LogFactory.getLog(LoginBaseCommand.class);
+    protected static final Logger log = LoggerFactory.getLogger(LoginBaseCommand.class);
 
     private static final Map<Integer, AuditLogType> auditLogMap = new HashMap<>();
     private static final Map<Integer, VdcBllMessages> vdcBllMessagesMap = new HashMap<>();
@@ -136,8 +136,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                     validTo = fromExtension;
                 }
             } catch (ParseException e) {
-                log.warn("Error parsing AuthRecord.VALID_TO . Default VALID_TO value will be set on session");
-                log.debug("Exception is ", e);
+                log.warn("Error parsing AuthRecord.VALID_TO. Default VALID_TO value will be set on session: {}",
+                        e.getMessage());
+                log.debug("Exception", e);
             }
         }
         SessionDataContainer.getInstance().setHardLimit(engineSessionId, validTo);
@@ -147,10 +148,8 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
     protected boolean isUserCanBeAuthenticated() {
         AuthenticationProfile profile = AuthenticationProfileRepository.getInstance().getProfile(getParameters().getProfileName());
         if (profile == null) {
-            log.errorFormat(
-                    "Can't login because authentication profile \"{1}\" doesn't exist.",
-                    getParameters().getProfileName()
-                    );
+            log.error("Can't login because authentication profile '{}' doesn't exist.",
+                    getParameters().getProfileName());
             addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
             return false;
         }
@@ -170,28 +169,21 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
             // Verify that the login name and password have been provided:
             loginName = getParameters().getLoginName();
             if (loginName == null) {
-                log.errorFormat(
-                        "Can't login user because no login name has been provided."
-                        );
+                log.error("Can't login user because no login name has been provided.");
                 addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
                 return false;
             }
             String password = getParameters().getPassword();
             if (password == null) {
-                log.errorFormat(
-                        "Can't login user \"{0}\" because no password has been provided.",
-                        loginName
-                        );
+                log.error("Can't login user '{}' because no password has been provided.", loginName);
                 return false;
             }
 
             if (!AuthzUtils.supportsPasswordAuthentication(authnExtension)) {
-                log.errorFormat(
-                        "Can't login user \"{0}\" because the authentication profile \"{1}\" doesn't support password "
-                                +
-                                "authentication.",
-                        loginName, profile.getName()
-                        );
+                log.error("Can't login user '{}' because the authentication profile '{}' doesn't support password"
+                                + " authentication.",
+                        loginName,
+                        profile.getName());
                 addCanDoActionMessage(VdcBllMessages.USER_FAILED_TO_AUTHENTICATE);
                 return false;
             }
@@ -236,13 +228,10 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         ExtMap principalRecord = AuthzUtils.fetchPrincipalRecord(profile.getAuthz(), authRecord);
         if (principalRecord == null) {
-            log.infoFormat(
-                    "Can't login user \"{0}\" with authentication profile \"{1}\" because the user doesn't exist in the "
-                            +
-                            "directory.",
+            log.info("Can't login user '{}' with authentication profile '{}' because the user doesn't exist in the"
+                            + " directory.",
                     authRecord.<String> get(Authn.AuthRecord.PRINCIPAL),
-                    profile.getName()
-                    );
+                    profile.getName());
             addCanDoActionMessage(VdcBllMessages.USER_MUST_EXIST_IN_DIRECTORY);
             AcctUtils.reportRecords(
                     Acct.ReportReason.PRINCIPAL_NOT_FOUND,
@@ -260,11 +249,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         DbUser dbUser = DirectoryUtils.mapPrincipalRecordToDbUser(AuthzUtils.getName(profile.getAuthz()), principalRecord);
         if (!dbUser.isActive()) {
             dbUser.setActive(true);
-            log.info(
-                    String.format("The user %1$s was reactivated as it was found in authz provider %2$s during login attempt.",
+            log.info("The user '{}' was reactivated as it was found in authz provider '{}' during login attempt.",
                     dbUser.getLoginName(),
-                            dbUser.getDomain())
-                    );
+                    dbUser.getDomain());
         }
         getDbUserDAO().saveOrUpdate(dbUser);
 
@@ -295,7 +282,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         // This may be redundant in some use-cases, but looking forward to Single Sign On,
         // we will want this info
         boolean isAdmin = MultiLevelAdministrationHandler.isAdminUser(dbUser);
-        log.debugFormat("Checking if user {0} is an admin, result {1}", dbUser.getLoginName(), isAdmin);
+        log.debug("Checking if user '{}' is an admin, result {}", dbUser.getLoginName(), isAdmin);
         dbUser.setAdmin(isAdmin);
         setCurrentUser(dbUser);
         AcctUtils.reportRecords(
@@ -319,9 +306,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
     @Override
     protected boolean isUserAuthorizedToRunAction() {
-        if (log.isDebugEnabled()) {
-            log.debug("IsUserAutorizedToRunAction: login - no permission check");
-        }
+        log.debug("IsUserAutorizedToRunAction: login - no permission check");
         return true;
     }
 
@@ -382,8 +367,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
 
         int authResult = outputMap.<Integer>get(Authn.InvokeKeys.RESULT);
         if (authResult != Authn.AuthResult.SUCCESS) {
-            log.infoFormat(
-                    "Can't login user \"{0}\" with authentication profile \"{1}\" because the authentication failed.",
+            log.info("Can't login user '{}' with authentication profile '{}' because the authentication failed.",
                     user,
                     getParameters().getProfileName());
 
