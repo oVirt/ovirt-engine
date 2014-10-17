@@ -1034,9 +1034,7 @@ public class VmDeviceUtils {
 
     private static boolean isBalloonEnabled(VmManagementParametersBase params) {
         Boolean balloonEnabled = params.isBalloonEnabled();
-        return balloonEnabled != null ? balloonEnabled :
-            osRepository.isBalloonEnabled(params.getVmStaticData().getOsId(),
-                    ClusterUtils.getCompatibilityVersion(params.getVmStaticData()));
+        return (balloonEnabled != null) ? balloonEnabled : isBalloonEnabled(params.getVmStaticData().getId());
     }
 
     public static boolean isVirtioScsiControllerAttached(Guid vmId) {
