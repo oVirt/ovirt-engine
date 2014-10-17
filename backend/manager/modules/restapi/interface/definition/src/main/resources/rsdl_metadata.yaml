@@ -6136,3 +6136,20 @@ actions:
       Content-Type: {value: application/xml|json, required: true}
       Expect: {value: 201-created, required: false}
       Correlation-Id: {value: 'any string', required: false}
+
+- name: /operatingsystems|rel=get
+  description: get the list of all Operating Systems
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}
+- name: /operatingsystems/{operatingsystem:id}|rel=get
+  description: get the details of the specified Operating System
+  request:
+    body:
+      parameterType: null
+      signatures: []
+    urlparams: {}
+    headers: {}

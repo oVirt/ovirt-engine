@@ -66,6 +66,7 @@ import org.ovirt.engine.api.model.MacPool;
 import org.ovirt.engine.api.model.NIC;
 import org.ovirt.engine.api.model.Network;
 import org.ovirt.engine.api.model.NumaNode;
+import org.ovirt.engine.api.model.OperatingSystemInfo;
 import org.ovirt.engine.api.model.Parameter;
 import org.ovirt.engine.api.model.ParametersSet;
 import org.ovirt.engine.api.model.Permission;
@@ -155,6 +156,8 @@ import org.ovirt.engine.api.resource.MacPoolsResource;
 import org.ovirt.engine.api.resource.MovableCopyableDiskResource;
 import org.ovirt.engine.api.resource.NetworkResource;
 import org.ovirt.engine.api.resource.NetworksResource;
+import org.ovirt.engine.api.resource.OperatingSystemResource;
+import org.ovirt.engine.api.resource.OperatingSystemsResource;
 import org.ovirt.engine.api.resource.PermissionResource;
 import org.ovirt.engine.api.resource.PermitResource;
 import org.ovirt.engine.api.resource.PermitsResource;
@@ -479,6 +482,9 @@ public class LinkHelper {
         map = new ParentToCollectionMap(CpuProfileResource.class, CpuProfilesResource.class);
         TYPES.put(CpuProfile.class, map);
 
+        // Operating systems:
+        map = new ParentToCollectionMap(OperatingSystemResource.class, OperatingSystemsResource.class);
+        TYPES.put(OperatingSystemInfo.class, map);
     }
 
     /**

@@ -41,6 +41,7 @@ import org.ovirt.engine.api.restapi.resource.BackendInstanceTypesResource;
 import org.ovirt.engine.api.restapi.resource.BackendJobsResource;
 import org.ovirt.engine.api.restapi.resource.BackendMacPoolsResource;
 import org.ovirt.engine.api.restapi.resource.BackendNetworksResource;
+import org.ovirt.engine.api.restapi.resource.BackendOperatingSystemsResource;
 import org.ovirt.engine.api.restapi.resource.BackendResource;
 import org.ovirt.engine.api.restapi.resource.BackendRolesResource;
 import org.ovirt.engine.api.restapi.resource.BackendSchedulingPoliciesResource;
@@ -146,6 +147,7 @@ public class BackendApplication extends Application {
         addResource(new BackendSystemPermissionsResource());
         addResource(new BackendDiskProfilesResource());
         addResource(new BackendCpuProfilesResource());
+        addResource(new BackendOperatingSystemsResource());
 
         final SessionProcessor processor = new SessionProcessor();
         processor.setBackend(backend);

@@ -126,7 +126,8 @@ public class BackendApiResourceTest extends Assert {
         "schedulingpolicyunits",
         "schedulingpolicies",
         "permissions",
-        "macpools"
+        "macpools",
+        "operatingsystems",
     };
 
     private static final String[] relationshipsGlusterOnly = {
@@ -188,7 +189,8 @@ public class BackendApiResourceTest extends Assert {
         BASE_PATH + "/schedulingpolicyunits",
         BASE_PATH + "/schedulingpolicies",
         BASE_PATH + "/permissions",
-        BASE_PATH + "/macpools"
+        BASE_PATH + "/macpools",
+        BASE_PATH + "/operatingsystems",
     };
 
     private static final String[] hrefsGlusterOnly = {

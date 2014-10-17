@@ -4904,4 +4904,32 @@
       </xs:extension>
     </xs:complexContent>
   </xs:complexType>
+
+  <!-- Operating systems: -->
+  <xs:element name="operating_system" type="OperatingSystemInfo"/>
+
+  <xs:element name="operating_systems" type="OperatingSystemInfos"/>
+
+  <xs:complexType name="OperatingSystemInfo">
+    <xs:complexContent>
+      <xs:extension base="BaseResource"/>
+    </xs:complexContent>
+  </xs:complexType>
+
+  <xs:complexType name="OperatingSystemInfos">
+    <xs:complexContent>
+      <xs:extension base="BaseResources">
+        <xs:sequence>
+          <xs:element ref="operating_system" minOccurs="0" maxOccurs="unbounded">
+            <xs:annotation>
+              <xs:appinfo>
+                <jaxb:property name="OperatingSystemInfos"/>
+              </xs:appinfo>
+            </xs:annotation>
+          </xs:element>
+        </xs:sequence>
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+
 </xs:schema>
