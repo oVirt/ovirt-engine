@@ -16,6 +16,11 @@
       <artifactId>spring-ldap-core</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-beans</artifactId>
+      <version>${spring.version}</version>
+    </dependency>
+    <dependency>
       <groupId>${engine.groupId}</groupId>
       <artifactId>compat</artifactId>
       <version>${engine.version}</version>
