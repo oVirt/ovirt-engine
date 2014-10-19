@@ -3,15 +3,19 @@ package org.ovirt.engine.core.bll;
 import java.util.Collections;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.NetworkConfigurator;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.transport.ProtocolDetector;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
@@ -22,7 +26,7 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,6 +36,12 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     private static Logger log = LoggerFactory.getLogger(InstallVdsInternalCommand.class);
     private VDSStatus vdsInitialStatus;
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
+    @Inject
+    private ResourceManager resourceManager;
 
     public InstallVdsInternalCommand(T parameters) {
         this(parameters, null);
@@ -100,7 +110,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
             );
 
             if (configureNetworkUsingHostDeploy) {
-                installer.setManagementNetwork(NetworkUtils.getDefaultManagementNetworkName());
+                final Network managementNetwork = managementNetworkUtil.getManagementNetwork(getVdsGroupId());
+                installer.setManagementNetwork(managementNetwork.getName());
             }
 
             if (parameters.getNetworkProviderId() != null) {

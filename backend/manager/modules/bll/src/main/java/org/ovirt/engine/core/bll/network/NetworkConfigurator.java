@@ -10,6 +10,7 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.SetupNetworksParameters;
@@ -28,10 +29,9 @@ import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.slf4j.Logger;
@@ -53,15 +53,17 @@ public class NetworkConfigurator {
     }
 
     public void createManagementNetworkIfRequired() {
-        final String managementNetwork = NetworkUtils.getDefaultManagementNetworkName();
 
         if (host == null) {
             return;
         }
 
-        if (managementNetwork.equals(host.getActiveNic())) {
+        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
+        final Network managementNetwork = managementNetworkUtil.getManagementNetwork(host.getVdsGroupId());
+        final String managementNetworkName = managementNetwork.getName();
+        if (managementNetworkName.equals(host.getActiveNic())) {
             log.info("The management network '{}' is already configured on host '{}'",
-                    managementNetwork,
+                    managementNetworkName,
                     host.getName());
             return;
         }
@@ -78,7 +80,7 @@ public class NetworkConfigurator {
 
         List<VdsNetworkInterface> interfaces = filterBondsWithoutSlaves(host.getInterfaces());
         if (interfaces.contains(nic)) {
-            nic.setNetworkName(managementNetwork);
+            nic.setNetworkName(managementNetworkName);
             configureManagementNetwork(createSetupNetworkParams(interfaces));
         } else {
             final AuditLogableBase event = createEvent();
@@ -88,6 +90,10 @@ public class NetworkConfigurator {
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
         }
+    }
+
+    private ManagementNetworkUtil getManagementNetworkUtil() {
+        return Injector.get(ManagementNetworkUtil.class);
     }
 
     public boolean pollVds() {
@@ -172,9 +178,7 @@ public class NetworkConfigurator {
                     host.getActiveNic()));
         }
 
-        Network managementNetwork =
-                getDbFacade().getNetworkDao()
-                        .getByNameAndDataCenter(NetworkUtils.getDefaultManagementNetworkName(), host.getStoragePoolId());
+        final Network managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getVdsGroupId());
 
         if (managementNetwork.getName().equals(nic.getNetworkName())) {
             return null;
@@ -262,10 +266,6 @@ public class NetworkConfigurator {
 
     private CommandContext cloneContextAndDetachFromParent() {
         return commandContext.clone().withoutCompensationContext().withoutExecutionContext().withoutLock();
-    }
-
-    private DbFacade getDbFacade() {
-        return DbFacade.getInstance();
     }
 
     public static class NetworkConfiguratorException extends RuntimeException {

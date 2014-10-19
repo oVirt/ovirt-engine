@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
 
@@ -39,10 +39,8 @@ public class NetworkClusterHelper {
     private NetworkCluster getManagementNetworkCluster() {
         if (managementNetworkCluster == null) {
             Guid clusterId = networkCluster.getClusterId();
-            Network mgmt =
-                    DbFacade.getInstance()
-                            .getNetworkDao()
-                            .getByNameAndCluster(NetworkUtils.getDefaultManagementNetworkName(), clusterId);
+            final ManagementNetworkUtil managementNetworkUtil = Injector.get(ManagementNetworkUtil.class);
+            Network mgmt = managementNetworkUtil.getManagementNetwork(clusterId);
             managementNetworkCluster = getNetworkClusterDao().get(new NetworkClusterId(clusterId, mgmt.getId()));
         }
 

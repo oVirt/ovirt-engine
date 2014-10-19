@@ -136,7 +136,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
                 && validate(validatorNew.vlanIdNotUsed())
                 && validate(validatorNew.qosExistsInDc())
                 && validate(validatorOld.networkIsSet())
-                && validate(validatorOld.notRenamingManagementNetwork(getNetwork()))
                 && validate(validatorOld.notChangingDataCenterId(getNetwork().getDataCenterId()))
                 && validate(validatorNew.networkNameNotUsed())
                 && validate(validatorOld.networkNotUsedByRunningVms())
@@ -294,14 +293,6 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
             }
 
             return ValidationResult.VALID;
-        }
-
-        public ValidationResult notRenamingManagementNetwork(Network newNetwork) {
-            String managementNetwork = NetworkUtils.getDefaultManagementNetworkName();
-            return network.getName().equals(managementNetwork) &&
-                    !newNetwork.getName().equals(managementNetwork)
-                    ? new ValidationResult(VdcBllMessages.NETWORK_CAN_NOT_REMOVE_DEFAULT_NETWORK)
-                    : ValidationResult.VALID;
         }
 
         /**

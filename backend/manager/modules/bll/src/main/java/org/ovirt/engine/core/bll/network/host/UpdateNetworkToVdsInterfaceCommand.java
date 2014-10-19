@@ -4,7 +4,10 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.UpdateNetworkToVdsParameters;
@@ -32,6 +35,9 @@ import org.ovirt.engine.core.utils.linq.Predicate;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 
 public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsParameters> extends VdsNetworkCommand<T> {
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
 
     private List<VdsNetworkInterface> interfaces;
     private VDSReturnValue retVal;
@@ -215,31 +221,29 @@ public class UpdateNetworkToVdsInterfaceCommand<T extends UpdateNetworkToVdsPara
             return false;
         }
 
-        if (StringUtils.equals(getParameters().getOldNetworkName(), NetworkUtils.getDefaultManagementNetworkName())
-                && !StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getDefaultManagementNetworkName())) {
-            getReturnValue().getCanDoActionMessages()
-                    .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
-            getReturnValue().getCanDoActionMessages().add(String.format("$NetworkName %1$s",
-                    NetworkUtils.getDefaultManagementNetworkName()));
-            return false;
-        }
-
-        if (!NetworkUtils.getDefaultManagementNetworkName().equals(getParameters().getNetwork().getName())
-                && StringUtils.isNotEmpty(getParameters().getGateway())) {
-            if (!getParameters().getGateway().equals(ifaceGateway)) {
-                addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+        final Guid clusterId = getVdsGroupId();
+        if (!managementNetworkUtil.isManagementNetwork(getParameters().getNetwork().getName(), clusterId)) {
+            if (managementNetworkUtil.isManagementNetwork(getParameters().getOldNetworkName(), clusterId)) {
+                getReturnValue().getCanDoActionMessages()
+                        .add(VdcBllMessages.NETWORK_DEFAULT_UPDATE_NAME_INVALID.toString());
+                getReturnValue().getCanDoActionMessages()
+                        .add(String.format("$NetworkName %1$s", getParameters().getOldNetworkName()));
                 return false;
             }
-            // if the gateway didn't change we don't want the vdsm to set it.
-            else {
-                getParameters().setGateway(null);
-            }
-        }
 
-        // check conectivity
-        getParameters().setCheckConnectivity(getParameters().getCheckConnectivity());
-        if (getParameters().getCheckConnectivity()) {
-            if (!StringUtils.equals(getParameters().getNetwork().getName(), NetworkUtils.getDefaultManagementNetworkName())) {
+            if (StringUtils.isNotEmpty(getParameters().getGateway())) {
+                if (!getParameters().getGateway().equals(ifaceGateway)) {
+                    addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
+                    return false;
+                }
+                // if the gateway didn't change we don't want the vdsm to set it.
+                else {
+                    getParameters().setGateway(null);
+                }
+            }
+
+            // check connectivity
+            if (getParameters().getCheckConnectivity()) {
                 addCanDoActionMessage(VdcBllMessages.NETWORK_CHECK_CONNECTIVITY);
                 return false;
             }

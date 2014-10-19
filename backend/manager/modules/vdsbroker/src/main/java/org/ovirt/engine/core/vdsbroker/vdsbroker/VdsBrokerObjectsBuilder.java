@@ -18,6 +18,7 @@ import java.util.Map.Entry;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
@@ -76,6 +77,7 @@ import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
@@ -1642,7 +1644,7 @@ public class VdsBrokerObjectsBuilder {
             iface.setNetworkName(net.getName());
 
             // set the management ip
-            if (StringUtils.equals(iface.getNetworkName(), NetworkUtils.getDefaultManagementNetworkName())) {
+            if (getManagementNetworkUtil().isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())) {
                 iface.setType(iface.getType() | VdsInterfaceType.MANAGEMENT.getValue());
             }
 
@@ -1749,11 +1751,17 @@ public class VdsBrokerObjectsBuilder {
      *            the gateway value to be set
      */
     private static void setGatewayIfNecessary(VdsNetworkInterface iface, VDS host, String gateway) {
+        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
         if (FeatureSupported.multipleGatewaysSupported(host.getVdsGroupCompatibilityVersion())
-                || NetworkUtils.getDefaultManagementNetworkName().equals(iface.getNetworkName())
+                || managementNetworkUtil.isManagementNetwork(iface.getNetworkName(), host.getVdsGroupId())
                 || iface.getName().equals(host.getActiveNic())) {
             iface.setGateway(gateway);
         }
+    }
+
+    private static ManagementNetworkUtil getManagementNetworkUtil() {
+        final ManagementNetworkUtil managementNetworkUtil = Injector.get(ManagementNetworkUtil.class);
+        return managementNetworkUtil;
     }
 
     /**

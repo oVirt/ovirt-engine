@@ -88,7 +88,7 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
                                                           List<Network> clusterNetworks) {
         if (host.getStatus() != VDSStatus.Maintenance) {
             if (skipManagementNetwork) {
-                skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks);
+                skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks, host.getVdsGroupId());
             }
 
             Map<String, String> customLogValues;
@@ -135,8 +135,9 @@ final class HostNetworkTopologyPersisterImpl implements HostNetworkTopologyPersi
         return persistAndEnforceNetworkCompliance(host, false, Collections.<VdsNetworkInterface> emptyList());
     }
 
-    private void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks) {
-        String managementNetworkName = NetworkUtils.getDefaultManagementNetworkName();
+    private void skipManagementNetworkCheck(List<VdsNetworkInterface> ifaces, List<Network> clusterNetworks, Guid clusterId) {
+        final Network managementNetwork = managementNetworkUtil.getManagementNetwork(clusterId);
+        final String managementNetworkName = managementNetwork.getName();
         for (VdsNetworkInterface iface : ifaces) {
             if (managementNetworkName.equals(iface.getNetworkName())) {
                 return;

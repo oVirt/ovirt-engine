@@ -4,8 +4,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import javax.inject.Inject;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.Backend;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -26,6 +29,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsParameters> extends VdsNetworkCommand<T> {
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     private Network logicalNetwork;
 
     public AttachNetworkToVdsInterfaceCommand(T parameters) {
@@ -139,7 +146,7 @@ public class AttachNetworkToVdsInterfaceCommand<T extends AttachNetworkToVdsPara
             return false;
         }
 
-        if (!NetworkUtils.getDefaultManagementNetworkName().equals(logicalNetwork.getName())
+        if (!managementNetworkUtil.isManagementNetwork(logicalNetwork.getName(), getVdsGroupId())
                 && StringUtils.isNotEmpty(params.getGateway())) {
             addCanDoActionMessage(VdcBllMessages.NETWORK_ATTACH_ILLEGAL_GATEWAY);
             return false;

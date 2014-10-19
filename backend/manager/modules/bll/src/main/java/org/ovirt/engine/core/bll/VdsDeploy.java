@@ -26,15 +26,19 @@ import java.util.concurrent.Callable;
 import javax.naming.TimeLimitExceededException;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties;
 import org.ovirt.engine.core.common.businessentities.OpenstackNetworkProviderProperties.MessagingConfiguration;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSType;
+import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.di.Injector;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.PKIResources;
@@ -408,10 +412,12 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 );
             }
             else if (_isLegacyNode) {
+                final ManagementNetworkUtil managmentNetworkUtil = Injector.get(ManagementNetworkUtil.class);
+                final Guid clusterId = _vds.getVdsGroupId();
+                final Network managementNetwork = managmentNetworkUtil.getManagementNetwork(clusterId);
                 _parser.cliEnvironmentSet(
                     VdsmEnv.MANAGEMENT_BRIDGE_NAME,
-                    NetworkUtils.getDefaultManagementNetworkName()
-                );
+                    managementNetwork.getName());
             }
             else {
                 _parser.cliNoop();
