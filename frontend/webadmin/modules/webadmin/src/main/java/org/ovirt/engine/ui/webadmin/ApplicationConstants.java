@@ -266,7 +266,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Name")
     String nameClusterHeader();
 
-    @DefaultStringValue("Type")
+    @DefaultStringValue("Storage Type")
     String dataCenterPopupStorageTypeLabel();
 
     @DefaultStringValue("Shared")
