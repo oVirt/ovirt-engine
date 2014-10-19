@@ -1187,7 +1187,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     String dataCenterMacPoolTab();
 
     // Storage DC
-    @DefaultStringValue("Domain Status in Data-Center")
+    @DefaultStringValue("Domain status in Data Center")
     String domainStatusInDcStorageDc();
 
     @DefaultStringValue("Attach")
@@ -1585,7 +1585,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Format")
     String formatStorage();
 
-    @DefaultStringValue("Cross Data-Center Status")
+    @DefaultStringValue("Cross Data Center Status")
     String crossDcStatusStorage();
 
     @DefaultStringValue("Free Space")
