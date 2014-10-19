@@ -35,7 +35,7 @@
             width: 100%;
         }
         .radioButtonLabel {
-            width: 200px;
+            width: 250px;
         }
         .radioButtonsTabContent {
             margin-top: 10px;
