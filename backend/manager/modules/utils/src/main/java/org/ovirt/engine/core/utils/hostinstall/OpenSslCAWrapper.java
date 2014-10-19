@@ -12,10 +12,12 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.FileUtil;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OpenSslCAWrapper {
+
+    private static final Logger log = LoggerFactory.getLogger(OpenSslCAWrapper.class);
 
     private static String escapeSubjectComponent(String input) {
         StringBuilder ret = new StringBuilder();
@@ -83,7 +85,7 @@ public class OpenSslCAWrapper {
                 signatureTimeout
             );
         } else {
-            log.error(String.format("Sign certificate request file '%s' not found", executable.getPath()));
+            log.error("Sign certificate request file '{}' not found", executable.getPath());
             returnValue = false;
         }
         log.debug("End of signCertificateRequest");
@@ -128,7 +130,7 @@ public class OpenSslCAWrapper {
                     logOutputAndErrors(outputString, errorString);
                 } else if (exitCode != 0) {
                     returnValue = false;
-                    log.error("Sign Certificate request failed with exit code " + exitCode);
+                    log.error("Sign Certificate request failed with exit code {}", exitCode);
                     logOutputAndErrors(outputString, errorString);
                 } else {
                     log.debug("Successfully completed certificate signing script");
@@ -168,10 +170,10 @@ public class OpenSslCAWrapper {
      */
     private void logOutputAndErrors(String output, String errors) {
         if (errors != null && errors.length() != 0) {
-            log.error("Sign Certificate request script errors:\n" + errors);
+            log.error("Sign Certificate request script errors:\n{}", errors);
         }
         if (output != null && output.length() != 0) {
-            log.debug("Sign Certificate request script output:\n" + output);
+            log.debug("Sign Certificate request script output:\n{}", output);
         }
     }
 
@@ -181,6 +183,4 @@ public class OpenSslCAWrapper {
     protected Runtime getRuntime() {
         return Runtime.getRuntime();
     }
-
-    private static final Log log = LogFactory.getLog(OpenSslCAWrapper.class);
 }

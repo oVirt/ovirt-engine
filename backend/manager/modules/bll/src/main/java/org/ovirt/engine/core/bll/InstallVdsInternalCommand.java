@@ -20,14 +20,14 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
-    private static Log log = LogFactory.getLog(InstallVdsInternalCommand.class);
+    private static Logger log = LoggerFactory.getLogger(InstallVdsInternalCommand.class);
     private VDSStatus vdsInitialStatus;
 
     public InstallVdsInternalCommand(T parameters) {
@@ -80,8 +80,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
 
     private void installHost() {
         try (final VdsDeploy installer = new VdsDeploy(getVds())) {
-            log.infoFormat(
-                "Before Installation host {0}, {1}",
+            log.info(
+                "Before Installation host {}, {}",
                 getVds().getId(),
                 getVds().getName()
             );
@@ -120,8 +120,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 break;
                 case oVirtNode:
                     if (parameters.getOverrideFirewall()) {
-                        log.warnFormat(
-                            "Installation of Host {0} will ignore Firewall Override option, since it is not supported for Host type {1}",
+                        log.warn(
+                            "Installation of Host {} will ignore Firewall Override option, since it is not supported for Host type {}",
                             getVds().getName(),
                             getVds().getVdsType().name()
                         );
@@ -171,8 +171,8 @@ public class InstallVdsInternalCommand<T extends InstallVdsParameters> extends V
                 break;
             }
 
-            log.infoFormat(
-                "After Installation host {0}, {1}",
+            log.info(
+                "After Installation host {}, {}",
                 getVds().getName(),
                 getVds().getVdsType().name()
             );

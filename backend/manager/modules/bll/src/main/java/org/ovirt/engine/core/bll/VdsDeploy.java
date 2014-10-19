@@ -43,8 +43,6 @@ import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.hostinstall.OpenSslCAWrapper;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.uutils.ssh.SSHDialog;
@@ -64,6 +62,8 @@ import org.ovirt.ovirt_host_deploy.constants.KdumpEnv;
 import org.ovirt.ovirt_host_deploy.constants.OpenStackEnv;
 import org.ovirt.ovirt_host_deploy.constants.VdsmEnv;
 import org.ovirt.ovirt_host_deploy.constants.VirtEnv;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Host deploy implementation.
@@ -89,7 +89,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
     private static final String IPTABLES_SSH_PORT_PLACE_HOLDER = "@SSH_PORT@";
     private static final String BOOTSTRAP_CUSTOM_ENVIRONMENT_PLACE_HOLDER = "@ENVIRONMENT@";
 
-    private static final Log log = LogFactory.getLog(VdsDeploy.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsDeploy.class);
     private static volatile CachedTar s_deployPackage;
 
     private SSHDialog.Control _control;
@@ -130,8 +130,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             throw new SoftError("Cannot acquire node id");
         }
 
-        log.infoFormat(
-            "Host {0} reports unique id {1}",
+        log.info(
+            "Host {} reports unique id {}",
             _vds.getHostName(),
             vdsmid
         );
@@ -155,8 +155,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 hosts.append(v.getName());
             }
 
-            log.errorFormat(
-                "Host {0} reports duplicate unique id {1} of following hosts {2}",
+            log.error(
+                "Host {} reports duplicate unique id {} of following hosts {}",
                 _vds.getHostName(),
                 vdsmid,
                 hosts
@@ -170,7 +170,7 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             );
         }
 
-        log.infoFormat("Assigning unique id {0} to Host {1}", vdsmid, _vds.getHostName());
+        log.info("Assigning unique id {} to Host {}", vdsmid, _vds.getHostName());
         _vds.setUniqueId(vdsmid);
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
@@ -675,11 +675,12 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             throw new RuntimeException("Protocol violation", e);
         }
         catch (SoftError e) {
-            log.errorFormat(
-                "Soft error during host {0} customization dialog",
+            log.error(
+                "Soft error during host {} customization dialog: {}",
                 _vds.getHostName(),
-                e
+                e.getMessage()
             );
+            log.debug("Exception", e);
             _failException = e;
             _customizationShouldAbort = true;
         }
@@ -820,8 +821,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             while(!terminate) {
                 Event.Base bevent = _parser.nextEvent();
 
-                log.debugFormat(
-                    "Installation of {0}: Event {1}",
+                log.debug(
+                    "Installation of {}: Event {}",
                     _vds.getHostName(),
                     bevent
                 );
@@ -856,8 +857,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                         event.reply = true;
                     }
                     else {
-                        log.warnFormat(
-                            "Installation of {0}: Not confirming {1}: ${2}",
+                        log.warn(
+                            "Installation of {}: Not confirming {}: {}",
                             _vds.getHostName(),
                             event.what,
                             event.description
@@ -1107,8 +1108,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                 ""
             );
 
-            log.infoFormat(
-                "Installation of {0}. Executing command via SSH {1} < {2}",
+            log.info(
+                "Installation of {}. Executing command via SSH {} < {}",
                 _vds.getHostName(),
                 command,
                 s_deployPackage.getFileNoUse()
@@ -1142,8 +1143,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             }
         }
         catch (TimeLimitExceededException e){
-            log.errorFormat(
-                "Timeout during host {0} install",
+            log.error(
+                "Timeout during host {} install",
                 _vds.getHostName(),
                 e
             );
@@ -1154,8 +1155,8 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
             throw e;
         }
         catch(Exception e) {
-            log.errorFormat(
-                "Error during host {0} install",
+            log.error(
+                "Error during host {} install",
                 _vds.getHostName(),
                 e
             );
@@ -1168,11 +1169,12 @@ public class VdsDeploy implements SSHDialog.Sink, Closeable {
                     e.getMessage()
                 );
 
-                log.errorFormat(
-                    "Error during host {0} install, prefering first exception",
+                log.error(
+                    "Error during host {} install, prefering first exception: {}",
                     _vds.getHostName(),
-                    _failException
+                    _failException.getMessage()
                 );
+                log.debug("Exception", _failException);
                 throw _failException;
             }
         }
