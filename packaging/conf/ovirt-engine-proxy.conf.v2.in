@@ -4,6 +4,14 @@
 # configurations, in particular after the configuration of the required
 # proxy modules, otherwise the "IfModule" directives fail.
 #
+
+<IfModule !proxy_ajp_module>
+    # If you get an error in this block, it means that proxy_ajp_module is not:
+    # 1. loaded by other configuration of httpd
+    # 2. found in the path below (which is relative to ServerRoot)
+    LoadModule proxy_ajp_module modules/mod_proxy_ajp.so
+</IfModule>
+
 <IfModule proxy_ajp_module>
 
     #
