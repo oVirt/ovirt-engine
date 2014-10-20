@@ -20,22 +20,24 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
 
     private GlusterGeoRepSessionDetails populatePairDetails(Map<String, Object> innerMap, GlusterGeoRepSession session) {
         GlusterGeoRepSessionDetails details = getSessionDetails(innerMap, session);
-        Long filesSynced =
-                innerMap.containsKey(FILES_SYNCED) ? Long.parseLong(innerMap.get(FILES_SYNCED).toString()) : null;
-        Long filesPending =
-                innerMap.containsKey(FILES_PENDING) ? Long.parseLong(innerMap.get(FILES_PENDING).toString()) : null;
-        Long bytesPending =
-                innerMap.containsKey(BYTES_PENDING) ? Long.parseLong(innerMap.get(BYTES_PENDING).toString()) : null;
-        Long deletesPending =
-                innerMap.containsKey(DELETES_PENDING) ? Long.parseLong(innerMap.get(DELETES_PENDING).toString()) : null;
-        Long filesSkipped =
-                innerMap.containsKey(FILES_SKIPPED) ? Long.parseLong(innerMap.get(FILES_SKIPPED).toString()) : null;
+        if (details != null) {
+            Long filesSynced =
+                    innerMap.containsKey(FILES_SYNCED) ? Long.parseLong(innerMap.get(FILES_SYNCED).toString()) : null;
+            Long filesPending =
+                    innerMap.containsKey(FILES_PENDING) ? Long.parseLong(innerMap.get(FILES_PENDING).toString()) : null;
+            Long bytesPending =
+                    innerMap.containsKey(BYTES_PENDING) ? Long.parseLong(innerMap.get(BYTES_PENDING).toString()) : null;
+            Long deletesPending =
+                    innerMap.containsKey(DELETES_PENDING) ? Long.parseLong(innerMap.get(DELETES_PENDING).toString()) : null;
+            Long filesSkipped =
+                    innerMap.containsKey(FILES_SKIPPED) ? Long.parseLong(innerMap.get(FILES_SKIPPED).toString()) : null;
 
-        details.setFilesPending(filesPending);
-        details.setFilesSkipped(filesSkipped);
-        details.setFilesSynced(filesSynced);
-        details.setBytesPending(bytesPending);
-        details.setDeletesPending(deletesPending);
+            details.setFilesPending(filesPending);
+            details.setFilesSkipped(filesSkipped);
+            details.setFilesSynced(filesSynced);
+            details.setBytesPending(bytesPending);
+            details.setDeletesPending(deletesPending);
+        }
         return details;
     }
 
