@@ -865,6 +865,16 @@ public enum ConfigValues {
     @DefaultValueAttribute("")
     CustomFenceAgentDefaultParams,
 
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ilo4:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4")
+    FenceAgentDefaultParamsForPPC,
+
+    @Reloadable
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("")
+    CustomFenceAgentDefaultParamsForPPC,
+
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("admin")
     AdminUser,

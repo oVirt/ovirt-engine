@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
@@ -241,12 +242,16 @@ public class FenceExecutor {
 
     private String getManagementOptions(FenceAgentOrder order) {
         String managementOptions = "";
+        ArchitectureType architectureType = null;
+        if (_vds.getCpuName() != null) {
+            architectureType =  _vds.getCpuName().getArchitecture();
+        }
         if (order == FenceAgentOrder.Primary) {
-            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getPmType(), _vds.getPmOptions());
+            managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getPmType(), _vds.getPmOptions(), architectureType);
         }
         else if (order == FenceAgentOrder.Secondary) {
             managementOptions =
-                    VdsFenceOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions());
+                    VdsFenceOptions.getDefaultAgentOptions(_vds.getPmSecondaryType(), _vds.getPmSecondaryOptions(), architectureType);
         }
         return managementOptions;
     }

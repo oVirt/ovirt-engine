@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.FenceVdsActionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.FenceActionType;
 import org.ovirt.engine.core.common.businessentities.FenceAgentOrder;
 import org.ovirt.engine.core.common.businessentities.FenceStatusReturnValue;
@@ -594,7 +595,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // subsequent 'on' command issued during this delay will be overridden by the actual shutdown
         String agent = (order == FenceAgentOrder.Primary) ? getVds().getPmType() : getVds().getPmSecondaryType();
         String options =  (order == FenceAgentOrder.Primary) ? getVds().getPmOptions() : getVds().getPmSecondaryOptions();
-        options = VdsFenceOptions.getDefaultAgentOptions(agent, options);
+        ArchitectureType architectureType = (getVds().getCpuName() != null) ? getVds().getCpuName().getArchitecture() : null;
+        options = VdsFenceOptions.getDefaultAgentOptions(agent, options, architectureType);
         HashMap<String, String> optionsMap = VdsStatic.pmOptionsStringToMap(options);
         String powerWaitParamSettings = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FencePowerWaitParam.name(), ConfigCommon.defaultConfigurationVersion);
         String powerWaitParam = VdsFenceOptions.getAgentPowerWaitParam(agent, powerWaitParamSettings);
