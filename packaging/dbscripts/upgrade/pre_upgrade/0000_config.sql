@@ -126,6 +126,8 @@ select fn_db_add_config_value('EngineMode','Active','general');
 select fn_db_add_config_value('FailedJobCleanupTimeInMinutes','60','general');
 select fn_db_add_config_value('FenceAgentDefaultParams','ilo3:lanplus,power_wait=4;ilo4:lanplus,power_wait=4','general');
 select fn_db_add_config_value('CustomFenceAgentDefaultParams','','general');
+select fn_db_add_config_value('FenceAgentDefaultParamsForPPC','ilo3:lanplus=1,cipher=1,privlvl=administrator,power_wait=4;ilo4:ilanplus=1,cipher=1,privlvl=administrator,power_wait=4;ipmilan:lanplus=1,cipher=1,privlvl=administrator,power_wait=4','general');
+select fn_db_add_config_value('CustomFenceAgentDefaultParamsForPPC','','general');
 select fn_db_add_config_value('FenceAgentMapping','drac7=ipmilan,ilo2=ilo,ilo3=ipmilan,ilo4=ipmilan','general');
 select fn_db_add_config_value('CustomFenceAgentMapping','','general');
 select fn_db_add_config_value('CustomFencePowerWaitParam','','general');

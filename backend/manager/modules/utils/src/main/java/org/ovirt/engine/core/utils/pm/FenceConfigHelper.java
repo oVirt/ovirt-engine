@@ -29,17 +29,20 @@ public class FenceConfigHelper {
            keyValidatorMap = new HashMap<String, String>();
            keyValidatorMap.put("FenceAgentMapping", FenceAgentMappingExpr);
            keyValidatorMap.put("FenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
+           keyValidatorMap.put("FenceAgentDefaultParamsForPPC", FenceAgentDefaultParamsExpr);
            keyValidatorMap.put("VdsFenceOptionMapping", VdsFenceOptionMappingExpr);
            keyValidatorMap.put("VdsFenceType", CustomVdsFenceTypeExpr);
            keyValidatorMap.put("FencePowerWaitParam", FencePowerWaitParamExpr);
            keyValidatorMap.put("CustomFenceAgentMapping", FenceAgentMappingExpr);
            keyValidatorMap.put("CustomFenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
+           keyValidatorMap.put("CustomFenceAgentDefaultParamsForPPC", FenceAgentDefaultParamsExpr);
            keyValidatorMap.put("CustomVdsFenceOptionMapping", VdsFenceOptionMappingExpr);
            keyValidatorMap.put("CustomVdsFenceType", CustomVdsFenceTypeExpr);
            keyValidatorMap.put("CustomFencePowerWaitParam", FencePowerWaitParamExpr);
            keyValidatorExampleMap = new HashMap<String, String>();
            keyValidatorExampleMap.put("CustomFenceAgentMapping", "agent1=agent2,agent3=agent4");
            keyValidatorExampleMap.put("CustomFenceAgentDefaultParams", "agent1=key1=val1,flag;key2=val2");
+           keyValidatorExampleMap.put("CustomFenceAgentDefaultParamsForPPC", "agent1=key1=val1,flag;key2=val2");
            keyValidatorExampleMap.put("CustomVdsFenceOptionMapping", "agent1:secure=secure;agent2:port=ipport,slot=slot");
            keyValidatorExampleMap.put("CustomVdsFenceType", "agent1,agent2");
            keyValidatorExampleMap.put("CustomFencePowerWaitParam", "agent1=power_wait,agent2=delay");
@@ -47,6 +50,7 @@ public class FenceConfigHelper {
            keySeparatorMap = new HashMap<String, String>();
            keySeparatorMap.put("FenceAgentMapping", COMMA);
            keySeparatorMap.put("FenceAgentDefaultParams", SEMICOLON);
+           keySeparatorMap.put("FenceAgentDefaultParamsForPPC", SEMICOLON);
            keySeparatorMap.put("VdsFenceOptionMapping", SEMICOLON);
            keySeparatorMap.put("VdsFenceType", COMMA);
            keySeparatorMap.put("FencePowerWaitParam", COMMA);

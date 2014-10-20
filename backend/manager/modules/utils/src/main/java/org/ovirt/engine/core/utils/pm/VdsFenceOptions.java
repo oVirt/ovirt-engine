@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.regex.Pattern;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -321,8 +322,12 @@ public class VdsFenceOptions implements Serializable {
      * @param fenceOptions
      * @return String the options after adding default agent parameters
      */
-    public static String getDefaultAgentOptions(String agent, String fenceOptions) {
-        String agentDefaultParams = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentDefaultParams.name(), ConfigCommon.defaultConfigurationVersion);
+    public static String getDefaultAgentOptions(String agent, String fenceOptions, ArchitectureType architectureType) {
+        String agentDefaultParams =  (architectureType != null && architectureType == ArchitectureType.ppc64)
+                ?
+                FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentDefaultParamsForPPC.name(), ConfigCommon.defaultConfigurationVersion)
+                :
+                FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FenceAgentDefaultParams.name(), ConfigCommon.defaultConfigurationVersion);
         StringBuilder realOptions = new StringBuilder(fenceOptions);
         // result has the format [<agent>:param=value[,]...;]*
         String[] params = agentDefaultParams.split(Pattern.quote(SEMICOLON), -1);

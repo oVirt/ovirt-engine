@@ -61,6 +61,7 @@ public enum ConfigurationValues {
     VdsFenceOptionTypes,
     FenceAgentMapping,
     FenceAgentDefaultParams,
+    FenceAgentDefaultParamsForPPC,
     VdsFenceOptionMapping,
     VdsFenceType,
     SupportedClusterLevels(ConfigAuthType.User),
