@@ -10,13 +10,13 @@ import java.util.ResourceBundle;
 import org.apache.commons.lang.text.StrSubstitutor;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.interfaces.ErrorTranslator;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     private static final long ONE_HOUR = 60 * 60 * 1000L;
-    private static final Log log = LogFactory.getLog(ErrorTranslatorImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(ErrorTranslatorImpl.class);
     private List<String> messageSources;
     private Locale standardLocale;
     private Map<String, String> standardMessages;
@@ -24,12 +24,12 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
 
     // Will assume these are property files, not ResxFiles.
     public ErrorTranslatorImpl(String... errorFileNames) {
-        log.infoFormat("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}",  getClass().getSimpleName());
         messageSources = asList(errorFileNames);
         standardLocale = Locale.getDefault();
         standardMessages = retrieveByLocale(standardLocale);
         messagesByLocale = new ReapedMap<Locale, Map<String, String>>(ONE_HOUR, true);
-        log.infoFormat("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     private synchronized Map<String, String> getMessages(Locale locale) {
@@ -61,11 +61,12 @@ public final class ErrorTranslatorImpl implements ErrorTranslator {
                 if (!messages.containsKey(key)) {
                     messages.put(key, bundle.getString(key));
                 } else {
-                    log.warnFormat("Code {0} appears more than once in string table.", key);
+                    log.warn("Code '{}' appears more than once in string table.", key);
                 }
             }
         } catch (RuntimeException e) {
-            log.errorFormat("File: {0} could not be loaded: {1}", messageSource, e.toString());
+            log.error("File: '{}' could not be loaded: {}", messageSource, e.getMessage());
+            log.debug("Exception", e);
         }
         return messages;
     }

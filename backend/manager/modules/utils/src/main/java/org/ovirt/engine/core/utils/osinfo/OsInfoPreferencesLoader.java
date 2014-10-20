@@ -15,8 +15,8 @@ import java.util.prefs.Preferences;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.utils.OsLoader;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public enum OsInfoPreferencesLoader implements OsLoader {
 
@@ -31,7 +31,7 @@ public enum OsInfoPreferencesLoader implements OsLoader {
      */
     private MapBackedPreferences preferences = new MapBackedPreferences(null, "");
 
-    private Log log = LogFactory.getLog(OsInfoPreferencesLoader.class);
+    private Logger log = LoggerFactory.getLogger(OsInfoPreferencesLoader.class);
 
     public void init(Path directoryPath) {
         load(directoryPath);
@@ -53,13 +53,13 @@ public enum OsInfoPreferencesLoader implements OsLoader {
                 Arrays.sort(files);
 
                 for (File file : files) {
-                    log.info("Loading file " + file.getPath());
+                    log.info("Loading file '{}'", file.getPath());
                     OsinfoPropertiesParser.parse(file.getAbsolutePath());
                     loadFile(file.toPath());
                 }
             }
         } else {
-            log.errorFormat("directory {0} doesn't exist.", dir.getPath());
+            log.error("Directory '{}' doesn't exist.", dir.getPath());
         }
 
     }
@@ -74,7 +74,8 @@ public enum OsInfoPreferencesLoader implements OsLoader {
             properties = new Properties(properties);
             properties.load(reader);
         } catch (IOException e) {
-            log.error("Failed loading file "  + path);
+            log.error("Failed loading file '{}': {}", path, e.getMessage());
+            log.debug("Exception", e);
         }
 
     }

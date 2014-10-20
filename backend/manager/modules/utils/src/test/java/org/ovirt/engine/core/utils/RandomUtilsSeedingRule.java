@@ -2,8 +2,8 @@ package org.ovirt.engine.core.utils;
 
 import org.junit.rules.TestWatcher;
 import org.junit.runner.Description;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A rule to improve the work with {@link RandomUtils} in unit tests.
@@ -16,6 +16,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  * </code>
  */
 public class RandomUtilsSeedingRule extends TestWatcher {
+    private static final Logger log = LoggerFactory.getLogger(RandomUtilsSeedingRule.class);
+
     private static final String RANDOM_SEED_PROPERTY = "test.random.seed";
 
     @Override
@@ -25,13 +27,11 @@ public class RandomUtilsSeedingRule extends TestWatcher {
         try {
             seed = Long.parseLong(seedProperty);
         } catch (NumberFormatException e) {
-            log.infoFormat("Property \"{0}\" was not set, using System.currentTimeMillis() as a seed.",
+            log.info("Property '{}' was not set, using System.currentTimeMillis() as a seed.",
                     RANDOM_SEED_PROPERTY);
             seed = System.currentTimeMillis();
         }
+        log.info("Running test with random seed '{}'", seed);
         RandomUtils.instance().setSeed(seed);
-        log.info("Running test with random seed: " + RandomUtils.instance().getSeed());
     }
-
-    private static final Log log = LogFactory.getLog(RandomUtilsSeedingRule.class);
 }

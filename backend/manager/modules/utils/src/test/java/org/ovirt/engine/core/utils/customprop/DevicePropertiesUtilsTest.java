@@ -28,15 +28,15 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationFailureReason;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Tests for custom device properties handling
  */
 @RunWith(MockitoJUnitRunner.class)
 public class DevicePropertiesUtilsTest {
-    private static final Log log = LogFactory.getLog(DevicePropertiesUtilsTest.class);
+    private static final Logger log = LoggerFactory.getLogger(DevicePropertiesUtilsTest.class);
 
     /**
      * Mock supported cluster levels for custom device properties

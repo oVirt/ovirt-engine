@@ -12,10 +12,12 @@ import java.util.Set;
 import org.ovirt.engine.core.common.utils.IObjectDescriptorContainer;
 import org.ovirt.engine.core.compat.backendcompat.PropertyInfo;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ObjectIdentityChecker {
+    private static final Logger log = LoggerFactory.getLogger(ObjectIdentityChecker.class);
+
     private IObjectDescriptorContainer container;
     private static Map<String, Class<?>> aliases =
             new HashMap<String, Class<?>>();
@@ -118,7 +120,7 @@ public class ObjectIdentityChecker {
                 }
             }
             if (!returnValue) {
-                log.warnFormat("Field {0} can not be updated when status is {1}", name, status);
+                log.warn("Field '{}' can not be updated when status is '{}'", name, status);
             }
         }
         return returnValue;
@@ -146,9 +148,10 @@ public class ObjectIdentityChecker {
                         dstFld.set(destination, srcFld.get(source));
                     }
                 } catch (Exception exp) {
-                    log.errorFormat("Failed to copy non editable field {0}, error: {1}",
+                    log.error("Failed to copy non editable field '{}', error: {}",
                             srcFld.getName(),
                             exp.getMessage());
+                    log.debug("Exception", exp);
                     return false;
                 }
             }
@@ -179,8 +182,8 @@ public class ObjectIdentityChecker {
         }
         for (String fieldName : GetChangedFields(source, destination)) {
             if (!IsFieldUpdatable(status, fieldName, null, hotsetEnabled)) {
-                log.warn(String.format("ObjectIdentityChecker.IsUpdateValid:: Not updatable field '%1$s' was updated",
-                        fieldName));
+                log.warn("ObjectIdentityChecker.IsUpdateValid:: Not updatable field '{}' was updated",
+                        fieldName);
                 return false;
             }
         }
@@ -228,6 +231,4 @@ public class ObjectIdentityChecker {
         }
         return returnValue;
     }
-
-    private static final Log log = LogFactory.getLog(ObjectIdentityChecker.class);
 }

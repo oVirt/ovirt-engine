@@ -8,12 +8,12 @@ import java.util.List;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.math.LongRange;
 import org.apache.commons.lang.math.Range;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MacAddressRangeUtils {
 
-    private static final Log log = LogFactory.getLog(MacAddressRangeUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(MacAddressRangeUtils.class);
 
     private static final int HEX_RADIX = 16;
 
@@ -87,14 +87,14 @@ public class MacAddressRangeUtils {
         }
 
         if (rangeStart > rangeEnd) {
-            log.warnFormat(
-                    "User supplied range({0}) contains only multicast addresses, so this range is not usable.", range);
+            log.warn(
+                    "User supplied range({}) contains only multicast addresses, so this range is not usable.", range);
             return null;
         }
 
         final LongRange result = new LongRange(rangeStart, rangeEnd);
         if (trimmingOccurred) {
-            log.warnFormat("User supplied range({0}) need to be trimmed to {1}, ", range, result);
+            log.warn("User supplied range({}) need to be trimmed to {}.", range, result);
         }
         return result;
     }

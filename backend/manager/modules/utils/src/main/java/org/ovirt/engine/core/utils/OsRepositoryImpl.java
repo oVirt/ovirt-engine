@@ -21,8 +21,8 @@ import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is holding all Virtual OSs information.
@@ -31,7 +31,7 @@ public enum OsRepositoryImpl implements OsRepository {
 
     INSTANCE;
 
-    private static final Log log = LogFactory.getLog(OsRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(OsRepositoryImpl.class);
     private static final String OS_ROOT_NODE = "/os/";
     private static final String BACKWARD_COMPATIBILITY_ROOT_NODE = "/backwardCompatibility";
     /**
@@ -59,7 +59,7 @@ public enum OsRepositoryImpl implements OsRepository {
         buildBackCompatMapping();
         validateTree();
         if (log.isDebugEnabled()) {
-            log.debugFormat("Osinfo Repository:\n {0}", toString());
+            log.debug("Osinfo Repository:\n{}", this);
         }
     }
 
@@ -74,12 +74,13 @@ public enum OsRepositoryImpl implements OsRepository {
                         if (derivedFrom != null && !idToUnameLookup.containsValue(derivedFrom)) {
                             idToUnameLookup.remove(Integer.valueOf(id));
                             preferences.node("/os/" + uniqueName).removeNode();
-                            log.warn("Illegal parent for os: " + uniqueName);
+                            log.warn("Illegal parent for os '{}'", uniqueName);
                         }
                     }
                 }
         } catch (BackingStoreException e) {
-            log.warn("Failed to validate Os Repository due to " + e);
+            log.warn("Failed to validate Os Repository due to {}", e.getMessage());
+            log.debug("Exception", e);
             throw new RuntimeException("Failed to validate Os Repository due to " + e);
         }
     }
@@ -595,7 +596,8 @@ public enum OsRepositoryImpl implements OsRepository {
         try {
             walkTree(sb, preferences);
         } catch (BackingStoreException e) {
-            log.error(e.getStackTrace());
+            log.error("Error traversing OS tree: {}", e.getMessage());
+            log.debug("Exception", e);
         }
         return sb.toString();
     }

@@ -15,14 +15,15 @@ import org.ovirt.engine.core.common.config.OptionBehaviourAttribute;
 import org.ovirt.engine.core.common.config.TypeConverterAttribute;
 import org.ovirt.engine.core.compat.TimeSpan;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Config Utils Base Class
  */
 public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
+    private static final Logger log = LoggerFactory.getLogger(ConfigUtilsBase.class);
 
     @Override
     public final boolean getBoolValue(String name, String defaultValue) {
@@ -127,7 +128,7 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
             // Ignore temporary values inserted to vdc_options by upgrades as
             // flags.
             if (!name.startsWith(TEMP)) {
-                log.warnFormat("Could not find enum value for option: {0}", name);
+                log.warn("Could not find enum value for option: '{}'", name);
             }
             return null;
         } else {
@@ -153,8 +154,6 @@ public abstract class ConfigUtilsBase implements IConfigUtilsInterface {
             }
         }
     }
-
-    private static final Log log = LogFactory.getLog(ConfigUtilsBase.class);
 
     @SuppressWarnings("unchecked")
     @Override

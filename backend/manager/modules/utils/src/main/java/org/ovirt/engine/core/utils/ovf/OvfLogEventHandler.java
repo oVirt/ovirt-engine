@@ -9,8 +9,8 @@ import java.util.Map;
 import org.apache.commons.beanutils.BeanUtils;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField;
 import org.ovirt.engine.core.common.businessentities.OvfExportOnlyField.ExportOption;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class assists in OVF log events handling
@@ -18,6 +18,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  *
  */
 public abstract class OvfLogEventHandler<T> {
+    private static final Logger log = LoggerFactory.getLogger(OvfLogEventHandler.class);
 
     // entity to import to OVF or to export from OVF
     private T entity;
@@ -83,7 +84,8 @@ public abstract class OvfLogEventHandler<T> {
             }
 
         } catch (Exception ex) {
-            log.error("Error in initializing the OvfLogHandler", ex);
+            log.error("Error in initializing the OvfLogHandler: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
 
     }
@@ -123,7 +125,8 @@ public abstract class OvfLogEventHandler<T> {
             return map;
 
         } catch (Exception ex) {
-            log.error("Error in getting aliases values map", ex);
+            log.error("Error in getting aliases values map: {}", ex.getMessage());
+            log.debug("Exception", ex);
             return null;
         }
 
@@ -147,8 +150,8 @@ public abstract class OvfLogEventHandler<T> {
             Object objValue = typeConverter.convert(value, declaredField.getType());
             BeanUtils.setProperty(entity, fieldName, objValue);
         } catch (Exception ex) {
-
-            log.error("Error filling the entity with values", ex);
+            log.error("Error filling the entity with values: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
     }
 
@@ -188,15 +191,12 @@ public abstract class OvfLogEventHandler<T> {
             }
 
         } catch (Exception ex) {
-
-            log.error("Error resseting the log event fields to default values ", ex);
+            log.error("Error resseting the log event fields to default values: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
     }
 
     public List<String> getAliases() {
         return aliases;
     }
-
-    private static final Log log = LogFactory.getLog(OvfLogEventHandler.class);
-
 }

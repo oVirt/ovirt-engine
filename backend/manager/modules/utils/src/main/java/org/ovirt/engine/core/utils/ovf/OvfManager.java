@@ -9,13 +9,13 @@ import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OvfManager {
 
-    private Log log = LogFactory.getLog(OvfManager.class);
+    private Logger log = LoggerFactory.getLogger(OvfManager.class);
 
     public String ExportVm(VM vm, ArrayList<DiskImage> images, Version version) {
         OvfWriter ovf = new OvfVmWriter(vm, images, version);
@@ -66,8 +66,8 @@ public class OvfManager {
     }
 
     private void logOvfLoadError(String message, String ovfstring) {
-        log.errorFormat("Error parsing OVF due to {0}", message);
-        log.debugFormat("Error parsing OVF {0}\n", ovfstring);
+        log.error("Error parsing OVF due to {}", message);
+        log.debug("Error parsing OVF {}\n", ovfstring);
     }
 
     public boolean IsOvfTemplate(String ovfstring) throws OvfReaderException {

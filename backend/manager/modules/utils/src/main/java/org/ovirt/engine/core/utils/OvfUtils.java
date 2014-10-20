@@ -16,18 +16,18 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.archivers.tar.TarInMemoryExport;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OvfUtils {
     private final static String TEMPLATE_ENTITY_TYPE = "<TemplateType>";
     private final static String ENTITY_NAME = "<Name>";
     private final static String END_ENTITY_NAME = "</Name>";
     private final static String OVF_FILE_EXT = ".ovf";
-    protected final static Log log = LogFactory.getLog(TarInMemoryExport.class);
+    protected final static Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
     private static String getEntityName(String ovfData) {
         int beginIndexOfEntityName = ovfData.indexOf(ENTITY_NAME) + ENTITY_NAME.length();
         int endIndexOfEntityName = ovfData.indexOf(END_ENTITY_NAME, beginIndexOfEntityName);
@@ -68,7 +68,7 @@ public class OvfUtils {
         List<OvfEntityData> ovfEntityDataFromTar = new ArrayList<>();
         InputStream is = new ByteArrayInputStream(tar);
 
-        log.infoFormat("Start fetching OVF files from tar file");
+        log.info("Start fetching OVF files from tar file");
         Map<String, ByteBuffer> filesFromTar;
         try (TarInMemoryExport memoryTar = new TarInMemoryExport(is)) {
             filesFromTar = memoryTar.unTar();
@@ -86,7 +86,8 @@ public class OvfUtils {
                     XmlDocument xmlDocument = new XmlDocument(ovfData);
                     archType = getOsSection(xmlDocument);
                 } catch (Exception e) {
-                    log.errorFormat("Could not parse architecture type for VM. Exception : {0}", e);
+                    log.error("Could not parse architecture type for VM: {}", e.getMessage());
+                    log.debug("Exception", e);
                     continue;
                 }
                 // Creates an OVF entity data.
@@ -97,17 +98,17 @@ public class OvfUtils {
                                 getEntityName(ovfData),
                                 archType,
                                 getEntityId(fileEntry.getKey()));
-                log.infoFormat("Retrieve OVF Entity from storage domain ID {0} for entity ID {1}, entity name {2} and VM Type of {3}",
+                log.info("Retrieve OVF Entity from storage domain ID '{}' for entity ID '{}', entity name '{}' and VM Type of '{}'",
                         storageDomainId,
                         getEntityId(fileEntry.getKey()),
                         getEntityName(ovfData),
                         vmType.name());
                 ovfEntityDataFromTar.add(ovfEntityData);
             } else {
-                log.infoFormat("File {0} is not an OVF file, will be ignored.", fileEntry.getKey());
+                log.info("File '{}' is not an OVF file, will be ignored.", fileEntry.getKey());
             }
         }
-        log.infoFormat("Finish to fetch OVF files from tar file. The number of OVF entities are {0}",
+        log.info("Finish to fetch OVF files from tar file. The number of OVF entities are {}",
                 ovfEntityDataFromTar.size());
         return ovfEntityDataFromTar;
     }

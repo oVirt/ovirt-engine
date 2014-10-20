@@ -14,12 +14,12 @@ import javax.transaction.TransactionManager;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TransactionSupport {
 
-    private static final Log log = LogFactory.getLog(TransactionSupport.class);
+    private static final Logger log = LoggerFactory.getLogger(TransactionSupport.class);
 
     /**
      * JBoss specific location of TransactionManager
@@ -152,7 +152,7 @@ public class TransactionSupport {
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
-            log.error("executeInRequired - Wrapping Exception: " + e.getClass().getName() + " with RunTimeException");
+            log.error("executeInRequired - Wrapping Exception: {} with RunTimeException", e.getClass().getName());
             throw new RuntimeException("Failed running code", e);
         }
     }
@@ -180,7 +180,7 @@ public class TransactionSupport {
         } catch (RuntimeException rte) {
             throw rte;
         } catch (Exception e) {
-            log.error("executeInSuppressed - Wrapping Exception: " + e.getClass().getName() + " with RunTimeException");
+            log.error("executeInSuppressed - Wrapping Exception: {} with RunTimeException", e.getClass().getName());
             throw new RuntimeException("Failed executing code", e);
         }
         return result;
@@ -216,8 +216,8 @@ public class TransactionSupport {
                 // code failed need to rollback
                 tm.rollback();
                 log.info("transaction rolled back");
-                log.error("executeInNewTransaction - Wrapping Exception: " + e.getClass().getName()
-                        + " with RunTimeException");
+                log.error("executeInNewTransaction - Wrapping Exception: {} with RunTimeException",
+                        e.getClass().getName());
                 throw new RuntimeException("Failed executing code", e);
             }
             // commit or rollback according to state

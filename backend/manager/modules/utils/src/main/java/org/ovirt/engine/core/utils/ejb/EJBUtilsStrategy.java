@@ -7,8 +7,8 @@ import javax.naming.Context;
 import javax.naming.InitialContext;
 import javax.naming.NamingException;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * EJBUtils strategy to fine tune the lookup process of beans
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public abstract class EJBUtilsStrategy {
 
-    private static final Log log = LogFactory.getLog(EJBUtilsStrategy.class);
+    private static final Logger log = LoggerFactory.getLogger(EJBUtilsStrategy.class);
 
     // Map from resource types (for example ResourceTypeEnum.DATA_SOURCE ) to
     // their JNDI names
@@ -70,14 +70,14 @@ public abstract class EJBUtilsStrategy {
     public <T> T findResource(ContainerManagedResourceType resourceValue) {
         String jndiNameFromMap = getResourceJNDIName(resourceValue);
         if (jndiNameFromMap == null) {
-            log.error("No JNDI name for : " + resourceValue);
+            log.error("No JNDI name for '{}'", resourceValue);
             return null;
         }
 
         try {
             return getReference(jndiNameFromMap);
         } catch (NamingException ex) {
-            log.error("Error looking up resource " + resourceValue);
+            log.error("Error looking up resource '{}'", resourceValue);
             return null;
         }
     }
@@ -99,7 +99,7 @@ public abstract class EJBUtilsStrategy {
         try {
             jndiNameFromMap = getBeanJNDIName(beanType);
             if (jndiNameFromMap == null) {
-                log.error("No JNDI name for : " + beanType);
+                log.error("No JNDI name for '{}'", beanType);
                 return null;
             }
 
@@ -116,17 +116,16 @@ public abstract class EJBUtilsStrategy {
             if (context != null) {
                 return getReference(jndiNameSB.toString());
             } else {
-                log.errorFormat("Failed to create InitialContext which is currently null," +
-                        " possibly because given BeanProxyType is null. Given BeanProxyType: {0}",
+                log.error("Failed to create InitialContext which is currently null," +
+                        " possibly because given BeanProxyType is null. Given BeanProxyType: {}",
                         ((proxyType == null) ? "is null" : proxyType.toString()));
                 throw new NullPointerException();
             }
 
         } catch (Exception e) {
-            StringBuilder errorMsgSb = new StringBuilder();
-            errorMsgSb.append("Failed to lookup resource type: ").append(beanType).append(". JNDI name: ")
-                    .append(jndiNameSB);
-            log.error(errorMsgSb.toString(), e);
+            log.error("Failed to lookup resource type '{}'. JNDI name '{}'. Error: {}",
+                    beanType, jndiNameSB, e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
     }

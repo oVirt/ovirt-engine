@@ -5,14 +5,14 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides utilities for handling resource files.
  */
 public class ResourceUtils {
-    private static final Log log = LogFactory.getLog(ResourceUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceUtils.class);
 
     /**
      * Loads a collection of {@link Properties} from a resource file.
@@ -40,8 +40,8 @@ public class ResourceUtils {
             try {
                 is.close();
             } catch (Exception e) {
-                String msg = (e.getMessage() != null) ? e.getMessage() : "";
-                log.error("Failed to close input stream: " + msg);
+                log.error("Failed to close input stream: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
     }

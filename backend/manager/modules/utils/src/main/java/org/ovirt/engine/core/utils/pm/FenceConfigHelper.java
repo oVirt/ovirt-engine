@@ -1,19 +1,19 @@
 package org.ovirt.engine.core.utils.pm;
 
+import java.util.HashMap;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-
-import java.util.HashMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FenceConfigHelper {
     private static HashMap<String, String> keyValidatorMap;
     private static HashMap<String, String> keyValidatorExampleMap;
     private static HashMap<String, String> keySeparatorMap;
-    private static Log log;
+    private static Logger log = LoggerFactory.getLogger(FenceConfigHelper.class);
     private static boolean initialized=false;
     private static final String FenceAgentMappingExpr = "((\\w)+[=](\\w)+[,]{0,1})+";
     private static final String FenceAgentDefaultParamsExpr = "([\\w]+([=][\\w]+){0,1}[,]{0,1})+";
@@ -25,7 +25,6 @@ public class FenceConfigHelper {
 
    private static void init() {
        if (!initialized) {
-           log = LogFactory.getLog(FenceConfigHelper.class);
            keyValidatorMap = new HashMap<String, String>();
            keyValidatorMap.put("FenceAgentMapping", FenceAgentMappingExpr);
            keyValidatorMap.put("FenceAgentDefaultParams", FenceAgentDefaultParamsExpr);
@@ -68,7 +67,8 @@ public class FenceConfigHelper {
                 sb.append(customValue);
             }
             else {
-                log.errorFormat("Configuration key {0} has illegal value {1}. Expression should match {2}", key, customValue, keyValidatorMap.get(key));
+                log.error("Configuration key '{}' has illegal value '{}'. Expression should match '{}'",
+                        key, customValue, keyValidatorMap.get(key));
             }
         }
         return sb.toString();

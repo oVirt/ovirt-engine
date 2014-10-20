@@ -12,8 +12,8 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigCommon;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.IntegerCompat;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VdsFenceOptions implements Serializable {
 
@@ -27,10 +27,10 @@ public class VdsFenceOptions implements Serializable {
     private static final String FALSE_STRING = "false";
     private static final String YES = "yes";
     private static final String NO = "no";
-    private static final String AGENT_ERROR = "Cannot find fence agent named {0} in fence option mapping";
-    private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format {0}";
+    private static final String AGENT_ERROR = "Cannot find fence agent named '{}' in fence option mapping";
+    private static final String MAPPING_FORMAT_ERROR = "Illegal fencing mapping format '{}'";
 
-    private static final Log log = LogFactory.getLog(VdsFenceOptions.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsFenceOptions.class);
     private HashMap<String, HashMap<String, String>> fencingOptionMapping;
     private static HashMap<String, String> fencingOptionTypes;
 
@@ -95,7 +95,7 @@ public class VdsFenceOptions implements Serializable {
                 }
                 fencingOptionMapping.put(agent, agentOptions);
             } else {
-                log.errorFormat(MAPPING_FORMAT_ERROR, agentOptionsStr);
+                log.error(MAPPING_FORMAT_ERROR, agentOptionsStr);
                 break;
             }
         }
@@ -131,7 +131,7 @@ public class VdsFenceOptions implements Serializable {
                 result = agentOptions.containsKey(displayedKey) ? agentOptions.get(displayedKey)
                         : displayedKey;
             } else {
-                log.errorFormat(AGENT_ERROR, agent);
+                log.error(AGENT_ERROR, agent);
             }
         }
         return result;
@@ -164,7 +164,7 @@ public class VdsFenceOptions implements Serializable {
                     result = realKey;
                 }
             } else {
-                log.errorFormat(AGENT_ERROR, agent);
+                log.error(AGENT_ERROR, agent);
             }
         }
         return result;
@@ -432,7 +432,7 @@ public class VdsFenceOptions implements Serializable {
             HashMap<String, String> agentOptions = fencingOptionMapping.get(agent);
             result = (agentOptions == null) ? false : agentOptions.containsKey(key);
         } else {
-            log.errorFormat(AGENT_ERROR, agent);
+            log.error(AGENT_ERROR, agent);
         }
 
         return result;
@@ -476,7 +476,7 @@ public class VdsFenceOptions implements Serializable {
                 agentOptions.add(pair.getKey());
             }
         } else {
-            log.errorFormat(AGENT_ERROR, agent);
+            log.error(AGENT_ERROR, agent);
         }
         return agentOptions;
 

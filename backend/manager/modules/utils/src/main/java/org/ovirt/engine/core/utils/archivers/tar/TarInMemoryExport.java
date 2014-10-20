@@ -8,11 +8,11 @@ import java.util.Map;
 
 import org.apache.commons.compress.archivers.tar.TarArchiveEntry;
 import org.apache.commons.compress.archivers.tar.TarArchiveInputStream;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TarInMemoryExport implements AutoCloseable {
-    protected final static Log log = LogFactory.getLog(TarInMemoryExport.class);
+    protected final static Logger log = LoggerFactory.getLogger(TarInMemoryExport.class);
 
     private TarArchiveInputStream tarInputStream;
 
@@ -38,7 +38,7 @@ public class TarInMemoryExport implements AutoCloseable {
 
             // Read file from the archive into byte array.
             if (tarInputStream.read(content) == -1) {
-                log.errorFormat("File {0} could not be read ", tarEntry.getFile());
+                log.error("File '{}' could not be read.", tarEntry.getFile());
                 continue;
             }
             fileContent.put(tarEntry.getName(), ByteBuffer.wrap(content));

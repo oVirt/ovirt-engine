@@ -9,14 +9,15 @@ import java.util.TimeZone;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.xml.XmlDocument;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNamespaceManager;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNode;
 import org.ovirt.engine.core.utils.ovf.xml.XmlNodeList;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OvfParser {
+    private static final Logger log = LoggerFactory.getLogger(OvfParser.class);
     private static final String utcFallbackDateFormatStr = "yyyy.MM.dd HH:mm:ss";
     private static final String utcDateFormatStr = "yyyy/MM/dd HH:mm:ss";
     public static final String formatStrFromDiskDescription = "EEE MMM d HH:mm:ss zzz yyyy";
@@ -27,7 +28,8 @@ public class OvfParser {
         try {
             _document = new XmlDocument(ovfstring);
         } catch (Exception e) {
-            log.errorFormat("Failed Parsing OVF due to {0} ", e.getMessage());
+            log.error("Failed Parsing OVF due to {}", e.getMessage());
+            log.debug("Exception", e);
             throw new OvfReaderException(e);
         }
         _xmlNS = new XmlNamespaceManager();
@@ -101,11 +103,10 @@ public class OvfParser {
             try {
                 return getDateFormat(utcFallbackDateFormatStr).parse(str);
             } catch (ParseException e) {
-                log.error("OVF DateTime format Error, Expected: yyyy/M/dd hh:mm:ss", e);
+                log.error("OVF DateTime format error: '{}', Expected: yyyy/M/dd hh:mm:ss", e.getMessage());
+                log.debug("Exception", e);
                 return null;
             }
         }
     }
-
-    private static final Log log = LogFactory.getLog(OvfParser.class);
 }

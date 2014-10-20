@@ -17,12 +17,12 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ThreadPoolUtil {
 
-    private static final Log log = LogFactory.getLog(ThreadPoolUtil.class);
+    private static final Logger log = LoggerFactory.getLogger(ThreadPoolUtil.class);
 
     private static class InternalThreadExecutor extends ThreadPoolExecutor {
 
@@ -49,12 +49,13 @@ public class ThreadPoolUtil {
                 t.setName("org.ovirt.thread." + threadName);
             }
             if (log.isDebugEnabled()) {
-                log.debug("About to run task " + r.getClass().getName() + " from ", new Exception());
+                log.debug(String.format("About to run task '%s' from", r.getClass().getName()), new Exception());
             }
 
             if (getQueue().size() > 5) {
-                log.warn("Executing a command: " + r.getClass().getName() + " , but note that there are "
-                        + getQueue().size() + " tasks in the queue.");
+                log.warn("Executing a command '{}', but note that there are {} tasks in the queue.",
+                        r.getClass().getName(),
+                        getQueue().size());
             }
         }
 
@@ -186,7 +187,8 @@ public class ThreadPoolUtil {
                 }
                 return resultList;
             } catch (Exception e) {
-                log.warnFormat("The thread pool failed to execute list of tasks");
+                log.warn("The thread pool failed to execute list of tasks: {}", e.getMessage());
+                log.debug("Exception", e);
                 throw new RuntimeException(e);
             }
         }
