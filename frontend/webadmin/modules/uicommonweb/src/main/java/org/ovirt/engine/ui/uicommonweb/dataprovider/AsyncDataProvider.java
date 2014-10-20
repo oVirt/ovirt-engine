@@ -3670,8 +3670,10 @@ public final class AsyncDataProvider {
         for (VM vm : vms) {
             Version version = vm.getVdsGroupCompatibilityVersion();
             Version anyDcVersion = new Version();
-            // currently on VDSM side reboot is supported only when the guest agent is present and responsive so we need to check for that
-            if (!isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion) || StringHelper.isNullOrEmpty(vm.getVmIp())) {
+            boolean compatibleCluster = isCommandCompatible(VdcActionType.RebootVm, version, anyDcVersion);
+            boolean guestAgentPresent = !StringHelper.isNullOrEmpty(vm.getVmIp());
+            boolean acpiEnabled = Boolean.TRUE.equals(vm.getAcpiEnable());
+            if (!(compatibleCluster && (guestAgentPresent || acpiEnabled))) {
                 return false;
             }
         }
