@@ -5,6 +5,7 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.commons.lang.LocaleUtils;
+import org.apache.commons.lang.StringUtils;
 import org.apache.log4j.Logger;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -56,14 +57,16 @@ public class UnsupportedLocaleHelper {
         List<String> result = new ArrayList<String>();
         if (locales != null && !locales.isEmpty()) {
             for (String localeKey: locales) {
-                try {
-                    //Check for valid locale.
-                    String underScoredLocaleKey = localeKey.replaceAll("-", "_");
-                    LocaleUtils.toLocale(underScoredLocaleKey);
-                    result.add(underScoredLocaleKey);
-                } catch (IllegalArgumentException iae) {
-                    //The locale passed in is not valid, don't add it to the list.
-                    log.info("Invalid locale found in configuration: " + localeKey); //$NON-NLS-1$
+                if (!StringUtils.isBlank(localeKey)) {
+                    try {
+                        //Check for valid locale.
+                        String underScoredLocaleKey = localeKey.replaceAll("-", "_");
+                        LocaleUtils.toLocale(underScoredLocaleKey);
+                        result.add(underScoredLocaleKey);
+                    } catch (IllegalArgumentException iae) {
+                        //The locale passed in is not valid, don't add it to the list.
+                        log.info("Invalid locale found in configuration: " + localeKey); //$NON-NLS-1$
+                    }
                 }
             }
         }
