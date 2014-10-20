@@ -3138,10 +3138,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Don't import")
     String cloneDontImport();
 
-    @DefaultStringValue("Import as cloned")
-    String cloneImportVm();
-
-    @DefaultStringValue("Changing name, MAC addresses, and cloning all disks removing all snapshots")
+    @DefaultStringValue("Import as cloned (Changing name, MAC addresses and cloning all disks removing all snapshots)")
     String cloneImportVmDetails();
 
     @DefaultStringValue("Clone")

@@ -159,9 +159,6 @@ public interface ApplicationTemplates extends CommonApplicationTemplates {
     @Template("<div title=\'{1}'style='line-height: 100%; text-align: center; vertical-align: middle;'>{0}</div>")
     SafeHtml image(SafeHtml statusImage, String title);
 
-    @Template("{0}<br><span style=\"padding-left: 25px;\">{1}</span>")
-    SafeHtml twoLinesRadioButtonLabel(String firstLine, String secondLine);
-
     @Template("<div title=\"{2}\"><table cellspacing='0' cellpadding='0' style='line-height: 5px;'>" +
             "<tr>" +
             "<td>{0} (</td>" +
