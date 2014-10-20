@@ -105,6 +105,8 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
 
     @Override
     protected void executeVmCommand() {
+        // load vm init from db
+        VmHandler.updateVmInitFromDB(getVmTemplate(), false);
         if (!copyData(getVmTemplate(), getVm().getStaticData())) {
             return;
         }
@@ -212,6 +214,9 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             addVmParams.setSessionId(getParameters().getSessionId());
         }
         addVmParams.setDiskOperatorAuthzPrincipalDbId(getParameters().getPreviousDiskOperatorAuthzPrincipalDbId());
+
+        // reset vm to not initialized
+        addVmParams.getVmStaticData().setInitialized(false);
 
         return addVmParams;
     }

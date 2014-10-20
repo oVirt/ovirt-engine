@@ -303,6 +303,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     private Guid createdByUserId;
 
     @EditableField
+    @CopyOnNewVersion
     private VmInit vmInit;
 
     @CopyOnNewVersion
