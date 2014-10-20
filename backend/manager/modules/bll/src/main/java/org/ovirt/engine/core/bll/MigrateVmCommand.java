@@ -352,11 +352,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
-        if (getDestinationVds() != null && getDestinationVds().getStatus() != VDSStatus.Up) {
-            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
-        }
-
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
@@ -384,7 +379,6 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         // if vm is up and rerun is called then it got up on the source, try to rerun
         if (getVm() != null && getVm().getStatus() == VMStatus.Up) {
-            setDestinationVdsId(null);
             super.rerun();
         } else {
             // vm went down on the destination and source, migration failed.
@@ -393,6 +387,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             // the failure message again
             _isRerun = true;
         }
+    }
+
+    @Override
+    protected void reexecuteCommand() {
+        setDestinationVdsId(null);
+        super.reexecuteCommand();
     }
 
     /**

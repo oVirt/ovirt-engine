@@ -11,6 +11,7 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
@@ -37,6 +38,11 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
         VDS vds = getVdsDAO().get(destinationId);
         if (vds == null) {
             return failCanDoAction(VdcBllMessages.VDS_INVALID_SERVER_ID);
+        }
+
+        if (getDestinationVds().getStatus() != VDSStatus.Up) {
+            addCanDoActionMessage(VdcBllMessages.VAR__HOST_STATUS__UP);
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL);
         }
 
         if (!super.canDoAction()) {
