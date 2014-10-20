@@ -17,7 +17,6 @@
 
 
 import socket
-import paramiko
 import time
 import gettext
 _ = lambda m: gettext.dgettext(message=m, domain='ovirt-engine-setup')
@@ -66,6 +65,7 @@ class Plugin(plugin.PluginBase):
             return _('Access remote engine server using ssh as root')
 
         def _ssh_get_port(self):
+            import paramiko
             port_valid = False
             key = osetupcons.ConfigEnv.REMOTE_ENGINE_HOST_SSH_PORT
             port = self.environment[key]
@@ -114,6 +114,7 @@ class Plugin(plugin.PluginBase):
                         raise RuntimeError(msg)
 
         def _ssh_connect(self):
+            import paramiko
             connected = False
             interactive = False
             password = self.environment[
@@ -281,13 +282,16 @@ class Plugin(plugin.PluginBase):
         priority=plugin.Stages.PRIORITY_HIGH,
     )
     def _setup(self):
-        self.environment[
-            osetupcons.ConfigEnv.REMOTE_ENGINE_SETUP_STYLES
-        ].append(
-            self._RootSshManager(
-                plugin=self,
+        if not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ]:
+            self.environment[
+                osetupcons.ConfigEnv.REMOTE_ENGINE_SETUP_STYLES
+            ].append(
+                self._RootSshManager(
+                    plugin=self,
+                )
             )
-        )
 
 
 # vim: expandtab tabstop=4 shiftwidth=4
