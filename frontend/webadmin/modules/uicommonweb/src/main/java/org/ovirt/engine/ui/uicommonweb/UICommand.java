@@ -77,9 +77,9 @@ public class UICommand extends Model implements ICommand
         return privateExecuteProhibitionReasons;
     }
 
-    public void setExecuteProhibitionReasons(List<String> value)
-    {
+    public UICommand setExecuteProhibitionReasons(List<String> value) {
         privateExecuteProhibitionReasons = value;
+        return this;
     }
 
     private boolean privateIsDefault;
@@ -102,9 +102,9 @@ public class UICommand extends Model implements ICommand
         return privateIsVisible;
     }
 
-    public void setIsVisible(boolean value)
-    {
+    public UICommand setIsVisible(boolean value) {
         privateIsVisible = value;
+        return this;
     }
 
     private boolean privateIsCancel;
@@ -127,17 +127,18 @@ public class UICommand extends Model implements ICommand
         return privateName;
     }
 
-    public void setName(String value)
-    {
+    public UICommand setName(String value) {
         privateName = value;
+        return this;
     }
 
     public ICommandTarget getTarget() {
         return target;
     }
 
-    public void setTarget(ICommandTarget target) {
+    public UICommand setTarget(ICommandTarget target) {
         this.target = target;
+        return this;
     }
 
     private ICommandTarget target;
