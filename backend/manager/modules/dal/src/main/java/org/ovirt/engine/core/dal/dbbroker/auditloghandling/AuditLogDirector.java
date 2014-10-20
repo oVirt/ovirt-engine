@@ -19,12 +19,12 @@ import org.ovirt.engine.core.common.businessentities.AuditLog;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.TypeCompat;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public final class AuditLogDirector {
-    private static final Log log = LogFactory.getLog(AuditLogDirector.class);
+    private static final Logger log = LoggerFactory.getLogger(AuditLogDirector.class);
     private static final Map<AuditLogType, String> messages = new EnumMap<AuditLogType, String>(AuditLogType.class);
     private static final Pattern pattern = Pattern.compile("\\$\\{\\w*\\}"); // match ${<alphanumeric>...}
     static final String UNKNOWN_VARIABLE_VALUE = "<UNKNOWN>";
@@ -45,13 +45,15 @@ public final class AuditLogDirector {
                 if (!messages.containsKey(type)) {
                     messages.put(type, bundle.getString(key));
                 } else {
-                    log.errorFormat("The type {0} appears more then once in audit log messages bundle with the values '{1}' and '{2}'",
+                    log.error("The type '{}' appears more then once in audit log messages bundle with the values"
+                                    + " '{}' and '{}'",
                             type,
                             messages.get(type),
                             bundle.getString(key));
                 }
             } catch (Exception e) {
-                log.errorFormat("Cannot convert the string {0} to AuditLogType, the key does not exist in the AuditLogType declared types",
+                log.error("Cannot convert the string '{}' to AuditLogType, the key does not exist in the AuditLogType"
+                                + " declared types",
                         bundle.getString(key));
             }
         }
@@ -62,7 +64,7 @@ public final class AuditLogDirector {
         try {
             return ResourceBundle.getBundle(APP_ERRORS_MESSAGES_FILE_NAME);
         } catch (MissingResourceException e) {
-            log.error("Could not load audit log messages from the file " + APP_ERRORS_MESSAGES_FILE_NAME);
+            log.error("Could not load audit log messages from the file '{}'", APP_ERRORS_MESSAGES_FILE_NAME);
             throw e;
         }
     }
@@ -72,7 +74,7 @@ public final class AuditLogDirector {
         if (values.length != messages.size()) {
             for (AuditLogType value : values) {
                 if (!messages.containsKey(value)) {
-                    log.infoFormat("AuditLogType: {0} not exist in string table", value.toString());
+                    log.info("AuditLogType: '{}' not exist in string table", value);
                 }
             }
         }
@@ -115,7 +117,7 @@ public final class AuditLogDirector {
         AuditLogSeverity severity = logType.getSeverity();
         if (severity == null) {
             severity = AuditLogSeverity.NORMAL;
-            log.infoFormat("No severity for {0} audit log type, assuming Normal severity", logType);
+            log.info("No severity for '{}' audit log type, assuming Normal severity", logType);
         }
         AuditLog auditLog = null;
         // handle external log messages invoked by plugins via the API

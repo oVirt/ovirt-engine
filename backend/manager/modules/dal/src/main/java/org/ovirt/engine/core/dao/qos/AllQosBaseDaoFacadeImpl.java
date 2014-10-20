@@ -8,13 +8,13 @@ import org.ovirt.engine.core.common.businessentities.qos.QosBase;
 import org.ovirt.engine.core.common.businessentities.qos.QosType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkQoSDaoFacadeImpl;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
 public class AllQosBaseDaoFacadeImpl extends QosBaseDaoFacadeImpl<QosBase> implements QosBaseDao {
-    private static final Log log = LogFactory.getLog(AllQosBaseDaoFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(AllQosBaseDaoFacadeImpl.class);
 
     public AllQosBaseDaoFacadeImpl() {
         super(QosType.ALL);
@@ -53,7 +53,7 @@ public class AllQosBaseDaoFacadeImpl extends QosBaseDaoFacadeImpl<QosBase> imple
             case NETWORK:
                 return NetworkQoSDaoFacadeImpl.NetworkQosDaoDbFacadaeImplMapper.MAPPER.createQosEntity(rs);
                 default:
-                    log.debugFormat("not handled/missing qos_type", qosType);
+                    log.debug("not handled/missing qos_type '{}'", qosType);
                     break;
             }
 

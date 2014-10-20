@@ -14,9 +14,6 @@ import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.Tags;
 import org.ovirt.engine.core.common.businessentities.TagsType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-
 
 /**
  * The following test checks multi-threading issues with DAO usage.
@@ -25,7 +22,6 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 public class MultiThreadedDAOTest extends BaseDAOTestCase {
 
     private TagDAO dao;
-    private Log log = LogFactory.getLog(MultiThreadedDAOTest.class);
     private static final Guid[] EXISTING_TAGS_IDS = {
             new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0c"),
             new Guid("d3ec3e01-ca89-48e1-8b43-a9b38f873b0d"),

@@ -9,8 +9,8 @@ import org.ovirt.engine.core.utils.EngineLocalConfig;
 import org.ovirt.engine.core.utils.ResourceUtils;
 import org.ovirt.engine.core.utils.ejb.ContainerManagedResourceType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
 
@@ -18,8 +18,7 @@ import org.springframework.jdbc.support.SQLErrorCodeSQLExceptionTranslator;
  * A locator singleton for looking up (and initializing) DbFacade instance
  */
 public class DbFacadeLocator {
-    // The log:
-    private static final Log log = LogFactory.getLog(DbFacadeLocator.class);
+    private static final Logger log = LoggerFactory.getLogger(DbFacadeLocator.class);
 
     // Default values for the configuration (these will be replaced with the
     // values from the configuration file):
@@ -108,18 +107,18 @@ public class DbFacadeLocator {
             long now = System.currentTimeMillis();
             long waited = now - started;
             if (waited > connectionTimeout) {
-                log.errorFormat(
-                    "The data source can't be located after waiting for more " +
-                    "than {0} seconds, giving up.", connectionTimeout / 1000
+                log.error(
+                        "The data source can't be located after waiting for more " +
+                                "than {} seconds, giving up.", connectionTimeout / 1000
                 );
                 return null;
             }
 
             // It failed, so tell the user that the lookup failed but that we
             // will try again in a few seconds:
-            log.warnFormat(
-                "The data source can't be located after waiting for {0} " +
-                "seconds, will try again.", waited / 1000
+            log.warn(
+                    "The data source can't be located after waiting for {} " +
+                            "seconds, will try again.", waited / 1000
             );
 
             // Wait a bit before trying again:
@@ -127,10 +126,8 @@ public class DbFacadeLocator {
                 Thread.sleep(checkInterval);
             }
             catch (InterruptedException exception) {
-                log.warnFormat(
-                    "Interrupted while waiting for data source, will try " +
-                    " again.", exception
-                );
+                log.warn("Interrupted while waiting for data source, will try again: {}", exception.getMessage());
+                log.debug("Exception", exception);
             }
         }
     }
@@ -178,11 +175,10 @@ public class DbFacadeLocator {
             checkInterval = config.getInteger("ENGINE_DB_CHECK_INTERVAL");
         }
         catch (Exception exception) {
-            log.warn(
-                "Can't load connection checking parameters of DB facade, " +
-                "will continue using the default values.",
-                exception
-            );
+            log.warn("Can't load connection checking parameters of DB facade, "
+                            + "will continue using the default values. Error: {}",
+                exception.getMessage());
+            log.debug("Exception", exception);
         }
     }
 

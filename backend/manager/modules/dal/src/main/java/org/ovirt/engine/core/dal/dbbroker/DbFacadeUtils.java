@@ -5,11 +5,11 @@ import java.util.Date;
 import java.util.List;
 
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DbFacadeUtils {
-    private static final Log log = LogFactory.getLog(DbFacadeUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(DbFacadeUtils.class);
 
     public static Date fromDate(Timestamp timestamp) {
         if (timestamp == null) {
@@ -34,7 +34,7 @@ public class DbFacadeUtils {
         try {
             return EngineEncryptionUtils.decrypt(password);
         } catch (Exception e) {
-            log.debugFormat("Failed to decrypt password, error message: {0}", e.getMessage());
+            log.debug("Failed to decrypt password", e);
             return password;
         }
     }

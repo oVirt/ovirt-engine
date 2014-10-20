@@ -20,12 +20,14 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdcOptionDAO;
 import org.ovirt.engine.core.utils.ConfigUtilsBase;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DBConfigUtils extends ConfigUtilsBase {
+    private static final Logger log = LoggerFactory.getLogger(DBConfigUtils.class);
+
     private static final Map<String, Map<String, Object>> _vdcOptionCache = new HashMap<String, Map<String, Object>>();
 
     /**
@@ -75,7 +77,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 return value;
             }
         } catch (Exception e2) {
-            log.errorFormat("Could not parse option {0} value.", name);
+            log.error("Error parsing option '{}' value: {}", name, e2.getMessage());
+            log.debug("Exception", e2);
             return null;
         }
     }
@@ -111,8 +114,9 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     try {
                         result = EngineEncryptionUtils.decrypt((String) result);
                     } catch (Exception e) {
-                        log.errorFormat("Failed to decrypt value for property {0} will be used encrypted value",
-                                option.getoption_name(), e);
+                        log.error("Failed to decrypt value for property '{}', encrypted value will be used. Error: {} ",
+                                option.getoption_name(), e.getMessage());
+                        log.debug("Exception", e);
                     }
                     break;
                 case DomainsPasswordMap:
@@ -138,8 +142,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
                         try {
                             versions.add(new Version(ver));
                         } catch (Exception e) {
-                            log.errorFormat("Could not parse version {0} for config value {1}", ver,
-                                    option.getoption_name());
+                            log.error("Could not parse version '{}' for config value '{}'",
+                                    ver, option.getoption_name());
                         }
                     }
                     result = versions;
@@ -189,7 +193,8 @@ public class DBConfigUtils extends ConfigUtilsBase {
             // refresh the cache entry after update
             _vdcOptionCache.get(vdcOption.getoption_name()).put(version, getValue(vdcOption));
         } catch (Exception e) {
-            log.errorFormat("Could not update option {0} in cache.", name);
+            log.error("Error updating option '{}' in cache: {}", name, e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -197,7 +202,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
     protected Object getValue(DataType type, String name, String defaultValue) {
         // Note that the type parameter is useless, it should be removed (and
         // maybe all the method) in a future refactoring.
-        log.warnFormat("Using old getValue for {0}.", name);
+        log.warn("Using old getValue for '{}'.", name);
         ConfigValues value = ConfigValues.valueOf(name);
         return getValue(value, ConfigCommon.defaultConfigurationVersion);
     }
@@ -226,7 +231,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                 _vdcOptionCache.put(option.getoption_name(), defaultValues);
                 log.debug("Adding new value to configuration cache.");
             }
-            log.debugFormat("Didn't find the value of {0} in DB for version {1} - using default: {2}",
+            log.debug("Didn't find the value of '{}' in DB for version '{}' - using default: '{}'",
                     name, version, returnValue);
         }
 
@@ -244,7 +249,7 @@ public class DBConfigUtils extends ConfigUtilsBase {
                     updateOption(option);
                 }
             } catch (NoSuchFieldException e) {
-                log.errorFormat("Not refreshing field {0}: does not exist in class {1}.", option.getoption_name(),
+                log.error("Not refreshing field '{}': does not exist in class {}.", option.getoption_name(),
                         ConfigValues.class.getSimpleName());
             }
         }
@@ -266,6 +271,4 @@ public class DBConfigUtils extends ConfigUtilsBase {
     private static boolean isReloadable(String optionName) throws NoSuchFieldException {
         return ConfigValues.class.getField(optionName).isAnnotationPresent(Reloadable.class);
     }
-
-    private static final Log log = LogFactory.getLog(DBConfigUtils.class);
 }

@@ -53,11 +53,13 @@ import org.ovirt.engine.core.dao.network.VnicProfileDao;
 import org.ovirt.engine.core.dao.profiles.CpuProfileDao;
 import org.ovirt.engine.core.dao.profiles.DiskProfileDao;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AuditLogableBase extends TimeoutBase {
+    private static final Logger log = LoggerFactory.getLogger(AuditLogableBase.class);
+
     private Guid mVmId = Guid.Empty;
     private DbUser dbUser;
     private Guid mUserId = Guid.Empty;
@@ -371,7 +373,8 @@ public class AuditLogableBase extends TimeoutBase {
             try {
                 mVds = getVdsDAO().get(getVdsId());
             } catch (final RuntimeException e) {
-                log.infoFormat("Failed to get vds {0}\n{1}", mVdsId, e.getMessage());
+                log.info("Failed to get vds '{}', error {}", mVdsId, e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return mVds;
@@ -386,7 +389,8 @@ public class AuditLogableBase extends TimeoutBase {
             try {
                 cachedVdsStatic = getVdsStaticDAO().get(getVdsId());
             } catch (final RuntimeException e) {
-                log.infoFormat("Failed to get vds {0}\n{1}", mVdsId, e.getMessage());
+                log.info("Failed to get vds '{}', error: {}", mVdsId, e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return cachedVdsStatic;
@@ -411,8 +415,8 @@ public class AuditLogableBase extends TimeoutBase {
                     mVm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(mVmId));
                 }
             } catch (final Exception e) {
-                log.infoFormat("Failed to get vm {0}", mVmId);
-                log.debug(e);
+                log.info("Failed to get vm '{}', error {}", mVmId, e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return mVm;
@@ -486,7 +490,8 @@ public class AuditLogableBase extends TimeoutBase {
             try {
                 AuditLogDirector.log(this);
             } catch (final RuntimeException ex) {
-                log.errorFormat("Error during log command: {0}. Exception {1}", getClass().getName(), ex);
+                log.error("Error during log command: {}. Exception {}", getClass().getName(), ex.getMessage());
+                log.debug("Exception", ex);
             }
         } finally {
             TransactionSupport.resume(transaction);
@@ -773,7 +778,6 @@ public class AuditLogableBase extends TimeoutBase {
         this.quotaEnforcementType = quotaEnforcementType;
     }
 
-    private static final Log log = LogFactory.getLog(AuditLogableBase.class);
 
     public Guid getQuotaIdForLog() {
         return quotaIdForLog;

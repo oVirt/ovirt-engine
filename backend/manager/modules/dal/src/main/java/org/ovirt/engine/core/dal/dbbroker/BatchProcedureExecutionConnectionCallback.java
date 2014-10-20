@@ -20,15 +20,15 @@ import java.util.concurrent.ConcurrentMap;
 
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.ConnectionCallback;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 import org.springframework.jdbc.core.simple.SimpleJdbcCall;
 
 public final class BatchProcedureExecutionConnectionCallback implements ConnectionCallback<Object> {
-    private static final Log log = LogFactory.getLog(BatchProcedureExecutionConnectionCallback.class);
+    private static final Logger log = LoggerFactory.getLogger(BatchProcedureExecutionConnectionCallback.class);
     private static ConcurrentMap<String, StoredProcedureMetaData> storedProceduresMap =
             new ConcurrentHashMap<>();
 
@@ -47,7 +47,7 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
     @Override
     public Object doInConnection(Connection con) throws SQLException,
             DataAccessException {
-        log.debugFormat("Executing batch for prcoedure %s", procName);
+        log.debug("Executing batch for procedure '{}'", procName);
         StoredProcedureMetaData procMetaData = getStoredProcedureMetaData(
                 procName, con);
 
@@ -62,11 +62,13 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
             stmt.executeBatch();
             log.debug("Executed batch");
         } catch (SQLException e) {
-            log.fatal("Can't execute batch: ", e);
+            log.error("Can't execute batch: {}", e.getMessage());
+            log.debug("Exception", e);
 
             if (e.getNextException() != null) {
-                log.fatal("Can't execute batch. Next exception is: ",
-                        e.getNextException());
+                log.error("Can't execute batch. Next exception is: {}",
+                        e.getNextException().getMessage());
+                log.debug("Exception", e.getNextException());
             }
             throw e;
         }
@@ -117,9 +119,8 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
                 params.deleteCharAt(params.length() - 1);
             }
         } catch (SQLException e) {
-            log.fatalFormat("Can't get procedure %s meta data",
-                    procName);
-            log.fatal(e.getMessage(), e);
+            log.error("Can't get procedure '{}' meta data: {}", procName, e.getMessage());
+            log.debug("Exception", e);
         }
 
         procMetaData.setSqlCommand(handler.getDialect().createSqlCallCommand(
@@ -183,8 +184,8 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
                         Method method = value.getClass().getMethod("getValue");
                         value = method.invoke(value);
                     } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException ex) {
-                        log.error("Can't map Enum type " + value + "Exception is: " + ex.getMessage());
-                        log.debug("", ex);
+                        log.error("Error mapping enum type '{}': {}", value, ex.getMessage());
+                        log.debug("Exception", ex);
                     }
                 }
 
@@ -209,14 +210,16 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
             try {
                 stmt.setObject(ordinal, value);
             } catch (Exception e) {
-                log.error("Can't map " + value + " of type " + value.getClass().getName() + " to type "
-                        + sqlParam.getDataType()
-                        + " mapping to null value for parameter " + sqlParam.getName());
+                log.error("Can't map '{}' of type '{}' to type '{}', mapping to null value for parameter '{}'.",
+                        value,
+                        value.getClass().getName(),
+                        sqlParam.getDataType(),
+                        sqlParam.getName());
                 stmt.setObject(ordinal, null);
             }
         }
 
-        log.debugFormat("Mapped params %s", values.keySet());
+        log.debug("Mapped params: {}", values.keySet());
     }
 
     private  static class ProcData {

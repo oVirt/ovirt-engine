@@ -15,10 +15,10 @@ import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesStat
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectDeserializer;
 import org.ovirt.engine.core.utils.serialization.json.JsonObjectSerializer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -30,7 +30,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  */
 public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<VdsDynamic, Guid> implements VdsDynamicDAO {
 
-    private static final Log log = LogFactory.getLog(VdsDynamicDAODbFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsDynamicDAODbFacadeImpl.class);
 
     public VdsDynamicDAODbFacadeImpl() {
         super("VdsDynamic");

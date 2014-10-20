@@ -20,8 +20,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.dal.dbbroker.MapSqlParameterMapper;
 import org.ovirt.engine.core.utils.ReflectionUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -30,7 +30,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  * {@code DbFacade}.
  */
 public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTaskDAO {
-    private static final Log log = LogFactory.getLog(AsyncTaskDAODbFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(AsyncTaskDAODbFacadeImpl.class);
 
     private static class IdRowMapper implements RowMapper<Guid> {
         public static final IdRowMapper instance = new IdRowMapper();

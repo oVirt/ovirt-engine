@@ -21,8 +21,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
 
@@ -32,7 +32,7 @@ import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
  *
  */
 public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroupDAO {
-    private static final Log log = LogFactory.getLog(VdsGroupDAODbFacadeImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsGroupDAODbFacadeImpl.class);
 
     @Override
     public VDSGroup get(Guid id) {
@@ -118,7 +118,8 @@ public class VdsGroupDAODbFacadeImpl extends BaseDAODbFacade implements VdsGroup
             // The UI requires the host and vm count
             return getHostsAndVmsForClusters(groups);
         } catch (Exception e) {
-            log.error("Can't load host and vm count for cluster. Query is " + query, e);
+            log.error("Can't load host and vm count for cluster. Query is '{}'. Error: {}", query, e.getMessage());
+            log.debug("Excpetion", e);
         }
         return groups;
     }

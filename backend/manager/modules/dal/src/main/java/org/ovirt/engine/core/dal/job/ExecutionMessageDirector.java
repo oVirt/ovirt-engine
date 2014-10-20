@@ -6,9 +6,9 @@ import java.util.ResourceBundle;
 
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.job.StepEnum;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Contains messages by the context of Job or Step, as read from <i>bundles/ExecutionMessages.properties</i>
@@ -35,7 +35,7 @@ public class ExecutionMessageDirector {
     /**
      * Logger
      */
-    private static final Log log = LogFactory.getLog(ExecutionMessageDirector.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecutionMessageDirector.class);
 
     /**
      * Stores the job messages
@@ -57,7 +57,7 @@ public class ExecutionMessageDirector {
      *            The base name of the resource bundle
      */
     public void initialize(String bundleBaseName) {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         ResourceBundle bundle = ResourceBundle.getBundle(bundleBaseName);
         final int jobMessagePrefixLength = JOB_MESSAGE_PREFIX.length();
         final int stepMessagePrefixLength = STEP_MESSAGE_PREFIX.length();
@@ -69,13 +69,13 @@ public class ExecutionMessageDirector {
             } else if (key.startsWith(STEP_MESSAGE_PREFIX)) {
                 addMessage(key, bundle.getString(key), stepMessages, StepEnum.class, stepMessagePrefixLength);
             } else {
-                log.errorFormat("The message key {0} cannot be categorized since not started with {1} nor {2}",
+                log.error("The message key '{}' cannot be categorized since not started with '{}' nor '{}'",
                         key,
                         JOB_MESSAGE_PREFIX,
                         STEP_MESSAGE_PREFIX);
             }
         }
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     /**
@@ -110,14 +110,14 @@ public class ExecutionMessageDirector {
         try {
             enumKey = T.valueOf(enumClass, key.substring(prefixLength));
         } catch (IllegalArgumentException e) {
-            log.errorFormat("Message key {0} is not valid for enum {1}", key, enumClass.getSimpleName());
+            log.error("Message key '{}' is not valid for enum '{}'", key, enumClass.getSimpleName());
             return;
         }
 
         if (!messagesMap.containsKey(key)) {
             messagesMap.put(enumKey, value);
         } else {
-            log.warnFormat("Code {0} appears more then once in {1} table.", key, enumClass.getSimpleName());
+            log.warn("Code '{}' appears more then once in '{}' table.", key, enumClass.getSimpleName());
         }
     }
 
@@ -151,7 +151,7 @@ public class ExecutionMessageDirector {
     private <T extends Enum<T>> String getMessage(Map<T, String> map, T type) {
         String message = map.get(type);
         if (message == null) {
-            log.warnFormat("The message key {0} is missing from {1}", type.name(), EXECUTION_MESSAGES_FILE_PATH);
+            log.warn("The message key '{}' is missing from '{}'", type.name(), EXECUTION_MESSAGES_FILE_PATH);
             message = type.name();
         }
         return message;
