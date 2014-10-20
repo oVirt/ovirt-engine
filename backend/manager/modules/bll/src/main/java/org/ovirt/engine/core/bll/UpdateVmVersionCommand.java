@@ -26,6 +26,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
 import org.ovirt.engine.core.common.businessentities.VmWatchdog;
@@ -201,14 +202,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
             addVmParams.setWatchdog(watchdogs.get(0));
         }
 
-        if (!StringUtils.isEmpty(getParameters().getSessionId())) {
-            VmPayload payload = runInternalQuery(VdcQueryType.GetVmPayload,
-                    new IdQueryParameters(getVmTemplateId())).getReturnValue();
-
-            if (payload != null) {
-                addVmParams.setVmPayload(payload);
-            }
-        }
+        loadVmPayload(addVmParams);
 
         // when this initiated from down vm event (restore stateless vm)
         // then there is no session, so using the current user.
@@ -220,6 +214,18 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
         addVmParams.setDiskOperatorAuthzPrincipalDbId(getParameters().getPreviousDiskOperatorAuthzPrincipalDbId());
 
         return addVmParams;
+    }
+
+    private void loadVmPayload(AddVmParameters addVmParams) {
+        List<VmDevice> vmDevices = getVmDeviceDao()
+                .getVmDeviceByVmIdAndType(getVmTemplateId(),
+                        VmDeviceGeneralType.DISK);
+        for (VmDevice vmDevice : vmDevices) {
+            if (VmPayload.isPayload(vmDevice.getSpecParams())) {
+                addVmParams.setVmPayload(new VmPayload(vmDevice));
+                return;
+            }
+        }
     }
 
     /**
