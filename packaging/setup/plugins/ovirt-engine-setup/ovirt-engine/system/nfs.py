@@ -88,18 +88,25 @@ class Plugin(plugin.PluginBase):
         self._foundpreextnfs = False
 
     @plugin.event(
+        stage=plugin.Stages.STAGE_SETUP,
+    )
+    def _setup(self):
+        self._enabled = not self.environment[
+            osetupcons.CoreEnv.DEVELOPER_MODE
+        ]
+
+    @plugin.event(
         stage=plugin.Stages.STAGE_PROGRAMS,
+        condition=lambda self: self._enabled,
     )
     def _programs(self):
         self.command.detect('exportfs')
 
     @plugin.event(
         stage=plugin.Stages.STAGE_LATE_SETUP,
+        condition=lambda self: self._enabled,
     )
-    def _setup(self):
-        self._enabled = not self.environment[
-            osetupcons.CoreEnv.DEVELOPER_MODE
-        ]
+    def _late_setup(self):
         if self._distribution not in ('redhat', 'fedora', 'centos'):
             self.logger.warning(
                 _('Unsupported distribution disabling nfs export')
