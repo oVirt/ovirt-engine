@@ -284,7 +284,7 @@ public class VmBackupModel extends ManageBackupModel {
         ImportCloneModel entity = new ImportCloneModel();
         Object object = objectsToClone.iterator().next();
         entity.setEntity(object);
-        entity.setTitle(ConstantsManager.getInstance().getConstants().importConflictTitle());
+        entity.setTitle(getImportConflictTitle());
         entity.setHelpTag(HelpTag.import_conflict);
         entity.setHashName("import_conflict"); //$NON-NLS-1$
         UICommand command = new UICommand("onClone", this); //$NON-NLS-1$
@@ -658,5 +658,9 @@ public class VmBackupModel extends ManageBackupModel {
             }
             return result;
         }
+    }
+
+    protected String getImportConflictTitle() {
+        return ConstantsManager.getInstance().getConstants().importVmConflictTitle();
     }
 }

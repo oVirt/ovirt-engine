@@ -378,4 +378,8 @@ public class TemplateBackupModel extends VmBackupModel
     protected String getListName() {
         return "TemplateBackupModel"; //$NON-NLS-1$
     }
+
+    protected String getImportConflictTitle() {
+        return ConstantsManager.getInstance().getConstants().importTemplateConflictTitle();
+    }
 }

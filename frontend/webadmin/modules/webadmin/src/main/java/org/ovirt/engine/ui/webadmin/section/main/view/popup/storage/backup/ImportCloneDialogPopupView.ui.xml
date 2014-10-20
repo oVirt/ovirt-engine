@@ -11,7 +11,7 @@
         padding-left: 30px;
     }
 </ui:style>
-<d:SimpleDialogPanel height="400px" width="540px">
+<d:SimpleDialogPanel height="400px" width="600px">
     <d:content>
         <g:VerticalPanel>
             <g:Label ui:field="dialogLabelEditor"/>
