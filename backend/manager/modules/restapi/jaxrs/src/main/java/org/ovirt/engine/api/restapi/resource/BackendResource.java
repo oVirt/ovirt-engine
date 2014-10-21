@@ -36,9 +36,9 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendResource extends BaseBackendResource {
     private static final String FALSE = "false";
@@ -49,7 +49,7 @@ public class BackendResource extends BaseBackendResource {
     public static final String FORCE_CONSTRAINT = "force";
     protected static final String MAX = "max";
     private static final String NON_BLOCKING_EXPECTATION = "202-accepted";
-    protected static final Log LOG = LogFactory.getLog(BackendResource.class);
+    private static final Logger log = LoggerFactory.getLogger(BackendResource.class);
     public static final String POPULATE = "All-Content";
     public static final String JOB_ID_CONSTRAINT = "JobId";
     public static final String STEP_ID_CONSTRAINT = "StepId";
@@ -149,7 +149,7 @@ public class BackendResource extends BaseBackendResource {
             try {
                 return Integer.valueOf(maxString);
             } catch (NumberFormatException e) {
-                LOG.error("Max number of results is not a valid number: " + maxString);
+                log.error("Max number of results is not a valid number: '{}'", maxString);
                 throw new MalformedNumberException("Max number of results is not a valid number: " + maxString);
             }
         } else {
@@ -375,7 +375,7 @@ public class BackendResource extends BaseBackendResource {
             Object entity = m.invoke(this);
             return getEntityWithIdAndHref(entity);
         } catch (Exception e) {
-            LOG.error("Getting resource after action failed.", e);
+            log.error("Getting resource after action failed.", e);
             return null;
         }
     }
@@ -454,7 +454,7 @@ public class BackendResource extends BaseBackendResource {
                     break;
                 } catch (Exception e) {
                     // should not happen
-                    LOG.error("Resource to action asignment failure.", e);
+                    log.error("Resource to action assignment failure.", e);
                     break;
                 }
             }

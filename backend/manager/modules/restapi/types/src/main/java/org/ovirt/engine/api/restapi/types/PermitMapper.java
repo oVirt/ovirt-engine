@@ -2,14 +2,13 @@ package org.ovirt.engine.api.restapi.types;
 
 import org.ovirt.engine.api.model.Permit;
 import org.ovirt.engine.api.model.PermitType;
-import org.ovirt.engine.api.restapi.utils.MappingException;
 import org.ovirt.engine.core.common.businessentities.ActionGroup;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PermitMapper {
 
-    private static final Log log = LogFactory.getLog(PermitMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(PermitMapper.class);
 
     /**
      * @pre completeness of "name|id" already validated
@@ -48,7 +47,8 @@ public class PermitMapper {
         try {
             return PermitType.valueOf(entity);
         } catch (IllegalArgumentException e) {
-            log.error(new MappingException("Missing mapping "+entity+" --> "+PermitType.class.getName(), e));
+            log.error("Missing mapping '{}' --> '{}': {}", entity, PermitType.class.getName(), e.getMessage());
+            log.error("Exception", e);
             return null;
         }
     }
@@ -58,7 +58,7 @@ public class PermitMapper {
         final ActionGroup result = entity.getActionGroup();
 
         if (result == null) {
-            log.error(new MappingException("Missing mapping " + entity + " --> " + ActionGroup.class.getName()));
+            log.error("Missing mapping '{}' --> '{}'", entity, ActionGroup.class.getName());
         }
 
         return result;

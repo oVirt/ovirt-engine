@@ -33,10 +33,13 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendHostsResource extends AbstractBackendCollectionResource<Host, VDS> implements
         HostsResource {
 
+    private static final Logger log = LoggerFactory.getLogger(BackendHostsResource.class);
     private static final String DEFAULT_NAME = "Default";
     static final String[] SUB_COLLECTIONS = { "storage", "nics", "numanodes", "tags", "permissions", "statistics", "hooks" };
     static final String GLUSTERONLY_MODE_COLLECTIONS_TO_HIDE = "storage";
@@ -165,7 +168,7 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
             }
         }
         else {
-            LOG.error("Could not fetch certificate info for host " + host.getId());
+            log.error("Could not fetch certificate info for host '{}'", host.getId());
         }
         return host;
     }

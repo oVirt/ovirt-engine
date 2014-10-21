@@ -24,8 +24,8 @@ import org.ovirt.engine.core.common.queries.SearchParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractBackendCollectionResource<R extends BaseResource, Q /* extends IVdcQueryable */>
         extends AbstractBackendResource<R, Q> {
@@ -34,7 +34,7 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
     private static final String CREATION_STATUS_REL = "creation_status";
     public static final String FROM_CONSTRAINT_PARAMETER = "from";
     public static final String CASE_SENSITIVE_CONSTRAINT_PARAMETER = "case_sensitive";
-    protected static final Log LOG = LogFactory.getLog(AbstractBackendCollectionResource.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBackendCollectionResource.class);
 
     protected AbstractBackendCollectionResource(Class<R> modelType, Class<Q> entityType, String... subCollections) {
         super(modelType, entityType, subCollections);
@@ -71,21 +71,27 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
             try {
                 searchParams.setSearchFrom(Long.parseLong(matrixConstraints.get(FROM_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
-                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' matrix search parameter failed.", ex);
+                log.error("Unwrapping of '{}' matrix search parameter failed: {}",
+                        FROM_CONSTRAINT_PARAMETER, ex.getMessage());
+                log.error("Exception", ex);
             }
         } else if (queryConstraints.containsKey(FROM_CONSTRAINT_PARAMETER)) {
             //preserved in sake if backward compatibility until 4.0
             try {
                 searchParams.setSearchFrom(Long.parseLong(queryConstraints.get(FROM_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
-                LOG.error("Unwrapping of '"+FROM_CONSTRAINT_PARAMETER+"' query search parameter failed.", ex);
+                log.error("Unwrapping of '{}' query search parameter failed: {}",
+                        FROM_CONSTRAINT_PARAMETER, ex.getMessage());
+                log.error("Exception", ex);
             }
         }
         if (matrixConstraints.containsKey(CASE_SENSITIVE_CONSTRAINT_PARAMETER)) {
             try {
                 searchParams.setCaseSensitive(Boolean.parseBoolean(matrixConstraints.get(CASE_SENSITIVE_CONSTRAINT_PARAMETER)));
             } catch (Exception ex) {
-                LOG.error("Unwrapping of '"+CASE_SENSITIVE_CONSTRAINT_PARAMETER+"' search parameter failed.", ex);
+                log.error("Unwrapping of '{}' search parameter failed: {}",
+                        CASE_SENSITIVE_CONSTRAINT_PARAMETER, ex.getMessage());
+                log.error("Exception", ex);
             }
         }
 
@@ -164,24 +170,24 @@ public abstract class AbstractBackendCollectionResource<R extends BaseResource, 
         try {
             Method method = getMethod(this.getClass(), SingleEntityResource.class);
             if (method==null) {
-                LOG.error("Could not find sub-resource in the collection resource");
+                log.error("Could not find sub-resource in the collection resource");
             } else {
                 Object entityResource = method.invoke(this, id);
                 method = entityResource.getClass().getMethod("get");
                 method.invoke(entityResource);
             }
         } catch (IllegalAccessException e) {
-            LOG.error("Reflection Error", e);
+            log.error("Reflection Error", e);
         } catch (InvocationTargetException e) {
             if (e.getTargetException() instanceof WebApplicationException) {
                 throw((WebApplicationException)e.getTargetException());
             } else {
-                LOG.error("Reflection Error", e);
+                log.error("Reflection Error", e);
             }
         } catch (SecurityException e) {
-            LOG.error("Reflection Error", e);
+            log.error("Reflection Error", e);
         } catch (NoSuchMethodException e) {
-            LOG.error("Reflection Error", e);
+            log.error("Reflection Error", e);
         }
     }
 

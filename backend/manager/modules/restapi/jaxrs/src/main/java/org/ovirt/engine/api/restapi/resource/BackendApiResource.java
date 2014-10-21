@@ -63,11 +63,14 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.branding.BrandingManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BackendApiResource
     extends AbstractBackendActionableResource<API, Object>
     implements ApiResource {
 
+    private static final Logger log = LoggerFactory.getLogger(BackendApiResource.class);
     private static final String SYSTEM_STATS_ERROR = "Unknown error querying system statistics";
     private static final String API_SCHEMA = "api.xsd";
     private static final String RSDL_CONSTRAINT_PARAMETER = "rsdl";
@@ -255,7 +258,7 @@ public class BackendApiResource
                            .header("content-disposition", "attachment; filename = " + SCHEMA_NAME)
                            .build();
         } catch (IOException e) {
-            LOG.error("Loading api.xsd file failed.", e);
+            log.error("Loading api.xsd file failed.", e);
             return Response.serverError().build();
         } finally {
             try {

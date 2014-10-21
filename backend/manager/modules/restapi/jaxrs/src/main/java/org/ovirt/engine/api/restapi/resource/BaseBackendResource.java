@@ -28,14 +28,14 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.interfaces.BackendLocal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class BaseBackendResource {
 
     private static String USER_FILTER_HEADER = "Filter";
 
-    protected static final Log LOG = LogFactory.getLog(AbstractBackendResource.class);
+    private static final Logger log = LoggerFactory.getLogger(AbstractBackendResource.class);
 
     protected BackendLocal backend;
     protected SessionHelper sessionHelper;
@@ -136,7 +136,7 @@ public class BaseBackendResource {
 
     static String detail(Throwable t) {
         String detail = null;
-        if (LOG.isDebugEnabled()) {
+        if (log.isDebugEnabled()) {
             StringWriter sw = new StringWriter();
             t.printStackTrace(new PrintWriter(sw, true));
             detail = sw.toString();
@@ -250,16 +250,18 @@ public class BaseBackendResource {
         if ((e instanceof EntityNotFoundException) && (notFoundAs404)) {
             throw new WebApplicationException(Response.status(Response.Status.NOT_FOUND).build());
         } else if ((e instanceof BackendFailureException) && (!StringUtils.isEmpty(e.getMessage()))) {
-            LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage(), null);
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage());
             BackendFailureException e2 = (BackendFailureException) e;
             throw new WebFaultException(null, e.getMessage(), e2.getHttpStatus() != null ? e2.getHttpStatus()
                     : Response.Status.BAD_REQUEST);
         } else if (e instanceof WebFaultException) {
             WebFaultException e2 = (WebFaultException) e;
-            LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), detail(e2), e2);
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e2.getMessage());
+            log.error("Exception", e2);
             throw e2;
         } else {
-            LOG.errorFormat(localize(Messages.BACKEND_FAILED_TEMPLATE), detail(e), e);
+            log.error(localize(Messages.BACKEND_FAILED_TEMPLATE), e.getMessage());
+            log.error("Exception", e);
             throw new WebFaultException(e, detail(e), Response.Status.INTERNAL_SERVER_ERROR);
         }
     }

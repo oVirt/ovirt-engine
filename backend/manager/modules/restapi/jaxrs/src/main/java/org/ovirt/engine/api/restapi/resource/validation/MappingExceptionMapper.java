@@ -22,17 +22,17 @@ import javax.ws.rs.ext.Provider;
 
 import org.ovirt.engine.api.model.Fault;
 import org.ovirt.engine.api.restapi.utils.MappingException;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Provider
 public class MappingExceptionMapper implements ExceptionMapper<MappingException> {
 
-    private static final Log LOGGER = LogFactory.getLog(MappingExceptionMapper.class);
+    private static final Logger log = LoggerFactory.getLogger(MappingExceptionMapper.class);
 
     @Override
     public Response toResponse(MappingException exception) {
-        LOGGER.error(exception);
+        log.error("Exception", exception);
 
         final Fault fault = new Fault();
         fault.setReason("Operation Failed");

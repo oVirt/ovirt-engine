@@ -7,15 +7,15 @@ import javax.xml.datatype.DatatypeConfigurationException;
 import javax.xml.datatype.DatatypeFactory;
 import javax.xml.datatype.XMLGregorianCalendar;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.api.restapi.types.SnapshotMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class TypeConversionHelper {
 
     private volatile static DatatypeFactory datatypeFactory;
-    protected static final Log LOG = LogFactory.getLog(SnapshotMapper.class);
-    protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed";
+    private static final Logger log = LoggerFactory.getLogger(SnapshotMapper.class);
+    protected static final String DATATYPE_FACTORY_CREATION_FAILED = "DatatypeFactory creation failed.";
 
     /**
      * @pre called with class-level mutex held
@@ -25,7 +25,7 @@ public class TypeConversionHelper {
             try {
                 datatypeFactory = DatatypeFactory.newInstance();
             } catch (DatatypeConfigurationException dce) {
-                LOG.warn(DATATYPE_FACTORY_CREATION_FAILED, dce);
+                log.warn(DATATYPE_FACTORY_CREATION_FAILED, dce);
             }
         }
         return datatypeFactory;
