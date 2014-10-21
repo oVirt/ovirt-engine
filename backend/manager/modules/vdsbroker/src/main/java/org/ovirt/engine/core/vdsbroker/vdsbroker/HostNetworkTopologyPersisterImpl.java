@@ -50,13 +50,16 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
         List<VdsNetworkInterface> dbIfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(host.getId());
         List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao().getAllForCluster(host.getVdsGroupId());
+
         persistTopology(host.getInterfaces(), dbIfaces, userConfiguredNics);
-        return enforceNetworkCompliance(host, skipManagementNetwork, dbIfaces, clusterNetworks);
+        NonOperationalReason nonOperationalReason =
+                enforceNetworkCompliance(host, skipManagementNetwork, clusterNetworks);
+        auditNetworkCompliance(host, dbIfaces, clusterNetworks);
+        return nonOperationalReason;
     }
 
     private NonOperationalReason enforceNetworkCompliance(VDS host,
                                                           boolean skipManagementNetwork,
-                                                          List<VdsNetworkInterface> dbIfaces,
                                                           List<Network> clusterNetworks) {
         if (host.getStatus() != VDSStatus.Maintenance) {
             if (skipManagementNetwork) {
@@ -84,8 +87,6 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
                 setNonOperational(host, NonOperationalReason.VM_NETWORK_IS_BRIDGELESS, customLogValues);
                 return NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
             }
-
-            auditNetworkCompliance(host, dbIfaces, clusterNetworks);
         }
 
         return NonOperationalReason.NONE;
@@ -94,6 +95,10 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
     private void auditNetworkCompliance(VDS host,
             List<VdsNetworkInterface> dbIfaces,
             List<Network> clusterNetworks) {
+        if (host.getStatus() == VDSStatus.Maintenance) {
+            return;
+        }
+
         final Map<String, Network> clusterNetworksByName = Entities.entitiesByName(clusterNetworks);
         final Collection<Network> dbHostNetworks = findNetworksOnInterfaces(dbIfaces, clusterNetworksByName);
         logChangedDisplayNetwork(host, dbHostNetworks, dbIfaces);
