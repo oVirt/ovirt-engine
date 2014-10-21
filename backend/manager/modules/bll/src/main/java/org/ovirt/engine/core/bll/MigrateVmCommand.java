@@ -10,14 +10,17 @@ import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.scheduling.VdsFreeMemoryChecker;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
 import org.ovirt.engine.core.bll.validator.LocalizedVmStatus;
 import org.ovirt.engine.core.bll.validator.VmValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
+import org.ovirt.engine.core.common.action.ChangeVMClusterParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmParameters;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.MigrationMethod;
 import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.VDS;
@@ -54,6 +57,12 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
     public MigrateVmCommand(T migrateVmParameters, CommandContext cmdContext) {
         super(migrateVmParameters, cmdContext);
+
+        if (migrateVmParameters.getTargetVdsGroupId() != null) {
+            setVdsGroupId(migrateVmParameters.getTargetVdsGroupId());
+            // force reload
+            setVdsGroup(null);
+        }
     }
 
     @Override
@@ -173,10 +182,20 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     public void runningSucceded() {
         try {
             getVmDynamicDao().clearMigratingToVds(getVmId());
+            updateVmAfterMigrationToDifferentCluster();
         }
         finally {
             super.runningSucceded();
         }
+    }
+
+    private void updateVmAfterMigrationToDifferentCluster() {
+        if (getVm().getVdsGroupId().equals(getParameters().getTargetVdsGroupId())) {
+            return;
+        }
+
+        ChangeVMClusterParameters params = new ChangeVMClusterParameters(getParameters().getTargetVdsGroupId(), getVmId());
+        setSucceeded(getBackend().runInternalAction(VdcActionType.ChangeVMCluster, params).getSucceeded());
     }
 
     private int getMaximumMigrationDowntime() {
@@ -352,6 +371,13 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
             return false;
         }
 
+        if (getParameters().getTargetVdsGroupId() != null) {
+            ChangeVmClusterValidator changeVmClusterValidator = new ChangeVmClusterValidator(this, getParameters().getTargetVdsGroupId());
+            if (!changeVmClusterValidator.validate()) {
+                return false;
+            }
+        }
+
         return validate(new SnapshotsValidator().vmNotDuringSnapshot(vm.getId()))
                 // This check was added to prevent migration of VM while its disks are being migrated
                 // TODO: replace it with a better solution
@@ -439,5 +465,16 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
     // passed by load balancing process.
     protected List<Guid> getVdsWhiteList() {
         return getParameters().getInitialHosts();
+    }
+
+    @Override
+    public List<PermissionSubject> getPermissionCheckSubjects() {
+        List<PermissionSubject> permissionList = super.getPermissionCheckSubjects();
+        if (getParameters().getTargetVdsGroupId() != null) {
+            // additional permissions needed since changing the cluster
+            permissionList.addAll(VmHandler.getPermissionsNeededToChangeCluster(getParameters().getVmId(), getParameters().getTargetVdsGroupId()));
+        }
+
+        return permissionList;
     }
 }

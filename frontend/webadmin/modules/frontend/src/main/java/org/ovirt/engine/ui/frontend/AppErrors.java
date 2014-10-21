@@ -604,6 +604,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. source and destination is the same.")
     String ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Destination host is not present in destination cluster.")
+    String ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER();
+
     @DefaultStringValue("Cannot ${action} ${type} if custom properties are in invalid format. Please check the input.")
     String ACTION_TYPE_FAILED_INVALID_CUSTOM_PROPERTIES_INVALID_SYNTAX();
 
@@ -1750,7 +1753,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Operation can be performed only when Host status is ${hostStatus}.")
     String ACTION_TYPE_FAILED_VDS_STATUS_ILLEGAL();
 
-    @DefaultStringValue("Cannot ${action} ${type}. VM can be migrated only between Hosts in the same Cluster.\n-Please select target Host in the same Cluster to run the VM.")
+    @DefaultStringValue("Cannot ${action} ${type}. If target Cluster is not specified VM can be migrated only between Hosts in the same Cluster.\n-Please select target Host in the same Cluster to run the VM or specify a target Cluster.")
     String ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS();
 
     @DefaultStringValue("Cannot get Host version when Host is in Non Responsive status.")

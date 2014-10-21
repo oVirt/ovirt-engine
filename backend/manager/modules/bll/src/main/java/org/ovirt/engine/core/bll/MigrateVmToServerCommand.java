@@ -45,11 +45,15 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return false;
         }
 
+        if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
+        }
+
         if (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(getDestinationVdsId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
         }
 
-        if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+        if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId()) && getParameters().getTargetVdsGroupId() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 
