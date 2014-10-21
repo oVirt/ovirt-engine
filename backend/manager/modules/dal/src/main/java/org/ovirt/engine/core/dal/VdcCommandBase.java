@@ -17,6 +17,11 @@ public abstract class VdcCommandBase {
     @Deprecated
     protected Log log = LogFactory.getLog(getClass());
     private final Logger log1 = LoggerFactory.getLogger(getClass());
+    @Deprecated
+    protected void ___dummy() {
+        // make findbugs happy while easy to remember to remove soon.
+        log.isDebugEnabled();
+    }
 
     protected String getCommandName() {
         return getClass().getSimpleName().replace("Command", "");
