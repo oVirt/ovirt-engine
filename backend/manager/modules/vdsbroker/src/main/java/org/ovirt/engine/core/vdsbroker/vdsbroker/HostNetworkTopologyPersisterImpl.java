@@ -49,17 +49,16 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
                                                                    List<VdsNetworkInterface> userConfiguredNics) {
         List<VdsNetworkInterface> dbIfaces =
                 DbFacade.getInstance().getInterfaceDao().getAllInterfacesForVds(host.getId());
+        List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao().getAllForCluster(host.getVdsGroupId());
         persistTopology(host.getInterfaces(), dbIfaces, userConfiguredNics);
-        return enforceNetworkCompliance(host, skipManagementNetwork, dbIfaces);
+        return enforceNetworkCompliance(host, skipManagementNetwork, dbIfaces, clusterNetworks);
     }
 
     private NonOperationalReason enforceNetworkCompliance(VDS host,
                                                           boolean skipManagementNetwork,
-                                                          List<VdsNetworkInterface> dbIfaces) {
+                                                          List<VdsNetworkInterface> dbIfaces,
+                                                          List<Network> clusterNetworks) {
         if (host.getStatus() != VDSStatus.Maintenance) {
-
-            List<Network> clusterNetworks = DbFacade.getInstance().getNetworkDao()
-                    .getAllForCluster(host.getVdsGroupId());
             if (skipManagementNetwork) {
                 skipManagementNetworkCheck(host.getInterfaces(), clusterNetworks);
             }
