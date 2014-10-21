@@ -15,6 +15,7 @@ import static org.mockito.Mockito.when;
 
 import org.junit.Test;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.slf4j.Logger;
 
 /**
  * Tests for the {@link LoggedUtils} class.
@@ -27,9 +28,9 @@ public class LoggedUtilsTest {
      * Interface used for DRY testing of {@link LoggedUtils#log}.
      */
     private static interface LogSetup {
-        public void setup(Log mock, String message, Object args);
+        public void setup(Logger mock, String message, Object... args);
 
-        public void verifyCall(Log mock, String message, Object args);
+        public void verifyCall(Logger mock, String message, Object... args);
     }
 
     @Logged(executionLevel = LogLevel.OFF, errorLevel = LogLevel.OFF)
@@ -112,7 +113,7 @@ public class LoggedUtilsTest {
     @Test
     public void testDetermineMessageReturnsObjectForParameterExpansion() throws Exception {
         Object obj = new Object();
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         when(log.isDebugEnabled()).thenReturn(true);
 
         assertSame(obj,
@@ -121,7 +122,7 @@ public class LoggedUtilsTest {
 
     @Test
     public void testDetermineMessageReturnsClassNameForNoParameterExpansion() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
 
         assertEquals("LoggedUtils.determineMessage shouldn't return parameter expansion for a disabled log level.",
                 Object.class.getName(),
@@ -136,9 +137,9 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogOffDoesntLog() {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
 
-        LoggedUtils.log(log, LogLevel.OFF, "{0}", new Object());
+        LoggedUtils.log(log, LogLevel.OFF, "{}", new Object());
         verifyZeroInteractions(log);
     }
 
@@ -146,13 +147,13 @@ public class LoggedUtilsTest {
     public void testLogTrace() throws Exception {
         helpTestLog(LogLevel.TRACE, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
+            public void setup(Logger mock, String message, Object... args) {
                 when(mock.isTraceEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).traceFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).trace(message, args);
             }
         });
     }
@@ -161,13 +162,13 @@ public class LoggedUtilsTest {
     public void testLogDebug() throws Exception {
         helpTestLog(LogLevel.DEBUG, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
+            public void setup(Logger mock, String message, Object... args) {
                 when(mock.isDebugEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).debugFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).debug(message, args);
             }
         });
     }
@@ -176,13 +177,13 @@ public class LoggedUtilsTest {
     public void testLogInfo() throws Exception {
         helpTestLog(LogLevel.INFO, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
+            public void setup(Logger mock, String message, Object... args) {
                 when(mock.isInfoEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).infoFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).info(message, args);
             }
         });
     }
@@ -191,13 +192,13 @@ public class LoggedUtilsTest {
     public void testLogWarn() throws Exception {
         helpTestLog(LogLevel.WARN, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
+            public void setup(Logger mock, String message, Object... args) {
                 when(mock.isWarnEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).warnFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).warn(message, args);
             }
         });
     }
@@ -206,13 +207,13 @@ public class LoggedUtilsTest {
     public void testLogError() throws Exception {
         helpTestLog(LogLevel.ERROR, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
+            public void setup(Logger mock, String message, Object... args) {
                 when(mock.isErrorEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).errorFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).error(message, args);
             }
         });
     }
@@ -221,13 +222,13 @@ public class LoggedUtilsTest {
     public void testLogFatal() throws Exception {
         helpTestLog(LogLevel.FATAL, new LogSetup() {
             @Override
-            public void setup(Log mock, String message, Object args) {
-                when(mock.isFatalEnabled()).thenReturn(true);
+            public void setup(Logger mock, String message, Object... args) {
+                when(mock.isErrorEnabled()).thenReturn(true);
             }
 
             @Override
-            public void verifyCall(Log mock, String message, Object args) {
-                verify(mock).fatalFormat(message, args);
+            public void verifyCall(Logger mock, String message, Object... args) {
+                verify(mock).error(message, args);
             }
         });
     }
@@ -236,14 +237,14 @@ public class LoggedUtilsTest {
 
     @Test
     public void testLogEntryDoesntLogWhenNoAnnotation() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logEntry(log, "", new Object());
         verifyZeroInteractions(log);
     }
 
     @Test
     public void testLogEntryDoesntLogWhenLogLevelInactive() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logEntry(log, "", new LoggedOverridingSubclass());
         verifyNoLogging(log);
     }
@@ -251,25 +252,25 @@ public class LoggedUtilsTest {
     @Test
     public void testLogEntryLogsWhenLogLevelActive() throws Exception {
         String id = "";
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logEntry(log, id, new LoggedOverridingSubclass());
-        verify(log).debugFormat(eq(LoggedUtils.ENTRY_LOG), anyObject(), eq(id));
+        verify(log).debug(eq(LoggedUtils.ENTRY_LOG), new Object[] {anyObject(), eq(id)});
     }
 
     /* --- Tests for the method "logReturn" --- */
 
     @Test
     public void testLogReturnDoesntLogWhenNoAnnotation() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logReturn(log, "", new Object(), new Object());
         verifyZeroInteractions(log);
     }
 
     @Test
     public void testLogReturnDoesntLogWhenLogLevelInactive() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logReturn(log, "", new LoggedOverridingSubclass(), new Object());
         verifyNoLogging(log);
     }
@@ -277,45 +278,45 @@ public class LoggedUtilsTest {
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndNoExpandReturn() throws Exception {
         String id = "";
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         when(log.isInfoEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclassNoReturn(), new Object());
-        verify(log).infoFormat(eq(LoggedUtils.EXIT_LOG_VOID), anyObject(), eq(id));
+        verify(log).info(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {anyObject(), eq(id)});
     }
 
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndExpandReturn() throws Exception {
         String id = "";
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclass(), new Object());
-        verify(log).debugFormat(eq(LoggedUtils.EXIT_LOG_RETURN_VALUE), anyObject(), anyObject(), eq(id));
+        verify(log).debug(eq(LoggedUtils.EXIT_LOG_RETURN_VALUE), new Object[] {anyObject(), anyObject(), eq(id)});
     }
 
     @Test
     public void testLogReturnLogsWhenLogLevelActiveAndExpandReturnButNullReturn() throws Exception {
         String id = "";
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         when(log.isDebugEnabled()).thenReturn(true);
 
         LoggedUtils.logReturn(log, id, new LoggedOverridingSubclass(), null);
-        verify(log).debugFormat(eq(LoggedUtils.EXIT_LOG_VOID), anyObject(), eq(id));
+        verify(log).debug(eq(LoggedUtils.EXIT_LOG_VOID), new Object[] {anyObject(), eq("")});
     }
 
     /* --- Tests for the method "logError" --- */
 
     @Test
     public void testLogErrorDoesntLogWhenNoAnnotation() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logError(log, "", new Object(), new Exception());
         verifyZeroInteractions(log);
     }
 
     @Test
     public void testLogErrorDoesntLogWhenLogLevelInactive() throws Exception {
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
         LoggedUtils.logError(log, "", new LoggedOverridingSubclass(), new Exception());
         verifyNoLogging(log);
     }
@@ -323,14 +324,16 @@ public class LoggedUtilsTest {
     @Test
     public void testLogErrorLogsWhenLogLevelActive() throws Exception {
         String id = "";
-        Log log = mock(Log.class);
+        Logger log = mock(Logger.class);
 
         // when the call to determine whether to log the parameters or not.
         when(log.isDebugEnabled()).thenReturn(true);
         when(log.isWarnEnabled()).thenReturn(true);
 
-        LoggedUtils.logError(log, id, new LoggedOverridingSubclass(), new Exception());
-        verify(log).warnFormat(eq(LoggedUtils.ERROR_LOG), anyObject(), anyObject(), eq(id), anyObject());
+        Exception e = new Exception();
+        LoggedUtils.logError(log, id, new LoggedOverridingSubclass(), e);
+        verify(log).warn(eq(LoggedUtils.ERROR_LOG), new Object[] {anyObject(), anyObject(), eq(id)});
+        verify(log).error(eq("Exception"), eq(e));
     }
 
     /* --- Helper methods --- */
@@ -338,13 +341,12 @@ public class LoggedUtilsTest {
     /**
      * Verifies that no logging was done on the given log mock.
      */
-    private static void verifyNoLogging(Log logMock) {
-        verify(logMock, never()).traceFormat(any(String.class), any());
-        verify(logMock, never()).debugFormat(any(String.class), any());
-        verify(logMock, never()).infoFormat(any(String.class), any());
-        verify(logMock, never()).warnFormat(any(String.class), any());
-        verify(logMock, never()).errorFormat(any(String.class), any());
-        verify(logMock, never()).fatalFormat(any(String.class), any());
+    private static void verifyNoLogging(Logger logMock) {
+        verify(logMock, never()).trace(any(String.class), any());
+        verify(logMock, never()).debug(any(String.class), any());
+        verify(logMock, never()).info(any(String.class), any());
+        verify(logMock, never()).warn(any(String.class), any());
+        verify(logMock, never()).error(any(String.class), any());
     }
 
     /**
@@ -353,12 +355,11 @@ public class LoggedUtilsTest {
      * @param logSetup Setup the mocks using an anonymous inner class of this interface.
      */
     private static void helpTestLog(LogLevel logLevel, LogSetup logSetup) {
-        Log log = mock(Log.class);
-        String message = "{0}";
-        Object args = new Object();
-        logSetup.setup(log, message, args);
-
-        LoggedUtils.log(log, logLevel, message, args);
-        logSetup.verifyCall(log, message, args);
+        Logger log = mock(Logger.class);
+        String message = "{}";
+        Object s = "arg1";
+        logSetup.setup(log, message, s);
+        LoggedUtils.log(log, logLevel, message, s);
+        logSetup.verifyCall(log, message, s);
     }
 }

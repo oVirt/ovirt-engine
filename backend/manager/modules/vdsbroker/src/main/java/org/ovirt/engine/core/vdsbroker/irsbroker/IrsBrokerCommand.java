@@ -39,9 +39,16 @@ import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.BrokerCommandBase;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSExceptionBase;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcRunTimeException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
+
+    @Deprecated
+    private static final Log log = LogFactory.getLog(IrsBrokerCommand.class);
+    private static final Logger log1 = LoggerFactory.getLogger(IrsBrokerCommand.class);
+
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
     static final VDSStatus reportingVdsStatus = VDSStatus.Up;
 
@@ -171,7 +178,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (ExceptionUtils.getRootCause(ex) != null) {
                     logException(ExceptionUtils.getRootCause(ex));
                 } else {
-                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
             } catch (XmlRpcRunTimeException ex) {
@@ -182,7 +189,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     getVDSReturnValue().setSucceeded(false);
                 } else {
                     log.errorFormat("IrsBroker::Failed::{0}", getCommandName());
-                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
                     throw new IRSProtocolException(ex);
                 }
             } catch (IRSNoMasterDomainException ex) {
@@ -217,7 +224,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setVdsError(ex.getVdsError());
                 logException(ex);
                 if (log.isDebugEnabled()) {
-                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
             } catch (RuntimeException ex) {
@@ -230,7 +237,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         ExceptionUtils.getRootCause(ex) instanceof SocketException) {
                     logException(ExceptionUtils.getRootCause(ex));
                 } else {
-                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
                 }
                 // always failover because of changes in vdsm error, until we
                 // realize what to do in each case:
@@ -306,5 +313,4 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
         return returnValue;
     }
 
-    private static final Log log = LogFactory.getLog(IrsBrokerCommand.class);
 }

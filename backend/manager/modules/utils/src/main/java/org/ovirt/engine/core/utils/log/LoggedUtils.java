@@ -2,6 +2,7 @@ package org.ovirt.engine.core.utils.log;
 
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
+import org.slf4j.Logger;
 
 /**
  * Utilities for logging commands using the {@link Logged} annotation for configuring the logging behavior of a class.<br>
@@ -30,22 +31,22 @@ public class LoggedUtils {
     /**
      * Log format for entry log message.
      */
-    protected static final String ENTRY_LOG = "START, {0}, log id: {1}";
+    protected static final String ENTRY_LOG = "START, {}, log id: {}";
 
     /**
      * Log format for return log message with no return value.
      */
-    protected static final String EXIT_LOG_VOID = "FINISH, {0}, log id: {1}";
+    protected static final String EXIT_LOG_VOID = "FINISH, {}, log id: {}";
 
     /**
      * Log format for return log message with a return value.
      */
-    protected static final String EXIT_LOG_RETURN_VALUE = "FINISH, {0}, return: {1}, log id: {2}";
+    protected static final String EXIT_LOG_RETURN_VALUE = "FINISH, {}, return: {}, log id: {}";
 
     /**
      * Log format for exception log message with exception message.
      */
-    protected static final String ERROR_LOG = "ERROR, {0}, exception: {1}, log id: {2}";
+    protected static final String ERROR_LOG = "ERROR, {}, exception: {}, log id: {}";
 
     /* --- Public Methods --- */
 
@@ -74,9 +75,9 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logEntry(Log log, String id, Object obj) {
+    public static void logEntry(Logger log, String id, Object obj) {
         Logged logged = getAnnotation(obj);
-        if (logged != null && isLogLevelOn(log, logged.executionLevel())) {
+        if (logged != null) {
             log(log, logged.executionLevel(), ENTRY_LOG, determineMessage(log, logged, obj), id);
         }
     }
@@ -93,7 +94,7 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logReturn(Log log, String id, Object obj, Object returnValue) {
+    public static void logReturn(Logger log, String id, Object obj, Object returnValue) {
         Logged logged = getAnnotation(obj);
         if (logged != null) {
             LogLevel logLevel = logged.executionLevel();
@@ -120,11 +121,12 @@ public class LoggedUtils {
      * @param obj
      *            The object to log for.
      */
-    public static void logError(Log log, String id, Object obj, Throwable t) {
+    public static void logError(Logger log, String id, Object obj, Throwable t) {
         Logged logged = getAnnotation(obj);
         if (logged != null && isLogLevelOn(log, logged.errorLevel())) {
             log(log, logged.errorLevel(), ERROR_LOG, determineMessage(log, logged, obj),
-                    ExceptionUtils.getMessage(t), id, t);
+                    ExceptionUtils.getMessage(t), id);
+            log.error("Exception", t);
         }
     }
 
@@ -145,32 +147,28 @@ public class LoggedUtils {
      *            Optional parameters for the message.
      * @see MessageFormat#format(Object[], StringBuffer, java.text.FieldPosition)
      */
-    protected static void log(Log log, Logged.LogLevel logLevel, String message, Object... parameters) {
+    protected static void log(Logger log, Logged.LogLevel logLevel, String message, Object... parameters) {
         try {
-            if (isLogLevelOn(log, logLevel)) {
-                switch (logLevel) {
-                case FATAL:
-                    log.fatalFormat(message, parameters);
-                    break;
-                case ERROR:
-                    log.errorFormat(message, parameters);
-                    break;
-                case WARN:
-                    log.warnFormat(message, parameters);
-                    break;
-                case INFO:
-                    log.infoFormat(message, parameters);
-                    break;
-                case DEBUG:
-                    log.debugFormat(message, parameters);
-                    break;
-                case TRACE:
-                    log.traceFormat(message, parameters);
-                    break;
-                case OFF:
-                default:
-                    break;
-                }
+            switch (logLevel) {
+            case FATAL:
+            case ERROR:
+                log.error(message, parameters);
+                break;
+            case WARN:
+                log.warn(message, parameters);
+                break;
+            case INFO:
+                log.info(message, parameters);
+                break;
+            case DEBUG:
+                log.debug(message, parameters);
+                break;
+            case TRACE:
+                log.trace(message, parameters);
+                break;
+            case OFF:
+            default:
+                break;
             }
         } catch (Throwable th) {
             try {
@@ -202,10 +200,9 @@ public class LoggedUtils {
      *            The log level to check if active.
      * @return Whether the log level is active on the log or not.
      */
-    protected static boolean isLogLevelOn(Log log, Logged.LogLevel logLevel) {
+    protected static boolean isLogLevelOn(Logger log, Logged.LogLevel logLevel) {
         switch (logLevel) {
         case FATAL:
-            return log.isFatalEnabled();
         case ERROR:
             return log.isErrorEnabled();
         case WARN:
@@ -234,7 +231,7 @@ public class LoggedUtils {
      *
      * @return The message for logging.
      */
-    protected static Object determineMessage(Log log, Logged logged, Object obj) {
+    protected static Object determineMessage(Logger log, Logged logged, Object obj) {
         if (logged != null
                 && !isLogLevelOn(log, LogLevel.getMinimalLevel(logged.parametersLevel(), logged.executionLevel()))) {
             return obj.getClass().getName();
