@@ -1,4 +1,4 @@
-package org.ovirt.engine.core.vdsbroker.jsonrpc;
+package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.httpclient.HttpClient;
 import org.ovirt.engine.core.common.businessentities.VdsProtocol;
@@ -8,6 +8,9 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IIrsServer;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsServerConnector;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsServerWrapper;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcIIrsServer;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcUtils;
+import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerConnector;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsServerWrapper;

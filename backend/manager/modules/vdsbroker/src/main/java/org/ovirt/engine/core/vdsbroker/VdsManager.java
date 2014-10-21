@@ -53,7 +53,6 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IRSErrorException;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.GetCapabilitiesVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersister;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersisterImpl;

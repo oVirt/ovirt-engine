@@ -74,7 +74,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.jsonrpc.JsonRpcIIrsServer;
-import org.ovirt.engine.core.vdsbroker.jsonrpc.TransportFactory;
+import org.ovirt.engine.core.vdsbroker.TransportFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StoragePoolDomainHelper;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcUtils;
