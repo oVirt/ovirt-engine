@@ -86,13 +86,19 @@ public final class HostNetworkTopologyPersisterImpl implements HostNetworkTopolo
                 return NonOperationalReason.VM_NETWORK_IS_BRIDGELESS;
             }
 
-            final Map<String, Network> clusterNetworksByName = Entities.entitiesByName(clusterNetworks);
-            final Collection<Network> dbHostNetworks = findNetworksOnInterfaces(dbIfaces, clusterNetworksByName);
-            logChangedDisplayNetwork(host, dbHostNetworks, dbIfaces);
-            logUnsynchronizedNetworks(host, clusterNetworksByName);
+            auditNetworkCompliance(host, dbIfaces, clusterNetworks);
         }
 
         return NonOperationalReason.NONE;
+    }
+
+    private void auditNetworkCompliance(VDS host,
+            List<VdsNetworkInterface> dbIfaces,
+            List<Network> clusterNetworks) {
+        final Map<String, Network> clusterNetworksByName = Entities.entitiesByName(clusterNetworks);
+        final Collection<Network> dbHostNetworks = findNetworksOnInterfaces(dbIfaces, clusterNetworksByName);
+        logChangedDisplayNetwork(host, dbHostNetworks, dbIfaces);
+        logUnsynchronizedNetworks(host, clusterNetworksByName);
     }
 
     @Override
