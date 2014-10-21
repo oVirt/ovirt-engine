@@ -716,6 +716,7 @@ public class VmSnapshotListModel extends SearchableListModel
         setupAddVmFromSnapshotParameters(parameters);
         parameters.setConsoleEnabled(model.getIsConsoleDeviceEnabled().getEntity());
         parameters.setVirtioScsiEnabled(model.getIsVirtioScsiEnabled().getEntity());
+        parameters.setBalloonEnabled(model.getMemoryBalloonDeviceEnabled().getEntity());
 
         model.startProgress(null);
 
