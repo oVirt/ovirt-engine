@@ -5,14 +5,14 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterJobsManager {
 
-    private static final Log log = LogFactory.getLog(GlusterJobsManager.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterJobsManager.class);
 
     public static void init() {
         if (!glusterModeSupported()) {

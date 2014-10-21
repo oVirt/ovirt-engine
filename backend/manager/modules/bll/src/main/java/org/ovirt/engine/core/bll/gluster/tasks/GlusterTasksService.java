@@ -17,11 +17,11 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterTasksService {
-    private static final Log log = LogFactory.getLog(GlusterTasksService.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterTasksService.class);
 
     public Map<Guid, GlusterAsyncTask> getTaskListForCluster(Guid id) {
         VDS upServer = ClusterUtils.getInstance().getRandomUpServer(id);
@@ -39,7 +39,7 @@ public class GlusterTasksService {
             }
             return tasksMap;
         } else {
-            log.error(returnValue.getVdsError());
+            log.error("Error: {}", returnValue.getVdsError());
             throw new VdcBLLException(VdcBllErrors.GlusterVolumeStatusAllFailedException, returnValue.getVdsError().getMessage());
         }
     }

@@ -24,15 +24,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterServicesListVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterServiceSyncJob extends GlusterJob {
-    private static final Log log = LogFactory.getLog(GlusterServiceSyncJob.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterServiceSyncJob.class);
     private static final GlusterServiceSyncJob instance = new GlusterServiceSyncJob();
     private final Map<String, GlusterService> serviceNameMap = new HashMap<String, GlusterService>();
 
@@ -72,9 +72,10 @@ public class GlusterServiceSyncJob extends GlusterJob {
                         }
                     }
                 } catch (Exception e) {
-                    log.errorFormat("Error while refreshing service statuses of cluster {0}!",
+                    log.error("Error while refreshing service statuses of cluster '{}': {}",
                             cluster.getName(),
-                            e);
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
         }
@@ -223,7 +224,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                 VDSReturnValue returnValue = runVdsCommand(VDSCommandType.GlusterServicesList,
                         new GlusterServicesListVDSParameters(server.getId(), getServiceNameMap().keySet()));
                 if (!returnValue.getSucceeded()) {
-                    log.errorFormat("Couldn't fetch services statuses from server {0}, error: {1}! " +
+                    log.error("Couldn't fetch services statuses from server '{}', error: {}! " +
                             "Updating statuses of all services on this server to UNKNOWN.",
                             server.getHostName(),
                             returnValue.getVdsError().getMessage());
@@ -240,7 +241,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
                         final GlusterServiceStatus oldStatus = existingService.getStatus();
                         final GlusterServiceStatus newStatus = fetchedService.getStatus();
                         if (oldStatus != newStatus) {
-                            log.infoFormat("Status of service {0} on server {1} changed from {2} to {3}. Updating in engine now.",
+                            log.info("Status of service '{}' on server '{}' changed from '{}' to '{}'. Updating in engine now.",
                                     fetchedService.getServiceName(),
                                     server.getHostName(),
                                     oldStatus.name(),
@@ -299,7 +300,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
     private void insertServerService(VDS server, final GlusterServerService fetchedService) {
         fetchedService.setId(Guid.newGuid());
         getGlusterServerServiceDao().save(fetchedService);
-        log.infoFormat("Service {0} was not mapped to server {1}. Mapped it now.",
+        log.info("Service '{}' was not mapped to server '{}'. Mapped it now.",
                 fetchedService.getServiceName(),
                 server.getHostName());
         logUtil.logAuditMessage(server.getVdsGroupId(),
@@ -319,7 +320,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
         final GlusterServiceStatus oldStatus = clusterService.getStatus();
         clusterService.setStatus(newStatus);
         getGlusterClusterServiceDao().update(clusterService);
-        log.infoFormat("Status of service type {0} changed on cluster {1} from {2} to {3}.",
+        log.info("Status of service type '{}' changed on cluster '{}' from '{}' to '{}'.",
                 clusterService.getServiceType().name(),
                 clusterService.getClusterId(),
                 oldStatus,
@@ -348,7 +349,7 @@ public class GlusterServiceSyncJob extends GlusterJob {
 
         getGlusterClusterServiceDao().save(clusterService);
 
-        log.infoFormat("Service type {0} not mapped to cluster {1}. Mapped it now.",
+        log.info("Service type '{}' not mapped to cluster '{}'. Mapped it now.",
                 serviceType,
                 cluster.getName());
         logUtil.logAuditMessage(clusterService.getClusterId(),

@@ -26,13 +26,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.common.vdscommands.gluster.GlusterHookVDSParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterHookSyncJob extends GlusterJob {
-    private static final Log log = LogFactory.getLog(GlusterHookSyncJob.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterHookSyncJob.class);
 
     private static final GlusterHookSyncJob instance = new GlusterHookSyncJob();
 
@@ -60,7 +60,7 @@ public class GlusterHookSyncJob extends GlusterJob {
             return;
         }
 
-        log.debugFormat("Syncing hooks for cluster {0}", cluster.getName());
+        log.debug("Syncing hooks for cluster {}", cluster.getName());
         List<VDS> upServers = getClusterUtils().getAllUpServers(cluster.getId());
 
         if (upServers == null || upServers.isEmpty()) {
@@ -119,7 +119,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                 upServers.add(server);
 
                 if (!pairResult.getSecond().getSucceeded()) {
-                    log.infoFormat("Failed to get list of hooks from server {0} with error {1} ", server,
+                    log.info("Failed to get list of hooks from server '{}' with error: {}", server,
                             pairResult.getSecond().getVdsError().getMessage());
                     logUtil.logServerMessage(server, AuditLogType.GLUSTER_HOOK_LIST_FAILED);
                     continue;
@@ -157,7 +157,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                             } else {
                                 if (!(serverHook.getChecksum().equals(fetchedHook.getChecksum()) && serverHook.getContentType().equals(fetchedHook.getContentType())
                                         && serverHook.getStatus().equals(fetchedHook.getStatus()))) {
-                                    log.infoFormat("Updating existing server hook {0} in server {1} ", key, server);
+                                    log.info("Updating existing server hook '{}' in server '{}' ", key, server);
                                     serverHook.setChecksum(fetchedHook.getChecksum());
                                     serverHook.setContentType(fetchedHook.getContentType());
                                     serverHook.setStatus(fetchedHook.getStatus());
@@ -172,7 +172,7 @@ public class GlusterHookSyncJob extends GlusterJob {
                             newHook = fetchedHook;
                             newHook.setClusterId(clusterId);
                             newHook.setId(Guid.newGuid());
-                            log.infoFormat("Detected new hook {0} in server {1}, adding to engine hooks", key, server);
+                            log.info("Detected new hook '{}' in server '{}', adding to engine hooks", key, server);
                             logMessage(clusterId, key, AuditLogType.GLUSTER_HOOK_DETECTED_NEW);
 
                             updateContentTasksList(contentTasksList, newHook, server);
@@ -241,7 +241,7 @@ public class GlusterHookSyncJob extends GlusterJob {
         for (Pair<GlusterHookEntity, VDSReturnValue> pairResult: pairResults) {
             final GlusterHookEntity hook = pairResult.getFirst();
             if (!pairResult.getSecond().getSucceeded()) {
-                log.infoFormat("Failed to get content of hook {0} with error {1} ", hook.getHookKey(),
+                log.info("Failed to get content of hook '{}' with error: {}", hook.getHookKey(),
                         pairResult.getSecond().getVdsError().getMessage());
                 logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_GETCONTENT_FAILED);
                 continue;
@@ -289,7 +289,8 @@ public class GlusterHookSyncJob extends GlusterJob {
             // Check if aggregated conflict status is different from existing hook
             Integer oldConflictStatus = existingHookConflictMap.get(hook.getHookKey());
             if (!(hook.getConflictStatus().equals(oldConflictStatus))) {
-                log.debugFormat("Conflict change detected for hook {0} in cluster {1} ", hook.getHookKey(), hook.getClusterId());
+                log.debug("Conflict change detected for hook '{}' in cluster '{}' ",
+                        hook.getHookKey(), hook.getClusterId());
                 logMessage(hook.getClusterId(), hook.getHookKey(), AuditLogType.GLUSTER_HOOK_CONFLICT_DETECTED);
                 getHooksDao().updateGlusterHookConflictStatus(hook.getId(), hook.getConflictStatus());
             }

@@ -38,8 +38,8 @@ import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterTaskUtils {
     private static GlusterTaskUtils instance;
@@ -58,7 +58,7 @@ public class GlusterTaskUtils {
         taskTypeAuditMsg.put(GlusterTaskType.REMOVE_BRICK, AuditLogType.GLUSTER_VOLUME_MIGRATE_BRICK_DATA_FINISHED);
     }
 
-    private static final Log log = LogFactory.getLog(GlusterTasksSyncJob.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
 
     private GlusterTaskUtils() {
     }
@@ -119,7 +119,7 @@ public class GlusterTaskUtils {
             releaseLock(vol.getId());
 
         } else {
-            log.debugFormat("Did not find a volume associated with task {0}", taskId);
+            log.debug("Did not find a volume associated with task '{}'", taskId);
         }
     }
 

@@ -43,15 +43,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterTasksSyncJob extends GlusterJob  {
-    private static final Log log = LogFactory.getLog(GlusterTasksSyncJob.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterTasksSyncJob.class);
 
     private static GlusterTasksSyncJob instance = new GlusterTasksSyncJob();
 
@@ -155,7 +155,8 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         GlusterVolumeEntity vol = getVolumeDao().getByName(cluster.getId(), volumeName);
 
         if (vol == null) {
-            log.infoFormat("Volume {0} does not exist yet for task detected from CLI {1}, not adding to engine", volumeName, task);
+            log.info("Volume '{}' does not exist yet for task detected from CLI '{}', not adding to engine",
+                    volumeName, task);
             return;
         }
 
@@ -237,7 +238,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
                         GlusterBrickEntity brickEntity = new GlusterBrickEntity();
                         VdsStatic server = GlusterDBUtils.getInstance().getServer(cluster.getId(), hostnameOrIp);
                         if (server == null) {
-                            log.warnFormat("Could not find server {0} in cluster {1}", hostnameOrIp, cluster.getId());
+                            log.warn("Could not find server '{}' in cluster '{}'", hostnameOrIp, cluster.getId());
                         } else {
                             brickEntity.setServerId(server.getId());
                             brickEntity.setBrickDirectory(brickDir);
@@ -251,7 +252,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
             }
             logTaskStartedFromCLI(cluster, task, vol);
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception", e);
             // Release the lock only if there is any exception,
             // otherwise the lock will be released once the task is completed
             releaseLock(vol.getId());
@@ -333,7 +334,7 @@ public class GlusterTasksSyncJob extends GlusterJob  {
         //if task is in DB but not in running task list
         final Set<Guid> tasksNotRunning = new HashSet<Guid>(taskListInDB);
         tasksNotRunning.removeAll(allRunningTasksInCluster);
-        log.debugFormat("tasks to be cleaned up in db {0}", tasksNotRunning);
+        log.debug("Tasks to be cleaned up in db '{}'", tasksNotRunning);
 
         for (Guid taskId: tasksNotRunning) {
             GlusterVolumeEntity vol= getVolumeDao().getVolumeByGlusterTask(taskId);

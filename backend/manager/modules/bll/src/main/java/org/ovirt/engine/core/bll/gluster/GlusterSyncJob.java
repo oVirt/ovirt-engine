@@ -45,11 +45,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is responsible for keeping the Gluster related data of engine in sync with the actual data retrieved from
@@ -57,7 +57,7 @@ import org.ovirt.engine.core.utils.transaction.TransactionSupport;
  * engine as well.
  */
 public class GlusterSyncJob extends GlusterJob {
-    private final Log log = LogFactory.getLog(GlusterSyncJob.class);
+    private final Logger log = LoggerFactory.getLogger(GlusterSyncJob.class);
     private static final GlusterSyncJob instance = new GlusterSyncJob();
 
     private GlusterSyncJob() {
@@ -86,21 +86,22 @@ public class GlusterSyncJob extends GlusterJob {
                 try {
                     refreshClusterData(cluster);
                 } catch (Exception e) {
-                    log.errorFormat("Error while refreshing Gluster lightweight data of cluster {0}!",
+                    log.error("Error while refreshing Gluster lightweight data of cluster '{}': {}",
                             cluster.getName(),
-                            e);
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
         }
     }
 
     private void refreshClusterData(VDSGroup cluster) {
-        log.debugFormat("Refreshing Gluster lightweight Data for cluster {0}", cluster.getName());
+        log.debug("Refreshing Gluster lightweight Data for cluster '{}'", cluster.getName());
 
         List<VDS> existingServers = getVdsDao().getAllForVdsGroup(cluster.getId());
         VDS upServer = getClusterUtils().getUpServer(cluster.getId());
         if (upServer == null) {
-            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getName());
+            log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
         }
 
@@ -123,14 +124,14 @@ public class GlusterSyncJob extends GlusterJob {
             // If the cluster supports virt service as well, we should not be removing any servers from it, even if they
             // have been removed from the Gluster cluster using the Gluster cli, as they could potentially be used for
             // running VMs
-            log.debugFormat("As cluster {0} supports virt service as well, it's servers will not be synced with glusterfs",
+            log.debug("As cluster '{}' supports virt service as well, it's servers will not be synced with glusterfs",
                     cluster.getName());
             return;
         }
 
         acquireLock(cluster.getId());
 
-        log.debugFormat("Refreshing Gluster Server data for cluster {0} using server {1} ",
+        log.debug("Refreshing Gluster Server data for cluster '{}' using server '{}'",
                 cluster.getName(),
                 upServer.getName());
         try {
@@ -139,14 +140,17 @@ public class GlusterSyncJob extends GlusterJob {
                 syncServers(existingServers, fetchedServers);
             }
         } catch(Exception e) {
-            log.errorFormat("Error while refreshing server data for cluster {0} from database!", cluster.getName(), e);
+            log.error("Error while refreshing server data for cluster '{}' from database: {}",
+                    cluster.getName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         } finally {
             releaseLock(cluster.getId());
         }
     }
 
     private void syncServers(List<VDS> existingServers, List<GlusterServerInfo> fetchedServers) {
-        log.debugFormat("Existing servers list returned {0} comparing with fetched servers {1)", existingServers, fetchedServers);
+        log.debug("Existing servers list returned '{}' comparing with fetched servers '{}'", existingServers, fetchedServers);
 
         boolean serverRemoved = false;
         for (VDS server : existingServers) {
@@ -154,7 +158,7 @@ public class GlusterSyncJob extends GlusterJob {
             if (isRemovableStatus(server.getStatus())) {
                 GlusterServerInfo glusterServer = findGlusterServer(server, fetchedServers);
                 if (glusterServer == null) {
-                    log.infoFormat("Server {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
+                    log.info("Server '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
                             server.getName());
                     logUtil.logServerMessage(server, AuditLogType.GLUSTER_SERVER_REMOVED_FROM_CLI);
                     try (EngineLock lock = getGlusterUtil().acquireGlusterLockWait(server.getId())) {
@@ -163,7 +167,10 @@ public class GlusterSyncJob extends GlusterJob {
                         runVdsCommand(VDSCommandType.RemoveVds, new RemoveVdsVDSCommandParameters(server.getId()));
                         serverRemoved = true;
                     } catch (Exception e) {
-                        log.errorFormat("Error while removing server {0} from database!", server.getName(), e);
+                        log.error("Error while removing server '{}' from database: {}",
+                                server.getName(),
+                                e.getMessage());
+                        log.debug("Exception", e);
                     }
                 }
                 else if (server.getStatus() == VDSStatus.Up && glusterServer.getStatus() == PeerStatus.DISCONNECTED) {
@@ -178,8 +185,8 @@ public class GlusterSyncJob extends GlusterJob {
             }
         }
         if (serverRemoved) {
-            log.infoFormat("Servers detached using gluster CLI  is removed from engine after inspecting the Gluster servers list returned {0} "
-                    + "- comparing with db servers {1}",
+            log.info("Servers detached using gluster CLI is removed from engine after inspecting the Gluster servers"
+                    + " list returned '{}' - comparing with db servers '{}'",
                     fetchedServers, existingServers);
         }
     }
@@ -260,13 +267,13 @@ public class GlusterSyncJob extends GlusterJob {
         List<GlusterServerInfo> fetchedServers = fetchServers(upServer, tempServers);
 
         if (fetchedServers == null) {
-            log.errorFormat("gluster peer status command failed on all servers of the cluster {0}."
+            log.error("gluster peer status command failed on all servers of the cluster '{}'."
                     + "Can't refresh it's data at this point.", cluster.getName());
             return null;
         }
 
         if (fetchedServers.size() == 1 && existingServers.size() > 2) {
-            log.infoFormat("Gluster servers list fetched from server {0} has only one server", upServer.getName());
+            log.info("Gluster servers list fetched from server '{}' has only one server", upServer.getName());
             // It's possible that the server we are using to get list of servers itself has been removed from the
             // cluster, and hence is returning a single server (itself)
             GlusterServerInfo server = fetchedServers.iterator().next();
@@ -275,7 +282,7 @@ public class GlusterSyncJob extends GlusterJob {
                 tempServers.remove(upServer);
                 upServer = getNewUpServer(tempServers, upServer);
                 if (upServer == null) {
-                    log.warnFormat("The only UP server in cluster {0} seems to have been removed from it using gluster CLI. "
+                    log.warn("The only UP server in cluster '{}' seems to have been removed from it using gluster CLI. "
                             + "Can't refresh it's data at this point.",
                             cluster.getName());
                     return null;
@@ -283,7 +290,7 @@ public class GlusterSyncJob extends GlusterJob {
 
                 fetchedServers = fetchServers(upServer, tempServers);
                 if (fetchedServers == null) {
-                    log.warnFormat("The only UP server in cluster {0} (or the only one on which gluster peer status "
+                    log.warn("The only UP server in cluster '{}' (or the only one on which gluster peer status "
                             + "command is working) seems to have been removed from it using gluster CLI. "
                             + "Can't refresh it's data at this point.", cluster.getName());
                     return null;
@@ -315,10 +322,10 @@ public class GlusterSyncJob extends GlusterJob {
     private List<GlusterServerInfo> fetchServers(VDS upServer, List<VDS> existingServers) {
         List<GlusterServerInfo> fetchedServers = null;
         while (fetchedServers == null && !existingServers.isEmpty()) {
-            log.debugFormat("Fetching gluster servers list from server {0}", upServer.getName());
+            log.debug("Fetching gluster servers list from server '{}'", upServer.getName());
             fetchedServers = fetchServers(upServer);
             if (fetchedServers == null) {
-                log.infoFormat("Gluster servers list failed in server {0} moving it to NonOperational",
+                log.info("Gluster servers list failed in server '{}' moving it to NonOperational",
                         upServer.getName());
                 logUtil.logServerMessage(upServer, AuditLogType.GLUSTER_SERVERS_LIST_FAILED);
                 // Couldn't fetch servers from the up server. Mark it as non-operational
@@ -362,7 +369,7 @@ public class GlusterSyncJob extends GlusterJob {
             // Pass a copy of the existing servers as the fetchVolumes method can potentially remove elements from it
             Map<Guid, GlusterVolumeEntity> volumesMap = fetchVolumes(upServer, new ArrayList<VDS>(existingServers));
             if (volumesMap == null) {
-                log.errorFormat("gluster volume info command failed on all servers of the cluster {0}."
+                log.error("gluster volume info command failed on all servers of the cluster '{}'."
                         + "Can't refresh it's data at this point.", cluster.getName());
                 return;
             }
@@ -415,7 +422,7 @@ public class GlusterSyncJob extends GlusterJob {
         for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(clusterId)) {
             if (!volumesMap.containsKey(volume.getId())) {
                 idsToRemove.add(volume.getId());
-                log.debugFormat("Volume {0} has been removed directly using the gluster CLI. Removing it from engine as well.",
+                log.debug("Volume '{}' has been removed directly using the gluster CLI. Removing it from engine as well.",
                         volume.getName());
                 logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_DELETED_FROM_CLI);
             }
@@ -425,7 +432,7 @@ public class GlusterSyncJob extends GlusterJob {
             try {
                 getVolumeDao().removeAll(idsToRemove);
             } catch (Exception e) {
-                log.errorFormat("Error while removing volumes from database!", e);
+                log.error("Error while removing volumes from database!", e);
             }
         }
     }
@@ -433,22 +440,24 @@ public class GlusterSyncJob extends GlusterJob {
     private void updateExistingAndNewVolumes(Guid clusterId, Map<Guid, GlusterVolumeEntity> volumesMap) {
         for (Entry<Guid, GlusterVolumeEntity> entry : volumesMap.entrySet()) {
             GlusterVolumeEntity volume = entry.getValue();
-            log.debugFormat("Analyzing volume {0}", volume.getName());
+            log.debug("Analyzing volume '{}'", volume.getName());
 
             GlusterVolumeEntity existingVolume = getVolumeDao().getById(entry.getKey());
             if (existingVolume == null) {
                 try {
                     createVolume(volume);
                 } catch (Exception e) {
-                    log.errorFormat("Could not save volume {0} in database!", volume.getName(), e);
+                    log.error("Could not save volume {} in database: {}", volume.getName(), e.getMessage());
+                    log.debug("Exception", e);
                 }
             } else {
                 try {
-                    log.debugFormat("Volume {0} exists in engine. Checking if it needs to be updated.",
+                    log.debug("Volume '{}' exists in engine. Checking if it needs to be updated.",
                             existingVolume.getName());
                     updateVolume(existingVolume, volume);
                 } catch (Exception e) {
-                    log.errorFormat("Error while updating Volume {0}!", volume.getName(), e);
+                    log.error("Error while updating volume '{}': {}", volume.getName(), e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
         }
@@ -461,19 +470,19 @@ public class GlusterSyncJob extends GlusterJob {
      */
     private void createVolume(final GlusterVolumeEntity volume) {
         if (volume.getBricks() == null) {
-            log.warnFormat("Bricks of volume {0} were not fetched. " +
+            log.warn("Bricks of volume '{}' were not fetched. " +
                     "Hence will not add it to engine at this point.", volume.getName());
             return;
         }
 
         for (GlusterBrickEntity brick : volume.getBricks()) {
             if (brick == null) {
-                log.warnFormat("Volume {0} contains a apparently corrupt brick(s). " +
+                log.warn("Volume '{}' contains a apparently corrupt brick(s). " +
                         "Hence will not add it to engine at this point.",
                         volume.getName());
                 return;
             } else if (brick.getServerId() == null) {
-                log.warnFormat("Volume {0} contains brick(s) from unknown hosts. " +
+                log.warn("Volume '{}' contains brick(s) from unknown hosts. " +
                         "Hence will not add it to engine at this point.",
                         volume.getName());
                 return;
@@ -486,7 +495,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         logUtil.logVolumeMessage(volume, AuditLogType.GLUSTER_VOLUME_CREATED_FROM_CLI);
-        log.debugFormat("Volume {0} has been created directly using the gluster CLI. Creating it in engine as well.",
+        log.debug("Volume '{}' has been created directly using the gluster CLI. Creating it in engine as well.",
                 volume.getName());
         getVolumeDao().save(volume);
     }
@@ -509,7 +518,7 @@ public class GlusterSyncJob extends GlusterJob {
         Collection<TransportType> addedTransportTypes =
                 ListUtils.getAddedElements(existingTransportTypes, fetchedTransportTypes);
         if (!addedTransportTypes.isEmpty()) {
-            log.infoFormat("Adding transport type(s) {0} to volume {1}",
+            log.info("Adding transport type(s) '{}' to volume '{}'",
                     addedTransportTypes,
                     existingVolume.getName());
             getVolumeDao().addTransportTypes(existingVolume.getId(), addedTransportTypes);
@@ -518,7 +527,7 @@ public class GlusterSyncJob extends GlusterJob {
         Collection<TransportType> removedTransportTypes =
                 ListUtils.getAddedElements(fetchedTransportTypes, existingTransportTypes);
         if (!removedTransportTypes.isEmpty()) {
-            log.infoFormat("Removing transport type(s) {0} from volume {1}",
+            log.info("Removing transport type(s) '{}' from volume '{}'",
                     removedTransportTypes,
                     existingVolume.getName());
             getVolumeDao().removeTransportTypes(existingVolume.getId(), removedTransportTypes);
@@ -528,7 +537,7 @@ public class GlusterSyncJob extends GlusterJob {
     private void updateBricks(GlusterVolumeEntity existingVolume, GlusterVolumeEntity fetchedVolume) {
         List<GlusterBrickEntity> fetchedBricks = fetchedVolume.getBricks();
         if (fetchedBricks == null) {
-            log.warnFormat("Bricks of volume {0} were not fetched. " +
+            log.warn("Bricks of volume '{}' were not fetched. " +
                     "Hence will not try to update them in engine at this point.",
                     fetchedVolume.getName());
             return;
@@ -544,7 +553,7 @@ public class GlusterSyncJob extends GlusterJob {
         for (final GlusterBrickEntity existingBrick : existingVolume.getBricks()) {
             if (!GlusterCoreUtil.containsBrick(fetchedBricks, existingBrick)) {
                 idsToRemove.add(existingBrick.getId());
-                log.infoFormat("Detected brick {0} removed from Volume {1}. Removing it from engine DB as well.",
+                log.info("Detected brick '{}' removed from volume '{}'. Removing it from engine DB as well.",
                         existingBrick.getQualifiedName(),
                         existingVolume.getName());
                 logUtil.logAuditMessage(existingVolume.getClusterId(), existingVolume, null,
@@ -560,7 +569,8 @@ public class GlusterSyncJob extends GlusterJob {
             try {
                 getBrickDao().removeAll(idsToRemove);
             } catch (Exception e) {
-                log.errorFormat("Error while removing bricks from database!", e);
+                log.error("Error while removing bricks from database: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
     }
@@ -573,7 +583,7 @@ public class GlusterSyncJob extends GlusterJob {
                 // server id could be null if the new brick resides on a server that is not yet added in the engine
                 // adding such servers to engine required manual approval by user, and hence can't be automated.
                 if (fetchedBrick.getServerId() != null) {
-                    log.infoFormat("New brick {0} added to volume {1} from gluster CLI. Updating engine DB accordingly.",
+                    log.info("New brick '{}' added to volume '{}' from gluster CLI. Updating engine DB accordingly.",
                             fetchedBrick.getQualifiedName(),
                             existingVolume.getName());
                     fetchedBrick.setStatus(existingVolume.isOnline() ? GlusterStatus.UP : GlusterStatus.DOWN);
@@ -589,7 +599,7 @@ public class GlusterSyncJob extends GlusterJob {
             } else {
                 // brick found. update it if required. Only property that could be different is the brick order
                 if (!Objects.equals(existingBrick.getBrickOrder(), fetchedBrick.getBrickOrder())) {
-                    log.infoFormat("Brick order for brick {0} changed from {1} to {2} because of direct CLI operations. Updating engine DB accordingly.",
+                    log.info("Brick order for brick '{}' changed from '{}' to '{}' because of direct CLI operations. Updating engine DB accordingly.",
                             existingBrick.getQualifiedName(),
                             existingBrick.getBrickOrder(),
                             fetchedBrick.getBrickOrder());
@@ -614,7 +624,7 @@ public class GlusterSyncJob extends GlusterJob {
         for (final GlusterVolumeOptionEntity existingOption : existingOptions) {
             if (fetchedVolume.getOption(existingOption.getKey()) == null) {
                 idsToRemove.add(existingOption.getId());
-                log.infoFormat("Detected option {0} reset on volume {1}. Removing it from engine DB as well.",
+                log.info("Detected option '{}' reset on volume '{}'. Removing it from engine DB as well.",
                         existingOption.getKey(),
                         fetchedVolume.getName());
                 // The option "group" gets implicitly replaced with a set of options defined in the group file
@@ -635,7 +645,10 @@ public class GlusterSyncJob extends GlusterJob {
             try {
                 getOptionDao().removeAll(idsToRemove);
             } catch (Exception e) {
-                log.errorFormat("Error while removing options of volume {0} from database!", fetchedVolume.getName(), e);
+                log.error("Error while removing options of volume '{}' from database: {}",
+                        fetchedVolume.getName(),
+                        e.getMessage());
+                log.debug("Exception", e);
             }
         }
     }
@@ -699,7 +712,7 @@ public class GlusterSyncJob extends GlusterJob {
                             put(GlusterConstants.OPTION_VALUE, entity.getValue());
                         }
                     });
-            log.infoFormat("New option {0}={1} set on volume {2} from gluster CLI. Updating engine DB accordingly.",
+            log.info("New option '{}'='{}' set on volume '{}' from gluster CLI. Updating engine DB accordingly.",
                     entity.getKey(),
                     entity.getValue(),
                     volume.getName());
@@ -718,7 +731,7 @@ public class GlusterSyncJob extends GlusterJob {
                             put(GlusterConstants.OPTION_NEW_VALUE, entity.getValue());
                         }
                     });
-            log.infoFormat("Detected change in value of option {0} of volume {1} from {2} to {3}. Updating engine DB accordingly.",
+            log.info("Detected change in value of option '{}' of volume '{}' from '{}' to '{}'. Updating engine DB accordingly.",
                     volume.getOption(entity.getKey()),
                     volume.getName(),
                     volume.getOption(entity.getKey()).getValue(),
@@ -756,7 +769,7 @@ public class GlusterSyncJob extends GlusterJob {
         }
 
         if (changed) {
-            log.infoFormat("Updating volume {0} with fetched properties.", existingVolume.getName());
+            log.info("Updating volume '{}' with fetched properties.", existingVolume.getName());
             getVolumeDao().updateGlusterVolume(existingVolume);
             logUtil.logVolumeMessage(existingVolume, AuditLogType.GLUSTER_VOLUME_PROPERTIES_CHANGED_FROM_CLI);
         }
@@ -785,9 +798,10 @@ public class GlusterSyncJob extends GlusterJob {
                 try {
                     refreshClusterHeavyWeightData(cluster);
                 } catch (Exception e) {
-                    log.errorFormat("Error while refreshing Gluster heavyweight data of cluster {0}!",
+                    log.error("Error while refreshing Gluster heavyweight data of cluster '{}': {}",
                             cluster.getName(),
-                            e);
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
         }
@@ -796,12 +810,12 @@ public class GlusterSyncJob extends GlusterJob {
     private void refreshClusterHeavyWeightData(VDSGroup cluster) {
         VDS upServer = getClusterUtils().getRandomUpServer(cluster.getId());
         if (upServer == null) {
-            log.debugFormat("No server UP in cluster {0}. Can't refresh it's data at this point.", cluster.getName());
+            log.debug("No server UP in cluster '{}'. Can't refresh it's data at this point.", cluster.getName());
             return;
         }
 
         for (GlusterVolumeEntity volume : getVolumeDao().getByClusterId(cluster.getId())) {
-            log.debugFormat("Refreshing brick statuses for volume {0} of cluster {1}",
+            log.debug("Refreshing brick statuses for volume '{}' of cluster '{}'",
                     volume.getName(),
                     cluster.getName());
             // brick statuses can be fetched only for started volumes
@@ -810,10 +824,11 @@ public class GlusterSyncJob extends GlusterJob {
                 try {
                     refreshVolumeDetails(upServer, volume);
                 } catch (Exception e) {
-                    log.errorFormat("Error while refreshing brick statuses for volume {0} of cluster {1}",
+                    log.error("Error while refreshing brick statuses for volume '{}' of cluster '{}': {}",
                             volume.getName(),
                             cluster.getName(),
-                            e);
+                            e.getMessage());
+                    log.debug("Exception", e);
                 } finally {
                     releaseLock(cluster.getId());
                 }
@@ -873,7 +888,7 @@ public class GlusterSyncJob extends GlusterJob {
     }
 
     private void logBrickStatusChange(GlusterVolumeEntity volume, final GlusterBrickEntity brick, final GlusterStatus fetchedStatus) {
-        log.debugFormat("Detected that status of brick {0} in volume {1} changed from {2} to {3}",
+        log.debug("Detected that status of brick '{}' in volume '{}' changed from '{}' to '{}'",
                 brick.getQualifiedName(), volume.getName(), brick.getStatus(), fetchedStatus);
         logUtil.logAuditMessage(volume.getClusterId(), volume, null,
                 AuditLogType.GLUSTER_BRICK_STATUS_CHANGED,
