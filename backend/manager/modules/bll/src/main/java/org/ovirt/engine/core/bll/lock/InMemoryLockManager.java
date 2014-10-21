@@ -26,10 +26,10 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The following class an implementation of internal locking mechanism
@@ -51,7 +51,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     private MBeanServer platformMBeanServer;
     private ObjectName objectName = null;
-    private static final Log log = LogFactory.getLog(InMemoryLockManager.class);
+    private static final Logger log = LoggerFactory.getLogger(InMemoryLockManager.class);
 
     @PostConstruct
     public void registerInJMX() {
@@ -75,7 +75,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     @Override
     public Pair<Boolean, Set<String>> acquireLock(EngineLock lock) {
-        log.debugFormat("Before acquiring lock {0}", lock);
+        log.debug("Before acquiring lock '{}'", lock);
         globalLock.lock();
         try {
             return acquireLockInternal(lock);
@@ -86,12 +86,12 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     @Override
     public void acquireLockWait(EngineLock lock) {
-        log.debugFormat("Before acquiring and wait lock {0}", lock);
+        log.debug("Before acquiring and wait lock '{}'", lock);
         validateLockForAcquireAndWait(lock);
         globalLock.lock();
         try {
             while (!acquireLockInternal(lock).getFirst()) {
-                log.infoFormat("Failed to acquire lock and wait lock {0}", lock);
+                log.info("Failed to acquire lock and wait lock '{}'", lock);
                 releasedLock.await();
             }
         } catch (InterruptedException e) {
@@ -103,14 +103,14 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     private void validateLockForAcquireAndWait(EngineLock lock) {
         if (lock.getSharedLocks() != null && lock.getExclusiveLocks().size() > 1) {
-            log.errorFormat("Trying to acquire or wait on shared or more than one exclussive locks {0}", lock);
+            log.error("Trying to acquire or wait on shared or more than one exclussive locks '{}'", lock);
             throw new IllegalArgumentException("Trying to acquire or wait on shared or more than one exclussive locks");
         }
     }
 
     @Override
     public void releaseLock(EngineLock lock) {
-        log.debugFormat("Before releasing a lock {0}", lock);
+        log.debug("Before releasing a lock '{}'", lock);
         globalLock.lock();
         try {
             if (lock.getSharedLocks() != null) {
@@ -143,13 +143,14 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
 
     @Override
     public boolean releaseLock(String lockId) {
-        log.warnFormat("The following lock is going to be released via external call, lockId {0}, error message can be left for shared lock",
+        log.warn("The following lock is going to be released via external call, lockId '{}', error message can be"
+                + " left for shared lock",
                 lockId);
         globalLock.lock();
         try {
             InternalLockView lock = locks.get(lockId);
             if (lock == null) {
-                log.warnFormat("Lock with id {0} does not exist and can not be released via external call", lockId);
+                log.warn("Lock with id '{}' does not exist and can not be released via external call", lockId);
                 return false;
             }
             if (lock.getExclusive()) {
@@ -161,7 +162,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         } finally {
             globalLock.unlock();
         }
-        log.warnFormat("Lock {0} was released via external call", lockId);
+        log.warn("Lock '{}' was released via external call", lockId);
         return true;
     }
 
@@ -207,7 +208,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                     Pair<Boolean, Set<String>> result =
                             insertSharedLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
                     if (!result.getFirst()) {
-                        log.debugFormat("Failed to acquire lock. Shared lock is taken for key :{0} , value: {1}",
+                        log.debug("Failed to acquire lock. Shared lock is taken for key '{}', value '{}'",
                                 entry.getKey(),
                                 entry.getValue().getFirst());
                         return result;
@@ -219,7 +220,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
                     Pair<Boolean, Set<String>> result =
                             insertExclusiveLock(buildHashMapKey(entry), entry.getValue().getSecond(), checkOnly);
                     if (!result.getFirst()) {
-                        log.debugFormat("Failed to acquire lock. Exclusive lock is taken for key: {0} , value: {1}",
+                        log.debug("Failed to acquire lock. Exclusive lock is taken for key '{}', value '{}'",
                                 entry.getKey(),
                                 entry.getValue().getFirst());
                         return result;
@@ -228,7 +229,7 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
             }
             checkOnly = false;
         }
-        log.debugFormat("Successed acquiring lock {0} succeeded ", lock);
+        log.debug("Success acquiring lock '{}' succeeded ", lock);
         return LOCK_INSERT_SUCCESS_RESULT;
     }
 
@@ -275,11 +276,11 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         InternalLockView lock = locks.get(key);
         if (lock != null && lock.getExclusive()) {
             locks.remove(key);
-            log.debugFormat("The exclusive lock for key {0} is released and lock is removed from map", key);
+            log.debug("The exclusive lock for key '{}' is released and lock is removed from map", key);
         } else if (lock == null) {
-            log.warnFormat("Trying to release exclusive lock which does not exist, lock key: {0}", key);
+            log.warn("Trying to release exclusive lock which does not exist, lock key: '{}'", key);
         } else {
-            log.warnFormat("Trying to release exclusive lock but lock is not exclusive. lock key: {0}", key);
+            log.warn("Trying to release exclusive lock but lock is not exclusive. lock key: '{}'", key);
         }
     }
 
@@ -288,18 +289,18 @@ public class InMemoryLockManager implements LockManager, LockManagerMonitorMXBea
         if (lock != null) {
             if (lock.getCount() > 0) {
                 lock.decreaseCount();
-                log.debugFormat("The shared lock for key {0} is released.", key);
+                log.debug("The shared lock for key '{}' is released.", key);
                 if (lock.getCount() == 0) {
                     locks.remove(key);
-                    log.debugFormat("The shared lock for key {0} is removed from map", key);
+                    log.debug("The shared lock for key '{}' is removed from map", key);
                 } else {
                     lock.removeMessage(message);
                 }
             } else {
-                log.warnFormat("Trying to decrease a shared lock for key: {0} , but shared index is 0", key);
+                log.warn("Trying to decrease a shared lock for key: '{}' , but shared index is 0", key);
             }
         } else {
-            log.warnFormat("Trying to release a shared lock for key: {0} , but lock does not exist", key);
+            log.warn("Trying to release a shared lock for key: '{}' , but lock does not exist", key);
         }
     }
 

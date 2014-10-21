@@ -15,15 +15,15 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
     private final TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand;
-    private static final Log log = LogFactory.getLog(LiveMigrateDisksTaskHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(LiveMigrateDisksTaskHandler.class);
 
     public LiveMigrateDisksTaskHandler(TaskHandlerCommand<? extends LiveMigrateVmDisksParameters> enclosingCommand) {
         this.enclosingCommand = enclosingCommand;
@@ -58,7 +58,7 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
                     if (!parameters.getTaskGroupSuccess()) {
                         ExecutionHandler.endTaskJob(commandContext.getExecutionContext(), false);
-                        log.errorFormat("Failed LiveMigrateDisk (Disk {0} , VM {1})",
+                        log.error("Failed LiveMigrateDisk (Disk '{}' , VM '{}')",
                                 parameters.getImageGroupID(),
                                 parameters.getVmId());
                     }

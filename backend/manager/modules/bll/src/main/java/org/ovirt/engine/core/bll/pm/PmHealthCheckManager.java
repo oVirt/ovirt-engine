@@ -25,11 +25,11 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AlertDirector;
 import org.ovirt.engine.core.utils.ThreadUtils;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for checking PM enabled hosts by sending a status command to each host configured PM agent cards and
@@ -37,7 +37,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  */
 public class PmHealthCheckManager {
 
-    private static final Log log = LogFactory.getLog(PmHealthCheckManager.class);
+    private static final Logger log = LoggerFactory.getLogger(PmHealthCheckManager.class);
     private static final PmHealthCheckManager instance = new PmHealthCheckManager();
     private boolean active = false;
 
@@ -50,7 +50,7 @@ public class PmHealthCheckManager {
      */
     public void initialize() {
         if(Config.<Boolean>getValue(ConfigValues.PMHealthCheckEnabled)) {
-            log.info("Start initializing " + getClass().getSimpleName());
+            log.info("Start initializing {}", getClass().getSimpleName());
             Integer pmHealthCheckInterval = Config.<Integer> getValue(ConfigValues.PMHealthCheckIntervalInSec);
             SchedulerUtilQuartzImpl.getInstance().scheduleAFixedDelayJob(this,
                     "pmHealthCheck",
@@ -59,7 +59,7 @@ public class PmHealthCheckManager {
                     pmHealthCheckInterval,
                     pmHealthCheckInterval,
                     TimeUnit.SECONDS);
-            log.info("Finished initializing " + getClass().getSimpleName());
+            log.info("Finished initializing {}", getClass().getSimpleName());
         }
     }
 
@@ -169,11 +169,11 @@ public class PmHealthCheckManager {
             if (restartVdsCommand.isPmReportsStatusDown()) {
                 VdcReturnValueBase retValue = Backend.getInstance().runInternalAction(VdcActionType.RestartVds, restartVdsCommand.getParameters());
                 if (retValue!= null && retValue.getSucceeded()) {
-                    log.infoFormat("Host {0} was started successfully by PM Health Check Manager",
+                    log.info("Host '{}' was started successfully by PM Health Check Manager",
                             host.getName());
                 }
                 else {
-                    log.infoFormat("PM Health Check Manager failed to start Host {0}", host.getName());
+                    log.info("PM Health Check Manager failed to start Host '{}'", host.getName());
                 }
             }
         }

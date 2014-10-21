@@ -24,14 +24,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.QuotaDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class QuotaManager {
     private static final QuotaManager INSTANCE = new QuotaManager();
     private final ReentrantReadWriteLock lock = new ReentrantReadWriteLock();
-    private final Log log = LogFactory.getLog(QuotaManager.class);
+    private final Logger log = LoggerFactory.getLogger(QuotaManager.class);
     private HashMap<Guid, Map<Guid, Quota>> storagePoolQuotaMap = new HashMap<Guid, Map<Guid, Quota>>();
 
     private final QuotaManagerAuditLogger quotaManagerAuditLogger = new QuotaManagerAuditLogger();
@@ -207,7 +207,7 @@ public class QuotaManager {
             Quota quota = quotaMap.get(entry.getKey());
             double value = entry.getValue();
             if (value < 0) {
-                log.errorFormat("Quota id {0} cached storage size is negative, removing from cache", entry.getKey());
+                log.error("Quota id '{}' cached storage size is negative, removing from cache", entry.getKey());
                 quotaMap.remove(entry.getKey());
                 continue;
             }
@@ -220,7 +220,7 @@ public class QuotaManager {
                     double value = quotaStorageEntry.getValue()
                             .get(quotaStorage.getStorageId());
                     if (value < 0) {
-                        log.errorFormat("Quota id {0} cached storage size is negative, removing from cache",
+                        log.error("Quota id '{}' cached storage size is negative, removing from cache",
                                 quotaStorageEntry.getKey());
                         quotaMap.remove(quotaStorageEntry.getKey());
                         continue;
@@ -707,7 +707,7 @@ public class QuotaManager {
                         :
                         AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
             }
-            log.errorFormat("No Quota id passed from command: {0}", parameters.getAuditLogable().getClass().getName());
+            log.error("No Quota id passed from command '{}'", parameters.getAuditLogable().getClass().getName());
             corruptedParameters.add(param);
             return false;
         }
@@ -721,7 +721,7 @@ public class QuotaManager {
             auditLogPair.setFirst(param.getParameterType() == QuotaConsumptionParameter.ParameterType.STORAGE ?
                     AuditLogType.MISSING_QUOTA_STORAGE_PARAMETERS_PERMISSIVE_MODE :
                     AuditLogType.MISSING_QUOTA_CLUSTER_PARAMETERS_PERMISSIVE_MODE);
-            log.errorFormat("The quota id {0} is not found in backend and DB.", param.getQuotaGuid().toString());
+            log.error("The quota id '{}' is not found in backend and DB.", param.getQuotaGuid());
             corruptedParameters.add(param);
             return false;
         } else {
@@ -741,7 +741,7 @@ public class QuotaManager {
 
         if (paramVds.getVdsGroupId() == null) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.errorFormat("Quota Vds parameters from command: {0} are missing vds group id",
+            log.error("Quota Vds parameters from command '{}' are missing vds group id",
                     parameters.getAuditLogable().getClass().getName());
             return false;
         }
@@ -759,7 +759,7 @@ public class QuotaManager {
 
         if (!vdsGroupInQuota) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.errorFormat("Quota Vds parameters from command: {0}. Vds group does not match quota",
+            log.error("Quota Vds parameters from command '{}'. Vds group does not match quota",
                     parameters.getAuditLogable().getClass().getName());
             return false;
         }
@@ -774,7 +774,7 @@ public class QuotaManager {
 
         if (paramStorage.getStorageDomainId() == null) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_QUOTA_IS_NOT_VALID.toString());
-            log.errorFormat("Quota storage parameters from command: {0} are missing storage domain id",
+            log.error("Quota storage parameters from command '{}' are missing storage domain id",
                     parameters.getAuditLogable().getClass().getName());
             return false;
         }
@@ -792,7 +792,7 @@ public class QuotaManager {
 
         if (!storageDomainInQuota) {
             parameters.getCanDoActionMessages().add(VdcBllMessages.ACTION_TYPE_FAILED_NO_QUOTA_SET_FOR_DOMAIN.toString());
-            log.errorFormat("Quota storage parameters from command: {0}. Storage domain does not match quota",
+            log.error("Quota storage parameters from command '{}'. Storage domain does not match quota",
                     parameters.getAuditLogable().getClass().getName());
             return false;
         }
@@ -1082,7 +1082,7 @@ public class QuotaManager {
             lock.writeLock().unlock();
         }
         long timeEnd = System.currentTimeMillis();
-        log.infoFormat("Quota Cache updated. ({0} msec)", timeEnd-timeStart);
+        log.info("Quota Cache updated. ({} msec)", timeEnd-timeStart);
     }
 
     public boolean isCacheUpdateNeeded() {

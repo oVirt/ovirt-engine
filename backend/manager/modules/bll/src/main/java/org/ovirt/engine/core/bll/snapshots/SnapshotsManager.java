@@ -49,17 +49,17 @@ import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.dao.VmStaticDAO;
 import org.ovirt.engine.core.dao.VmTemplateDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link Snapshot} manager is used to easily add/update/remove snapshots.
  */
 public class SnapshotsManager {
-    private final static Log log = LogFactory.getLog(SnapshotsManager.class);
+    private final static Logger log = LoggerFactory.getLogger(SnapshotsManager.class);
 
     /**
      * Save an active snapshot for the VM, without saving the configuration.<br>
@@ -561,7 +561,10 @@ public class SnapshotsManager {
             validateQuota(vm);
             return true;
         } catch (OvfReaderException e) {
-            log.errorFormat("Failed to update VM from the configuration: {0}).", configuration, e);
+            log.error("Failed to update VM from the configuration '{}': {}",
+                    configuration,
+                    e.getMessage());
+            log.debug("Exception", e);
             return false;
         }
     }

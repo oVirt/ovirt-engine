@@ -8,10 +8,10 @@ import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeepingVariab
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Job notifies DWH, that engine is up and running
@@ -25,7 +25,7 @@ public class DwhHeartBeat {
     /**
      * Logger instance
      */
-    private static final Log log = LogFactory.getLog(DwhHeartBeat.class);
+    private static final Logger log = LoggerFactory.getLogger(DwhHeartBeat.class);
 
     /**
      * Instance of heartBeat variable
@@ -41,7 +41,8 @@ public class DwhHeartBeat {
             heartBeatVar.setDateTime(new Date());
             DbFacade.getInstance().getDwhHistoryTimekeepingDao().save(heartBeatVar);
         } catch (Exception ex) {
-            log.error("Error updating DWH Heart Beat: ", ex);
+            log.error("Error updating DWH Heart Beat: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
     }
 

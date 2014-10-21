@@ -18,12 +18,12 @@ import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SnapshotVmConfigurationHelper {
 
-    private static final Log log = LogFactory.getLog(SnapshotVmConfigurationHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(SnapshotVmConfigurationHelper.class);
 
     /**
      * Creates a VM by a specified OVF string.
@@ -104,7 +104,7 @@ public class SnapshotVmConfigurationHelper {
         for (DiskImage fromConfigImg : vm.getImages()) {
             if (fromConfigImg.getDiskStorageType() == Disk.DiskStorageType.IMAGE
                     && !imagesInDbMap.containsKey(fromConfigImg.getImageId())) {
-                log.debugFormat("Image {0} of Disk {1} cannot be found in database. This image will be returned as ILLEGAL from the query",
+                log.debug("Image '{}' of Disk '{}' cannot be found in database. This image will be returned as ILLEGAL from the query",
                         fromConfigImg.getImageId(),
                         fromConfigImg.getId());
                 fromConfigImg.setImageStatus(ImageStatus.ILLEGAL);

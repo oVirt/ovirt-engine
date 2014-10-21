@@ -19,11 +19,11 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.utils.GuidUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class MemoryImageRemover {
-    private static final Log log = LogFactory.getLog(MemoryImageRemover.class);
+    private static final Logger log = LoggerFactory.getLogger(MemoryImageRemover.class);
     private static final int NUM_OF_UUIDS_IN_MEMORY_STATE = 6;
 
     protected final TaskHandlerCommand<?> enclosingCommand;
@@ -83,7 +83,7 @@ public abstract class MemoryImageRemover {
         List<Guid> guids = GuidUtils.getGuidListFromString(memVols);
 
         if (guids.size() != NUM_OF_UUIDS_IN_MEMORY_STATE) {
-            log.warnFormat("Cannot remove memory volumes, invalid format: {0}", memVols);
+            log.warn("Cannot remove memory volumes, invalid format '{}'", memVols);
             return true;
         }
 
@@ -132,7 +132,7 @@ public abstract class MemoryImageRemover {
         else {
             boolean imageDoesNotExist = vdsRetValue.getVdsError().getCode() == VdcBllErrors.ImageDoesNotExistInDomainError;
             if (!imageDoesNotExist) {
-                log.errorFormat("Could not remove memory image: {0}", parameters);
+                log.error("Could not remove memory image '{}'", parameters);
             }
             enclosingCommand.deleteAsyncTaskPlaceHolder(taskKey);
             // otherwise, if the command failed because the image does not exist,

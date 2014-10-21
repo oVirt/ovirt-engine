@@ -8,12 +8,12 @@ import java.io.OutputStream;
 import java.security.KeyStore;
 
 import org.ovirt.engine.core.utils.EngineLocalConfig;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExternalTrustStoreInitializer {
 
-    private static final Log log = LogFactory.getLog(ExternalTrustStoreInitializer.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalTrustStoreInitializer.class);
 
     private static String getTrustStorePath() {
         File varDir = EngineLocalConfig.getInstance().getVarDir();
@@ -30,7 +30,8 @@ public class ExternalTrustStoreInitializer {
                 trustStore.load(null, password.toCharArray());
                 trustStore.store(out, password.toCharArray());
             } catch (Exception e) {
-                log.error("Creation of the external trust store failed.", e);
+                log.error("Creation of the external trust store failed: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
     }

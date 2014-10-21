@@ -23,9 +23,9 @@ import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Singleton(name = "EventQueue")
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
@@ -33,7 +33,7 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 @Local(EventQueue.class)
 public class EventQueueMonitor implements EventQueue {
 
-    private static final Log log = LogFactory.getLog(EventQueueMonitor.class);
+    private static final Logger log = LoggerFactory.getLogger(EventQueueMonitor.class);
 
     private static final ConcurrentMap<Guid, ReentrantLock> poolsLockMap = new ConcurrentHashMap<Guid, ReentrantLock>();
     private static final Map<Guid, LinkedList<Pair<Event, FutureTask<EventResult>>>> poolsEventsMap =
@@ -55,12 +55,14 @@ public class EventQueueMonitor implements EventQueue {
                 // CancellationException is normal here, as we cancel future tasks when reconstruct is running
                 // This cancellation is also being reported to the log
                 // Currently ignoring that exception, writing a debug message, in case other scenario of canceling an exception will be introduced
-                log.debugFormat("Failed to submit event using submitEventSync (the event was cancelled)- pool {0} , exception {1}",
-                        event.getStoragePoolId(),
-                        e);
+                log.debug("Failed to submit event using submitEventSync (the event was cancelled)- pool '{}'",
+                        event.getStoragePoolId());
+                log.debug("Exception", e);
             } catch (Exception e) {
-                log.errorFormat("Failed at submitEventSync, for pool {0} with exception {1}",
-                        event.getStoragePoolId(), e);
+                log.error("Failed at submitEventSync, for pool '{}': {}",
+                        event.getStoragePoolId(),
+                        e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return null;
@@ -82,7 +84,7 @@ public class EventQueueMonitor implements EventQueue {
                             || event.getEventType() == EventType.DOMAINFAILOVER) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
-                        log.debugFormat("Current event was skipped because of recovery is running now for pool {0}, event {1}",
+                        log.debug("Current event was skipped because of recovery is running now for pool '{}', event '{}'",
                                 storagePoolId, event);
                     }
                     break;
@@ -93,7 +95,7 @@ public class EventQueueMonitor implements EventQueue {
                             || event.getEventType() == EventType.VDSCLEARCACHE) {
                         task = addTaskToQueue(event, callable, storagePoolId, isEventShouldBeFirst(event));
                     } else {
-                        log.debugFormat("Current event was skipped because of reconstruct is running now for pool {0}, event {1}",
+                        log.debug("Current event was skipped because of reconstruct is running now for pool '{}', event '{}'",
                                 storagePoolId, event);
                     }
                     break;
@@ -180,7 +182,7 @@ public class EventQueueMonitor implements EventQueue {
                     } else {
                         poolCurrentEventMap.remove(storagePoolId);
                         poolsEventsMap.remove(storagePoolId);
-                        log.debugFormat("All task for event query were executed pool {0}", storagePoolId);
+                        log.debug("All task for event query were executed pool '{}'", storagePoolId);
                         break;
                     }
                 } finally {
@@ -191,7 +193,7 @@ public class EventQueueMonitor implements EventQueue {
                     if (futureResult.get() == null) {
                         EventResult result = pair.getSecond().get();
                         if (result != null && result.getEventType() == EventType.RECONSTRUCT) {
-                            log.infoFormat("Finished reconstruct for pool {0}. Clearing event queue", storagePoolId);
+                            log.info("Finished reconstruct for pool '{}'. Clearing event queue", storagePoolId);
                             lock.lock();
                             try {
                                 LinkedList<Pair<Event, FutureTask<EventResult>>> queue =
@@ -203,7 +205,7 @@ public class EventQueueMonitor implements EventQueue {
                                             ((eventType == EventType.RECOVERY || eventType == EventType.DOMAINFAILOVER || eventType == EventType.VDSCLEARCACHE) && !result.isSuccess())) {
                                         queue.add(task);
                                     } else {
-                                        log.infoFormat("The following operation {0} was cancelled, because of reconstruct was run before",
+                                        log.info("The following operation '{}' was cancelled, because of reconstruct was run before",
                                                 task.getFirst());
                                         task.getSecond().cancel(true);
                                     }
@@ -221,8 +223,10 @@ public class EventQueueMonitor implements EventQueue {
                         }
                     }
                 } catch (Exception e) {
-                    log.errorFormat("Exception during process of events for pool {0}, error is {1}",
-                            storagePoolId, e.getMessage());
+                    log.error("Exception during process of events for pool '{}': {}",
+                            storagePoolId,
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
         }
