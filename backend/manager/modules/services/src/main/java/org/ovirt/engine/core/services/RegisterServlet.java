@@ -22,12 +22,12 @@ import org.ovirt.engine.core.utils.PKIResources;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RegisterServlet extends HttpServlet {
 
-    private static final Log log = LogFactory.getLog(RegisterServlet.class);
+    private static final Logger log = LoggerFactory.getLogger(RegisterServlet.class);
 
     private static final int SSH_PORT = 22;
     private static final int VDSM_PORT = 54321;
@@ -36,11 +36,9 @@ public class RegisterServlet extends HttpServlet {
     protected void getVersionV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         log.info(
-            String.format(
-                "Version request: source='%s', secured='%s'",
-                request.getRemoteHost(),
-                request.isSecure()
-            )
+            "Version request: source={}', secured='{}'",
+            request.getRemoteHost(),
+            request.isSecure()
         );
 
         try (PrintWriter out = response.getWriter()) {
@@ -52,11 +50,9 @@ public class RegisterServlet extends HttpServlet {
     protected void getPKITrustV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         log.info(
-            String.format(
-                "PKI Trust request: source='%s', secured='%s'",
-                request.getRemoteHost(),
-                request.isSecure()
-            )
+            "PKI Trust request: source='{}', secured='{}'",
+            request.getRemoteHost(),
+            request.isSecure()
         );
 
         try (PrintWriter out = response.getWriter()) {
@@ -68,11 +64,9 @@ public class RegisterServlet extends HttpServlet {
     protected void getSSHTrustV1(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 
         log.info(
-            String.format(
-                "SSH Trust request: source='%s', secured='%s'",
-                request.getRemoteHost(),
-                request.isSecure()
-            )
+            "SSH Trust request: source='{}', secured='{}'",
+            request.getRemoteHost(),
+            request.isSecure()
         );
 
         try (PrintWriter out = response.getWriter()) {
@@ -149,15 +143,13 @@ public class RegisterServlet extends HttpServlet {
         }
 
         log.info(
-            String.format(
-                "Registration request: source='%s', secured='%s', address='%s', vdsPort=%s, name='%s', uniqueId='%s'",
-                request.getRemoteHost(),
-                request.isSecure(),
-                hostAddress,
-                hostVdsPort,
-                hostName,
-                hostUniqueId
-            )
+            "Registration request: source='{}', secured='{}', address='{}', vdsPort={}, name='{}', uniqueId='{}'",
+            request.getRemoteHost(),
+            request.isSecure(),
+            hostAddress,
+            hostVdsPort,
+            hostName,
+            hostUniqueId
         );
 
         if (hostUniqueId != null) {
@@ -208,18 +200,16 @@ public class RegisterServlet extends HttpServlet {
         }
 
         log.info(
-            String.format(
-                "Registration request: source='%s', secured='%s', address='%s%s:%s', sshKeyFingerprint=%s, vdsPort=%s, name='%s', uniqueId='%s'",
-                request.getRemoteHost(),
-                request.isSecure(),
-                hostSSHUser != null ? hostSSHUser + "@" : "",
-                hostAddress,
-                hostSSHPort,
-                hostSSHKeyFingerprint,
-                hostVdsPort,
-                hostName,
-                hostUniqueId
-            )
+            "Registration request: source='{}', secured='{}', address='{}{}:{}', sshKeyFingerprint={}, vdsPort={}, name='{}', uniqueId='{}'",
+            request.getRemoteHost(),
+            request.isSecure(),
+            hostSSHUser != null ? hostSSHUser + "@" : "",
+            hostAddress,
+            hostSSHPort,
+            hostSSHKeyFingerprint,
+            hostVdsPort,
+            hostName,
+            hostUniqueId
         );
 
         doRegister(
@@ -243,7 +233,8 @@ public class RegisterServlet extends HttpServlet {
             registerV0(request, response);
         }
         catch (Exception e) {
-            log.error("Registration failed", e);
+            log.error("Registration failed: {}", e.getMessage());
+            log.debug("Exception", e);
             response.sendError(response.SC_INTERNAL_SERVER_ERROR, e.getMessage());
         }
     }
@@ -269,7 +260,8 @@ public class RegisterServlet extends HttpServlet {
             }
         }
         catch (Exception e) {
-            log.error("Registration failed", e);
+            log.error("Registration failed: {}", e.getMessage());
+            log.debug("Exception", e);
             response.sendError(response.SC_BAD_REQUEST, e.getMessage());
         }
     }

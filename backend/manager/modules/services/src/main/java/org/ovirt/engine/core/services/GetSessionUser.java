@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /*
  * This servlet gets a session ID, validates it, checks if the logged in user is administrator, and if so returns its user name
@@ -29,7 +29,7 @@ public class GetSessionUser extends HttpServlet {
     private int SUCCESS_CODE = HttpURLConnection.HTTP_OK;
     private int FAILED_CODE = HttpURLConnection.HTTP_INTERNAL_ERROR;
 
-    private static final Log log = LogFactory.getLog(GetSessionUser.class);
+    private static final Logger log = LoggerFactory.getLogger(GetSessionUser.class);
 
     protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
         doProcessRequest(request, response);
@@ -43,10 +43,10 @@ public class GetSessionUser extends HttpServlet {
         String sessionID = request.getParameter(SESSION_ID_PARAMETER);
         if (runQuery(request, response, sessionID)) {
             response.setStatus(SUCCESS_CODE);
-            log.debug("Validate Session " + sessionID + " succeeded");
+            log.debug("Validate Session '{}' succeeded", sessionID);
         } else {
             response.setStatus(FAILED_CODE);
-            log.debug("Validate Session " + sessionID + " failed");
+            log.debug("Validate Session '{}' failed", sessionID);
         }
     }
 
@@ -75,7 +75,7 @@ public class GetSessionUser extends HttpServlet {
                     log.debug("Getting user name");
                     printUPNToResponse(response, getUPN(user));
                 } else {
-                    log.error("User is not authorized to perform operation");
+                    log.error("User '{}' is not authorized to perform operation", user.getLoginName());
                     returnValue = false;
                 }
             }
@@ -90,7 +90,8 @@ public class GetSessionUser extends HttpServlet {
         try {
             response.getWriter().print(upn);
         } catch (IOException e) {
-            log.error("IO Exception while writing user name: ", e);
+            log.error("Exception while writing user name: {}", e.getMessage());
+            log.debug("Exception", e);
         }
 
     }

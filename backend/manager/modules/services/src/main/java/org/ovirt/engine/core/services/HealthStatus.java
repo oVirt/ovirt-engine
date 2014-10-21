@@ -13,11 +13,11 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /***
  * This class is a servlet implementation, aimed to report fundemental health of engine.
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.ejb.EjbUtils;
  */
 public class HealthStatus extends HttpServlet {
 
-    private static final Log log = LogFactory.getLog(HealthStatus.class);
+    private static final Logger log = LoggerFactory.getLogger(HealthStatus.class);
 
     private boolean runQuery(HttpServletRequest request, PrintWriter out) {
         boolean fReturn = false;
@@ -58,7 +58,7 @@ public class HealthStatus extends HttpServlet {
                 msg = "Unable to contact Backend!";
             }
             out.print(msg);
-            log.error(msg + " Caught exception while trying to run query: ", t);
+            log.error(msg, t);
             fReturn = false;
         }
 
