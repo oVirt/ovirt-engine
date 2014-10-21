@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.VmGeneralModelForm;
@@ -37,6 +38,7 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
     private final ApplicationResources resources;
 
     @UiField(provided = true)
+    @WithElementId
     VmGeneralModelForm form;
 
     // This is the panel containing the alerts label and the
@@ -61,6 +63,8 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         clearAlerts();
+
+        generateIds();
     }
 
     @Override

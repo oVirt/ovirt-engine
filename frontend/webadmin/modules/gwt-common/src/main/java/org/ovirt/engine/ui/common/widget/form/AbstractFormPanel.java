@@ -5,7 +5,10 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.ovirt.engine.ui.common.utils.ElementIdUtils;
+
 import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.client.DOM;
 import com.google.gwt.user.client.ui.Composite;
 import com.google.gwt.user.client.ui.Grid;
 import com.google.gwt.user.client.ui.HorizontalPanel;
@@ -16,6 +19,8 @@ import com.google.gwt.user.client.ui.Widget;
  * Represents a form panel that renders name/value items organized in columns.
  */
 public abstract class AbstractFormPanel extends Composite {
+
+    protected String elementIdPrefix = DOM.createUniqueId();
 
     @UiField
     public HorizontalPanel contentPanel;
@@ -85,10 +90,20 @@ public abstract class AbstractFormPanel extends Composite {
         // Update item visibility
         view.getWidget(item.getRow(), 0).setVisible(visible);
         view.getWidget(item.getRow(), 1).setVisible(visible);
+
+        // set item ids
+        view.getWidget(item.getRow(), 0).getElement().setId(
+                ElementIdUtils.createFormGridElementId(elementIdPrefix, item.getColumn(), item.getRow(), "_label")); //$NON-NLS-1$
+        view.getWidget(item.getRow(), 1).getElement().setId(
+                ElementIdUtils.createFormGridElementId(elementIdPrefix, item.getColumn(), item.getRow(), "_value")); //$NON-NLS-1$
     }
 
     Grid getDetailView(int column) {
         return detailViews.get(column);
+    }
+
+    public void setElementIdPrefix(String elementIdPrefix) {
+        this.elementIdPrefix = elementIdPrefix;
     }
 
 }

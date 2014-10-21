@@ -22,6 +22,27 @@ public class ElementIdUtils {
     }
 
     /**
+     * Returns DOM element ID for a form grid element.
+     *
+     * @param prefix
+     *            Element ID prefix that meets ID constraints (unique, deterministic).
+     * @param columnId
+     *            Column ID that will be part of the resulting DOM element ID
+     * @param rowId
+     *            Row ID that will be part of the resulting DOM element ID
+     */
+    public static String createFormGridElementId(String prefix, int columnId, int rowId, String suffix) {
+        StringBuilder sb = new StringBuilder(prefix);
+        sb.append("_"); //$NON-NLS-1$
+        sb.append("col"); //$NON-NLS-1$
+        sb.append(columnId);
+        sb.append("_row"); //$NON-NLS-1$
+        sb.append(rowId);
+        sb.append(suffix);
+        return sb.toString();
+    }
+
+    /**
      * Returns DOM element ID for a table cell element.
      *
      * @param prefix

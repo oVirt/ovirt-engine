@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.widget.uicommon;
 
+import org.ovirt.engine.ui.common.idhandler.HasElementId;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
 import org.ovirt.engine.ui.common.widget.form.GeneralFormPanel;
@@ -14,7 +15,7 @@ import com.google.gwt.user.client.ui.Composite;
  * @param <T>
  *            Model type being edited.
  */
-public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extends Composite implements Editor<T> {
+public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extends Composite implements Editor<T>, HasElementId {
 
     private final ModelProvider<T> modelProvider;
     private final GeneralFormPanel formPanel;
@@ -46,5 +47,11 @@ public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extend
      * Performs the actual Editor logic, using Editor Driver to update fields of the widget.
      */
     protected abstract void doEdit(T model);
+
+    public void setElementId(String elementId) {
+        this.getElement().setId(elementId);
+        // set id prefix for any children that need it
+        this.formPanel.setElementIdPrefix(elementId);
+    }
 
 }
