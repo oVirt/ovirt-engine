@@ -14,13 +14,19 @@ public class MigrateVmParameters extends VmOperationParameterBase {
     protected boolean forceMigrationForNonMigratableVm;
     ArrayList<Guid> initialHosts;
     protected Date startTime;
+    private Guid targetVdsGroupId;
 
     public MigrateVmParameters() {
     }
 
     public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId) {
+        this(forceMigrationForNonMigratableVM, vmId, null);
+    }
+
+    public MigrateVmParameters(boolean forceMigrationForNonMigratableVM, Guid vmId, Guid targetVdsGroupId) {
         super(vmId);
 
+        this.targetVdsGroupId = targetVdsGroupId;
         setForceMigrationForNonMigratableVm(forceMigrationForNonMigratableVM);
     }
 
@@ -56,4 +62,11 @@ public class MigrateVmParameters extends VmOperationParameterBase {
         this.startTime = startTime;
     }
 
+    public Guid getTargetVdsGroupId() {
+        return targetVdsGroupId;
+    }
+
+    public void setTargetVdsGroupId(Guid targetVdsGroupId) {
+        this.targetVdsGroupId = targetVdsGroupId;
+    }
 }

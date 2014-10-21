@@ -10,7 +10,6 @@ import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.MigrateVmToServerParameters;
 import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -42,13 +41,15 @@ public class MigrateVmToServerCommand<T extends MigrateVmToServerParameters> ext
             return false;
         }
 
-        VM vm = getVm();
+        if (getParameters().getTargetVdsGroupId() != null && !getParameters().getTargetVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DESTINATION_HOST_NOT_IN_DESTINATION_CLUSTER);
+        }
 
-        if (vm.getRunOnVds() != null && vm.getRunOnVds().equals(destinationId)) {
+        if (getVm().getRunOnVds() != null && getVm().getRunOnVds().equals(getDestinationVdsId())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATION_TO_SAME_HOST);
         }
 
-        if (!vm.getVdsGroupId().equals(getDestinationVds().getVdsGroupId())) {
+        if (!getVm().getVdsGroupId().equals(getDestinationVds().getVdsGroupId()) && getParameters().getTargetVdsGroupId() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIGRATE_BETWEEN_TWO_CLUSTERS);
         }
 
