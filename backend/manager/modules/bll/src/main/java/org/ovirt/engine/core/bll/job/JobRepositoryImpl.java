@@ -18,17 +18,17 @@ import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.JobSubjectEntityDao;
 import org.ovirt.engine.core.dao.StepDao;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Implements the CRUD operations for the Job entities.
  */
 public class JobRepositoryImpl implements JobRepository {
 
-    private static final Log log = LogFactory.getLog(JobRepositoryImpl.class);
+    private static final Logger log = LoggerFactory.getLogger(JobRepositoryImpl.class);
 
     private JobDao jobDao;
     private JobSubjectEntityDao jobSubjectEntityDao;
@@ -53,7 +53,11 @@ public class JobRepositoryImpl implements JobRepository {
                     jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
                     stepDao.save(step);
                 } catch (Exception e) {
-                    log.errorFormat("Failed to save step {0}, {1}.", step.getId(), step.getStepName(), e);
+                    log.error("Failed to save step '{}', '{}': {}",
+                            step.getId(),
+                            step.getStepName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
                 return null;
             }
@@ -71,7 +75,11 @@ public class JobRepositoryImpl implements JobRepository {
                     jobDao.updateJobLastUpdateTime(step.getJobId(), new Date());
                     stepDao.update(step);
                 } catch (Exception e) {
-                    log.errorFormat("Failed to update step {0}, {1}.", step.getId(), step.getStepName(), e);
+                    log.error("Failed to update step '{}', '{}': {}",
+                            step.getId(),
+                            step.getStepName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                 }
                 return null;
             }

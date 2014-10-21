@@ -7,7 +7,6 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.CommandBase;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.EngineContext;
@@ -29,9 +28,9 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Provides methods for managing the flow objects the of the command, by the given execution context o the command.
@@ -46,7 +45,7 @@ import org.ovirt.engine.core.utils.log.LoggedUtils;
  */
 public class ExecutionHandler {
 
-    private static final Log log = LogFactory.getLog(ExecutionHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ExecutionHandler.class);
 
     private static final List<Class<?>> validationGroups = Arrays.asList(new Class<?>[] { PreRun.class });
 
@@ -134,7 +133,7 @@ public class ExecutionHandler {
                     }
                 }
             } catch (Exception e) {
-                log.error(e);
+                log.error("Exception", e);
             }
         }
     }
@@ -160,7 +159,11 @@ public class ExecutionHandler {
                 }
             }
         } catch (Exception e) {
-            log.errorFormat("Failed to terminate step {0} with status {1}", stepId, exitStatus, e);
+            log.error("Failed to terminate step '{}' with status '{}': {}",
+                    stepId,
+                    exitStatus,
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -204,10 +207,10 @@ public class ExecutionHandler {
                 context.setMonitored(true);
             }
         } catch (Exception e) {
-            log.errorFormat("Failed to prepare command of type {0} for monitoring due to error {1}",
+            log.error("Failed to prepare command of type '{}' for monitoring due to error '{}'",
                     actionType.name(),
-                    ExceptionUtils.getMessage(e),
-                    e);
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -295,8 +298,12 @@ public class ExecutionHandler {
                         step.setExternal(isExternal);
                         JobRepositoryFactory.getJobRepository().saveStep(step);
                     } catch (Exception e) {
-                        log.errorFormat("Failed to save new step {0} for job {1}, {2}.", stepName.name(),
-                                job.getId(), job.getActionType().name(), e);
+                        log.error("Failed to save new step '{}' for job '{}', '{}': {}",
+                                stepName.name(),
+                                job.getId(),
+                                job.getActionType().name(),
+                                e.getMessage());
+                        log.debug("Exception", e);
                         job.getSteps().remove(step);
                         step = null;
                     }
@@ -308,7 +315,7 @@ public class ExecutionHandler {
                     }
                 }
             } catch (Exception e) {
-                log.error(e);
+                log.error("Exception", e);
             }
         }
         return step;
@@ -355,8 +362,12 @@ public class ExecutionHandler {
             try {
                 JobRepositoryFactory.getJobRepository().saveStep(step);
             } catch (Exception e) {
-                log.errorFormat("Failed to save new step {0} for step {1}, {2}.", stepName.name(),
-                        parentStep.getId(), parentStep.getStepType().name(), e);
+                log.error("Failed to save new step '{}' for step '{}', '{}': {}",
+                        stepName.name(),
+                        parentStep.getId(),
+                        parentStep.getStepType().name(),
+                        e.getMessage());
+                log.debug("Exception", e);
                 parentStep.getSteps().remove(step);
                 step = null;
             }
@@ -428,7 +439,7 @@ public class ExecutionHandler {
                 JobRepositoryFactory.getJobRepository().saveStep(step);
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception", e);
         }
         return step;
     }
@@ -476,7 +487,7 @@ public class ExecutionHandler {
                 }
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception", e);
         }
     }
 
@@ -485,7 +496,11 @@ public class ExecutionHandler {
         try {
             JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
         } catch (Exception e) {
-            log.errorFormat("Failed to end Job {0}, {1}", job.getId(), job.getActionType().name(), e);
+            log.error("Failed to end Job '{}', '{}': {}",
+                    job.getId(),
+                    job.getActionType().name(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -611,7 +626,7 @@ public class ExecutionHandler {
                 context.setMonitored(true);
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception", e);
         }
         return context;
     }
@@ -664,7 +679,7 @@ public class ExecutionHandler {
                 }
             }
         } catch (Exception e) {
-            log.error(e);
+            log.error("Exception", e);
         }
         return step;
     }
@@ -686,12 +701,13 @@ public class ExecutionHandler {
             try {
                 JobRepositoryFactory.getJobRepository().updateStep(step);
             } catch (Exception e) {
-                log.errorFormat("Failed to save step {0}, {1} for system-type {2} with id {3}",
+                log.error("Failed to save step '{}', '{}' for system-type '{}' with id '{}': {}",
                         step.getId(),
                         step.getStepType().name(),
                         systemType.name(),
                         externalId,
-                        e);
+                        e.getMessage());
+                log.debug("Exception", e);
 
             }
         }
@@ -788,7 +804,7 @@ public class ExecutionHandler {
                 }
             }
         } catch (RuntimeException e) {
-            log.error(e);
+            log.error("Exception", e);
         }
     }
 
@@ -816,7 +832,7 @@ public class ExecutionHandler {
                 return DbFacade.getInstance().getJobDao().checkIfJobHasTasks(jobId);
             }
         } catch (RuntimeException e) {
-            log.error(e);
+            log.error("Exception", e);
         }
 
         return false;
@@ -841,7 +857,7 @@ public class ExecutionHandler {
                 JobRepositoryFactory.getJobRepository().updateCompletedJobAndSteps(job);
             }
         } catch (RuntimeException e) {
-            log.error(e);
+            log.error("Exception", e);
         }
     }
 }

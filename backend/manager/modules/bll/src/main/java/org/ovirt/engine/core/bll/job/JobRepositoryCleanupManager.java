@@ -6,10 +6,10 @@ import java.util.concurrent.TimeUnit;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Responsible for clearing completed jobs from the database by running a fixed scheduled job
@@ -17,7 +17,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
  */
 public class JobRepositoryCleanupManager {
 
-    private static final Log log = LogFactory.getLog(JobRepositoryCleanupManager.class);
+    private static final Logger log = LoggerFactory.getLogger(JobRepositoryCleanupManager.class);
     private static JobRepositoryCleanupManager instance = new JobRepositoryCleanupManager();
     private int succeededJobTime;
     private int failedJobTime;
@@ -29,7 +29,7 @@ public class JobRepositoryCleanupManager {
      * Initializes the Job Cleanup scheduler
      */
     public void initialize() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         succeededJobTime = Config.<Integer> getValue(ConfigValues.SucceededJobCleanupTimeInMinutes).intValue();
         failedJobTime = Config.<Integer> getValue(ConfigValues.FailedJobCleanupTimeInMinutes).intValue();
 
@@ -41,7 +41,7 @@ public class JobRepositoryCleanupManager {
                 cleanupFrequency,
                 cleanupFrequency,
                 TimeUnit.MINUTES);
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     /**
@@ -62,7 +62,8 @@ public class JobRepositoryCleanupManager {
         try {
             DbFacade.getInstance().getJobDao().deleteCompletedJobs(succeededJobsDeleteTime, failedJobsDeleteTime);
         } catch (RuntimeException e) {
-            log.error("Failed to delete completed jobs", e);
+            log.error("Failed to delete completed jobs: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
