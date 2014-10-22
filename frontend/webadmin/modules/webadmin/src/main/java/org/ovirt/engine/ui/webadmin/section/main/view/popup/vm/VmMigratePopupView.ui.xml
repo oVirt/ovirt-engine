@@ -4,6 +4,8 @@
 	xmlns:d="urn:import:org.ovirt.engine.ui.common.widget.dialog" xmlns:e="urn:import:org.ovirt.engine.ui.common.widget.editor"
   xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
+    <ui:with field='constants' type='org.ovirt.engine.ui.common.CommonApplicationConstants'/>
+
 	<ui:style>
 		.noteLabel,
 		.errorLabel {
@@ -11,7 +13,7 @@
 			margin-top: 10px;
 		}
 
-		.errorLabel {
+		.errorLabel, .differentClusterWarning {
 			color: #CD2127;
 		}
 
@@ -22,6 +24,14 @@
         .contentWidgets {
             width: 97%;
         }
+
+        .expanderContent {
+            padding-left: 10px;
+        }
+
+        .differentClusterWarning {
+            font-weight: bold;
+        }
 	</ui:style>
 
 	<d:SimpleDialogPanel width="400px" height="300px">
@@ -30,6 +40,11 @@
 				<ge:EntityModelRadioButtonEditor ui:field="selectHostAutomaticallyEditor" addStyleNames="{style.contentWidgets}"/>
 				<ge:EntityModelRadioButtonEditor ui:field="selectDestinationHostEditor" addStyleNames="{style.contentWidgets}"/>
 				<e:ListModelListBoxEditor ui:field="hostsListEditor" addStyleNames="{style.contentWidgets}"/>
+                <d:AdvancedParametersExpander ui:field="advancedOptionsExpander"/>
+                <g:FlowPanel ui:field="advancedOptionsExpanderContent" addStyleNames="{style.expanderContent}">
+                    <g:Label text="{constants.migrationToDifferentClusterWarning}" addStyleNames="{style.differentClusterWarning}" />
+                    <e:ListModelListBoxEditor ui:field="clustersEditor" />
+                </g:FlowPanel>
 				<g:FlowPanel addStyleNames="{style.messagePanel}" >
 					<g:Label ui:field="message1" addStyleNames="{style.errorLabel}" />
 					<g:Label ui:field="message2" addStyleNames="{style.noteLabel}" />

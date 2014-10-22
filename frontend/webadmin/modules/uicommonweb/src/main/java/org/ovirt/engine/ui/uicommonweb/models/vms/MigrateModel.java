@@ -1,12 +1,21 @@
 package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import java.util.ArrayList;
+import java.util.List;
 
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.UICommand;
+import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
@@ -16,6 +25,8 @@ public class MigrateModel extends Model
 {
 
     private ListModel<VDS> privateHosts;
+    private VmListModel parentModel;
+    private VM vm;
 
     public ListModel<VDS> getHosts()
     {
@@ -25,6 +36,16 @@ public class MigrateModel extends Model
     private void setHosts(ListModel<VDS> value)
     {
         privateHosts = value;
+    }
+
+    private ListModel<VDSGroup> clusters;
+
+    public ListModel<VDSGroup> getClusters() {
+        return clusters;
+    }
+
+    public void setClusters(ListModel<VDSGroup> clusters) {
+        this.clusters = clusters;
     }
 
     private ArrayList<VM> privateVmList;
@@ -154,8 +175,9 @@ public class MigrateModel extends Model
         privateSelectDestinationHost_IsSelected = value;
     }
 
-    public MigrateModel()
+    public MigrateModel(VmListModel parentModel)
     {
+        this.parentModel = parentModel;
         setHosts(new ListModel<VDS>());
         getHosts().getSelectedItemChangedEvent().addListener(this);
 
@@ -164,6 +186,117 @@ public class MigrateModel extends Model
 
         setSelectDestinationHost_IsSelected(new EntityModel<Boolean>());
         getSelectDestinationHost_IsSelected().getEntityChangedEvent().addListener(this);
+
+        setClusters(new ListModel<VDSGroup>());
+        getClusters().getSelectedItemChangedEvent().addListener(this);
+    }
+
+    public void initializeModel() {
+        if (vm.getVdsGroupId() == null) {
+            return;
+        }
+
+        AsyncDataProvider.getClusterList(
+                new AsyncQuery(MigrateModel.this, new INewAsyncCallback() {
+
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        List<VDSGroup> clusterList = (List<VDSGroup>) returnValue;
+                        List<VDSGroup> onlyWithArchitecture = AsyncDataProvider.filterClustersWithoutArchitecture(clusterList);
+                        List<VDSGroup> onlyVirt = AsyncDataProvider.getClusterByServiceList(onlyWithArchitecture, true, false);
+
+
+                        VDSGroup selected = null;
+                        for (VDSGroup cluster : onlyVirt) {
+                            if (cluster.getId().equals(vm.getVdsGroupId())) {
+                                selected = cluster;
+                                break;
+                            }
+                        }
+
+                        clusters.setItems(onlyVirt, selected != null ? selected : Linq.firstOrDefault(onlyVirt));
+                    }
+                }),
+                vm.getStoragePoolId());
+    }
+
+    private void loadHosts() {
+        VDSGroup selectedCluster = clusters.getSelectedItem();
+        if (selectedCluster == null) {
+            return;
+        }
+
+        AsyncDataProvider.getUpHostListByCluster(new AsyncQuery(this,
+                new INewAsyncCallback() {
+                    @Override
+                    public void onSuccess(Object target, Object returnValue) {
+                        postMigrateGetUpHosts(privateVmList, (ArrayList<VDS>) returnValue);
+                    }
+                }), selectedCluster.getName());
+    }
+
+    private void postMigrateGetUpHosts(List<VM> selectedVms, ArrayList<VDS> hosts) {
+        setVmsOnSameCluster(true);
+        setIsSameVdsMessageVisible(false);
+        setNoSelAvailable(false);
+
+        Guid run_on_vds = null;
+        boolean allRunOnSameVds = true;
+
+        for (VM item : selectedVms) {
+            if (!item.getVdsGroupId().equals((selectedVms.get(0)).getVdsGroupId())) {
+                setVmsOnSameCluster(false);
+            }
+            if (run_on_vds == null) {
+                run_on_vds = item.getRunOnVds();
+            }
+            else if (allRunOnSameVds && !run_on_vds.equals(item.getRunOnVds())) {
+                allRunOnSameVds = false;
+            }
+        }
+
+        setIsHostSelAvailable(getVmsOnSameCluster() && hosts.size() > 0);
+
+        removeUnselectableHosts(hosts, run_on_vds, allRunOnSameVds);
+
+        getCommands().clear();
+
+        if (hosts.isEmpty()) {
+            setIsHostSelAvailable(false);
+            getHosts().setItems(new ArrayList<VDS>());
+
+            if (allRunOnSameVds) {
+                setNoSelAvailable(true);
+                UICommand tempVar = new UICommand("Cancel", parentModel); //$NON-NLS-1$
+                tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
+                tempVar.setIsDefault(true);
+                tempVar.setIsCancel(true);
+                getCommands().add(tempVar);
+            }
+        } else {
+            getHosts().setItems(hosts, Linq.firstOrDefault(hosts));
+
+            UICommand tempVar2 = new UICommand("OnMigrate", parentModel); //$NON-NLS-1$
+            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
+            tempVar2.setIsDefault(true);
+            getCommands().add(tempVar2);
+            UICommand tempVar3 = new UICommand("Cancel", parentModel); //$NON-NLS-1$
+            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
+            tempVar3.setIsCancel(true);
+            getCommands().add(tempVar3);
+        }
+    }
+
+    private void removeUnselectableHosts(ArrayList<VDS> hosts, Guid run_on_vds, boolean allRunOnSameVds) {
+        if (getVmsOnSameCluster() && allRunOnSameVds) {
+            VDS runOnSameVDS = null;
+            for (VDS host : hosts) {
+                if (host.getId().equals(run_on_vds)) {
+                    runOnSameVDS = host;
+                }
+            }
+            hosts.remove(runOnSameVDS);
+        }
     }
 
     @Override
@@ -173,6 +306,10 @@ public class MigrateModel extends Model
         if (sender == getHosts() && getVmsOnSameCluster())
         {
             VDS selectedHost = getHosts().getSelectedItem();
+            if (selectedHost == null) {
+                return;
+            }
+
             sethasSameVdsMessage(false);
             for (VM vm : getVmList())
             {
@@ -183,6 +320,10 @@ public class MigrateModel extends Model
                 }
             }
             setIsSameVdsMessageVisible(gethasSameVdsMessage());
+        }
+        else if (sender == getClusters())
+        {
+            loadHosts();
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
         {
@@ -195,5 +336,9 @@ public class MigrateModel extends Model
                 setIsAutoSelect(!getSelectDestinationHost_IsSelected().getEntity());
             }
         }
+    }
+
+    public void setVm(VM vm) {
+        this.vm = vm;
     }
 }

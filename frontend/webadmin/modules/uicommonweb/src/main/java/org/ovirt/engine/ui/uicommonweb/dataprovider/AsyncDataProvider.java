@@ -3579,7 +3579,7 @@ public final class AsyncDataProvider {
         return (Boolean) getConfigValuePreConverted(ConfigurationValues.MixedDomainTypesInDataCenter, version.toString());
     }
 
-    private static ArrayList<VDSGroup> getClusterByServiceList(ArrayList<VDSGroup> list,
+    public static ArrayList<VDSGroup> getClusterByServiceList(List<VDSGroup> list,
             boolean supportsVirtService,
             boolean supportsGlusterService) {
         final ArrayList<VDSGroup> filteredList = new ArrayList<VDSGroup>();

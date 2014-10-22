@@ -1,7 +1,11 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.vm;
 
+import com.google.gwt.user.client.ui.Panel;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VDSGroup;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
+import org.ovirt.engine.ui.common.widget.dialog.AdvancedParametersExpander;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
 import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
@@ -58,6 +62,19 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
     @Ignore
     Label message3;
 
+    @UiField
+    @Ignore
+    AdvancedParametersExpander advancedOptionsExpander;
+
+    @UiField
+    @Ignore
+    Panel advancedOptionsExpanderContent;
+
+    @UiField(provided = true)
+    @Path(value = "clusters.selectedItem")
+    @WithElementId("clusters")
+    public ListModelListBoxEditor<VDSGroup> clustersEditor;
+
     private final Driver driver = GWT.create(Driver.class);
 
     @Inject
@@ -68,6 +85,9 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
         super(eventBus, resources);
         initEditors();
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
+        advancedOptionsExpander.initWithContent(advancedOptionsExpanderContent.getElement());
+
         localize(constants, messages);
         driver.initialize(this);
     }
@@ -82,12 +102,20 @@ public class VmMigratePopupView extends AbstractModelBoundPopupView<MigrateModel
                 return vds.getName();
             }
         });
+
+        clustersEditor = new ListModelListBoxEditor<VDSGroup>(new NullSafeRenderer<VDSGroup>() {
+            @Override
+            protected String renderNullSafe(VDSGroup cluster) {
+                return cluster.getName();
+            }
+        });
     }
 
     void localize(ApplicationConstants constants, ApplicationMessages messages) {
         selectHostAutomaticallyEditor.setLabel(constants.vmMigratePopupSelectHostAutomaticallyLabel());
         selectDestinationHostEditor.setLabel(constants.vmMigratePopupSelectDestinationHostLabel());
         hostsListEditor.setLabel(constants.vmMigratePopupHostsListLabel());
+        clustersEditor.setLabel(constants.hostClusterVmPopup());
         message1.setText(messages.migrateHostDisabledVMsInServerClusters());
         message2.setText(messages.migrateSomeVmsAlreadyRunningOnHost());
         message3.setText(messages.migrateNoAvailableHost());
