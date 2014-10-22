@@ -34,6 +34,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.VmDeviceDAO;
+import org.ovirt.engine.core.utils.linq.LinqUtils;
+import org.ovirt.engine.core.utils.linq.Predicate;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters> extends BaseImagesCommand<T>
@@ -94,6 +96,13 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
             }
         }
         return images;
+    }
+
+    /**
+     * Returns the images chain of the disk.
+     */
+    protected List<DiskImage> getAllImagesForDisk() {
+        return getDiskImageDao().getAllSnapshotsForImageGroup(getImageGroupId());
     }
 
     protected SnapshotsValidator getSnapshotsValidator() {
@@ -170,8 +179,18 @@ public class RemoveDiskSnapshotsCommand<T extends RemoveDiskSnapshotsParameters>
         // Sort images from parent to leaf (active) - needed only on first task handler
         // as the sorted list is being saved in the parameters.
         if (isFirstTaskHandler()) {
-            ImagesHandler.sortImageList(getImages());
-            getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(getImages())));
+            // Retrieve and sort the entire chain of images
+            List<DiskImage> images = getAllImagesForDisk();
+            ImagesHandler.sortImageList(images);
+
+            // Get a sorted list of the selected images
+            List<DiskImage> sortedImages = LinqUtils.filter(images, new Predicate<DiskImage>() {
+                @Override
+                public boolean eval(DiskImage image) {
+                    return getImages().contains(image);
+                }
+            });
+            getParameters().setImageIds(new ArrayList<>(ImagesHandler.getDiskImageIds(sortedImages)));
         }
 
         for (Guid imageId : getParameters().getImageIds()) {
