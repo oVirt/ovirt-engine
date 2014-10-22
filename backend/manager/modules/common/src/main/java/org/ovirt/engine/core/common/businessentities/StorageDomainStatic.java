@@ -43,8 +43,6 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     private boolean containsUnregisteredEntities;
 
-    private String storagePoolName;
-
     private SANState sanState;
 
     private transient long lastTimeUsedAsMaster;
@@ -81,14 +79,6 @@ public class StorageDomainStatic implements BusinessEntity<Guid>, Nameable {
 
     public void setStorageDomainType(StorageDomainType storageType) {
         this.storageType = storageType;
-    }
-
-    public String getStoragePoolName() {
-        return storagePoolName;
-    }
-
-    public void setStoragePoolName(String storagePoolName) {
-        this.storagePoolName = storagePoolName;
     }
 
     public StorageType getStorageType() {
