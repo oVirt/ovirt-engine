@@ -20,7 +20,8 @@ public class TransportFactory {
         if (VdsProtocol.STOMP == vdsProtocol) {
             irsServer = new JsonRpcIIrsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
-                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)));
+                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
+                    Config.<String> getValue(ConfigValues.VdsmSSLProtocol)));
         } else if (VdsProtocol.XML == vdsProtocol){
             Pair<IrsServerConnector, HttpClient> returnValue =
                     XmlRpcUtils.getConnection(hostname, port, clientTimeOut, connectionTimeOut,
@@ -42,7 +43,8 @@ public class TransportFactory {
         if (VdsProtocol.STOMP == vdsProtocol) {
             vdsServer = new JsonRpcVdsServer(JsonRpcUtils.createStompClient(hostname,
                     port, connectionTimeOut, clientTimeOut, clientRetries, heartbeat,
-                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)), returnValue.getSecond());
+                    Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication),
+                    Config.<String> getValue(ConfigValues.VdsmSSLProtocol)), returnValue.getSecond());
         } else if (VdsProtocol.XML == vdsProtocol) {
             vdsServer = new VdsServerWrapper(returnValue.getFirst(), returnValue.getSecond());
         }
