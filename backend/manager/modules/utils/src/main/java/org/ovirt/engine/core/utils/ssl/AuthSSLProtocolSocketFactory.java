@@ -190,12 +190,15 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
 
     private final SSLContext sslcontext;
 
+    private String protocol;
+
     /**
      * Constructor for AuthSSLProtocolSocketFactory. Either a keystore or truststore file must be given. Otherwise SSL
      * context initialization error will result.
      */
-    public AuthSSLProtocolSocketFactory(KeyManager[] keymanagers, TrustManager[] trustmanagers) {
+    public AuthSSLProtocolSocketFactory(KeyManager[] keymanagers, TrustManager[] trustmanagers, String protocol) {
         super();
+        this.protocol = protocol;
         this.sslcontext = createSSLContext(keymanagers, trustmanagers);
     }
 
@@ -203,9 +206,10 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      * Constructor for AuthSSLProtocolSocketFactory. Either a keystore or truststore file must be given. Otherwise SSL
      * context initialization error will result.
      */
-    public AuthSSLProtocolSocketFactory(KeyStore truststore) {
+    public AuthSSLProtocolSocketFactory(KeyStore truststore, String protocol) {
         super();
         try {
+            this.protocol = protocol;
             TrustManagerFactory tmfactory = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
             tmfactory.init(truststore);
             this.sslcontext = createSSLContext(null, tmfactory.getTrustManagers());
@@ -228,7 +232,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
     private SSLContext createSSLContext(KeyManager[] keymanagers, TrustManager[] trustmanagers) {
         try {
             trustmanagers = createTrustManagers(trustmanagers);
-            SSLContext sslcontext = SSLContext.getInstance("SSLv3");
+            SSLContext sslcontext = SSLContext.getInstance(this.protocol);
             sslcontext.init(keymanagers, trustmanagers, null);
             return sslcontext;
         } catch (NoSuchAlgorithmException e) {
@@ -278,7 +282,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
         SocketFactory socketfactory = sslcontext.getSocketFactory();
         if (timeout == 0) {
             SSLSocket socket = (SSLSocket) socketfactory.createSocket(host, port, localAddress, localPort);
-            socket.setEnabledProtocols(new String[] { "SSLv3" });
+            socket.setEnabledProtocols(new String[] { this.protocol });
             return socket;
         } else {
             SSLSocket socket = (SSLSocket) socketfactory.createSocket();
@@ -286,7 +290,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             SocketAddress remoteaddr = new InetSocketAddress(host, port);
             socket.bind(localaddr);
             socket.connect(remoteaddr, timeout);
-            socket.setEnabledProtocols(new String[] { "SSLv3" });
+            socket.setEnabledProtocols(new String[] { this.protocol });
             return socket;
         }
     }
@@ -298,7 +302,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             UnknownHostException {
         SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port, clientHost,
                 clientPort);
-        socket.setEnabledProtocols(new String[] { "SSLv3" });
+        socket.setEnabledProtocols(new String[] { this.protocol });
         return socket;
     }
 
@@ -307,7 +311,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
      */
     public Socket createSocket(String host, int port) throws IOException, UnknownHostException {
         SSLSocket socket = (SSLSocket) sslcontext.getSocketFactory().createSocket(host, port);
-        socket.setEnabledProtocols(new String[] { "SSLv3" });
+        socket.setEnabledProtocols(new String[] { this.protocol });
         return socket;
     }
 
@@ -318,7 +322,7 @@ public class AuthSSLProtocolSocketFactory implements SecureProtocolSocketFactory
             UnknownHostException {
         SSLSocket sslSocket = (SSLSocket) sslcontext.getSocketFactory()
                 .createSocket(socket, host, port, autoClose);
-        sslSocket.setEnabledProtocols(new String[] { "SSLv3" });
+        sslSocket.setEnabledProtocols(new String[] { this.protocol });
         return sslSocket;
     }
 }

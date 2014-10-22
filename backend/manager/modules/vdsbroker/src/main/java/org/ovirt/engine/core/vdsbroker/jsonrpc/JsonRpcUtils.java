@@ -18,21 +18,21 @@ public class JsonRpcUtils {
     private static Logger log = LoggerFactory.getLogger(JsonRpcUtils.class);
 
     public static JsonRpcClient createStompClient(String hostname, int port, int connectionTimeout,
-            int clientTimeout, int connectionRetry, int heartbeat, boolean isSecure) {
-        return createClient(hostname, port, connectionTimeout, clientTimeout, connectionRetry, heartbeat, isSecure, ReactorType.STOMP);
+            int clientTimeout, int connectionRetry, int heartbeat, boolean isSecure, String protocol) {
+        return createClient(hostname, port, connectionTimeout, clientTimeout, connectionRetry, heartbeat, isSecure, ReactorType.STOMP, protocol);
     }
 
-    private static ManagerProvider getManagerProvider(boolean isSecure) {
+    private static ManagerProvider getManagerProvider(boolean isSecure, String protocol) {
         ManagerProvider provider = null;
         if (isSecure) {
-            provider = new EngineManagerProvider();
+            provider = new EngineManagerProvider(protocol);
         }
         return provider;
     }
 
     private static JsonRpcClient createClient(String hostname, int port, int connectionTimeout,
-            int clientTimeout, int connectionRetry, int heartbeat, boolean isSecure, ReactorType type) {
-        final ManagerProvider provider = getManagerProvider(isSecure);
+            int clientTimeout, int connectionRetry, int heartbeat, boolean isSecure, ReactorType type, String protocol) {
+        final ManagerProvider provider = getManagerProvider(isSecure, protocol);
         try {
             final Reactor reactor = ReactorFactory.getReactor(provider, type);
             return getJsonClient(reactor, hostname, port, connectionTimeout, clientTimeout, connectionRetry, heartbeat);

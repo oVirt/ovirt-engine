@@ -57,12 +57,11 @@ public class XmlRpcUtils {
     private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<String>(Arrays.asList(""));
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
-            URL keystoreUrl;
             try {
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
                 ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(EngineEncryptionUtils.getKeyManagers(),
-                    EngineEncryptionUtils.getTrustManagers());
+                    EngineEncryptionUtils.getTrustManagers(), Config.<String> getValue(ConfigValues.VdsmSSLProtocol));
                 Protocol clientAuthHTTPS = new Protocol("https", factory, 54321);
                 Protocol.registerProtocol("https", clientAuthHTTPS);
             } catch (Exception e) {

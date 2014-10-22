@@ -54,7 +54,7 @@ public class AttestationService {
                 // registering the https protocol with a socket factory that
                 // provides client authentication.
                 ProtocolSocketFactory factory = new AuthSSLProtocolSocketFactory(getTrustStore(trustStoreUrl.getPath(),
-                        truststorePassword));
+                        truststorePassword), "SSLv3");
                 Protocol clientAuthHTTPS = new Protocol("https", factory, port);
                 httpClient.getHostConfiguration().setHost(attestationServer,
                         port, clientAuthHTTPS);

@@ -371,7 +371,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 int hostPort = hostUrl.getPort() == -1 ? HttpsURL.DEFAULT_PORT : hostUrl.getPort();
                 Protocol httpsProtocol =
                         new Protocol(String.valueOf(HttpsURL.DEFAULT_SCHEME),
-                                (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(ExternalTrustStoreInitializer.getTrustStore()),
+                                (ProtocolSocketFactory) new AuthSSLProtocolSocketFactory(ExternalTrustStoreInitializer.getTrustStore(), "SSLv3"),
                                 hostPort);
                 httpClient.getHostConfiguration().setHost(hostUrl.getHost(), hostPort, httpsProtocol);
             } else {

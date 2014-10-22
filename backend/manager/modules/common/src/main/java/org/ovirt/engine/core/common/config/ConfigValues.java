@@ -360,6 +360,9 @@ public enum ConfigValues {
     @TypeConverterAttribute(Boolean.class)
     @DefaultValueAttribute("true")
     EncryptHostCommunication,
+    @TypeConverterAttribute(String.class)
+    @DefaultValueAttribute("TLSv1")
+    VdsmSSLProtocol,
     @Reloadable
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("oVirt")
