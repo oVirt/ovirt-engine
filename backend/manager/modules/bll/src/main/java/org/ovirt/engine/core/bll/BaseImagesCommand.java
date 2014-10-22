@@ -345,7 +345,7 @@ public abstract class BaseImagesCommand<T extends ImagesActionsParametersBase> e
                 }
             } catch (VdcBLLException e) {
                 // Logging only
-                log.errorFormat("Unable to update the image info for image {0} (image group: {1}) on domain {2}",
+                log.error("Unable to update the image info for image '{}' (image group: '{}') on domain '{}'",
                         newImageId, newImageGroupId, newStorageDomainID);
             } finally {
                 if (!getParameters().isLeaveLocked()) {

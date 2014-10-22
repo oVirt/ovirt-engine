@@ -15,9 +15,9 @@ import org.ovirt.engine.core.bll.utils.EngineSSHDialog;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.uutils.ssh.SSHDialog;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * ovirt-node upgrade.
@@ -29,7 +29,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
     private static final int BUFFER_SIZE = 10 * 1024;
     private static final int THREAD_JOIN_TIMEOUT = 20 * 1000;
 
-    private static final Log log = LogFactory.getLog(OVirtNodeUpgrade.class);
+    private static final Logger log = LoggerFactory.getLogger(OVirtNodeUpgrade.class);
 
     private SSHDialog.Control _control;
     private Thread _thread;
@@ -56,7 +56,7 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
                 _incoming != null &&
                 (line = _incoming.readLine()) != null
             ) {
-                log.infoFormat("update from host {0}: {1}", _vds.getHostName(), line);
+                log.info("update from host '{}': {}", _vds.getHostName(), line);
                 error = _messages.postOldXmlFormat(line) || error;
             }
 
@@ -68,12 +68,14 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
         }
         catch (Exception e) {
             _failException = e;
-            log.error("Error during upgrade", e);
+            log.error("Error during upgrade: {}", e.getMessage());
+            log.debug("Exception", e);
             try {
                 _control.close();
             }
             catch (IOException ee) {
-                log.error("Error during close", ee);
+                log.error("Error during close: {}", ee.getMessage());
+                log.debug("Exception", ee);
             }
         }
     }
@@ -109,7 +111,8 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             close();
         }
         catch (IOException e) {
-            log.error("Exception during finalize", e);
+            log.error("Exception during finalize: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -225,11 +228,12 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             _deployStatus = DeployStatus.Reboot;
         }
         catch (TimeLimitExceededException e){
-            log.errorFormat(
-                "Timeout during node {0} upgrade",
+            log.error(
+                "Timeout during node '{}' upgrade: {}",
                 _vds.getHostName(),
-                e
+                e.getMessage()
             );
+            log.debug("Exception", e);
             _messages.post(
                 InstallerMessages.Severity.ERROR,
                 "Processing stopped due to timeout"
@@ -237,16 +241,17 @@ public class OVirtNodeUpgrade implements SSHDialog.Sink, Closeable {
             throw e;
         }
         catch (Exception e) {
-            log.errorFormat("Error during node {0} upgrade", _vds.getHostName(), e);
+            log.error("Error during node '{}' upgrade: {}", _vds.getHostName(), e.getMessage());
+            log.error("Exception", e);
 
             if (_failException == null) {
                 throw e;
             }
             else {
-                log.errorFormat(
-                    "Error during node {0} upgrade, prefering first exception",
+                log.error(
+                    "Error during node '{}' upgrade, prefering first exception: {}",
                     _vds.getHostName(),
-                    _failException
+                    _failException.getMessage()
                 );
                 throw _failException;
             }

@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOperation {
 
-    private static final Log log = LogFactory.getLog(ConntectVDSToPoolAndDomains.class);
+    private static final Logger log = LoggerFactory.getLogger(ConntectVDSToPoolAndDomains.class);
 
     private Guid masterStorageDomainId;
 
@@ -44,15 +44,16 @@ public class ConntectVDSToPoolAndDomains extends ActivateDeactivateSingleAsyncOp
                         new ConnectStoragePoolVDSCommandParameters(
                                 vds, getStoragePool(), masterStorageDomainId, storagePoolIsoMap));
             } else {
-                log.errorFormat("Failed to connect host {0} to domain {1}",
+                log.error("Failed to connect host '{}' to domain '{}'",
                         vds.getName(),
                         getStorageDomain().getStorageName());
             }
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to connect host {0} to storage pool {1}. Exception: {3}",
+            log.error("Failed to connect host '{}' to storage pool '{}': {}",
                     vds.getName(),
                     getStoragePool().getName(),
-                    e);
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 

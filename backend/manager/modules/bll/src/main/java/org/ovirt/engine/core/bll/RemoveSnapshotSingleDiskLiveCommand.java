@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.DestroyImageParameters;
@@ -28,15 +27,15 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
 public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleDiskParameters>
         extends RemoveSnapshotSingleDiskCommandBase<T> {
-    private static final Log log = LogFactory.getLog(RemoveSnapshotSingleDiskLiveCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(RemoveSnapshotSingleDiskLiveCommand.class);
 
     public RemoveSnapshotSingleDiskLiveCommand(T parameters) {
         super(parameters);
@@ -84,7 +83,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
             switch (CommandCoordinatorUtil.getCommandStatus(currentChildId)) {
             case ACTIVE:
             case NOT_STARTED:
-                log.infoFormat("Waiting on Live Merge command step {0} to complete",
+                log.info("Waiting on Live Merge command step '{}' to complete",
                         getParameters().getCommandStep());
                 return;
 
@@ -94,7 +93,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     getParameters().setCommandStep(getParameters().getNextCommandStep());
                     break;
                 } else {
-                    log.errorFormat("Child command {0} failed: {1}",
+                    log.error("Child command '{}' failed: {}",
                             getParameters().getCommandStep(),
                             (vdcReturnValue != null
                                     ? vdcReturnValue.getExecuteFailedMessages()
@@ -106,20 +105,20 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
             case FAILED:
             case FAILED_RESTARTED:
-                log.errorFormat("Failed child command status for step {0}",
+                log.error("Failed child command status for step '{}'",
                         getParameters().getCommandStep());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
 
             case UNKNOWN:
-                log.errorFormat("Unknown child command status for step {0}",
+                log.error("Unknown child command status for step '{}'",
                         getParameters().getCommandStep());
                 setCommandStatus(CommandStatus.FAILED);
                 return;
             }
         }
 
-        log.infoFormat("Executing Live Merge command step {0}", getParameters().getCommandStep());
+        log.info("Executing Live Merge command step '{}'", getParameters().getCommandStep());
 
         Pair<VdcActionType, ? extends VdcActionParametersBase> nextCommand = null;
         switch (getParameters().getCommandStep()) {
@@ -222,7 +221,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
     public void onSucceeded() {
         syncDbRecords(true);
         endSuccessfully();
-        log.infoFormat("Successfully merged snapshot {0} images {1}..{2}",
+        log.info("Successfully merged snapshot '{}' images '{}'..'{}'",
                 getDiskImage().getImage().getSnapshotId(),
                 getDiskImage().getImageId(),
                 getDestinationDiskImage() != null ? getDestinationDiskImage().getImageId() : "(n/a)");
@@ -356,7 +355,7 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     return null;
                 }
             });
-            log.errorFormat("Merging of snapshot {0} images {1}..{2} failed. Images have been" +
+            log.error("Merging of snapshot '{}' images '{}'..'{}' failed. Images have been" +
                             " marked illegal and can no longer be previewed or reverted to." +
                             " Please retry Live Merge on the snapshot to complete the operation.",
                     getDiskImage().getImage().getSnapshotId(),
@@ -372,8 +371,8 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     return null;
                 }
             });
-            log.errorFormat("Snapshot {0} images {1}..{2} merged, but volume removal failed." +
-                            " Some or all of the following volumes may be orphaned: {3}." +
+            log.error("Snapshot '{}' images '{}'..'{}' merged, but volume removal failed." +
+                            " Some or all of the following volumes may be orphaned: {}." +
                             " Please retry Live Merge on the snapshot to complete the operation.",
                     getDiskImage().getImage().getSnapshotId(),
                     getDiskImage().getImageId(),

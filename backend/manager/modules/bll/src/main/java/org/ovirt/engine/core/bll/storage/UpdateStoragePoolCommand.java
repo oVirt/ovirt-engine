@@ -124,7 +124,8 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
                 runVdsCommand(VDSCommandType.UpgradeStoragePool,
                     new UpgradeStoragePoolVDSCommandParameters(spId, targetFormat));
             } catch (VdcBLLException e) {
-                log.warnFormat("Upgrade procees of Storage Pool {0} has encountered a problem due to following reason: {1}", spId, e.getMessage());
+                log.warn("Upgrade process of Storage Pool '{}' has encountered a problem due to following reason: {}",
+                        spId, e.getMessage());
                 AuditLogDirector.log(this, AuditLogType.UPGRADE_STORAGE_POOL_ENCOUNTERED_PROBLEMS);
             }
         }
@@ -140,7 +141,7 @@ public class UpdateStoragePoolCommand<T extends StoragePoolManagementParameter> 
             StorageDomainType sdType = domain.getStorageDomainType();
 
             if (sdType == StorageDomainType.Data || sdType == StorageDomainType.Master) {
-                log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
+                log.info("Updating storage domain '{}' (type '{}') to format '{}'",
                                domain.getId(), sdType, targetFormat);
 
                 domain.setStorageFormat(targetFormat);

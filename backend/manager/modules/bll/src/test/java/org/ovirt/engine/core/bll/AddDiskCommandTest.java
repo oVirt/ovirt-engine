@@ -60,11 +60,12 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNicDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddDiskCommandTest {
+    private static final Logger log = LoggerFactory.getLogger(AddDiskCommandTest.class);
     private static int MAX_BLOCK_SIZE = 8192;
     private static int FREE_SPACE_CRITICAL_LOW_IN_GB = 5;
     private static int MAX_PCI_SLOTS = 26;
@@ -524,7 +525,7 @@ public class AddDiskCommandTest {
      */
     private void runAndAssertCanDoActionSuccess() {
         boolean canDoAction = command.canDoAction();
-        log.info(command.getReturnValue().getCanDoActionMessages());
+        log.info("{}", command.getReturnValue().getCanDoActionMessages());
         assertTrue(canDoAction);
     }
 
@@ -933,8 +934,6 @@ public class AddDiskCommandTest {
         .getCanDoActionMessages()
         .clear();
     }
-
-    private static final Log log = LogFactory.getLog(AddDiskCommandTest.class);
 
     private void mockEntities(Guid storageId) {
         mockStorageDomain(storageId);

@@ -389,7 +389,7 @@ public class RemoveDiskCommand<T extends RemoveDiskParameters> extends CommandBa
             return createSharedLocksForTemplateDisk();
         }
 
-        log.warnFormat("No shared locks are taken while removing disk of entity: {0}",
+        log.warn("No shared locks are taken while removing disk of entity: {}",
                 getDisk().getVmEntityType());
         return null;
     }

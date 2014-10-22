@@ -14,11 +14,11 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
-    private static final Log log = LogFactory.getLog(RemoveDiskSnapshotTaskHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(RemoveDiskSnapshotTaskHandler.class);
 
     private final TaskHandlerCommand<? extends RemoveDiskSnapshotsParameters> enclosingCommand;
     private final Guid imageId;
@@ -51,7 +51,7 @@ public class RemoveDiskSnapshotTaskHandler implements SPMAsyncTaskHandler {
                     .addAll(vdcReturnValue.getInternalVdsmTaskIdList());
         }
         else {
-            log.errorFormat("Failed RemoveSnapshotSingleDisk (Image {0} , VM {1})", imageId, vmId);
+            log.error("Failed RemoveSnapshotSingleDisk (Image '{}', VM '{}')", imageId, vmId);
         }
 
         ExecutionHandler.setAsyncJob(enclosingCommand.getExecutionContext(), true);

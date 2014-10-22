@@ -8,8 +8,11 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MigrationPolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(MigrationPolicyUnit.class);
 
     public MigrationPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
@@ -20,7 +23,7 @@ public class MigrationPolicyUnit extends PolicyUnitImpl {
         if (vm.getRunOnVds() != null) {
             for (VDS host : hosts) {
                 if (host.getId().equals(vm.getRunOnVds())) {
-                    log.debugFormat("Vm {0} run on host {1}, filtering host", vm.getName(), host.getName());
+                    log.debug("Vm '{}' run on host '{}', filtering host", vm.getName(), host.getName());
                     hosts.remove(host);
                     break;
                 }

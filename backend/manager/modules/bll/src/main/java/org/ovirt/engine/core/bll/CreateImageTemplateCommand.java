@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateImageTemplateParameters;
@@ -129,7 +128,7 @@ public class CreateImageTemplateCommand<T extends CreateImageTemplateParameters>
     private void fillVolumeInformation(DiskImage disk) {
         DiskImage ancestor = getDiskImageDao().getAncestor(getDiskImage().getImageId());
         if (ancestor == null) {
-            log.warnFormat("Can't find ancestor of Disk with ID {0}, using original disk for volume info.",
+            log.warn("Can't find ancestor of Disk with ID '{}', using original disk for volume info.",
                     getDiskImage().getImageId());
             ancestor = getDiskImage();
         }

@@ -7,12 +7,12 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.utils.customprop.SimpleCustomPropertiesUtil;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class ExternalSchedulerDiscoveryResult {
-    private static final Log log = LogFactory.getLog(ExternalSchedulerDiscoveryResult.class);
+    private static final Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscoveryResult.class);
     private static final String FILTERS = "filters";
     private static final String SCORES = "scores";
     private static final String BALANCE = "balance";
@@ -64,7 +64,8 @@ public class ExternalSchedulerDiscoveryResult {
         }
         return true;
         } catch (Exception e) {
-            log.error("External scheduler error, exception why parsing discovery results", e);
+            log.error("External scheduler error, exception while parsing discovery results: {}", e.getMessage());
+            log.debug("Exception", e);
             return false;
         }
     }

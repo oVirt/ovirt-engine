@@ -16,12 +16,12 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
-    private static final Log log = LogFactory.getLog(HaReservationWeightPolicyUnit.class);
+    private static final Logger log = LoggerFactory.getLogger(HaReservationWeightPolicyUnit.class);
 
     private static final int RATIO_FACTOR = 100;
     private static final int DEFAULT_SCORE = 0;
@@ -83,7 +83,7 @@ public class HaReservationWeightPolicyUnit extends PolicyUnitImpl {
 
                 scores.add(new Pair<Guid, Integer>(host.getId(), haCount));
 
-                log.infoFormat("Score for host:{0} is {1}", host.getName(), haCount);
+                log.info("Score for host '{}' is {}", host.getName(), haCount);
             }
 
         }

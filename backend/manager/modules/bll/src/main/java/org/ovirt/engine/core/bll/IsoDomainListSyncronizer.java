@@ -47,14 +47,14 @@ import org.ovirt.engine.core.dao.RepoFileMetaDataDAO;
 import org.ovirt.engine.core.dao.StorageDomainDAO;
 import org.ovirt.engine.core.dao.StoragePoolDAO;
 import org.ovirt.engine.core.dao.provider.ProviderDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The class manages the Iso domain cache mechanism, <BR/>
@@ -65,7 +65,7 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
  */
 @SuppressWarnings("synthetic-access")
 public class IsoDomainListSyncronizer {
-    private static final Log log = LogFactory.getLog(IsoDomainListSyncronizer.class);
+    private static final Logger log = LoggerFactory.getLogger(IsoDomainListSyncronizer.class);
     private List<RepoImage> problematicRepoFileList = new ArrayList<RepoImage>();
     private static final int MIN_TO_MILLISECONDS = 60 * 1000;
     private static volatile IsoDomainListSyncronizer isoDomainListSyncronizer;
@@ -97,7 +97,7 @@ public class IsoDomainListSyncronizer {
     }
 
     protected void init() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         repoStorageDom = DbFacade.getInstance().getRepoFileMetaDataDao();
         providerDao = DbFacade.getInstance().getProviderDao();
         isoDomainRefreshRate = Config.<Integer> getValue(ConfigValues.AutoRepoDomainRefreshTime) * MIN_TO_MILLISECONDS;
@@ -108,7 +108,7 @@ public class IsoDomainListSyncronizer {
                 300000,
                 isoDomainRefreshRate,
                 TimeUnit.MILLISECONDS);
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     /**
@@ -154,7 +154,8 @@ public class IsoDomainListSyncronizer {
                     }
                 });
             } else {
-                log.debugFormat("Automatic refresh process for {0} file type in storage domain id {1} was not performed since refresh time out did not passed yet.",
+                log.debug("Automatic refresh process for '{}' file type in storage domain id '{}' was not performed"
+                                + " since refresh time out did not passed yet.",
                         repoImage.getFileType(),
                         repoImage.getRepoDomainId());
             }
@@ -205,7 +206,7 @@ public class IsoDomainListSyncronizer {
                 storageDomain.getStorageType() == StorageType.GLANCE) {
             refreshResult = refreshImageDomain(storageDomain, tempProblematicRepoFileList, imageType);
         } else {
-            log.errorFormat("Unable to refresh the storage domain {0}, Storage Domain Type {1} not supported",
+            log.error("Unable to refresh the storage domain '{}', Storage Domain Type '{}' not supported",
                     storageDomainId, storageDomain.getStorageDomainType());
             return false;
         }
@@ -293,7 +294,7 @@ public class IsoDomainListSyncronizer {
         // Log if the refresh succeeded or add the storage domain to the problematic list.
         if (updateFromVDSMSucceeded) {
             refreshSucceeded = true;
-            log.debugFormat("Refresh succeeded for file type {0} at storage domain id {1} in storage pool id {2}.",
+            log.debug("Refresh succeeded for file type '{}' at storage domain id '{}' in storage pool id '{}'.",
                     imageType.name(),
                     storageDomainId,
                     storagePoolId);
@@ -327,7 +328,7 @@ public class IsoDomainListSyncronizer {
                 DbFacade.getInstance()
                         .getStoragePoolIsoMapDao()
                         .getAllForStorage(storageDomainId);
-        log.debugFormat("Fetched {0} storage pools for {1} file type, in Iso domain {2}.",
+        log.debug("Fetched {} storage pools for '{}' file type, in Iso domain '{}'.",
                 isoMapList.size(),
                 imageType,
                 storageDomainId);
@@ -339,7 +340,8 @@ public class IsoDomainListSyncronizer {
             StorageDomainStatus status = storagePoolIsoMap.getStatus();
 
             if (status != StorageDomainStatus.Active) {
-                log.debugFormat("Storage domain id {0}, is not active, and therefore could not be refreshed for {1} file type (Iso domain status is {2}).",
+                log.debug("Storage domain id '{}', is not active, and therefore could not be refreshed for '{}'"
+                                + " file type (Iso domain status is '{}').",
                         storageDomainId,
                         imageType,
                         status);
@@ -351,7 +353,7 @@ public class IsoDomainListSyncronizer {
                                 storagePoolId,
                                 imageType);
                 if (!refreshSucceeded) {
-                    log.debugFormat("Failed refreshing Storage domain id {0}, for {1} file type in storage pool id {2}.",
+                    log.debug("Failed refreshing Storage domain id '{}', for '{}' file type in storage pool id '{}'.",
                             storageDomainId,
                             imageType,
                             storagePoolId);
@@ -484,8 +486,8 @@ public class IsoDomainListSyncronizer {
             }
 
             hasProblematic = true;
-            log.errorFormat("The following storage domains had a problem retrieving data from VDSM {0}",
-                    problematicStorages.toString());
+            log.error("The following storage domains had a problem retrieving data from VDSM: {}",
+                    problematicStorages);
             addToAuditLogErrorMessage(problematicIsoDomainsForAuditLog.toString());
         }
         return hasProblematic;
@@ -553,7 +555,7 @@ public class IsoDomainListSyncronizer {
                             repoImage.getFileType());
             addRepoFileToProblematicList(problematicRepoFileList);
         } finally {
-            log.infoFormat("Finished automatic refresh process for {0} file type with {1}, for storage domain id {2}.",
+            log.info("Finished automatic refresh process for '{}' file type with {}, for storage domain id '{}'.",
                     repoImage.getFileType(),
                     isRefreshed ? "success"
                             : "failure",
@@ -600,7 +602,8 @@ public class IsoDomainListSyncronizer {
         } catch (RuntimeException e) {
             // Illegal number or null are treated as not available,
             // handling exception in UI will be much more complicated.
-            log.errorFormat("File's '{0}' size is illegal number", fileStats.getKey(), e);
+            log.error("File's '{}' size is illegal number: {}", fileStats.getKey(), e.getMessage());
+            log.debug("Exception", e);
             return StorageConstants.SIZE_IS_NOT_AVAILABLE;
         }
     }
@@ -671,7 +674,7 @@ public class IsoDomainListSyncronizer {
                 Map<String, Map<String, Object>> fileStats =
                         (Map<String, Map<String, Object>>) returnValue.getReturnValue();
                 if (returnValue.getSucceeded() && fileStats != null) {
-                    log.debugFormat("The refresh process from VDSM, for Iso files succeeded.");
+                    log.debug("The refresh process from VDSM, for Iso files succeeded.");
                     // Set the Iso domain file list fetched from VDSM into the DB.
                     refreshIsoSucceeded =
                             refreshIsoFileListMetaData(repoStorageDomainId,
@@ -681,8 +684,8 @@ public class IsoDomainListSyncronizer {
                 }
             } catch (Exception e) {
                 refreshIsoSucceeded = false;
-                log.warnFormat("The refresh process from VDSM, for Iso files failed.");
-                log.error(e);
+                log.warn("The refresh process from VDSM, for Iso files failed: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return refreshIsoSucceeded;
@@ -730,11 +733,11 @@ public class IsoDomainListSyncronizer {
                                     fileStats,
                                     ImageFileType.Floppy);
                 }
-                log.debugFormat("The refresh process from VDSM, for Floppy files succeeded.");
+                log.debug("The refresh process from VDSM, for Floppy files succeeded.");
             } catch (Exception e) {
                 refreshFloppySucceeded = false;
-                log.warnFormat("The refresh process from VDSM, for Floppy files failed.");
-                log.error(e);
+                log.warn("The refresh process from VDSM, for Floppy files failed: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return refreshFloppySucceeded;

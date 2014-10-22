@@ -15,8 +15,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
@@ -27,7 +27,7 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
 
     private static Object[] EMPTY = new Object[] {};
 
-    private final static Log log = LogFactory.getLog(ExternalSchedulerBrokerImpl.class);
+    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerBrokerImpl.class);
 
     private XmlRpcClientConfigImpl config = null;
 
@@ -40,7 +40,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
         try {
             config.setServerURL(new URL(extSchedUrl));
         } catch (MalformedURLException e) {
-            log.error("External scheduler got bad url", e);
+            log.error("External scheduler got bad url: {}", e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -53,7 +54,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return parseDiscoverResults(result);
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while discovering", e);
+            log.error("Error communicating with the external scheduler while discovering: {}", e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
     }
@@ -83,7 +85,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return ExternalSchedulerBrokerObjectBuilder.getFilteringResult(xmlRpcStruct).getHosts();
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while filtering", e);
+            log.error("Error communicating with the external scheduler while filtering: {}", e.getMessage());
+            log.debug("Exception", e);
             auditLogFailedToConnect();
             return hostIDs;
         }
@@ -131,7 +134,9 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return ExternalSchedulerBrokerObjectBuilder.getScoreResult(result).getHosts();
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while running weight modules", e);
+            log.error("Error communicating with the external scheduler while running weight modules: {}",
+                    e.getMessage());
+            log.debug("Exception", e);
             auditLogFailedToConnect();
             return null;
         }
@@ -175,7 +180,8 @@ public class ExternalSchedulerBrokerImpl implements ExternalSchedulerBroker {
             return ExternalSchedulerBrokerObjectBuilder.getBalanceResults(result).getResult();
 
         } catch (XmlRpcException e) {
-            log.error("Could not communicate with the external scheduler while balancing", e);
+            log.error("Error communicating with the external scheduler while balancing: {}", e.getMessage());
+            log.debug("Exception", e);
             auditLogFailedToConnect();
             return null;
         }

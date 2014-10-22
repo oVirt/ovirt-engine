@@ -76,8 +76,8 @@ import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.job.ExecutionMessageDirector;
 import org.ovirt.engine.core.dao.SnapshotDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
@@ -112,7 +112,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     public static final String ISO_PREFIX = "iso://";
     public static final String STATELESS_SNAPSHOT_DESCRIPTION = "stateless snapshot";
 
-    private static final Log log = LogFactory.getLog(RunVmCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(RunVmCommand.class);
 
     protected RunVmCommand(Guid commandId) {
         super(commandId);
@@ -242,7 +242,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                 case PROVIDER_FAILURE:
                     throw e;
                 default:
-                    log.warnFormat("Failed to run VM {0}: {1}", getVmName(), e.getMessage());
+                    log.warn("Failed to run VM '{}': {}", getVmName(), e.getMessage());
                 }
 
             } finally {
@@ -255,7 +255,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
             } else {
                 // Try to rerun Vm on different vds no need to log the command because it is
                 // being logged inside the rerun
-                log.infoFormat("Trying to rerun VM {0}", getVm().getName());
+                log.info("Trying to rerun VM '{}'", getVm().getName());
                 setCommandShouldBeLogged(false);
                 setSucceeded(true);
                 rerun();
@@ -392,12 +392,12 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         warnIfNotAllDisksPermitSnapshots();
 
         if (isStatelessSnapshotExistsForVm()) {
-            log.errorFormat(
-                    "VM {0} ({1}) already contains stateless snapshot, removing it",
+            log.error(
+                    "VM '{}' ({}) already contains stateless snapshot, removing it",
                     getVm().getName(), getVm().getId());
             removeVmStatlessImages();
         } else {
-            log.infoFormat("Creating stateless snapshot for VM {0} ({1})",
+            log.info("Creating stateless snapshot for VM '{}' ({})",
                     getVm().getName(), getVm().getId());
             CreateAllSnapshotsFromVmParameters createAllSnapshotsFromVmParameters = buildCreateSnapshotParameters();
 
@@ -417,7 +417,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     throw new VdcBLLException(VdcBllErrors.IRS_IMAGE_STATUS_ILLEGAL);
                 }
                 getReturnValue().setFault(vdcReturnValue.getFault());
-                log.errorFormat("Failed to create stateless snapshot for VM {0} ({1})",
+                log.error("Failed to create stateless snapshot for VM '{}' ({})",
                         getVm().getName(), getVm().getId());
             }
         }
@@ -485,7 +485,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     protected VMStatus createVm() {
         final String cdPath = chooseCd();
         if (StringUtils.isNotEmpty(cdPath)) {
-            log.infoFormat("Running VM with attached cd {0}", cdPath);
+            log.info("Running VM with attached cd '{}'", cdPath);
         }
         updateCurrentCd(cdPath);
         getVm().setCdPath(cdPathWindowsToLinux(cdPath));
@@ -766,13 +766,13 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
         setVds(null);
         setVdsName(null);
         if (getVdsId().equals(Guid.Empty)) {
-            log.errorFormat("Can't find VDS to run the VM {0} on, so this VM will not be run.", getVmId());
+            log.error("Can't find VDS to run the VM '{}' on, so this VM will not be run.", getVmId());
             return false;
         }
 
         if (getVds() == null) {
             VdcBLLException outEx = new VdcBLLException(VdcBllErrors.RESOURCE_MANAGER_VDS_NOT_FOUND);
-            log.error(String.format("VmHandler::%1$s", getClass().getName()), outEx);
+            log.error("VmHandler::{}: {}", getClass().getName(), outEx.getMessage());
             return false;
         }
         return true;
@@ -978,7 +978,7 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
                     getActionType(), getParameters(), createContextForRunStatelessVm()).getSucceeded());
             if (!getSucceeded()) {
                 getParameters().setShouldBeLogged(true);
-                log.errorFormat("Could not run VM {0} ({1}) in stateless mode",
+                log.error("Could not run VM '{}' ({}) in stateless mode",
                         getVm().getName(), getVm().getId());
                 // could not run the vm don't try to run the end action again
                 getReturnValue().setEndActionTryAgain(false);

@@ -37,20 +37,20 @@ import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * AsyncTaskManager: Singleton, manages all tasks in the system.
  */
 public final class AsyncTaskManager {
-    private static final Log log = LogFactory.getLog(AsyncTaskManager.class);
+    private static final Logger log = LoggerFactory.getLogger(AsyncTaskManager.class);
 
     /** Map which consist all tasks that currently are monitored **/
     private ConcurrentMap<Guid, SPMTask> _tasks;
@@ -111,14 +111,14 @@ public final class AsyncTaskManager {
         int numberOfCommandsWithEmptyVdsmId = 0;
         for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
-                log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
+                log.info("Root Command '{}' has tasks without vdsm id.", entry.getKey());
                 numberOfCommandsWithEmptyVdsmId++;
             }
         }
         irsBrokerLatch = new CountDownLatch(numberOfCommandsWithEmptyVdsmId);
         for (Entry<Guid, List<AsyncTask>> entry : rootCommandIdToTasksMap.entrySet()) {
             if (hasTasksWithoutVdsmId(rootCommandIdToTasksMap.get(entry.getKey()))) {
-                log.infoFormat("Root Command {0} has tasks without vdsm id.", entry.getKey());
+                log.info("Root Command '{}' has tasks without vdsm id.", entry.getKey());
                 handleTasksOfCommandWithEmptyVdsmId(rootCommandIdToTasksMap.get(entry.getKey()));
             }
             for (AsyncTask task : entry.getValue()) {
@@ -142,7 +142,7 @@ public final class AsyncTaskManager {
             pollAndUpdateAsyncTasks();
 
             if (thereAreTasksToPoll() && logChangedMap) {
-                log.infoFormat("Finished polling Tasks, will poll again in {0} seconds.",
+                log.info("Finished polling Tasks, will poll again in {} seconds.",
                         Config.<Integer>getValue(ConfigValues.AsyncTaskPollingRate));
 
                 // Set indication to false for not logging the same message next
@@ -325,24 +325,26 @@ public final class AsyncTaskManager {
     }
 
     public void logAndFailTaskOfCommandWithEmptyVdsmId(final AsyncTask task, String message) {
-        log.infoFormat(
-                "Failing task with empty vdsm id AsyncTaskType {0} : Task '{1}' Parent Command {2}",
+        log.info(
+                "Failing task with empty vdsm id AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                 task.getTaskType(),
                 task.getTaskId(),
                 (task.getActionType()));
         task.getTaskParameters().setTaskGroupSuccess(false);
         if (task.getActionType() == VdcActionType.Unknown) {
             removeTaskFromDbByTaskId(task.getTaskId());
-            log.infoFormat(
-                    "Not calling endAction for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2}",
+            log.info(
+                    "Not calling endAction for task with out vdsm id and AsyncTaskType '{}': Task '{}' Parent Command '{}'",
                     task.getTaskType(),
                     task.getTaskId(),
                     (task.getActionType()));
             return;
         }
-        log.infoFormat("Calling updateTask for task with out vdsm id and AsyncTaskType {0} : Task '{1}' Parent Command {2} Parameters class {3}", task.getTaskType(),
-                    task.getTaskId(),
-                    (task.getActionType()));
+        log.info("Calling updateTask for task with out vdsm id and AsyncTaskType '{}': Task '{}' Parent Command"
+                        + " '{}' Parameters class '{}'",
+                task.getTaskType(),
+                task.getTaskId(),
+                task.getActionType());
         AsyncTaskCreationInfo creationInfo = new AsyncTaskCreationInfo(Guid.Empty, task.getTaskType(), task.getStoragePoolId());
         SPMTask spmTask = coco.construct(creationInfo, task);
         AsyncTaskStatus failureStatus = new AsyncTaskStatus();
@@ -365,12 +367,13 @@ public final class AsyncTaskManager {
     public static void removeTaskFromDbByTaskId(Guid taskId) {
         try {
             if (CommandCoordinatorUtil.callRemoveTaskFromDbByTaskId(taskId) != 0) {
-                log.infoFormat("Removed task {0} from DataBase", taskId);
+                log.info("Removed task '{}' from DataBase", taskId);
             }
         } catch (RuntimeException e) {
-            log.error(String.format(
-                    "Removing task %1$s from DataBase threw an exception.",
-                    taskId), e);
+            log.error("Removing task '{}' from DataBase threw an exception: {}",
+                    taskId,
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -398,7 +401,7 @@ public final class AsyncTaskManager {
                     task.setZombieTask(true);
                     AuditLogDirector.log(logable, AuditLogType.TASK_STOPPING_ASYNC_TASK);
 
-                    log.infoFormat("Cleaning zombie tasks: Stopping async task {0} that started at {1}",
+                    log.info("Cleaning zombie tasks: Stopping async task '{}' that started at '{}'",
                             task.getParameters().getDbAsyncTask().getActionType(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
@@ -406,7 +409,7 @@ public final class AsyncTaskManager {
                 } else {
                     AuditLogDirector.log(logable, AuditLogType.TASK_CLEARING_ASYNC_TASK);
 
-                    log.infoFormat("Cleaning zombie tasks: Clearing async task {0} that started at {1}",
+                    log.info("Cleaning zombie tasks: Clearing async task '{}' that started at '{}'",
                             task.getParameters().getDbAsyncTask().getActionType(), task
                                     .getParameters().getDbAsyncTask().getStartTime());
 
@@ -442,7 +445,7 @@ public final class AsyncTaskManager {
      */
     private void pollAndUpdateAsyncTasks() {
         if (logChangedMap) {
-            log.infoFormat("Polling and updating Async Tasks: {0} tasks, {1} tasks to poll now",
+            log.info("Polling and updating Async Tasks: {} tasks, {} tasks to poll now",
                            _tasks.size(), numberOfTasksToPoll());
         }
 
@@ -504,14 +507,15 @@ public final class AsyncTaskManager {
             } catch (RuntimeException e) {
                 if ((e instanceof VdcBLLException)
                         && (((VdcBLLException) e).getErrorCode() == VdcBllErrors.VDS_NETWORK_ERROR)) {
-                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, "
-                            + "with storagePoolId {3}) threw an exception.",
-                            VDSCommandType.SPMGetAllTasksStatuses, "VDSCommand", storagePoolID);
+                    log.debug("Get SPM task statuses: Calling Command {}VDSCommand, "
+                                    + "with storagePoolId '{}') threw an exception.",
+                            VDSCommandType.SPMGetAllTasksStatuses, storagePoolID);
                 } else {
-                    log.debugFormat("Get SPM task statuses: Calling Command {1}{2}, "
-                            + "with storagePoolId {3}) threw an exception.",
-                            VDSCommandType.SPMGetAllTasksStatuses, "VDSCommand", storagePoolID, e);
+                    log.debug("Get SPM task statuses: Calling Command {}VDSCommand, "
+                                    + "with storagePoolId '{}') threw an exception: {}",
+                            VDSCommandType.SPMGetAllTasksStatuses, storagePoolID, e.getMessage());
                 }
+                log.debug("Exception", e);
             }
         }
 
@@ -560,7 +564,7 @@ public final class AsyncTaskManager {
             poolsOfClearedAndOldTasks.removeAll(poolsOfActiveTasks);
         }
         for (Guid storagePoolID : poolsOfClearedAndOldTasks) {
-            log.infoFormat("Cleared all tasks of pool {0}.",
+            log.info("Cleared all tasks of pool '{}'.",
                     storagePoolID);
         }
     }
@@ -574,8 +578,8 @@ public final class AsyncTaskManager {
             log.error("Cannot add a null task.");
         } else {
             if (!_tasks.containsKey(task.getVdsmTaskId())) {
-                log.infoFormat(
-                        "Adding task '{0}' (Parent Command {1}, Parameters Type {2}), {3}.",
+                log.info(
+                        "Adding task '{}' (Parent Command '{}', Parameters Type '{}'), {}.",
                         task.getVdsmTaskId(),
                         (task.getParameters().getDbAsyncTask().getActionType()),
                         task.getParameters().getClass().getName(),
@@ -589,8 +593,8 @@ public final class AsyncTaskManager {
                 SPMTask existingTask = _tasks.get(task.getVdsmTaskId());
                 if (existingTask.getParameters().getDbAsyncTask().getActionType() == VdcActionType.Unknown
                         && task.getParameters().getDbAsyncTask().getActionType() != VdcActionType.Unknown) {
-                    log.infoFormat(
-                            "Task '{0}' already exists with action type 'Unknown', now overriding it with action type '{1}'",
+                    log.info(
+                            "Task '{}' already exists with action type 'Unknown', now overriding it with action type '{}'",
                             task.getVdsmTaskId(),
                             task.getParameters().getDbAsyncTask().getActionType());
 
@@ -628,7 +632,7 @@ public final class AsyncTaskManager {
         logChangedMap = true;
 
         // Log tasks to poll now.
-        log.infoFormat("Setting new tasks map. The map contains now {0} tasks", _tasks.size());
+        log.info("Setting new tasks map. The map contains now {} tasks", _tasks.size());
     }
 
     public SPMTask createTask(AsyncTaskType taskType, AsyncTaskParameters taskParameters) {
@@ -652,8 +656,8 @@ public final class AsyncTaskManager {
                     returnValue.add(_tasks.get(vdsmTaskId).getLastTaskStatus());
                 } else { // task doesn't exist in the manager (shouldn't happen) ->
                 // assume it has been ended successfully.
-                    log.warnFormat(
-                            "Polling tasks. Task ID '{0}' doesn't exist in the manager -> assuming 'finished'.",
+                    log.warn(
+                            "Polling tasks. Task ID '{}' doesn't exist in the manager -> assuming 'finished'.",
                             vdsmTaskId);
 
                     AsyncTaskStatus tempVar = new AsyncTaskStatus();
@@ -678,11 +682,10 @@ public final class AsyncTaskManager {
         try {
             currPoolTasks = coco.getAllTasksInfo(sp.getId());
         } catch (RuntimeException e) {
-            log.error(
-                    String.format(
-                            "Getting existing tasks on Storage Pool %1$s failed.",
-                            sp.getName()),
-                    e);
+            log.error("Getting existing tasks on Storage Pool '{}' failed: {}",
+                    sp.getName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
 
         if (currPoolTasks != null && currPoolTasks.size() > 0) {
@@ -710,9 +713,10 @@ public final class AsyncTaskManager {
                             addTaskToManager(task);
                             newlyAddedTasks.add(task);
                         } catch (Exception e) {
-                            log.errorFormat("Failed to load task of type {0} with id {1}, due to: {2}.",
+                            log.error("Failed to load task of type '{}' with id '{}': {}.",
                                        creationInfo.getTaskType(), creationInfo.getVdsmTaskId(),
                                        ExceptionUtils.getRootCauseMessage(e));
+                            log.debug("Exception", e);
                         }
                     }
                 }
@@ -731,14 +735,14 @@ public final class AsyncTaskManager {
                     startPollingTask(task.getVdsmTaskId());
                 }
 
-                log.infoFormat(
-                        "Discovered {0} tasks on Storage Pool '{1}', {2} added to manager.",
+                log.info(
+                        "Discovered {} tasks on Storage Pool '{}', {} added to manager.",
                         currPoolTasks.size(),
                         sp.getName(),
                         newlyAddedTasks.size());
             }
         } else {
-            log.infoFormat("Discovered no tasks on Storage Pool {0}",
+            log.info("Discovered no tasks on Storage Pool '{}'",
                     sp.getName());
         }
 
@@ -772,7 +776,7 @@ public final class AsyncTaskManager {
 
     public synchronized void cancelTask(Guid vdsmTaskId) {
         if (_tasks.containsKey(vdsmTaskId)) {
-            log.infoFormat("Attempting to cancel task '{0}'.", vdsmTaskId);
+            log.info("Attempting to cancel task '{}'.", vdsmTaskId);
             _tasks.get(vdsmTaskId).stopTask();
             _tasks.get(vdsmTaskId).concreteStartPollingTask();
         }

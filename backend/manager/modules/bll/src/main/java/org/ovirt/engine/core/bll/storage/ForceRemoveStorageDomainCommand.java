@@ -51,8 +51,10 @@ public class ForceRemoveStorageDomainCommand<T extends StorageDomainParametersBa
                 tempVar2.setForce(true);
                 runVdsCommand(VDSCommandType.DetachStorageDomain, tempVar2);
             } catch (RuntimeException ex) {
-                log.errorFormat("Could not force detach storage domain {0}. error: {1}", getStorageDomain()
-                        .getStorageName(), ex.toString());
+                log.error("Could not force detach storage domain '{}': {}",
+                        getStorageDomain().getStorageName(),
+                        ex.getMessage());
+                log.debug("Exception", ex);
             }
         }
 

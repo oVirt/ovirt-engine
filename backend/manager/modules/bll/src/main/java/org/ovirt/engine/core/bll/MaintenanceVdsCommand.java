@@ -125,7 +125,7 @@ public class MaintenanceVdsCommand<T extends MaintenanceVdsParameters> extends V
                 if (!result.getCanDoAction() || !(((Boolean) result.getActionReturnValue()).booleanValue())) {
                     succeeded = false;
                     appendCustomValue("failedVms", vm.getName(), ",");
-                    log.errorFormat("ResourceManager::vdsMaintenance - Failed migrating desktop '{0}'", vm.getName());
+                    log.error("ResourceManager::vdsMaintenance - Failed migrating desktop '{}'", vm.getName());
                 }
             }
         }

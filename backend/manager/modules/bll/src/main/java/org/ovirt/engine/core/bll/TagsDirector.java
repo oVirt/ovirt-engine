@@ -15,8 +15,8 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.TagDAO;
 import org.ovirt.engine.core.utils.collections.CopyOnAccessMap;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class responsible to In memory Tags handling. On Vdc starting in memory tags tree initialized. All Tags changing
@@ -36,7 +36,7 @@ public class TagsDirector {
         NAME
     }
 
-    private static final Log log = LogFactory.getLog(TagsDirector.class);
+    private static final Logger log = LoggerFactory.getLogger(TagsDirector.class);
 
     protected static final Guid ROOT_TAG_ID = Guid.Empty;
 
@@ -65,7 +65,7 @@ public class TagsDirector {
         Tags root = new Tags("root", null, true, ROOT_TAG_ID, "root");
         addTagToHash(root);
         addChildren(root);
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
 
@@ -77,7 +77,7 @@ public class TagsDirector {
             // of the old version of the tag , if exists
             Tags parentTag = tagsMapByID.get(tag.getparent_id());
             if (parentTag == null) {
-                log.error(String.format("Could not obtain tag for guid %1$s", tag.getparent_id()));
+                log.error("Could not obtain tag for guid '{}'", tag.getparent_id());
                 return;
             }
             List<Tags> parentChildren = parentTag.getChildren();
@@ -107,11 +107,11 @@ public class TagsDirector {
      */
 
     private void addChildren(Tags tag) {
-        log.infoFormat("Tag {0} added to tree", tag.gettag_name());
+        log.info("Tag '{}' added to tree", tag.gettag_name());
         List<Tags> children = getTagDAO().getAllForParent(tag.gettag_id());
         for (Tags child : children) {
             addChildren(child);
-            log.infoFormat("Tag {0} added as child to parent {1}", child.gettag_name(), tag.gettag_name());
+            log.info("Tag '{}' added as child to parent '{}'", child.gettag_name(), tag.gettag_name());
             tag.getChildren().add(child);
             addTagToHash(tag);
             addTagToHash(child);
@@ -140,7 +140,7 @@ public class TagsDirector {
             addTagToHash(tag);
             addTagToHash(parent);
         } else {
-            log.errorFormat("Trying to add tag {0}, parent doesn't exist in Data Structure - {1}", tag.gettag_name(),
+            log.error("Trying to add tag '{}', parent doesn't exist in Data Structure - '{}'", tag.gettag_name(),
                     tag.getparent_id());
         }
     }
@@ -159,7 +159,7 @@ public class TagsDirector {
             parent.getChildren().remove(tag);
             addTagToHash(parent);
         } else {
-            log.warnFormat("Trying to remove tag, not exists in Data Structure - {0}", tagId);
+            log.warn("Trying to remove tag, not exists in Data Structure - '{}'", tagId);
         }
     }
 
@@ -183,7 +183,7 @@ public class TagsDirector {
 
             addTagToHash(tag);
         } else {
-            log.warnFormat("Trying to update tag, not exists in Data Structure - {0}", tag.gettag_name());
+            log.warn("Trying to update tag, not exists in Data Structure - '{}'", tag.gettag_name());
         }
     }
 
@@ -196,7 +196,7 @@ public class TagsDirector {
                     parentTag.getChildren().remove(tag);
                     addTagToHash(parentTag);
                 } else {
-                    log.warnFormat("Trying to move tag from parent that doesn't exist in Data Structure - {0}",
+                    log.warn("Trying to move tag from parent that doesn't exist in Data Structure - '{}'",
                             tag.getparent_id());
                 }
                 Tags newParentTag = tagsMapByID.get(newParent);
@@ -205,10 +205,10 @@ public class TagsDirector {
                 addTagToHash(newParentTag); // Parent got changed, modify it.
                 updateTagInBackend(tag);
             } else {
-                log.errorFormat("Trying to move tag, to parent not exists in Data Structure - {0}", newParent);
+                log.error("Trying to move tag, to parent not exists in Data Structure - '{}'", newParent);
             }
         } else {
-            log.errorFormat("Trying to move tag, not exists in Data Structure - {0}", tagId);
+            log.error("Trying to move tag, not exists in Data Structure - '{}'", tagId);
         }
     }
 

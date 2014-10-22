@@ -7,14 +7,16 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.uutils.xml.SecureDocumentBuilderFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.xml.sax.InputSource;
 
 public class InstallerMessages {
+    private static final Logger log = LoggerFactory.getLogger(InstallerMessages.class);
+
     private VDS _vds;
     private String _correlationId;
 
@@ -40,16 +42,16 @@ public class InstallerMessages {
         switch (severity) {
         case INFO:
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS;
-            log.infoFormat("Installation {0}: {1}", _vds.getHostName(), text);
+            log.info("Installation '{}': {}", _vds.getHostName(), text);
             break;
         default:
         case WARNING:
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_WARNING;
-            log.warnFormat("Installation {0}: {1}", _vds.getHostName(), text);
+            log.warn("Installation '{}': {}", _vds.getHostName(), text);
             break;
         case ERROR:
             logType = AuditLogType.VDS_INSTALL_IN_PROGRESS_ERROR;
-            log.errorFormat("Installation {0}: {1}", _vds.getHostName(), text);
+            log.error("Installation '{}': {}", _vds.getHostName(), text);
             break;
         }
         AuditLogDirector.log(logable, logType);
@@ -74,14 +76,13 @@ public class InstallerMessages {
                     error = _internalPostOldXmlFormat(message);
                 } catch (RuntimeException e) {
                     error = true;
-                    log.errorFormat(
-                        "Installation of Host. Received illegal XML from Host. Message: {0}",
-                        message,
-                        e
-                    );
+                    log.error(
+                        "Installation of Host. Received illegal XML from Host. Message: {}",
+                        message);
+                    log.debug("Exception", e);
                 }
             } else {
-                log.info("VDS message: " + message);
+                log.info("VDS message: {}", message);
             }
         }
         return error;
@@ -130,6 +131,4 @@ public class InstallerMessages {
 
         return error;
     }
-
-    private static final Log log = LogFactory.getLog(InstallerMessages.class);
 }

@@ -13,15 +13,16 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AsyncTaskDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for async tasks handling
  */
 public class AsyncTaskUtils {
+    private static final Logger log = LoggerFactory.getLogger(AsyncTaskUtils.class);
 
     /**
      * Adds a task to DB or updates it if already exists in DB
@@ -48,10 +49,10 @@ public class AsyncTaskUtils {
                 });
             }
         } catch (RuntimeException e) {
-            log.error(String.format(
-                    "Adding/Updating task %1$s to DataBase threw an exception.",
-                    Guid.isNullOrEmpty(asyncTask.getVdsmTaskId()) ? asyncTask.getCommandId() : asyncTask.getVdsmTaskId()),
-                    e);
+            log.error("Adding/Updating task '{}' to DataBase threw an exception: {}",
+                    Guid.isNullOrEmpty(asyncTask.getVdsmTaskId()) ? asyncTask.getCommandId() : asyncTask.getVdsmTaskId(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
 
@@ -74,7 +75,4 @@ public class AsyncTaskUtils {
     private static AsyncTaskDAO getAsyncTaskDao() {
         return DbFacade.getInstance().getAsyncTaskDao();
     }
-
-    private static final Log log = LogFactory.getLog(AsyncTaskUtils.class);
-
 }

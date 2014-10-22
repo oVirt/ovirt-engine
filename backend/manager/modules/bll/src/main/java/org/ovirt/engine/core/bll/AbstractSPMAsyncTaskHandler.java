@@ -10,12 +10,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?>> implements SPMAsyncTaskHandler {
 
-    protected Log log = LogFactory.getLog(getClass());
+    protected Logger log = LoggerFactory.getLogger(AbstractSPMAsyncTaskHandler.class);
 
     private final C cmd;
 
@@ -71,7 +71,10 @@ public abstract class AbstractSPMAsyncTaskHandler<C extends TaskHandlerCommand<?
         Guid vdsmTaskId = taskCreationInfo.getVdsmTaskId();
         getReturnValue().getVdsmTaskIdList().add(vdsmTaskId);
         if (isRevertedTask) {
-            log.infoFormat("Reverting task {0} with ID {1} on DataCenter {2}.", taskCreationInfo.getTaskType().name(), vdsmTaskId, taskCreationInfo.getStoragePoolID());
+            log.info("Reverting task '{}' with ID '{}' on DataCenter '{}'.",
+                    taskCreationInfo.getTaskType().name(),
+                    vdsmTaskId,
+                    taskCreationInfo.getStoragePoolID());
         }
     }
 

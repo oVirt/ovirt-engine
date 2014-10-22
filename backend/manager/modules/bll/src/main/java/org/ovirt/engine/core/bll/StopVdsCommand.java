@@ -14,8 +14,8 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.UpdateVdsVMsClearedVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Send a Stop action to a power control device.
@@ -28,6 +28,8 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 @NonTransactiveCommandAttribute
 public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVdsBaseCommand<T> {
+    private static final Logger log = LoggerFactory.getLogger(StopVdsCommand.class);
+
     public StopVdsCommand(T parameters) {
         this(parameters, null);
     }
@@ -81,7 +83,7 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
         addCanDoActionMessage(VdcBllMessages.VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__HOST);
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__STOP);
-        log.errorFormat("Failed to run StopVdsCommand on vds :{0}", getVdsName());
+        log.error("Failed to run StopVdsCommand on vds '{}'", getVdsName());
     }
 
     @Override
@@ -101,8 +103,6 @@ public class StopVdsCommand<T extends FenceVdsActionParameters> extends FenceVds
                     new UpdateVdsVMsClearedVDSCommandParameters(getVds().getId()));
         }
     }
-
-    private static final Log log = LogFactory.getLog(StopVdsCommand.class);
 
     @Override
     protected int getRerties() {

@@ -60,15 +60,15 @@ import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OvfDataUpdater {
-    private static final Log log = LogFactory.getLog(OvfDataUpdater.class);
+    private static final Logger log = LoggerFactory.getLogger(OvfDataUpdater.class);
     private static final OvfDataUpdater INSTANCE = new OvfDataUpdater();
     private int itemsCountPerUpdate;
 
@@ -119,7 +119,7 @@ public class OvfDataUpdater {
     private void logInfoIfNeeded(StoragePool pool, String message, Object... args) {
         // if supported, the info would be logged when executing for each domain
         if (!ovfOnAnyDomainSupported(pool)) {
-            log.infoFormat(message, args);
+            log.info(message, args);
         }
     }
 
@@ -129,27 +129,27 @@ public class OvfDataUpdater {
             proccessDomainsForOvfUpdate(pool);
         }
 
-        logInfoIfNeeded(pool, "Attempting to update VM OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Attempting to update VM OVFs in Data Center '{}'",
                 pool.getName());
         initProcessedInfoLists();
 
         updateOvfForVmsOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully updated VM OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Successfully updated VM OVFs in Data Center '{}'",
                 pool.getName());
-        logInfoIfNeeded(pool, "Attempting to update template OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Attempting to update template OVFs in Data Center '{}'",
                 pool.getName());
 
         updateOvfForTemplatesOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully updated templates OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Successfully updated templates OVFs in Data Center '{}'",
                 pool.getName());
-        logInfoIfNeeded(pool, "Attempting to remove unneeded template/vm OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Attempting to remove unneeded template/vm OVFs in Data Center '{}'",
                 pool.getName());
 
         removeOvfForTemplatesAndVmsOfStoragePool(pool);
 
-        logInfoIfNeeded(pool, "Successfully removed unneeded template/vm OVFs in Data Center {0}",
+        logInfoIfNeeded(pool, "Successfully removed unneeded template/vm OVFs in Data Center '{}'",
                 pool.getName());
     }
 
@@ -173,7 +173,8 @@ public class OvfDataUpdater {
         for (StoragePool pool : storagePools) {
             EngineLock poolLock = buildPoolEngineLock(pool);
             if (!acquireLock(poolLock)) {
-                    log.errorFormat("Failed to update OVFs in Data Center {0} as there is a related operation in progress.", pool.getName());
+                    log.error("Failed to update OVFs in Data Center '{}' as there is a related operation in progress.",
+                            pool.getName());
                 continue;
             }
 
@@ -182,7 +183,7 @@ public class OvfDataUpdater {
             try {
                 proceedPoolOvfUpdate(pool);
                 if (ovfOnAnyDomainSupported(pool)) {
-                    logInfoIfNeeded(pool, "Attempting to update ovfs in domain in Data Center {0}",
+                    logInfoIfNeeded(pool, "Attempting to update ovfs in domain in Data Center '{}'",
                             pool.getName());
 
                     releaseLock(poolLock);
@@ -194,7 +195,10 @@ public class OvfDataUpdater {
                 }
             } catch (Exception ex) {
                 addAuditLogError(pool.getName());
-                log.errorFormat("Exception while trying to update or remove VMs/Templates ovf in Data Center {0}.", pool.getName(), ex);
+                log.error("Exception while trying to update or remove VMs/Templates ovf in Data Center '{}': {}",
+                        pool.getName(),
+                        ex.getMessage());
+                log.debug("Exception", ex);
             } finally {
                 if (!lockReleased) {
                     releaseLock(poolLock);
@@ -386,7 +390,8 @@ public class OvfDataUpdater {
                 loadVmData(vm);
                 Long currentDbGeneration = getVmStaticDao().getDbGeneration(vm.getId());
                 if (currentDbGeneration == null) {
-                    log.warnFormat("currentDbGeneration of VM (name: {0}, id: {1}) is null, probably because the VM was deleted during the run of OvfDataUpdater.",
+                    log.warn("CurrentDbGeneration of VM (name '{}', id '{}') is null, probably because the VM was"
+                                    + " deleted during the run of OvfDataUpdater.",
                             vm.getName(),
                             vm.getId());
                     continue;

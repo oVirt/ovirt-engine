@@ -13,11 +13,12 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation=true)
 public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCommandBase<T> {
+    private static final Logger log = LoggerFactory.getLogger(ShutdownVmCommand.class);
 
     protected ShutdownVmCommand(Guid commandId) {
         super(commandId);
@@ -48,14 +49,14 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
     @Override
     protected void perform() {
-        log.infoFormat("Entered (VM {0}).", getVm().getName());
+        log.info("Entered (VM '{}').", getVm().getName());
 
         VmHandler.updateVmGuestAgentVersion(getVm());
 
         if (canShutdownVm()) {
             // shutting down desktop and waiting for it in a separate thread to
             // become 'down':
-            log.infoFormat("Sending shutdown command for VM {0}.", getVmName());
+            log.info("Sending shutdown command for VM '{}'.", getVmName());
 
             int secondsToWait = getParameters().getWaitBeforeShutdown() ? Config
                     .<Integer> getValue(ConfigValues.VmGracefulShutdownTimeout) : 0;
@@ -70,7 +71,7 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
             // don't log -> log will appear for the StopVmCommand we are about to run:
             setCommandShouldBeLogged(false);
 
-            log.infoFormat("Cannot shutdown VM {0}, status is not up. Stopping instead.", getVmName());
+            log.info("Cannot shutdown VM '{}', status is not up. Stopping instead.", getVmName());
 
             StopVmParameters stopVmParams = new StopVmParameters(getVmId(), StopVmTypeEnum.CANNOT_SHUTDOWN);
             stopVmParams.setStopReason(getParameters().getStopReason());
@@ -86,6 +87,4 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
         return getVm().getStatus() == VMStatus.Up &&
                 (Boolean.TRUE.equals(getVm().getAcpiEnable()) || getVm().getHasAgent());
     }
-
-    private static final Log log = LogFactory.getLog(ShutdownVmCommand.class);
 }

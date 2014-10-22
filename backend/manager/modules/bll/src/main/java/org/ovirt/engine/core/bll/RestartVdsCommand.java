@@ -109,7 +109,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
             setSucceeded(false);
         }
         if (!getSucceeded()) {
-            log.warnFormat("Restart host action failed, updating host {0} to {1}",
+            log.warn("Restart host action failed, updating host '{}' to '{}'",
                     vdsId,
                     VDSStatus.NonResponsive.name());
             runVdsCommand(VDSCommandType.SetVdsStatus, new SetVdsStatusVDSCommandParameters(vdsId,
@@ -154,7 +154,7 @@ public class RestartVdsCommand<T extends FenceVdsActionParameters> extends Fence
         addCanDoActionMessage(VDS_FENCE_OPERATION_FAILED);
         addCanDoActionMessage(VAR__TYPE__HOST);
         addCanDoActionMessage(VAR__ACTION__RESTART);
-        log.errorFormat("Failed to run RestartVdsCommand on vds :{0}", getVdsName());
+        log.error("Failed to run RestartVdsCommand on vds '{}'", getVdsName());
     }
 
     @Override

@@ -29,16 +29,16 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandExecutor {
 
     private static final ExecutorService executor = Executors.newFixedThreadPool(Config.<Integer>getValue(ConfigValues.CommandCoordinatorThreadPoolSize));
-    private static final Log log = LogFactory.getLog(CommandExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(CommandExecutor.class);
 
     private final CommandCoordinatorImpl coco;
     private final Map<Guid, CommandCallBack> cmdCallBackMap = new ConcurrentHashMap<>();
@@ -90,11 +90,11 @@ public class CommandExecutor {
     }
 
     private void handleError(Exception ex, CommandStatus status, Guid cmdId) {
-        log.errorFormat("Error invoking callback method {0} for {1} command {2}",
+        log.error("Error invoking callback method '{}' for '{}' command '{}'",
                 getCallBackMethod(status),
-                status.toString(),
-                cmdId.toString());
-        log.error(ex);
+                status,
+                cmdId);
+        log.error("Exception", ex);
         if (!CommandStatus.FAILED.equals(status)) {
             coco.updateCommandStatus(cmdId, CommandStatus.FAILED);
         }
@@ -159,8 +159,8 @@ public class CommandExecutor {
             });
         } catch(RejectedExecutionException ex) {
             command.setCommandStatus(CommandStatus.FAILED);
-            log.errorFormat("Failed to submit command to executor service, command {0} status has been set to FAILED",
-                    command.getCommandId().toString());
+            log.error("Failed to submit command to executor service, command '{}' status has been set to FAILED",
+                    command.getCommandId());
             retVal = new RejectedExecutionFuture();
         }
         return retVal;

@@ -182,7 +182,7 @@ public class VdsKdumpDetectionCommand<T extends VdsActionParameters> extends Vds
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
-            log.infoFormat("Kdump detection will not be executed on host {0}({1}) since it doesn't exist anymore.",
+            log.info("Kdump detection will not be executed on host '{}' ({}) since it doesn't exist anymore.",
                     getVdsName(),
                     getVdsId()
             );

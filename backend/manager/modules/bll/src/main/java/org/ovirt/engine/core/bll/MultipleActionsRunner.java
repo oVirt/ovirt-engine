@@ -10,13 +10,13 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MultipleActionsRunner {
 
-    private static final Log log = LogFactory.getLog(MultipleActionsRunner.class);
+    private static final Logger log = LoggerFactory.getLogger(MultipleActionsRunner.class);
     private final static int CONCURRENT_ACTIONS = 10;
 
     private VdcActionType actionType = VdcActionType.Unknown;
@@ -50,7 +50,7 @@ public class MultipleActionsRunner {
     public ArrayList<VdcReturnValueBase> execute() {
         // sanity - don't do anything if no parameters passed
         if (parameters == null || parameters.isEmpty()) {
-            log.infoFormat("{0} of type {1} invoked with no actions", this.getClass().getSimpleName(), actionType);
+            log.info("{} of type '{}' invoked with no actions", this.getClass().getSimpleName(), actionType);
             return new ArrayList<VdcReturnValueBase>();
         }
 
@@ -98,7 +98,8 @@ public class MultipleActionsRunner {
                 }
             }
         } catch (RuntimeException e) {
-            log.error("Failed to execute multiple actions of type: " + actionType, e);
+            log.error("Failed to execute multiple actions of type '{}': {}", actionType, e.getMessage());
+            log.error("Exception", e);
         }
         return returnValues;
     }
@@ -139,13 +140,13 @@ public class MultipleActionsRunner {
         String actionType = command.getActionType().toString();
         CorrelationIdTracker.setCorrelationId(command.getCorrelationId());
         try {
-            log.infoFormat("Start running CanDoAction for command number {0}/{1} (Command type: {2})",
+            log.info("Start running CanDoAction for command number {}/{} (Command type '{}')",
                     currentCanDoActionId + 1,
                     totalSize,
                     actionType);
             return command.canDoActionOnly();
         } finally {
-            log.infoFormat("Finish handling CanDoAction for command number {0}/{1} (Command type: {2})",
+            log.info("Finish handling CanDoAction for command number {}/{} (Command type '{}')",
                     currentCanDoActionId + 1,
                     totalSize,
                     actionType);

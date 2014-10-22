@@ -29,12 +29,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.pm.VdsFenceOptions;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class FenceExecutor {
-    private static final Log log = LogFactory.getLog(FenceExecutor.class);
+    private static final Logger log = LoggerFactory.getLogger(FenceExecutor.class);
 
     private final VDS _vds;
     private FenceActionType _action = FenceActionType.forValue(0);
@@ -96,7 +96,7 @@ public class FenceExecutor {
                 proxyOption = PMProxyOptions.OTHER_DC;
             }
             else {
-                log.errorFormat("Illegal value in PM Proxy Preferences string {0}, skipped.", pmProxyOption);
+                log.error("Illegal value in PM Proxy Preferences string '{}', skipped.", pmProxyOption);
                 continue;
             }
             // check if this is a new host, no need to retry , only status is
@@ -130,11 +130,12 @@ public class FenceExecutor {
                     // do not retry getting proxy for Status operation.
                     if (_action == FenceActionType.Status)
                         break;
-                    log.infoFormat("Attempt {0} to find fence proxy host failed...", ++count);
+                    log.info("Attempt {} to find fence proxy host failed...", ++count);
                     try {
                         Thread.sleep(delayInMs);
                     } catch (Exception e) {
-                        log.error(e.getMessage());
+                        log.error("Exception: {}", e.getMessage());
+                        log.debug("Exception", e);
                         break;
                     }
                 }
@@ -144,7 +145,7 @@ public class FenceExecutor {
             }
         }
         if (NO_VDS.equals(proxyHostId)) {
-            log.errorFormat("Failed to run Power Management command on Host {0}, no running proxy Host was found.",
+            log.error("Failed to run Power Management command on Host '{}', no running proxy Host was found.",
                     _vds.getName());
         }
         else {
@@ -167,7 +168,7 @@ public class FenceExecutor {
         logable.addCustomValue("Command", command);
         logable.setVdsId(_vds.getId());
         AuditLogDirector.log(logable, AuditLogType.PROXY_HOST_SELECTION);
-        log.infoFormat("Using Host {0} from {1} as proxy to execute {2} command on Host {3}",
+        log.info("Using Host '{}' from '{}' as proxy to execute '{}' command on Host '{}'",
                 proxy, origin, command, _vds.getName());
     }
 
@@ -194,9 +195,9 @@ public class FenceExecutor {
             retValue = runFenceAction(_action, order);
             // if fence failed, retry with another proxy
             if (!retValue.getSucceeded()) {
-                log.warnFormat("Fencing operation failed with proxy host {0}, trying another proxy...", proxyHostId);
+                log.warn("Fencing operation failed with proxy host '{}', trying another proxy...", proxyHostId);
                 if (!findProxyHostExcluding(proxyHostId)) {
-                    log.warnFormat("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
+                    log.warn("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
                     findProxyHost();
                 }
                 retValue = runFenceAction(_action, order);
@@ -223,8 +224,8 @@ public class FenceExecutor {
         String managementPassword = getManagementPassword(order);
         String managementOptions = getManagementOptions(order);
 
-        log.infoFormat("Executing <{0}> Power Management command, Proxy Host:{1}, "
-                + "Agent:{2}, Target Host:{3}, Management IP:{4}, User:{5}, Options:{6}, Fencing policy:{7}",
+        log.info("Executing <{}> Power Management command, Proxy Host '{}', "
+                + "Agent '{}', Target Host '{}', Management IP '{}', User '{}', Options '{}', Fencing policy '{}'",
                 actionType, proxyHostName, managementAgent, _vds.getName(), managementIp, managementUser,
                 managementOptions,
                 fencingPolicy);

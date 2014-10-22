@@ -21,13 +21,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("serial")
 @NonTransactiveCommandAttribute
 public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParameters> extends
         StorageDomainCommandBase<T> {
+
+    private static final Logger log = LoggerFactory.getLogger(ConnectAllHostsToLunCommand.class);
 
     public ConnectAllHostsToLunCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
@@ -126,7 +128,7 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
             // try to connect vds to luns and getDeviceList in order to refresh them
             for (LUNs lun : luns) {
                 if (!connectStorageToLunByVdsId(vds, lun)) {
-                    log.errorFormat("Could not connect host {0} to lun {1}", vds.getName(), lun.getLUN_id());
+                    log.error("Could not connect host '{}' to lun '{}'", vds.getName(), lun.getLUN_id());
                     setVds(vds);
                     handleFailure(vds, lun);
                     return new Pair<Boolean, Map<String, List<Guid>>>(Boolean.FALSE, resultMap);
@@ -217,6 +219,4 @@ public class ConnectAllHostsToLunCommand<T extends ExtendSANStorageDomainParamet
         setVds(getResult().getFailedVds()); // For audit logging purposes in case of an error
         return AuditLogType.USER_CONNECT_HOSTS_TO_LUN_FAILED;
     }
-
-    private static final Log log = LogFactory.getLog(ConnectAllHostsToLunCommand.class);
 }

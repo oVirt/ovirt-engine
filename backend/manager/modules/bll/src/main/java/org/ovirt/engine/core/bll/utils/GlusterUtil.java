@@ -35,17 +35,17 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.XmlUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.uutils.ssh.ConstraintByteArrayOutputStream;
 import org.ovirt.engine.core.uutils.ssh.SSHClient;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class GlusterUtil {
     private static GlusterUtil instance = new GlusterUtil();
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
     private static final int SSH_PORT = 22;
     private static final String PEER = "peer";
     private static final String HOST_NAME = "hostname";
@@ -129,7 +129,7 @@ public class GlusterUtil {
         try {
             client.connect();
         } catch (Exception e) {
-            log.debug(String.format("Could not connect to server %1$s: %2$s", serverName, e.getMessage()));
+            log.debug("Could not connect to server '{}': {}", serverName, e.getMessage());
             throw new RuntimeException(e);
         }
     }
@@ -142,7 +142,8 @@ public class GlusterUtil {
         } catch (AuthenticationException e) {
             throw e;
         } catch (Exception e) {
-            log.errorFormat("Exception during authentication!", e);
+            log.error("Exception during authentication: {}", e.getMessage());
+            log.debug("Exception", e);
             throw new RuntimeException(e);
         }
     }
@@ -154,7 +155,11 @@ public class GlusterUtil {
             client.executeCommand(command, null, out, null);
             return new String(out.toByteArray(), "UTF-8");
         } catch (Exception e) {
-            log.errorFormat("Error while executing command {0} on server {1}!", command, client.getHost(), e);
+            log.error("Error while executing command '{}' on server '{}': {}",
+                    command,
+                    client.getHost(),
+                    e.getMessage());
+            log.debug("Exception", e);
             throw new RuntimeException(e);
         }
     }
@@ -200,7 +205,8 @@ public class GlusterUtil {
         try {
             return getServers(XmlUtils.loadXmlDoc(serversXml).getElementsByTagName(PEER));
         } catch (Exception e) {
-            log.errorFormat("Error while parsing peer list xml [{0}]!", serversXml, e);
+            log.error("Error while parsing peer list xml [{}]: {}", serversXml, e.getMessage());
+            log.debug("Exception", e);
             throw new RuntimeException(e);
         }
     }
@@ -246,7 +252,7 @@ public class GlusterUtil {
                         }
                     }
                 } catch (UnknownHostException e) {
-                    log.errorFormat("Could not resolve IP address of the host {0}. Error: {1}",
+                    log.error("Could not resolve IP address of the host '{}': {}",
                             glusterServer.getHostnameOrIp(),
                             e.getMessage());
                 }

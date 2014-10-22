@@ -19,11 +19,12 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmPoolMonitor {
+    private static final Logger log = LoggerFactory.getLogger(VmPoolMonitor.class);
 
     /**
      * Goes over each Vmpool, and makes sure there are at least as much prestarted Vms as defined in the prestarted_vms
@@ -51,7 +52,7 @@ public class VmPoolMonitor {
             int numOfVmsToPrestart =
                     Math.min(missingPrestartedVms, Config.<Integer> getValue(ConfigValues.VmPoolMonitorBatchSize));
 
-            log.infoFormat("VmPool {0} is missing {1} prestarted Vms, attempting to prestart {2} Vms",
+            log.info("VmPool '{}' is missing {} prestarted Vms, attempting to prestart {} Vms",
                     vmPoolId,
                     missingPrestartedVms,
                     numOfVmsToPrestart);
@@ -87,7 +88,7 @@ public class VmPoolMonitor {
                 }
             }
         } else {
-            log.infoFormat("No Vms avaialable for prestarting");
+            log.info("No Vms avaialable for prestarting");
         }
     }
 
@@ -99,12 +100,12 @@ public class VmPoolMonitor {
      */
     private void logResultOfPrestartVms(int prestartedVmsCounter, int numOfVmsToPrestart, Guid vmPoolId) {
         if (prestartedVmsCounter > 0) {
-            log.infoFormat("Prestarted {0} Vms out of the {1} required, in VmPool {2}",
+            log.info("Prestarted {} Vms out of the {} required, in VmPool '{}'",
                     prestartedVmsCounter,
                     numOfVmsToPrestart,
                     vmPoolId);
         } else {
-            log.infoFormat("Failed to prestart any Vms for VmPool {0}",
+            log.info("Failed to prestart any Vms for VmPool '{}'",
                     vmPoolId);
         }
     }
@@ -128,7 +129,7 @@ public class VmPoolMonitor {
      * @return
      */
     private boolean runVmAsStateless(VM vmToRunAsStateless) {
-        log.infoFormat("Running Vm {0} as stateless", vmToRunAsStateless);
+        log.info("Running Vm '{}' as stateless", vmToRunAsStateless);
         RunVmParams runVmParams = new RunVmParams(vmToRunAsStateless.getId());
         runVmParams.setEntityInfo(new EntityInfo(VdcObjectType.VM, vmToRunAsStateless.getId()));
         runVmParams.setRunAsStateless(true);
@@ -142,10 +143,8 @@ public class VmPoolMonitor {
             AuditLogDirector.log(log, AuditLogType.VM_FAILED_TO_PRESTART_IN_POOL);
         }
 
-        log.infoFormat("Running Vm {0} as stateless {1}",
+        log.info("Running Vm '{}' as stateless {}",
                 vmToRunAsStateless, prestartingVmSucceeded ? "succeeded" : "failed");
         return prestartingVmSucceeded;
     }
-
-    private static final Log log = LogFactory.getLog(VmPoolMonitor.class);
 }

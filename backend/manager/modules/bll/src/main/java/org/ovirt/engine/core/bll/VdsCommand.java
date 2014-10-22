@@ -91,7 +91,7 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     private void SleepOnReboot(final VDSStatus status) {
         int sleepTimeInSec = Config.<Integer> getValue(ConfigValues.ServerRebootTimeout);
-        log.infoFormat("Waiting {0} seconds, for server to finish reboot process.",
+        log.info("Waiting {} seconds, for server to finish reboot process.",
                 sleepTimeInSec);
         ThreadUtils.sleep(sleepTimeInSec * 1000);
         runVdsCommand(VDSCommandType.SetVdsStatus,
@@ -240,11 +240,11 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
         EngineLock monitoringLock =
                 new EngineLock(Collections.singletonMap(getParameters().getVdsId().toString(),
                         new Pair<String, String>(LockingGroup.VDS_INIT.name(), "")), null);
-        log.infoFormat("Before acquiring lock in order to prevent monitoring for host {0} from data-center {1}",
+        log.info("Before acquiring lock in order to prevent monitoring for host '{}' from data-center '{}'",
                 vds.getName(),
                 vds.getStoragePoolName());
         getLockManager().acquireLockWait(monitoringLock);
-        log.infoFormat("Lock acquired, from now a monitoring of host will be skipped for host {0} from data-center {1}",
+        log.info("Lock acquired, from now a monitoring of host will be skipped for host '{}' from data-center '{}'",
                 vds.getName(),
                 vds.getStoragePoolName());
 
@@ -253,19 +253,19 @@ public abstract class VdsCommand<T extends VdsActionParameters> extends CommandB
 
     protected void logMonitorLockReleased(String commandName) {
         final VDS vds = getVds();
-        log.infoFormat(commandName
-                + " finished. Lock released. Monitoring can run now for host {0} from data-center {1}",
+        log.info("{} finished. Lock released. Monitoring can run now for host '{}' from data-center '{}'",
+                commandName,
                 vds.getName(),
                 vds.getStoragePoolName());
     }
 
     protected void handleError(Exception e, VDSStatus status) {
-        log.errorFormat(
-                "Host installation failed for host {0}, {1}.",
+        log.error(
+                "Host installation failed for host '{}', '{}': {}",
                 getVds().getId(),
                 getVds().getName(),
-                e
-        );
+                e.getMessage());
+        log.debug("Exception", e);
         setVdsStatus(status);
         setSucceeded(false);
         _failureMessage = e.getMessage();

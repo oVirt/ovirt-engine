@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RestoreAllSnapshotsParameters;
 import org.ovirt.engine.core.common.action.UpdateVmVersionParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -44,7 +43,7 @@ public class RestoreStatelessVmCommand<T extends VmOperationParameterBase> exten
         // if it fail because of canDoAction, its safe to restore the snapshot
         // and the vm will still be usable with previous version
         if (!result.getSucceeded() && !result.getCanDoAction()) {
-            log.warnFormat("Couldn't update VM {0} ({1}) version from it's template, continue with restoring stateless snapshot.",
+            log.warn("Couldn't update VM '{}' ({}) version from it's template, continue with restoring stateless snapshot.",
                     getVm().getName(),
                     getVmId());
 

@@ -425,7 +425,7 @@ public class ExportVmCommand<T extends MoveVmParameters> extends MoveOrCopyTempl
         if (getParameters().getCopyCollapse()) {
             DiskImage ancestor = getDiskImageDao().getAncestor(disk.getImageId());
             if (ancestor == null) {
-                log.warnFormat("Can't find ancestor of Disk with ID {0}, using original disk for volume info.",
+                log.warn("Can't find ancestor of Disk with ID '{}', using original disk for volume info.",
                         disk.getImageId());
                 ancestor = disk;
             }

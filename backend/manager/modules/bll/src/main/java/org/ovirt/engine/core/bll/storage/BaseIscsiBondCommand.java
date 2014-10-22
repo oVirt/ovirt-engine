@@ -64,17 +64,20 @@ public abstract class BaseIscsiBondCommand<T extends VdcActionParametersBase> ex
                             }
                         });
                         if (!failedConnectionsList.isEmpty()) {
-                            log.errorFormat("Host {0} - {1} encounter problems to connect to the iSCSI Storage Server. The following connections were problematic (connectionid=vdsm result): {2}",
+                            log.error("Host '{}' - '{}' encounter problems to connect to the iSCSI Storage"
+                                            + " Server. The following connections were problematic"+ "" +
+                                            " (connectionid=vdsm result): {}",
                                     host.getName(),
                                     host.getId(),
                                     iscsiMap.toString());
                             encounterConnectionProblems = true;
                         }
                     } catch (VdcBLLException e) {
-                        log.errorFormat("Could not connect Host {0} - {1} to Iscsi Storage Server. The exception is: {2}",
+                        log.error("Could not connect Host '{}' - '{}' to Iscsi Storage Server: {}",
                                 host.getName(),
                                 host.getId(),
-                                e);
+                                e.getMessage());
+                        log.debug("Exception", e);
                         encounterConnectionProblems = true;
                     }
                     return null;

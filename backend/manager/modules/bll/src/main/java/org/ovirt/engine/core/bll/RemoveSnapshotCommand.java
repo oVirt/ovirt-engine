@@ -161,7 +161,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
         } else {
             VdcReturnValueBase ret = runInternalAction(VdcActionType.RemoveMemoryVolumes, parameters);
             if (!ret.getSucceeded()) {
-                log.errorFormat("Cannot remove memory volumes for snapshot {0}", snapshot.getId());
+                log.error("Cannot remove memory volumes for snapshot '{}'", snapshot.getId());
             }
         }
     }
@@ -251,7 +251,7 @@ public class RemoveSnapshotCommand<T extends RemoveSnapshotParameters> extends V
                     snapshot = ImagesHandler.prepareSnapshotConfigWithoutImageSingleImage(
                             snapshot, imagesParams.getImageId());
                 } else {
-                    log.errorFormat("Could not delete image {0} from snapshot {1}",
+                    log.error("Could not delete image '{}' from snapshot '{}'",
                             imagesParams.getImageId(), getParameters().getSnapshotId());
 
                     DiskImage diskImage = getDiskImageDao().getSnapshotById(imagesParams.getImageId());

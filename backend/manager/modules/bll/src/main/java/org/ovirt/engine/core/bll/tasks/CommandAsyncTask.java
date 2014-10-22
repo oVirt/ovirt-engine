@@ -18,14 +18,16 @@ import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTask;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for all tasks regarding a specific command.
  */
 public class CommandAsyncTask extends SPMAsyncTask {
+    private static final Logger log = LoggerFactory.getLogger(CommandAsyncTask.class);
+
     private static final Object _lockObject = new Object();
 
     private static final Map<Guid, CommandMultiAsyncTasks> _multiTasksByCommandIds =
@@ -44,7 +46,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
         boolean isNewCommandAdded = false;
         synchronized (_lockObject) {
             if (!_multiTasksByCommandIds.containsKey(getCommandId())) {
-                log.infoFormat("CommandAsyncTask::Adding CommandMultiAsyncTasks object for command '{0}'",
+                log.info("CommandAsyncTask::Adding CommandMultiAsyncTasks object for command '{}'",
                         getCommandId());
                 _multiTasksByCommandIds.put(getCommandId(), new CommandMultiAsyncTasks(getCommandId()));
                 isNewCommandAdded = true;
@@ -59,7 +61,7 @@ public class CommandAsyncTask extends SPMAsyncTask {
                     CommandsFactory.createCommand(parameters.getDbAsyncTask().getActionType(),
                             parameters.getDbAsyncTask().getActionParameters());
             if (!command.acquireLockAsyncTask()) {
-                log.warnFormat("Failed to acquire locks for command {0} with parameters {1}",
+                log.warn("Failed to acquire locks for command '{}' with parameters '{}'",
                         parameters.getDbAsyncTask().getActionType(),
                         parameters.getDbAsyncTask().getActionParameters());
             }
@@ -83,8 +85,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private void endActionIfNecessary() {
         CommandMultiAsyncTasks entityInfo = getCommandMultiAsyncTasks();
         if (entityInfo == null) {
-            log.warnFormat(
-                    "CommandAsyncTask::endActionIfNecessary: No info is available for entity '{0}', current task ('{1}') was probably created while other tasks were in progress, clearing task.",
+            log.warn("CommandAsyncTask::endActionIfNecessary: No info is available for entity '{}', current"
+                            + " task ('{}') was probably created while other tasks were in progress, clearing task.",
                     getCommandId(),
                     getVdsmTaskId());
 
@@ -92,12 +94,11 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
 
         else if (entityInfo.ShouldEndAction()) {
-            log.infoFormat(
-                    "CommandAsyncTask::endActionIfNecessary: All tasks of command '{0}' has ended -> executing 'endAction'",
+            log.info(
+                    "CommandAsyncTask::endActionIfNecessary: All tasks of command '{}' has ended -> executing 'endAction'",
                     getCommandId());
 
-            log.infoFormat(
-                    "CommandAsyncTask::endAction: Ending action for {0} tasks (command ID: '{1}'): calling endAction '.",
+            log.info("CommandAsyncTask::endAction: Ending action for '{}' tasks (command ID: '{}'): calling endAction '.",
                     entityInfo.getTasksCountCurrentActionType(),
                     entityInfo.getCommandId());
 
@@ -134,7 +135,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
         dbAsyncTask.getActionParameters().setImagesParameters(imagesParameters);
 
         try {
-            log.infoFormat("CommandAsyncTask::endCommandAction [within thread] context: Attempting to endAction '{0}', executionIndex: '{1}'",
+            log.info("CommandAsyncTask::endCommandAction [within thread] context: Attempting to endAction '{}',"
+                            + " executionIndex: '{}'",
                     dbAsyncTask.getActionParameters().getCommandType(),
                     dbAsyncTask.getActionParameters().getExecutionIndex());
 
@@ -148,9 +150,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
                 }
                 vdcReturnValue = coco.endAction(this, context);
             } catch (VdcBLLException ex) {
-                log.error(getErrorMessage());
-                log.error(ex.toString());
-                log.debug(ex);
+                log.error("{}: {}", getErrorMessage(), ex.getMessage());
+                log.debug("Exception", ex);
             } catch (RuntimeException ex) {
                 log.error(getErrorMessage(), ex);
                 endActionRuntimeException = true;
@@ -158,8 +159,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
         }
 
         catch (RuntimeException Ex2) {
-            log.error(
-                    "CommandAsyncTask::endCommandAction [within thread]: An exception has been thrown (not related to 'endAction' itself)",
+            log.error("CommandAsyncTask::endCommandAction [within thread]: An exception has been thrown (not"
+                            + " related to 'endAction' itself)",
                     Ex2);
             endActionRuntimeException = true;
         }
@@ -191,14 +192,14 @@ public class CommandAsyncTask extends SPMAsyncTask {
     private void handleEndActionRuntimeException(CommandMultiAsyncTasks commandInfo, AsyncTask dbAsyncTask) {
         try {
             VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
-            log.infoFormat(
-                    "CommandAsyncTask::HandleEndActionResult: endAction for action type '{0}' threw an unrecoverable RuntimeException the task will be cleared.",
+            log.info("CommandAsyncTask::HandleEndActionResult: endAction for action type '{}' threw an"
+                            + " unrecoverable RuntimeException the task will be cleared.",
                     actionType);
             commandInfo.clearTaskByVdsmTaskId(dbAsyncTask.getVdsmTaskId());
             removeTaskFromDB();
             if (commandInfo.getAllCleared()) {
-                log.infoFormat(
-                        "CommandAsyncTask::HandleEndActionRuntimeException: Removing CommandMultiAsyncTasks object for entity '{0}'",
+                log.info("CommandAsyncTask::HandleEndActionRuntimeException: Removing CommandMultiAsyncTasks"
+                                + " object for entity '{}'",
                         commandInfo.getCommandId());
                 synchronized (_lockObject) {
                     _multiTasksByCommandIds.remove(commandInfo.getCommandId());
@@ -216,23 +217,23 @@ public class CommandAsyncTask extends SPMAsyncTask {
             boolean isTaskGroupSuccess) {
         try {
             VdcActionType actionType = getParameters().getDbAsyncTask().getActionType();
-            log.infoFormat(
-                    "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{0}' completed, handling the result.",
+            log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type '{}'"
+                            + " completed, handling the result.",
                     actionType);
 
                 if (vdcReturnValue == null || (!vdcReturnValue.getSucceeded() && vdcReturnValue.getEndActionTryAgain())) {
-                    log.infoFormat(
-                            "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type {0} hasn't succeeded, not clearing tasks, will attempt again next polling.",
+                    log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
+                                    + " '{}' hasn't succeeded, not clearing tasks, will attempt again next polling.",
                         actionType);
 
                     commandInfo.Repoll();
                 }
 
                 else {
-                    log.infoFormat(
-                            "CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type {0} {1}succeeded, clearing tasks.",
+                    log.info("CommandAsyncTask::HandleEndActionResult [within thread]: endAction for action type"
+                                    + " '{}' {}succeeded, clearing tasks.",
                         actionType,
-                            (vdcReturnValue.getSucceeded() ? "" : "hasn't "));
+                        vdcReturnValue.getSucceeded() ? "" : "hasn't ");
 
                     /**
                      * Terminate the job by the return value of endAction.
@@ -246,8 +247,8 @@ public class CommandAsyncTask extends SPMAsyncTask {
 
                     synchronized (_lockObject) {
                         if (commandInfo.getAllCleared()) {
-                            log.infoFormat(
-                                    "CommandAsyncTask::HandleEndActionResult [within thread]: Removing CommandMultiAsyncTasks object for entity '{0}'",
+                            log.info("CommandAsyncTask::HandleEndActionResult [within thread]: Removing"
+                                            + " CommandMultiAsyncTasks object for entity '{}'",
                                     commandInfo.getCommandId());
                             _multiTasksByCommandIds.remove(commandInfo.getCommandId());
                         }
@@ -271,7 +272,4 @@ public class CommandAsyncTask extends SPMAsyncTask {
         logTaskDoesntExist();
         endActionIfNecessary();
     }
-
-
-    private static final Log log = LogFactory.getLog(CommandAsyncTask.class);
 }

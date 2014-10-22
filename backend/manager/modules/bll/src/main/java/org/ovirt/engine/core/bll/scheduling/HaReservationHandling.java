@@ -15,15 +15,15 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helper class for the scheduling mechanism for checking the HA Reservation status of a Cluster
  */
 public class HaReservationHandling {
 
-    private static final Log log = LogFactory.getLog(HaReservationHandling.class);
+    private static final Logger log = LoggerFactory.getLogger(HaReservationHandling.class);
     /**
      * @param cluster
      *            - Cluster to check
@@ -41,7 +41,7 @@ public class HaReservationHandling {
         }
         // HA Reservation is not possible with less than 2 hosts
         if (hosts.size() < 2) {
-            log.debugFormat("Cluster: {0} failed HA reservation check because there is only one host in the cluster",
+            log.debug("Cluster '{}' failed HA reservation check because there is only one host in the cluster",
                     cluster.getName());
             failedHosts.addAll(hosts);
             return false;
@@ -66,8 +66,9 @@ public class HaReservationHandling {
             }
         }
 
-        log.infoFormat("HA reservation status for cluster {0} is {1}", cluster.getName(), failedHosts.isEmpty() ? "OK"
-                : "Failed");
+        log.info("HA reservation status for cluster '{}' is '{}'",
+                cluster.getName(),
+                failedHosts.isEmpty() ? "OK" : "Failed");
         return failedHosts.isEmpty();
     }
 
@@ -90,7 +91,7 @@ public class HaReservationHandling {
                         vm.getUsageCpuPercent() * vm.getNumOfCpus()
                                 / SlaValidator.getEffectiveCpuCores(host, cluster.getCountThreadsAsCores());
             }
-            log.debugFormat("VM {0}. CPU usage:{1}%, RAM usage:{2}MB", vm.getName(), curVmCpuPercent, curVmMemSize);
+            log.debug("VM '{}'. CPU usage: {}%, RAM usage: {}MB", vm.getName(), curVmCpuPercent, curVmMemSize);
 
             boolean foundForCurVm = false;
             for (Pair<Guid, Pair<Integer, Integer>> hostData : hostsUnutilizedResources) {
@@ -134,7 +135,7 @@ public class HaReservationHandling {
             }
 
             if (!foundForCurVm) {
-                log.infoFormat("Did not found a replacement host for VM:{0}", vm.getName());
+                log.info("Did not found a replacement host for VM '{}'", vm.getName());
                 return false;
             }
 
@@ -188,7 +189,7 @@ public class HaReservationHandling {
 
         List<VM> vms = DbFacade.getInstance().getVmDao().getAllForVdsGroup(clusterId);
         if (vms == null || vms.isEmpty()) {
-            log.debugFormat("No VMs available for this cluster with id {0}", clusterId);
+            log.debug("No VMs available for this cluster with id '{}'", clusterId);
             // return empty map
             return Collections.EMPTY_MAP;
         }

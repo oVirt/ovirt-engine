@@ -25,8 +25,11 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ISCSIStorageHelper extends StorageHelperBase {
+    private static final Logger log = LoggerFactory.getLogger(ISCSIStorageHelper.class);
 
     @Override
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
@@ -196,7 +199,7 @@ public class ISCSIStorageHelper extends StorageHelperBase {
                     if (CollectionUtils.subtract(strings, failedConnectionsList).size() == 0) {
                         // At case of failure the appropriate log message will be
                         // added
-                        log.infoFormat("The lun with id {0} was reported as problematic !", lun.getphysical_volume_id());
+                        log.info("The lun with id '{}' was reported as problematic", lun.getphysical_volume_id());
                         for (String connectionFailed : failedConnectionsList) {
                             String connectionField =
                                     addToAuditLogErrorMessage(connectionFailed,

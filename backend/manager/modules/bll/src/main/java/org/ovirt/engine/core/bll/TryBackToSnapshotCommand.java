@@ -41,7 +41,7 @@ public class TryBackToSnapshotCommand<T extends ImagesContainterParametersBase> 
     protected void updateOldImageActive(SnapshotType snapshotType, boolean active) {
         Guid oldImageId = findImageForSameDrive(snapshotType);
         if (oldImageId == null) {
-            log.errorFormat("Can't find image to update to active: {0}, snapshot type: {1}, original image id: {2}",
+            log.error("Can't find image to update to active '{}', snapshot type '{}', original image id '{}'",
                     active,
                     snapshotType,
                     getImageId());

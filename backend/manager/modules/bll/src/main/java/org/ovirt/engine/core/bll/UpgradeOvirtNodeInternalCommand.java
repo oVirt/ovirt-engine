@@ -1,12 +1,18 @@
 package org.ovirt.engine.core.bll;
 
+import java.io.File;
+import java.io.IOException;
+import java.util.Collections;
+import java.util.Map;
+import java.util.regex.Matcher;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
-import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.LockProperties;
+import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VDSType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -14,19 +20,13 @@ import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.RpmVersion;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-
-import java.io.IOException;
-import java.io.File;
-import java.util.Collections;
-import java.util.Map;
-import java.util.regex.Matcher;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> extends VdsCommand<T> {
 
-    private static Log log = LogFactory.getLog(UpgradeOvirtNodeInternalCommand.class);
+    private static Logger log = LoggerFactory.getLogger(UpgradeOvirtNodeInternalCommand.class);
     protected File _iso = null;
     private VDSStatus vdsInitialStatus;
 
@@ -58,7 +58,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
     ) {
         boolean ret = false;
 
-        log.debugFormat("Check if ISO compatible: {0}", iso);
+        log.debug("Check if ISO compatible: '{}'", iso);
 
         for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
             if (info.path.equals(iso.getParentFile())) {
@@ -68,20 +68,21 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     );
                     if (matcher.find()) {
                         String rpmLike = matcher.group(1).replaceAll("-", ".");
-                        log.debugFormat("ISO version: {0} {1} {2}", iso, rpmLike, ovirtHostOsVersion);
+                        log.debug("ISO version: '{}' '{}' '{}'", iso, rpmLike, ovirtHostOsVersion);
                         RpmVersion isoVersion = new RpmVersion(rpmLike, "", true);
                         if (VdsHandler.isIsoVersionCompatibleForUpgrade(ovirtHostOsVersion, isoVersion)) {
-                            log.debugFormat("ISO compatible: {0}", iso);
+                            log.debug("ISO compatible '{}'", iso);
                             ret = true;
                             break;
                         }
                     }
                 } catch (IOException e) {
-                    log.errorFormat(
-                        "Cannot get canonical path to {0} with error {1}",
+                    log.error(
+                        "Cannot get canonical path to '{}': {}",
                         iso.getName(),
                         ExceptionUtils.getMessage(e)
                     );
+                    log.debug("Exception", e);
                 }
 
             }
@@ -160,8 +161,8 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
             )
         ) {
             upgrade.setCorrelationId(getCorrelationId());
-            log.infoFormat(
-                "Execute upgrade host {0}, {1}",
+            log.info(
+                "Execute upgrade host '{}', '{}'",
                 getVds().getId(),
                 getVds().getName()
             );
@@ -184,8 +185,8 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                 break;
             }
 
-            log.infoFormat(
-                "After upgrade host {0}, {1}: success",
+            log.info(
+                "After upgrade host '{}', '{}': success",
                 getVds().getId(),
                 getVds().getName()
             );

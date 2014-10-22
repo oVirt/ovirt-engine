@@ -26,8 +26,12 @@ import org.ovirt.engine.core.dao.network.InterfaceDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NetworkPolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(NetworkPolicyUnit.class);
+
     public NetworkPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
     }
@@ -132,7 +136,7 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
                 }
                 StringBuilder sbBuilder = new StringBuilder();
                 sbBuilder.append(Entities.vmInterfacesByNetworkName(vmNICs).keySet());
-                log.debugFormat("host {0} is missing networks required by VM nics {1}",
+                log.debug("Host '{}' is missing networks required by VM nics '{}'",
                         vds.getName(),
                         sbBuilder.toString());
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VDS_VM_NETWORKS);
@@ -184,12 +188,12 @@ public class NetworkPolicyUnit extends PolicyUnitImpl {
 
         // Check if display network attached to host and has a proper boot protocol
         if (displayNic == null) {
-            log.debugFormat("host {0} is missing the cluster's display network", host.getName());
+            log.debug("Host '{}' is missing the cluster's display network", host.getName());
             return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_MISSING_DISPLAY_NETWORK);
         }
 
         if (displayNic.getBootProtocol() == NetworkBootProtocol.NONE) {
-            log.debugFormat("Host {0} has the display network {1} configured with improper boot protocol on interface {2}.",
+            log.debug("Host '{}' has the display network '{}' configured with improper boot protocol on interface '{}'.",
                     host.getName(),
                     displayNetwork.getName(),
                     displayNic.getName());

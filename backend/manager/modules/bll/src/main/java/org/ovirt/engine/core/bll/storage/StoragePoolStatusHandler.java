@@ -13,14 +13,16 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class StoragePoolStatusHandler {
+    private static final Logger log = LoggerFactory.getLogger(StoragePoolStatusHandler.class);
+
     private static HashMap<Guid, StoragePoolStatusHandler> _nonOperationalPools =
             new HashMap<Guid, StoragePoolStatusHandler>();
 
@@ -91,8 +93,10 @@ public final class StoragePoolStatusHandler {
             changeStatus = true;
         }
         if (changeStatus) {
-            log.info("Moving data center " + pool.getName() + " with Id " + pool.getId()
-                    + " to status Problematic from status NotOperational on a one time basis to try to recover");
+            log.info("Moving data center '{}' with Id '{}' to status Problematic from status NotOperational on a one"
+                    + " time basis to try to recover",
+                    pool.getName(),
+                    pool.getId());
             Backend.getInstance().runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(pool.getId(), StoragePoolStatus.NonResponsive,
@@ -111,6 +115,4 @@ public final class StoragePoolStatusHandler {
             }
         }
     }
-
-    private static final Log log = LogFactory.getLog(StoragePoolStatusHandler.class);
 }

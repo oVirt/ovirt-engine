@@ -29,14 +29,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.dao.VmPoolDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
 public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T> {
 
-    private static final Log log = LogFactory.getLog(ProcessDownVmCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(ProcessDownVmCommand.class);
 
     protected ProcessDownVmCommand(Guid commandId) {
         super(commandId);
@@ -225,7 +225,7 @@ public class ProcessDownVmCommand<T extends IdParameters> extends CommandBase<T>
 
     private void removeVmStatelessImages() {
         if (getSnapshotDAO().exists(getVmId(), SnapshotType.STATELESS)) {
-            log.infoFormat("Deleting snapshot for stateless vm {0}", getVmId());
+            log.info("Deleting snapshot for stateless vm '{}'", getVmId());
             runInternalAction(VdcActionType.RestoreStatelessVm,
                     new VmOperationParameterBase(getVmId()),
                     ExecutionHandler.createDefaultContextForTasks(getContext(), getLock()));

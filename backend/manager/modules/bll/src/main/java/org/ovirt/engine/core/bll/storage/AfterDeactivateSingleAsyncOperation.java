@@ -13,11 +13,13 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 
 public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
+    private static final Logger log = LoggerFactory.getLogger(AfterDeactivateSingleAsyncOperation.class);
+
     private final boolean _isLastMaster;
     private Guid masterStorageDomainId = Guid.Empty;
     private List<StoragePoolIsoMap> storagePoolIsoMap;
@@ -42,7 +44,7 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
     @Override
     public void execute(int iterationId) {
         try {
-            log.infoFormat("After deactivate treatment vds: {0},pool {1}", getVdss().get(iterationId).getName(),
+            log.info("After deactivate treatment vds '{}', pool '{}'", getVdss().get(iterationId).getName(),
                     getStoragePool().getName());
 
             if (!_isLastMaster) {
@@ -56,10 +58,11 @@ public class AfterDeactivateSingleAsyncOperation extends ActivateDeactivateSingl
                         .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
             }
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to refresh storagePool. Host {0} to storage pool {1}. Exception: {3}", getVdss()
-                    .get(iterationId).getName(), getStoragePool().getName(), e);
+            log.error("Failed to refresh storagePool. Host '{}' to storage pool '{}': {}",
+                    getVdss().get(iterationId).getName(),
+                    getStoragePool().getName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
-
-    private static final Log log = LogFactory.getLog(AfterDeactivateSingleAsyncOperation.class);
 }

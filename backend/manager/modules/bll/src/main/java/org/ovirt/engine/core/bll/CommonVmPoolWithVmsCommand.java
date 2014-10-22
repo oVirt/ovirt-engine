@@ -224,10 +224,11 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             ctx.setMonitored(true);
             commandCtx = cloneContextAndDetachFromParent().withExecutionContext(ctx);
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to create command context of adding VM {0} to Pool {1}",
+            log.error("Failed to create command context of adding VM '{}' to Pool '{}': {}",
                     currentVmName,
                     getParameters().getVmPool().getName(),
-                    e);
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         return commandCtx;
     }
@@ -348,7 +349,7 @@ public abstract class CommonVmPoolWithVmsCommand<T extends AddVmPoolWithVmsParam
             }
         }
         if (getVmTemplate().getDiskTemplateMap().values().size() != diskInfoDestinationMap.size()) {
-            log.errorFormat("Can not found any default active domain for one of the disks of template with id : {0}",
+            log.error("Can not found any default active domain for one of the disks of template with id '{}'",
                     getVmTemplate().getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             return false;

@@ -26,8 +26,11 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(EvenDistributionBalancePolicyUnit.class);
 
     private static final String HIGH_UTILIZATION = "HighUtilization";
 
@@ -42,7 +45,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
             ArrayList<String> messages) {
         if (hosts == null || hosts.size() < 2) {
             int hostCount = hosts == null ? 0 : hosts.size();
-            log.debugFormat("No balancing for cluster {0}, contains only {1} host(s)", cluster.getName(), hostCount);
+            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hostCount);
             return null;
         }
         // get vds that over committed for the time defined
@@ -54,7 +57,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
 
         // if there aren't any overutilized hosts, then there is nothing to balance...
         if (overUtilizedHosts == null || overUtilizedHosts.size() == 0) {
-            log.debugFormat("There is no over-utilized host in cluster '{0}'", cluster.getName());
+            log.debug("There is no over-utilized host in cluster '{}'", cluster.getName());
             return null;
         }
 
@@ -63,7 +66,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
 
         //if no host has a spare power, then there is nothing we can do to balance it..
         if (underUtilizedHosts == null || underUtilizedHosts.size() == 0) {
-            log.warnFormat("All hosts are over-utilized, can't balance the cluster '{0}'", cluster.getName());
+            log.warn("All hosts are over-utilized, can't balance the cluster '{}'", cluster.getName());
             return null;
         }
         VDS randomHost = overUtilizedHosts.get(new Random().nextInt(overUtilizedHosts.size()));
@@ -114,7 +117,7 @@ public class EvenDistributionBalancePolicyUnit extends PolicyUnitImpl {
             log.info("VdsLoadBalancer: vm selection - no vm without pending found.");
             result = Collections.min(vms, new VmCpuUsageComparator());
         } else {
-            log.infoFormat("VdsLoadBalancer: vm selection - selected vm: {0}, cpu: {1}.", result.getName(),
+            log.info("VdsLoadBalancer: vm selection - selected vm: '{}', cpu: {}.", result.getName(),
                     result.getUsageCpuPercent());
         }
         return result;

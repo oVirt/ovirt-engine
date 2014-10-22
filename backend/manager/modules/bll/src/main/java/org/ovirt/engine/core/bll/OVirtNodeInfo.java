@@ -5,10 +5,10 @@ import java.util.List;
 import java.util.LinkedList;
 import java.util.regex.Pattern;
 
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class OVirtNodeInfo {
 
@@ -19,7 +19,7 @@ public class OVirtNodeInfo {
         public Pattern osPattern;
     }
 
-    private static final Log log = LogFactory.getLog(OVirtNodeInfo.class);
+    private static final Logger log = LoggerFactory.getLogger(OVirtNodeInfo.class);
     private static final String delimiter = ":";
     private static volatile OVirtNodeInfo instance;
 
@@ -61,7 +61,7 @@ public class OVirtNodeInfo {
 
         info = new LinkedList<Entry>();
 
-        log.debugFormat("NodeInfo: regexISO length {0} minimum length {1} path length {2} regexNode {3}",
+        log.debug("NodeInfo: regexISO length {} minimum length {} path length {} regexNode {}",
                 regexISO.length, minimumVersion.length, path.length, regexNode.length);
 
         if (regexISO.length != minimumVersion.length ||
@@ -71,7 +71,7 @@ public class OVirtNodeInfo {
         }
 
         for (int i=0; i < regexISO.length; i++) {
-            log.debugFormat("NodeInfo: regexISO {0} path {1}, minimumVersion {2} regexNode {3}",
+            log.debug("NodeInfo: regexISO '{}' path '{}', minimumVersion '{}' regexNode '{}'",
                     regexISO[i], path[i], minimumVersion[i], regexNode[i]);
             Entry entry = new Entry();
             entry.isoPattern = Pattern.compile(regexISO[i]);

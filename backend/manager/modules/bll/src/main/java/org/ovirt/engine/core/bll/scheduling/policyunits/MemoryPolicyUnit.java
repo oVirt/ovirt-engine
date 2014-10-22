@@ -20,8 +20,11 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MemoryPolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(MemoryPolicyUnit.class);
 
     public MemoryPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
@@ -37,12 +40,12 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
         List<VmNumaNode> vmNumaNodes = DbFacade.getInstance().getVmNumaNodeDAO().getAllVmNumaNodeByVmId(vm.getId());
         for (VDS vds : hosts) {
             if (!isVMSwapValueLegal(vds)) {
-                log.debugFormat("host '{0}' swap value is illegal", vds.getName());
+                log.debug("Host '{}' swap value is illegal", vds.getName());
                 messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__SWAP_VALUE_ILLEGAL.toString());
                 continue;
             }
             if (!memoryChecker.evaluate(vds, vm)) {
-                log.debugFormat("host '{0}' has insufficient memory to run the VM", vds.getName());
+                log.debug("Host '{}' has insufficient memory to run the VM", vds.getName());
                 messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_ENOUGH_MEMORY.toString());
                 continue;
             }
@@ -54,7 +57,7 @@ public class MemoryPolicyUnit extends PolicyUnitImpl {
             // * there isn't enough memory for pinned vNode in pNode
             if (vm.getNumaTuneMode() == NumaTuneMode.STRICT && isVmNumaPinned(vmNumaNodes)
                     && (!vds.isNumaSupport() || !canVmNumaPinnedToVds(vm, vmNumaNodes, vds))) {
-                log.debugFormat("host '{0}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
+                log.debug("Host '{}' cannot accommodate memory of VM's pinned virtual NUMA nodes within host's physical NUMA nodes",
                         vds.getName());
                 messages.addMessage(vds.getId(), VdcBllMessages.VAR__DETAIL__NOT_MEMORY_PINNED_NUMA.toString());
                 continue;

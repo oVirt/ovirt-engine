@@ -22,11 +22,11 @@ import org.ovirt.engine.core.common.vdscommands.VdsIdAndVdsVDSCommandParametersB
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.AutoRecoverDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 import org.ovirt.engine.core.vdsbroker.NetworkMonitoringHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Runs scheduled autorecovery jobs.
@@ -34,7 +34,7 @@ import org.ovirt.engine.core.vdsbroker.NetworkMonitoringHelper;
  */
 public class AutoRecoveryManager {
     private final static AutoRecoveryManager instance = new AutoRecoveryManager();
-    private final static Log log = LogFactory.getLog(AutoRecoveryManager.class);
+    private final static Logger log = LoggerFactory.getLogger(AutoRecoveryManager.class);
 
     static AutoRecoveryManager getInstance() {
         return instance;
@@ -48,10 +48,10 @@ public class AutoRecoveryManager {
      * Should be called by backend, schedules the execution as configured.
      */
     void initialize() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         SchedulerUtilQuartzImpl.getInstance().scheduleACronJob(this, "onTimer",
                 new Class<?>[] {}, new Object[] {}, Config.<String> getValue(ConfigValues.AutoRecoverySchedule));
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     /**
@@ -126,22 +126,22 @@ public class AutoRecoveryManager {
             final FilterClosure<T> filter,
             final String logMsg) {
         if (!shouldPerformRecoveryOnType(logMsg)) {
-            log.info("Autorecovering " + logMsg + " is disabled, skipping");
+            log.info("Autorecovering {} is disabled, skipping", logMsg);
             return;
         }
-        log.debugFormat("Checking autorecoverable {0}" , logMsg);
+        log.debug("Checking autorecoverable {}" , logMsg);
         final List<T> fails = filter.filter(dao.listFailedAutorecoverables());
         if (fails.size() > 0) {
             final BackendInternal backend = getBackend();
-            log.info("Autorecovering " + fails.size() + " " + logMsg);
+            log.info("Autorecovering {} {}", fails.size(), logMsg);
             for (final T fail : fails) {
-                log.info("Autorecovering " + logMsg + " id: " + fail.getId() + getHostName(fail));
+                log.info("Autorecovering {} id: {} {}", logMsg, fail.getId(), getHostName(fail));
                 final VdcActionParametersBase actionParams = paramsCallback.doWith(fail);
                 actionParams.setShouldBeLogged(true);
                 backend.runInternalAction(actionType, actionParams);
             }
         }
-        log.debugFormat("Checking autorecoverable {0} done", logMsg);
+        log.debug("Checking autorecoverable {} done", logMsg);
     }
 
     private <T extends BusinessEntity<Guid>>  String getHostName(T entity) {

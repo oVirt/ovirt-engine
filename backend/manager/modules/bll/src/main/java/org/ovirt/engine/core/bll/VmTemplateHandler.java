@@ -16,12 +16,14 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmTemplateHandler {
+    private static final Logger log = LoggerFactory.getLogger(VmTemplateHandler.class);
+
     protected final static Guid BLANK_VM_TEMPLATE_ID = Guid.Empty;
     protected final static String BLANK_VM_TEMPLATE_NAME = "Blank";
     private static ObjectIdentityChecker mUpdateVmTemplate;
@@ -111,11 +113,9 @@ public class VmTemplateHandler {
             vmTemplate.setStatus(status);
             DbFacade.getInstance().getVmTemplateDao().update(vmTemplate);
         } else {
-            log.warnFormat(
-                    "setVmTemplateStatus: vmTemplate is null, not setting status '{0}' to vmTemplate",
+            log.warn(
+                    "setVmTemplateStatus: vmTemplate is null, not setting status '{}' to vmTemplate",
                     status);
         }
     }
-
-    private static final Log log = LogFactory.getLog(VmTemplateHandler.class);
 }

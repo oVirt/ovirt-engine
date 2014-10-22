@@ -17,8 +17,11 @@ import org.ovirt.engine.core.common.errors.VdcFault;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class BaseFsStorageHelper extends StorageHelperBase {
+    private static final Logger log = LoggerFactory.getLogger(BaseFsStorageHelper.class);
 
     @Override
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type) {
@@ -33,8 +36,10 @@ public abstract class BaseFsStorageHelper extends StorageHelperBase {
             result = new Pair<>(returnValue.getSucceeded(), returnValue.getFault());
         } else {
             result = new Pair<>(false, null);
-            log.warn("Did not connect host: " + vdsId + " to storage domain: " + storageDomain.getStorageName()
-                    + " because connection for connectionId:" + storageDomain.getStorage() + " is null.");
+            log.warn("Did not connect host '{}' to storage domain '{}' because connection for connectionId '{}' is null.",
+                    vdsId,
+                    storageDomain.getStorageName(),
+                    storageDomain.getStorage());
         }
         return result;
     }

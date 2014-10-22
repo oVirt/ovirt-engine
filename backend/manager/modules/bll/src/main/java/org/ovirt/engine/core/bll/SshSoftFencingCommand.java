@@ -37,7 +37,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
-            log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it doesn't exist anymore.",
+            log.info("SSH Soft Fencing will not be executed on host '{}' ({}) since it doesn't exist anymore.",
                     getVdsName(),
                     getVdsId());
             getReturnValue().setSucceeded(false);
@@ -58,7 +58,7 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                 getReturnValue().setSucceeded(result);
             } else {
                 setCommandShouldBeLogged(false);
-                log.infoFormat("SSH Soft Fencing will not be executed on host {0}({1}) since it's status is ok.",
+                log.info("SSH Soft Fencing will not be executed on host '{}' ({}) since it's status is ok.",
                         getVdsName(),
                         getVdsId());
                 getReturnValue().setSucceeded(false);
@@ -81,13 +81,13 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
             final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
         ) {
             try {
-                log.infoFormat("Opening SSH Soft Fencing session on host {0}", getVds().getHostName());
+                log.info("Opening SSH Soft Fencing session on host '{}'", getVds().getHostName());
                 sshClient.setVds(getVds());
                 sshClient.useDefaultKeyPair();
                 sshClient.connect();
                 sshClient.authenticate();
 
-                log.infoFormat("Executing SSH Soft Fencing command on host {0}", getVds().getHostName());
+                log.info("Executing SSH Soft Fencing command on host '{}'", getVds().getHostName());
                 sshClient.executeCommand(
                     Config.<String> getValue(ConfigValues.SshSoftFencingCommand, version),
                     null,
@@ -96,8 +96,12 @@ public class SshSoftFencingCommand<T extends VdsActionParameters> extends VdsCom
                 );
                 ret = true;
             } catch (Exception ex) {
-                log.errorFormat("SSH Soft Fencing command failed on host {0}: {1}\nStdout: {2}\nStderr: {3}\nStacktrace: {4}",
-                        getVds().getHostName(), ex.getMessage(), cmdOut.toString(), cmdErr.toString(), ex);
+                log.error("SSH Soft Fencing command failed on host '{}': {}\nStdout: {}\nStderr: {}",
+                        getVds().getHostName(),
+                        ex.getMessage(),
+                        cmdOut,
+                        cmdErr);
+                log.debug("Exception", ex);
             }
         }
         catch(IOException e) {

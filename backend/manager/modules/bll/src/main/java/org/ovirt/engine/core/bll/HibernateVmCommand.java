@@ -35,14 +35,16 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOperationCommandBase<T> {
+    private static final Logger log = LoggerFactory.getLogger(HibernateVmCommand.class);
+
     private static final String SAVE_IMAGE_TASK_KEY = "SAVE_IMAGE_TASK_KEY";
     private static final String SAVE_RAM_STATE_TASK_KEY = "SAVE_RAM_STATE_TASK_KEY";
     private boolean isHibernateVdsProblematic = false;
@@ -301,16 +303,16 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                 // NOTE: We don't remove the 2 volumes because we don't want to
                 // start here another tasks.
 
-                log.warnFormat(
-                        "VM '{0}' is not in 'PreparingForHibernate' status, but in '{1}' status - not performing Hibernate.",
+                log.warn(
+                        "VM '{}' is not in 'PreparingForHibernate' status, but in '{}' status - not performing Hibernate.",
                         getVm().getName(),
                         getVm().getStatus());
                 getReturnValue().setEndActionTryAgain(false);
             }
 
             else if (getVm().getRunOnVds() == null) {
-                log.warnFormat(
-                        "VM '{0}' doesn't have 'run_on_vds' value - cannot Hibernate.",
+                log.warn(
+                        "VM '{}' doesn't have 'run_on_vds' value - cannot Hibernate.",
                         getVm().getName());
                 getReturnValue().setEndActionTryAgain(false);
             }
@@ -329,7 +331,7 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
                     }
                     setSucceeded(true);
                 } else {
-                    log.errorFormat("hibernation volume of VM '{0}', is not initialized.", getVm().getName());
+                    log.error("Hibernation volume of VM '{}', is not initialized.", getVm().getName());
                     endWithFailure();
                 }
             }
@@ -358,8 +360,8 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
             }
 
             else {
-                log.warnFormat(
-                        "VM '{0}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
+                log.warn(
+                        "VM '{}' doesn't have 'run_on_vds' value - not clearing 'hibernation_vol_handle' info.",
                         getVm().getName());
 
                 getReturnValue().setEndActionTryAgain(false);
@@ -386,6 +388,4 @@ public class HibernateVmCommand<T extends VmOperationParameterBase> extends VmOp
     public static VolumeType getMemoryVolumeTypeForStorageDomain(StorageType storageType) {
         return storageType.isFileDomain() ? VolumeType.Sparse : VolumeType.Preallocated;
     }
-
-    private static final Log log = LogFactory.getLog(HibernateVmCommand.class);
 }

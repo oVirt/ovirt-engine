@@ -45,13 +45,13 @@ import org.ovirt.engine.core.dao.VdsDynamicDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.scheduling.ClusterPolicyDao;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SchedulingManager {
-    private static final Log log = LogFactory.getLog(SchedulingManager.class);
+    private static final Logger log = LoggerFactory.getLogger(SchedulingManager.class);
     /**
      * singleton
      */
@@ -256,7 +256,7 @@ public class SchedulingManager {
             String correlationId) {
         clusterLockMap.putIfAbsent(cluster.getId(), new Semaphore(1));
         try {
-            log.debugFormat("scheduling started, correlation Id: {0}", correlationId);
+            log.debug("Scheduling started, correlation Id: {}", correlationId);
             checkAllowOverbooking(cluster);
             clusterLockMap.get(cluster.getId()).acquire();
             List<VDS> vdsList = getVdsDAO()
@@ -301,7 +301,7 @@ public class SchedulingManager {
                 clusterLockMap.get(cluster.getId()).drainPermits();
                 clusterLockMap.get(cluster.getId()).release();
             }
-            log.debugFormat("Scheduling ended, correlation Id: {0}", correlationId);
+            log.debug("Scheduling ended, correlation Id: {}", correlationId);
         }
     }
 
@@ -351,7 +351,7 @@ public class SchedulingManager {
                 && Config.<Boolean> getValue(ConfigValues.SchedulerAllowOverBooking)
                 && clusterLockMap.get(cluster.getId()).getQueueLength() >=
                 Config.<Integer> getValue(ConfigValues.SchedulerOverBookingThreshold)) {
-            log.infoFormat("scheduler: cluster ({0}) lock is skipped (cluster is allowed to overbook)",
+            log.info("Scheduler: cluster '{}' lock is skipped (cluster is allowed to overbook)",
                     cluster.getName());
             // release pending threads (requests) and current one (+1)
             clusterLockMap.get(cluster.getId())
@@ -377,7 +377,7 @@ public class SchedulingManager {
                         && clusterLockMap.get(cluster.getId()).getQueueLength() >
                         threshold;
         if (crossedThreshold) {
-            log.infoFormat("Scheduler: skipping whighing hosts in cluster {0}, since there are more than {1} parallel requests",
+            log.info("Scheduler: skipping whinging hosts in cluster '{}', since there are more than '{}' parallel requests",
                     cluster.getName(),
                     threshold);
         }
@@ -537,17 +537,13 @@ public class SchedulingManager {
                                   String correlationId) {
         for (VDS host: oldList) {
             if (!newSet.contains(host.getId())) {
-                String reason =
-                        String.format("Candidate host %s (%s) was filtered out by %s filter %s",
-                                host.getName(),
-                                host.getId().toString(),
-                                actionName.name(),
-                                filterName);
                 result.addReason(host.getId(), host.getName(), actionName, filterName);
-                if (!StringUtils.isEmpty(correlationId)) {
-                    reason = String.format("%s (correlation id: %s)", reason, correlationId);
-                }
-                log.info(reason);
+                log.info("Candidate host '{}' ('{}') was filtered out by '{}' filter '{}' (correlation id: {})",
+                        host.getName(),
+                        host.getId(),
+                        actionName.name(),
+                        filterName,
+                        correlationId);
             }
         }
     }
@@ -822,7 +818,7 @@ public class SchedulingManager {
 
                         logable.addCustomValue("Hosts", failedHostsStr);
                         AlertDirector.Alert(logable, AuditLogType.CLUSTER_ALERT_HA_RESERVATION);
-                        log.infoFormat("Cluster: {0} fail to pass HA reservation check.", cluster.getName());
+                        log.info("Cluster '{}' fail to pass HA reservation check.", cluster.getName());
                     }
 
                     boolean clusterHaStatusFromPreviousCycle =
@@ -848,7 +844,7 @@ public class SchedulingManager {
 
     @OnTimerMethodAnnotation("performLoadBalancing")
     public void performLoadBalancing() {
-        log.debugFormat("Load Balancer timer entered.");
+        log.debug("Load Balancer timer entered.");
         List<VDSGroup> clusters = DbFacade.getInstance().getVdsGroupDao().getAll();
         for (VDSGroup cluster : clusters) {
             ClusterPolicy policy = policyMap.get(cluster.getClusterPolicyId());
@@ -895,7 +891,7 @@ public class SchedulingManager {
         List<String> list = new ArrayList<String>();
         final PolicyUnitImpl policyUnitImpl = policyUnits.get(policyUnitId);
         if (policyUnitImpl == null) {
-            log.warnFormat("Trying to find usages of non-existing policy unit %s", policyUnitId.toString());
+            log.warn("Trying to find usages of non-existing policy unit '{}'", policyUnitId);
             return null;
         }
 

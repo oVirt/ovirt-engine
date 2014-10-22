@@ -15,8 +15,8 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.DbUserDAO;
 import org.ovirt.engine.core.dao.PermissionDAO;
 import org.ovirt.engine.core.dao.RoleDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class caches config values for used with many commands
@@ -32,7 +32,7 @@ public class MultiLevelAdministrationHandler {
      */
     public static final Guid BOTTOM_OBJECT_ID = new Guid("BBB00000-0000-0000-0000-123456789BBB");
 
-    private static final Log log = LogFactory.getLog(MultiLevelAdministrationHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(MultiLevelAdministrationHandler.class);
 
     public static PermissionDAO getPermissionDAO() {
         return DbFacade.getInstance().getPermissionDao();
@@ -59,9 +59,7 @@ public class MultiLevelAdministrationHandler {
 
         for (Role r : userRoles) {
             if (r.getType() == RoleType.ADMIN) {
-                if (log.isDebugEnabled()) {
-                    log.debugFormat("LoginAdminUser: User logged to admin using role {0}", r.getname());
-                }
+                log.debug("LoginAdminUser: User logged to admin using role '{}'", r.getname());
                 return true;
             }
         }

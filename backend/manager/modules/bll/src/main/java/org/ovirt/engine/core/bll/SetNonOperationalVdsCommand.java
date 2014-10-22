@@ -72,12 +72,13 @@ public class SetNonOperationalVdsCommand<T extends SetNonOperationalVdsParameter
         }
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.NETWORK_UNREACHABLE) {
-            log.errorFormat("Host '{0}' is set to Non-Operational, it is missing the following networks: '{1}'",
+            log.error("Host '{}' is set to Non-Operational, it is missing the following networks: '{}'",
                     getVds().getName(), getParameters().getCustomLogValues().get("Networks"));
         }
 
         if (getParameters().getNonOperationalReason() == NonOperationalReason.VM_NETWORK_IS_BRIDGELESS) {
-            log.errorFormat("Host '{0}' is set to Non-Operational, the following networks are implemented as non-VM instead of a VM networks: '{1}'",
+            log.error("Host '{}' is set to Non-Operational, the following networks are implemented as non-VM"
+                            + " instead of a VM networks: '{}'",
                     getVds().getName(), getParameters().getCustomLogValues().get("Networks"));
         }
 

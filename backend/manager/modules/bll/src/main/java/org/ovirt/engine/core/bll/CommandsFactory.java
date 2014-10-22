@@ -16,10 +16,11 @@ import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.ReflectionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CommandsFactory {
+    private static final Logger log = LoggerFactory.getLogger(CommandsFactory.class);
     private static final Injector injector = new Injector();
     private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
     private static final String CommandSuffix = "Command";
@@ -27,7 +28,7 @@ public final class CommandsFactory {
     private static final String CTOR_MISMATCH =
             "could not find matching constructor for Command class {0}";
     private static final String CTOR_NOT_FOUND_FOR_PARAMETERS =
-            "Can't find constructor for type {0} with parameter types: {1}";
+            "Can't find constructor for type {} with parameter types: {}";
 
     private static final String[] COMMAND_PACKAGES = new String[] {
         "org.ovirt.engine.core.bll",
@@ -64,13 +65,15 @@ public final class CommandsFactory {
             return Injector.injectMembers(instantiateCommand(action, parameters, commandContext));
         }
         catch (InvocationTargetException ex) {
-            log.error("Error in invocating CTOR of command " + action.name() + ". Exception is ", ex);
-            log.debug("", ex);
+            log.error("Error in invocating CTOR of command '{}': {}", action.name(), ex.getMessage());
+            log.debug("Exception", ex);
             return null;
         }
         catch (Exception ex) {
-            log.error("An exception has occured while trying to create a command object for command " + action.name(), ex);
-            log.debug("", ex);
+            log.error("An exception has occured while trying to create a command object for command '{}': {}",
+                    action.name(),
+                    ex.getMessage());
+            log.debug("Exception", ex);
             return null;
         }
     }
@@ -107,9 +110,11 @@ public final class CommandsFactory {
             CommandBase<?> cmd = (CommandBase<?>) constructor.newInstance(new Object[]{commandId});
             return Injector.injectMembers(cmd);
         } catch (Exception e) {
-            log.error(
-                    "CommandsFactory : Failed to get type information using " +
-                            "reflection for Class : " + className + ", Command Id:" + commandId, e);
+            log.error("CommandsFactory : Failed to get type information using reflection for Class  '{}', Command Id '{}': {}",
+                    className,
+                    commandId,
+                    e.getMessage());
+            log.error("Exception", e);
             return null;
         } finally {
             if (isAcessible != null) {
@@ -134,7 +139,8 @@ public final class CommandsFactory {
             }
             return result;
         } catch (Exception e) {
-            log.errorFormat("Command Factory: Failed to create command {0} using reflection\n. {1}", type, e);
+            log.error("Command Factory: Failed to create command '{}' using reflection: {}", type, e.getMessage());
+            log.error("Exception", e);
             throw new RuntimeException(e);
         }
     }
@@ -173,7 +179,7 @@ public final class CommandsFactory {
         }
 
         // nothing found
-        log.warn("Unable to find class for action: " + key);
+        log.warn("Unable to find class for action '{}'", key);
         return null;
     }
 
@@ -207,13 +213,10 @@ public final class CommandsFactory {
         Constructor<T> constructor = ReflectionUtils.findConstructor(type, expectedParams);
 
         if (constructor == null) {
-            log.errorFormat(CTOR_NOT_FOUND_FOR_PARAMETERS, type.getName(), Arrays.toString(expectedParams));
+            log.error(CTOR_NOT_FOUND_FOR_PARAMETERS, type.getName(), Arrays.toString(expectedParams));
             throw new RuntimeException(MessageFormat.format(CTOR_MISMATCH, type));
         }
 
         return constructor;
     }
-
-    private static final Log log = LogFactory.getLog(CommandsFactory.class);
-
 }

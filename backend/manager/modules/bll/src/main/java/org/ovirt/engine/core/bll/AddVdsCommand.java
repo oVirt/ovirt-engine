@@ -100,7 +100,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
             // if fails to remove deprecated entry, we might attempt to add new oVirt host with an existing unique-id.
             if (!removeDeprecatedOvirtEntry(oVirtId)) {
-                log.errorFormat("Failed to remove duplicated oVirt entry with id {0}. Abort adding oVirt Host type",
+                log.error("Failed to remove duplicated oVirt entry with id '{}'. Abort adding oVirt Host type",
                         oVirtId);
                 throw new VdcBLLException(VdcBllErrors.HOST_ALREADY_EXISTS);
             }
@@ -108,11 +108,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
         if (getParameters().getAddProvisioned()) {
             if (getParameters().getComputeResource() == null) {
-                log.errorFormat("Failed to provision: Compute resource cannot be empty");
+                log.error("Failed to provision: Compute resource cannot be empty");
                 throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_COMPUTERESOURCE);
             }
             if (getParameters().getHostGroup() == null) {
-                log.errorFormat("Failed to provision: Host group cannot be empty");
+                log.error("Failed to provision: Host group cannot be empty");
                 throw new VdcBLLException(VdcBllErrors.PROVIDER_PROVISION_MISSING_HOSTGROUP);
             }
             HostProviderProxy proxy =
@@ -231,7 +231,7 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
         }
 
         String vdsName = getParameters().getVdsStaticData().getName();
-        log.infoFormat("Host {0}, id {1} of type {2} is being re-registered as Host {3}",
+        log.info("Host '{}', id '{}' of type '{}' is being re-registered as Host '{}'",
                 vds.getName(),
                 vds.getId(),
                 vds.getVdsType().name(),
@@ -249,13 +249,13 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             String errors =
                     result.getCanDoAction() ? result.getFault().getError().name()
                             : StringUtils.join(result.getCanDoActionMessages(), ",");
-            log.warnFormat("Failed to remove Host {0}, id {1}, re-registering it as Host {2} fails with errors {3}",
+            log.warn("Failed to remove Host '{}', id '{}', re-registering it as Host '{}' fails with errors {}",
                     vds.getName(),
                     vds.getId(),
                     vdsName,
                     errors);
         } else {
-            log.infoFormat("Host {0} is now known as Host {2}",
+            log.info("Host '{}' is now known as Host '{}'",
                     vds.getName(),
                     vdsName);
         }
@@ -433,10 +433,11 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             return new String(out.toByteArray(), Charset.forName("UTF-8"));
         }
         catch (Exception e) {
-            log.warnFormat(
-                    "Failed to initiate vdsm-id request on host with message {0}",
+            log.warn(
+                    "Failed to initiate vdsm-id request on host: {}",
                     e.getMessage()
                     );
+            log.debug("Exception", e);
             return null;
         }
     }
@@ -458,29 +459,28 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
 
                 return isValidGlusterPeer(sshclient, vds.getVdsGroupId());
             } catch (AuthenticationException e) {
-                log.errorFormat(
-                        "Failed to authenticate session with host {0}",
+                log.error(
+                        "Failed to authenticate session with host '{}': {}",
                         vds.getName(),
-                        e
-                        );
-
+                        e.getMessage());
+                log.debug("Exception", e);
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (SecurityException e) {
-                log.errorFormat(
-                        "Failed to connect to host {0}, fingerprint: {1}",
+                log.error(
+                        "Failed to connect to host '{}', fingerprint '{}': {}",
                         vds.getName(),
                         vds.getSshKeyFingerprint(),
-                        e
-                        );
+                        e.getMessage());
+                log.debug("Exception", e);
                 addCanDoActionMessage(VdcBllMessages.VDS_SECURITY_CONNECTION_ERROR);
                 addCanDoActionMessageVariable("ErrorMessage", e.getMessage());
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_AUTHENTICATE_TO_SERVER);
             } catch (Exception e) {
-                log.errorFormat(
-                        "Failed to establish session with host {0}",
+                log.error(
+                        "Failed to establish session with host '{}': {}",
                         vds.getName(),
-                        e
-                        );
+                        e.getMessage());
+                log.debug("Exception", e);
 
                 return failCanDoAction(VdcBllMessages.VDS_CANNOT_CONNECT_TO_SERVER);
             }
@@ -522,9 +522,10 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             } catch (Exception e) {
                 // This can happen if glusterd is not running on the server. Ignore it and let the server get added.
                 // Peer probe will anyway fail later and the server will then go to non-operational status.
-                log.debugFormat("Could not check if server {0} is already part of another gluster cluster. Will allow adding it.",
-                        sshclient.getHost(),
-                        e);
+                log.debug("Could not check if server '{}' is already part of another gluster cluster. Will"
+                                + " allow adding it.",
+                        sshclient.getHost());
+                log.debug("Exception", e);
             }
         }
         return true;

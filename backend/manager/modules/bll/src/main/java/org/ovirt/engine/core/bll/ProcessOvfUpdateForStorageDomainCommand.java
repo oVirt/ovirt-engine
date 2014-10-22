@@ -315,7 +315,7 @@ public class ProcessOvfUpdateForStorageDomainCommand<T extends StorageDomainPara
                 return true;
             }
         } catch (VdcBLLException e) {
-            log.warnFormat("failed to update domain {0} ovf store disk {1}", storageDomainId, diskId);
+            log.warn("failed to update domain '{}' ovf store disk '{}'", storageDomainId, diskId);
         }
 
         return false;

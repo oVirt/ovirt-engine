@@ -19,11 +19,11 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.RpmVersion;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VdsHandler extends BaseHandler {
-    private static final Log log = LogFactory.getLog(VdsHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(VdsHandler.class);
     private static ObjectIdentityChecker mUpdateVdsStatic;
 
     /**
@@ -79,11 +79,12 @@ public class VdsHandler extends BaseHandler {
         try {
             return new RpmVersion(vds.getHostOs(), "RHEV Hypervisor -", true);
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to parse version of Host {0},{1} and Host OS '{2}' with error {3}",
+            log.error("Failed to parse version of Host '{}','{}' and Host OS '{}': {}",
                     vds.getId(),
                     vds.getName(),
                     vds.getHostOs(),
                     ExceptionUtils.getMessage(e));
+            log.debug("Exception", e);
         }
         return null;
     }

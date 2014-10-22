@@ -296,7 +296,7 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
                 } else if (_isLastMaster) {
                     map.setStatus(StorageDomainStatus.Maintenance);
                 } else {
-                    log.infoFormat("Domain {0} will remain in {1} status until deactivated on all hosts",
+                    log.info("Domain '{}' will remain in '{}' status until deactivated on all hosts",
                             getStorageDomain().getId(), map.getStatus());
                 }
                 getStoragePoolIsoMapDAO().updateStatus(map.getId(), map.getStatus());

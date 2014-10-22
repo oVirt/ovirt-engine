@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
@@ -25,12 +31,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.Collection;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
@@ -64,7 +64,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     @Override
     protected void logErrorOneOrMoreActiveDomainsAreMissing() {
-        log.errorFormat("Can not found any default active domain for one of the disks of snapshot with id : {0}",
+        log.error("Can not found any default active domain for one of the disks of snapshot with id '{}'",
                 oldVmId);
     }
 

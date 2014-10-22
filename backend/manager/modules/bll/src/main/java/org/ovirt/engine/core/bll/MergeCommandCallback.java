@@ -10,11 +10,11 @@ import org.ovirt.engine.core.common.businessentities.VmJob;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MergeCommandCallback extends CommandCallBack {
-    private static final Log log = LogFactory.getLog(MergeCommandCallback.class);
+    private static final Logger log = LoggerFactory.getLogger(MergeCommandCallback.class);
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
@@ -29,7 +29,7 @@ public class MergeCommandCallback extends CommandCallBack {
             if (vmJob.getId().equals(command.getParameters().getVmJobId())) {
                 if (vmStatus == VMStatus.Down) {
                     DbFacade.getInstance().getVmJobDao().remove(vmJob.getId());
-                    log.infoFormat("VM {0} is down, Merge command {1} removed",
+                    log.info("VM '{}' is down, Merge command '{}' removed",
                             command.getParameters().getVmId(), vmJob.getId());
                 } else {
                     log.info("Waiting on merge command to complete");
@@ -44,7 +44,7 @@ public class MergeCommandCallback extends CommandCallBack {
             command.setSucceeded(true);
             command.setCommandStatus(CommandStatus.SUCCEEDED);
             command.persistCommand(command.getParameters().getParentCommand(), true);
-            log.infoFormat("Merge command has completed for images {0}..{1}",
+            log.info("Merge command has completed for images '{}'..'{}'",
                     command.getParameters().getBaseImage().getImageId(),
                     command.getParameters().getTopImage().getImageId());
         }

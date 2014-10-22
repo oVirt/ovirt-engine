@@ -23,13 +23,9 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.LunDAO;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
 
 public abstract class StorageHelperBase implements IStorageHelper {
-
-    protected final Log log = LogFactory.getLog(getClass());
-
     protected abstract Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain, Guid vdsId, int type);
 
     protected Pair<Boolean, VdcFault> runConnectionStorageToDomain(StorageDomain storageDomain,
@@ -156,10 +152,10 @@ public abstract class StorageHelperBase implements IStorageHelper {
         return connectionField;
     }
 
-    protected void printLog(Log logger, String connectionField, String errorCode) {
+    protected void printLog(Logger logger, String connectionField, String errorCode) {
         String translatedError = getTranslatedStorageError(errorCode);
-        logger.errorFormat(
-                "The connection with details {0} failed because of error code {1} and error message is: {2}",
+        logger.error(
+                "The connection with details '{}' failed because of error code '{}' and error message is: {}",
                 connectionField, errorCode, Backend.getInstance().getVdsErrorsTranslator()
                         .TranslateErrorTextSingle(translatedError));
     }

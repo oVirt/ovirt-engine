@@ -13,10 +13,12 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
+    private static final Logger log = LoggerFactory.getLogger(RefreshPoolSingleAsyncOperation.class);
+
     private final ArrayList<Guid> _vdsIdsToSetNonOperational;
 
     private Guid masterStorageDomainId;
@@ -46,8 +48,11 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                                     new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId),
                                             getStoragePool(), masterStorageDomainId, storagePoolIsoMap));
                 } catch (Exception e) {
-                    log.errorFormat("Could not connect vds {0} to pool {1} - moving host to non-operational", getVdss()
-                            .get(iterationId).getName(), getStoragePool().getName());
+                    log.error("Could not connect vds '{}' to pool '{}' - moving host to non-operational: {}",
+                            getVdss().get(iterationId).getName(),
+                            getStoragePool().getName(),
+                            e.getMessage());
+                    log.debug("Exception", e);
                     synchronized (_vdsIdsToSetNonOperational) {
                         _vdsIdsToSetNonOperational.add(getVdss().get(iterationId).getId());
                     }
@@ -57,15 +62,16 @@ public class RefreshPoolSingleAsyncOperation extends ActivateDeactivateSingleAsy
                         VDSCommandType.ConnectStoragePool,
                         new ConnectStoragePoolVDSCommandParameters(getVdss().get(iterationId), getStoragePool(),
                                 masterStorageDomainId, storagePoolIsoMap, true));
-                log.infoFormat("Refreshed vds {0} in pool {1}", getVdss().get(iterationId).getName(),
+                log.info("Refreshed vds '{}' in pool '{}'", getVdss().get(iterationId).getName(),
                         getStoragePool().getName());
             }
 
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to connect/refresh storagePool. Host {0} to storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getName(), getStoragePool().getName(), e);
+            log.error("Failed to connect/refresh storagePool. Host '{}' to storage pool '{}': {}",
+                    getVdss().get(iterationId).getName(),
+                    getStoragePool().getName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
     }
-
-    private static final Log log = LogFactory.getLog(RefreshPoolSingleAsyncOperation.class);
 }

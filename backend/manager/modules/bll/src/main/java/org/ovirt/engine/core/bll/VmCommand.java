@@ -437,7 +437,7 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * reflected in the DB immediately.
      */
     protected void lockVmWithCompensationIfNeeded() {
-        log.infoFormat("Locking VM(id = {0}) {1} compensation.", getVmId(), isInternalExecution() ? "without" : "with");
+        log.info("Locking VM(id = '{}') {} compensation.", getVmId(), isInternalExecution() ? "without" : "with");
 
         if (isInternalExecution()) {
             VmHandler.checkStatusAndLockVm(getVmId());

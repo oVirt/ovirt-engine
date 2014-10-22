@@ -97,11 +97,11 @@ import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManager;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.RollbackHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.dao.DataAccessException;
 
 public abstract class CommandBase<T extends VdcActionParametersBase> extends AuditLogableBase implements
@@ -125,7 +125,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     private boolean releaseLocksAtEndOfExecute = true;
     /** Object which is representing a lock that some commands will acquire */
 
-    protected Log log = LogFactory.getLog(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     /** The context defines how to monitor the command and handle its compensation */
     private final CommandContext context;
@@ -425,13 +425,13 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                         SerializationFactory.getDeserializer();
                 List<BusinessEntitySnapshot> entitySnapshots =
                         getBusinessEntitySnapshotDAO().getAllForCommandId(commandId);
-                log.debugFormat("Command [id={0}]: {1} compensation data.", commandId,
+                log.debug("Command [id={}]: {} compensation data.", commandId,
                         entitySnapshots.isEmpty() ? "No" : "Going over");
                 for (BusinessEntitySnapshot snapshot : entitySnapshots) {
                     Class<Serializable> snapshotClass =
                             (Class<Serializable>) ReflectionUtils.getClassFor(snapshot.getSnapshotClass());
                     Serializable snapshotData = deserializer.deserialize(snapshot.getEntitySnapshot(), snapshotClass);
-                    log.infoFormat("Command [id={0}]: Compensating {1} of {2}; snapshot: {3}.",
+                    log.info("Command [id={}]: Compensating {} of {}; snapshot: {}.",
                             commandId,
                             snapshot.getSnapshotType(),
                             snapshot.getEntityType(),
@@ -492,7 +492,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             handleTransactivity();
             TransactionSupport.executeInScope(endActionScope, this);
         } catch (TransactionRolledbackLocalException e) {
-            log.infoFormat("endAction: Transaction was aborted in {0}", this.getClass().getName());
+            log.info("endAction: Transaction was aborted in {}", this.getClass().getName());
         } finally {
             freeLockEndAction();
             if (getCommandShouldBeLogged()) {
@@ -599,13 +599,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            The exception to log.
      */
     protected void logExceptionAndCompensate(Exception e) {
-        log.errorFormat("Exception while wrapping-up compensation in endAction: {0}.",
-                ExceptionUtils.getMessage(e), e);
+        log.error("Exception while wrapping-up compensation in endAction: {}.",
+                ExceptionUtils.getMessage(e));
+        log.error("Exception", e);
         compensate();
     }
 
     private void internalEndSuccessfully() {
-        log.infoFormat("Ending command successfully: {0}", getClass().getName());
+        log.info("Ending command '{}' successfully.", getClass().getName());
         if (hasTaskHandlers()) {
             getCurrentTaskHandler().endSuccessfully();
             getParameters().incrementExecutionIndex();
@@ -646,7 +647,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     private void internalEndWithFailure() {
-        log.errorFormat("Ending command with failure: {0}", getClass().getName());
+        log.error("Ending command '{}' with failure.", getClass().getName());
         if (hasTaskHandlers()) {
             if (hasStepsToRevert()) {
                 getCurrentTaskHandler().endWithFailure();
@@ -723,7 +724,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     protected void logRollbackedTask() {
         String type = (getCurrentTaskHandler().getRevertTaskType() != null ? getCurrentTaskHandler().getRevertTaskType().name() : AsyncTaskType.unknown.name());
-        log.errorFormat("Reverting task {0}, handler: {1}", type, getCurrentTaskHandler().getClass().getName());
+        log.error("Reverting task '{}', handler '{}'", type, getCurrentTaskHandler().getClass().getName());
     }
 
     private boolean hasRevertTask() {
@@ -745,7 +746,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                                 && canDoAction()
                                 && internalValidateAndSetQuota();
                 if (!returnValue && getReturnValue().getCanDoActionMessages().size() > 0) {
-                    log.warnFormat("CanDoAction of action {0} failed. Reasons:{1}", getActionType(),
+                    log.warn("CanDoAction of action '{}' failed. Reasons: {}", getActionType(),
                             StringUtils.join(getReturnValue().getCanDoActionMessages(), ','));
                 }
             } finally {
@@ -885,7 +886,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 getDbFacade().getPermissionDao().getEntityPermissions(userId, actionGroup, object, type);
         if (permId != null) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
+                log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",
                         permId,
                         getActionType(),
                         type.getVdcObjectTranslation(),
@@ -896,7 +897,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // Deny otherwise:
         if (log.isDebugEnabled()) {
-            log.debugFormat("No permission found for user when running action {0}, on object {1} for action group {2} with id {3}.",
+            log.debug("No permission found for user when running action '{}', on object '{}' for action group '{}' with id '{}'.",
                     getActionType(),
                     type.getVdcObjectTranslation(),
                     actionGroup,
@@ -930,9 +931,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             final boolean ignoreEveryone) {
         // Grant if there is matching permission in the database:
         if (log.isDebugEnabled()) {
-            log.debugFormat("Checking whether user {0} or groups {1} have action group {3} on object type {4}",
+            log.debug("Checking whether user '{}' or groups '{}' have action group '{}' on object type '{}'",
                     userId,
-                    StringUtils.join(groupIds, ","),
+                    groupIds,
                     actionGroup,
                     object,
                     type.name());
@@ -941,7 +942,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                 getPermissionDAO().getEntityPermissionsForUserAndGroups(userId, StringUtils.join(groupIds, ","), actionGroup, object, type, ignoreEveryone);
         if (permId != null) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("Found permission {0} for user when running {1}, on {2} with id {3}",
+                log.debug("Found permission '{}' for user when running '{}', on '{}' with id '{}'",
                         permId,
                         getActionType(),
                         type.getVdcObjectTranslation(),
@@ -952,7 +953,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         // Deny otherwise:
         if (log.isDebugEnabled()) {
-            log.debugFormat("No permission found for user when running action {0}, on object {1} for action group {2} with id {3}.",
+            log.debug("No permission found for user when running action '{}', on object '{}' for action group '{}' with id '{}'.",
                     getActionType(),
                     type.getVdcObjectTranslation(),
                     actionGroup,
@@ -972,7 +973,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Skip check if this is an internal action:
         if (isInternalExecution()) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("Permission check skipped for internal action {0}.", getActionType());
+                log.debug("Permission check skipped for internal action {}.", getActionType());
             }
             return true;
         }
@@ -980,7 +981,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Skip check if multilevel administration is disabled:
         if (!MultiLevelAdministrationHandler.isMultilevelAdministrationOn()) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("Permission check for action {0} skipped because multilevel administration is disabled.",
+                log.debug("Permission check for action '{}' skipped because multilevel administration is disabled.",
                         getActionType());
             }
             return true;
@@ -998,7 +999,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
         if (permSubjects == null || permSubjects.isEmpty()) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("The set of objects to check is null or empty for action {0}.", getActionType());
+                log.debug("The set of objects to check is null or empty for action '{}'.", getActionType());
             }
             addCanDoActionMessage(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION);
 
@@ -1012,7 +1013,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         if (log.isDebugEnabled()) {
             StringBuilder builder = getPermissionSubjectsAsStringBuilder(permSubjects);
 
-            log.debugFormat("Checking whether user {0} or one of the groups he is member of, have the following permissions: {1}",
+            log.debug("Checking whether user '{}' or one of the groups he is member of, have the following permissions: {}",
                     getCurrentUser().getId(),
                     builder.toString());
         }
@@ -1024,9 +1025,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
         for (PermissionSubject permSubject : permSubjects) {
             if (!checkSinglePermission(permSubject, getReturnValue().getCanDoActionMessages())) {
-                log.infoFormat("No permission found for user {0} or one of the groups he is member of,"
-                        + " when running action {1}, Required permissions are: Action type: {2} Action group: {3}"
-                        + " Object type: {4}  Object ID: {5}.",
+                log.info("No permission found for user '{}' or one of the groups he is member of,"
+                        + " when running action '{}', Required permissions are: Action type: '{}' Action group: '{}'"
+                        + " Object type: '{}'  Object ID: '{}'.",
                         getCurrentUser().getId(),
                         getActionType(),
                         permSubject.getActionGroup().getRoleType().name(),
@@ -1047,7 +1048,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // if objectId is null we can't check permission
         if (objectId == null) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("The object to check is null for action {0}.", getActionType());
+                log.debug("The object to check is null for action '{}'.", getActionType());
             }
             messages.add(VdcBllMessages.USER_NOT_AUTHORIZED_TO_PERFORM_ACTION.name());
             return false;
@@ -1055,7 +1056,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         // Check that an action group is defined for this action;
         if (objectActionGroup == null) {
             if (log.isDebugEnabled()) {
-                log.debugFormat("No action group is defined for action {0}.", getActionType());
+                log.debug("No action group is defined for action '{}'.", getActionType());
             }
             return false;
         }
@@ -1166,16 +1167,15 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             functionReturnValue = getSucceeded();
             exceptionOccurred = false;
         } catch (VdcBLLException e) {
-            log.error(String.format("Command %1$s throw Vdc Bll exception. With error message %2$s",
+            log.error("Command '{}' failed: {}",
                     getClass().getName(),
-                    e.getMessage()));
-            if (log.isDebugEnabled()) {
-                log.debug(String.format("Command %1$s throw Vdc Bll exception", getClass().getName()), e);
-            }
+                    e.getMessage());
+            log.debug("Exception", e);
             processExceptionToClient(new VdcFault(e, e.getVdsError().getCode()));
         } catch (RuntimeException e) {
             processExceptionToClient(new VdcFault(e, VdcBllErrors.ENGINE));
-            log.error(String.format("Command %1$s throw exception", getClass().getName()), e);
+            log.error("Command '{}' failed: {}", getClass().getName(), e.getMessage());
+            log.error("Exception", e);
         } finally {
             if (!exceptionOccurred) {
                 setCommandExecuted();
@@ -1269,7 +1269,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         }
 
         // Log the final appended message to the log.
-        log.info(logInfo);
+        log.info("{}", logInfo);
     }
 
     private StringBuilder getPermissionSubjectsAsStringBuilder(List<PermissionSubject> permissionSubjects) {
@@ -1326,7 +1326,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             handleTransactivity();
             TransactionSupport.executeInScope(scope, this);
         } catch (TransactionRolledbackLocalException e) {
-            log.infoFormat("Transaction was aborted in {0}", this.getClass().getName());
+            log.info("Transaction was aborted in '{}'", this.getClass().getName());
             // Transaction was aborted - we must sure we compensation for all previous applicative stages of the command
             compensate();
         } finally {
@@ -1375,7 +1375,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
                                     BackendUtils.getBackendCommandObjectsHandler(log).createAction(entry.getValue().getFirst(),
                                             entry.getValue().getSecond(),
                                             context);
-                            log.infoFormat("Command {0} persisting async task placeholder for child command {1}",
+                            log.info("Command '{}' persisting async task placeholder for child command '{}'",
                                     getCommandId(),
                                     command.getCommandId());
                             command.insertAsyncTaskPlaceHolders();
@@ -1494,7 +1494,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             });
             addToReturnValueTaskPlaceHolderIdList(taskId);
         } catch (RuntimeException ex) {
-            log.errorFormat("Error during persistAsyncTaskPlaceHolder for command: {0}. Exception {1}", getClass().getName(), ex);
+            log.error("Error during persistAsyncTaskPlaceHolder for command '{}': {}",
+                    getClass().getName(),
+                    ex.getMessage());
+            log.error("Exception", ex);
         }
         return taskId;
     }
@@ -1639,7 +1642,8 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         try {
             return createTaskImpl(taskId, asyncTaskCreationInfo, parentCommand, description, entitiesMap);
         } catch (RuntimeException ex) {
-            log.errorFormat("Error during createTask for command: {0}. Exception {1}", getClass().getName(), ex);
+            log.error("Error during createTask for command '{}': {}", getClass().getName(), ex.getMessage());
+            log.error("Exception", ex);
         } finally {
             TransactionSupport.resume(transaction);
         }
@@ -1731,7 +1735,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
 
     @Override
     public void rollback() {
-        log.errorFormat("Transaction rolled-back for command: {0}.", CommandBase.this.getClass().getName());
+        log.error("Transaction rolled-back for command '{}'.", CommandBase.this.getClass().getName());
         try {
             if (isQuotaDependant()) {
                 rollbackQuota();
@@ -1822,10 +1826,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (lock != null) {
                 Pair<Boolean, Set<String>> lockAcquireResult = getLockManager().acquireLock(lock);
                 if (lockAcquireResult.getFirst()) {
-                    log.infoFormat("Lock Acquired to object {0}", lock);
+                    log.info("Lock Acquired to object '{}'", lock);
                     context.withLock(lock);
                 } else {
-                    log.infoFormat("Failed to Acquire Lock to object {0}", lock);
+                    log.info("Failed to Acquire Lock to object '{}'", lock);
                     getReturnValue().getCanDoActionMessages()
                     .addAll(extractVariableDeclarations(lockAcquireResult.getSecond()));
                     return false;
@@ -1897,7 +1901,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected void freeLock() {
         if (context.getLock() != null) {
             getLockManager().releaseLock(context.getLock());
-            log.infoFormat("Lock freed to object {0}", context.getLock());
+            log.info("Lock freed to object '{}'", context.getLock());
             context.withLock(null);
         }
     }

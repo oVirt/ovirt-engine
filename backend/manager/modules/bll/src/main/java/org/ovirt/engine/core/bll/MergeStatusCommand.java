@@ -1,7 +1,5 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
@@ -9,6 +7,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -25,15 +24,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FullListVdsCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
 public class MergeStatusCommand<T extends MergeParameters>
         extends CommandBase<T> {
-    private static final Log log = LogFactory.getLog(MergeStatusCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(MergeStatusCommand.class);
 
     public MergeStatusCommand(T parameters) {
         super(parameters);
@@ -71,18 +70,18 @@ public class MergeStatusCommand<T extends MergeParameters>
         Set<Guid> imagesToRemove = getImagesToRemove();
         images.retainAll(imagesToRemove);
         if (images.size() != 1) {
-            log.errorFormat("Failed to live merge, still in volume chain: {0}", images.toString());
+            log.error("Failed to live merge, still in volume chain: {}", images);
             setCommandStatus(CommandStatus.FAILED);
             return;
         }
 
         imagesToRemove.removeAll(images);
-        log.infoFormat("Successfully removed volume(s) {0}", imagesToRemove);
+        log.info("Successfully removed volume(s): {}", imagesToRemove);
 
         // Direction: base exists => backwards merge (commit); else (top exists) => forward merge (rebase)
         VmBlockJobType jobType = (images.contains(getParameters().getBaseImage().getImageId()))
                 ? VmBlockJobType.COMMIT : VmBlockJobType.PULL;
-        log.infoFormat("Volume merge type: {0}", jobType.name());
+        log.info("Volume merge type '{}'", jobType.name());
 
         MergeStatusReturnValue returnValue = new MergeStatusReturnValue(jobType, imagesToRemove);
         getReturnValue().setActionReturnValue(returnValue);
@@ -111,7 +110,7 @@ public class MergeStatusCommand<T extends MergeParameters>
 
         Guid vmId = new Guid((String) vm.get(VdsProperties.vm_guid));
         if (!vmId.equals(getParameters().getVmId())) {
-            log.errorFormat("Invalid VM returned when querying status: expected {0}, got {1}",
+            log.error("Invalid VM returned when querying status: expected '{}', got '{}'",
                     getParameters().getVmId(), vmId);
             return null;
         }

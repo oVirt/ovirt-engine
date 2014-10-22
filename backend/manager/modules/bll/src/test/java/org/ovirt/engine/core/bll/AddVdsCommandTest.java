@@ -30,7 +30,7 @@ import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.utils.MockConfigRule;
-import org.ovirt.engine.core.utils.log.Log;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddVdsCommandTest {
@@ -53,7 +53,7 @@ public class AddVdsCommandTest {
     @Mock
     private EngineSSHClient sshClient;
     @Mock
-    private Log log;
+    private Logger log;
 
     @ClassRule
     public static MockConfigRule configRule =

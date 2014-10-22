@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Collection;
 import java.util.List;
 
 import org.apache.commons.collections.CollectionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.ImagesContainterParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -62,7 +61,7 @@ public class RemoveAllVmTemplateImageTemplatesCommand<T extends VmTemplateParame
                         return;
                     }
 
-                    log.errorFormat("Can't remove image id: {0} for template id: {1} from domain id: {2} due to: {3}.",
+                    log.error("Can't remove image id '{}' for template id '{}' from domain id '{}' due to: {}.",
                             template.getImageId(), getVmTemplateId(), domain,
                             vdcReturnValue.getFault().getMessage());
                 }

@@ -89,7 +89,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         for (Guid hostId :vdssToMaintenance.keySet()) {
             for (VM vm : getVmDAO().getAllMigratingToHost(hostId)) {
                 if (vm.getStatus() == VMStatus.MigratingFrom) {
-                    log.infoFormat("Cancelling incoming migration of {0} id: {1}", vm, vm.getId());
+                    log.info("Cancelling incoming migration of '{}' id '{}'", vm, vm.getId());
                     runVdsCommand(VDSCommandType.CancelMigrate, new CancelMigrationVDSParameters(vm.getRunOnVds(), vm.getId(), true));
                 }
             }
@@ -174,7 +174,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
         for (Guid vdsId : getParameters().getVdsIdList()) {
             VDS vds = DbFacade.getInstance().getVdsDao().get(vdsId);
             if (vds == null) {
-                log.error(String.format("ResourceManager::vdsMaintenance could not find vds_id = '%1$s'", vdsId));
+                log.error("ResourceManager::vdsMaintenance could not find VDS '{}'", vdsId);
                 addCanDoActionMessage(VdcBllMessages.VDS_INVALID_SERVER_ID);
                 result = false;
                 continue;
@@ -223,7 +223,7 @@ public class MaintenanceNumberOfVdssCommand<T extends MaintenanceNumberOfVdssPar
                             nonMigratableVms.addAll(nonMigratableVmDescriptionsToFrontEnd);
 
                             // The non migratable VM names will be comma separated
-                            log.error(String.format("VDS %1$s contains non migratable VMs", vdsId));
+                            log.error("VDS '{}' contains non migratable VMs", vdsId);
                             result = false;
 
                         } else if (!validate(new VmValidator(vms)

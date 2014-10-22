@@ -1,13 +1,12 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Set;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.RemoveAllVmImagesParameters;
 import org.ovirt.engine.core.common.action.RemoveImageParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
@@ -65,14 +64,14 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                 } else {
                     StorageDomain domain = getStorageDomainDAO().get(image.getStorageIds().get(0));
                     failedRemoving.add(image);
-                    log.errorFormat("Can't remove image id: {0} for VM id: {1} from domain id: {2} due to: {3}.",
+                    log.error("Can't remove image id '{}' for VM id '{}' from domain id '{}' due to: {}.",
                             image.getImageId(),
                             getParameters().getVmId(),
                             image.getStorageIds().get(0),
                             vdcReturnValue.getFault().getMessage());
 
                     if (domain.getStorageDomainType() == StorageDomainType.Data) {
-                        log.infoFormat("Image id: {0} will be set at illegal state with no snapshot id.", image.getImageId());
+                        log.info("Image id '{}' will be set at illegal state with no snapshot id.", image.getImageId());
                         TransactionSupport.executeInScope(TransactionScopeOption.Required,
                                 new TransactionMethod<Object>() {
                                     @Override
@@ -84,7 +83,7 @@ public class RemoveAllVmImagesCommand<T extends RemoveAllVmImagesParameters> ext
                                     }
                                 });
                     } else {
-                        log.infoFormat("Image id: {0} is not on a data domain and will not be marked as illegal.", image.getImageId());
+                        log.info("Image id '{}' is not on a data domain and will not be marked as illegal.", image.getImageId());
                     }
                 }
             }

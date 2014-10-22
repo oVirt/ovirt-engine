@@ -1,5 +1,11 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -24,12 +30,6 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.SnapshotDao;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
-
-import java.util.Collection;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
 
 /**
  * This class adds a cloned VM from a snapshot (Deep disk copy).
@@ -96,7 +96,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
     @Override
     protected void logErrorOneOrMoreActiveDomainsAreMissing() {
-        log.errorFormat("Can not found any default active domain for one of the disks of snapshot with id : {0}",
+        log.error("Can not found any default active domain for one of the disks of snapshot with id '{}'",
                 sourceSnapshotId);
     }
 

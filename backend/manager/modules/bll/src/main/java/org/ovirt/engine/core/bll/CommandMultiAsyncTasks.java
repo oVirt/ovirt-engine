@@ -9,10 +9,11 @@ import org.ovirt.engine.core.common.asynctasks.EndedTaskInfo;
 import org.ovirt.engine.core.common.asynctasks.EndedTasksInfo;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandMultiAsyncTasks {
+    private static final Logger log = LoggerFactory.getLogger(CommandMultiAsyncTasks.class);
 
     private HashMap<Guid, CommandAsyncTask> _listTasks;
     private Guid commandId;
@@ -33,7 +34,7 @@ public class CommandMultiAsyncTasks {
     public void AttachTask(CommandAsyncTask asyncTask) {
         synchronized (_listTasks) {
             if (!_listTasks.containsKey(asyncTask.getVdsmTaskId())) {
-                log.infoFormat("CommandMultiAsyncTasks::AttachTask: Attaching task '{0}' to command '{1}'.",
+                log.info("CommandMultiAsyncTasks::AttachTask: Attaching task '{}' to command '{}'.",
                         asyncTask.getVdsmTaskId(), getCommandId());
 
                 _listTasks.put(asyncTask.getVdsmTaskId(), asyncTask);
@@ -63,14 +64,15 @@ public class CommandMultiAsyncTasks {
             for (CommandAsyncTask task : CurrentActionTypeTasks) {
                 // Check this is a task that is run on VDSM and is not in ENDED state.
                 if (task.getState() != AsyncTaskState.Ended && !Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                    log.infoFormat("Task with DB Task ID '{0}' and VDSM Task ID '{1}' is in state {2}. End action for command {3} will proceed when all the entity's tasks are completed.",
+                    log.info("Task with DB Task ID '{}' and VDSM Task ID '{}' is in state {}. End action for command"
+                                    + " {} will proceed when all the entity's tasks are completed.",
                             task.getParameters().getDbAsyncTask().getTaskId(),
                             task.getVdsmTaskId(),
                             task.getState(),
                             getCommandId());
                     return false;
                 } else if (Guid.isNullOrEmpty(task.getVdsmTaskId())) {
-                    log.infoFormat("task with DB task ID '{0}' has  empty vdsm  task ID and is about to be cleared",
+                    log.info("Task with DB task ID '{}' has  empty vdsm  task ID and is about to be cleared",
                             task.getVdsmTaskId());
                 }
 
@@ -160,8 +162,8 @@ public class CommandMultiAsyncTasks {
                     }
                 }
             } else {
-                log.warnFormat(
-                        "CommandMultiAsyncTasks::startPollingTask: For some reason, task '{0}' has no parameters or no DB task - we don't know its action type",
+                log.warn("CommandMultiAsyncTasks::startPollingTask: For some reason, task '{}' has no parameters or"
+                                + " no DB task - we don't know its action type",
                         TaskID);
             }
         }
@@ -171,7 +173,8 @@ public class CommandMultiAsyncTasks {
         synchronized (_listTasks) {
             for (CommandAsyncTask task : _listTasks.values()) {
                 if (!taskWasCleared(task)) {
-                    log.infoFormat("[within thread]: Some of the tasks related to command id {0} were not cleared yet (Task id {1} is in state {2}).",
+                    log.info("[within thread]: Some of the tasks related to command id '{}' were not cleared yet"
+                                    + " (Task id '{}' is in state '{}').",
                             getCommandId(),
                             task.getVdsmTaskId(),
                             task.getState());
@@ -192,6 +195,4 @@ public class CommandMultiAsyncTasks {
         AsyncTaskState taskState = task.getState();
         return taskState == AsyncTaskState.Cleared || taskState == AsyncTaskState.ClearFailed;
     }
-
-    private static final Log log = LogFactory.getLog(CommandMultiAsyncTasks.class);
 }

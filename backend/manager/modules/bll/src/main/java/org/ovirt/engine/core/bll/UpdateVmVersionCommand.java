@@ -38,8 +38,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class updates VM to the latest template version for stateless vms that has newer template version
@@ -47,7 +47,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
 @InternalCommandAttribute
 public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends VmCommand<T> {
 
-    private static final Log log = LogFactory.getLog(UpdateVmVersionCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(UpdateVmVersionCommand.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -122,7 +122,7 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
                     buildRemoveVmFromPoolParameters(),
                     getLock());
             if (!result.getSucceeded()) {
-                log.errorFormat("Could not detach vm {0} ({1}) from vm-pool {2}.",
+                log.error("Could not detach vm '{}' ({}) from vm-pool '{}'.",
                         getVm().getName(),
                         getVmId(),
                         getVm().getVmPoolName());
@@ -252,11 +252,12 @@ public class UpdateVmVersionCommand<T extends UpdateVmVersionParameters> extends
                     dstFld.set(dest, srcFld.get(source));
                 }
             } catch (Exception exp) {
-                log.errorFormat("Failed to copy field {0} of new version to VM {1} ({2}), error: {3}",
+                log.error("Failed to copy field '{}' of new version to VM '{}' ({}): {}",
                         srcFld.getName(),
                         source.getName(),
                         source.getId(),
                         exp.getMessage());
+                log.debug("Exception", exp);
                 return false;
             }
         }

@@ -186,7 +186,7 @@ public class RemoveStorageDomainCommand<T extends RemoveStorageDomainParameters>
             if (e.getErrorCode() != VdcBllErrors.StorageDomainDoesNotExist) {
                 throw e;
             }
-            log.warnFormat("Storage Domain {0} which was about to be formatted does not exist in VDS {1}",
+            log.warn("Storage Domain '{}' which was about to be formatted does not exist in VDS '{}'",
                     dom.getName(),
                     vds.getName());
             return true;

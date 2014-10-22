@@ -70,17 +70,17 @@ import org.ovirt.engine.core.dao.VmInitDAO;
 import org.ovirt.engine.core.utils.ObjectIdentityChecker;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmHandler {
 
     private static ObjectIdentityChecker mUpdateVmsStatic;
     private static OsRepository osRepository;
 
-    private static final Log log = LogFactory.getLog(VmHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(VmHandler.class);
 
     private static Set<VdcActionType> COMMANDS_ALLOWED_ON_EXTERNAL_VMS = new HashSet<>();
     private static Set<VdcActionType> COMMANDS_ALLOWED_ON_HOSTED_ENGINE = new HashSet<>();
@@ -408,10 +408,11 @@ public class VmHandler {
         try {
             return new RpmVersion(part, getAppName(part, appName), true);
         } catch (Exception e) {
-            log.debugFormat("Failed to create rpm version object, part: {0} appName: {1}, error: {2}",
+            log.debug("Failed to create rpm version object, part '{}' appName '{}': {}",
                     part,
                     appName,
-                    e.toString());
+                    e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
     }
@@ -742,7 +743,7 @@ public class VmHandler {
     public static void decreasePendingVms(Guid vdsId, int numOfCpus, int minAllocatedMem, String vmName) {
         getVdsDynamicDao().updatePartialVdsDynamicCalc(vdsId, 0, -numOfCpus, -minAllocatedMem, 0, 0);
 
-        log.debugFormat("Decreasing vds {0} pending vcpu count by {1} and vmem size by {2} (Vm: {3})",
+        log.debug("Decreasing vds '{}' pending vcpu count by {} and vmem size by {} (Vm '{}')",
                 vdsId, numOfCpus, minAllocatedMem, vmName);
     }
 

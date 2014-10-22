@@ -4,8 +4,8 @@ import javax.enterprise.inject.Produces;
 import javax.enterprise.inject.spi.InjectionPoint;
 
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class is made to keep all producers of bll dependencies, generally singletons from other jars in one place for the
@@ -26,20 +26,20 @@ public class BllCDIAdapter {
     DbFacade dbFacade = DbFacade.getInstance();
 
     /**
-     * this producer enables injection of Log instance. Its not
+     * this producer enables injection of Logger instance. Its not
      * intended to be used as protected instance as the runtime instance is the declaring class so
      * use directly as a private member.
      *
      *  <code>
      *      @Inject
-     *      private Log log;
+     *      private Logger log;
      *  </code>
      *
      * @param injectionPoint
      */
     @Produces
-    public Log produceLogger(InjectionPoint injectionPoint) {
-        return LogFactory.getLog(injectionPoint.getMember().getDeclaringClass());
+    public Logger produceLogger(InjectionPoint injectionPoint) {
+        return LoggerFactory.getLogger(injectionPoint.getMember().getDeclaringClass());
     }
 
 

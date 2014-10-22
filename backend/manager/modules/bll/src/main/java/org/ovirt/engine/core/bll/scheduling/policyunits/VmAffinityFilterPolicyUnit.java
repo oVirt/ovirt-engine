@@ -19,8 +19,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VdsStaticDAO;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.scheduling.AffinityGroupDao;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(VmAffinityFilterPolicyUnit.class);
+
     public VmAffinityFilterPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
     }
@@ -98,9 +102,9 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
         // contradicting rules to the log
         unacceptableHosts.retainAll(acceptableHosts);
         for (Guid id: unacceptableHosts) {
-            log.warnFormat("Host {1} ({2}) belongs to both positive and negative affinity list" +
-                    " while scheduling VM {3} ({4})",
-                    hostMap.get(id).getName(), id.toString(),
+            log.warn("Host '{}' ({}) belongs to both positive and negative affinity list" +
+                    " while scheduling VM '{}' ({})",
+                    hostMap.get(id).getName(), id,
                     vm.getName(), vm.getId());
         }
 
@@ -109,7 +113,7 @@ public class VmAffinityFilterPolicyUnit extends PolicyUnitImpl {
             acceptableHosts.addAll(hostMap.keySet());
         }
         else if (acceptableHosts.size() > 1) {
-            log.warnFormat("Invalid affinity situation was detected while scheduling VM {1} ({2})." +
+            log.warn("Invalid affinity situation was detected while scheduling VM '{}' ({})." +
                     " VMs belonging to the same affinity groups are running on more than one host.",
                     vm.getName(), vm.getId());
         }

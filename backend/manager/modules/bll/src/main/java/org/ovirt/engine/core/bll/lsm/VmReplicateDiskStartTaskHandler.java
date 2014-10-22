@@ -42,7 +42,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
                 ResourceManager.getInstance().runVdsCommand(VDSCommandType.VmReplicateDiskStart, migrationStartParams);
 
         if (!ret.getSucceeded()) {
-            log.errorFormat("Failed VmReplicateDiskStart (Disk {0} , VM {1})",
+            log.error("Failed VmReplicateDiskStart (Disk '{}' , VM '{}')",
                     getEnclosingCommand().getParameters().getImageGroupID(),
                     getEnclosingCommand().getParameters().getVmId());
             throw new VdcBLLException(ret.getVdsError().getCode(), ret.getVdsError().getMessage());
@@ -72,7 +72,7 @@ public class VmReplicateDiskStartTaskHandler extends AbstractSPMAsyncTaskHandler
     @Override
     protected void revertTask() {
         if (Guid.Empty.equals(getEnclosingCommand().getParameters().getVdsId())) {
-            log.errorFormat("VM {0} is not running on any VDS, skipping VmReplicateDiskFinish",
+            log.error("VM '{}' is not running on any VDS, skipping VmReplicateDiskFinish",
                     getEnclosingCommand().getParameters().getVmId());
             return;
         }

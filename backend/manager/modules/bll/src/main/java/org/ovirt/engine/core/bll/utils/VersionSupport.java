@@ -11,13 +11,13 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VersionSupport implements Serializable {
 
     private static final long serialVersionUID = 8368679686604395114L;
-    private static final Log log = LogFactory.getLog(VersionSupport.class);
+    private static final Logger log = LoggerFactory.getLogger(VersionSupport.class);
 
     private VersionSupport() {
     }
@@ -49,7 +49,8 @@ public class VersionSupport implements Serializable {
             try {
                 isVersionSupported = vds.getSupportedClusterVersionsSet().contains(clusterCompatibilityVersion);
             } catch (RuntimeException e) {
-                log.errorFormat(e.getMessage());
+                log.error("{}", e.getMessage());
+                log.debug("Exception", e);
                 isVersionSupported = false;
             }
         }

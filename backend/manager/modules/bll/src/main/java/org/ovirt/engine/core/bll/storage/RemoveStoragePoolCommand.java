@@ -179,7 +179,7 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
         for (StorageDomain storageDomain : storageDomains) {
             if (storageDomain.getStorageDomainType() != StorageDomainType.Master) {
                 if (!removeDomainFromPool(storageDomain, vdss.get(0))) {
-                    log.errorFormat("Unable to detach storage domain {0} {1}",
+                    log.error("Unable to detach storage domain '{}' '{}'",
                             storageDomain.getStorageName(),
                             storageDomain.getId());
                     retVal = false;
@@ -241,9 +241,10 @@ public class RemoveStoragePoolCommand<T extends StoragePoolParametersBase> exten
                     }
                 });
             } catch (Exception e1) {
-                log.errorFormat("Failed destroy storage pool with id {0} and after that failed to stop spm because of {1}",
+                log.error("Failed destroy storage pool with id '{}' and after that failed to stop spm: {}",
                         getStoragePoolId(),
-                        e1);
+                        e1.getMessage());
+                log.debug("Exception", e1);
             }
             throw e;
         }

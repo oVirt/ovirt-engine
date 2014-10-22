@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.CreateCloneOfTemplateParameters;
@@ -66,7 +65,7 @@ public class CreateCloneOfTemplateCommand<T extends CreateCloneOfTemplateParamet
                                     getDiskImage().isWipeAfterDelete(), false)));
 
         } catch (VdcBLLException e) {
-            log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
+            log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
             throw e;
         }
 

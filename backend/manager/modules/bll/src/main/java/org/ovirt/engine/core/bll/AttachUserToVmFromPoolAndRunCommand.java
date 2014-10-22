@@ -195,14 +195,14 @@ VmPoolUserCommandBase<T> implements QuotaVdsDependent {
                         permParams,
                         cloneContext().withoutExecutionContext().withoutLock());
                 if (!vdcReturnValueFromAddPerm.getSucceeded()) {
-                    log.infoFormat("Failed to give user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
+                    log.info("Failed to give user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
                     setActionReturnValue(vdcReturnValueFromAddPerm);
                     return;
                 } else {
-                    log.infoFormat("Succceeded giving user {0} permission to Vm {1} ", getAdUserId(), vmToAttach);
+                    log.info("Succeeded giving user '{}' permission to Vm '{}'", getAdUserId(), vmToAttach);
                 }
             } else {
-                log.infoFormat("No free Vms in pool {0}. Cannot allocate for user {1} ", getVmPoolId(), getAdUserId());
+                log.info("No free Vms in pool '{}'. Cannot allocate for user '{}'", getVmPoolId(), getAdUserId());
                 throw new VdcBLLException(VdcBllErrors.NO_FREE_VM_IN_POOL);
             }
         }

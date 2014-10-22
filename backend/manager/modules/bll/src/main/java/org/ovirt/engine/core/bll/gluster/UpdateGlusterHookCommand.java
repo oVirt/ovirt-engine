@@ -111,7 +111,7 @@ public class UpdateGlusterHookCommand extends GlusterHookCommandBase<GlusterHook
                                                 entity.getName()));
             if (!retValue.getSucceeded()) {
                 // throw exception as we cannot continue without content
-                log.errorFormat("Failed to get content from server with id {0} with error {1}", getParameters().getSourceServerId(), retValue.getExceptionString());
+                log.error("Failed to get content from server with id '{}': {}", getParameters().getSourceServerId(), retValue.getExceptionString());
                 throw new VdcBLLException(retValue.getVdsError().getCode(), retValue.getVdsError().getMessage());
             }
             hookContent = (String) retValue.getReturnValue();

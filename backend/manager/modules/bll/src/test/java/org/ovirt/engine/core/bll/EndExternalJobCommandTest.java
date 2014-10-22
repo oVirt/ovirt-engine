@@ -15,7 +15,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
-import org.ovirt.engine.core.utils.log.Log;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class EndExternalJobCommandTest   {
@@ -28,7 +28,7 @@ public class EndExternalJobCommandTest   {
     @Mock
     private EndExternalJobCommand<EndExternalJobParameters> commandMock;
     @Mock
-    private Log log;
+    private Logger log;
 
 
     @Before

@@ -1,12 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
@@ -92,9 +90,11 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
                     updateAuditLogFailedToUpdateVM(vm.getName());
                 }
             } catch (VdcBLLException e) {
-                log.warnFormat("Failed to update VM '{0}' with the new volume size due to error: {1}." +
-                        "VM should be restarted to detect the new size.",
-                        vm.getName(), ExceptionUtils.getMessage(e));
+                log.warn("Failed to update VM '{}' with the new volume size due to error, "
+                                + "VM should be restarted to detect the new size: {}",
+                        vm.getName(),
+                        e.getMessage());
+                log.debug("Exception", e);
                 updateAuditLogFailedToUpdateVM(vm.getName());
             }
         }
@@ -130,7 +130,10 @@ public class ExtendImageSizeCommand<T extends ExtendImageSizeParameters> extends
         try {
             diskImage = (DiskImage) runVdsCommand(VDSCommandType.GetImageInfo, params).getReturnValue();
         } catch (VdcBLLException e) {
-            log.errorFormat("Failed to retrieve image ('{0}') info!", params.getImageId());
+            log.error("Failed to retrieve image '{}' info: {}",
+                    params.getImageId(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         return diskImage;
     }

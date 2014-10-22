@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -10,9 +13,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.SetHaMaintenanceModeVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Version;
-
-import java.util.Collections;
-import java.util.List;
 
 @NonTransactiveCommandAttribute
 public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParameters> {
@@ -32,8 +32,8 @@ public class SetHaMaintenanceCommand extends VdsCommand<SetHaMaintenanceParamete
                             getVds(), params.getMode(), params.getIsEnabled()))
                     .getSucceeded();
         } catch (VdcBLLException e) {
-            log.errorFormat("Could not {0} {1} Hosted Engine HA maintenance mode on host {2}",
-                    (params.getIsEnabled() ? "enable" : "disable"),
+            log.error("Could not {} {} Hosted Engine HA maintenance mode on host '{}'",
+                    params.getIsEnabled() ? "enable" : "disable",
                     params.getMode().name().toLowerCase(),
                     getVdsName());
         }

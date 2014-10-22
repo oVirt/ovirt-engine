@@ -660,7 +660,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             retValue = validateProvidedDestinations();
         }
         if (retValue && getImagesToCheckDestinationStorageDomains().size() != diskInfoDestinationMap.size()) {
-            log.errorFormat("Can not find any default active domain for one of the disks of template with id : {0}",
+            log.error("Can not find any default active domain for one of the disks of template with id '{}'",
                     vmDisksSource.getId());
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_MISSED_STORAGES_FOR_SOME_DISKS);
             retValue = false;
@@ -817,7 +817,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
                 });
             }
         } else {
-            log.errorFormat("Failed to add vm . The reasons are: {0}", StringUtils.join(errorMessages, ','));
+            log.error("Failed to add vm . The reasons are: {}", StringUtils.join(errorMessages, ','));
         }
     }
 

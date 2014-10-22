@@ -31,8 +31,11 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyUnit {
+    private static final Logger log = LoggerFactory.getLogger(PowerSavingBalancePolicyUnit.class);
 
     public PowerSavingBalancePolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
@@ -119,9 +122,9 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
         }
         else {
             /* Should not ever happen... */
-            log.errorFormat("Unknown host power management transition {0} -> {1}",
-                    currentStatus.toString(),
-                    targetStatus.toString());
+            log.error("Unknown host power management transition '{}' -> '{}'",
+                    currentStatus,
+                    targetStatus);
         }
     }
 
@@ -183,7 +186,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
 
         /* Automatic power management is disabled */
         if (!enableAutoPM.booleanValue()) {
-            log.infoFormat("Automatic power management is disabled for cluster {0}.", cluster.getName());
+            log.info("Automatic power management is disabled for cluster '{}'.", cluster.getName());
             return null;
         }
 
@@ -191,7 +194,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
         if (requiredReserve > emptyHosts.size()
                 && pmDownHosts.isEmpty()
                 && pmMaintenanceHosts.isEmpty()) {
-            log.infoFormat("Cluster {0} does not have enough spare hosts, but no additional host is available.",
+            log.info("Cluster '{}' does not have enough spare hosts, but no additional host is available.",
                     cluster.getName());
             return null;
         }
@@ -201,7 +204,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
          */
         else if (requiredReserve < emptyHosts.size()
                 && pmMaintenanceHosts.size() > 1) {
-            log.infoFormat("Cluster {0} does have enough spare hosts, shutting one host down.", cluster.getName());
+            log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
         }
 
@@ -218,7 +221,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
             });
 
             if (hostsWithAutoPM.isEmpty()) {
-                log.infoFormat("Cluster {0} does have too many spare hosts, but none can be put to maintenance.",
+                log.info("Cluster '{}' does have too many spare hosts, but none can be put to maintenance.",
                         cluster.getName());
                 return null;
             } else {
@@ -231,7 +234,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
          */
         else if (requiredReserve == emptyHosts.size()
                 && pmMaintenanceHosts.isEmpty() == false) {
-            log.infoFormat("Cluster {0} does have enough spare hosts, shutting one host down.", cluster.getName());
+            log.info("Cluster '{}' does have enough spare hosts, shutting one host down.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Down);
         }
 
@@ -240,7 +243,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
          */
         else if (requiredReserve > emptyHosts.size()
                 && pmMaintenanceHosts.isEmpty() == false) {
-            log.infoFormat("Cluster {0} does not have enough spare hosts, reactivating one.", cluster.getName());
+            log.info("Cluster '{}' does not have enough spare hosts, reactivating one.", cluster.getName());
             return new Pair<>(pmMaintenanceHosts.get(0), VDSStatus.Up);
         }
 
@@ -249,7 +252,7 @@ public class PowerSavingBalancePolicyUnit extends EvenDistributionBalancePolicyU
          */
         else if (requiredReserve > emptyHosts.size()
                 && pmMaintenanceHosts.isEmpty()) {
-            log.infoFormat("Cluster {0} does not have enough spare hosts, trying to start one up.", cluster.getName());
+            log.info("Cluster '{}' does not have enough spare hosts, trying to start one up.", cluster.getName());
             return new Pair<>(pmDownHosts.get(0), VDSStatus.Up);
         }
 

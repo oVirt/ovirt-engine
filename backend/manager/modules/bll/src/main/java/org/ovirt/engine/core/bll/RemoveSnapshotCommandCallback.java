@@ -7,11 +7,11 @@ import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RemoveSnapshotCommandCallback extends CommandCallBack {
-    private static final Log log = LogFactory.getLog(RemoveSnapshotCommandCallback.class);
+    private static final Logger log = LoggerFactory.getLogger(RemoveSnapshotCommandCallback.class);
 
     @Override
     public void doPolling(Guid cmdId, List<Guid> childCmdIds) {
@@ -35,7 +35,7 @@ public class RemoveSnapshotCommandCallback extends CommandCallBack {
         RemoveSnapshotCommand<RemoveSnapshotParameters> command = getCommand(cmdId);
         command.getParameters().setTaskGroupSuccess(!anyFailed);
         command.setCommandStatus(anyFailed ? CommandStatus.FAILED : CommandStatus.SUCCEEDED);
-        log.infoFormat("All Live Merge child commands have completed, status {0}",
+        log.info("All Live Merge child commands have completed, status '{}'",
                 command.getCommandStatus());
     }
 

@@ -74,18 +74,19 @@ import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @Stateless(name = "VdsEventListener")
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @Local(IVdsEventListener.class)
 @DependsOn("Backend")
 public class VdsEventListener implements IVdsEventListener {
+    private static final Logger log = LoggerFactory.getLogger(VdsEventListener.class);
 
     @Override
     public void vdsMovedToMaintenance(VDS vds) {
@@ -240,7 +241,7 @@ public class VdsEventListener implements IVdsEventListener {
         ThreadPoolUtil.execute(new Runnable() {
             @Override
             public void run() {
-                log.infoFormat("ResourceManager::vdsNotResponding entered for Host {0}, {1}",
+                log.info("ResourceManager::vdsNotResponding entered for Host '{}', '{}'",
                         vds.getId(),
                         vds.getHostName());
 
@@ -302,7 +303,8 @@ public class VdsEventListener implements IVdsEventListener {
                                     ctx);
                         }
                     } catch (RuntimeException e) {
-                        log.errorFormat("Failed to initialize Vds on up. Error: {0}", e);
+                        log.error("Failed to initialize Vds on up: {}", e.getMessage());
+                        log.error("Exception", e);
                     }
                 }
             });
@@ -416,7 +418,7 @@ public class VdsEventListener implements IVdsEventListener {
             event.setVmId(vmId);
             AuditLogDirector.log(event, AuditLogType.HA_VM_FAILED);
 
-            log.infoFormat("Highly Available VM went down. Attempting to restart. VM Name: {0}, VM Id: {1}",
+            log.info("Highly Available VM went down. Attempting to restart. VM Name '{}', VM Id '{}'",
                     event.getVmName(), vmId);
         }
 
@@ -429,7 +431,7 @@ public class VdsEventListener implements IVdsEventListener {
             AddVmParameters params = new AddVmParameters(currVm);
             VdcReturnValueBase returnValue = Backend.getInstance().runInternalAction(VdcActionType.AddVmFromScratch, params, ExecutionHandler.createInternalJobContext());
             if (!returnValue.getSucceeded()) {
-                log.debugFormat("Failed adding Externally managed VM {0}", currVm.getName());
+                log.debug("Failed adding Externally managed VM '{}'", currVm.getName());
             }
         }
     }
@@ -495,7 +497,4 @@ public class VdsEventListener implements IVdsEventListener {
             }
         });
     }
-
-    private static final Log log = LogFactory.getLog(VdsEventListener.class);
-
 }

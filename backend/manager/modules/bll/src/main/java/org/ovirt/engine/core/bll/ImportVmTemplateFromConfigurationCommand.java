@@ -10,14 +10,14 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplateParameters> extends ImportVmTemplateCommand {
 
-    private static final Log log = LogFactory.getLog(ImportVmFromConfigurationCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private OvfEntityData ovfEntityData;
     VmTemplate vmTemplateFromConfiguration;
 
@@ -75,7 +75,10 @@ public class ImportVmTemplateFromConfigurationCommand<T extends ImportVmTemplate
                     ensureDomainMap(imageList, getParameters().getDestDomainId());
                 }
             } catch (OvfReaderException e) {
-                log.errorFormat("failed to parse a given ovf configuration: \n" + ovfEntityData.getOvfData(), e);
+                log.error("Failed to parse a given ovf configuration: {}:\n{}",
+                        e.getMessage(),
+                        ovfEntityData.getOvfData());
+                log.debug("Exception", e);
             }
         }
         setVdsGroupId(getParameters().getVdsGroupId());

@@ -241,11 +241,11 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setVmTemplateName(getBaseTemplate().getName());
             String jobId = updateVmsJobIdMap.remove(getParameters().getBaseTemplateId());
             if (jobId != null) {
-                log.infoFormat("Cancelling current running update for vms for base template id {0}", getParameters().getBaseTemplateId());
+                log.info("Cancelling current running update for vms for base template id '{}'", getParameters().getBaseTemplateId());
                 try {
                     SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
                 } catch (Exception e) {
-                    log.warnFormat("Failed deleting job {0} at cancelRecoveryJob", jobId);
+                    log.warn("Failed deleting job '{}' at cancelRecoveryJob", jobId);
                 }
             }
         }

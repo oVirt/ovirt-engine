@@ -46,7 +46,7 @@ public class UpdateStorageDomainCommand<T extends StorageDomainManagementParamet
         props.remove("description");
         props.remove("comment");
         if (!props.isEmpty()) {
-            log.warnFormat("There was an attempt to update the following fields although they are not allowed to be updated: {0}",
+            log.warn("There was an attempt to update the following fields although they are not allowed to be updated: {}",
                     StringUtils.join(props, ","));
             return failCanDoAction(VdcBllMessages.ERROR_CANNOT_CHANGE_STORAGE_DOMAIN_FIELDS);
         }

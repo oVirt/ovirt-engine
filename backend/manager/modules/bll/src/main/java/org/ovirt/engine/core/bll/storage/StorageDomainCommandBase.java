@@ -314,8 +314,12 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
                                 .connectStorageToDomainByVdsId(getStorageDomain(), vds.getId());
                         toReturn.setSecond(connectResult);
                     } catch (RuntimeException e) {
-                        log.errorFormat("Failed to connect host {0} to storage domain (name: {1}, id: {2}). Exception: {3}",
-                                vds.getName(), getStorageDomain().getName(), getStorageDomain().getId(), e);
+                        log.error("Failed to connect host '{}' to storage domain (name '{}', id '{}'): {}",
+                                vds.getName(),
+                                getStorageDomain().getName(),
+                                getStorageDomain().getId(),
+                                e.getMessage());
+                        log.debug("Exception", e);
                     }
                     return toReturn;
                 }
@@ -344,14 +348,14 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
      */
     protected StorageDomain electNewMaster(boolean duringReconstruct, boolean selectInactiveWhenNoActiveUnknownDomains, boolean canChooseCurrentMasterAsNewMaster) {
         if (getStoragePool() == null) {
-            log.warnFormat("Cannot elect new master: storage pool not found");
+            log.warn("Cannot elect new master: storage pool not found");
             return null;
         }
 
         List<StorageDomain> storageDomains = getStorageDomainDAO().getAllForStoragePool(getStoragePool().getId());
 
         if (storageDomains.isEmpty()) {
-            log.warnFormat("Cannot elect new master, no storage domains found for pool {0}", getStoragePool().getName());
+            log.warn("Cannot elect new master, no storage domains found for pool {}", getStoragePool().getName());
             return null;
         }
 

@@ -19,13 +19,13 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.Ticketing;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOperationCommandBase<T> {
 
     // The log:
-    private static final Log log = LogFactory.getLog(SetVmTicketCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(SetVmTicketCommand.class);
 
     private String mTicket;
     private final int mValidTime;
@@ -90,7 +90,9 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         final Guid currentId = getCurrentUser().getId();
         final Guid previousId = vm.getConsoleUserId();
         if (previousId != null && !previousId.equals(currentId)) {
-            log.warnFormat("User \"{0}\" is trying to take the console of virtual machine \"{1}\", but the console is already taken by user \"{2}\".", currentId, vm.getId(), previousId);
+            log.warn("User '{}' is trying to take the console of virtual machine '{}', but the console is already"
+                            + " taken by user '{}'.",
+                    currentId, vm.getId(), previousId);
             return true;
         }
 
@@ -178,7 +180,8 @@ public class SetVmTicketCommand<T extends SetVmTicketParameters> extends VmOpera
         // Send messages to the log explaining the situation:
         final VM vm = getVm();
         final DbUser user = getCurrentUser();
-        log.warnFormat("Can't give console of virtual machine \"{0}\" to user \"{1}\", it has probably been taken by another user.", vm.getId(), user.getId());
+        log.warn("Can't give console of virtual machine '{}' to user '{}', it has probably been taken by another user.",
+                vm.getId(), user.getId());
 
         // Set the result messages indicating that the operation failed:
         addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_VM_IN_USE_BY_OTHER_USER);

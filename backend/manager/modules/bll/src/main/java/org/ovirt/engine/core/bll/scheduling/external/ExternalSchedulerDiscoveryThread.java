@@ -16,12 +16,12 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.dao.scheduling.PolicyUnitDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ExternalSchedulerDiscoveryThread extends Thread {
 
-    private final static Log log = LogFactory.getLog(ExternalSchedulerDiscoveryThread.class);
+    private final static Logger log = LoggerFactory.getLogger(ExternalSchedulerDiscoveryThread.class);
 
     @Override
     public void run() {

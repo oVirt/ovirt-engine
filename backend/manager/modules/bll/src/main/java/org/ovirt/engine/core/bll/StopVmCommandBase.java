@@ -26,13 +26,15 @@ import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends VmOperationCommandBase<T>
         implements QuotaVdsDependent, QuotaStorageDependent {
+    private static final Logger log = LoggerFactory.getLogger(StopVmCommandBase.class);
+
     private boolean suspendedVm;
 
     protected StopVmCommandBase(Guid guid) {
@@ -216,8 +218,6 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
         setSucceeded(true);
     }
-
-    private static final Log log = LogFactory.getLog(StopVmCommandBase.class);
 
     @Override
     public List<QuotaConsumptionParameter> getQuotaVdsConsumptionParameters() {

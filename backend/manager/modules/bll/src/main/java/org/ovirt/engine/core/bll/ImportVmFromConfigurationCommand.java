@@ -24,14 +24,14 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> extends ImportVmCommand<T> {
 
-    private static final Log log = LogFactory.getLog(ImportVmFromConfigurationCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(ImportVmFromConfigurationCommand.class);
     private Collection<Disk> vmDisksToAttach;
     private OvfEntityData ovfEntityData;
     VM vmFromConfiguration;
@@ -102,7 +102,10 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
                     vmFromConfiguration.setImages(getDiskImageListFromDiskMap(getParameters().getDiskMap()));
                 }
             } catch (OvfReaderException e) {
-                log.errorFormat("failed to parse a given ovf configuration: \n" + ovfEntityData.getOvfData(), e);
+                log.error("Failed to parse a given ovf configuration: {}:\n{}",
+                        e.getMessage(),
+                        ovfEntityData.getOvfData());
+                log.debug("Exception", e);
             }
         }
     }

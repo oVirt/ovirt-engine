@@ -91,19 +91,19 @@ import org.ovirt.engine.core.utils.GuidUtils;
 import org.ovirt.engine.core.utils.linq.Function;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfLogEventHandler;
 import org.ovirt.engine.core.utils.ovf.VMStaticOvfLogHandler;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
 public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTemplateCommand<T>
         implements QuotaStorageDependent, TaskHandlerCommand<T> {
 
-    private static final Log log = LogFactory.getLog(ImportVmCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
 
     private static VmStatic vmStaticForDefaultValues = new VmStatic();
     private List<DiskImage> imageList;
@@ -983,7 +983,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             if (snapshot.getType() == SnapshotType.ACTIVE)
                 return snapshot;
         }
-        log.warnFormat("VM {0} doesn't have active snapshot in export domain", getVmId());
+        log.warn("VM '{}' doesn't have active snapshot in export domain", getVmId());
         return null;
     }
 
@@ -1234,7 +1234,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 new RemoveMemoryVolumesParameters(memoryVolume, vmId), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
-            log.errorFormat("Failed to remove memory volumes: {0}", memoryVolume);
+            log.error("Failed to remove memory volumes '{}'", memoryVolume);
         }
     }
 

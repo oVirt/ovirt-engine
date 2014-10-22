@@ -54,8 +54,9 @@ public class AddExistingBlockStorageDomainCommand<T extends StorageDomainManagem
             returnValue = runVdsCommand(VDSCommandType.GetVGInfo,
                     new GetVGInfoVDSCommandParameters(getParameters().getVdsId(), vgId));
         } catch (RuntimeException e) {
-            log.errorFormat("Could not get info for VG ID: {0}. Error message: {1}",
+            log.error("Could not get info for VG ID '{}': {}",
                     vgId, e.getMessage());
+            log.debug("Exception", e);
             return luns;
         }
 

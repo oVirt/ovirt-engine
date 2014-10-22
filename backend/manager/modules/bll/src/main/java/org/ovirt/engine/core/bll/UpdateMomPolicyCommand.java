@@ -1,6 +1,9 @@
 package org.ovirt.engine.core.bll;
 
 
+import java.util.Collections;
+import java.util.List;
+
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -10,9 +13,6 @@ import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.vdscommands.MomPolicyVDSParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-
-import java.util.Collections;
-import java.util.List;
 
 @NonTransactiveCommandAttribute
 public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
@@ -30,7 +30,10 @@ public class UpdateMomPolicyCommand extends VdsCommand<VdsActionParameters> {
                                                 getVdsGroup().isEnableKsm())
                                               ).getSucceeded();
         } catch (VdcBLLException e) {
-            log.errorFormat("Could not update MoM policy on host {0}", getVdsName());
+            log.error("Could not update MoM policy on host '{}': {}",
+                    getVdsName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         getReturnValue().setSucceeded(succeeded);
     }

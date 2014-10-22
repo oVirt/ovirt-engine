@@ -1,5 +1,8 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.math.NumberUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
@@ -8,18 +11,15 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
-
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBalancePolicyUnit {
 
     private final int spmVmGraceDefault;
     private final int migrationThresholdDefault;
     private final int highVmCountDefault;
-    protected static final Log log = LogFactory.getLog(EvenGuestDistributionBalancePolicyUnit.class);
+    protected static final Logger log = LoggerFactory.getLogger(EvenGuestDistributionBalancePolicyUnit.class);
 
     public EvenGuestDistributionBalancePolicyUnit (PolicyUnit policyUnit) {
         super(policyUnit);
@@ -65,7 +65,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
         final VDS worstVDS = getWorstVDS(relevantHosts, parameters);
         final int worstVdsOccupiedVmSlots = getOccupiedVmSlots(worstVDS, parameters);
         if (worstVdsOccupiedVmSlots < highVmCountUtilization) {
-            log.infoFormat("There is no host with more than {0} running guests, no balancing is needed",
+            log.info("There is no host with more than {} running guests, no balancing is needed",
                     highVmCountUtilization);
             return null;
         }
@@ -99,7 +99,7 @@ public class EvenGuestDistributionBalancePolicyUnit extends EvenDistributionBala
         });
 
         if (underUtilizedHosts.size() == 0) {
-            log.warnFormat("There is no host with less than {0} running guests",
+            log.warn("There is no host with less than {} running guests",
                     worstVdsOccupiedVmSlots - migrationThreshold);
         }
 

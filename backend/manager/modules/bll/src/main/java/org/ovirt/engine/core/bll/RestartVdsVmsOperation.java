@@ -19,15 +19,15 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Restart VMs running on Vds, that was stopped using PM or kdump was detected
  * on it
  */
 public class RestartVdsVmsOperation {
-    private static final Log log = LogFactory.getLog(RestartVdsVmsOperation.class);
+    private static final Logger log = LoggerFactory.getLogger(RestartVdsVmsOperation.class);
 
     /**
      * Context of command, that instantiates this class
@@ -68,15 +68,15 @@ public class RestartVdsVmsOperation {
                                     0
                             )
                     );
-                    log.infoFormat(
-                            "Stopped migrating vm: {0} on vds: {1}",
+                    log.info(
+                            "Stopped migrating vm '{}' on vds '{}'",
                             vm.getName(),
                             vm.getMigratingToVds()
                     );
                 }
             } catch (RuntimeException ex) {
-                log.infoFormat(
-                        "Could not stop migrating vm: {0} on vds: {1}, Error: {2}",
+                log.info(
+                        "Could not stop migrating vm '{}' on vds '{}': {}",
                         vm.getName(),
                         vm.getMigratingToVds(),
                         ex.getMessage()

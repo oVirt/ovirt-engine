@@ -111,7 +111,7 @@ public class RemoveStorageServerConnectionCommand<T extends StorageServerConnect
     protected void executeCommand() {
         String connectionId = getConnection().getid();
         getStorageServerConnectionDao().remove(connectionId);
-        log.infoFormat("Removing connection {0} from database ", connectionId);
+        log.info("Removing connection '{}' from database ", connectionId);
         if (Guid.isNullOrEmpty(getParameters().getVdsId())) {
             log.info("No vdsId passed - hosts will not be disconnected.");
         } else {

@@ -107,7 +107,7 @@ public class AddStoragePoolWithStoragesCommand<T extends StoragePoolWithStorages
                 retVal = addStoragePoolInIrs();
                 if (!retVal.getSucceeded()
                         && retVal.getVdsError().getCode() == VdcBllErrors.StorageDomainAccessError) {
-                    log.warnFormat("Error creating storage pool on vds {0} - continuing",
+                    log.warn("Error creating storage pool on vds '{}' - continuing",
                             vds.getName());
                     continue;
                 } else {

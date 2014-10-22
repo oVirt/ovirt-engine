@@ -59,8 +59,10 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
             } else {
                 _hasFlags = false;
             }
-            log.errorFormat("Could not find server cpu for server {0}:{1}, flags: {2}", getVdsId(), getVds()
-                    .getName(), getVds().getCpuFlags());
+            log.error("Could not find server cpu for server '{}' ({}), flags: '{}'",
+                    getVds().getName(),
+                    getVdsId(),
+                    getVds().getCpuFlags());
         }
 
         // Checks whether the host and the cluster have the same architecture

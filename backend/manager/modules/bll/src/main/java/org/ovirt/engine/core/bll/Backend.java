@@ -79,10 +79,10 @@ import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
 import org.ovirt.engine.core.utils.extensionsmgr.EngineExtensionsManager;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.osinfo.OsInfoPreferencesLoader;
 import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 // Here we use a Singleton Bean
 // The @Startup annotation is to make sure the bean is initialized on startup.
@@ -99,6 +99,7 @@ import org.ovirt.engine.core.utils.timer.SchedulerUtilQuartzImpl;
 @TransactionAttribute(TransactionAttributeType.SUPPORTS)
 @ConcurrencyManagement(ConcurrencyManagementType.BEAN)
 public class Backend implements BackendInternal, BackendCommandObjectsHandler {
+    private static final Logger log = LoggerFactory.getLogger(Backend.class);
 
     private ITagsHandler mTagsHandler;
     private ErrorTranslator errorsTranslator;
@@ -153,13 +154,14 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             try {
                 dbUp = DbFacade.getInstance().checkDBConnection();
             } catch (RuntimeException ex) {
-                log.error("Error in getting DB connection. The database is inaccessible. " +
-                        "Original exception is: " + ExceptionUtils.getMessage(ex));
+                log.error("Error in getting DB connection, database is inaccessible: {}",
+                        ex.getMessage());
+                log.debug("Exception", ex);
                 try {
                     Thread.sleep(waitBetweenInterval);
                 } catch (InterruptedException e) {
                     log.warn("Failed to wait between connection polling attempts. " +
-                            "Original exception is: " + ExceptionUtils.getMessage(e));
+                            "Original exception is: {}", ExceptionUtils.getMessage(e));
                 }
             }
 
@@ -182,7 +184,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
      */
     @Override
     public void initialize() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         // initialize configuration utils to use DB
         Config.setConfigUtils(new DBConfigUtils());
         // we need to initialize os-info before the compensations take place because of VmPoolCommandBase#osRepository
@@ -198,7 +200,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
             firstInitialization = false;
         }
 
-        log.info("Running ovirt-engine " + Config.<String>getValue(ConfigValues.ProductRPMVersion));
+        log.info("Running ovirt-engine {}", Config.<String>getValue(ConfigValues.ProductRPMVersion));
         _resourceManger = new VDSBrokerFrontendImpl();
 
         CpuFlagsManagerHandler.InitDictionaries();
@@ -225,7 +227,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         _vdsErrorsTranslator = new ErrorTranslatorImpl(VdsErrorsFileName);
 
         // initialize the JobRepository object and finalize non-terminated jobs
-        log.infoFormat("Mark incomplete jobs as {0}", JobExecutionStatus.UNKNOWN.name());
+        log.info("Mark incomplete jobs as {}", JobExecutionStatus.UNKNOWN.name());
         initJobRepository();
 
         // initializes the JobRepositoryCleanupManager
@@ -341,14 +343,17 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 try {
                     cmd.compensate();
                 } catch (RuntimeException e) {
-                    log.errorFormat(
-                            "Failed to run compensation on startup for Command {0}, Command Id : {1}, due to: {2}",
-                            commandSnapshot.getValue(), commandSnapshot.getKey(), ExceptionUtils.getMessage(e), e);
+                    log.error(
+                            "Failed to run compensation on startup for Command '{}', Command Id '{}': {}",
+                            commandSnapshot.getValue(),
+                            commandSnapshot.getKey(),
+                            e.getMessage());
+                    log.error("Exception", e);
                 }
-                log.infoFormat("Running compensation on startup for Command : {0} , Command Id : {1}",
+                log.info("Running compensation on startup for Command '{}', Command Id '{}'",
                         commandSnapshot.getValue(), commandSnapshot.getKey());
             } else {
-                log.errorFormat("Failed to run compensation on startup for Command {0} , Command Id : {1}",
+                log.error("Failed to run compensation on startup for Command '{}', Command Id '{}'",
                         commandSnapshot.getValue(), commandSnapshot.getKey());
             }
         }
@@ -439,7 +444,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         // Evaluate and set the correlationId on the parameters, fails on invalid correlation id
         returnValue = ExecutionHandler.evaluateCorrelationId(commandBase.getParameters());
         if (returnValue != null) {
-            log.warnFormat("CanDoAction of action {0} failed. Reasons: {1}", commandBase.getActionType(),
+            log.warn("CanDoAction of action '{}' failed. Reasons: {}", commandBase.getActionType(),
                     StringUtils.join(returnValue.getCanDoActionMessages(), ','));
 
         }
@@ -673,8 +678,6 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 executionContext, null);
         return runAction(action, true);
     }
-
-    private static final Log log = LogFactory.getLog(Backend.class);
 
     @Override
     public VdcQueryReturnValue runInternalQuery(VdcQueryType queryType, VdcQueryParametersBase queryParameters) {

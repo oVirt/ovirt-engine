@@ -236,7 +236,7 @@ public class ChangeVMClusterCommand<T extends ChangeVMClusterParameters> extends
             for (AffinityGroup affinityGroup : allAffinityGroupsByVmId) {
                 sb.append(affinityGroup.getName() + " ");
             }
-            log.infoFormat("Due to cluster change, removing VM from associated affinity group(s): {0}", sb.toString());
+            log.info("Due to cluster change, removing VM from associated affinity group(s): {}", sb);
             DbFacade.getInstance().getAffinityGroupDao().removeVmFromAffinityGroups(vm.getId());
         }
         setSucceeded(true);

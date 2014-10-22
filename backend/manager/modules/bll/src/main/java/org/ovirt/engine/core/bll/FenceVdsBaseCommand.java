@@ -392,7 +392,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                     break;
                 }
             } catch (InterruptedException | ExecutionException e) {
-                log.error(e);
+                log.error("Exception", e);
             }
         }
         else {
@@ -471,9 +471,9 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         if (!((FenceStatusReturnValue) (vdsReturnValue.getReturnValue())).getIsSkipped()) {
             // Since this is a non-transactive command , restore last status
             setSucceeded(false);
-            log.errorFormat("Failed to {0} VDS using {1} Power Management agent", getParameters().getAction()
-                    .name()
-                    .toLowerCase(), order.name());
+            log.error("Failed to {} VDS using {} Power Management agent",
+                    getParameters().getAction().name().toLowerCase(),
+                    order.name());
             AlertIfPowerManagementOperationSkipped(getParameters().getAction().name(), vdsReturnValue.getExceptionObject());
             throw new VdcBLLException(VdcBllErrors.VDS_FENCE_OPERATION_FAILED);
         } else { // Fence operation was skipped because Host is already in the requested state.
@@ -515,7 +515,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         int i = 1;
         int j = 1;
         boolean statusReached = false;
-        log.infoFormat("Waiting for vds {0} to {1}", vdsName, ACTION_NAME);
+        log.info("Waiting for vds '{}' to {}", vdsName, ACTION_NAME);
 
         // Waiting before first attempt to check the host status.
         // This is done because if we will attempt to get host status immediately
@@ -527,7 +527,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // a potential preferred proxy host has connectivity problems and can not access the fenced host PM card
         if (executor.findProxyHost()) {
             while (!statusReached && i <= getRerties()) {
-                log.infoFormat("Attempt {0} to get vds {1} status", i, vdsName);
+                log.info("Attempt {} to get vds '{}' status", i, vdsName);
 
                     VDSReturnValue returnValue = executor.fence(order);
                     if (returnValue != null && returnValue.getReturnValue() != null) {
@@ -541,14 +541,18 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                             }
                             else {
                                 // No need to retry , agent definitions are corrupted
-                                log.warnFormat("Host {0} {1} PM Agent definitions are corrupted, Waiting for Host to {2} aborted.", vdsName, order.name(), actionType.name());
+                                log.warn("Host '{}' {} PM Agent definitions are corrupted, Waiting for Host to"
+                                                + " {} aborted.",
+                                        vdsName,
+                                        order.name(),
+                                        actionType.name());
                                 break;
                             }
                         }
                         else {
                             if (FENCE_CMD.equalsIgnoreCase(value.getStatus())) {
                                 statusReached = true;
-                                log.infoFormat("vds {0} status is {1}", vdsName, FENCE_CMD);
+                                log.info("Vds '{}' status is {}", vdsName, FENCE_CMD);
                             } else {
                                 i++;
                                 if (i <= getRerties())
@@ -556,7 +560,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
                             }
                         }
                     } else {
-                        log.errorFormat("Failed to get host {0} status.", vdsName);
+                        log.error("Failed to get host '{}' status.", vdsName);
                         break;
                     }
             }
@@ -570,7 +574,8 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
             auditLogable.addCustomValue("Status", actionName);
             auditLogable.setVdsId(getVds().getId());
             AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_STATUS_VERIFICATION_FAILED);
-            log.errorFormat("Failed to verify host {0} {1} status. Have retried {2} times with delay of {3} seconds between each retry.",
+            log.error("Failed to verify host '{}' {} status. Have retried {} times with delay of {} seconds"
+                            + " between each retry.",
                     vdsName,
                     ACTION_NAME,
                     getRerties(),

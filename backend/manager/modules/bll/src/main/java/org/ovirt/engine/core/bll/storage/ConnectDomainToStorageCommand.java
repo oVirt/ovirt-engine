@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Date;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.StorageDomainPoolParametersBase;
 
 @InternalCommandAttribute
@@ -22,8 +21,8 @@ public class ConnectDomainToStorageCommand<T extends StorageDomainPoolParameters
 
     @Override
     protected void executeCommand() {
-        log.infoFormat("ConnectDomainToStorage. Before Connect all hosts to pool. Time:{0}", new Date());
+        log.info("ConnectDomainToStorage. Before Connect all hosts to pool. Time: {}", new Date());
         connectHostsInUpToDomainStorageServer();
-        log.infoFormat("ConnectDomainToStorage. After Connect all hosts to pool. Time:{0}", new Date());
+        log.info("ConnectDomainToStorage. After Connect all hosts to pool. Time: {}", new Date());
     }
 }

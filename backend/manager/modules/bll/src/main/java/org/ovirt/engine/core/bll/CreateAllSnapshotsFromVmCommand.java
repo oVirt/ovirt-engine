@@ -326,7 +326,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                     removeMemoryVolumesOfSnapshot(createdSnapshot);
                 }
             } else {
-                log.warnFormat("No snapshot was created for VM {0} which is in LOCKED status", getVmId());
+                log.warn("No snapshot was created for VM '{}' which is in LOCKED status", getVmId());
             }
         }
 
@@ -349,7 +349,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
                 new RemoveMemoryVolumesParameters(snapshot.getMemoryVolume(), getVmId()), cloneContextAndDetachFromParent());
 
         if (!retVal.getSucceeded()) {
-            log.errorFormat("Failed to remove memory volumes of snapshot {0} ({1})",
+            log.error("Failed to remove memory volumes of snapshot '{}' ({})",
                     snapshot.getDescription(), snapshot.getId());
         }
     }
@@ -429,7 +429,7 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
-        log.warnFormat("Could not perform live snapshot due to error: {0}. VM will still be configured to the new created snapshot",
+        log.warn("Could not perform live snapshot due to error, VM will still be configured to the new created snapshot: {}",
                 ExceptionUtils.getMessage(e));
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());

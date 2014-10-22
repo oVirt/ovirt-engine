@@ -1,5 +1,10 @@
 package org.ovirt.engine.core.bll;
 
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Map;
+
 import org.ovirt.engine.core.bll.provider.ProviderProxyFactory;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageException;
 import org.ovirt.engine.core.bll.provider.storage.OpenStackImageProviderProxy;
@@ -24,11 +29,6 @@ import org.ovirt.engine.core.common.businessentities.VolumeFormat;
 import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
 
 @SuppressWarnings("unused")
 @NonTransactiveCommandAttribute
@@ -230,8 +230,9 @@ public class ImportRepoImageCommand<T extends ImportRepoImageParameters> extends
         try {
             diskImage = getDiskImage();
         } catch (OpenStackImageException e) {
-            log.errorFormat("Unable to get the disk image from the provider proxy: {0} ({1})",
-                    e.getMessage(), e.getErrorType());
+            log.error("Unable to get the disk image from the provider proxy: ({}) {}",
+                    e.getErrorType(),
+                    e.getMessage());
             switch (e.getErrorType()) {
                 case UNSUPPORTED_CONTAINER_FORMAT:
                 case UNSUPPORTED_DISK_FORMAT:

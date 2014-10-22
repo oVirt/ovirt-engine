@@ -279,7 +279,7 @@ public class UpdateStorageServerConnectionCommand<T extends StorageServerConnect
     }
 
     protected void updateStatus(StoragePoolIsoMap map, StorageDomainStatus status) {
-        log.infoFormat("Setting domain %s to status $s", map.getId(), status.name());
+        log.info("Setting domain '{}' to status '{}'", map.getId(), status.name());
         map.setStatus(status);
         getStoragePoolIsoMapDao().updateStatus(map.getId(), map.getStatus());
     }

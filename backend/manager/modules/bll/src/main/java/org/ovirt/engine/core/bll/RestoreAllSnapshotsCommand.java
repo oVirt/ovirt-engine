@@ -144,7 +144,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                 snapshot = getSnapshotDao().get(getVmId(), SnapshotType.STATELESS);
                 break;
             default:
-                log.errorFormat("The Snapshot Action {0} is not valid", getParameters().getSnapshotAction());
+                log.error("The Snapshot Action '{}' is not valid", getParameters().getSnapshotAction());
             }
 
             // We initialize the snapshotId in the parameters so we can use it in the endVmCommand
@@ -163,7 +163,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
                     getSnapshotDao().getNumOfSnapshotsByMemory(memoryVolume) == 1) {
                 boolean succeed = removeMemoryVolumes(memoryVolume, getActionType(), false);
                 if (!succeed) {
-                    log.errorFormat("Failed to remove memory {0} of snapshot {1}",
+                    log.error("Failed to remove memory '{}' of snapshot '{}'",
                             memoryVolume, snapshotId);
                 }
             }
@@ -216,7 +216,7 @@ public class RestoreAllSnapshotsCommand<T extends RestoreAllSnapshotsParameters>
             if (retValue.getSucceeded()) {
                 removeInProcessImageIds.add(diskImage.getImageId());
             } else {
-                log.errorFormat("Failed to remove image <{0}>", diskImage.getImageId());
+                log.error("Failed to remove image '{}'", diskImage.getImageId());
             }
         }
     }

@@ -228,7 +228,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
     private void removeEntityLeftOver(Guid entityId, String entityName, Guid storageDomainId) {
         OvfEntityData ovfEntityData = getUnregisteredOVFDataDao().getByEntityIdAndStorageDomain(entityId, storageDomainId);
         if (ovfEntityData != null) {
-            log.infoFormat("Entity {0} with id {1}, already exists as unregistered entity. override it with the new entity from the engine",
+            log.info("Entity '{}' with id '{}', already exists as unregistered entity. override it with the new entity from the engine",
                     entityName,
                     entityId);
             getUnregisteredOVFDataDao().removeEntity(entityId, storageDomainId);
@@ -504,7 +504,7 @@ public abstract class StorageHandlingCommandBase<T extends StoragePoolParameters
             final StorageFormatType targetFormat = getStoragePool().getStoragePoolFormatType();
 
             if (storageStaticData.getStorageFormat() != targetFormat) {
-                log.infoFormat("Updating storage domain {0} (type {1}) to format {2}",
+                log.info("Updating storage domain '{}' (type '{}') to format '{}'",
                         getStorageDomain().getId(), sdType, targetFormat);
                 storageStaticData.setStorageFormat(targetFormat);
                 getStorageDomainStaticDAO().update(storageStaticData);

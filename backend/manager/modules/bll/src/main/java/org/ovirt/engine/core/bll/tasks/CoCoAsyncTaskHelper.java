@@ -35,10 +35,10 @@ import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
 
 public class CoCoAsyncTaskHelper {
 
@@ -130,16 +130,16 @@ public class CoCoAsyncTaskHelper {
         }
     }
 
-    public void cancelTasks(final CommandBase command, final Log log) {
+    public void cancelTasks(final CommandBase command, final Logger log) {
         if (command.hasTasks()) {
             ThreadPoolUtil.execute(new Runnable() {
                 @Override
                 public void run() {
-                    log.infoFormat("Rollback for command: {0}.", command.getClass().getName());
+                    log.info("Rollback for command '{}'", command.getClass().getName());
                     try {
                         getAsyncTaskManager().cancelTasks(command.getReturnValue().getVdsmTaskIdList());
                     } catch (Exception e) {
-                        log.errorFormat("Failed to cancel tasks for command: {0}.",
+                        log.error("Failed to cancel tasks for command '{}'",
                                 command.getClass().getName());
                     }
                 }

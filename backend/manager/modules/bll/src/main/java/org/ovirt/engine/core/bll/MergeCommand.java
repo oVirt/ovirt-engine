@@ -1,10 +1,9 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.interfaces.CommandCallBack;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.VdcObjectType;
@@ -19,13 +18,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @InternalCommandAttribute
 public class MergeCommand<T extends MergeParameters>
         extends CommandBase<T> {
-    private static final Log log = LogFactory.getLog(MergeCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(MergeCommand.class);
 
     public MergeCommand(T parameters) {
         super(parameters);
@@ -74,7 +73,7 @@ public class MergeCommand<T extends MergeParameters>
         blockJob.setJobState(VmJobState.UNKNOWN);
         blockJob.setImageGroupId(getParameters().getImageGroupId());
         DbFacade.getInstance().getVmJobDao().save(blockJob);
-        log.infoFormat("Stored placeholder for job id {0}", blockJob.getId());
+        log.info("Stored placeholder for job id '{}'", blockJob.getId());
     }
 
     @Override

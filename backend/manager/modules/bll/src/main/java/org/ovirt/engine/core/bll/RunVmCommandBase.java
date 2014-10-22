@@ -43,11 +43,11 @@ import org.ovirt.engine.core.common.vdscommands.UpdateVmDynamicDataVDSCommandPar
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.VdsMonitor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Base class for asynchronous running process handling
@@ -55,7 +55,7 @@ import org.ovirt.engine.core.vdsbroker.VdsMonitor;
 public abstract class RunVmCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> implements
         IVdsAsyncCommand, RunVmDelayer {
 
-    private static final Log log = LogFactory.getLog(RunVmCommandBase.class);
+    private static final Logger log = LoggerFactory.getLogger(RunVmCommandBase.class);
     protected boolean _isRerun;
     private SnapshotsValidator snapshotsValidator=new SnapshotsValidator();
     private final List<Guid> runVdsList = new ArrayList<Guid>();
@@ -295,7 +295,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
             if (!lun.getLunConnections().isEmpty()
                     && !StorageHelperDirector.getInstance().getItem(lun.getLunConnections().get(0).getstorage_type())
                             .connectStorageToLunByVdsId(null, hostId, lun, getVm().getStoragePoolId())) {
-                log.infoFormat("Failed to connect  a lun disk to vdsm {0} skiping it", hostId);
+                log.info("Failed to connect  a lun disk to vdsm '{}' skiping it", hostId);
                 return false;
             }
 
@@ -307,7 +307,8 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         Guid vdsId = getCurrentVdsId();
         VM vm = getVm();
         if (vdsId == null || vdsId.equals(lastDecreasedVds)) {
-            log.debugFormat("PendingVms for the guest {0} running on host {1} was already released, not releasing again", vm.getName(), vdsId);
+            log.debug("PendingVms for the guest '{}' running on host '{}' was already released, not releasing again",
+                    vm.getName(), vdsId);
             // do not decrease twice..
             return;
         }
@@ -326,7 +327,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     @Override
     public void delay(Guid vdsId) {
-        log.debug("try to wait for te engine update the host memory and cpu stats");
+        log.debug("Try to wait for te engine update the host memory and cpu stats");
 
         try {
             // time out waiting for an update is the highest between the refresh rate and the last update elapsed time

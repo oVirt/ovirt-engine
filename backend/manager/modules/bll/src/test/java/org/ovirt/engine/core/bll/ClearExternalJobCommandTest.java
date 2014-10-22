@@ -14,7 +14,7 @@ import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
-import org.ovirt.engine.core.utils.log.Log;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ClearExternalJobCommandTest {
@@ -27,7 +27,7 @@ public class ClearExternalJobCommandTest {
     @Mock
     private ClearExternalJobCommand<VdcActionParametersBase> commandMock;
     @Mock
-    private Log log;
+    private Logger log;
 
     @Before
     public void createParameters() {

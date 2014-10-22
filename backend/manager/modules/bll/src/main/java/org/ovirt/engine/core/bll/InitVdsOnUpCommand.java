@@ -102,9 +102,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
         try {
             value = AttestationService.getInstance().attestHosts(hosts);
         } catch (Exception e) {
-            log.errorFormat("Encounter an exception while attesting host's trustworthiness for Host {0}, Error is {1}",
+            log.error("Encounter an exception while attesting host's trustworthiness for Host '{}': {}",
                     hosts,
-                    e);
+                    e.getMessage());
+            log.debug("Exception", e);
         }
         if (value.size() > 0 && value.get(0).getTrustLevel() == AttestationResultEnum.TRUSTED) {
             return true;
@@ -261,13 +262,15 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
 
         if (error != null) {
             if (error.getCode() != VdcBllErrors.CannotConnectMultiplePools && masterDomainInactiveOrUnknown) {
-                log.infoFormat("Could not connect host {0} to pool {1}, as the master domain is in inactive/unknown status - not failing the operation",
+                log.info("Could not connect host '{}' to pool '{}', as the master domain is in inactive/unknown"
+                                + " status - not failing the operation",
                         vds.getName(),
-                        storagePool
-                                .getName());
+                        storagePool.getName());
             } else {
-                log.errorFormat("Could not connect host {0} to pool {1} with the message: {2}", vds.getName(), storagePool
-                        .getName(), error.getMessage());
+                log.error("Could not connect host '{}' to pool '{}': {}",
+                        vds.getName(),
+                        storagePool.getName(),
+                        error.getMessage());
                 result.setSuccess(false);
             }
         }
@@ -292,7 +295,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                         new MomPolicyVDSParameters(vds, cluster.isEnableBallooning(), cluster.isEnableKsm())
                                                 );
             } catch (VdcBLLException e) {
-                log.errorFormat("Could not update MoM policy on host {0}", vds.getName());
+                log.error("Could not update MoM policy on host '{}'", vds.getName());
                 returnValue.setSucceeded(false);
             }
         }
@@ -310,7 +313,7 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                                 getVds().getDomains());
                 for (Guid domainId : problematicDomainsIds) {
                     StorageDomainStatic domainInfo = getStorageDomainStaticDAO().get(domainId);
-                    log.errorFormat("Storage Domain {0} of pool {1} is in problem in host {2}",
+                    log.error("Storage Domain '{}' of pool '{}' is in problem in host '{}'",
                             domainInfo != null ? domainInfo.getStorageName() : domainId,
                             getStoragePool().getName(),
                             getVds().getName());
@@ -324,9 +327,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                 }
             }
         } catch (VdcBLLException e) {
-            log.errorFormat("Could not get Host statistics for Host {0}, Error is {1}",
+            log.error("Could not get Host statistics for Host '{}': {}",
                     getVds().getName(),
-                    e);
+                    e.getMessage());
+            log.debug("Exception", e);
             returnValue.setFirst(false);
         }
         return returnValue;
@@ -452,7 +456,8 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
                             }
                             List<GlusterServerInfo> newGlusterServers = getGlusterPeers(newUpServer.getId());
                             if (!getGlusterUtil().isHostExists(newGlusterServers, getVds())) {
-                                log.infoFormat("Failed to find host {0} in gluster peer list from {1} on attempt {2}" , getVds(), newUpServer, ++retries);
+                                log.info("Failed to find host '{}' in gluster peer list from '{}' on attempt {}",
+                                        getVds(), newUpServer, ++retries);
                                 // if num of attempts done
                                 if (retries == getMaxRetriesGlusterProbeStatus()) {
                                     customLogValues.put("Command", "gluster peer status " + getVds().getHostName());
@@ -544,9 +549,10 @@ public class InitVdsOnUpCommand extends StorageHandlingCommandBase<HostStoragePo
             }
             return returnValue.getSucceeded();
         } catch (Exception e) {
-            log.errorFormat("Could not peer probe the gluster server {0}. Error: {1}",
+            log.error("Could not peer probe the gluster server '{}': {}",
                     getVds().getHostName(),
                     e.getMessage());
+            log.debug("Exception", e);
             glusterPeerProbeSucceeded = false;
             return false;
         }

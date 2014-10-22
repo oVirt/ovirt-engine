@@ -34,10 +34,12 @@ import org.ovirt.engine.core.common.scheduling.PolicyUnit;
 import org.ovirt.engine.core.common.scheduling.PolicyUnitType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(PolicyUnitImpl.class);
+
     public static final int MaxSchedulerWeight = Config.<Integer> getValue(ConfigValues.MaxSchedulerWeight);;
 
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit) {
@@ -111,7 +113,6 @@ public class PolicyUnitImpl {
         throw new NotImplementedException("policyUnit: " + policyUnit.getName());
     }
 
-    protected static final Log log = LogFactory.getLog(PolicyUnitImpl.class);
     private final PolicyUnit policyUnit;
     protected VdsFreeMemoryChecker memoryChecker;
 
@@ -120,12 +121,12 @@ public class PolicyUnitImpl {
     }
 
     public List<VDS> filter(List<VDS> hosts, VM vm, Map<String, String> parameters, PerHostMessages messages) {
-        log.error("policy unit:" + getPolicyUnit().getName() + "filter is not implemented");
+        log.error("Policy unit '{}' filter is not implemented", getPolicyUnit().getName());
         return hosts;
     }
 
     public List<Pair<Guid, Integer>> score(List<VDS> hosts, VM vm, Map<String, String> parameters) {
-        log.error("policy unit:" + getPolicyUnit().getName() + "function is not implemented");
+        log.error("Policy unit '{}' function is not implemented", getPolicyUnit().getName());
         List<Pair<Guid, Integer>> pairs = new ArrayList<Pair<Guid, Integer>>();
         for (VDS vds : hosts) {
             pairs.add(new Pair<Guid, Integer>(vds.getId(), 1));
@@ -137,7 +138,7 @@ public class PolicyUnitImpl {
             List<VDS> hosts,
             Map<String, String> parameters,
             ArrayList<String> messages) {
-        log.error("policy unit:" + getPolicyUnit().getName() + "balance is not implemented");
+        log.error("Policy unit '{}' balance is not implemented", getPolicyUnit().getName());
         return null;
     }
 

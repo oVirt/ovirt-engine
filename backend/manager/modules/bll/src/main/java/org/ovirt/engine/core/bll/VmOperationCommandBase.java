@@ -5,13 +5,13 @@ import org.ovirt.engine.core.common.action.VmOperationParameterBase;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class VmOperationCommandBase<T extends VmOperationParameterBase> extends VmCommand<T> {
 
     // The log:
-    private static final Log log = LogFactory.getLog(VmOperationCommandBase.class);
+    private static final Logger log = LoggerFactory.getLogger(VmOperationCommandBase.class);
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -60,7 +60,8 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         // Find the id of the host where the machine is running:
         Guid hostId = vm.getRunOnVds();
         if (hostId == null) {
-            log.warnFormat("Strange, according to the status \"{0}\" virtual machine \"{1}\" should be running in a host but it isn't.", status, vm.getId());
+            log.warn("Strange, according to the status '{}' virtual machine '{}' should be running in a host but it isn't.",
+                    status, vm.getId());
             return false;
         }
 
@@ -70,7 +71,8 @@ public abstract class VmOperationCommandBase<T extends VmOperationParameterBase>
         setVdsId(new Guid(hostId.toString()));
         setVds(null);
         if (getVds() == null) {
-            log.warnFormat("Strange, virtual machine \"{0}\" is is running in host \"{1}\" but that host can't be found.", vm.getId(), hostId);
+            log.warn("Strange, virtual machine '{}' is is running in host '{}' but that host can't be found.",
+                    vm.getId(), hostId);
             return false;
         }
 

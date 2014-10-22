@@ -9,7 +9,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.AddExternalJobParameters;
-import org.ovirt.engine.core.utils.log.Log;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddExternalJobCommandTest {
@@ -18,7 +18,7 @@ public class AddExternalJobCommandTest {
     @Mock
     private AddExternalJobCommand<AddExternalJobParameters> commandMock;
     @Mock
-    private Log log;
+    private Logger log;
 
     @Before
     public void createParameters() {

@@ -52,17 +52,17 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.TransactionScopeOption;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ovf.OvfManager;
 import org.ovirt.engine.core.utils.ovf.OvfReaderException;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class ImagesHandler {
     public static final String DISK = "_Disk";
     public static final String DefaultDriveName = "1";
-    private static final Log log = LogFactory.getLog(ImagesHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(ImagesHandler.class);
 
     /**
      * The following method will find all images and storages where they located for provide template and will fill an
@@ -155,7 +155,7 @@ public final class ImagesHandler {
         String diskAlias;
         if (disk == null) {
             diskAlias = getDefaultDiskAlias(diskPrefix, DefaultDriveName);
-            log.warnFormat("Disk object is null, the suggested default disk alias to be used is {0}",
+            log.warn("Disk object is null, the suggested default disk alias to be used is '{}'",
                     diskAlias);
         } else {
             String defaultAlias = getDefaultDiskAlias(diskPrefix, String.valueOf(count));
@@ -177,7 +177,8 @@ public final class ImagesHandler {
     public static String getDiskAliasWithDefault(BaseDisk disk, String aliasIfNull) {
         String diskAlias = disk.getDiskAlias();
         if (StringUtils.isEmpty(diskAlias)) {
-            log.infoFormat("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be used is {0}",
+            log.info("Disk alias retrieved from the client is null or empty, the suggested default disk alias to be"
+                            + " used is '{}'",
                     aliasIfNull);
             return aliasIfNull;
         }
@@ -219,7 +220,8 @@ public final class ImagesHandler {
             addImage(image, active, imageStorageDomainMap);
             addDiskToVmIfNotExists(image, vmId);
         } catch (RuntimeException ex) {
-            log.error("Failed adding new disk image and related entities to db", ex);
+            log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
+            log.debug("Exception", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
         }
     }
@@ -276,7 +278,8 @@ public final class ImagesHandler {
             addImage(image, active, imageStorageDomainMap);
             addDisk(image);
         } catch (RuntimeException ex) {
-            log.error("Failed adding new disk image and related entities to db", ex);
+            log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
+            log.debug("Exception", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
         }
     }
@@ -439,7 +442,7 @@ public final class ImagesHandler {
                             new GetImageInfoVDSCommandParameters(storagePoolId, storageDomainId, imageGroupId,
                                     image.getImageId())).getReturnValue();
         } catch (Exception e) {
-            log.debug("Unable to get image info from from storage.", e);
+            log.debug("Unable to get image info from from storage", e);
         }
         return fromIrs;
     }
@@ -581,7 +584,8 @@ public final class ImagesHandler {
             removeDiskFromVm(vmId, diskImage.getId());
             removeImage(diskImage);
         } catch (RuntimeException ex) {
-            log.error("Failed adding new disk image and related entities to db", ex);
+            log.error("Failed adding new disk image and related entities to db: {}", ex.getMessage());
+            log.debug("Exception", ex);
             throw new VdcBLLException(VdcBllErrors.DB, ex);
         }
     }
@@ -813,14 +817,14 @@ public final class ImagesHandler {
                 while (diskIter.hasNext()) {
                     DiskImage imageInList = diskIter.next();
                     if (imageInList.getImageId().equals(oldImageId)) {
-                        log.debugFormat("Recreating vmSnapshot {0} without the image {1}", snapshot.getId(), oldImageId);
+                        log.debug("Recreating vmSnapshot '{}' without the image '{}'", snapshot.getId(), oldImageId);
                         diskIter.remove();
                         break;
                     }
                 }
 
                 if (newImage != null) {
-                    log.debugFormat("Adding image {0} to vmSnapshot {1}", newImage.getImageId(), snapshot.getId());
+                    log.debug("Adding image '{}' to vmSnapshot '{}'", newImage.getImageId(), snapshot.getId());
                     snapshotImages.add(newImage);
                 }
 
@@ -828,7 +832,7 @@ public final class ImagesHandler {
                 snapshot.setVmConfiguration(newOvf);
             }
         } catch (OvfReaderException e) {
-            log.errorFormat("Can't remove image {0} from snapshot {1}", oldImageId, snapshot.getId());
+            log.error("Can't remove image '{}' from snapshot '{}'", oldImageId, snapshot.getId());
         }
         return snapshot;
     }

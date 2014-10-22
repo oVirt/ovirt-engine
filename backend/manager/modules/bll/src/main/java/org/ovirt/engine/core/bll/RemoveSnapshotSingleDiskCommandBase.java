@@ -49,7 +49,7 @@ public abstract class RemoveSnapshotSingleDiskCommandBase<T extends ImagesContai
         if (imageFromIRS != null) {
             completeImageData(imageFromIRS);
         } else {
-            log.warnFormat("Could not update DiskImage's size with ID {0}",
+            log.warn("Could not update DiskImage's size with ID '{}'",
                     targetImage.getImageId());
         }
     }

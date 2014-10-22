@@ -5,14 +5,14 @@ import java.util.EnumMap;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.businessentities.StorageType;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StorageHelperDirector {
     private static final String ACTION_TYPE_PACKAGE = "org.ovirt.engine.core.bll.storage";
     private static final String ACTION_TYPE_CLASS = "StorageHelper";
 
-    private static final Log log = LogFactory.getLog(StorageHelperDirector.class);
+    private static final Logger log = LoggerFactory.getLogger(StorageHelperDirector.class);
 
     private static StorageHelperDirector _instance = new StorageHelperDirector();
     private Map<StorageType, IStorageHelper> _helpers =
@@ -38,8 +38,8 @@ public class StorageHelperDirector {
                     try {
                         actionType = Class.forName(formattedClassName);
                     } catch (ClassNotFoundException cnfe) {
-                        log.debugFormat("StorageHelperDirector Error:: the lookup for following class has failed: {0}"
-                                , formattedClassName);
+                        log.debug("StorageHelperDirector Error:: the lookup for following class has failed: {}",
+                                formattedClassName);
                     }
 
                     // if action type not exist - operation invalid
@@ -51,8 +51,9 @@ public class StorageHelperDirector {
                 }
             }
         } catch (Exception ex) {
-            log.error("StorageHelperDirector Error:: exception was encountered during InitializeHelpers() execution",
-                    ex);
+            log.error("StorageHelperDirector Error:: exception was encountered during InitializeHelpers() execution: {}",
+                    ex.getMessage());
+            log.debug("Exception");
             throw new RuntimeException(ex);
         }
     }

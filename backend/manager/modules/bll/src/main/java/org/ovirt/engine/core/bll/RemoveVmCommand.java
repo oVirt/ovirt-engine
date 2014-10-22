@@ -138,7 +138,7 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
                     new RemoveMemoryVolumesParameters(memoryState, getVmId()), cloneContextAndDetachFromParent());
 
             if (!retVal.getSucceeded()) {
-                log.errorFormat("Failed to remove memory volumes whie removing vm {0} (volumes: {1})",
+                log.error("Failed to remove memory volumes while removing vm '{}' (volumes: '{}')",
                         getVmId(), memoryState);
             }
         }

@@ -17,7 +17,7 @@ import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.JobDao;
 import org.ovirt.engine.core.dao.StepDao;
-import org.ovirt.engine.core.utils.log.Log;
+import org.slf4j.Logger;
 
 @RunWith(MockitoJUnitRunner.class)
 public class AddExternalStepCommandTest {
@@ -34,7 +34,7 @@ public class AddExternalStepCommandTest {
     @Mock
     private AddExternalStepCommand<AddExternalStepParameters> commandMock;
     @Mock
-    private Log log;
+    private Logger log;
 
     @Before
     public void createParameters() {

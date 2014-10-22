@@ -218,7 +218,8 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                         .connectStorageToDomainByVdsId(masterDomain, vds.getId())) {
             return true;
         }
-        log.errorFormat("Error while trying connect host {0} to the needed storage server during the reinitialization of Data Center {1}",
+        log.error("Error while trying connect host {} to the needed storage server during the reinitialization"
+                        + " of Data Center '{}'",
                 vds.getId(),
                 getStoragePool().getId());
         return false;
@@ -226,7 +227,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
 
     private void connectAndRefreshAllUpHosts(final boolean commandSucceeded) {
         if (_isLastMaster || !commandSucceeded) {
-            log.warnFormat("skipping connect and refresh for all hosts, last master: {0}, command status: {1}",
+            log.warn("skipping connect and refresh for all hosts, last master '{}', command status '{}'",
                     _isLastMaster, commandSucceeded);
             return;
         }
@@ -238,7 +239,7 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                 public Void call() {
                     try {
                         if (!connectVdsToNewMaster(vds)) {
-                            log.warnFormat("failed to connect vds {0} to the new master {1}",
+                            log.warn("failed to connect vds '{}' to the new master '{}'",
                                     vds.getId(), _newMasterStorageDomainId);
                             return null;
                         }
@@ -257,22 +258,23 @@ public class ReconstructMasterDomainCommand<T extends ReconstructMasterParameter
                                         new ConnectStoragePoolVDSCommandParameters(vds, getStoragePool(),
                                                 _newMasterStorageDomainId, storagePoolIsoMap));
                                 if (!returnVal.getSucceeded()) {
-                                    log.errorFormat("Post reconstruct actions (connectPool) did not complete on host {0} in the pool. error {1}",
+                                    log.error("Post reconstruct actions (connectPool) did not complete on host '{}' in the pool. error {}",
                                             vds.getId(),
                                             returnVal.getVdsError().getMessage());
                                 }
                             } else {
-                                log.errorFormat("Post reconstruct actions (refreshPool)"
-                                        + " did not complete on host {0} in the pool. error {1}",
+                                log.error("Post reconstruct actions (refreshPool)"
+                                        + " did not complete on host '{}' in the pool. error {}",
                                         vds.getId(),
                                         ex.getMessage());
                             }
                         }
                     } catch (Exception e) {
-                        log.errorFormat("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
-                                + " did not complete on host {0} in the pool. error {1}",
+                        log.error("Post reconstruct actions (connectPool,refreshPool,disconnect storage)"
+                                + " did not complete on host '{}' in the pool: {}",
                                 vds.getId(),
                                 e.getMessage());
+                        log.debug("Exception", e);
                     }
                     return null;
                 }

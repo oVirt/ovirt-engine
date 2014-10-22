@@ -39,13 +39,13 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
     protected void executeCommand() {
         setVds(null);
         if (getVds() == null) {
-            handleError("SSH power down will not be executed on host {0} ({1}) since it doesn't exist anymore.");
+            handleError("SSH power down will not be executed on host {} ({}) since it doesn't exist anymore.");
             return;
         }
 
         /* Try this only when the Host is in maintenance state */
         if (getVds().getStatus() != VDSStatus.Maintenance) {
-            handleError("SSH power down will not be executed on host {0} ({1}) since it is not in Maintenance.");
+            handleError("SSH power down will not be executed on host {} ({}) since it is not in Maintenance.");
             return;
         }
 
@@ -75,7 +75,7 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
 
     private void handleError(final String errorMessage) {
         setCommandShouldBeLogged(false);
-        log.infoFormat(errorMessage,
+        log.info(errorMessage,
                 getVdsName(),
                 getVdsId());
         getReturnValue().setSucceeded(false);
@@ -94,13 +94,13 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
                 final ByteArrayOutputStream cmdErr = new ByteArrayOutputStream();
         ) {
             try {
-                log.infoFormat("Opening SSH power down session on host {0}", getVds().getHostName());
+                log.info("Opening SSH power down session on host {}", getVds().getHostName());
                 sshClient.setVds(getVds());
                 sshClient.useDefaultKeyPair();
                 sshClient.connect();
                 sshClient.authenticate();
 
-                log.infoFormat("Executing SSH power down command on host {0}", getVds().getHostName());
+                log.info("Executing SSH power down command on host {}", getVds().getHostName());
                 sshClient.executeCommand(
                         Config.<String> getValue(ConfigValues.SshVdsPowerdownCommand, version),
                         null,
@@ -109,8 +109,12 @@ public class VdsPowerDownCommand<T extends VdsPowerDownParameters> extends VdsCo
                 );
                 ret = true;
             } catch (Exception ex) {
-                log.errorFormat("SSH power down command failed on host {0}: {1}\nStdout: {2}\nStderr: {3}\nStacktrace: {4}",
-                        getVds().getHostName(), ex.getMessage(), cmdOut.toString(), cmdErr.toString(), ex);
+                log.error("SSH power down command failed on host '{}': {}\nStdout: {}\nStderr: {}",
+                        getVds().getHostName(),
+                        ex.getMessage(),
+                        cmdOut,
+                        cmdErr);
+                log.debug("Exception", ex);
             }
         }
         catch(IOException e) {

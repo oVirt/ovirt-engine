@@ -11,10 +11,11 @@ import org.ovirt.engine.core.common.businessentities.AsyncTaskResultEnum;
 import org.ovirt.engine.core.common.businessentities.AsyncTaskStatusEnum;
 import org.ovirt.engine.core.common.businessentities.CommandEntity;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class AsyncTaskFactory {
+    private static final Logger log = LoggerFactory.getLogger(AsyncTaskFactory.class);
     /**
      * Constructs a task based on creation info (task type and task parameters
      * as retrieved from the vdsm). Use in order to construct tasks when service
@@ -81,12 +82,11 @@ public final class AsyncTaskFactory {
         }
 
         catch (Exception e) {
-            log.error(String.format(
-                    "AsyncTaskFactory: Failed to get type information using reflection for AsyncTask type: %1$s.",
-                    taskType), e);
+            log.error("AsyncTaskFactory: Failed to get type information using reflection for AsyncTask type '{}': {}",
+                    taskType,
+                    e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
     }
-
-    private static final Log log = LogFactory.getLog(AsyncTaskFactory.class);
 }

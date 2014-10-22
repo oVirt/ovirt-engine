@@ -72,7 +72,7 @@ public class VmReplicateDiskFinishTaskHandler extends AbstractSPMAsyncTaskHandle
                     getEnclosingCommand().getParameters().getSourceStorageDomainId(),
                     sourceQuotaId,
                     sourceDiskProfileId);
-            log.errorFormat("Failed VmReplicateDiskFinish (Disk {0} , VM {1})",
+            log.error("Failed VmReplicateDiskFinish (Disk '{}', VM '{}')",
                     getEnclosingCommand().getParameters().getImageGroupID(),
                     getEnclosingCommand().getParameters().getVmId());
             throw e;

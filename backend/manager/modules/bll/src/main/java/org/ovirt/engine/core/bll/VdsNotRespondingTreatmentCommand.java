@@ -94,7 +94,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         setVds(null);
         if (getVds() == null) {
             setCommandShouldBeLogged(false);
-            log.infoFormat("Host {0}({1}) not fenced since it doesn't exist anymore.", getVdsName(), getVdsId());
+            log.info("Host '{}' ({}) not fenced since it doesn't exist anymore.", getVdsName(), getVdsId());
             getReturnValue().setSucceeded(false);
             return;
         }
@@ -155,7 +155,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
             }
         } else {
             setCommandShouldBeLogged(false);
-            log.infoFormat("Host {0}({1}) not fenced since it's status is ok, or it doesn't exist anymore.",
+            log.info("Host '{}' ({}) not fenced since it's status is ok, or it doesn't exist anymore.",
                     getVdsName(), getVdsId());
         }
         if (skippedDueToFencingPolicy) {
@@ -178,14 +178,14 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
     protected void handleError() {
         // if fence failed on spm, move storage pool to non operational
         if (getVds().getSpmStatus() != VdsSpmStatus.None) {
-            log.infoFormat("Fence failed on vds {0} which is spm of pool {1} - moving pool to non operational",
+            log.info("Fence failed on vds '{}' which is spm of pool '{}' - moving pool to non operational",
                     getVds().getName(), getVds().getStoragePoolId());
             runInternalAction(
                     VdcActionType.SetStoragePoolStatus,
                     new SetStoragePoolStatusParameters(getVds().getStoragePoolId(), StoragePoolStatus.NotOperational,
                             AuditLogType.SYSTEM_CHANGE_STORAGE_POOL_STATUS_NO_HOST_FOR_SPM));
         }
-        log.errorFormat("Failed to run Fence script on vds:{0}.", getVdsName());
+        log.error("Failed to run Fence script on vds '{}'.", getVdsName());
         AlertIfPowerManagementOperationSkipped(RESTART, null);
     }
 

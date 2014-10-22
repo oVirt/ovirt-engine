@@ -1,5 +1,9 @@
 package org.ovirt.engine.core.bll.scheduling.policyunits;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.CpuFlagsManagerHandler;
 import org.ovirt.engine.core.bll.scheduling.PolicyUnitImpl;
@@ -9,12 +13,12 @@ import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.scheduling.PerHostMessages;
 import org.ovirt.engine.core.common.scheduling.PolicyUnit;
-
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
+    private static final Logger log = LoggerFactory.getLogger(CpuLevelFilterPolicyUnit.class);
+
     public CpuLevelFilterPolicyUnit(PolicyUnit policyUnit) {
         super(policyUnit);
     }
@@ -32,12 +36,12 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
                     int compareResult = CpuFlagsManagerHandler.compareCpuLevels(vm.getCpuName(), hostCpuName, vm.getVdsGroupCompatibilityVersion());
                     if (compareResult <= 0) {
                         hostsToRunOn.add(host);
-                        log.debugFormat("Host {0} wasn't filtered out as it has a CPU level ({1}) which is higher or equal than the CPU level the VM was run with ({2})",
+                        log.debug("Host '{}' wasn't filtered out as it has a CPU level ({}) which is higher or equal than the CPU level the VM was run with ({})",
                                 host.getName(),
                                 hostCpuName,
                                 vm.getCpuName());
                     } else {
-                        log.debugFormat("Host {0} was filtered out as it has a CPU level ({1}) which is lower than the CPU level the VM was run with ({2})",
+                        log.debug("Host '{}' was filtered out as it has a CPU level ({}) which is lower than the CPU level the VM was run with ({})",
                                 host.getName(),
                                 hostCpuName,
                                 vm.getCpuName());

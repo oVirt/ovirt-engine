@@ -177,7 +177,7 @@ public class UpdateVdsCommand<T extends UpdateVdsActionParameters>  extends VdsC
                         // add can do action messages to return value so error messages
                         // are returned back to the client
                         getReturnValue().getCanDoActionMessages().addAll(canDoActionMessages);
-                        log.errorFormat("Installation/upgrade of Host {0},{1} failed due to: {2} ",
+                        log.error("Installation/upgrade of Host '{}', '{}' failed: {}",
                                 getVdsId(),
                                 getVdsName(),
                                 StringUtils.join(Backend.getInstance()

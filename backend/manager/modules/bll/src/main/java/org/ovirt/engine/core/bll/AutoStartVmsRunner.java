@@ -26,16 +26,16 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class represent a job which is responsible for running HA VMs
  */
 public class AutoStartVmsRunner {
 
-    private static final Log log = LogFactory.getLog(AutoStartVmsRunner.class);
+    private static final Logger log = LoggerFactory.getLogger(AutoStartVmsRunner.class);
     /** How long to wait before rerun HA VM that failed to start (not because of lock acquisition) */
     private static final int RETRY_TO_RUN_HA_VM_INTERVAL =
             Config.<Integer> getValue(ConfigValues.RetryToRunAutoStartVmIntervalInSeconds);
@@ -55,7 +55,7 @@ public class AutoStartVmsRunner {
         List<VM> failedAutoStartVms = getVmDao().getAllFailedAutoStartVms();
         ArrayList<AutoStartVmToRestart> initialFailedVms = new ArrayList<>(failedAutoStartVms.size());
         for (VM vm: failedAutoStartVms) {
-            log.infoFormat("Found HA VM which is down because of an error, trying to restart it, VM: {0} ({1})",
+            log.info("Found HA VM which is down because of an error, trying to restart it, VM '{}' ({})",
                     vm.getName(), vm.getId());
             initialFailedVms.add(new AutoStartVmToRestart(vm.getId()));
         }
@@ -95,7 +95,7 @@ public class AutoStartVmsRunner {
             // try to acquire the required lock for running the VM, if the lock cannot be
             // acquired, skip for now  and we'll try again in the next iteration
             if (!acquireLock(runVmLock)) {
-                log.debugFormat("Could not acquire lock for running HA VM {0}", vmId);
+                log.debug("Could not acquire lock for running HA VM '{}'", vmId);
                 continue;
             }
 

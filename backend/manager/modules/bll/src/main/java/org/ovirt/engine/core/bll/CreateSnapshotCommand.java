@@ -1,11 +1,10 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.tasks.CommandCoordinatorUtil;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.ImagesActionsParametersBase;
@@ -122,7 +121,7 @@ public class CreateSnapshotCommand<T extends ImagesActionsParametersBase> extend
                 }
             }
         } catch (Exception e) {
-            log.errorFormat("Failed creating snapshot from image id -'{0}'", getImage().getImageId());
+            log.error("Failed creating snapshot from image id '{}'", getImage().getImageId());
             CommandCoordinatorUtil.logAndFailTaskOfCommandWithEmptyVdsmId(getAsyncTaskId(),
                     "Create snapshot failed at VDSM. DB task ID is " + getAsyncTaskId());
             throw new VdcBLLException(VdcBllErrors.VolumeCreationError);

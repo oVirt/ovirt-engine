@@ -17,11 +17,11 @@ import org.ovirt.engine.core.common.businessentities.ServerCpu;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class CpuFlagsManagerHandler {
-    private static final Log log = LogFactory.getLog(CpuFlagsManagerHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(CpuFlagsManagerHandler.class);
     private static Map<Version, CpuFlagsManager> _managersDictionary =
             new HashMap<Version, CpuFlagsManager>();
 
@@ -194,7 +194,7 @@ public final class CpuFlagsManagerHandler {
 
                         _allCpuList.add(sc);
                     } else {
-                        log.errorFormat("Error getting info for CPU: {0}, not in expected format.", cpu);
+                        log.error("Error getting info for CPU '{}', not in expected format.", cpu);
                     }
                 }
             }

@@ -63,11 +63,11 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
             LUNs lunFromDB = getLunDao().get(lunFromVgInfo.getLUN_id());
             if (lunFromDB == null) {
                 getLunDao().save(lunFromVgInfo);
-                log.infoFormat("New LUN discovered, ID: {0}", lunFromVgInfo.getLUN_id());
+                log.info("New LUN discovered, ID '{}'", lunFromVgInfo.getLUN_id());
             }
             else if (lunFromDB.getDeviceSize() != lunFromVgInfo.getDeviceSize()) {
                 getLunDao().update(lunFromVgInfo);
-                log.infoFormat("Updated LUN device size - ID: {0}, previous size: {1}, new size: {2}.",
+                log.info("Updated LUN device size - ID '{}', previous size {}, new size {}.",
                         lunFromVgInfo.getLUN_id(), lunFromDB.getDeviceSize(), lunFromVgInfo.getDeviceSize());
             }
 
@@ -92,7 +92,7 @@ public class SyncLunsInfoForBlockStorageDomainCommand<T extends StorageDomainPar
         for (LUNs lunFromDb : lunsFromDb) {
             if (!isDummyLun(lunFromDb) && !containsLun(lunsFromVgInfo, lunFromDb)) {
                 getLunDao().remove(lunFromDb.getLUN_id());
-                log.infoFormat("Removed LUN ID: {0}", lunFromDb.getLUN_id());
+                log.info("Removed LUN ID '{}'", lunFromDb.getLUN_id());
             }
         }
     }

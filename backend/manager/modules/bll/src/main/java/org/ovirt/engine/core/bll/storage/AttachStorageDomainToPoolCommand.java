@@ -147,9 +147,9 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 VDSReturnValue returnValue =
                                         runVdsCommand(VDSCommandType.DetachStorageDomain, detachParams);
                                 if (!returnValue.getSucceeded()) {
-                                    log.warnFormat("Detaching Storage Domain {0} from it's previous storage pool {1} has failed. "
-                                            +
-                                            "The meta data of the Storage Domain might still indicate that it is attached to a different Storage Pool.",
+                                    log.warn("Detaching Storage Domain '{}' from it's previous storage pool '{}'"
+                                                    + " has failed. The meta data of the Storage Domain might still"
+                                                    + " indicate that it is attached to a different Storage Pool.",
                                             getParameters().getStorageDomainId(),
                                             Guid.Empty,
                                             0);
@@ -188,7 +188,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                                 getUnregisteredOVFDataDao().removeEntity(ovf.getEntityId(),
                                         getParameters().getStorageDomainId());
                                 getUnregisteredOVFDataDao().saveOVFData(ovf);
-                                log.infoFormat("Adding OVF data of entity id {0} and entity name {1}",
+                                log.info("Adding OVF data of entity id '{}' and entity name '{}'",
                                         ovf.getEntityId(),
                                         ovf.getEntityName());
                             }
@@ -249,24 +249,25 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                             return OvfUtils.getOvfEntities((byte[]) vdcReturnValue.getActionReturnValue(),
                                     getParameters().getStorageDomainId());
                         } else {
-                            log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}",
+                            log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}'",
                                     ovfDisk.getId(),
                                     getParameters().getStorageDomainId());
                         }
                     } catch (RuntimeException e) {
                         // We are catching RuntimeException, since the call for OvfUtils.getOvfEntities will throw
                         // a RuntimeException if there is a problem to untar the file.
-                        log.errorFormat("Image data could not be retrieved for disk id {0} in storage domain id {1}. Error: {2}",
+                        log.error("Image data could not be retrieved for disk id '{}' in storage domain id '{}': {}",
                                 ovfDisk.getId(),
                                 getParameters().getStorageDomainId(),
-                                e);
+                                e.getMessage());
+                        log.debug("Exception", e);
                     }
                     ovfStoreDiskImages.remove(ovfDisk);
                 }
             }
             AuditLogDirector.log(this, AuditLogType.RETRIEVE_OVF_STORE_FAILED);
         } else {
-            log.warnFormat("There are no OVF_STORE disks on storage domain id {0}",
+            log.warn("There are no OVF_STORE disks on storage domain id {}",
                     getParameters().getStorageDomainId());
         }
         return Collections.emptyList();
@@ -297,7 +298,7 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             if (!runInternalAction(VdcActionType.RegisterDisk, registerDiskParams, cloneContext()).getSucceeded()) {
                 result = "failed";
             }
-            log.infoFormat("Register new floating OVF_STORE disk with disk id {0} for storage domain {1} has {2}",
+            log.info("Register new floating OVF_STORE disk with disk id '{}' for storage domain '{}' has {}",
                     ovfStoreDiskImage.getId(),
                     getParameters().getStorageDomainId(),
                     result);
@@ -321,14 +322,15 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                     try {
                         diskDescriptionMap = JsonHelper.jsonToMap(diskDecription);
                     } catch (IOException e) {
-                        log.warnFormat("Exception while generating json containing ovf store info. Exception: {0}", e);
+                        log.warn("Exception while generating json containing ovf store info: {}", e.getMessage());
+                        log.debug("Exception", e);
                         continue;
                     }
 
                     // The purpose of this check is to verify that it's an OVF store with data related to the Storage
                     // Domain.
                     if (!isDomainExistsInDiskDescription(diskDescriptionMap, getParameters().getStorageDomainId())) {
-                        log.warnFormat("The disk description does not contain the storage domain id {0}",
+                        log.warn("The disk description does not contain the storage domain id '{}'",
                                 getParameters().getStorageDomainId());
                         continue;
                     }
@@ -359,7 +361,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
             try {
                 diskDescriptionMap = JsonHelper.jsonToMap(ovfStoreDisk.getDescription());
             } catch (IOException e) {
-                log.warnFormat("Exception while generating json containing ovf store info. Exception: {0}", e);
+                log.warn("Exception while generating json containing ovf store info: {}", e.getMessage());
+                log.debug("Exception", e);
                 continue;
             }
 
@@ -393,7 +396,8 @@ public class AttachStorageDomainToPoolCommand<T extends AttachStorageDomainToPoo
                 log.info("LastUpdate Date is not initialized in the OVF_STORE disk.");
             }
         } catch (java.text.ParseException e) {
-            log.errorFormat("LastUpdate Date could not be parsed from disk desscription. Exception: {0}", e);
+            log.error("LastUpdate Date could not be parsed from disk description: {}", e.getMessage());
+            log.debug("Exception", e);
         }
         return null;
     }

@@ -106,13 +106,13 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
                     StorageDomainStatus.Locked : StorageDomainStatus.Activating);
         freeLock();
 
-        log.infoFormat("ActivateStorage Domain. Before Connect all hosts to pool. Time:{0}", new Date());
+        log.info("ActivateStorage Domain. Before Connect all hosts to pool. Time: {}", new Date());
         List<Pair<Guid, Boolean>> hostsConnectionResults = connectHostsInUpToDomainStorageServer();
         syncStorageDomainInfo(hostsConnectionResults);
 
         runVdsCommand(VDSCommandType.ActivateStorageDomain,
                 new ActivateStorageDomainVDSCommandParameters(getStoragePool().getId(), getStorageDomain().getId()));
-        log.infoFormat("ActivateStorage Domain. After Connect all hosts to pool. Time:{0}", new Date());
+        log.info("ActivateStorage Domain. After Connect all hosts to pool. Time: {}", new Date());
 
         TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
             @Override
@@ -127,7 +127,7 @@ public class ActivateStorageDomainCommand<T extends StorageDomainPoolParametersB
         });
         refreshAllVdssInPool();
 
-        log.infoFormat("ActivateStorage Domain. After change storage pool status in vds. Time:{0}",
+        log.info("ActivateStorage Domain. After change storage pool status in vds. Time: {}",
                 new Date());
         if (getStorageDomain().getStorageDomainType() == StorageDomainType.ISO) {
             IsoDomainListSyncronizer.getInstance().refresheIsoDomainWhenActivateDomain(getStorageDomain().getId(),

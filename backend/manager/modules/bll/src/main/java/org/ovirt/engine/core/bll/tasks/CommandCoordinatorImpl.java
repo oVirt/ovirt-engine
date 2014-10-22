@@ -35,12 +35,12 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.CommandStatus;
 import org.ovirt.engine.core.compat.DateTime;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CommandCoordinatorImpl extends CommandCoordinator {
 
-    private static final Log log = LogFactory.getLog(CommandCoordinator.class);
+    private static final Logger log = LoggerFactory.getLogger(CommandCoordinator.class);
     private final CommandsCache commandsCache;
     private final CommandContextsCache contextsCache;
     private final CoCoAsyncTaskHelper coCoAsyncTaskHelper;

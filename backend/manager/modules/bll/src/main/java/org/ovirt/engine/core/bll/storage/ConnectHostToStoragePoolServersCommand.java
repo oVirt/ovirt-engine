@@ -1,12 +1,11 @@
 package org.ovirt.engine.core.bll.storage;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.bll.InternalCommandAttribute;
 import org.ovirt.engine.core.bll.NonTransactiveCommandAttribute;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.ConnectHostToStoragePoolServersParameters;
 import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
@@ -57,7 +56,7 @@ public class ConnectHostToStoragePoolServersCommand extends
             connectSucceeded = connectStorageServersByType(connectionsType, connections) && connectSucceeded;
         }
 
-        log.infoFormat("Host {0} storage connection was {1} ", getVds().getName(), connectSucceeded ? "succeeded" : "failed");
+        log.info("Host '{}' storage connection was {} ", getVds().getName(), connectSucceeded ? "succeeded" : "failed");
 
         return connectSucceeded;
     }

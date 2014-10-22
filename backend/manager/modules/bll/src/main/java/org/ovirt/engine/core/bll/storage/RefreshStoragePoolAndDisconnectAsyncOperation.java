@@ -12,10 +12,11 @@ import org.ovirt.engine.core.common.vdscommands.ConnectStoragePoolVDSCommandPara
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeactivateSingleAsyncOperation {
+    private static final Logger log = LoggerFactory.getLogger(RefreshStoragePoolAndDisconnectAsyncOperation.class);
 
     private Guid masterStorageDomainId;
 
@@ -40,11 +41,12 @@ public class RefreshStoragePoolAndDisconnectAsyncOperation extends ActivateDeact
             StorageHelperDirector.getInstance().getItem(getStorageDomain().getStorageType())
                     .disconnectStorageFromDomainByVdsId(getStorageDomain(), getVdss().get(iterationId).getId());
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to connect/refresh storagePool. Host {0} to storage pool {1}. Exception: {3}",
-                    getVdss().get(iterationId).getName(), getStoragePool().getName(), e);
+            log.error("Failed to connect/refresh storagePool. Host '{}' to storage pool '{}': {}",
+                    getVdss().get(iterationId).getName(),
+                    getStoragePool().getName(),
+                    e.getMessage());
+            log.debug("Exception", e);
         }
 
     }
-
-    private static final Log log = LogFactory.getLog(RefreshStoragePoolAndDisconnectAsyncOperation.class);
 }

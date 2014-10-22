@@ -20,8 +20,8 @@ import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.utils.linq.LinqUtils;
 import org.ovirt.engine.core.utils.linq.Predicate;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This balancing policy, is for use in cases the user selected HA Reservation for its Cluster. The basic methodology
@@ -31,7 +31,7 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
-    private static final Log log = LogFactory.getLog(HaReservationBalancePolicyUnit.class);
+    private static final Logger log = LoggerFactory.getLogger(HaReservationBalancePolicyUnit.class);
 
     private static final int DEFAULT_OVER_UTILIZATION_VALUE = 200;
     private static final long serialVersionUID = 4926515666890804243L;
@@ -46,13 +46,13 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             Map<String, String> parameters,
             ArrayList<String> messages) {
 
-        log.debugFormat("Started HA reservation balancing method for cluster: {0}", cluster.getName());
+        log.debug("Started HA reservation balancing method for cluster '{}'", cluster.getName());
         if (!cluster.supportsHaReservation()) {
             return null;
         }
         if (hosts == null || hosts.size() < 2) {
             int hostCount = hosts == null ? 0 : hosts.size();
-            log.debugFormat("No balancing for cluster {0}, contains only {1} host(s)", cluster.getName(), hostCount);
+            log.debug("No balancing for cluster '{}', contains only {} host(s)", cluster.getName(), hostCount);
             return null;
         }
 
@@ -71,22 +71,22 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
             overUtilizationParam = Config.<Integer> getValue(ConfigValues.OverUtilizationForHaReservation);
         }
 
-        log.debugFormat("optimalHaDistribution value:{0}", optimalHaDistribution);
+        log.debug("optimalHaDistribution value: {}", optimalHaDistribution);
 
         int overUtilizationThreshold = (int) Math.ceil(optimalHaDistribution * (overUtilizationParam / 100.0));
-        log.debugFormat("overUtilizationThreshold value: {0}", overUtilizationThreshold);
+        log.debug("overUtilizationThreshold value: {}", overUtilizationThreshold);
 
         List<VDS> overUtilizedHosts =
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationThreshold, Condition.MORE_THAN);
         if (overUtilizedHosts.isEmpty()) {
-            log.debugFormat("No over utilized hosts for cluster: {0}", cluster.getName());
+            log.debug("No over utilized hosts for cluster '{}'", cluster.getName());
             return null;
         }
 
         List<VDS> underUtilizedHosts =
                 getHostUtilizedByCondition(hosts, hostId2HaVmMapping, overUtilizationParam, Condition.LESS_THAN);
         if (underUtilizedHosts.size() == 0) {
-            log.debugFormat("No under utilized hosts for cluster: {0}", cluster.getName());
+            log.debug("No under utilized hosts for cluster '{}'", cluster.getName());
             return null;
         }
 
@@ -95,13 +95,13 @@ public class HaReservationBalancePolicyUnit extends PolicyUnitImpl {
 
         List<VM> migrableVmsOnRandomHost = getMigrableVmsRunningOnVds(randomHost.getId(), hostId2HaVmMapping);
         if (migrableVmsOnRandomHost.isEmpty()) {
-            log.debugFormat("No migratable hosts were found for cluster: {0} ", cluster.getName());
+            log.debug("No migratable hosts were found for cluster '{}'", cluster.getName());
             return null;
         }
 
         // Get random vm to migrate
         VM vm = migrableVmsOnRandomHost.get(new Random().nextInt(migrableVmsOnRandomHost.size()));
-        log.infoFormat("VM to be migrated:{0}", vm.getName());
+        log.info("VM to be migrated '{}'", vm.getName());
 
         List<Guid> underUtilizedHostsKeys = new ArrayList<Guid>();
         for (VDS vds : underUtilizedHosts) {
