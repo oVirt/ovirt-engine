@@ -7,13 +7,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.VmDynamicDAO;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.MigrateBrokerVDSCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MigrateVDSCommand<P extends MigrateVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
 
-    private static final Log log = LogFactory.getLog(MigrateVDSCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(MigrateVDSCommand.class);
 
     public MigrateVDSCommand(P parameters) {
         super(parameters);

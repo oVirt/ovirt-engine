@@ -15,9 +15,9 @@ import org.ovirt.engine.core.common.businessentities.gluster.TransportType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The XmlRpc return type to receive a list of gluster volumes. The constructor takes cluster id as well, so that
@@ -39,10 +39,11 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
     private static final String NAME = "name";
     private static final String HOST_UUID = "hostUuid";
 
+    private static final Logger log = LoggerFactory.getLogger(GlusterVolumesListReturnForXmlRpc.class);
+    private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
+
     private Guid clusterId;
     private final Map<Guid, GlusterVolumeEntity> volumes = new HashMap<Guid, GlusterVolumeEntity>();
-    private static final Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
-    private static final GlusterDBUtils dbUtils = GlusterDBUtils.getInstance();
 
     @SuppressWarnings("unchecked")
     public GlusterVolumesListReturnForXmlRpc(Guid clusterId, Map<String, Object> innerMap) {
@@ -56,7 +57,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
         Map<String, Object> volumesMap = (Map<String, Object>) innerMap.get(VOLUMES);
 
         for (Entry<String, Object> entry : volumesMap.entrySet()) {
-            log.debugFormat("received volume {0}", entry.getKey());
+            log.debug("received volume '{}'", entry.getKey());
 
             GlusterVolumeEntity volume = getVolume((Map<String, Object>)entry.getValue());
             volumes.put(volume.getId(), volume);
@@ -99,7 +100,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
                 volume.setBricks(getBricks(volume.getId(), (Object[])map.get(BRICKS), false));
             }
         } catch (Exception e) {
-            log.errorFormat("Could not populate bricks of volume {0} on cluster {1}.", volume.getName(), clusterId, e);
+            log.error("Could not populate bricks of volume '{}' on cluster '{}': {}", volume.getName(), clusterId, e.getMessage());
+            log.debug("Exception", e);
         }
         volume.setOptions(getOptions((Map<String, Object>)map.get(OPTIONS)));
 
@@ -143,7 +145,8 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
             // We do not want the command to fail if bricks for one of the volumes could not be fetched. Hence log the
             // exception and return null. The client should have special handling if bricks list of any of the volumes
             // is null.
-            log.errorFormat("Error while populating bricks of volume {0}.", volumeId, e);
+            log.error("Error while populating bricks of volume '{}': {}", volumeId, e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
 
@@ -169,7 +172,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
         VdsStatic server = dbUtils.getServer(clusterId, hostnameOrIp);
         if (server == null) {
-            log.warnFormat("Could not add brick {0} to volume {1} - server {2} not found in cluster {3}", brickInfo, volumeId, hostnameOrIp, clusterId);
+            log.warn("Could not add brick '{}' to volume '{}' - server '{}' not found in cluster '{}'", brickInfo, volumeId, hostnameOrIp, clusterId);
             return null;
         }
 
@@ -189,7 +192,7 @@ public final class GlusterVolumesListReturnForXmlRpc extends StatusReturnForXmlR
 
         GlusterServer glusterServer = dbUtils.getServerByUuid(Guid.createGuidFromString(hostUuid));
         if (glusterServer == null) {
-            log.warnFormat("Could not add brick {0} to volume {1} - server uuid {2} not found in cluster {3}", brickName, volumeId, hostUuid, clusterId);
+            log.warn("Could not add brick '{}' to volume '{}' - server uuid '{}' not found in cluster '{}'", brickName, volumeId, hostUuid, clusterId);
             return null;
         }
         VdsStatic server = DbFacade.getInstance().getVdsStaticDao().get(glusterServer.getId());

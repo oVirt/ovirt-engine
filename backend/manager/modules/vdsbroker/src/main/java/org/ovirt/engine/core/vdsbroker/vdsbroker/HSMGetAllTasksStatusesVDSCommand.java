@@ -68,7 +68,7 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 Guid taskGuid = new Guid(entry.getKey().toString());
                 Map<String, Object> xrsTaskStatusAsMAp = (Map<String, Object>) entry.getValue();
                 if (xrsTaskStatusAsMAp == null) {
-                    log.errorFormat("Task ID {0} has no task data", entry.getKey().toString());
+                    log.error("Task ID {} has no task data", entry.getKey());
                 } else {
                     Map<String, Object> xrsTaskStatus = xrsTaskStatusAsMAp;
                     TaskStatusForXmlRpc tempVar = new TaskStatusForXmlRpc();
@@ -82,11 +82,11 @@ public class HSMGetAllTasksStatusesVDSCommand<P extends VdsIdVDSCommandParameter
                 }
             } catch (RuntimeException exp) {
                 log.error(
-                        String.format(
-                                "HSMGetAllTasksStatusesVDSCommand: Error while parsing task status from list. key: %1$s, value: %2$s - ignoring.",
-                                entry.getKey().toString(),
-                                entry.getValue().toString()),
-                        exp);
+                        "HSMGetAllTasksStatusesVDSCommand: Ignoring error while parsing task status from list. key: '{}', value: '{}': {}",
+                        entry.getKey(),
+                        entry.getValue(),
+                        exp.getMessage());
+                log.debug("Exception", exp);
             }
         }
         return result;

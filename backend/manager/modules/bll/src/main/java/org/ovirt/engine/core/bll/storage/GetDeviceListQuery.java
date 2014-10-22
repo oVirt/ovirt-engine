@@ -47,10 +47,10 @@ public class GetDeviceListQuery<P extends GetDeviceListQueryParameters> extends 
             // Filtering code should be deprecated once DC level 3.0 is no longer supported
             if (filteringLUNsEnabled) {
                 if (StringUtils.isNotEmpty(lun.getvolume_group_id())) {
-                    log.debugFormat("LUN with GUID {0} already has VG ID {1}, so not returning it.",
+                    log.debug("LUN with GUID {} already has VG ID {}, so not returning it.",
                             lun.getLUN_id(), lun.getvolume_group_id());
                 } else if (lunsFromDbById.containsKey(lun.getLUN_id())) {
-                    log.debugFormat("LUN with GUID {0} already exists in the DB, so not returning it.",
+                    log.debug("LUN with GUID {} already exists in the DB, so not returning it.",
                             lun.getLUN_id());
                 } else {
                     returnValue.add(lun);

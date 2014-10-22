@@ -11,7 +11,6 @@ import java.util.List;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
@@ -48,8 +47,8 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             return;
         }
         for (OVirtNodeInfo.Entry info : OVirtNodeInfo.getInstance().get()) {
-            log.debugFormat(
-                "nodeOS [{0}] | osPattern [{1}] | minimumVersion [{2}]",
+            log.debug(
+                "nodeOS [{}] | osPattern [{}] | minimumVersion [{}]",
                 nodeOS,
                 info.osPattern,
                 info.minimumVersion
@@ -57,15 +56,15 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
 
             Matcher matcher = info.osPattern.matcher(nodeOS);
             if (matcher.matches() && info.path.isDirectory()) {
-                log.debugFormat("Looking for list of ISOs in [{0}], regex [{1}]", info.path, info.isoPattern);
+                log.debug("Looking for list of ISOs in [{}], regex [{}]", info.path, info.isoPattern);
                 for (File file : info.path.listFiles()) {
                     matcher = info.isoPattern.matcher(file.getName());
                     if (matcher.matches()) {
-                        log.debugFormat("ISO Found [{0}]", file);
+                        log.debug("ISO Found [{}]", file);
                         String version = matcher.group(1);
-                        log.debugFormat("ISO Version [{0}]", version);
+                        log.debug("ISO Version [{}]", version);
                         File versionFile = new File(info.path, String.format("version-%s.txt", version));
-                        log.debugFormat("versionFile [{0}]", versionFile);
+                        log.debug("versionFile [{}]", versionFile);
 
                         // Setting IsoData Class to get further [version] and [vdsm compatibility version] data
                         IsoData isoData = new IsoData();
@@ -76,13 +75,13 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
                                         OVIRT_ISO_VDSM_COMPATIBILITY_PREFIX))));
 
                         if (StringUtils.isEmpty(isoVersionText)) {
-                            log.debugFormat("Iso version file {0} is empty.", versionFile.getAbsolutePath());
+                            log.debug("Iso version file '{}' is empty.", versionFile.getAbsolutePath());
                             continue;
                         }
 
                         String[] versionParts = isoVersionText.split(",");
                         if (versionParts.length < 2) {
-                            log.debugFormat("Iso version file {0} contains invalid content. Expected: <major-version>,<release> format.",
+                            log.debug("Iso version file '{}' contains invalid content. Expected: <major-version>,<release> format.",
                                     versionFile.getAbsolutePath());
                             continue;
                         }
@@ -115,8 +114,8 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
     private boolean isNewerVersion(Version isoClusterVersion) {
         VDS vds = getVdsByVdsId(getParameters().getVdsId());
         Version vdsClusterVersion = vds.getVdsGroupCompatibilityVersion();
-        log.debugFormat(
-            "vdsClusterVersion {0} isoClusterVersion {1}",
+        log.debug(
+            "vdsClusterVersion '{}' isoClusterVersion '{}'",
             vdsClusterVersion,
             isoClusterVersion
         );
@@ -135,13 +134,15 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
                     versions = lineRead.split(",");
                 }
             } catch (FileNotFoundException e) {
-                log.errorFormat("Failed to open version file {0} with error {1}",
+                log.error("Failed to open version file '{}': {}",
                         file.getParent(),
-                        ExceptionUtils.getMessage(e));
-            } catch (IOException e1) {
-                log.errorFormat("Failed to read version from {0} with error {1}",
+                        e.getMessage());
+                log.debug("Exception", e);
+            } catch (IOException e) {
+                log.error("Failed to read version from '{}': {}",
                         file.getAbsolutePath(),
-                        ExceptionUtils.getMessage(e1));
+                        e.getMessage());
+                log.debug("Exception", e);
             } finally {
                 if (input != null) {
                     try {
@@ -163,13 +164,15 @@ public class GetoVirtISOsQuery<P extends VdsIdParametersBase> extends QueriesCom
             isoVersionText = input.readLine();
 
         } catch (FileNotFoundException e) {
-            log.errorFormat("Failed to open version file {0} with error {1}",
+            log.error("Failed to open version file '{}': {}",
                     versionFile.getAbsolutePath(),
-                    ExceptionUtils.getMessage(e));
-        } catch (IOException e1) {
-            log.errorFormat("Failed to read version from {0} with error {1}",
+                    e.getMessage());
+            log.debug("Exception", e);
+        } catch (IOException e) {
+            log.error("Failed to read version from '{}': {}",
                     versionFile.getAbsolutePath(),
-                    ExceptionUtils.getMessage(e1));
+                    e.getMessage());
+            log.debug("Exception", e);
         } finally {
             if (input != null) {
                 try {

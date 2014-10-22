@@ -4,11 +4,14 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.CreateSnapshotVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParameters> extends IrsCreateCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(CreateSnapshotVDSCommand.class);
+
     public CreateSnapshotVDSCommand(P parameters) {
         super(parameters);
     }
@@ -43,6 +46,4 @@ public class CreateSnapshotVDSCommand<P extends CreateSnapshotVDSCommandParamete
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.createVolume,
                         getParameters().getStoragePoolId()));
     }
-
-    private static final Log log = LogFactory.getLog(CreateSnapshotVDSCommand.class);
 }

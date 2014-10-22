@@ -19,14 +19,13 @@ import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StoragePoolDomainHelper {
 
-    private static final Log log = LogFactory.getLog(StoragePoolDomainHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(StoragePoolDomainHelper.class);
 
     public static final Set<StorageDomainStatus> storageDomainMonitoredStatus =
             Collections.unmodifiableSet(EnumSet.of(StorageDomainStatus.Inactive, StorageDomainStatus.Active));
@@ -67,9 +66,10 @@ public class StoragePoolDomainHelper {
         } catch (VdcBLLException ex) {
             VDSError error = ex.getVdsError();
             if (error.getCode() != VdcBllErrors.StoragePoolUnknown) {
-                log.infoFormat("Failed to refresh host {0} pool {1} metadata with error {2} (message: {3})",
+                log.info("Failed to refresh host '{}' pool '{}' metadata with error '{}': {}",
                         vds.getName(),
                         storagePool.getId(), error.getCode(), error.getMessage());
+                log.debug("Exception", ex);
                 return false;
             }
 
@@ -89,7 +89,7 @@ public class StoragePoolDomainHelper {
             }
 
             if (error != null) {
-                log.infoFormat("Failed to connect host {0} to pool {1} with error {2} (message: {3})",
+                log.info("Failed to connect host '{}' to pool '{}' with error '{}': {}",
                         vds.getName(),
                         storagePool.getId(), error.getCode(), error.getMessage());
                 return false;
@@ -108,7 +108,7 @@ public class StoragePoolDomainHelper {
             if (storageStatusInPool.getStatus() != null
                     && storageStatusInPool.getStatus() != newStatus
                     && applicableStatusesForUpdate.contains(storageStatusInPool.getStatus())) {
-                log.infoFormat("Storage Pool {0} - Updating Storage Domain {1} status from {2} to {3}, reason : {4}",
+                log.info("Storage Pool '{}' - Updating Storage Domain '{}' status from '{}' to '{}', reason: {}",
                         storagePoolId,
                         storageStatusInPool.getstorage_id(),
                         storageStatusInPool.getStatus().name(),

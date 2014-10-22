@@ -644,7 +644,7 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
             if (vnicProfile != null) {
                 network = DbFacade.getInstance().getNetworkDao().get(vnicProfile.getNetworkId());
                 networkName = network.getName();
-                log.debugFormat("VNIC {0} is using profile {1} on network {2}",
+                log.debug("VNIC '{}' is using profile '{}' on network '{}'",
                         nic.getName(), vnicProfile, networkName);
                 if (!addQosForDevice(struct, vnicProfile, vm.getVdsGroupCompatibilityVersion())) {
                     unsupportedFeatures.add(VNIC_PROFILE_PROPERTIES.NETWORK_QOS);

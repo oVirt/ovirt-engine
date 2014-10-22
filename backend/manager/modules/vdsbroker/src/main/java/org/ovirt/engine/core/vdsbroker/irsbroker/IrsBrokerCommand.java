@@ -30,8 +30,6 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.log.Logged;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.ovirt.engine.core.utils.log.LoggedUtils;
@@ -45,9 +43,7 @@ import org.slf4j.LoggerFactory;
 @Logged(errorLevel = LogLevel.ERROR)
 public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> extends BrokerCommandBase<P> {
 
-    @Deprecated
-    private static final Log log = LogFactory.getLog(IrsBrokerCommand.class);
-    private static final Logger log1 = LoggerFactory.getLogger(IrsBrokerCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(IrsBrokerCommand.class);
 
     private static Map<Guid, IrsProxyData> _irsProxyData = new ConcurrentHashMap<Guid, IrsProxyData>();
     static final VDSStatus reportingVdsStatus = VDSStatus.Up;
@@ -178,26 +174,26 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 if (ExceptionUtils.getRootCause(ex) != null) {
                     logException(ExceptionUtils.getRootCause(ex));
                 } else {
-                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
             } catch (XmlRpcRunTimeException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 if (ex.isNetworkError()) {
-                    log.errorFormat("IrsBroker::Failed::{0} - network exception.", getCommandName());
+                    log.error("IrsBroker::Failed::{} - network exception.", getCommandName());
                     getVDSReturnValue().setSucceeded(false);
                 } else {
-                    log.errorFormat("IrsBroker::Failed::{0}", getCommandName());
-                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
+                    log.error("IrsBroker::Failed::{}", getCommandName());
+                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                     throw new IRSProtocolException(ex);
                 }
             } catch (IRSNoMasterDomainException ex) {
                 getVDSReturnValue().setExceptionString(ex.toString());
                 getVDSReturnValue().setExceptionObject(ex);
                 getVDSReturnValue().setVdsError(ex.getVdsError());
-                log.errorFormat("IrsBroker::Failed::{0}", getCommandName());
-                log.errorFormat("Exception: {0}", ex.getMessage());
+                log.error("IrsBroker::Failed::{}: {}", getCommandName(), ex.getMessage());
+                log.debug("Exception", ex);
 
                 if ((ex.getVdsError() == null || ex.getVdsError().getCode() != VdcBllErrors.StoragePoolWrongMaster)
                         && getCurrentIrsProxyData().getHasVdssForSpmSelection()) {
@@ -224,7 +220,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                 getVDSReturnValue().setVdsError(ex.getVdsError());
                 logException(ex);
                 if (log.isDebugEnabled()) {
-                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                 }
                 failover();
             } catch (RuntimeException ex) {
@@ -237,7 +233,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         ExceptionUtils.getRootCause(ex) instanceof SocketException) {
                     logException(ExceptionUtils.getRootCause(ex));
                 } else {
-                    LoggedUtils.logError(log1, LoggedUtils.getObjectId(this), this, ex);
+                    LoggedUtils.logError(log, LoggedUtils.getObjectId(this), this, ex);
                 }
                 // always failover because of changes in vdsm error, until we
                 // realize what to do in each case:
@@ -277,8 +273,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                         }
                     });
         } else {
-            log.errorFormat(
-                    "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool {0} !!!",
+            log.error(
+                    "IrsBroker::IRSNoMasterDomainException:: Could not find master domain for pool '{}'",
                     getParameters().getStoragePoolId());
         }
     }
@@ -293,7 +289,8 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
      *            Exception to log.
      */
     private void logException(Throwable ex) {
-        log.errorFormat("IrsBroker::Failed::{0} due to: {1}", getCommandName(), ExceptionUtils.getMessage(ex));
+        log.error("IrsBroker::Failed::{}: {}", getCommandName(), ex.getMessage());
+        log.debug("Exception", ex);
     }
 
     public static Long assignLongValue(Map<String, Object> input, String name) {
@@ -306,7 +303,7 @@ public abstract class IrsBrokerCommand<P extends IrsBaseVDSCommandParameters> ex
                     returnValue = Long.parseLong(stringValue);
                 }
             } catch (NumberFormatException nfe) {
-                log.errorFormat("Failed to parse {0} value {1} to long", name, stringValue);
+                log.error("Failed to parse {} value {} to long", name, stringValue);
                 returnValue = null;
             }
         }

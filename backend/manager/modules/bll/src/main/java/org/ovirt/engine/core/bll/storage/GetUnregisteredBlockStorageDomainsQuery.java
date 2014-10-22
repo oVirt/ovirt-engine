@@ -59,7 +59,8 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             List<String> vgIDs = getVolumeGroupIdsByLUNs(filteredLUNs);
             storageDomains = getStorageDomainsByVolumeGroupIds(vgIDs);
         } catch (RuntimeException e) {
-            log.errorFormat("Failed to retrieve storage domains by connections info. Exception message: {0}", e.getMessage());
+            log.error("Failed to retrieve storage domains by connections info: {}", e.getMessage());
+            log.debug("Exception", e);
             getQueryReturnValue().setSucceeded(false);
             return;
         }
@@ -84,7 +85,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
                 connectedTargets.add(storageConnection);
             }
             else {
-                log.errorFormat("Could not connect to target IQN: {0}. Error message: {1}",
+                log.error("Could not connect to target IQN '{}': {}",
                         storageConnection.getiqn(), returnValue.getFault().getMessage());
             }
         }
@@ -212,8 +213,9 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
                 returnValue = executeGetVGInfo(
                         new GetVGInfoVDSCommandParameters(getParameters().getVdsId(), vgID));
             } catch (RuntimeException e) {
-                log.errorFormat("Could not get info for VG ID: {0}. Error message: {1}",
+                log.error("Could not get info for VG ID: '{}': {}",
                         vgID, e.getMessage());
+                log.debug("Exception", e);
                 continue;
             }
 
@@ -246,8 +248,9 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
             returnValue = executeHSMGetStorageDomainInfo(
                     new HSMGetStorageDomainInfoVDSCommandParameters(getParameters().getVdsId(), storageDomainId));
         } catch (RuntimeException e) {
-            log.errorFormat("Could not get info for storage domain ID: {0}. Error message: {1}",
+            log.error("Could not get info for storage domain ID: '{}': {}",
                     storageDomainId, e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
 

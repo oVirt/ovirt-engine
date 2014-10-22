@@ -2,11 +2,14 @@ package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.DetachStorageDomainVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSCommandParameters>
         extends IrsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(DetachStorageDomainVDSCommand.class);
+
     public DetachStorageDomainVDSCommand(P parameters) {
         super(parameters);
     }
@@ -24,8 +27,10 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
                 proceedProxyReturnValue();
             } catch (RuntimeException ex) {
                 printReturnValue();
-                log.errorFormat("Could not force detach domain {0} on pool {1}. error: {2}", getParameters()
-                        .getStorageDomainId(), getParameters().getStoragePoolId(), ex.toString());
+                log.error("Could not force detach domain '{}' on pool '{}'. error: {}",
+                        getParameters().getStorageDomainId(), getParameters().getStoragePoolId(),
+                        ex.getMessage());
+                log.debug("Exception", ex);
                 getVDSReturnValue().setSucceeded(false);
             }
         } else {
@@ -36,6 +41,4 @@ public class DetachStorageDomainVDSCommand<P extends DetachStorageDomainVDSComma
             proceedProxyReturnValue();
         }
     }
-
-    private static final Log log = LogFactory.getLog(DetachStorageDomainVDSCommand.class);
 }

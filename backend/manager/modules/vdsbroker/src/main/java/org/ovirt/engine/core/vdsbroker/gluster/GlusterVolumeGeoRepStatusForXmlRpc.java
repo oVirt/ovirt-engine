@@ -12,11 +12,14 @@ import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSessio
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServer;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
+
+    private static final Logger log = LoggerFactory.getLogger(GlusterVolumeGeoRepStatusForXmlRpc.class);
+
     protected static final String GEO_REP = "geo-rep";
     protected static final String VOLUME_NAME = "volumeName";
     protected static final String GEO_REP_PAIRS = "pairs";
@@ -30,8 +33,6 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     private static final String CRAWL_STATUS = "crawlStatus";
 
     private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
-
-    private static final Log log = LogFactory.getLog(GlusterVolumesListReturnForXmlRpc.class);
 
     protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap, GlusterGeoRepSession session) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();
@@ -53,7 +54,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
             }
         }
         if (details.getMasterBrickId() == null) {
-            log.errorFormat("Brick information could not be retrieved for gluster host id %1 and brick dir %2",
+            log.error("Brick information could not be retrieved for gluster host id {} and brick dir {}",
                     masterNodeGlusterId,
                     masterBrickDir);
         }

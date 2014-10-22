@@ -9,12 +9,15 @@ import org.ovirt.engine.core.common.vdscommands.SetVdsStatusVDSCommandParameters
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(SetVdsStatusVDSCommand.class);
+
     public SetVdsStatusVDSCommand(P parameters) {
         super(parameters);
     }
@@ -27,7 +30,7 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
 
             final VDS vds = getVds();
             if (vds.getSpmStatus() != VdsSpmStatus.None && parameters.getStatus() != VDSStatus.Up) {
-                log.infoFormat("VDS {0} is spm and moved from up calling resetIrs.", vds.getName());
+                log.info("VDS '{}' is spm and moved from up calling resetIrs.", vds.getName());
                 // check if this host was spm and reset if do.
                 getVDSReturnValue().setSucceeded(
                         ResourceManager
@@ -71,6 +74,4 @@ public class SetVdsStatusVDSCommand<P extends SetVdsStatusVDSCommandParameters> 
     private void updateVdsFromParameters(SetVdsStatusVDSCommandParameters parameters, VDS vds) {
         vds.getDynamicData().setNonOperationalReason(parameters.getNonOperationalReason());
     }
-
-    private static final Log log = LogFactory.getLog(SetVdsStatusVDSCommand.class);
 }

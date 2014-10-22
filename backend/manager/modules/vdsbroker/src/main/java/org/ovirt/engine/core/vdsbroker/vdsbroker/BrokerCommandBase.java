@@ -183,7 +183,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
             outEx = new VDSNetworkException(getReturnStatus().mMessage);
             break;
         default:
-            log.errorFormat("Failed in {0} method", getCommandName());
+            log.error("Failed in '{}' method", getCommandName());
             outEx = createException();
             break;
         }
@@ -206,7 +206,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
         try {
             VdcBllErrors bllErrors = VdcBllErrors.forValue(xmlRpcStatus.mCode);
             if (bllErrors == null) {
-                log.warn("Unexpected return value: " + xmlRpcStatus);
+                log.warn("Unexpected return value: {}", xmlRpcStatus);
                 bllErrors = VdcBllErrors.unexpected;
             }
             return bllErrors;
@@ -238,7 +238,7 @@ public abstract class BrokerCommandBase<P extends VDSParametersBase> extends VDS
             } else {
                 returnValue = getReturnValueFromBroker().toString();
             }
-            log.infoFormat("Command {0} return value \n {1}", getClass().getName(), returnValue);
+            log.info("Command '{}' return value '{}'", getClass().getName(), returnValue);
             if (!StringUtils.isEmpty(getAdditionalInformation())) {
                 log.info(getAdditionalInformation());
             }

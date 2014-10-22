@@ -1,11 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.IrsBaseVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MarkPoolInReconstructModeVDSCommand<P extends IrsBaseVDSCommandParameters>
         extends IrsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(MarkPoolInReconstructModeVDSCommand.class);
 
     public MarkPoolInReconstructModeVDSCommand(P parameters) {
         super(parameters);
@@ -18,10 +20,9 @@ public class MarkPoolInReconstructModeVDSCommand<P extends IrsBaseVDSCommandPara
             proxyData.clearPoolTimers();
             proxyData.clearCache();
         } catch (Exception e) {
-            log.error("Could not change timers for pool " + getParameters().getStoragePoolId(), e);
+            log.error("Could not change timers for pool '{}': {}", getParameters().getStoragePoolId(), e.getMessage());
+            log.debug("Exception", e);
         }
         getVDSReturnValue().setSucceeded(true);
     }
-
-    private static final Log log = LogFactory.getLog(MarkPoolInReconstructModeVDSCommand.class);
 }

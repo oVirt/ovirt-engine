@@ -23,9 +23,9 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.ovirt.engine.core.common.businessentities.AttestationResultEnum;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class AttestationService {
     private static final String HEADER_HOSTS = "hosts";
@@ -34,7 +34,8 @@ public class AttestationService {
     private static final String HEADER_VTIME = "vtime";
     private static final String CONTENT_TYPE = "application/json";
     private static final AttestationService instance = new AttestationService();
-    private static final Log log = LogFactory.getLog(AttestationService.class);
+
+    private static final Logger log = LoggerFactory.getLogger(AttestationService.class);
 
     public static HttpClient getClient() {
         HttpClient httpClient = new HttpClient();
@@ -58,9 +59,8 @@ public class AttestationService {
                 httpClient.getHostConfiguration().setHost(attestationServer,
                         port, clientAuthHTTPS);
             } catch (Exception e) {
-                log.fatal(
-                        "Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work",
-                        e);
+                log.error("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work: {}", e.getMessage());
+                log.debug("Exception", e);
             }
         }
         return httpClient;
@@ -97,21 +97,19 @@ public class AttestationService {
             HttpClient httpClient = getClient();
             int statusCode = httpClient.executeMethod(postMethod);
             String strResponse = postMethod.getResponseBodyAsString();
-            log.debug("return attested result:" + strResponse);
+            log.debug("return attested result: {}", strResponse);
             if (statusCode == 200) {
                 values = parsePostedResp(strResponse);
             } else {
-                log.error("attestation error:" + strResponse);
+                log.error("attestation error: {}", strResponse);
             }
         } catch (JsonParseException e) {
-            log.error(
-                    String.format("Failed to parse result: [%s]",
-                            e.getMessage()), e);
+            log.error("Failed to parse result: {}", e.getMessage());
+            log.debug("Exception", e);
         } catch (IOException e) {
-            log.error(
-                    String.format(
-                            "Failed to attest hosts: [%s], make sure hosts are up and reachable",
-                            e.getMessage()), e);
+            log.error("Failed to attest hosts, make sure hosts are up and reachable: {}",
+                    e.getMessage());
+            log.debug("Exception", e);
         } finally {
             postMethod.releaseConnection();
         }

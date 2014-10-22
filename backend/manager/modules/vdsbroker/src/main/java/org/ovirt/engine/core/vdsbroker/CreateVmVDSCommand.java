@@ -12,14 +12,17 @@ import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromCloudInitVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.CreateVmFromSysPrepVDSCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSGenericException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(CreateVmVDSCommand.class);
+
     public CreateVmVDSCommand(P parameters) {
         super(parameters);
     }
@@ -57,7 +60,8 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                 }
             } catch (Exception e) {
-                log.error("Error in excuting CreateVmVDSCommand", e);
+                log.error("Error in excuting CreateVmVDSCommand: {}", e.getMessage());
+                log.error("Exception", e);
                 if (command != null && !command.getVDSReturnValue().getSucceeded()) {
                     ResourceManager.getInstance().RemoveAsyncRunningVm(getParameters().getVmId());
                 }
@@ -93,18 +97,18 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
         String vmName = getParameters().getVm().getName();
         VmDynamic vmDynamicFromDb = DbFacade.getInstance().getVmDynamicDao().get(guid);
         if (ResourceManager.getInstance().IsVmDuringInitiating(getParameters().getVm().getId())) {
-            log.infoFormat("Vm Running failed - vm {0}:{1} already running", guid, vmName);
+            log.info("Vm Running failed - vm '{}'({}) already running", vmName, guid);
             getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
             return false;
         } else {
             VMStatus vmStatus = vmDynamicFromDb.getStatus();
 
             if (vmStatus == VMStatus.ImageLocked) {
-                log.infoFormat("Vm Running failed - vm {0}:{1} - cannot run vm when image is locked", guid, vmName);
+                log.info("Vm Running failed - vm '{}'({}) - cannot run vm when image is locked", vmName, guid);
                 return false;
             }
             if (vmDynamicFromDb.getStatus() != VMStatus.Down && vmDynamicFromDb.getStatus() != VMStatus.Suspended) {
-                log.infoFormat("Vm Running failed - vm {0}:{1} already running, status {2}", guid, vmName, vmStatus);
+                log.info("Vm Running failed - vm '{}'({}) already running, status {}", vmName, guid, vmStatus);
                 getVDSReturnValue().setReturnValue(vmDynamicFromDb.getStatus());
                 return false;
             }
@@ -112,7 +116,7 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
             List<Snapshot> snapshots = DbFacade.getInstance().getSnapshotDao().getAll(guid);
 
             if (!snapshots.isEmpty() && SnapshotStatus.LOCKED == snapshots.get(snapshots.size() - 1).getStatus()) {
-                log.infoFormat("VM Running failed - VM {0}:{1} - cannot run VM when VM during Snapshot", guid, vmName);
+                log.info("VM Running failed - VM '{}'({}) - cannot run VM when VM during Snapshot", vmName, guid);
                 return false;
             }
         }
@@ -122,8 +126,8 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     private void handleCommandResult(CreateVDSCommand<?> command) {
         if (!command.getVDSReturnValue().getSucceeded() && command.getVDSReturnValue().getExceptionObject() != null) {
             if (command.getVDSReturnValue().getExceptionObject() instanceof VDSGenericException) {
-                log.errorFormat("VDS::create Failed creating vm '{0}' in vds = {1} : {2} error = {3}",
-                        getParameters().getVm().getName(), getVds().getId(), getVds().getName(),
+                log.error("VDS::create Failed creating vm '{}' in vds '{}'({}): {}",
+                        getParameters().getVm().getName(), getVds().getName(), getVds().getId(),
                         command.getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setReturnValue(VMStatus.Down);
                 getVDSReturnValue().setSucceeded(false);
@@ -138,6 +142,4 @@ public class CreateVmVDSCommand<P extends CreateVmVDSCommandParameters> extends 
     private void saveSetInitializedToDb(final Guid vmId) {
         DbFacade.getInstance().getVmDao().saveIsInitialized(vmId, true);
     }
-
-    private static final Log log = LogFactory.getLog(CreateVmVDSCommand.class);
 }

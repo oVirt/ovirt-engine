@@ -10,11 +10,12 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.SetVmStatusVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> extends VDSCommandBase<P> {
-    private static final Log log = LogFactory.getLog(SetVmStatusVDSCommand.class);
+
+    private static final Logger log = LoggerFactory.getLogger(SetVmStatusVDSCommand.class);
 
     public SetVmStatusVDSCommand(P parameters) {
         super(parameters);
@@ -26,7 +27,7 @@ public class SetVmStatusVDSCommand<P extends SetVmStatusVDSCommandParameters> ex
         final VMStatus status = parameters.getStatus();
 
         if (status == null) {
-            log.warnFormat("got request to change the status of VM whose id is {0} to null,  ignoring", parameters.getVmId());
+            log.warn("got request to change the status of VM whose id is '{}' to null,  ignoring", parameters.getVmId());
             return;
         }
 

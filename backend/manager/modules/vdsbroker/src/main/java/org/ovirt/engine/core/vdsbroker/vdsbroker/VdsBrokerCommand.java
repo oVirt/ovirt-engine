@@ -107,11 +107,12 @@ public abstract class VdsBrokerCommand<P extends VdsIdVDSCommandParametersBase> 
         catch (RuntimeException e) {
             printReturnValue();
             if (getAndSetVdsStatic() == null) {
-                log.errorFormat("Failed in {0} method, for vds id: {1}",
-                        getCommandName(), getParameters().getVdsId());
+                log.error("Failed in '{}' method, for vds id: '{}': {}",
+                        getCommandName(), getParameters().getVdsId(), e.getMessage());
             } else {
-                log.errorFormat("Failed in {0} method, for vds: {1}; host: {2}",
-                        getCommandName(), getAndSetVdsStatic().getName(), getAndSetVdsStatic().getHostName());
+                log.error("Failed in '{}' method, for vds: '{}'; host: '{}': {}",
+                        getCommandName(), getAndSetVdsStatic().getName(), getAndSetVdsStatic().getHostName(),
+                        e.getMessage());
             }
             throw e;
         }

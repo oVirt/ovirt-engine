@@ -25,10 +25,10 @@ import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.gluster.GlusterDBUtils;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.StatusReturnForXmlRpc;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @SuppressWarnings("unchecked")
 public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
@@ -81,7 +81,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
     private static final String MEMORY_POOLMISSES = "poolMisses";
     private static final String MEMORY_MAXSTDALLOC = "maxStdAlloc";
 
-    private static final Log log = LogFactory.getLog(GlusterVolumeStatusReturnForXmlRpc.class);
+    private static final Logger log = LoggerFactory.getLogger(GlusterVolumeStatusReturnForXmlRpc.class);
     private StatusForXmlRpc status;
     private final GlusterVolumeAdvancedDetails volumeAdvancedDetails = new GlusterVolumeAdvancedDetails();
 
@@ -194,7 +194,7 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
         if (brickEntity != null) {
             brickProperties.setBrickId(brickEntity.getId());
         } else {
-            log.warnFormat("Could not update brick {0} as not found in db", (String) brick.get(BRICK));
+            log.warn("Could not update brick '{}' as not found in db", brick.get(BRICK));
         }
 
         if (brick.containsKey(STATUS)) {
@@ -252,13 +252,13 @@ public class GlusterVolumeStatusReturnForXmlRpc extends StatusReturnForXmlRpc {
             GlusterServer glusterServer =
                     GlusterDBUtils.getInstance().getServerByUuid(Guid.createGuidFromString(glusterHostUuid));
             if (glusterServer == null) {
-                log.warnFormat("Could not update brick {0} to volume {1} - server uuid {2} not found",
+                log.warn("Could not update brick '{}' to volume '{}' - server uuid '{}' not found",
                         brickName, volume.getName(), glusterHostUuid);
                 return null;
             }
             String[] brickParts = brickName.split(":", -1);
             if (brickParts.length != 2) {
-                log.warnFormat("Invalid brick representation [" + brickName + "]");
+                log.warn("Invalid brick representation '{}'", brickName);
                 return null;
             }
             String brickDir = brickParts[1];

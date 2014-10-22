@@ -6,10 +6,13 @@ import java.util.Map;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.vdscommands.CreateVmVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends VmReturnVdsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(CreateVDSCommand.class);
+
     protected VM vm;
     protected Map<String, Object> createInfo;
     protected VmInfoBuilderBase builder;
@@ -46,7 +49,7 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
             info.append(createInfoEntry.getValue());
             sep = SEP;
         }
-        log.infoFormat("{0} {1}", getClass().getName(), info.toString());
+        log.info("{} {}", getClass().getName(), info);
     }
 
     private VmInfoBuilderBase createBuilder() {
@@ -81,6 +84,4 @@ public class CreateVDSCommand<P extends CreateVmVDSCommandParameters> extends Vm
         builder.buildVmSerialNumber();
         builder.buildVmNumaProperties();
     }
-
-    private static final Log log = LogFactory.getLog(CreateVDSCommand.class);
 }

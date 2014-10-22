@@ -25,7 +25,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
         proceedProxyReturnValue();
         setReturnValue(ParseSpmStatusResult(_result.spmStatus));
         if (((SpmStatusResult) getReturnValue()).getSpmStatus() == SpmStatus.SPM_ERROR) {
-            log.errorFormat("SPM {0} status returned SPM_ERROR on VDS {1}", getParameters().getStoragePoolId(),
+            log.error("SPM '{}' status returned SPM_ERROR on VDS '{}'", getParameters().getStoragePoolId(),
                     getParameters().getVdsId());
             throw new IRSNonOperationalException("SPM status returned SPM_ERROR");
         }
@@ -65,7 +65,7 @@ public class SpmStatusVDSCommand<P extends SpmStatusVDSCommandParameters> extend
                     .parseInt(_result.spmStatus.get("spmId").toString()) : -5);
             return statusResult;
         } catch (RuntimeException exp) {
-            log.errorFormat("Could not parse SPM Status: {0}", _result.spmStatus.toString());
+            log.error("Could not parse SPM Status: '{}'", _result.spmStatus);
             throw exp;
         }
     }

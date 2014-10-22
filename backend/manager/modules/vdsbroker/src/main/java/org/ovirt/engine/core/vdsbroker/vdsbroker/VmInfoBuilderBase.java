@@ -34,12 +34,12 @@ import org.ovirt.engine.core.compat.WindowsJavaTimezoneMapping;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class VmInfoBuilderBase {
 
-    protected static final Log log = LogFactory.getLog(VmInfoBuilderBase.class);
+    protected static final Logger log = LoggerFactory.getLogger(VmInfoBuilderBase.class);
     protected Map<String, Object> createInfo;
     protected VM vm;
     // IDE supports only 4 slots , slot 2 is preserved by VDSM to the CDROM

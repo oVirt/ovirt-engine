@@ -10,13 +10,16 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.utils.SizeConverter;
 import org.ovirt.engine.core.common.vdscommands.GetStorageDomainStatsVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcObjectDescriptor;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSCommandParameters>
         extends VdsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(GetStorageDomainStatsVDSCommand.class);
+
     private OneStorageDomainStatsReturnForXmlRpc _result;
 
     public GetStorageDomainStatsVDSCommand(P parameters) {
@@ -62,10 +65,10 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
                     Map<String, Object> alert = (Map<String, Object>) rawAlert;
                     Integer alertCode = (Integer) alert.get("code");
                     if (alertCode == null || VdcBllErrors.forValue(alertCode) == null) {
-                        log.warnFormat("Unrecognized alert code: {0}.", alertCode);
+                        log.warn("Unrecognized alert code: {}.", alertCode);
                         StringBuilder alertStringBuilder = new StringBuilder();
                         XmlRpcObjectDescriptor.toStringBuilder(alert, alertStringBuilder);
-                        log.infoFormat("The received alert is: {0}", alertStringBuilder.toString());
+                        log.info("The received alert is: {}", alertStringBuilder);
                     } else {
                         alerts.add(VdcBllErrors.forValue(alertCode));
                     }
@@ -75,11 +78,11 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
             }
             return domain;
         } catch (RuntimeException ex) {
-            log.errorFormat(
-                    "vdsBroker::buildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {0}",
-                    xmlRpcStruct.toString());
+            log.error(
+                    "vdsBroker::buildStorageDynamicFromXmlRpcStruct::Failed building Storage dynamic, xmlRpcStruct = {}",
+                    xmlRpcStruct);
             VDSErrorException outEx = new VDSErrorException(ex);
-            log.error(outEx);
+            log.error("Exception", outEx);
             throw outEx;
         }
     }
@@ -88,6 +91,4 @@ public class GetStorageDomainStatsVDSCommand<P extends GetStorageDomainStatsVDSC
     protected Object getReturnValueFromBroker() {
         return _result;
     }
-
-    private static final Log log = LogFactory.getLog(GetStorageDomainStatsVDSCommand.class);
 }

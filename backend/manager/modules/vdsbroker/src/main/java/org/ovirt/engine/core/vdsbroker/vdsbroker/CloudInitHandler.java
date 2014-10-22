@@ -15,13 +15,14 @@ import org.codehaus.jackson.map.JsonMappingException;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.utils.JsonHelper;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.yaml.snakeyaml.DumperOptions;
 import org.yaml.snakeyaml.Yaml;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CloudInitHandler {
-    private static final Log log = LogFactory.getLog(CloudInitHandler.class);
+
+    private static final Logger log = LoggerFactory.getLogger(CloudInitHandler.class);
 
     private final VmInit vmInit;
     private final Map<String, Object> metaData;
@@ -86,8 +87,8 @@ public class CloudInitHandler {
             String newStr = String.format("\"%s\" : ***", passwordKey);
             metaDataStr = metaDataStr.replace(oldStr, newStr);
         }
-        log.debugFormat("cloud-init meta-data:\n{0}", metaDataStr);
-        log.debugFormat("cloud-init user-data:\n{0}", userDataStr);
+        log.debug("cloud-init meta-data:\n{}", metaDataStr);
+        log.debug("cloud-init user-data:\n{}", userDataStr);
 
         return files;
     }

@@ -11,7 +11,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.NonOperationalReason;
@@ -46,8 +45,6 @@ import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
 import org.ovirt.engine.core.utils.lock.EngineLock;
 import org.ovirt.engine.core.utils.lock.LockManagerFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.utils.timer.OnTimerMethodAnnotation;
 import org.ovirt.engine.core.utils.timer.SchedulerUtil;
@@ -63,9 +60,11 @@ import org.ovirt.engine.core.vdsbroker.vdsbroker.HostNetworkTopologyPersisterImp
 import org.ovirt.engine.core.vdsbroker.vdsbroker.IVdsServer;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSNetworkException;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.VDSRecoveringException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class VdsManager {
-    private static Log log = LogFactory.getLog(VdsManager.class);
+    private static Logger log = LoggerFactory.getLogger(VdsManager.class);
     private static Map<Guid, String> recoveringJobIdMap = new ConcurrentHashMap<Guid, String>();
     private final int numberRefreshesBeforeSave = Config.<Integer> getValue(ConfigValues.NumberVmRefreshesBeforeSave);
     private final Object lockObj = new Object();
@@ -154,7 +153,7 @@ public class VdsManager {
     }
 
     private void initVdsBroker() {
-        log.infoFormat("Initialize vdsBroker ({0},{1})", vds.getHostName(), vds.getPort());
+        log.info("Initialize vdsBroker '{}:{}'", vds.getHostName(), vds.getPort());
 
         // Get the values of the timeouts:
         int clientTimeOut = Config.<Integer> getValue(ConfigValues.vdsTimeout) * 1000;
@@ -186,7 +185,7 @@ public class VdsManager {
                 synchronized (getLockObj()) {
                     tmpVds = vds = DbFacade.getInstance().getVdsDao().get(getVdsId());
                     if (vds == null) {
-                        log.errorFormat("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for {0}",
+                        log.error("VdsManager::refreshVdsRunTimeInfo - onTimer is NULL for '{}'",
                                 getVdsId());
                         return;
                     }
@@ -208,7 +207,7 @@ public class VdsManager {
                         if (!isInitialized() && vds.getStatus() != VDSStatus.NonResponsive
                                 && vds.getStatus() != VDSStatus.PendingApproval
                                 && vds.getStatus() != VDSStatus.InstallingOS) {
-                            log.infoFormat("Initializing Host: {0}", vds.getName());
+                            log.info("Initializing Host: '{}'", vds.getName());
                             ResourceManager.getInstance().HandleVdsFinishedInit(vds.getId());
                             setInitialized(true);
                         }
@@ -261,11 +260,12 @@ public class VdsManager {
     }
 
     private void logFailureMessage(RuntimeException ex) {
-        log.warnFormat(
-                "Failed to refresh VDS , vds = {0} : {1}, error = '{2}', continuing.",
-                vds.getId(),
+        log.warn(
+                "Failed to refresh VDS, continuing, vds ='{}' ('{}'): {}",
                 vds.getName(),
-                ex);
+                vds.getId(),
+                ex.getMessage());
+        log.error("Exception", ex);
     }
 
     private static void logException(final RuntimeException ex) {
@@ -273,9 +273,10 @@ public class VdsManager {
     }
 
     private void logAfterRefreshFailureMessage(RuntimeException ex) {
-        log.warnFormat(
-                "Failed to AfterRefreshTreatment VDS  error = '{0}', continuing.",
-                ExceptionUtils.getMessage(ex));
+        log.warn(
+                "Failed to AfterRefreshTreatment VDS, continuing: {}",
+                ex.getMessage());
+        log.debug("Exception", ex);
     }
 
     public boolean isMonitoringNeeded() {
@@ -298,11 +299,12 @@ public class VdsManager {
             logable.addCustomValue("ErrorMessage", ex.getMessage());
             logable.updateCallStackFromThrowable(ex);
             AuditLogDirector.log(logable, AuditLogType.VDS_INITIALIZING);
-            log.warnFormat(
-                    "Failed to refresh VDS , vds = {0} : {1}, error = {2}, continuing.",
-                    vds.getId(),
+            log.warn(
+                    "Failed to refresh VDS, continuing, vds='{}'({}): {}",
                     vds.getName(),
+                    vds.getId(),
                     ex.getMessage());
+            log.debug("Exception", ex);
             final int VDS_RECOVERY_TIMEOUT_IN_MINUTES = Config.<Integer> getValue(ConfigValues.VdsRecoveryTimeoutInMinutes);
             String jobId = SchedulerUtilQuartzImpl.getInstance().scheduleAOneTimeJob(this, "onTimerHandleVdsRecovering", new Class[0],
                     new Object[0], VDS_RECOVERY_TIMEOUT_IN_MINUTES, TimeUnit.MINUTES);
@@ -325,11 +327,12 @@ public class VdsManager {
                                 Guid.Empty);
                 setIsSetNonOperationalExecuted(true);
             } catch (RuntimeException exp) {
-                log.errorFormat(
-                            "HandleVdsRecoveringException::Error in recovery timer treatment, vds = {0} : {1}, error = {2}.",
-                            vds.getId(),
+                log.error(
+                            "HandleVdsRecoveringException::Error in recovery timer treatment, vds='{}'({}): {}",
                             vds.getName(),
+                            vds.getId(),
                             exp.getMessage());
+                log.debug("Exception", exp);
             }
         }
     }
@@ -491,7 +494,7 @@ public class VdsManager {
         if (vds != null && vds.getStatus() == VDSStatus.Error) {
             setStatus(VDSStatus.Up, vds);
             DbFacade.getInstance().getVdsDynamicDao().updateStatus(getVdsId(), VDSStatus.Up);
-            log.infoFormat("Settings host {0} to up after {1} failed attempts to run a VM",
+            log.info("Settings host '{}' to up after {} failed attempts to run a VM",
                     vds.getName(),
                     mFailedToRunVmAttempts);
             mFailedToRunVmAttempts.set(0);
@@ -526,7 +529,7 @@ public class VdsManager {
                             "Time",
                             Config.<Integer> getValue(ConfigValues.TimeToReduceFailedRunOnVdsInMinutes).toString()),
                     AuditLogType.VDS_FAILED_TO_RUN_VMS);
-            log.infoFormat("Vds {0} moved to Error mode after {1} attempts. Time: {2}", vds.getName(),
+            log.info("Vds '{}' moved to Error mode after {} attempts. Time: {}", vds.getName(),
                     mFailedToRunVmAttempts, new Date());
         }
     }
@@ -540,7 +543,7 @@ public class VdsManager {
     }
 
     public VDSStatus refreshCapabilities(AtomicBoolean processHardwareCapsNeeded, VDS vds) {
-        log.debugFormat("monitoring: refresh {0} capabilities", vds);
+        log.debug("monitoring: refresh '{}' capabilities", vds);
         VDS oldVDS = vds.clone();
         GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase> vdsBrokerCommand =
                 new GetCapabilitiesVDSCommand<VdsIdAndVdsVDSCommandParametersBase>(new VdsIdAndVdsVDSCommandParametersBase(vds));
@@ -567,9 +570,9 @@ public class VdsManager {
             if (vds.getSELinuxEnforceMode() == null || vds.getSELinuxEnforceMode().equals(SELinuxMode.DISABLED)) {
                 AuditLogDirector.log(new AuditLogableBase(vds.getId()), AuditLogType.VDS_NO_SELINUX_ENFORCEMENT);
                 if (vds.getSELinuxEnforceMode() != null) {
-                    log.warnFormat("Host {0} is running with disabled SELinux.", vds.getName());
+                    log.warn("Host '{}' is running with disabled SELinux.", vds.getName());
                 } else {
-                    log.warnFormat("Host {0} does not report SELinux enforcement information.", vds.getName());
+                    log.warn("Host '{}' does not report SELinux enforcement information.", vds.getName());
                 }
             }
 
@@ -581,8 +584,8 @@ public class VdsManager {
                 setIsSetNonOperationalExecuted(true);
 
                 if (returnStatus != VDSStatus.NonOperational) {
-                    log.debugFormat(
-                            "monitoring: vds {0} networks do not match its cluster networks, vds will be moved to NonOperational",
+                    log.debug(
+                            "monitoring: vds '{}' networks do not match its cluster networks, vds will be moved to NonOperational",
                             vds);
                     vds.setStatus(VDSStatus.NonOperational);
                     vds.setNonOperationalReason(nonOperationalReason);
@@ -619,7 +622,7 @@ public class VdsManager {
             }
             throw vdsBrokerCommand.getVDSReturnValue().getExceptionObject();
         } else {
-            log.errorFormat("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
+            log.error("refreshCapabilities:GetCapabilitiesVDSCommand failed with no exception!");
             throw new RuntimeException(vdsBrokerCommand.getVDSReturnValue().getExceptionString());
         }
     }
@@ -652,7 +655,8 @@ public class VdsManager {
     public boolean handleNetworkException(VDSNetworkException ex, VDS vds) {
         if (vds.getStatus() != VDSStatus.Down) {
             long timeoutToFence = calcTimeoutToFence(vds.getVmCount(), vds.getSpmStatus());
-            log.warnFormat("Host {0} is not responding. It will stay in Connecting state for a grace period of {1} seconds and after that an attempt to fence the host will be issued.",
+            log.warn("Host '{}' is not responding. It will stay in Connecting state for a grace period " +
+                    "of {} seconds and after that an attempt to fence the host will be issued.",
                 vds.getName(),
                 TimeUnit.MILLISECONDS.toSeconds(timeoutToFence));
             AuditLogableBase logable = new AuditLogableBase();
@@ -677,9 +681,9 @@ public class VdsManager {
             }
             setStatus(VDSStatus.NonResponsive, vds);
             moveVMsToUnknown();
-            log.infoFormat(
-                    "Server failed to respond, vds_id = {0}, vds_name = {1}, vm_count = {2}, " +
-                    "spm_status = {3}, non-responsive_timeout (seconds) = {4}, error = {5}",
+            log.info(
+                    "Server failed to respond, vds_id='{}', vds_name='{}', vm_count={}, " +
+                    "spm_status='{}', non-responsive_timeout (seconds)={}, error: {}",
                     vds.getId(), vds.getName(), vds.getVmCount(), vds.getSpmStatus(),
                     TimeUnit.MILLISECONDS.toSeconds(timeoutToFence), ex.getMessage());
 
@@ -712,19 +716,20 @@ public class VdsManager {
         case Down:
             break;
         case NonResponsive:
-            log.debugFormat(
-                    "Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
-                    vds.getId(),
+            log.debug(
+                    "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
                     vds.getName(),
+                    vds.getId(),
                     e.getMessage());
             break;
         default:
-            log.warnFormat(
-                    "Failed to refresh VDS , vds = {0} : {1}, VDS Network Error, continuing.\n{2}",
-                    vds.getId(),
+            log.warn(
+                    "Failed to refresh VDS, network error, continuing, vds='{}'({}): {}",
                     vds.getName(),
+                    vds.getId(),
                     e.getMessage());
         }
+        log.debug("Exception", e);
     }
 
     public void setIsSetNonOperationalExecuted(boolean isExecuted) {
@@ -812,10 +817,10 @@ public class VdsManager {
                                                 , vm.getId(), true, false, 0)
                                 );
                 if (returnValue != null && returnValue.getSucceeded()) {
-                    log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vm.getName(), vm.getMigratingToVds());
+                    log.info("Stopped migrating vm: '{}' on vds: '{}'", vm.getName(), vm.getMigratingToVds());
                 }
                 else {
-                    log.infoFormat("Could not stop migrating vm: {0} on vds: {1}", vm.getName(),
+                    log.info("Could not stop migrating vm: '{}' on vds: '{}'", vm.getName(),
                             vm.getMigratingToVds());
                 }
             }
@@ -856,11 +861,12 @@ public class VdsManager {
     public static void cancelRecoveryJob(Guid vdsId) {
         String jobId = recoveringJobIdMap.remove(vdsId);
         if (jobId != null) {
-            log.infoFormat("Cancelling the recovery from crash timer for VDS {0} because vds started initializing", vdsId);
+            log.info("Cancelling the recovery from crash timer for VDS '{}' because vds started initializing", vdsId);
             try {
                 SchedulerUtilQuartzImpl.getInstance().deleteJob(jobId);
             } catch (Exception e) {
-                log.warnFormat("Failed deleting job {0} at cancelRecoveryJob", jobId);
+                log.warn("Failed deleting job '{}' at cancelRecoveryJob: {}", jobId, e.getMessage());
+                log.debug("Exception", e);
             }
         }
     }

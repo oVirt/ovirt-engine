@@ -138,7 +138,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             break;
         }
         default: {
-            log.errorFormat("Search object type not handled: {0}", getParameters().getSearchTypeValue());
+            log.error("Search object type not handled: {}", getParameters().getSearchTypeValue());
             break;
         }
         }
@@ -265,7 +265,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             return new ArrayList<T>();
         }
 
-        log.debug("Executing generic query: " + data.getQuery());
+        log.debug("Executing generic query: {}", data.getQuery());
         return ListUtils.filter(dao.getAllWithQuery(data.getQuery()), filter);
     }
 
@@ -335,7 +335,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
             // query not in cache or the cached entry is too old, process the
             // search text.
             if (!isExistsValue || IsFromYesterday) {
-                log.debugFormat("ResourceManager::searchBusinessObjects(''{0}'') - entered", searchText);
+                log.debug("ResourceManager::searchBusinessObjects(''{}'') - entered", searchText);
                 String queryAuthz = null;
                 String queryNamespace = null;
                 ISyntaxChecker curSyntaxChecker;
@@ -369,7 +369,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                 searchObj.setSearchFrom(getParameters().getSearchFrom());
 
                 if (searchObj.getError() != SyntaxError.NO_ERROR) {
-                    log.infoFormat("ResourceManager::searchBusinessObjects - erroneous search text - ''{0}''",
+                    log.info("ResourceManager::searchBusinessObjects - erroneous search text - ''{}''",
                             searchText);
                     int startPos = searchObj.getErrorStartPos();
                     int endPos = searchObj.getErrorEndPos();
@@ -389,7 +389,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     return null;
                 }
                 if (!searchObj.getvalid()) {
-                    log.warnFormat("ResourceManager::searchBusinessObjects - Invalid search text - ''{0}''", searchText);
+                    log.warn("ResourceManager::searchBusinessObjects - Invalid search text - ''{}''", searchText);
                     return null;
                 }
                 // find if this is a trivial search expression (like 'Vms:' etc).
@@ -407,13 +407,14 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     mQueriesCache.put(searchKey, data);
             }
         } catch (SearchEngineIllegalCharacterException e) {
-            log.error("Search expression can not end with ESCAPE character:" + getParameters().getSearchPattern());
+            log.error("Search expression can not end with ESCAPE character: {}", getParameters().getSearchPattern());
             data = null;
         } catch (SqlInjectionException e) {
-            log.error("Sql Injection in search: " + getParameters().getSearchPattern());
+            log.error("Sql Injection in search: {}", getParameters().getSearchPattern());
             data = null;
         } catch (RuntimeException ex) {
-            log.warn("Illegal search: " + getParameters().getSearchPattern(), ex);
+            log.warn("Illegal search: {}: {}", getParameters().getSearchPattern(), ex.getMessage());
+            log.debug("Exception", ex);
             data = null;
         }
         return data;

@@ -40,7 +40,7 @@ public class IsoPrefixVDSCommand<T extends VdsAndPoolIDVDSParametersBase> extend
             try {
                 retVal = getBroker().getStoragePoolInfo(storagePoolId.toString());
             } catch (Exception ex) {
-                log.errorFormat("IsoPrefix Failed to get storage pool info (vds {0}, pool {1}).",
+                log.error("IsoPrefix Failed to get storage pool info (vds '{}', pool '{}').",
                         getParameters().getVdsId(), storagePoolId);
                 return StringUtils.EMPTY;
             }

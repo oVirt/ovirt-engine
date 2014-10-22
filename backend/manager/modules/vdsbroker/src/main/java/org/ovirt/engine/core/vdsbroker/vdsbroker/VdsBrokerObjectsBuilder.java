@@ -70,8 +70,8 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
 import org.ovirt.engine.core.utils.NumaUtils;
 import org.ovirt.engine.core.utils.SerializationFactory;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * This class encapsulate the knowledge of how to create objects from the VDS RPC protocol response.
@@ -79,6 +79,9 @@ import org.ovirt.engine.core.utils.log.LogFactory;
  */
 @SuppressWarnings({ "unchecked", "rawtypes" })
 public class VdsBrokerObjectsBuilder {
+
+    private static final Logger log = LoggerFactory.getLogger(VdsBrokerObjectsBuilder.class);
+
     private final static int VNC_START_PORT = 5900;
     private final static double NANO_SECONDS = 1000000000;
 
@@ -164,7 +167,7 @@ public class VdsBrokerObjectsBuilder {
             try {
                 vm.setSession(SessionState.valueOf(session));
             } catch (Exception e) {
-                log.errorFormat("vm session value illegal : {0}", session);
+                log.error("Illegal vm session '{}'.", session);
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.kvmEnable)) {
@@ -183,13 +186,13 @@ public class VdsBrokerObjectsBuilder {
             try {
                 vm.setDisplay(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_port).toString()));
             } catch (NumberFormatException e) {
-                log.errorFormat("vm display_port value illegal : {0}", xmlRpcStruct.get(VdsProperties.display_port));
+                log.error("Illegal vm display_port '{}'.", xmlRpcStruct.get(VdsProperties.display_port));
             }
         } else if (xmlRpcStruct.containsKey(VdsProperties.display)) {
             try {
                 vm.setDisplay(VNC_START_PORT + Integer.parseInt(xmlRpcStruct.get(VdsProperties.display).toString()));
             } catch (NumberFormatException e) {
-                log.errorFormat("vm display value illegal : {0}", xmlRpcStruct.get(VdsProperties.display));
+                log.error("Illegal vm display '{}'.", xmlRpcStruct.get(VdsProperties.display));
             }
         }
         if (xmlRpcStruct.containsKey(VdsProperties.display_secure_port)) {
@@ -197,7 +200,7 @@ public class VdsBrokerObjectsBuilder {
                 vm.setDisplaySecurePort(Integer.parseInt(xmlRpcStruct.get(VdsProperties.display_secure_port)
                         .toString()));
             } catch (NumberFormatException e) {
-                log.errorFormat("vm display_secure_port value illegal : {0}",
+                log.error("Illegal vm display_secure_port '{}'.",
                         xmlRpcStruct.get(VdsProperties.display_secure_port));
             }
         }
@@ -207,7 +210,7 @@ public class VdsBrokerObjectsBuilder {
                 vm.setDisplayType(DisplayType.valueOf(displayType));
 
             } catch (Exception e2) {
-                log.errorFormat("vm display type value illegal : {0}", displayType);
+                log.error("Illegal vm display type '{}'.", displayType);
             }
         }
         if (xmlRpcStruct.containsKey((VdsProperties.displayIp))) {
@@ -222,7 +225,7 @@ public class VdsBrokerObjectsBuilder {
             try {
                 vm.setUtcDiff(Integer.parseInt(utc_diff));
             } catch (NumberFormatException e) {
-                log.errorFormat("vm offset (utc_diff) value illegal : {0}", utc_diff);
+                log.error("Illegal vm offset (utc_diff) '{}'.", utc_diff);
             }
         }
 
@@ -231,7 +234,7 @@ public class VdsBrokerObjectsBuilder {
             try {
                 vm.setHash(hash);
             } catch (Exception e) {
-                log.errorFormat("vm hash value illegal : {0}", hash);
+                log.error("Illegal vm hash '{}'.", hash);
             }
         }
 
@@ -932,7 +935,8 @@ public class VdsBrokerObjectsBuilder {
                     data.setDelay(delay);
                     domainsData.add(data);
                 } catch (Exception e) {
-                    log.error("failed building domains", e);
+                    log.error("failed building domains: {}", e.getMessage());
+                    log.debug("Exception", e);
                 }
             }
             vds.setDomains(domainsData);
@@ -989,8 +993,7 @@ public class VdsBrokerObjectsBuilder {
                 int intValue = Integer.parseInt(stringValue);
                 return intValue;
             } catch (NumberFormatException nfe) {
-                String errMsg = String.format("Failed to parse %1$s value %2$s to integer", name, stringValue);
-                log.error(errMsg, nfe);
+                log.error("Failed to parse '{}' value '{}' to integer: {}", name, stringValue, nfe.getMessage());
             }
         }
         return null;
@@ -1010,7 +1013,7 @@ public class VdsBrokerObjectsBuilder {
             try {
                 return Long.parseLong(stringValue);
             } catch (NumberFormatException e) {
-                log.errorFormat("Failed to parse {0} value {1} to long", name, stringValue);
+                log.error("Failed to parse '{}' value '{}' to long: {}", name, stringValue, e.getMessage());
             }
         }
         return null;
@@ -1051,9 +1054,9 @@ public class VdsBrokerObjectsBuilder {
                 retval = calendar.getTime();
             }
         } catch (RuntimeException ex) {
-            String msg = String.format("VdsBroker::AssignDateTImeFromEpoch - failed to convert field %1$s to dateTime",
-                    name);
-            log.warn(msg, ex);
+            log.warn("VdsBroker::AssignDateTImeFromEpoch - failed to convert field '{}' to dateTime: {}",
+                    name, ex.getMessage());
+            log.debug("Exception", ex);
             retval = null;
         }
         return retval;
@@ -1168,7 +1171,7 @@ public class VdsBrokerObjectsBuilder {
                 statusName = statusName.replace(" ", "");
                 status = EnumUtils.valueOf(VMStatus.class, statusName, true);
             } catch (Exception e) {
-                log.errorFormat("Vm status: {0} illegal", statusName);
+                log.error("Illegal Vm status: '{}'.", statusName);
             }
         }
         return status;
@@ -1740,6 +1743,4 @@ public class VdsBrokerObjectsBuilder {
         }
         return list;
     }
-
-    private static final Log log = LogFactory.getLog(VdsBrokerObjectsBuilder.class);
 }

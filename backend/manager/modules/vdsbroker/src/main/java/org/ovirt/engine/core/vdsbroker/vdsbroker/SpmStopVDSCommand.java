@@ -68,41 +68,43 @@ public class SpmStopVDSCommand<P extends SpmStopVDSCommandParameters> extends Vd
                     }
                 } catch (Exception e) {
                     performSpmStop = false;
-                    log.infoFormat("SpmStopVDSCommand::Could not get tasks on vds {0}, reason: {1}",
+                    log.info("SpmStopVDSCommand::Could not get tasks on vds '{}': {}",
                             getVds().getName(),
                             e.getMessage());
+                    log.debug("Exception", e);
                 }
                 if (performSpmStop) {
-                    log.infoFormat("SpmStopVDSCommand::Stopping SPM on vds {0}, pool id {1}", getVds().getName(),
+                    log.info("SpmStopVDSCommand::Stopping SPM on vds '{}', pool id '{}'", getVds().getName(),
                             getParameters().getStoragePoolId());
                     status = getBroker().spmStop(getParameters().getStoragePoolId().toString());
                     proceedProxyReturnValue();
                 } else {
                     getVDSReturnValue().setSucceeded(false);
                     if (getVDSReturnValue().getVdsError() == null) {
-                        log.infoFormat("SpmStopVDSCommand::Not stopping SPM on vds {0}, pool id {1} as there are uncleared tasks",
+                        log.info("SpmStopVDSCommand::Not stopping SPM on vds '{}', pool id '{}' as there are uncleared tasks",
                                 getVds().getName(),
                                 getParameters().getStoragePoolId());
                         VDSError error = new VDSError();
                         error.setCode(VdcBllErrors.TaskInProgress);
                         getVDSReturnValue().setVdsError(error);
                     } else if (getVDSReturnValue().getVdsError().getCode() == VdcBllErrors.VDS_NETWORK_ERROR) {
-                        log.infoFormat(
-                                "SpmStopVDSCommand::Could not get tasks on vds {0} - network exception, not stopping spm! pool id {1}",
+                        log.info(
+                                "SpmStopVDSCommand::Could not get tasks on vds '{}' - network exception, not stopping spm! pool id '{}'",
                                 getVds().getName(),
                                 getParameters().getStoragePoolId());
                     }
                 }
             } else {
-                log.infoFormat("SpmStopVDSCommand:: vds {0} is in {1} status - not performing spm stop, pool id {2}",
+                log.info("SpmStopVDSCommand:: vds '{}' is in '{}' status - not performing spm stop, pool id '{}'",
                         getVds().getName(), getVds().getStatus(), getParameters().getStoragePoolId());
                 getVDSReturnValue().setVdsError(new VDSError(VdcBllErrors.VDS_NETWORK_ERROR,
                         "Vds is in incorrect status"));
                 getVDSReturnValue().setSucceeded(false);
             }
         } catch (RuntimeException exp) {
-            log.warnFormat("could not stop spm of pool {0} on vds {1} - reason: {2}", getParameters()
-                    .getStoragePoolId(), getParameters().getVdsId(), exp.toString());
+            log.warn("Could not stop spm of pool '{}' on vds '{}': {}", getParameters()
+                    .getStoragePoolId(), getParameters().getVdsId(), exp.getMessage());
+            log.debug("Exception", exp);
             getVDSReturnValue().setExceptionObject(exp);
             getVDSReturnValue().setSucceeded(false);
         } finally {

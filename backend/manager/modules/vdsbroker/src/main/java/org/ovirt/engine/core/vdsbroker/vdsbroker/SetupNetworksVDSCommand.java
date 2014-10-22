@@ -17,8 +17,8 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters> extends FutureVDSCommand<T> {
 
@@ -28,7 +28,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
     protected static final String SLAVES = "nics";
     private static final String DEFAULT_ROUTE = "defaultRoute";
     private static final Map<String, String> REMOVE_OBJ = Collections.singletonMap("remove", Boolean.TRUE.toString());
-    private static final Log log = LogFactory.getLog(SetupNetworksVDSCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(SetupNetworksVDSCommand.class);
 
     public SetupNetworksVDSCommand(T parameters) {
         super(parameters);
@@ -80,7 +80,7 @@ public class SetupNetworksVDSCommand<T extends SetupNetworksVdsCommandParameters
 
             Set<Version> supportedClusterVersionsSet = host.getSupportedClusterVersionsSet();
             if (supportedClusterVersionsSet == null || supportedClusterVersionsSet.isEmpty()) {
-                log.warnFormat("Host {0} ({1}) doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
+                log.warn("Host '{}' ('{}') doesn't contain Supported Cluster Versions, therefore 'defaultRoute'"
                         + " will not be sent via the SetupNetworks", host.getName(), host.getId());
             } else if (FeatureSupported.defaultRoute(Collections.max(supportedClusterVersionsSet))
                     && NetworkUtils.isManagementNetwork(network)

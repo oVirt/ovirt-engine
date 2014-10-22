@@ -28,8 +28,8 @@ public class HibernateVDSCommand<P extends HibernateVDSCommandParameters> extend
             getVDSReturnValue().setSucceeded(true);
         }
         else {
-            log.errorFormat("Failed to hibernate vm '{0}' in vds = {1} : {2}, error = {3}",
-                    getParameters().getVmId(), getVds().getId(), getVds().getName(), retVal.getExceptionString());
+            log.error("Failed to hibernate vm '{}' in vds '{}'({}): {}",
+                    getParameters().getVmId(), getVds().getName(), getVds().getId(), retVal.getExceptionString());
             getVDSReturnValue().setSucceeded(false);
             getVDSReturnValue().setExceptionString(retVal.getExceptionString());
             getVDSReturnValue().setExceptionObject(retVal.getExceptionObject());

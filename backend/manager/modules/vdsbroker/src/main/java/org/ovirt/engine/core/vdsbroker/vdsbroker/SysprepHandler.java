@@ -16,8 +16,8 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.utils.FileUtil;
 import org.ovirt.engine.core.utils.collections.DomainsPasswordMap;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class SysprepHandler {
     private static final Map<String, String> userPerDomain = new HashMap<String, String>();
@@ -25,7 +25,7 @@ public final class SysprepHandler {
     public static final Map<String, Integer> timeZoneIndex = new HashMap<String, Integer>();
     private static OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
 
-    private static final Log log = LogFactory.getLog(SysprepHandler.class);
+    private static final Logger log = LoggerFactory.getLogger(SysprepHandler.class);
 
     static {
         initTimeZones();
@@ -167,7 +167,7 @@ public final class SysprepHandler {
     private static String useDefaultIfNull(String key, String value, String defaultValue,
             boolean printDefaultValue) {
         if (value == null && printDefaultValue) {
-            log.warnFormat("Could not find value for key '{0}'. Going to use default value of: '{1}'",
+            log.warn("Could not find value for key '{}'. Going to use default value of: '{}'",
                     key, defaultValue);
         }
         return value != null ? value : defaultValue;
@@ -201,10 +201,11 @@ public final class SysprepHandler {
             try {
                 content = FileUtil.readAllText(fileName);
             } catch (Exception e) {
-                log.error("Failed to read sysprep template: " + fileName, e);
+                log.error("Failed to read sysprep template '{}': {}", fileName, e.getMessage());
+                log.debug("Exception", e);
             }
         } else {
-            log.error("Sysprep template: " + fileName + " not found");
+            log.error("Sysprep template: '{}' not found", fileName);
         }
         return content;
     }
@@ -313,7 +314,7 @@ public final class SysprepHandler {
                 return timeZoneEntry.getValue().toString();
             }
         }
-        log.errorFormat("getTimezoneIndexByKey: cannot find timezone key '{0}'", key);
+        log.error("getTimezoneIndexByKey: cannot find timezone key '{}'", key);
         return key;
     }
 

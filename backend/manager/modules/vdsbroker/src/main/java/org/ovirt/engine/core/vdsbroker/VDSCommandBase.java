@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.vdsbroker;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.vdscommands.VDSParametersBase;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.dal.VdcCommandBase;
@@ -79,10 +78,8 @@ public abstract class VDSCommandBase<P extends VDSParametersBase> extends VdcCom
     }
 
     private void logException(RuntimeException ex) {
-        log.errorFormat("Command {0} execution failed. Exception: {1}", this, ExceptionUtils.getMessage(ex));
-        if (log.isDebugEnabled()) {
-            log.debugFormat("Detailed stacktrace:", ex);
-        }
+        log.error("Command '{}' execution failed: {}", this, ex.getMessage());
+        log.debug("Exception", ex);
     }
 
     protected String getAdditionalInformation() {

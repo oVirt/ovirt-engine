@@ -37,7 +37,7 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
             }
             return result;
         } catch (RuntimeException exp) {
-            log.errorFormat("Could not parse task info list: '{0}'", taskInfoList.toString());
+            log.error("Could not parse task info list: '{}'", taskInfoList);
             throw exp;
         }
     }
@@ -50,8 +50,8 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
                 taskType = AsyncTaskType.valueOf(deTaskType);
             } catch (Exception e) {
                 taskType = AsyncTaskType.unknown;
-                log.warn("The task type in the vdsm response is " + deTaskType
-                        + " and does not appear in the AsyncTaskType enum");
+                log.warn("The task type in the vdsm response is '{}' and does not " +
+                        " appear in the AsyncTaskType enum", deTaskType);
             }
 
             AsyncTaskCreationInfo tempVar = new AsyncTaskCreationInfo();
@@ -63,9 +63,9 @@ public class HSMGetAllTasksInfoVDSCommand<P extends VdsIdVDSCommandParametersBas
         }
 
         catch (RuntimeException e) {
-            log.error(String.format(
-                    "Could not parse single task info: '%1$s'  (possibly specific task should not be monitored).",
-                    taskInfo), e);
+            log.error("Could not parse single task info: '{}' (possibly specific task should not be monitored): {}",
+                    taskInfo, e.getMessage());
+            log.debug("Exception", e);
             return null;
         }
     }

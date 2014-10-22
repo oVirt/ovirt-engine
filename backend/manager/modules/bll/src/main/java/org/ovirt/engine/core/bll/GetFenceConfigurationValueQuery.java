@@ -20,13 +20,14 @@ public class GetFenceConfigurationValueQuery<P extends GetConfigurationValuePara
                 final ConfigValues value = ConfigValues.valueOf(params.getConfigValue().toString());
                 String version = params.getVersion();
                 if (version == null) {
-                    log.warnFormat("calling {0} ({2}) with null version, using default {1} for version",
+                    log.warn("calling {} ({}) with null version, using default {} for version",
                             GetConfigurationValueQuery.class.getSimpleName(), ConfigCommon.defaultConfigurationVersion, value);
                     version = ConfigCommon.defaultConfigurationVersion;
                 }
                 getQueryReturnValue().setReturnValue(FenceConfigHelper.getFenceConfigurationValue(getParameters().getConfigValue().toString(), version));
             } catch (Exception e) {
-                log.error("Unable to return config parameter: " + getParameters(), e);
+                log.error("Unable to return config parameter {}: {}", getParameters(), e.getMessage() );
+                log.debug("Exception", e);
             }
         }
     }

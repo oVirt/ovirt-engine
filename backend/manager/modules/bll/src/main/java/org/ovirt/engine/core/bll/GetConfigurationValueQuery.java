@@ -19,13 +19,14 @@ public class GetConfigurationValueQuery<P extends GetConfigurationValueParameter
                 final ConfigValues value = ConfigValues.valueOf(params.getConfigValue().toString());
                 String version = params.getVersion();
                 if (version == null) {
-                    log.warnFormat("calling {0} ({2}) with null version, using default {1} for version",
-                            GetConfigurationValueQuery.class.getSimpleName(), ConfigCommon.defaultConfigurationVersion, value);
+                    log.warn("calling {} ({}) with null version, using default {} for version",
+                            GetConfigurationValueQuery.class.getSimpleName(), value, ConfigCommon.defaultConfigurationVersion);
                     version = ConfigCommon.defaultConfigurationVersion;
                 }
                 returnValue = Config.<Object> getValue(value, version);
             } catch (Exception e) {
-                log.error("Unable to return config parameter: " + getParameters(), e);
+                log.error("Unable to return config parameter {}: {}", getParameters(), e.getMessage());
+                log.debug("Exception", e);
             }
         }
 

@@ -79,7 +79,7 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
         } catch (InterruptedException e) {
             throw new RuntimeException(e);
         } catch (Exception e) {
-            log.debug(e);
+            log.debug("Exception", e);
             throw createNetworkException(e);
         }
 
@@ -147,18 +147,12 @@ public abstract class HttpImageTaskVDSCommand<T extends HttpMethodBase, P extend
     }
 
     private void logExecution() {
-        log.info("-- executeVdsBrokerCommand: ");
-        log.infoFormat("-- parameters:" + "\r\n"
-                + "                spUUID={0}" + "\r\n"
-                + "                sdUUID={1}" + "\r\n"
-                + "                imageGUID={2}" + "\r\n"
-                + "                volUUID={3}" + "\r\n"
-                + "                size={4}" + "\r\n",
-                getParameters().getStoragePoolId().toString(),
-                getParameters().getStorageDomainId().toString(),
-                getParameters().getImageGroupId().toString(),
-                getParameters().getImageId().toString(),
-                getParameters().getSize());
+        log.info("-- executeVdsBrokerCommand, parameters:");
+        log.info("++ spUUID={}", getParameters().getStoragePoolId());
+        log.info("++ sdUUID={}", getParameters().getStorageDomainId());
+        log.info("++ imageGUID={}", getParameters().getImageGroupId());
+        log.info("++ volUUID={}", getParameters().getImageId());
+        log.info("++ size={}", getParameters().getSize());
     }
 
     protected void throwVdsErrorException(String message, VdcBllErrors error) {

@@ -4,11 +4,14 @@ import org.ovirt.engine.core.common.asynctasks.AsyncTaskCreationInfo;
 import org.ovirt.engine.core.common.asynctasks.AsyncTaskType;
 import org.ovirt.engine.core.common.vdscommands.CopyImageVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.storage.StorageDomainHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extends IrsCreateCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(CopyImageVDSCommand.class);
+
     public CopyImageVDSCommand(P parameters) {
         super(parameters);
     }
@@ -22,17 +25,16 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
          */
         setReturnValue(Guid.Empty);
 
-        log.info("-- executeIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID");
-        log.infoFormat("-- copyImage parameters:" + "\r\n" + "                sdUUID={0}" + "\r\n"
-                + "                spUUID={1}" + "\r\n" + "                vmGUID={2}" + "\r\n"
-                + "                srcImageGUID={3}" + "\r\n" + "                srcVolUUID={4}" + "\r\n"
-                + "                dstImageGUID={5}" + "\r\n" + "                dstVolUUID={6}" + "\r\n"
-                + "                descr={7}" + "\r\n" + "                dstSdUUID={8}"
-                , getParameters().getStorageDomainId()
-                .toString(), getParameters().getStoragePoolId().toString(), getParameters().getVmId()
-                .toString(), getParameters().getImageGroupId().toString(), getParameters().getImageId()
-                .toString(), getParameters().getdstImageGroupId().toString(), getParameters().getDstImageId()
-                .toString(), getParameters().getImageDescription(), getParameters().getDstStorageDomainId());
+        log.info("-- executeIrsBrokerCommand: calling 'copyImage' with two new parameters: description and UUID. Parameters:");
+        log.info("++ sdUUID={}", getParameters().getStorageDomainId());
+        log.info("++ spUUID={}", getParameters().getStoragePoolId());
+        log.info("++ vmGUID={}", getParameters().getVmId());
+        log.info("++ srcImageGUID={}", getParameters().getImageGroupId());
+        log.info("++ srcVolUUID={}", getParameters().getImageId());
+        log.info("++ dstImageGUID={}", getParameters().getdstImageGroupId());
+        log.info("++ dstVolUUID={}", getParameters().getDstImageId());
+        log.info("++ descr={}", getParameters().getImageDescription());
+        log.info("++ dstSdUUID={}", getParameters().getDstStorageDomainId());
 
         // NOTE: The 'uuidReturn' variable will contain the taskID and not the
         // created image id!
@@ -60,6 +62,4 @@ public class CopyImageVDSCommand<P extends CopyImageVDSCommandParameters> extend
         getVDSReturnValue().setCreationInfo(
                 new AsyncTaskCreationInfo(taskID, AsyncTaskType.copyImage, getParameters().getStoragePoolId()));
     }
-
-    private static final Log log = LogFactory.getLog(CopyImageVDSCommand.class);
 }

@@ -11,12 +11,9 @@ public class GetDiskAlignmentVDSCommand<P extends GetDiskAlignmentVDSCommandPara
 
     @Override
     protected void executeVdsBrokerCommand() {
-        log.info("-- GetDiskAlignmentVDSCommand::executeVdsBrokerCommand: calling 'getDiskAlignment' ");
-        log.infoFormat("-- getDiskAlignment parameters:" + "\r\n"
-                + "                vmId={0}" + "\r\n"
-                + "                driveSpecs={1}" + "\r\n",
-                getParameters().getVmId().toString(),
-                getParameters().getDriveSpecs().toString());
+        log.info("-- GetDiskAlignmentVDSCommand::executeVdsBrokerCommand: calling 'getDiskAlignment', parameters:");
+        log.info("++ vmId={}", getParameters().getVmId());
+        log.info("++ driveSpecs={}", getParameters().getDriveSpecs());
 
         diskAlignment = getBroker().getDiskAlignment(getParameters().getVmId().toString(), getParameters().getDriveSpecs());
         proceedProxyReturnValue();

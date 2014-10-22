@@ -81,18 +81,20 @@ public abstract class QueriesCommandBase<P extends VdcQueryParametersBase> exten
                         } else {
                             returnValue.setExceptionString(vdcExc.getMessage());
                         }
-                        log.errorFormat("Query {0} failed. Exception message is {1} : {2}",
+                        log.error("Query '{}' failed: {}",
                                 getClass().getSimpleName(),
-                                vdcExc.getMessage(), vdcExc);
+                                vdcExc.getMessage());
+                        log.error("Exception", vdcExc);
                     } else {
                         returnValue.setExceptionString(ex.getMessage());
-                        log.errorFormat("Query {0} failed. Exception message is {1} : {2}",
+                        log.error("Query '{}' failed: {}",
                                 getClass().getSimpleName(),
-                                ex.getMessage(), ex);
+                                ex.getMessage());
+                        log.error("Exception", ex);
                     }
                 }
             } else {
-                log.error("Query execution failed due to invalid inputs. " + returnValue.getExceptionString());
+                log.error("Query execution failed due to invalid inputs: {}", returnValue.getExceptionString());
             }
         } else {
             String errMessage = "Query execution failed due to insufficient permissions.";

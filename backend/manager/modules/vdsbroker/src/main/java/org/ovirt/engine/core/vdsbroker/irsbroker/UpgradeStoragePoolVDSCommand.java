@@ -1,10 +1,13 @@
 package org.ovirt.engine.core.vdsbroker.irsbroker;
 
 import org.ovirt.engine.core.common.vdscommands.UpgradeStoragePoolVDSCommandParameters;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class UpgradeStoragePoolVDSCommand<P extends UpgradeStoragePoolVDSCommandParameters> extends IrsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(UpgradeStoragePoolVDSCommand.class);
+
     public UpgradeStoragePoolVDSCommand(P parameters) {
         super(parameters);
     }
@@ -15,10 +18,8 @@ public class UpgradeStoragePoolVDSCommand<P extends UpgradeStoragePoolVDSCommand
         final String storagePoolId = params.getStoragePoolId().toString();
         final String targetVersion = params.getCompatibilityVersion();
 
-        log.infoFormat("Upgrading storage pool {0} to version {1}", storagePoolId, targetVersion);
+        log.info("Upgrading storage pool '{}' to version '{}'.", storagePoolId, targetVersion);
         status = getIrsProxy().upgradeStoragePool(storagePoolId, targetVersion);
         proceedProxyReturnValue();
     }
-
-    private static final Log log = LogFactory.getLog(UpgradeStoragePoolVDSCommand.class);
 }

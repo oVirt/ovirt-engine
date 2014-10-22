@@ -9,13 +9,16 @@ import org.ovirt.engine.core.common.businessentities.network.VmNetworkInterface;
 import org.ovirt.engine.core.common.businessentities.network.VmNetworkStatistics;
 import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.DestroyVDSCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extends VdsIdVDSCommandBase<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(DestroyVmVDSCommand.class);
+
     public DestroyVmVDSCommand(P parameters) {
         super(parameters);
     }
@@ -78,10 +81,10 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
 
                 getVDSReturnValue().setReturnValue(curVm.getStatus());
             } else if (vdsBrokerCommand.getVDSReturnValue().getExceptionObject() != null) {
-                log.errorFormat("VDS::destroy Failed destroying vm '{0}' in vds = {1} : {2}, error = {3}",
+                log.error("VDS::destroy Failed destroying vm '{}' in vds '{}'({}): {}",
                         parameters.getVmId(),
-                        getVds().getId(),
                         getVds().getName(),
+                        getVds().getId(),
                         vdsBrokerCommand
                                 .getVDSReturnValue().getExceptionString());
                 getVDSReturnValue().setSucceeded(false);
@@ -103,6 +106,4 @@ public class DestroyVmVDSCommand<P extends DestroyVmVDSCommandParameters> extend
                     parameters.getGracefully() ? VMStatus.PoweringDown : VMStatus.Down);
         }
     }
-
-    private static final Log log = LogFactory.getLog(DestroyVmVDSCommand.class);
 }

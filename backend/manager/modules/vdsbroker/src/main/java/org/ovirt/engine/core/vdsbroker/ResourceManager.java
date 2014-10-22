@@ -41,10 +41,10 @@ import org.ovirt.engine.core.utils.collections.MultiValueMapUtils;
 import org.ovirt.engine.core.utils.ejb.BeanProxyType;
 import org.ovirt.engine.core.utils.ejb.BeanType;
 import org.ovirt.engine.core.utils.ejb.EjbUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureVDSCommand;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ResourceManager {
 
@@ -56,7 +56,7 @@ public class ResourceManager {
 
     private static final String VDSCommandPrefix = "VDSCommand";
 
-    private static final Log log = LogFactory.getLog(ResourceManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ResourceManager.class);
 
     private ResourceManager() {
 
@@ -67,7 +67,7 @@ public class ResourceManager {
     }
 
     public void init() {
-        log.info("Start initializing " + getClass().getSimpleName());
+        log.info("Start initializing {}", getClass().getSimpleName());
         List<VDS> allVdsList = DbFacade.getInstance().getVdsDao().getAll();
         HashSet<Guid> nonResponsiveVdss = new HashSet<Guid>();
         for (VDS helper_vds : allVdsList) {
@@ -127,7 +127,7 @@ public class ResourceManager {
             AddVds(curVds, true);
         }
         IrsBrokerCommand.init();
-        log.info("Finished initializing " + getClass().getSimpleName());
+        log.info("Finished initializing {}", getClass().getSimpleName());
     }
 
     public boolean AddAsyncRunningVm(Guid vmId) {
@@ -212,7 +212,7 @@ public class ResourceManager {
         }
         vdsManager.schedulJobs();
         vdsManagersDict.put(vds.getId(), vdsManager);
-        log.infoFormat("VDS {0} was added to the Resource Manager", vds.getId());
+        log.info("VDS '{}' was added to the Resource Manager", vds.getId());
 
     }
 
@@ -236,7 +236,7 @@ public class ResourceManager {
         VdsManager vdsManger = vdsManagersDict.get(vdsId);
         if (vdsManger == null) {
             if (!newHost) {
-                log.errorFormat("Cannot get vdsManager for vdsid={0}", vdsId);
+                log.error("Cannot get vdsManager for vdsid='{}'.", vdsId);
             }
         }
         return vdsManger;
@@ -382,10 +382,12 @@ public class ResourceManager {
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
-                log.error("CreateCommand failed", e.getCause());
+                log.error("CreateCommand failed: {}", e.getCause().getMessage());
+                log.error("Exception", e);
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
-            log.error("CreateCommand failed", e);
+            log.error("CreateCommand failed: {}", e.getMessage());
+            log.debug("Exception", e);
         }
         return null;
     }
@@ -404,10 +406,12 @@ public class ResourceManager {
             }
         } catch (Exception e) {
             if (e.getCause() != null) {
-                log.error("CreateFutureCommand failed", e.getCause());
+                log.error("CreateFutureCommand failed: {}", e.getCause().getMessage());
+                log.debug("Exception", e);
                 throw new RuntimeException(e.getCause().getMessage(), e.getCause());
             }
-            log.error("CreateFutureCommand failed", e);
+            log.error("CreateFutureCommand failed: {}", e.getMessage());
+            log.debug("Exception", e);
         }
         return null;
 

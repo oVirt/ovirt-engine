@@ -79,7 +79,7 @@ public class VmOldInfoBuilder extends VmInfoBuilderBase {
                             drive.put("index", String.valueOf(ideIndexSlots[ideCount]));
                             ideCount++;
                         } catch (IndexOutOfBoundsException e) {
-                            log.errorFormat("buildVmDrives throws IndexOutOfBoundsException for index {0}, IDE slots are limited to 4.",
+                            log.error("buildVmDrives throws IndexOutOfBoundsException for index {}, IDE slots are limited to 4.",
                                     ideCount);
                             throw e;
                         }

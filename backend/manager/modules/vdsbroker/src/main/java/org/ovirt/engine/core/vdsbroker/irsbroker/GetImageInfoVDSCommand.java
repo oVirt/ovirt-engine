@@ -14,11 +14,14 @@ import org.ovirt.engine.core.common.utils.EnumUtils;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.StatusForXmlRpc;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> extends IrsBrokerCommand<P> {
+
+    private static final Logger log = LoggerFactory.getLogger(GetImageInfoVDSCommand.class);
+
     protected OneImageInfoReturnForXmlRpc imageInfoReturn;
 
     @Override
@@ -58,16 +61,14 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     protected void proceedProxyReturnValue() {
         VdcBllErrors returnStatus = getReturnValueFromStatus(getReturnStatus());
         if (returnStatus != VdcBllErrors.Done) {
-            log.errorFormat(
-                    "IrsBroker::getImageInfo::Failed getting image info imageId = {0} does not exist on domainName = {1} , domainId = {2},  error code: {3}, message: {4}",
-                    getParameters().getImageId().toString(),
+            log.error(
+                    "IrsBroker::getImageInfo::Failed getting image info imageId='{}' does not exist on domainName='{}', domainId='{}', error code: '{}', message: {}",
+                    getParameters().getImageId(),
                     DbFacade.getInstance().getStorageDomainStaticDao()
                             .get(getParameters().getStorageDomainId())
                             .getStorageName(),
-                    getParameters()
-                            .getStorageDomainId().toString(),
-                    returnStatus
-                            .toString(),
+                    getParameters().getStorageDomainId(),
+                    returnStatus,
                     imageInfoReturn.mStatus.mMessage);
             throw new IRSErrorException(returnStatus.toString());
         }
@@ -117,9 +118,9 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
                         .toString(), true));
             }
         } catch (RuntimeException ex) {
-            log.errorFormat("irsBroker::buildImageEntity::Failed building DIskImage");
+            log.error("irsBroker::buildImageEntity::Failed building DIskImage: {}", ex.getMessage());
             printReturnValue();
-            log.error(ex.getMessage(), ex);
+            log.debug("Exception", ex);
             newImage = null;
         }
 
@@ -129,6 +130,4 @@ public class GetImageInfoVDSCommand<P extends GetImageInfoVDSCommandParameters> 
     private static Date MakeDTFromCTime(long ctime) {
         return new Date(ctime * 1000L);
     }
-
-    private static final Log log = LogFactory.getLog(GetImageInfoVDSCommand.class);
 }

@@ -34,17 +34,17 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.utils.CorrelationIdTracker;
 import org.ovirt.engine.core.utils.crypt.EngineEncryptionUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.ssl.AuthSSLProtocolSocketFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureCall;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XmlRpcUtils {
 
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
-    private static final Log log = LogFactory.getLog(XmlRpcUtils.class);
+    private static final Logger log = LoggerFactory.getLogger(XmlRpcUtils.class);
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;
@@ -56,7 +56,7 @@ public class XmlRpcUtils {
                 Protocol clientAuthHTTPS = new Protocol("https", factory, 54321);
                 Protocol.registerProtocol("https", clientAuthHTTPS);
             } catch (Exception e) {
-                log.fatal("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work", e);
+                log.error("Failed to init AuthSSLProtocolSocketFactory. SSL connections will not work", e);
             }
         }
     }
