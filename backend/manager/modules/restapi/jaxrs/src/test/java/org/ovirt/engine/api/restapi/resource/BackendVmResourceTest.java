@@ -803,6 +803,21 @@ public class BackendVmResourceTest
     }
 
     @Test
+    public void testMigrateWithClusterId() throws Exception {
+        setUriInfo(setUpActionExpectations(VdcActionType.MigrateVm,
+                MigrateVmParameters.class,
+                new String[] { "VmId", "ForceMigrationForNonMigratableVm", "TargetVdsGroupId"},
+                new Object[] { GUIDS[0], Boolean.FALSE, GUIDS[1]}));
+
+        Action action = new Action();
+        Cluster cluster = new Cluster();
+        cluster.setId(GUIDS[1].toString());
+        action.setCluster(cluster);
+
+        verifyActionResponse(resource.migrate(action));
+    }
+
+    @Test
     public void testExport() throws Exception {
         testExportWithStorageDomainId(false, false);
     }

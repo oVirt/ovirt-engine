@@ -244,15 +244,25 @@ public class BackendVmResource extends
     @Override
     public Response migrate(Action action) {
         boolean forceMigration = action.isSetForce() ? action.isForce() : false;
+
         if (!action.isSetHost()) {
             return doAction(VdcActionType.MigrateVm,
-                    new MigrateVmParameters(forceMigration, guid),
+                    new MigrateVmParameters(forceMigration, guid, getTargetClusterId(action)),
                     action);
         } else {
             return doAction(VdcActionType.MigrateVmToServer,
-                        new MigrateVmToServerParameters(forceMigration, guid, getHostId(action)),
+                        new MigrateVmToServerParameters(forceMigration, guid, getHostId(action), getTargetClusterId(action)),
                         action);
         }
+    }
+
+    private Guid getTargetClusterId(Action action) {
+        if (action.isSetCluster() && action.getCluster().isSetId()) {
+            return asGuid(action.getCluster().getId());
+        }
+
+        // means use the cluster of the provided host
+        return null;
     }
 
     @Override

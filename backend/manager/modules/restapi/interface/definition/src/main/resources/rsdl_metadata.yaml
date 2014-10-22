@@ -484,7 +484,7 @@ actions:
       signatures:
       - mandatoryArguments: {}
         optionalArguments: {action.host.id|name: 'xs:string', action.async: 'xs:boolean',
-          action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long'}
+          action.force: 'xs:boolean', action.grace_period.expiry: 'xs:long', action.cluster.id: 'xs:string'}
         description: migrate a virtual machine in the system identified by the given id to another host with options specified in the request body
     urlparams: {}
     headers:
