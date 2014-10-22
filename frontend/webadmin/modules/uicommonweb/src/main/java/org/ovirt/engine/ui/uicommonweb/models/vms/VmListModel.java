@@ -34,7 +34,6 @@ import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.HaMaintenanceMode;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.Tags;
-import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -1461,7 +1460,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
             return;
         }
 
-        MigrateModel model = new MigrateModel();
+        MigrateModel model = new MigrateModel(this);
         setWindow(model);
         model.setTitle(ConstantsManager.getInstance().getConstants().migrateVirtualMachinesTitle());
         model.setHelpTag(HelpTag.migrate_virtual_machine);
@@ -1469,15 +1468,8 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setVmsOnSameCluster(true);
         model.setIsAutoSelect(true);
         model.setVmList(Linq.<VM> cast(getSelectedItems()));
-
-        AsyncDataProvider.getInstance().getUpHostListByCluster(new AsyncQuery(this,
-                new INewAsyncCallback() {
-                    @Override
-                    public void onSuccess(Object target, Object returnValue) {
-                        VmListModel vmListModel = (VmListModel) target;
-                        vmListModel.postMigrateGetUpHosts((ArrayList<VDS>) returnValue);
-                    }
-                }), vm.getVdsGroupName());
+        model.setVm(vm);
+        model.initializeModel();
     }
 
     private void cancelMigration()
@@ -1497,74 +1489,6 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                                                  }, null);
     }
 
-    private void postMigrateGetUpHosts(ArrayList<VDS> hosts)
-    {
-        MigrateModel model = (MigrateModel) getWindow();
-        Guid run_on_vds = null;
-        boolean allRunOnSameVds = true;
-
-        for (Object item : getSelectedItems())
-        {
-            VM a = (VM) item;
-            if (!a.getVdsGroupId().equals(((VM) getSelectedItems().get(0)).getVdsGroupId()))
-            {
-                model.setVmsOnSameCluster(false);
-            }
-            if (run_on_vds == null)
-            {
-                run_on_vds = a.getRunOnVds();
-            }
-            else if (allRunOnSameVds && !run_on_vds.equals(a.getRunOnVds()))
-            {
-                allRunOnSameVds = false;
-            }
-        }
-
-        model.setIsHostSelAvailable(model.getVmsOnSameCluster() && hosts.size() > 0);
-
-        if (model.getVmsOnSameCluster() && allRunOnSameVds)
-        {
-            VDS runOnSameVDS = null;
-            for (VDS host : hosts)
-            {
-                if (host.getId().equals(run_on_vds))
-                {
-                    runOnSameVDS = host;
-                }
-            }
-            hosts.remove(runOnSameVDS);
-        }
-        if (hosts.isEmpty())
-        {
-            model.setIsHostSelAvailable(false);
-
-            if (allRunOnSameVds)
-            {
-                model.setNoSelAvailable(true);
-
-                UICommand tempVar = new UICommand("Cancel", this); //$NON-NLS-1$
-                tempVar.setTitle(ConstantsManager.getInstance().getConstants().close());
-                tempVar.setIsDefault(true);
-                tempVar.setIsCancel(true);
-                model.getCommands().add(tempVar);
-            }
-        }
-        else
-        {
-            model.getHosts().setItems(hosts);
-            model.getHosts().setSelectedItem(Linq.firstOrDefault(hosts));
-
-            UICommand tempVar2 = new UICommand("OnMigrate", this); //$NON-NLS-1$
-            tempVar2.setTitle(ConstantsManager.getInstance().getConstants().ok());
-            tempVar2.setIsDefault(true);
-            model.getCommands().add(tempVar2);
-            UICommand tempVar3 = new UICommand("Cancel", this); //$NON-NLS-1$
-            tempVar3.setTitle(ConstantsManager.getInstance().getConstants().cancel());
-            tempVar3.setIsCancel(true);
-            model.getCommands().add(tempVar3);
-        }
-    }
-
     private void onMigrate()
     {
         MigrateModel model = (MigrateModel) getWindow();
@@ -1576,13 +1500,15 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
 
         model.startProgress(null);
 
+        Guid targetClusterId = model.getClusters().getSelectedItem() != null ? model.getClusters().getSelectedItem().getId() : null;
+
         if (model.getIsAutoSelect())
         {
             ArrayList<VdcActionParametersBase> list = new ArrayList<VdcActionParametersBase>();
             for (Object item : getSelectedItems())
             {
                 VM a = (VM) item;
-                list.add(new MigrateVmParameters(true, a.getId()));
+                list.add(new MigrateVmParameters(true, a.getId(), targetClusterId));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVm, list,
@@ -1610,7 +1536,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
                 }
 
                 list.add(new MigrateVmToServerParameters(true, a.getId(), model.getHosts()
-                        .getSelectedItem().getId()));
+                        .getSelectedItem().getId(), targetClusterId));
             }
 
             Frontend.getInstance().runMultipleAction(VdcActionType.MigrateVmToServer, list,

@@ -706,6 +706,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Priority for Run/Migration queue:")
     String priorForRunMigrationQueueVmPopup();
 
+    @DefaultStringValue("Choosing different cluster may lead to unexpected results. Please consult documentation.")
+    String migrationToDifferentClusterWarning();
+
     @DefaultStringValue("Watchdog")
     String watchdog();
 
