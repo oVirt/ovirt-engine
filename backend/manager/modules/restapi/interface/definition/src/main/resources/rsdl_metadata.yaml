@@ -423,8 +423,14 @@ actions:
     body:
       parameterType: Action
       signatures:
-      - mandatoryArguments: {action.snapshot.id: 'xs:string'}
-        optionalArguments: {action.restore_memory: 'xs:boolean', action.disks.disk--COLLECTION: {disk.id: 'xs:string', disk.image_id: 'xs:string'}}
+      - mandatoryArguments:
+          action.snapshot.id: xs:string
+        optionalArguments:
+          action.restore_memory: xs:boolean
+          action.disks.disk--COLLECTION:
+            disk.id: xs:string
+            disk.image_id: xs:string
+            disk.snapshot.id: xs:string
     urlparams: {}
     headers:
       Content-Type: {value: application/xml|json, required: true}
