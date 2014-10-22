@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.storage.DiskImage;
 import org.ovirt.engine.core.compat.Guid;
@@ -15,9 +16,12 @@ import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
+import org.ovirt.engine.ui.uicommonweb.builders.BuilderExecutor;
+import org.ovirt.engine.ui.uicommonweb.builders.vm.HwOnlyVmBaseToUnitBuilder;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.SystemTreeItemModel;
 import org.ovirt.engine.ui.uicommonweb.models.storage.DisksAllocationModel;
+import org.ovirt.engine.ui.uicommonweb.models.templates.LatestVmTemplate;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.ExistingPoolInstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.models.vms.instancetypes.InstanceTypeManager;
 import org.ovirt.engine.ui.uicommonweb.validation.ExistingPoolNameLengthValidation;
@@ -78,7 +82,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
     }
 
     public void initTemplate() {
-        setupReadOnlyTemplateWithVersion(pool.getVmtGuid(), pool.isUseLatestVersion());
+        setupTemplateWithVersion(pool.getVmtGuid(), pool.isUseLatestVersion(), true);
     }
 
     @Override
@@ -86,8 +90,50 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         super.templateWithVersion_SelectedItemChanged();
         getModel().setIsDisksAvailable(true);
         VmTemplate template = getModel().getTemplateWithVersion().getSelectedItem().getTemplateVersion();
+        if (template == null) {
+            return;
+        }
+
         updateRngDevice(template.getId());
         getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
+
+        boolean isLatestPropertyChanged = pool.isUseLatestVersion() != (template instanceof LatestVmTemplate);
+
+        // template ID changed but latest is not set, as it would cause false-positives
+        boolean isTemplateIdChangedSinceInit = !pool.getVmtGuid().equals(template.getId()) && !pool.isUseLatestVersion();
+
+        // check if template-version selected requires to manually load the model instead of using the InstanceTypeManager
+        if (isTemplateIdChangedSinceInit || isLatestPropertyChanged) {
+            if (instanceTypeManager.isActive()) {
+                deactivateInstanceTypeManager(new InstanceTypeManager.ActivatedListener() {
+                    @Override
+                    public void activated() {
+                        getInstanceTypeManager().updateAll();
+                    }
+                });
+            }
+            doChangeDefautlHost(template.getDedicatedVmForVds());
+            setupWindowModelFrom(template);
+
+        } else {
+            if (!instanceTypeManager.isActive()) {
+                activateInstanceTypeManager();
+            }
+        }
+    }
+
+    @Override
+    protected void buildModel(VmBase vmBase, BuilderExecutor.BuilderExecutionFinished<VmBase, UnitVmModel> callback) {
+        super.buildModel(vmBase, callback);
+        if (!instanceTypeManager.isActive()) {
+            BuilderExecutor.build(vmBase, getModel(), new HwOnlyVmBaseToUnitBuilder());
+        }
+    }
+
+    @Override
+    public void updateIsDisksAvailable()
+    {
+        getModel().setIsDisksAvailable(getModel().getDisks() != null);
     }
 
     @Override

@@ -4290,4 +4290,20 @@ public class AsyncDataProvider {
             return true;
         }
     }
+
+    public void getVmTemplatesByBaseTemplateId(AsyncQuery asyncQuery, Guid baseTemplate) {
+        asyncQuery.converterCallback = new IAsyncConverter() {
+
+            @Override
+            public Object Convert(Object source, AsyncQuery asyncQuery) {
+                if (source == null) {
+                    return new ArrayList<VmTemplate>();
+                }
+                return source;
+            }
+        };
+        Frontend.getInstance().runQuery(VdcQueryType.GetVmTemplatesByBaseTemplateId,
+                new GetVmTemplateParameters(baseTemplate),
+                asyncQuery);
+    }
 }

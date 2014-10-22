@@ -233,28 +233,32 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
     /**
      *
      * @param templates empty list is allowed
+     * @param previousTemplateId template ID to select, if null -> autodetect based on the model (ignored if latest is set)
+     * @param useLatest if true, explicitly selects the latest template
      */
-    protected void initTemplateWithVersion(List<VmTemplate> templates) {
+    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest) {
         List<TemplateWithVersion> templatesWithVersion = createTemplateWithVersionsAddLatest(templates);
-        TemplateWithVersion previouslySelectedTemplate = getModel().getTemplateWithVersion().getSelectedItem();
-        TemplateWithVersion templateToSelect = computeTemplateWithVersionToSelect(templatesWithVersion,
-                previouslySelectedTemplate);
-        getModel().getTemplateWithVersion().setItems(templatesWithVersion);
-        if (templateToSelect != null) {
-            getModel().getTemplateWithVersion().setSelectedItem(templateToSelect);
+        if (previousTemplateId == null && !useLatest) {
+            TemplateWithVersion previouslySelectedTemplate = getModel().getTemplateWithVersion().getSelectedItem();
+            if (previouslySelectedTemplate != null && previouslySelectedTemplate.getTemplateVersion() != null) {
+                previousTemplateId = previouslySelectedTemplate.getTemplateVersion().getId();
+                useLatest = previouslySelectedTemplate.getTemplateVersion() instanceof LatestVmTemplate;
+            }
         }
+        TemplateWithVersion templateToSelect =
+                computeTemplateWithVersionToSelect(templatesWithVersion, previousTemplateId, useLatest);
+        getModel().getTemplateWithVersion().setItems(templatesWithVersion, templateToSelect);
     }
 
     private static TemplateWithVersion computeTemplateWithVersionToSelect(
             List<TemplateWithVersion> newItems,
-            TemplateWithVersion previousSelection) {
-        if (previousSelection == null) {
+            Guid previousTemplateId, boolean useLatest) {
+        if (previousTemplateId == null) {
             return computeNewTemplateWithVersionToSelect(newItems);
         }
-        Guid previousTemplateId = previousSelection.getTemplateVersion().getId();
         TemplateWithVersion oldTemplateToSelect = Linq.firstOrDefault(
                 newItems,
-                new Linq.TemplateWithVersionPredicate(previousTemplateId));
+                new Linq.TemplateWithVersionPredicate(previousTemplateId, useLatest));
         return oldTemplateToSelect != null
                 ? oldTemplateToSelect
                 : computeNewTemplateWithVersionToSelect(newItems);
@@ -823,33 +827,45 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
         getModel().getIsVirtioScsiEnabled().setIsAvailable(isVirtioScsiEnabled);
     }
 
-    protected void setupReadOnlyTemplateWithVersion(Guid templateId, final boolean useLatest) {
+    protected void setupTemplateWithVersion(final Guid templateId,
+            final boolean useLatest,
+            final boolean isVersionChangeable) {
         AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
                         new INewAsyncCallback() {
                             @Override
                             public void onSuccess(Object nothing, Object returnValue) {
                                 VmTemplate rawTemplate = (VmTemplate) returnValue;
 
-                                final VmTemplate template = useLatest
-                                        ? new LatestVmTemplate(rawTemplate)
-                                        : rawTemplate;
-
-                                if (template.isBaseTemplate()) {
-                                    TemplateWithVersion templateCouple = new TemplateWithVersion(template, template);
-                                    setReadOnlyTemplateWithVersion(templateCouple);
+                                if (isVersionChangeable) {
+                                    // only used by pools therefore query is limited to admin-portal permissions.
+                                    AsyncDataProvider.getInstance().getVmTemplatesByBaseTemplateId(
+                                            new AsyncQuery(getModel(), new INewAsyncCallback() {
+                                                @Override
+                                                public void onSuccess(Object target, Object returnValue) {
+                                                    ArrayList<VmTemplate> templatesChain = new ArrayList<VmTemplate>((List<VmTemplate>)returnValue);
+                                                    initTemplateWithVersion(templatesChain, templateId, useLatest);
+                                                }
+                                            }), rawTemplate.getBaseTemplateId());
                                 } else {
-                                    AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
-                                                    new INewAsyncCallback() {
-                                                        @Override
-                                                        public void onSuccess(Object nothing, Object returnValue) {
-                                                            VmTemplate baseTemplate = (VmTemplate) returnValue;
-                                                            TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, template);
-                                                            setReadOnlyTemplateWithVersion(templateCouple);
-                                                        }
-                                                    }),
-                                            template.getBaseTemplateId());
+                                    final VmTemplate template = useLatest
+                                            ? new LatestVmTemplate(rawTemplate)
+                                            : rawTemplate;
+                                    if (template.isBaseTemplate()) {
+                                        TemplateWithVersion templateCouple = new TemplateWithVersion(template, template);
+                                        setReadOnlyTemplateWithVersion(templateCouple);
+                                    } else {
+                                        AsyncDataProvider.getInstance().getTemplateById(new AsyncQuery(null,
+                                                        new INewAsyncCallback() {
+                                                            @Override
+                                                            public void onSuccess(Object nothing, Object returnValue) {
+                                                                VmTemplate baseTemplate = (VmTemplate) returnValue;
+                                                                TemplateWithVersion templateCouple = new TemplateWithVersion(baseTemplate, template);
+                                                                setReadOnlyTemplateWithVersion(templateCouple);
+                                                            }
+                                                        }),
+                                                template.getBaseTemplateId());
+                                    }
                                 }
-
                             }
                         }),
                 templateId

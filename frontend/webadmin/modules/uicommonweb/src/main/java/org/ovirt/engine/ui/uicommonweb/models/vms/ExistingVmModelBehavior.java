@@ -338,7 +338,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
     }
 
     protected void initTemplate() {
-        setupReadOnlyTemplateWithVersion(vm.getVmtGuid(), vm.isUseLatestVersion());
+        setupTemplateWithVersion(vm.getVmtGuid(), vm.isUseLatestVersion(), false);
     }
 
     public void initCdImage()

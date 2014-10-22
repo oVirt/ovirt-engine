@@ -67,7 +67,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
                         templatesWithoutBlank.add(template);
                     }
                 }
-                initTemplateWithVersion(templatesWithoutBlank);
+                initTemplateWithVersion(templatesWithoutBlank, null, false);
             }
         }), dataCenter.getId());
 

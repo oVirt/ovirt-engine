@@ -79,6 +79,8 @@ public class PoolEditPopupWidget extends PoolNewPopupWidget {
         editMaxAssignedVmsPerUserEditor.setEnabled(true);
 
         spiceProxyEditor.setEnabled(model.getSpiceProxyEnabled().getEntity());
+
+        templateWithVersionEditor.setEnabled(true);
     }
 
     @Override

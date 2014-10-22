@@ -53,7 +53,7 @@ public class NewVmFromTemplateModelBehavior extends NewVmModelBehavior {
             relatedTemplates.add(baseTemplate);
         }
 
-        initTemplateWithVersion(relatedTemplates);
+        initTemplateWithVersion(relatedTemplates, null, false);
 
         if (selectedDCWithCluster != null && selectedDCWithCluster.getCluster() != null) {
             if (selectedTemplate.getVdsGroupId() == null || selectedTemplate.getVdsGroupId().equals(selectedDCWithCluster.getCluster().getId())) {

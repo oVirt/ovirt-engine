@@ -310,7 +310,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase<UnitVmModel> {
     }
 
     protected void postInitTemplate(List<VmTemplate> templates) {
-        initTemplateWithVersion(templates);
+        initTemplateWithVersion(templates, null, false);
         updateIsDisksAvailable();
     }
 

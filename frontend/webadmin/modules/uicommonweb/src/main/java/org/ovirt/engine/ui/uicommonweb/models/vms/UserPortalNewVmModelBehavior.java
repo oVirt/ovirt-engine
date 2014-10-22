@@ -112,12 +112,12 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
         List<VdcQueryReturnValue> returnValueList = result.getReturnValues();
         List<VmTemplate> templates =
                 (ArrayList<VmTemplate>) returnValueList.get(0).getReturnValue();
-        initTemplateWithVersion(templates);
+        initTemplateWithVersion(templates, null, false);
         initCdImage();
     }
 
     @Override
-    protected void initTemplateWithVersion(List<VmTemplate> templates) {
+    protected void initTemplateWithVersion(List<VmTemplate> templates, Guid previousTemplateId, boolean useLatest) {
         DataCenterWithCluster dataCenterWithCluster = this.getModel().getDataCenterWithClustersList().getSelectedItem();
         StoragePool selectedDataCenter = dataCenterWithCluster.getDataCenter();
         Guid selectedDataCenterId = selectedDataCenter.getId();
@@ -132,7 +132,7 @@ public class UserPortalNewVmModelBehavior extends NewVmModelBehavior implements 
                 properStateTemplates.add(template);
             }
         }
-        super.initTemplateWithVersion(properStateTemplates);
+        super.initTemplateWithVersion(properStateTemplates, previousTemplateId, useLatest);
         updateIsDisksAvailable();
     }
 
