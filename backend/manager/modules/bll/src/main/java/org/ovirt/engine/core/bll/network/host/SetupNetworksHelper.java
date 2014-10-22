@@ -31,12 +31,12 @@ import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dao.network.NetworkQoSDao;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class SetupNetworksHelper {
     protected static final String VIOLATING_ENTITIES_LIST_FORMAT = "${0}_LIST {1}";
-    private static final Log log = LogFactory.getLog(SetupNetworksHelper.class);
+    private static final Logger log = LoggerFactory.getLogger(SetupNetworksHelper.class);
     private SetupNetworksParameters params;
     private VDS vds;
     private Map<VdcBllMessages, List<String>> violations = new HashMap<VdcBllMessages, List<String>>();

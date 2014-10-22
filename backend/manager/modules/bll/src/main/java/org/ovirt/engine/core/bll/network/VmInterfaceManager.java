@@ -31,17 +31,17 @@ import org.ovirt.engine.core.dao.VmDAO;
 import org.ovirt.engine.core.dao.network.VmNetworkInterfaceDao;
 import org.ovirt.engine.core.dao.network.VmNetworkStatisticsDao;
 import org.ovirt.engine.core.dao.network.VmNicDao;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class to use for adding/removing {@link VmNic}s.
  */
 public class VmInterfaceManager {
 
-    private Log log = LogFactory.getLog(getClass());
+    private Logger log = LoggerFactory.getLogger(getClass());
     private MacPoolManagerStrategy macPool;
 
     public VmInterfaceManager() {
@@ -103,8 +103,8 @@ public class VmInterfaceManager {
             public Void runInTransaction() {
                 AuditLogableBase logable = createAuditLog(iface);
                 log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE);
-                log.warnFormat("Network Interface {0} has MAC address {1} which is in use, " +
-                        "therefore the action for VM {2} failed.", iface.getName(), iface.getMacAddress(),
+                log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
+                        "therefore the action for VM '{}' failed.", iface.getName(), iface.getMacAddress(),
                         iface.getVmId());
                 return null;
             }
@@ -117,8 +117,8 @@ public class VmInterfaceManager {
             public Void runInTransaction() {
                 AuditLogableBase logable = createAuditLog(iface);
                 log(logable, AuditLogType.MAC_ADDRESS_IS_IN_USE_UNPLUG);
-                log.warnFormat("Network Interface {0} has MAC address {1} which is in use, " +
-                        "therefore it is being unplugged from VM {2}.", iface.getName(), iface.getMacAddress(),
+                log.warn("Network Interface '{}' has MAC address '{}' which is in use, " +
+                        "therefore it is being unplugged from VM '{}'.", iface.getName(), iface.getMacAddress(),
                         iface.getVmId());
                 return null;
             }

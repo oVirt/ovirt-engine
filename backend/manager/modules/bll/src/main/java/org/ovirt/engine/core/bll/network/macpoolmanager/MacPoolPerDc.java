@@ -16,8 +16,8 @@ import org.ovirt.engine.core.dao.MacPoolDao;
 import org.ovirt.engine.core.utils.DisjointRanges;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MacPoolPerDc {
 
@@ -27,7 +27,7 @@ public class MacPoolPerDc {
     static final String CANNOT_REMOVE_POOL_EXCEPTION_MESSAGE = "Cannot remove pool which is still in use.";
     static final String POOL_TO_BE_REMOVED_DOES_NOT_EXIST_EXCEPTION_MESSAGE =
             "Trying to removed pool which does not exist.";
-    private static final Log log = LogFactory.getLog(MacPoolPerDc.class);
+    private static final Logger log = LoggerFactory.getLogger(MacPoolPerDc.class);
     private final Map<Guid, MacPoolManagerStrategy> macPools = new HashMap<>();
 
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
@@ -48,9 +48,9 @@ public class MacPoolPerDc {
                 initializeMacPool(macPool);
             }
             initialized = true;
-            log.info("successfully initialized");
+            log.info("Successfully initialized");
         } catch(RuntimeException e) {
-            log.error("not initialized.");
+            log.error("Error initializing: {}", e.getMessage());
             throw e;
         }
     }

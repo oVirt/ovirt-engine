@@ -32,10 +32,10 @@ import org.ovirt.engine.core.dal.dbbroker.DbFacade;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.NetworkUtils;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class NetworkConfigurator {
 
@@ -43,7 +43,7 @@ public class NetworkConfigurator {
     private static final String MANAGEMENET_NETWORK_CONFIG_ERR = "Failed to configure management network";
     private static final String NETWORK_CONFIG_LOG_ERR = "Failed to configure management network: {0}";
     private static final long POLLING_BREAK_IN_MILLIS = 500;
-    private static final Log log = LogFactory.getLog(NetworkConfigurator.class);
+    private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
     private final VDS host;
     private CommandContext commandContext;
 
@@ -60,14 +60,14 @@ public class NetworkConfigurator {
         }
 
         if (managementNetwork.equals(host.getActiveNic())) {
-            log.infoFormat("The management network {0} is already configured on host {1}",
+            log.info("The management network '{}' is already configured on host '{}'",
                     managementNetwork,
                     host.getName());
             return;
         }
 
         if (!FeatureSupported.setupManagementNetwork(host.getVdsGroupCompatibilityVersion())) {
-            log.warnFormat("Host {0}'s cluster does not support normalize management network feature", host.getName());
+            log.warn("Cluster of host '{}' does not support normalize management network feature", host.getName());
             return;
         }
 
@@ -113,7 +113,7 @@ public class NetworkConfigurator {
                         / Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
         for (int i = 0; i < checks; i++) {
             if (pollVds()) {
-                log.infoFormat("Engine managed to communicate with VDSM agent on host {0}",
+                log.info("Engine managed to communicate with VDSM agent on host '{}' ('{}')",
                         host.getName(),
                         host.getId());
                 return true;
@@ -155,7 +155,7 @@ public class NetworkConfigurator {
     private VdsNetworkInterface findNicToSetupManagementNetwork() {
 
         if (StringUtils.isEmpty(host.getActiveNic())) {
-            log.warnFormat("No interface was reported as lastClientInterface by host {0} capabilities. "
+            log.warn("No interface was reported as lastClientInterface by host '{}' capabilities. "
                     + "There will be no attempt to create the management network on the host.", host.getName());
             return null;
         }
@@ -163,7 +163,7 @@ public class NetworkConfigurator {
         VdsNetworkInterface nic = Entities.entitiesByName(host.getInterfaces()).get(host.getActiveNic());
 
         if (nic == null) {
-            log.warnFormat("The lastClientInterface {0} of host {1} is not a valid interface for the mangement network."
+            log.warn("The lastClientInterface '{}' of host '{}' is not a valid interface for the management network."
                     + " If the interface is a bridge, it should be torn-down manually.",
                     host.getActiveNic(),
                     host.getName());

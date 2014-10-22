@@ -13,12 +13,12 @@ import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 import org.ovirt.engine.core.utils.lock.AutoCloseableLock;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class MacPoolManagerRanges implements MacPoolManagerStrategy {
 
-    private static final Log log = LogFactory.getLog(MacPoolManagerRanges.class);
+    private static final Logger log = LoggerFactory.getLogger(MacPoolManagerRanges.class);
 
     private final ReentrantReadWriteLock lockObj = new ReentrantReadWriteLock();
     private final boolean allowDuplicates;
@@ -35,18 +35,19 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
     public void initialize() {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.writeLock())) {
             if (initialized) {
-                log.error("Trying to initialized " + getClass().getName() + " multiple times.");
+                log.error("Trying to initialize {} multiple times.", getClass().getName());
                 return;
             }
 
-            log.infoFormat("Start initializing " + getClass().getSimpleName());
+            log.info("Start initializing {}", getClass().getSimpleName());
 
             this.macsStorage = createMacsStorage(rangesBoundaries);
 
             initialized = true;
-            log.infoFormat("Finished initializing. Available MACs in pool: {0}", macsStorage.getAvailableMacsCount());
+            log.info("Finished initializing. Available MACs in pool: {}", macsStorage.getAvailableMacsCount());
         } catch (Exception ex) {
-            log.errorFormat("Error in initializing MAC Addresses pool manager.", ex);
+            log.error("Error in initializing MAC Addresses pool manager: {}", ex.getMessage());
+            log.debug("Exception", ex);
         }
     }
 
@@ -98,7 +99,7 @@ public class MacPoolManagerRanges implements MacPoolManagerStrategy {
         try (AutoCloseableLock l = new AutoCloseableLock(lockObj.readLock())) {
             checkIfInitialized();
             int availableMacsSize = macsStorage.getAvailableMacsCount();
-            log.debugFormat("Number of available Mac addresses = {1}", availableMacsSize);
+            log.debug("Number of available Mac addresses = {}", availableMacsSize);
             return availableMacsSize;
         }
     }

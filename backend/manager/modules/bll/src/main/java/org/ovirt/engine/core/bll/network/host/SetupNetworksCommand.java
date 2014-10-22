@@ -30,10 +30,10 @@ import org.ovirt.engine.core.common.vdscommands.SetupNetworksVdsCommandParameter
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
 import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
-import org.ovirt.engine.core.utils.log.Log;
-import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.transaction.TransactionMethod;
 import org.ovirt.engine.core.utils.transaction.TransactionSupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 @NonTransactiveCommandAttribute
 public class SetupNetworksCommand<T extends SetupNetworksParameters> extends VdsCommand<T> {
@@ -46,7 +46,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
     private static final long POLLING_BREAK = 500;
     private static final List<VDSStatus> SUPPORTED_HOST_STATUSES =
             Arrays.asList(VDSStatus.Maintenance, VDSStatus.Up, VDSStatus.NonOperational);
-    private static final Log log = LogFactory.getLog(SetupNetworksCommand.class);
+    private static final Logger log = LoggerFactory.getLogger(SetupNetworksCommand.class);
     private SetupNetworksHelper helper;
 
     public SetupNetworksCommand(T parameters) {
@@ -99,7 +99,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 updateModifiedInterfaces();
             }
 
-            log.infoFormat("No changes were detected in setup networks for host {0} (ID: {1})",
+            log.info("No changes were detected in setup networks for host '{}' (ID '{}')",
                     getVdsName(),
                     getVdsId());
 
@@ -147,7 +147,7 @@ public class SetupNetworksCommand<T extends SetupNetworksParameters> extends Vds
                 }
             }
         } catch (TimeoutException e) {
-            log.debugFormat("Setup networks command timed out for {0} seconds", timeout);
+            log.debug("Setup networks command timed out for {} seconds", timeout);
         }
     }
 
