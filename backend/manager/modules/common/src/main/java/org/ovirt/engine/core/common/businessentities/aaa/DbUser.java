@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.common.businessentities.aaa;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
@@ -176,7 +177,7 @@ public class DbUser extends IVdcQueryable {
     }
 
     public Collection<String> getGroupNames() {
-        return Collections.unmodifiableCollection(groupNames);
+        return new ArrayList<String>(groupNames);
     }
 
     public void setGroupNames(Collection<String> value) {
@@ -232,7 +233,7 @@ public class DbUser extends IVdcQueryable {
         if (groupIds == null) {
             groupIds = Collections.emptyList();
         }
-        return Collections.unmodifiableCollection(groupIds);
+        return new ArrayList<Guid>(groupIds);
     }
 
     @Override
