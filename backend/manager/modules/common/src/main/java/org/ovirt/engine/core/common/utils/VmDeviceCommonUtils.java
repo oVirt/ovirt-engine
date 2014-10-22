@@ -57,6 +57,10 @@ public class VmDeviceCommonUtils {
         return device.getType() == VmDeviceGeneralType.SOUND;
     }
 
+    public static boolean isMemoryBalloon(VmDevice device) {
+        return device.getType() == VmDeviceGeneralType.BALLOON;
+    }
+
     public static boolean isBridge(VmDevice device) {
         return device.getType() == VmDeviceGeneralType.INTERFACE
                 && device.getDevice().equals(VmDeviceType.BRIDGE.getName());
