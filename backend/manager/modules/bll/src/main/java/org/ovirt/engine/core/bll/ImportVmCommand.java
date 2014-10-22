@@ -60,6 +60,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.VmStatistics;
@@ -79,6 +80,7 @@ import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
+import org.ovirt.engine.core.common.utils.VmDeviceCommonUtils;
 import org.ovirt.engine.core.common.validation.group.ImportClonedEntity;
 import org.ovirt.engine.core.common.validation.group.ImportEntity;
 import org.ovirt.engine.core.common.vdscommands.GetImageInfoVDSCommandParameters;
@@ -209,8 +211,17 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
 
+        boolean hasBalloon = false;
+
+        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
+            if (VmDeviceCommonUtils.isMemoryBalloon(vmDevice)) {
+                hasBalloon = true;
+                break;
+            }
+        }
+
         OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-        if (getVm().isBalloonEnabled() && !osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
+        if (hasBalloon && !osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getVdsGroup().getcompatibility_version())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);

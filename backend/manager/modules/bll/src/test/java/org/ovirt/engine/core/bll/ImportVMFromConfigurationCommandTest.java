@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -23,6 +25,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
@@ -78,6 +81,7 @@ public class ImportVMFromConfigurationCommandTest {
         displayTypeMap.put(osId, new HashMap<Version, List<DisplayType>>());
         displayTypeMap.get(osId).put(null, Arrays.asList(DisplayType.qxl));
         when(osRepository.getDisplayTypes()).thenReturn(displayTypeMap);
+        when(osRepository.isBalloonEnabled(anyInt(), any(Version.class))).thenReturn(true);
         mockVdsGroup();
         setXmlOvfData();
     }
@@ -189,6 +193,7 @@ public class ImportVMFromConfigurationCommandTest {
         vdsGroup = new VDSGroup();
         vdsGroup.setId(clusterId);
         vdsGroup.setStoragePoolId(storagePoolId);
+        vdsGroup.setArchitecture(ArchitectureType.x86_64);
     }
 
     private void mockStoragePool() {

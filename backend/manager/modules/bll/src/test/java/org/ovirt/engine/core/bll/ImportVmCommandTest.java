@@ -51,17 +51,21 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
+import org.ovirt.engine.core.common.businessentities.VmDeviceId;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.ValidationUtils;
+import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.ovirt.engine.core.utils.RandomUtils;
 import org.ovirt.engine.core.utils.RandomUtilsSeedingRule;
+import org.ovirt.engine.core.vdsbroker.vdsbroker.VdsProperties;
 
 @RunWith(MockitoJUnitRunner.class)
 public class ImportVmCommandTest {
@@ -121,10 +125,23 @@ public class ImportVmCommandTest {
         verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
+    void addBalloonToVm(VM vm) {
+        Guid deviceId = Guid.newGuid();
+        Map<String, Object> specParams = new HashMap<String, Object>();
+        specParams.put(VdsProperties.Model, VdsProperties.Virtio);
+        VmDevice balloon = new VmDevice(new VmDeviceId(deviceId, vm.getId()),
+                VmDeviceGeneralType.BALLOON, VmDeviceType.MEMBALLOON.toString(), null, 0, specParams,
+                true, true, true, null, null, null, null);
+
+        vm.getManagedVmDeviceMap().put(deviceId, balloon);
+    }
+
     @Test
     public void refuseBalloonOnPPC() {
         final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
-        c.getParameters().getVm().setBalloonEnabled(true);
+
+        addBalloonToVm(c.getParameters().getVm());
+
         c.getParameters().getVm().setClusterArch(ArchitectureType.ppc64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.ppc64);
@@ -140,7 +157,9 @@ public class ImportVmCommandTest {
     @Test
     public void acceptBalloon() {
         final ImportVmCommand<ImportVmParameters> c = setupDiskSpaceTest(createParameters());
-        c.getParameters().getVm().setBalloonEnabled(true);
+
+        addBalloonToVm(c.getParameters().getVm());
+
         c.getParameters().getVm().setClusterArch(ArchitectureType.x86_64);
         VDSGroup cluster = new VDSGroup();
         cluster.setArchitecture(ArchitectureType.x86_64);
