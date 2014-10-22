@@ -1743,15 +1743,15 @@ public enum ConfigValues {
     ImportGlanceImageAsTemplate,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
     IsMigrationSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
     IsMemorySnapshotSupported,
 
     @TypeConverterAttribute(Map.class)
-    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"false\"}")
+    @DefaultValueAttribute("{\"undefined\":\"true\",\"x86_64\":\"true\",\"ppc64\":\"true\"}")
     IsSuspendSupported,
 
     @TypeConverterAttribute(Boolean.class)

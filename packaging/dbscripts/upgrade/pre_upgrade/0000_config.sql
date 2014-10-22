@@ -200,11 +200,11 @@ select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.4');
 select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.5');
 -- migration support per architecture
-select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- snapshot support per architecture
-select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- suspend support per architecture
-select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "false" }','general');
+select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.1');
 select fn_db_add_config_value('NetworkLinkingSupported','false','3.0');
@@ -970,6 +970,11 @@ select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.4');
 select fn_db_update_config_value('VM64BitMaxMemorySizeInMB','4096000','3.5');
 select fn_db_update_config_value('AutoStartVmsRunnerIntervalInSeconds','1','general');
+
+-- enable migration, memory snapshot and suspend in the ppc64 architecture
+select fn_db_update_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
+select fn_db_update_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
+select fn_db_update_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 
 -- Allow to specify SecurityGroups property for vNICs, containing either an empty string or a list of one or more comma seperated UUIDs.
 select fn_db_update_config_value('CustomDeviceProperties', '{type=interface;prop={SecurityGroups=^(?:(?:[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}, *)*[0-9a-fA-F]{8}-(?:[0-9a-fA-F]{4}-){3}[0-9a-fA-F]{12}|)$}}', '3.4');
