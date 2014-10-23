@@ -104,6 +104,12 @@
         </includes>
       </resource>
       <resource>
+        <directory>${project.build.directory}/generated-sources/gwt</directory>
+        <includes>
+          <include>**/*GWTServiceAsync*.java</include>
+        </includes>
+      </resource>
+      <resource>
         <directory>src/main/resources</directory>
       </resource>
     </resources>
