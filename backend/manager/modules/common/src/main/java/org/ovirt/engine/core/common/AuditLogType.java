@@ -941,6 +941,10 @@ public enum AuditLogType {
     EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL(9609, AuditLogSeverity.WARNING,
             AuditLogTimeInterval.MINUTE.getValue()),
 
+    MIXING_RHEL_VERSIONS_IN_CLUSTER(9610, AuditLogSeverity.WARNING,
+            AuditLogTimeInterval.MINUTE.getValue()),
+
+
     /** Highly available virtual machine went down. */
     HA_VM_FAILED(9602, AuditLogSeverity.ERROR),
     /** Restart of a highly available virtual machine failed. */

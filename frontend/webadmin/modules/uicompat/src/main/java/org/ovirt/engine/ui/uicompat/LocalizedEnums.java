@@ -40,6 +40,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String NonOperationalReason___EMULATED_MACHINES_INCOMPATIBLE_WITH_CLUSTER_LEVEL();
 
+    String NonOperationalReason___MIXING_RHEL_VERSIONS_IN_CLUSTER();
+
     String NonOperationalReason___ARCHITECTURE_INCOMPATIBLE_WITH_CLUSTER();
 
     String NonOperationalReason___NETWORK_INTERFACE_IS_DOWN();

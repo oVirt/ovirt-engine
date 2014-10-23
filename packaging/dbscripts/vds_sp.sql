@@ -1120,3 +1120,16 @@ BEGIN
    RETURN;
 END; $procedure$
 LANGUAGE plpgsql;
+
+
+Create or replace FUNCTION getFirstUpRhelForVdsGroupId(v_vds_group_id UUID) RETURNS SETOF vds STABLE
+   AS $procedure$
+BEGIN
+   BEGIN
+   -- both centos and RHEL return RHEL as host_os
+      RETURN QUERY select * from vds where (host_os like 'RHEL%' or host_os like 'oVirt Node%' or host_os like 'RHEV Hypervisor%') and status = 3 and vds_group_id = v_vds_group_id LIMIT 1;
+   END;
+
+   RETURN;
+END; $procedure$
+LANGUAGE plpgsql;
