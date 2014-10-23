@@ -6,6 +6,7 @@ import static org.mockito.Matchers.any;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.when;
 
 import java.util.Map;
 
@@ -16,12 +17,15 @@ import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VDSStatus;
 import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 public class VirtMonitoringStrategyTest {
 
+    private VDS vdsFromDb = new VDS();
+
     public VirtMonitoringStrategyTest() {
-        virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup()));
+        virtStrategy = spy(new VirtMonitoringStrategy(mockVdsGroup(), mockVdsDao()));
         doNothing().when(virtStrategy).vdsNonOperational(any(VDS.class), any(NonOperationalReason.class), any(Map.class));
     }
 
@@ -51,10 +55,8 @@ public class VirtMonitoringStrategyTest {
 
     @Test
     public void testProcessSpecialSoftwareCapabilities() {
-        VDS vds = new VDS();
-        vds.setSupportedEmulatedMachines("pc-1.0");
-        vds.getSupportedRngSources().add(VmRngDevice.Source.RANDOM);
-        vds.setStatus(VDSStatus.Up);
+        VDS vds = createBaseVds();
+        vds.setHostOs("Fedora - 20 - 3");
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getStatus().equals(VDSStatus.Up));
         vds.setKvmEnabled(Boolean.TRUE);
@@ -70,6 +72,32 @@ public class VirtMonitoringStrategyTest {
         vds.getSupportedRngSources().clear();
         virtStrategy.processSoftwareCapabilities(vds);
         assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
+    @Test
+    public void testProtectRhel7InRhel6() {
+        VDS vds = createBaseVds();
+        vdsFromDb.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        vds.setHostOs("RHEL - 7Server - 1.el7");
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
+    @Test
+    public void testProtectRhel6InRhel7() {
+        VDS vds = createBaseVds();
+        vdsFromDb.setHostOs("RHEL - 7Server - 1.el7");
+        vds.setHostOs("RHEL - 6Server - 6.5.0.1.el6");
+        virtStrategy.processSoftwareCapabilities(vds);
+        assertTrue(vds.getStatus().equals(VDSStatus.NonOperational));
+    }
+
+    private VDS createBaseVds() {
+        VDS vds = new VDS();
+        vds.setSupportedEmulatedMachines("pc-1.0");
+        vds.getSupportedRngSources().add(VmRngDevice.Source.RANDOM);
+        vds.setStatus(VDSStatus.Up);
+        return vds;
     }
 
     @Test
@@ -99,6 +127,12 @@ public class VirtMonitoringStrategyTest {
         value.setEmulatedMachine("pc-1.0");
         value.getRequiredRngSources().add(VmRngDevice.Source.RANDOM);
         org.mockito.Mockito.when(mock.get(any(Guid.class))).thenReturn(value);
+        return mock;
+    }
+
+    private VdsDAO mockVdsDao() {
+        VdsDAO mock = mock(VdsDAO.class);
+        when(mock.getFirstUpRhelForVdsGroup(any(Guid.class))).thenReturn(vdsFromDb);
         return mock;
     }
 }

@@ -20,6 +20,10 @@ public class VdsDAOTest extends BaseDAOTestCase {
     private static final Guid EXISTING_VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
     private static final Guid EXISTING_VDS_ID_2 = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
 
+    private static final Guid VDS_GROUP_WITH_FEDORA = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d1");
+
+    private static final Guid VDS_GROUP_WITH_RHELS = new Guid("b399944a-81ab-4ec5-8266-e19ba7c3c9d2");
+
     private static final String IP_ADDRESS = "192.168.122.17";
     private VdsDAO dao;
     private VDS existingVds;
@@ -461,6 +465,16 @@ public class VdsDAOTest extends BaseDAOTestCase {
         assertNotNull(result);
         assertEquals(1, result.size());
         assertEquals(FixturesTool.VDS_GROUP_RHEL6_LOCALFS, result.get(0).getVdsGroupId());
+    }
+
+    public void testGetFirstUpRhelForVdsGroupFromClusterWithRhels() {
+        VDS vds = dao.getFirstUpRhelForVdsGroup(VDS_GROUP_WITH_RHELS);
+        assertNotNull(vds);
+    }
+
+    public void testGetFirstUpRhelForVdsGroupFromClusterWithFedoras() {
+        VDS vds = dao.getFirstUpRhelForVdsGroup(VDS_GROUP_WITH_FEDORA);
+        assertNull(vds);
     }
 
     private void assertGetAllForStoragePoolCorrectResult(List<VDS> result) {

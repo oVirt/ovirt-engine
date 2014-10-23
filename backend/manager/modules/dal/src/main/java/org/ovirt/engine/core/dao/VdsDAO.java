@@ -209,4 +209,12 @@ public interface VdsDAO extends DAO, SearchDAO<VDS>, AutoRecoverDAO<VDS> {
      * @return the list of VDS instances
      */
     List<VDS> getHostsForStorageOperation(Guid storagePoolId, boolean localFsOnly);
+
+    /**
+     * Finds the first VDS which is based on RHEL and the status is UP.
+     * Based on RHEL can be RHEL, CentOS, RHEV-H or ovirt-node
+     * @param vdsGroupId cluster id
+     * @return first host or null if there are none such hosts
+     */
+    VDS getFirstUpRhelForVdsGroup(Guid vdsGroupId);
 }

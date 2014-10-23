@@ -16,6 +16,7 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ListUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 
 /**
@@ -25,8 +26,11 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
     private final VdsGroupDAO vdsGroupDao;
 
-    protected VirtMonitoringStrategy(VdsGroupDAO vdsGroupDao) {
+    private final VdsDAO vdsDao;
+
+    protected VirtMonitoringStrategy(VdsGroupDAO vdsGroupDao, VdsDAO vdsDao) {
         this.vdsGroupDao = vdsGroupDao;
+        this.vdsDao = vdsDao;
     }
 
     @Override
@@ -64,6 +68,10 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
             vds.setStatus(VDSStatus.NonOperational);
         }
 
+        if (vds.getStatus() != VDSStatus.NonOperational) {
+            checkIfNotMixingRhels(vds, vdsGroup);
+        }
+
         if (!hostCompliesWithRngDeviceSources(vds, vdsGroup) && vds.getStatus() != VDSStatus.NonOperational) {
             Map<String, String> customLogValues = new HashMap<>();
             customLogValues.put("hostSupportedRngSources", VmRngDevice.sourcesToCsv(vds.getSupportedRngSources()));
@@ -71,6 +79,56 @@ public class VirtMonitoringStrategy implements MonitoringStrategy {
 
             vdsNonOperational(vds, NonOperationalReason.RNG_SOURCES_INCOMPATIBLE_WITH_CLUSTER, customLogValues);
             vds.setStatus(VDSStatus.NonOperational);
+        }
+    }
+
+    /**
+     * Sets the new host to non-operational if adding a RHEL6 machine to a cluster with RHEL7s or RHEL7 to cluster with RHEL6s
+     *
+     * It tries to be as non-invasive as possible and only if the above is the case, turns the host into non-operational.
+     */
+    private void checkIfNotMixingRhels(VDS vds, VDSGroup vdsGroup) {
+        if (vds.getHostOs() == null) {
+            return;
+        }
+
+        String[] hostOsInfo = vds.getHostOs().split("-");
+
+        if (hostOsInfo.length != 3) {
+            return;
+        }
+
+        String newOsName = hostOsInfo[0].trim();
+        String newRelease = hostOsInfo[2].trim();
+        // both the CentOS and RHEL has osName RHEL
+        if (newOsName.equals("RHEL") || newOsName.equals("oVirt Node") || newOsName.equals("RHEV Hypervisor")) {
+            VDS beforeRhel = vdsDao.getFirstUpRhelForVdsGroup(vdsGroup.getId());
+            boolean firstHostInCluster = beforeRhel == null;
+            if (firstHostInCluster) {
+                // no need to do any checks
+                return;
+            }
+
+            // if not first host in cluster, need to check if the version is the same
+            if (beforeRhel.getHostOs() == null) {
+                return;
+            }
+
+            String[] prevOsInfo = beforeRhel.getHostOs().split("-");
+            if (prevOsInfo.length != 3) {
+                return;
+            }
+
+            String prevRelease = prevOsInfo[2].trim();
+            boolean addingRhel6toRhel7 = newRelease.contains("el6") && prevRelease.contains("el7");
+            boolean addingRhel7toRhel6 = newRelease.contains("el7") && prevRelease.contains("el6");
+            if (addingRhel7toRhel6 || addingRhel6toRhel7) {
+                Map<String, String> customLogValues = new HashMap<>();
+                customLogValues.put("previousRhel", beforeRhel.getHostOs());
+                customLogValues.put("addingRhel", vds.getHostOs());
+                vdsNonOperational(vds, NonOperationalReason.MIXING_RHEL_VERSIONS_IN_CLUSTER, customLogValues);
+                vds.setStatus(VDSStatus.NonOperational);
+            }
         }
     }
 

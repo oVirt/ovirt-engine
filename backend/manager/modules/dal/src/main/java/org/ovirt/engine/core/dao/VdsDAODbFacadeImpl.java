@@ -148,6 +148,16 @@ public class VdsDAODbFacadeImpl extends BaseDAODbFacade implements VdsDAO {
     }
 
     @Override
+    public VDS getFirstUpRhelForVdsGroup(Guid vdsGroupId) {
+        List<VDS> vds = getCallsHandler().executeReadList("getFirstUpRhelForVdsGroupId",
+                VdsRowMapper.instance,
+                getCustomMapSqlParameterSource()
+                        .addValue("vds_group_id", vdsGroupId));
+
+        return vds.size() != 0 ? vds.iterator().next() : null;
+    }
+
+    @Override
     public List<VDS> getAllForStoragePool(Guid storagePool) {
         return getAllForStoragePool(storagePool, null, false);
     }
