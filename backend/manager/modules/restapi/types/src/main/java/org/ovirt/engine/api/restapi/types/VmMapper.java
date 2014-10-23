@@ -1350,7 +1350,14 @@ public class VmMapper {
 
         if (model.isSetUsers()) {
             for (User user : model.getUsers().getUsers()) {
-                entity.setRootPassword(user.getPassword());
+                String userName = user.getUserName();
+                if (StringUtils.equals(userName, "root")) {
+                    entity.setUserName(userName);
+                    String userPassword = user.getPassword();
+                    if (userPassword != null) {
+                        entity.setRootPassword(userPassword);
+                    }
+                }
             }
         }
 
