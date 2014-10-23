@@ -10,6 +10,8 @@ import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
+import com.google.gwt.safehtml.client.SafeHtmlTemplates;
+import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
 public class StatusCompositeCellWithElementId extends CompositeCellWithElementId<VM> implements CellWithElementId<VM>{
@@ -22,9 +24,16 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
         String divInlineBlock();
     }
 
+    public interface ContentTemplate extends SafeHtmlTemplates {
+        @Template("<div id=\"{0}\">")
+        SafeHtml id(String id);
+    }
+
     private static final StatusCompositeCellResources RESOURCES = GWT.create(StatusCompositeCellResources.class);
     private final StatusCompositeCellCss style;
     private final List<HasCell<VM, ?>> hasCells;
+
+    private ContentTemplate template;
 
     public StatusCompositeCellWithElementId(List<HasCell<VM, ?>> hasCells) {
         super(hasCells);
@@ -33,11 +42,17 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
         style.ensureInjected();
     }
 
+    ContentTemplate getTemplate() {
+        if (template == null) {
+            template = GWT.create(ContentTemplate.class);
+        }
+        return template;
+    }
+
     @Override
     public void render(Cell.Context context, VM value, SafeHtmlBuilder sb) {
-        sb.appendHtmlConstant("<div id=\""); //$NON-NLS-1$
-        sb.appendEscaped(ElementIdUtils.createTableCellElementId(getElementIdPrefix(), getColumnId(), context));
-        sb.appendHtmlConstant("\">"); //$NON-NLS-1$
+        sb.append(getTemplate().id(ElementIdUtils.createTableCellElementId(
+                getElementIdPrefix(), getColumnId(), context)));
 
         for (HasCell<VM, ?> hasCell : hasCells) {
             render(context, value, sb, hasCell);
@@ -46,6 +61,7 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
         sb.appendHtmlConstant("</div>"); //$NON-NLS-1$
     }
 
+    @Override
     protected <T> void render(Cell.Context context, VM value,
                               SafeHtmlBuilder sb, HasCell<VM, T> hasCell) {
         Cell<T> cell = hasCell.getCell();
