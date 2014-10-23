@@ -3123,6 +3123,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Disk Profile doesn't match provided Storage Domain.")
     String ACTION_TYPE_DISK_PROFILE_NOT_MATCH_STORAGE_DOMAIN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. CPU Profile doesn't match provided Cluster.")
+    String ACTION_TYPE_CPU_PROFILE_NOT_MATCH_CLUSTER();
+
     @DefaultStringValue("Cannot ${action} ${type}. Cannot remove last CPU profile in Cluster.")
     String ACTION_TYPE_CANNOT_REMOVE_LAST_CPU_PROFILE_IN_CLUSTER();
 

@@ -205,6 +205,8 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }), vm.getRunOnVds());
         }
 
+        updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+
         getModel().getSpiceFileTransferEnabled().setEntity(vm.isSpiceFileTransferEnabled());
 
         getModel().getSpiceCopyPasteEnabled().setEntity(vm.isSpiceCopyPasteEnabled());
@@ -216,6 +218,16 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
         getModel().getNumaTuneMode().setSelectedItem(vm.getNumaTuneMode());
 
         updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+    }
+
+    @Override
+    public void dataCenterWithClusterSelectedItemChanged() {
+        super.dataCenterWithClusterSelectedItemChanged();
+        if (getModel().getSelectedCluster() != null) {
+            updateCpuProfile(getModel().getSelectedCluster().getId(),
+                             getClusterCompatibilityVersion(),
+                             vm.getCpuProfileId());
+        }
     }
 
     private int calculateHostCpus() {
