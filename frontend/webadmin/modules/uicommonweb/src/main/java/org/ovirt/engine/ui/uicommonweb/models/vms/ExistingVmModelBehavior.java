@@ -193,7 +193,7 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
             }), vm.getRunOnVds());
         }
 
-        updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
+    updateCpuProfile(vm.getVdsGroupId(), vm.getVdsGroupCompatibilityVersion(), vm.getCpuProfileId());
     }
 
     @Override
@@ -204,13 +204,22 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
                               new CommonVmBaseToUnitBuilder());
     }
 
+    @Override
+    public void dataCenterWithClusterSelectedItemChanged() {
+        super.dataCenterWithClusterSelectedItemChanged();
+        if (getModel().getSelectedCluster() != null) {
+            updateCpuProfile(getModel().getSelectedCluster().getId(),
+                             getClusterCompatibilityVersion(),
+                             vm.getCpuProfileId());
+        }
+    }
+
     private int calculateHostCpus() {
         return  getModel().getSelectedCluster().getCountThreadsAsCores() ? runningOnHost.getCpuThreads() : runningOnHost.getCpuCores();
     }
 
     @Override
-    public void postDataCenterWithClusterSelectedItemChanged()
-    {
+    public void postDataCenterWithClusterSelectedItemChanged() {
         updateDefaultHost();
         updateCustomPropertySheet();
         updateNumOfSockets();
@@ -225,21 +234,18 @@ public class ExistingVmModelBehavior extends VmModelBehaviorBase
     }
 
     @Override
-    protected void changeDefualtHost()
-    {
+    protected void changeDefualtHost() {
         super.changeDefualtHost();
         doChangeDefautlHost(vm.getDedicatedVmForVds());
     }
 
     @Override
-    public void defaultHost_SelectedItemChanged()
-    {
+    public void defaultHost_SelectedItemChanged() {
         updateCdImage();
     }
 
     @Override
-    public void provisioning_SelectedItemChanged()
-    {
+    public void provisioning_SelectedItemChanged() {
     }
 
     @Override
