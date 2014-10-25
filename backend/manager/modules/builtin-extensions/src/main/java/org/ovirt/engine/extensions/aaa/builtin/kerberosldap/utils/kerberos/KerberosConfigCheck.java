@@ -25,6 +25,7 @@ public class KerberosConfigCheck {
     private LoginContext lc;
     private final List<String> ldapServers;
     private String defaultLdapServerPort;
+    private final String saslQOP;
     private final static Logger log = Logger.getLogger(KerberosConfigCheck.class);
 
     public enum Arguments {
@@ -37,13 +38,14 @@ public class KerberosConfigCheck {
         ldapProviderType;
     }
 
-    public KerberosConfigCheck(List<String> ldapServers, String defaultLdapServerPort) {
+    public KerberosConfigCheck(List<String> ldapServers, String defaultLdapServerPort, String saslQOP) {
         this.ldapServers = ldapServers;
         this.defaultLdapServerPort =  defaultLdapServerPort;
+        this.saslQOP = saslQOP;
     }
 
     public KerberosConfigCheck() {
-        this(null, null);
+        this(null, null, "auth-conf");
     }
 
     /**
@@ -130,7 +132,7 @@ public class KerberosConfigCheck {
             authResult =
                     (AuthenticationResult) Subject.doAs(lc.getSubject(), new JndiAction(username,
                             realm.toLowerCase(),
-                            userGuid, ldapProviderType, ldapServers, defaultLdapServerPort));
+                            userGuid, ldapProviderType, ldapServers, defaultLdapServerPort, saslQOP));
 
         } finally {
             if (lc != null) {

@@ -9,6 +9,7 @@ import static org.ovirt.engine.core.common.config.ConfigValues.LDAPProviderTypes
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPSecurityAuthentication;
 import static org.ovirt.engine.core.common.config.ConfigValues.LDAPServerPort;
 import static org.ovirt.engine.core.common.config.ConfigValues.LdapServers;
+import static org.ovirt.engine.core.common.config.ConfigValues.SASL_QOP;
 
 import java.io.BufferedWriter;
 import java.io.File;
@@ -34,7 +35,7 @@ public class ConfigurationProvider {
             String adUserId,
             String ldapProviderTypes,
             String engineConfigExecutable,
-            String engineConfigProperties, String ldapServerPort, String passwordChangeUrls) {
+            String engineConfigProperties, String ldapServerPort, String passwordChangeUrls, String saslQOP) {
         super();
         configVals.put(AdUserName, adUserName);
         configVals.put(AdUserPassword, adUserPassword);
@@ -45,6 +46,7 @@ public class ConfigurationProvider {
         configVals.put(LDAPProviderTypes, ldapProviderTypes);
         configVals.put(LDAPServerPort, ldapServerPort);
         configVals.put(ChangePasswordMsg, passwordChangeUrls);
+        configVals.put(SASL_QOP, saslQOP);
         this.engineConfigExecutable = engineConfigExecutable;
         this.engineConfigProperties = engineConfigProperties;
     }

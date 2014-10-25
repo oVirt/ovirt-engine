@@ -193,6 +193,8 @@ public class ManageDomains {
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.LDAPServerPort);
             String changePasswordUrl =
                     getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.ChangePasswordMsg);
+            String saslQOP =
+                    getConfigValue(engineConfigExecutable, engineConfigProperties, ConfigValues.SASL_QOP);
 
             configurationProvider =
                     new ConfigurationProvider(adUserName,
@@ -203,7 +205,7 @@ public class ManageDomains {
                             adUserId,
                             ldapProviderTypes,
                             utilityConfiguration.getEngineConfigExecutablePath(),
-                            engineConfigProperties, ldapPort, changePasswordUrl);
+                            engineConfigProperties, ldapPort, changePasswordUrl, saslQOP);
 
         } catch (Throwable e) {
             throw new ManageDomainsResult(ManageDomainsResultEnum.FAILED_READING_CURRENT_CONFIGURATION, e.getMessage());
@@ -748,7 +750,8 @@ public class ManageDomains {
             try {
                 log.info("Testing kerberos configuration for domain: " + domain);
                 List<String> ldapServersPerDomain = ldapServersPerDomainMap.get(domain);
-                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapServersPerDomain, ldapServerPort);
+                KerberosConfigCheck kerberosConfigCheck = new KerberosConfigCheck(ldapServersPerDomain, ldapServerPort,
+                        configurationProvider.getConfigValue(ConfigValues.SASL_QOP));
                 StringBuffer userGuid = new StringBuffer();
                 kerberosConfigCheck.checkInstallation(domain,
                         users.getValueForDomain(domain),
@@ -1114,6 +1117,8 @@ public class ManageDomains {
                     .append(ConfigValues.LDAPServerPort.name())
                     .append("=\n")
                     .append(ConfigValues.ChangePasswordMsg.name())
+                    .append("=\n")
+                    .append(ConfigValues.SASL_QOP.name())
                     .append("=\n")
                     .toString());
             fw.flush();

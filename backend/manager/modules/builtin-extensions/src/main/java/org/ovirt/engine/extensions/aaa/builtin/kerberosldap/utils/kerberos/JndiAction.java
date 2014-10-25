@@ -35,15 +35,17 @@ public class JndiAction implements PrivilegedAction {
     private final StringBuffer userGuid;
     private List<String> ldapServers;
     private final String defaultLdapServerPort;
+    private final String saslQOP;
     private final static Logger log = Logger.getLogger(JndiAction.class);
 
-    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers, String defaultLdapServerPort) {
+    public JndiAction(String userName, String domainName, StringBuffer userGuid, LdapProviderType ldapProviderType, List<String> ldapServers, String defaultLdapServerPort, String saslQOP) {
         this.userName = userName;
         this.domainName = domainName;
         this.ldapProviderType = ldapProviderType;
         this.userGuid = userGuid;
         this.ldapServers = ldapServers;
         this.defaultLdapServerPort = defaultLdapServerPort;
+        this.saslQOP = saslQOP;
     }
 
     @Override
@@ -52,7 +54,7 @@ public class JndiAction implements PrivilegedAction {
         env.put(Context.INITIAL_CONTEXT_FACTORY, "com.sun.jndi.ldap.LdapCtxFactory");
         env.put("java.naming.ldap.attributes.binary", "objectGUID");
         env.put(Context.SECURITY_AUTHENTICATION, "GSSAPI");
-        env.put("javax.security.sasl.qop", "auth-conf");
+        env.put("javax.security.sasl.qop", saslQOP);
 
         // Send an SRV record DNS query to retrieve all the LDAP servers in the domain
         LdapSRVLocator locator = new LdapSRVLocator();
