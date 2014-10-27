@@ -18,8 +18,8 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
     private final ArrayList<GlusterGeoRepSessionDetails> geoRepDetails = new ArrayList<GlusterGeoRepSessionDetails>();
     private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
 
-    private GlusterGeoRepSessionDetails populatePairDetails(Map<String, Object> innerMap, GlusterGeoRepSession session) {
-        GlusterGeoRepSessionDetails details = getSessionDetails(innerMap, session);
+    private GlusterGeoRepSessionDetails populatePairDetails(Map<String, Object> innerMap) {
+        GlusterGeoRepSessionDetails details = getSessionDetails(innerMap);
         if (details != null) {
             Long filesSynced =
                     innerMap.containsKey(FILES_SYNCED) ? Long.parseLong(innerMap.get(FILES_SYNCED).toString()) : null;
@@ -49,7 +49,7 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
 
             if (innerMap.containsKey(GEO_REP_PAIRS)) {
                 for (Object sessionPair : (Object[]) innerMap.get(GEO_REP_PAIRS)) {
-                    geoRepDetails.add(populatePairDetails((Map<String, Object>) sessionPair, session));
+                    geoRepDetails.add(populatePairDetails((Map<String, Object>) sessionPair));
                 }
             }
             session.setSessionDetails(geoRepDetails);
@@ -58,7 +58,7 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
     }
 
     public GlusterVolumeGeoRepStatusDetailForXmlRpc(Map<String, Object> innerMap) {
-        super(innerMap);
+        super(innerMap, false);
         if (innerMap.containsKey(GEO_REP)) {
             populateSessionDetails((Map<String, Object>) innerMap.get(GEO_REP));
         }
@@ -72,5 +72,4 @@ public class GlusterVolumeGeoRepStatusDetailForXmlRpc extends GlusterVolumeGeoRe
     public List<GlusterGeoRepSession> getGeoRepSessions() {
         return geoRepSessions;
     }
-
 }

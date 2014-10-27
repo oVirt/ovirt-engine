@@ -105,50 +105,42 @@ LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterGeoRepSessionById(v_session_id UUID)
-RETURNS SETOF gluster_georep_session STABLE
+RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_volume_id, session_key, slave_host_uuid,
-    slave_host_name, slave_volume_id, slave_volume_name, status,
-    _create_date, _update_date
-    FROM  gluster_georep_session
+    RETURN QUERY SELECT *
+    FROM  gluster_georep_sessions_view
     WHERE session_id = v_session_id;
 END; $procedure$
 LANGUAGE plpgsql;
 
 
 Create or replace FUNCTION GetGlusterGeoRepSessionsByVolumeId(v_master_volume_id UUID)
-RETURNS SETOF gluster_georep_session STABLE
+RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_volume_id, session_key, slave_host_uuid,
-    slave_host_name, slave_volume_id, slave_volume_name, status,
-    _create_date, _update_date
-    FROM  gluster_georep_session
+    RETURN QUERY SELECT *
+    FROM  gluster_georep_sessions_view
     WHERE master_volume_id = v_master_volume_id order by slave_volume_name asc;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterGeoRepSessionsByClusterId(v_cluster_id UUID)
-RETURNS SETOF gluster_georep_session STABLE
+RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_volume_id, session_key, slave_host_uuid,
-    slave_host_name, slave_volume_id, slave_volume_name, georep.status,
-    georep._create_date, georep._update_date
-    FROM  gluster_georep_session georep JOIN gluster_volumes ON master_volume_id = id
+    RETURN QUERY SELECT *
+    FROM  gluster_georep_sessions_view
     WHERE cluster_id = v_cluster_id order by slave_volume_name asc;
 END; $procedure$
 LANGUAGE plpgsql;
 
 Create or replace FUNCTION GetGlusterGeoRepSessionByKey(v_session_key VARCHAR(150))
-RETURNS SETOF gluster_georep_session STABLE
+RETURNS SETOF gluster_georep_sessions_view STABLE
 AS $procedure$
 BEGIN
-    RETURN QUERY SELECT session_id, master_volume_id, session_key, slave_host_uuid,
-    slave_host_name, slave_volume_id, slave_volume_name, status,
-    _create_date, _update_date
-    FROM  gluster_georep_session
+    RETURN QUERY SELECT *
+    FROM  gluster_georep_sessions_view
     WHERE session_key = v_session_key;
 END; $procedure$
 LANGUAGE plpgsql;
@@ -160,6 +152,22 @@ AS $procedure$
 BEGIN
     UPDATE gluster_georep_session
     SET status = v_status,
+    _update_date = LOCALTIMESTAMP
+    WHERE session_id = v_session_id;
+END; $procedure$
+LANGUAGE plpgsql;
+
+Create or replace FUNCTION UpdateGlusterGeoRepSession(v_session_id UUID,
+                                                      v_status VARCHAR(50),
+                                                      v_slave_host_uuid UUID,
+                                                      v_slave_volume_id UUID)
+RETURNS VOID
+AS $procedure$
+BEGIN
+    UPDATE gluster_georep_session
+    SET status = v_status,
+    slave_host_uuid = v_slave_host_uuid,
+    slave_volume_id = v_slave_volume_id,
     _update_date = LOCALTIMESTAMP
     WHERE session_id = v_session_id;
 END; $procedure$

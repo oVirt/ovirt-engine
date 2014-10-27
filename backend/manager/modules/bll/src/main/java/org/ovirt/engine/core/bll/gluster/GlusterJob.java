@@ -166,6 +166,14 @@ public abstract class GlusterJob {
                 LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER, VdcBllMessages.ACTION_TYPE_FAILED_GLUSTER_OPERATION_INPROGRESS)), null);
     }
 
+    protected EngineLock acquireGeoRepSessionLock(Guid id) {
+        EngineLock lock = new EngineLock(Collections.singletonMap(id.toString(),
+                LockMessagesMatchUtil.makeLockingPair(LockingGroup.GLUSTER_GEOREP,
+                        VdcBllMessages.ACTION_TYPE_FAILED_GEOREP_SESSION_LOCKED)), null);
+        LockManagerFactory.getLockManager().acquireLockWait(lock);
+        return lock;
+    }
+
     protected GlusterUtil getGlusterUtil() {
         return GlusterUtil.getInstance();
     }
