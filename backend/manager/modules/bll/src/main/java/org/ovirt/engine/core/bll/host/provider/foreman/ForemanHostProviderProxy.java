@@ -284,7 +284,7 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
                 "            },\n" +
                 "           {\n" +
                 "                \"name\": \"management\",\n" +
-                "                \"value\": \"" + computeResource.getUrl().replaceAll("(http://|/api)", "") + "\",\n" +
+                "                \"value\": \"" + computeResource.getUrl().replaceAll("(http://|/api|/ovirt-engine)", "") + "\",\n" +
                 "                \"_destroy\": \"false\",\n" +
                 "                \"nested\": \"\"\n" +
                 "            }\n" +
