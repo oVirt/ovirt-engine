@@ -253,6 +253,7 @@ public class GetUnregisteredBlockStorageDomainsQuery<P extends GetUnregisteredBl
 
         Pair<StorageDomainStatic, SANState> result = (Pair<StorageDomainStatic, SANState>) returnValue.getReturnValue();
         StorageDomainStatic storageDomainStatic = result.getFirst();
+        storageDomainStatic.setStorageType(getParameters().getStorageType());
 
         StorageDomain storageDomain = new StorageDomain();
         storageDomain.setStorageStaticData(storageDomainStatic);
