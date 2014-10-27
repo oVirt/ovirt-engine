@@ -9,6 +9,7 @@
     <obrand:favicon />
     <meta name="gwt:property" content="locale=${requestScope['locale']}">
     <obrand:stylesheets />
+    <obrand:javascripts />
     <script type="text/javascript">
         <c:if test="${requestScope['userInfo'] != null}">
             var userInfo = <c:out value="${requestScope['userInfo']}" escapeXml="false"/>;

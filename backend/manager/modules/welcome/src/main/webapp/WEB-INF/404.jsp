@@ -11,6 +11,7 @@
     <obrand:favicon />
     <title><fmt:message key="pagenotfound.page_not_found" bundle="${pagenotfound}" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
 <div class="obrand_loginPageBackground">

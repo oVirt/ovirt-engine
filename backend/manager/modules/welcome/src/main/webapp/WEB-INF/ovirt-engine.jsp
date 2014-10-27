@@ -10,6 +10,7 @@
     <obrand:favicon />
     <title><fmt:message key="obrand.welcome.title" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
     <script src="splash.js" type="text/javascript"></script>
 </head>
 <body onload="pageLoaded()">

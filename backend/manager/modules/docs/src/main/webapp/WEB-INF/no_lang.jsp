@@ -14,6 +14,7 @@
         </fmt:message>
     </title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
     <div class="obrand_loginPageBackground">
