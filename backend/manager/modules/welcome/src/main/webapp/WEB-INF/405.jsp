@@ -11,6 +11,7 @@
     <obrand:favicon />
     <title><fmt:message key="methodnotallowed.method_not_allowed" bundle="${methodnotallowed}" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
 <div class="obrand_loginPageBackground">

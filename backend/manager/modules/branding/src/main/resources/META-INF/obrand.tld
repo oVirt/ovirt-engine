@@ -15,4 +15,8 @@
     <name>messages</name>
     <path>/META-INF/tags/obrand/messages.tag</path>
   </tag-file>
+  <tag-file>
+    <name>javascripts</name>
+    <path>/META-INF/tags/obrand/javascripts.tag</path>
+  </tag-file>
 </taglib>

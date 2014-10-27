@@ -43,9 +43,14 @@ public class BrandingThemeTest {
     @Test
     public void testGetThemeStyleSheet() {
         assertEquals("User portal style sheet: 'user_portal.css'", "user_portal.css", //$NON-NLS-1$ //$NON-NLS-2$
-                testTheme.getThemeStyleSheet("userportal"));
+                testTheme.getThemeStylesheets("userportal").get(0));
+        assertEquals("User portal style sheet: 'abc.css'", "abc.css", //$NON-NLS-1$ //$NON-NLS-2$
+                testTheme.getThemeStylesheets("userportal").get(1));
+
         assertEquals("Wedadmin style sheet: 'web_admin.css'", "web_admin.css", //$NON-NLS-1$ //$NON-NLS-2$
-                testTheme.getThemeStyleSheet("webadmin"));
+                testTheme.getThemeStylesheets("webadmin").get(0));
+        assertEquals("Wedadmin style sheet: '123.css'", "123.css", //$NON-NLS-1$ //$NON-NLS-2$
+                testTheme.getThemeStylesheets("webadmin").get(1));
     }
 
     @Test

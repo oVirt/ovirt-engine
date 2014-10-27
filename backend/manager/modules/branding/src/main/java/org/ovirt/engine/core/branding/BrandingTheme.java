@@ -86,7 +86,7 @@ public class BrandingTheme {
     /**
      * Post fix for denoting css files.
      */
-    private static final String CSS_POST_FIX = "_css";
+    private static final String CSS_POST_FIX = "_css"; //$NON-NLS-1$
 
     private static final String[] TEMPLATE_REPLACE_VALUES = {"true", "false"}; //$NON-NLS-1$ //$NON-NLS-2$
 
@@ -197,12 +197,22 @@ public class BrandingTheme {
     }
 
     /**
-     * Get the style sheet type based on the passed in {@code ApplicationType}.
-     * @param applicationName The application name to get the style sheet string for.
-     * @return A {@code String} representation of the style sheet name.
+     * Get the css resources for this theme for this {@code ApplicationType}.
+     * @param applicationName The application name for which to get the css resources
+     * @return A {@code List} of filenames
      */
-    public String getThemeStyleSheet(String applicationName) {
-        return brandingProperties.getProperty(applicationName + CSS_POST_FIX);
+    public List<String> getThemeStylesheets(String applicationName) {
+        List<String> ret = null;
+        final String cssFiles = brandingProperties.getProperty(applicationName + CSS_POST_FIX);
+        if (cssFiles == null) {
+            log.warn("Theme '{}' has no property defined for key '{}'", //$NON-NLS-1$
+                    this.getPath(), applicationName + CSS_POST_FIX);
+        }
+        else {
+            // comma-delimited list
+            ret = Arrays.asList(cssFiles.split("\\s*,\\s*")); //$NON-NLS-1$
+        }
+        return ret;
     }
 
     /**
@@ -359,9 +369,9 @@ public class BrandingTheme {
     @Override
     public String toString() {
         return "Path to theme: " + getPath() + ", User portal css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStyleSheet("userportal") + ", Web admin css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStyleSheet("webadmin") + ", Welcome page css: " //$NON-NLS-1$ //$NON-NLS-2$
-        + getThemeStyleSheet("welcome"); //$NON-NLS-1$
+        + getThemeStylesheets("userportal") + ", Web admin css: " //$NON-NLS-1$ //$NON-NLS-2$
+        + getThemeStylesheets("webadmin") + ", Welcome page css: " //$NON-NLS-1$ //$NON-NLS-2$
+        + getThemeStylesheets("welcome"); //$NON-NLS-1$
     }
 
 }

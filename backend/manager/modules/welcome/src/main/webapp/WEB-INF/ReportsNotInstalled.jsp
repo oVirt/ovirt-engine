@@ -11,6 +11,7 @@
     <obrand:favicon />
     <title><fmt:message key="reportsnotinstalled.reports_not_installed" bundle="${reportsnotinstalled}" /></title>
     <obrand:stylesheets />
+    <obrand:javascripts />
 </head>
 <body>
 <div class="obrand_loginPageBackground">
