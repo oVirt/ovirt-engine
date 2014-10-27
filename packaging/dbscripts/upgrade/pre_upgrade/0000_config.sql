@@ -161,8 +161,9 @@ select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
 select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'general');
 -- Gluster Geo-replication --
 select fn_db_add_config_value_for_versions_up_to('GlusterGeoReplicationEnabled', 'false', '3.5');
-select fn_db_add_config_value('GlusterRefreshRateGeoRepStatus', '300', 'general');
-select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscovery', '3600', 'general');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscoveryInSecs', '3600', 'general');
+select fn_db_add_config_value('GlusterRefreshRateGeoRepStatusInSecs', '300', 'general');
+
 
 -- OpenStack related
 select fn_db_add_config_value('KeystoneAuthUrl', '', 'general');
@@ -869,6 +870,8 @@ select fn_db_delete_config_value('ENMailPort','general');
 select fn_db_delete_config_value('ENMailUseDefaultCredentials','general');
 select fn_db_delete_config_value('ENMailUser','general');
 select fn_db_delete_config_value('FreeSpaceCriticalLow','general');
+select fn_db_delete_config_value('GlusterRefreshRateGeoRepStatus', 'general');
+select fn_db_delete_config_value('GlusterRefreshRateGeoRepDiscovery', 'general');
 select fn_db_delete_config_value('HotPlugUnsupportedOsList','general');
 select fn_db_delete_config_value('HotPlugSupportedOsList','general');
 select fn_db_delete_config_value('ImagesSyncronizationTimeout','general');

@@ -34,7 +34,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
 
     private final List<GlusterGeoRepSession> geoRepSessions = new ArrayList<GlusterGeoRepSession>();
 
-    protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap, GlusterGeoRepSession session) {
+    protected GlusterGeoRepSessionDetails getSessionDetails(Map<String, Object> innerMap) {
         GlusterGeoRepSessionDetails details = new GlusterGeoRepSessionDetails();
         Guid masterNodeGlusterId;
         if (innerMap.containsKey(MASTER_NODE_UUID)) {
@@ -108,7 +108,7 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
         ArrayList<GlusterGeoRepSessionDetails> geoRepSessionDetails = new ArrayList<GlusterGeoRepSessionDetails>();
         if (innerMap.containsKey(GEO_REP_PAIRS)) {
             for (Object sessionPair : (Object[]) innerMap.get(GEO_REP_PAIRS)) {
-                geoRepSessionDetails.add(getSessionDetails((Map<String, Object>) sessionPair, geoRepSession));
+                geoRepSessionDetails.add(getSessionDetails((Map<String, Object>) sessionPair));
             }
         }
         geoRepSession.setSessionDetails(geoRepSessionDetails);
@@ -116,8 +116,12 @@ public class GlusterVolumeGeoRepStatusForXmlRpc extends StatusReturnForXmlRpc {
     }
 
     public GlusterVolumeGeoRepStatusForXmlRpc(Map<String, Object> innerMap) {
+        this(innerMap, true);
+    }
+
+    public GlusterVolumeGeoRepStatusForXmlRpc(Map<String, Object> innerMap, boolean includeSessions) {
         super(innerMap);
-        if (innerMap.containsKey(GEO_REP)) {
+        if (includeSessions && innerMap.containsKey(GEO_REP)) {
             populateSessions((Object[]) innerMap.get(GEO_REP));
         }
     }

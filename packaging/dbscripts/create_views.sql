@@ -1789,6 +1789,16 @@ SELECT gluster_server_hooks.*,
 FROM gluster_server_hooks
 INNER JOIN vds_static ON gluster_server_hooks.server_id = vds_static.vds_id;
 
+CREATE OR REPLACE VIEW gluster_georep_sessions_view
+AS
+SELECT session_id, master_volume_id, session_key, slave_host_uuid,
+    slave_host_name, slave_volume_id, slave_volume_name, georep.status,
+    georep._create_date, georep._update_date,
+    gluster_volumes.vol_name AS master_volume_name,
+    gluster_volumes.cluster_id AS cluster_id
+FROM  gluster_georep_session georep
+INNER JOIN gluster_volumes ON gluster_volumes.id = georep.master_volume_id;
+
 -- Affinity Groups view, including members
 CREATE OR REPLACE VIEW affinity_groups_view
 AS

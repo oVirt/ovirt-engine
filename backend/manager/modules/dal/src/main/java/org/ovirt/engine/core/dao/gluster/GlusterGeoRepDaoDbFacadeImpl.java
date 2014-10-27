@@ -39,6 +39,7 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
             GlusterGeoRepSession entity = new GlusterGeoRepSession();
             entity.setId(getGuidDefaultEmpty(rs, "session_id"));
             entity.setMasterVolumeId(getGuidDefaultEmpty(rs, "master_volume_id"));
+            entity.setMasterVolumeName(rs.getString("master_volume_name"));
             entity.setSessionKey(rs.getString("session_key"));
             entity.setSlaveHostName(rs.getString("slave_host_name"));
             entity.setSlaveNodeUuid(getGuid(rs, "slave_host_uuid"));
@@ -189,6 +190,14 @@ public class GlusterGeoRepDaoDbFacadeImpl extends MassOperationsGenericDaoDbFaca
 
     @Override
     public void updateSession(GlusterGeoRepSession geoRepSession) {
+        getCallsHandler().executeModification("UpdateGlusterGeoRepSession",
+                createIdParameterMapper(geoRepSession.getId())
+                        .addValue("status", EnumUtils.nameOrNull(geoRepSession.getStatus()))
+                        .addValue("slave_host_uuid", geoRepSession.getSlaveNodeUuid())
+                        .addValue("slave_volume_id", geoRepSession.getSlaveVolumeId()));
+    }
+
+    public void updateSessionStatus(GlusterGeoRepSession geoRepSession) {
         getCallsHandler().executeModification("UpdateGlusterGeoRepSessionStatus",
                 createIdParameterMapper(geoRepSession.getId())
                 .addValue("status", EnumUtils.nameOrNull(geoRepSession.getStatus())));

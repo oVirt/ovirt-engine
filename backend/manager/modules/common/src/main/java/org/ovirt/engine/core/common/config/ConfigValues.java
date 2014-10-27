@@ -1415,7 +1415,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3600")
-    GlusterRefreshRateGeoRepDiscovery,
+    GlusterRefreshRateGeoRepDiscoveryInSecs,
+
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("300")
+    GlusterRefreshRateGeoRepStatusInSecs,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("AttestationService/resources/PollHosts")

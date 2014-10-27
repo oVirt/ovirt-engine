@@ -33,13 +33,17 @@ import org.ovirt.engine.core.common.vdscommands.gluster.GlusterVolumeGeoRepSessi
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.gluster.GlusterAuditLogUtil;
+import org.ovirt.engine.core.dao.VdsDAO;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.gluster.GlusterGeoRepDao;
 import org.ovirt.engine.core.dao.gluster.GlusterVolumeDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
+import org.ovirt.engine.core.utils.lock.EngineLock;
 
 @RunWith(MockitoJUnitRunner.class)
 public class GlusterGeoRepSyncJobTest {
+    private static final Guid[] CLUSTER_GUIDS = { new Guid("CC111111-1111-1111-1111-111111111111"),
+            new Guid("CC222222-2222-2222-2222-222222222222") };
 
     @Mock
     private GlusterGeoRepDao geoRepDao;
@@ -49,6 +53,9 @@ public class GlusterGeoRepSyncJobTest {
 
     @Mock
     private VdsGroupDAO clusterDao;
+
+    @Mock
+    private VdsDAO vdsDao;
 
     @Mock
     private GlusterVolumeDao volumeDao;
@@ -61,65 +68,115 @@ public class GlusterGeoRepSyncJobTest {
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
             mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_5.toString(), true),
-            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_4.toString(), false)
+            mockConfig(ConfigValues.GlusterGeoReplicationEnabled, Version.v3_4.toString(), false),
+            mockConfig(ConfigValues.DefaultMinThreadPoolSize, 10),
+            mockConfig(ConfigValues.DefaultMaxThreadPoolSize, 20),
+            mockConfig(ConfigValues.DefaultMaxThreadWaitQueueSize, 10)
             );
 
     @Before
     public void init() {
         syncJob = Mockito.spy(GlusterGeoRepSyncJob.getInstance());
         MockitoAnnotations.initMocks(this);
+        syncJob.setLogUtil(logUtil);
         doReturn(clusterDao).when(syncJob).getClusterDao();
+        doReturn(vdsDao).when(syncJob).getVdsDao();
         doReturn(geoRepDao).when(syncJob).getGeoRepDao();
         doReturn(volumeDao).when(syncJob).getVolumeDao();
         doReturn(clusterUtils).when(syncJob).getClusterUtils();
-        syncJob.setLogUtil(logUtil);
         doReturn(getClusters()).when(clusterDao).getAll();
         doReturn(getVolume()).when(volumeDao).getByName(any(Guid.class), any(String.class));
+        doReturn(getVolume()).when(volumeDao).getById(any(Guid.class));
         doReturn(getServer()).when(clusterUtils).getRandomUpServer(any(Guid.class));
+        doReturn(getMockLock()).when(syncJob).acquireGeoRepSessionLock(any(Guid.class));
+        doReturn(getSessions(2, true)).when(geoRepDao).getGeoRepSessionsInCluster(CLUSTER_GUIDS[1]);
     }
 
     @Test
-    public void testSync() {
+    public void testDiscoverGeoRepData() {
 
         doReturn(getSessionsVDSReturnVal(true, 2)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatus),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
-        syncJob.refreshGeoRepData();
+        syncJob.discoverGeoRepData();
         Mockito.verify(geoRepDao, times(2)).save(any(GlusterGeoRepSession.class));
     }
 
     @Test
-    public void testSyncWhenNoSessions() {
+    public void testDiscoverGeoRepDataWhenNoSessions() {
 
         doReturn(getSessionsVDSReturnVal(true, 0)).when(syncJob)
                 .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatus),
                         any(GlusterVolumeGeoRepSessionVDSParameters.class));
-        syncJob.refreshGeoRepData();
+        syncJob.discoverGeoRepData();
         Mockito.verify(geoRepDao, times(0)).save(any(GlusterGeoRepSession.class));
+    }
+
+    @Test
+    public void testRefreshStatus() {
+        doReturn(getSessionDetailsVDSReturnVal(true)).when(syncJob)
+        .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatusDetail),
+                any(GlusterVolumeGeoRepSessionVDSParameters.class));
+        syncJob.refreshGeoRepSessionStatus();
+        Mockito.verify(geoRepDao, times(2)).saveOrUpdateDetailsInBatch(any(List.class));
+    }
+
+    @Test
+    public void testRefreshStatusNoSessions() {
+        doReturn(getSessionDetailsVDSReturnVal(false)).when(syncJob)
+                .runVdsCommand(eq(VDSCommandType.GetGlusterVolumeGeoRepStatusDetail),
+                        any(GlusterVolumeGeoRepSessionVDSParameters.class));
+        syncJob.refreshGeoRepSessionStatus();
+        Mockito.verify(geoRepDao, times(0)).saveOrUpdateDetailsInBatch(any(List.class));
+    }
+
+    private EngineLock getMockLock() {
+        return new EngineLock() {
+
+            @Override
+            public void close() {
+
+            }
+
+        };
     }
 
     private Object getSessionsVDSReturnVal(boolean ret, int count) {
         VDSReturnValue vdsRetValue = new VDSReturnValue();
         vdsRetValue.setSucceeded(ret);
         if (ret) {
-            vdsRetValue.setReturnValue(getSessions(count));
+            vdsRetValue.setReturnValue(getSessions(count, false));
         } else {
             vdsRetValue.setReturnValue(null);
         }
         return vdsRetValue;
     }
 
-    private List<GlusterGeoRepSession> getSessions(int count) {
+    private Object getSessionDetailsVDSReturnVal(boolean ret) {
+        VDSReturnValue vdsRetValue = new VDSReturnValue();
+        vdsRetValue.setSucceeded(ret);
+        if (ret) {
+            vdsRetValue.setReturnValue(getSessionDetailsList());
+        } else {
+            vdsRetValue.setReturnValue(null);
+        }
+        return vdsRetValue;
+    }
+
+    private List<GlusterGeoRepSession> getSessions(int count, boolean populateVoId) {
         List<GlusterGeoRepSession> sessions = new ArrayList<GlusterGeoRepSession>();
         for (int i = 0; i < count; i++) {
-            sessions.add(getSession());
+            sessions.add(getSession(populateVoId));
         }
         return sessions;
     }
 
-    private GlusterGeoRepSession getSession() {
+    private GlusterGeoRepSession getSession(boolean populateVoId) {
         GlusterGeoRepSession session = new GlusterGeoRepSession();
         session.setMasterVolumeName("VOL1");
+        if (populateVoId) {
+            session.setMasterVolumeId(Guid.newGuid());
+        }
         session.setId(Guid.newGuid());
         session.setSessionKey(session.getId() + session.getMasterVolumeName());
         session.setStatus(GeoRepSessionStatus.ACTIVE);
@@ -137,14 +194,14 @@ public class GlusterGeoRepSyncJobTest {
 
     private List<VDSGroup> getClusters() {
         List<VDSGroup> list = new ArrayList<>();
-        list.add(createCluster(Version.v3_4));
-        list.add(createCluster(Version.v3_5));
+        list.add(createCluster(0, Version.v3_4));
+        list.add(createCluster(1, Version.v3_5));
         return list;
     }
 
-    private VDSGroup createCluster(Version v) {
+    private VDSGroup createCluster(int index, Version v) {
         VDSGroup cluster = new VDSGroup();
-        cluster.setId(Guid.newGuid());
+        cluster.setId(CLUSTER_GUIDS[index]);
         cluster.setName("cluster");
         cluster.setGlusterService(true);
         cluster.setVirtService(false);

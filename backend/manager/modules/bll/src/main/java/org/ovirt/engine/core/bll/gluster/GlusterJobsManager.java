@@ -68,10 +68,17 @@ public class GlusterJobsManager {
                 "gluster_georep_poll_event",
                 new Class[0] ,
                 new Class [0],
-                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscovery),
-                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscovery),
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscoveryInSecs),
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepDiscoveryInSecs),
                 TimeUnit.SECONDS);
 
+        scheduler.scheduleAFixedDelayJob(GlusterGeoRepSyncJob.getInstance(),
+                "gluster_georepstatus_poll_event",
+                new Class[0],
+                new Class[0],
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs),
+                getRefreshRate(ConfigValues.GlusterRefreshRateGeoRepStatusInSecs),
+                TimeUnit.SECONDS);
     }
 
     private static boolean glusterModeSupported() {
