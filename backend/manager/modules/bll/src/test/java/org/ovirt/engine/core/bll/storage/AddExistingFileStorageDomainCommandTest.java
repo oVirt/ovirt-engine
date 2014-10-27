@@ -121,22 +121,6 @@ public class AddExistingFileStorageDomainCommandTest {
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
 
-    @Test
-    public void testCannotChangeStorageDomainType() {
-        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
-
-        StorageDomainStatic sdStatic = getStorageDomain();
-        sdStatic.setStorageDomainType(StorageDomainType.Image);
-
-        doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
-                any(HSMGetStorageDomainInfoVDSCommandParameters.class));
-        doReturn(Collections.singletonList(sdStatic.getId())).when(command).executeHSMGetStorageDomainsList(
-                any(HSMGetStorageDomainsListVDSCommandParameters.class));
-
-        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
-                VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
-    }
-
     private static StorageDomainStatic getStorageDomain() {
         StorageDomainStatic storageDomain = new StorageDomainStatic();
         storageDomain.setStorage(Guid.newGuid().toString());
