@@ -310,6 +310,7 @@ public enum VdcActionType {
     DeleteGeoRepSession(1428, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     StartGlusterVolumeGeoRep(1429, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
     ResumeGeoRepSession(1430, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    PauseGlusterVolumeGeoRepSession(1431, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Scheduling Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
