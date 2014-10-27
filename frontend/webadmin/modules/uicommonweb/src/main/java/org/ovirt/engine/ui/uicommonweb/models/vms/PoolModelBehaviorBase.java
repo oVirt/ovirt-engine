@@ -263,11 +263,12 @@ public abstract class PoolModelBehaviorBase extends VmModelBehaviorBase<PoolMode
                         new IntegerValidation(0, assignedVms)
                 });
 
+        final int maxAssignedVmsPerUserUpperBound = isNew ? getModel().getNumOfDesktops().getEntity() : assignedVms + getModel().getNumOfDesktops().getEntity();
         getModel().getMaxAssignedVmsPerUser().validateEntity(
                 new IValidation[]
                 {
                         new NotEmptyValidation(),
-                        new IntegerValidation(1, Short.MAX_VALUE)
+                        new IntegerValidation(1, maxAssignedVmsPerUserUpperBound)
                 });
 
         getModel().setValidTab(TabName.GENERAL_TAB, getModel().isValidTab(TabName.GENERAL_TAB)

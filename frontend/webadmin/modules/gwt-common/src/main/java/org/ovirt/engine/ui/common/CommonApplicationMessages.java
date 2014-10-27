@@ -62,7 +62,7 @@ public interface CommonApplicationMessages extends Messages {
             + "pool'' the generated names will be: my01pool,my02pool,...my99pool")
     String poolNameHelp();
 
-    @DefaultMessage("Maximum number of VMs a single user can attach to from this pool. This field must be between 1 and 32,767.")
+    @DefaultMessage("Maximum number of VMs a single user can attach to from this pool. This field must be between 1 and number of VMs in this pool.")
     String maxAssignedVmsPerUserHelp();
 
     @DefaultMessage("Free: {0} vCPU")
