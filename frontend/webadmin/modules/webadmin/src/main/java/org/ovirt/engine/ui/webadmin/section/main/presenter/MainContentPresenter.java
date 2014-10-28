@@ -7,7 +7,6 @@ import com.gwtplatform.mvp.client.Presenter;
 import com.gwtplatform.mvp.client.View;
 import com.gwtplatform.mvp.client.annotations.ContentSlot;
 import com.gwtplatform.mvp.client.annotations.ProxyCodeSplit;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 
@@ -37,15 +36,22 @@ public class MainContentPresenter extends Presenter<MainContentPresenter.ViewDef
         super(eventBus, view, proxy, MainSectionPresenter.TYPE_SetMainContent);
     }
 
-    @ProxyEvent
-    public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
-        boolean subTabPanelVisible = event.isSubTabPanelVisible();
-        getView().setSubTabPanelVisible(subTabPanelVisible);
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getEventBus().addHandler(UpdateMainContentLayoutEvent.getType(),
+                new UpdateMainContentLayoutEvent.UpdateMainContentLayoutHandler() {
 
-        if (!subTabPanelVisible) {
-            // Clear sub tab panel slot to ensure consistent sub tab presenter lifecycle
-            clearSlot(TYPE_SetSubTabPanelContent);
-        }
+            @Override
+            public void onUpdateMainContentLayout(UpdateMainContentLayoutEvent event) {
+                boolean subTabPanelVisible = event.isSubTabPanelVisible();
+                getView().setSubTabPanelVisible(subTabPanelVisible);
+
+                if (!subTabPanelVisible) {
+                    // Clear sub tab panel slot to ensure consistent sub tab presenter lifecycle
+                    clearSlot(TYPE_SetSubTabPanelContent);
+                }
+            }
+        }));
     }
-
 }
