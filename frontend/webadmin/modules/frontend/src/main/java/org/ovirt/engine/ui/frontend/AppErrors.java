@@ -658,6 +658,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Only the first template version can be selected as the base template.")
     String ACTION_TYPE_FAILED_TEMPLATE_VERSION_CANNOT_BE_BASE_TEMPLATE();
 
+    @DefaultStringValue("Cannot ${action} ${type} with an empty disk alias.")
+    String ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS();
+
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Instance Type doesn't exist.")
     String ACTION_TYPE_FAILED_INSTANCE_TYPE_DOES_NOT_EXIST();
 

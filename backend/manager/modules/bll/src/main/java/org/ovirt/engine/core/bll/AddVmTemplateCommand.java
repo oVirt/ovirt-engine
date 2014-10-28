@@ -408,11 +408,25 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             return false;
         }
 
+        if(!isDisksAliasNotEmpty()) {
+            return false;
+        }
+
         if (isInstanceType) {
             return true;
         } else {
             return doClusterRelatedChecks();
         }
+    }
+
+    protected boolean isDisksAliasNotEmpty() {
+        // Check that all the template's allocated disk's aliases are not an empty string.
+        for (DiskImage diskImage : diskInfoDestinationMap.values()) {
+            if (StringUtils.isEmpty(diskImage.getDiskAlias())) {
+                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_CANNOT_BE_CREATED_WITH_EMPTY_DISK_ALIAS);
+            }
+        }
+        return true;
     }
 
     protected boolean setAndValidateDiskProfiles() {
