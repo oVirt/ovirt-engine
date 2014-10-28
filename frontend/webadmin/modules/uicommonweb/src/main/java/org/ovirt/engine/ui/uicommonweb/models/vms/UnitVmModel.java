@@ -2759,7 +2759,8 @@ public class UnitVmModel extends Model {
 
         setIsHostTabValid(getIsHostTabValid() && getMigrationDowntime().getIsValid());
 
-        setIsAllocationTabValid(getIsAllocationTabValid() && getCpuSharesAmount().getIsValid());
+        boolean diskAliasesValid = getDisksAllocationModel().getIsValid();
+        setIsAllocationTabValid(getIsAllocationTabValid() && getCpuSharesAmount().getIsValid() && diskAliasesValid);
         setIsBootSequenceTabValid(getCdImage().getIsValid() && getKernel_path().getIsValid());
         boolean vmInitIsValid = getVmInitModel().validate();
         setIsFirstRunTabValid(vmInitIsValid);
