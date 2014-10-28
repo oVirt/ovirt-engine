@@ -872,6 +872,8 @@ public abstract class VmModelBehaviorBase<TModel extends UnitVmModel> {
                 .setEntity(changeable || none
                         ? null //$NON-NLS-1$
                         : getModel().getCpuSharesAmountSelection().getSelectedItem().getValue());
+
+        getModel().getCpuSharesAmount().setIsChangable(changeable);
     }
 
     public void updateCpuSharesSelection() {
