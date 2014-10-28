@@ -304,6 +304,7 @@ public enum VdcActionType {
     StopRemoveGlusterVolumeBricks(1423, ActionGroup.MANIPULATE_GLUSTER_VOLUME, false, QuotaDependency.NONE),
     CommitRemoveGlusterVolumeBricks(1424, ActionGroup.MANIPULATE_GLUSTER_VOLUME, false, QuotaDependency.NONE),
     RefreshGlusterVolumeDetails(1425, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
+    RefreshGeoRepSessions(1426, ActionGroup.MANIPULATE_GLUSTER_VOLUME, QuotaDependency.NONE),
 
     // Cluster Policy
     AddClusterPolicy(1450, ActionGroup.EDIT_STORAGE_POOL_CONFIGURATION, false, QuotaDependency.NONE),
