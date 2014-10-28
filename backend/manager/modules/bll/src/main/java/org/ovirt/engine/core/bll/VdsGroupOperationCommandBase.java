@@ -10,8 +10,10 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.common.AuditLogType;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.VdsGroupOperationParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.MigrateOnErrorOptions;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -55,6 +57,19 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         }
 
         return getVdsGroup().getArchitecture();
+    }
+
+    protected void updateMigrateOnError() {
+        if (getVdsGroup() != null && getVdsGroup().getMigrateOnError() == null) {
+            boolean isMigrationSupported =
+                    FeatureSupported.isMigrationSupported(getArchitecture(),
+                            getVdsGroup().getcompatibility_version());
+
+            MigrateOnErrorOptions migrateOnError =
+                    isMigrationSupported ? MigrateOnErrorOptions.YES : MigrateOnErrorOptions.NO;
+
+            getVdsGroup().setMigrateOnError(migrateOnError);
+        }
     }
 
     protected void checkMaxMemoryOverCommitValue() {

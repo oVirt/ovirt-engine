@@ -76,6 +76,11 @@ public class BackendClustersResource extends AbstractBackendCollectionResource<C
         validateEnums(Cluster.class, cluster);
         StoragePool pool = getStoragePool(cluster.getDataCenter(), this);
         VDSGroup entity = map(cluster, map(pool));
+
+        if (!cluster.isSetErrorHandling() || !cluster.getErrorHandling().isSetOnError()) {
+            entity.setMigrateOnError(null);
+        }
+
         return performCreate(VdcActionType.AddVdsGroup,
                 new VdsGroupOperationParameters(entity),
                 new QueryIdResolver<Guid>(VdcQueryType.GetVdsGroupById, IdQueryParameters.class));

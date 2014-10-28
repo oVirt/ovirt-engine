@@ -139,6 +139,14 @@ public class BackendVmsResource extends
                 } else {
                     vm.setPlacementPolicy(null);
                 }
+
+                // If the user omits the placement policy in the incoming XML and the selected template
+                // is the blank one, the AddVmCommand must auto-select a proper default value for the
+                // migration support (disabling it in architectures that do not support this feature)
+                if (!vm.isSetPlacementPolicy() && templateId.equals(Guid.Empty)) {
+                    staticVm.setMigrationSupport(null);
+                }
+
                 Guid storageDomainId =
                         (vm.isSetStorageDomain() && vm.getStorageDomain().isSetId()) ? asGuid(vm.getStorageDomain()
                                 .getId())

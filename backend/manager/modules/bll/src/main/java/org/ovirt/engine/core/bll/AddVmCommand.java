@@ -182,6 +182,11 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmStaticData());
 
+        // Fill the migration policy if it was omitted
+        if (getParameters().getVmStaticData() != null &&
+                getParameters().getVmStaticData().getMigrationSupport() == null) {
+            setDefaultMigrationPolicy();
+        }
     }
 
     @Override
@@ -310,6 +315,19 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         return !getImagesToCheckDestinationStorageDomains().isEmpty()
                 && !LinqUtils.firstOrNull(getImagesToCheckDestinationStorageDomains(), new All<DiskImage>())
                         .getImageId().equals(VmTemplateHandler.BLANK_VM_TEMPLATE_ID);
+    }
+
+    protected void setDefaultMigrationPolicy() {
+        if (getVdsGroup() != null) {
+            boolean isMigrationSupported =
+                    FeatureSupported.isMigrationSupported(getVdsGroup().getArchitecture(),
+                            getVdsGroup().getcompatibility_version());
+
+            MigrationSupport migrationSupport =
+                    isMigrationSupported ? MigrationSupport.MIGRATABLE : MigrationSupport.PINNED_TO_HOST;
+
+            getParameters().getVmStaticData().setMigrationSupport(migrationSupport);
+        }
     }
 
     protected Guid getStoragePoolIdFromSourceImageContainer() {

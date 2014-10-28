@@ -62,7 +62,6 @@ public class VDSGroup extends IVdcQueryable implements Serializable, BusinessEnt
 
     private boolean transparentHugepages;
 
-    @NotNull(message = "VALIDATION.VDS_GROUP.MigrateOnError.NOT_NULL")
     private MigrateOnErrorOptions migrateOnError;
 
     private boolean virtService;
