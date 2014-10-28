@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.uicompat;
 
-import org.ovirt.engine.core.common.businessentities.NumaTuneMode;
-
 import com.google.gwt.i18n.client.ConstantsWithLookup;
 
 public interface LocalizedEnums extends ConstantsWithLookup {
@@ -435,6 +433,10 @@ public interface LocalizedEnums extends ConstantsWithLookup {
 
     String AuditLogType___REMOVE_GLUSTER_VOLUME_BRICKS_NOT_FOUND_FROM_CLI();
 
+    String AuditLogType___GLUSTER_GEOREP_SESSION_REFRESH();
+
+    String AuditLogType___GLUSTER_GEOREP_SESSION_REFRESH_FAILED();
+
     String VdcActionType___ActivateVds();
 
     String VdcActionType___RecoveryStoragePool();
@@ -741,6 +743,8 @@ public interface LocalizedEnums extends ConstantsWithLookup {
     String VdcActionType___RefreshGlusterHook();
 
     String VdcActionType___ManageGlusterService();
+
+    String VdcActionType___RefreshGeoRepSessions();
 
     String VdcActionType___ConnectStorageToVds();
 
