@@ -22,7 +22,7 @@ public interface RoleDAO extends GenericDao<Role, Guid> {
     Role getByName(String name);
 
     /**
-     * This method gets the Roles for the given user and its groups. The purpose of this method is to be able to get
+     * This method gets the admin Roles for the given user and its groups. The purpose of this method is to be able to get
      * roles even if the user is not already added to DB, by getting the roles for his groups
      *
      * @param userId
@@ -31,10 +31,10 @@ public interface RoleDAO extends GenericDao<Role, Guid> {
      *            comma delimited list of group IDs of the user
      * @return the list of the roles
      */
-    List<Role> getAllForUserAndGroups(Guid userId, String groupIds);
+    List<Role> getAnyAdminRoleForUserAndGroups(Guid userId, String groupIds);
 
     /**
-     * This method gets the Roles for the given user and its groups. The purpose of this method is to be able to get
+     * This method gets the admin Roles for the given user and its groups. The purpose of this method is to be able to get
      * roles even if the user is not already added to DB, by getting the roles for his groups
      *
      * @param userId
@@ -45,5 +45,5 @@ public interface RoleDAO extends GenericDao<Role, Guid> {
      *            application mode to obtain roles for
      * @return the list of the roles
      */
-    List<Role> getAllForUserAndGroups(Guid userId, String groupIds, int appMode);
+    List<Role> getAnyAdminRoleForUserAndGroups(Guid userId, String groupIds, int appMode);
 }

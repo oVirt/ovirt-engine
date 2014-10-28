@@ -6,7 +6,6 @@ import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.businessentities.Permissions;
 import org.ovirt.engine.core.common.businessentities.Role;
-import org.ovirt.engine.core.common.businessentities.RoleType;
 import org.ovirt.engine.core.common.businessentities.aaa.DbUser;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -55,13 +54,10 @@ public class MultiLevelAdministrationHandler {
      */
     public static boolean isAdminUser(DbUser user) {
         List<Role> userRoles =
-                getRoleDAO().getAllForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
-
-        for (Role r : userRoles) {
-            if (r.getType() == RoleType.ADMIN) {
-                log.debug("LoginAdminUser: User logged to admin using role '{}'", r.getname());
-                return true;
-            }
+                getRoleDAO().getAnyAdminRoleForUserAndGroups(user.getId(), StringUtils.join(user.getGroupIds(), ","));
+        if (!userRoles.isEmpty()) {
+            log.debug("LoginAdminUser: User logged to admin using role '{}'", userRoles.get(0).getname());
+            return true;
         }
         return false;
     }
