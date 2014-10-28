@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll.utils;
 
 import java.util.Set;
 
+import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.event.Observes;
 import javax.enterprise.inject.Any;
 import javax.enterprise.inject.spi.AnnotatedType;
@@ -12,7 +13,6 @@ import javax.enterprise.inject.spi.Extension;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Named;
 import javax.inject.Singleton;
-import javax.interceptor.InterceptorBinding;
 
 import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 import org.reflections.Reflections;
@@ -39,7 +39,7 @@ public class ModuleConfigurationExtension implements Extension {
         Reflections reflections = new Reflections(packageName);
         Set<Class<?>> beanClasses = reflections.getTypesAnnotatedWith(Named.class);
         beanClasses.addAll(reflections.getTypesAnnotatedWith(Singleton.class));
-        beanClasses.addAll(reflections.getTypesAnnotatedWith(InterceptorBinding.class));
+        beanClasses.addAll(reflections.getTypesAnnotatedWith(ApplicationScoped.class));
 
         for (Class<?> bean : beanClasses) {
             AnnotatedType<Object> annotatedType = new AnnotatedTypeBuilder().readFromType(bean).create();

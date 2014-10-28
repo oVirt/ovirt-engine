@@ -8,6 +8,7 @@ import javax.annotation.PostConstruct;
 import javax.persistence.EntityManager;
 import javax.persistence.NoResultException;
 import javax.persistence.PersistenceContext;
+import javax.persistence.Query;
 import javax.persistence.TypedQuery;
 
 import org.ovirt.engine.core.common.businessentities.BusinessEntity;
@@ -33,6 +34,11 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
     @PersistenceContext
     protected EntityManager entityManager;
 
+    // Don't use. Only added because of CDI requirement
+    protected AbstractJpaDao() {
+        entityType = null;
+    }
+
     protected AbstractJpaDao(Class<T> entityType) {
         Objects.requireNonNull(entityType, "entityType cannot be null");
 
@@ -46,7 +52,7 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
 
     @Override
     public void save(T entity) {
-        entityManager.persist(entity);
+        entityManager.merge(entity);
     }
 
     @Override
@@ -90,6 +96,30 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
     }
 
     /**
+     * Runs the query and detaches its results.
+     *
+     * @param query
+     *            the {@link TypedQuery} to be run.
+     * @return the result {@code List} of the detached entities.
+     */
+    @SuppressWarnings("unchecked")
+    protected <O> List<O> multipleResults(Query query) {
+        final List<O> resultList = query.getResultList();
+
+        if (!resultList.isEmpty()) {
+            boolean isEntity = entityManager.getMetamodel().getEntities().contains(resultList.get(0));
+
+            for (Object entity : resultList) {
+                if (isEntity) {
+                    entityManager.detach(entity);
+                }
+            }
+        }
+
+        return resultList;
+    }
+
+    /**
      * Runs the query, expect a single result to be returned
      *
      * @param query
@@ -116,5 +146,13 @@ public abstract class AbstractJpaDao<T extends BusinessEntity<ID>, ID extends Se
         } else {
             entityManager.remove(entity);
         }
+    }
+
+    protected void updateQuery(final Query query) {
+        query.executeUpdate();
+    }
+
+    protected Object updateQueryGetResult(Query query) {
+        return query.getSingleResult();
     }
 }

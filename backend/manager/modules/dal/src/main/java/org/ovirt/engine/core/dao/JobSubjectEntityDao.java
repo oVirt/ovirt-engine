@@ -4,13 +4,15 @@ import java.util.List;
 import java.util.Map;
 
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.job.JobSubjectEntity;
+import org.ovirt.engine.core.common.job.JobSubjectEntityId;
 import org.ovirt.engine.core.compat.Guid;
 
 /**
  * Defines CRUD operations for job_subject_entity, the satellite table of Job.
  *
  */
-public interface JobSubjectEntityDao extends DAO {
+public interface JobSubjectEntityDao extends GenericDao<JobSubjectEntity, JobSubjectEntityId> {
 
     /**
      * Persists a collection of entities to database

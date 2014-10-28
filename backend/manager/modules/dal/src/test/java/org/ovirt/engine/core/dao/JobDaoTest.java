@@ -18,7 +18,7 @@ import org.ovirt.engine.core.common.job.Job;
 import org.ovirt.engine.core.common.job.JobExecutionStatus;
 import org.ovirt.engine.core.compat.Guid;
 
-public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
+public class JobDaoTest extends BaseHibernateDaoTestCase<JobDao, Job, Guid> {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
     private static final Guid NO_VDSM_TASKS_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5333");
@@ -26,34 +26,20 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     private static final int NUMBER_OF_JOBS_FOR_EXISTING_CORRELATION_ID = 1;
     private static final int TOTAL_JOBS = 6;
 
+    private JobDao dao;
+    private Job existingEntity;
+    private Job newEntity;
+
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        dao = dbFacade.getJobDao();
+        existingEntity = dao.get(EXISTING_JOB_ID);
+        newEntity = generateNewEntity();
     }
 
-    @Override
-    protected Guid getExistingEntityId() {
-        return EXISTING_JOB_ID;
-    }
-
-    @Override
-    protected JobDao prepareDao() {
-        return dbFacade.getJobDao();
-    }
-
-    @Override
-    protected Guid generateNonExistingId() {
-        return Guid.newGuid();
-    }
-
-    @Override
-    protected int getEneitiesTotalCount() {
-        return TOTAL_JOBS;
-    }
-
-    @Override
-    protected Job generateNewEntity() {
+    private Job generateNewEntity() {
         Job job = new Job();
         job.setId(Guid.newGuid());
         job.setActionType(VdcActionType.ActivateStorageDomain);
@@ -65,12 +51,6 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
         job.setLastUpdateTime(new Date());
         job.setCorrelationId(Guid.newGuid().toString());
         return job;
-    }
-
-    @Override
-    protected void updateExistingEntity() {
-        existingEntity.setEndTime(new Date());
-        existingEntity.setStatus(JobExecutionStatus.FINISHED);
     }
 
     @Test
@@ -106,10 +86,10 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     public void updateJobLastUpdateTime() throws ParseException {
         DateFormat df = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         Date updateDate = df.parse("2012-10-01 10:00:00");
-        Job job = dao.get(getExistingEntityId());
+        Job job = dao.get(EXISTING_JOB_ID);
         Date lastUpdateTime = job.getLastUpdateTime();
-        dao.updateJobLastUpdateTime(getExistingEntityId(), updateDate);
-        Job jobAfterUpdate = dao.get(getExistingEntityId());
+        dao.updateJobLastUpdateTime(EXISTING_JOB_ID, updateDate);
+        Job jobAfterUpdate = dao.get(EXISTING_JOB_ID);
         assertTrue("Compare the previous date is differ than new one",
                 !lastUpdateTime.equals(jobAfterUpdate.getLastUpdateTime()));
         assertEquals("Compare date was persisted by reading it from database",
@@ -146,5 +126,42 @@ public class JobDaoTest extends BaseGenericDaoTestCase<Guid, Job, JobDao> {
     @Test
     public void checkIfJobHasNoTasks() {
         assertFalse("Job has no steps for VDSM tasks", dao.checkIfJobHasTasks(NO_VDSM_TASKS_JOB_ID));
+    }
+
+    @Test
+    public void testStoredProcedureCall() {
+        dao.deleteRunningJobsOfTasklessCommands();
+    }
+
+    @Override
+    protected JobDao getDao() {
+        return dao;
+    }
+
+    @Override
+    protected Job getExistingEntity() {
+        return existingEntity;
+    }
+
+    @Override
+    protected Job getNonExistentEntity() {
+        return newEntity;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return TOTAL_JOBS;
+    }
+
+    @Override
+    protected Job modifyEntity(Job entity) {
+        entity.setEndTime(new Date());
+        entity.setStatus(JobExecutionStatus.FINISHED);
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(Job result) {
+        assertEquals(JobExecutionStatus.FINISHED, result.getStatus());
     }
 }

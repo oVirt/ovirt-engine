@@ -54,7 +54,7 @@
         class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
         <property name="dataSource" ref="engineDataSource" />
         <property name="packagesToScan"
-            value="org.ovirt.engine.core.common.businessentities" />
+            value="org.ovirt.engine.core.common.businessentities, org.ovirt.engine.core.common.job" />
         <property name="jpaVendorAdapter">
             <bean class="org.springframework.orm.jpa.vendor.HibernateJpaVendorAdapter" />
         </property>

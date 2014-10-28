@@ -16,7 +16,7 @@ import org.ovirt.engine.core.common.job.Step;
 import org.ovirt.engine.core.common.job.StepEnum;
 import org.ovirt.engine.core.compat.Guid;
 
-public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
+public class StepDaoTest extends BaseHibernateDaoTestCase<StepDao, Step, Guid> {
 
     private static final Guid EXISTING_JOB_WITH_MULTIPLE_STEPS = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5889");
     private static final int TOTAL_STEPS_OF_MULTI_STEP_JOB = 8;
@@ -31,46 +31,25 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
     private static final Guid REBALANCING_GLUSTER_VOLUME_STEP_ID = new Guid("cd75984e-1fd4-48fb-baf8-e45800a61a66");
     private static final int TOTAL_STEPS_OF_REBALANCING_GLUSTER_VOLUME = 1;
 
-    @Override
+    private StepDao dao;
+    private Step existingStep;
+    private Step newStep;
+
     @Before
     public void setUp() throws Exception {
         super.setUp();
+        dao = dbFacade.getStepDao();
+        existingStep = dao.get(EXISTING_STEP_ID);
+        newStep = generateNewEntity();
     }
 
-    @Override
-    protected Guid getExistingEntityId() {
-        return EXISTING_STEP_ID;
-    }
-
-    @Override
-    protected StepDao prepareDao() {
-        return dbFacade.getStepDao();
-    }
-
-    @Override
-    protected Guid generateNonExistingId() {
-        return Guid.newGuid();
-    }
-
-    @Override
-    protected int getEneitiesTotalCount() {
-        return TOTAL_STEPS;
-    }
-
-    @Override
-    protected Step generateNewEntity() {
+    private Step generateNewEntity() {
         Step step = new Step(StepEnum.EXECUTING);
         step.setJobId(EXISTING_JOB_ID);
         step.setStepNumber(1);
         step.setDescription("Execution step");
         step.setCorrelationId("Some correlation id");
         return step;
-    }
-
-    @Override
-    protected void updateExistingEntity() {
-        existingEntity.setStatus(JobExecutionStatus.FINISHED);
-        existingEntity.setEndTime(new Date());
     }
 
     @Test
@@ -123,5 +102,37 @@ public class StepDaoTest extends BaseGenericDaoTestCase<Guid, Step, StepDao> {
         List<Guid> externalIds = dao.getExternalIdsForRunningSteps(ExternalSystemType.GLUSTER);
         assertEquals("Verify external ids present", 1, externalIds.size());
         assertEquals("Invalid TaskId", IN_PROGRESS_REBALANCING_GLUSTER_VOLUME_TASK_ID, externalIds.get(0));
+    }
+
+    @Override
+    protected StepDao getDao() {
+        return dao;
+    }
+
+    @Override
+    protected Step getExistingEntity() {
+        return existingStep;
+    }
+
+    @Override
+    protected Step getNonExistentEntity() {
+        return newStep;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return TOTAL_STEPS;
+    }
+
+    @Override
+    protected Step modifyEntity(Step entity) {
+        entity.setStatus(JobExecutionStatus.FINISHED);
+        entity.setEndTime(new Date());
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(Step result) {
+        assertEquals(JobExecutionStatus.FINISHED, result.getStatus());
     }
 }

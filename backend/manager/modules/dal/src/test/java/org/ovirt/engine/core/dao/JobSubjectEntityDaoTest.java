@@ -9,9 +9,11 @@ import java.util.Map;
 import org.junit.Before;
 import org.junit.Test;
 import org.ovirt.engine.core.common.VdcObjectType;
+import org.ovirt.engine.core.common.job.JobSubjectEntity;
+import org.ovirt.engine.core.common.job.JobSubjectEntityId;
 import org.ovirt.engine.core.compat.Guid;
 
-public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
+public class JobSubjectEntityDaoTest extends BaseHibernateDaoTestCase<JobSubjectEntityDao, JobSubjectEntity, JobSubjectEntityId> {
 
     private static final Guid EXISTING_JOB_ID = new Guid("54947df8-0e9e-4471-a2f9-9af509fb5111");
     private static final Guid EXISTING_ENTITY_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e7");
@@ -19,12 +21,19 @@ public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
     private static final int TOTAL_JOBS_SUBJECT_ENTITIES = 1;
 
     private JobSubjectEntityDao dao;
+    private JobSubjectEntity existingEntity;
+    private JobSubjectEntity newEntity;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
         dao = dbFacade.getJobSubjectEntityDao();
+        JobSubjectEntityId existingKey = new JobSubjectEntityId();
+        existingKey.setEntityId(EXISTING_ENTITY_ID);
+        existingKey.setJobId(EXISTING_JOB_ID);
+        existingEntity = dao.get(existingKey);
+        newEntity = new JobSubjectEntity(EXISTING_JOB_ID, Guid.newGuid(), VdcObjectType.VmPool);
     }
 
     @Test
@@ -52,5 +61,36 @@ public class JobSubjectEntityDaoTest extends BaseDAOTestCase {
                 dao.getJobIdByEntityId(EXISTING_ENTITY_ID);
         assertTrue("Verify job subject entities exist for a given job",
                 jobIdByEntityIdAndEntityType.contains(EXISTING_JOB_ID));
+    }
+
+    @Override
+    protected JobSubjectEntityDao getDao() {
+        return dao;
+    }
+
+    @Override
+    protected JobSubjectEntity getExistingEntity() {
+        return existingEntity;
+    }
+
+    @Override
+    protected JobSubjectEntity getNonExistentEntity() {
+        return newEntity;
+    }
+
+    @Override
+    protected int getAllEntitiesCount() {
+        return 5;
+    }
+
+    @Override
+    protected JobSubjectEntity modifyEntity(JobSubjectEntity entity) {
+        entity.setEntityType(VdcObjectType.AdElements);
+        return entity;
+    }
+
+    @Override
+    protected void verifyEntityModification(JobSubjectEntity result) {
+        assertEquals(result.getEntityType(), VdcObjectType.AdElements);
     }
 }
