@@ -6,10 +6,9 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
@@ -300,20 +299,21 @@ public class BackendHostNicsResource
 
     @Override
     protected HostNIC deprecatedPopulate(HostNIC model, VdsNetworkInterface entity) {
-        return addStatistics(model, entity, uriInfo, httpHeaders);
-    }
-
-    HostNIC addStatistics(HostNIC model, VdsNetworkInterface entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            HostNicStatisticalQuery query = new HostNicStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
+        if (details.contains("statistics")) {
+            addStatistics(model, entity);
         }
         return model;
+    }
+
+    private void addStatistics(HostNIC model, VdsNetworkInterface entity) {
+        model.setStatistics(new Statistics());
+        HostNicStatisticalQuery query = new HostNicStatisticalQuery(newModel(model.getId()));
+        List<Statistic> statistics = query.getStatistics(entity);
+        for (Statistic statistic : statistics) {
+            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+        }
+        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     protected class HostNicResolver extends EntityIdResolver<Guid> {

@@ -11,7 +11,6 @@ import javax.ws.rs.WebApplicationException;
 import javax.ws.rs.core.Response;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Certificate;
 import org.ovirt.engine.api.model.Configuration;
@@ -461,14 +460,14 @@ public class BackendVmsResource extends
         return diskImages;
     }
 
-    protected VM addInlineDetails(Set<Detail> details, VM vm) {
-        if (details.contains(Detail.DISKS)) {
+    protected VM addInlineDetails(Set<String> details, VM vm) {
+        if (details.contains("disks")) {
             addInlineDisks(vm);
         }
-        if (details.contains(Detail.NICS)) {
+        if (details.contains("nics")) {
             addInlineNics(vm);
         }
-        if (details.contains(Detail.TAGS)) {
+        if (details.contains("tags")) {
             addInlineTags(vm);
         }
         return vm;
@@ -672,9 +671,9 @@ public class BackendVmsResource extends
 
     @Override
     protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         model = addInlineDetails(details, model);
-        if (details.contains(Detail.STATISTICS)) {
+        if (details.contains("statistics")) {
             addInlineStatistics(model);
         }
         return model;

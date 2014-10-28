@@ -1,10 +1,9 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
+import java.util.Set;
 
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Action;
@@ -125,22 +124,22 @@ public class BackendHostsResource extends AbstractBackendCollectionResource<Host
 
     @Override
     protected Host deprecatedPopulate(Host model, VDS entity) {
-        Host host = addStatistics(model, entity, uriInfo, httpHeaders);
-        addCertificateInfo(host);
-        return host;
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
+        if (details.contains("statistics")) {
+            addStatistics(model, entity);
+        }
+        addCertificateInfo(model);
+        return model;
     }
 
-    Host addStatistics(Host model, VDS entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            HostStatisticalQuery query = new HostStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+    public void addStatistics(Host model, VDS entity) {
+        model.setStatistics(new Statistics());
+        HostStatisticalQuery query = new HostStatisticalQuery(newModel(model.getId()));
+        List<Statistic> statistics = query.getStatistics(entity);
+        for (Statistic statistic : statistics) {
+            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
         }
-        return model;
+        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     private Hosts mapCollection(List<VDS> entities) {

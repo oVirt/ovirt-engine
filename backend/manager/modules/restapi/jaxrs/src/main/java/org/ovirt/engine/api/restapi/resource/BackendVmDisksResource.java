@@ -1,9 +1,8 @@
 package org.ovirt.engine.api.restapi.resource;
 
 import java.util.List;
-import javax.ws.rs.core.HttpHeaders;
+import java.util.Set;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.BooleanUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
@@ -193,20 +192,21 @@ public class BackendVmDisksResource
 
     @Override
     protected Disk deprecatedPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
-        return addStatistics(model, entity, uriInfo, httpHeaders);
-    }
-
-    Disk addStatistics(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            DiskStatisticalQuery query = new DiskStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
+        if (details.contains("statistics")) {
+            addStatistics(model, entity);
         }
         return model;
+    }
+
+    private void addStatistics(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        model.setStatistics(new Statistics());
+        DiskStatisticalQuery query = new DiskStatisticalQuery(newModel(model.getId()));
+        List<Statistic> statistics = query.getStatistics(entity);
+        for (Statistic statistic : statistics) {
+            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+        }
+        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     private Response attachDiskToVm(Disk disk) {

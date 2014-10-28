@@ -61,7 +61,8 @@ public class BackendVmNicResource extends BackendNicResource implements VmNicRes
 
             model.setPortMirroring(portMirroring);
         }
-        return parent.addStatistics(model, entity, uriInfo, httpHeaders);
+        parent.addStatistics(model, entity);
+        return model;
     }
 
     @Override

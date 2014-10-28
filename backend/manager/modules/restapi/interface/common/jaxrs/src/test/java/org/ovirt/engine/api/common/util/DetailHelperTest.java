@@ -18,6 +18,7 @@ package org.ovirt.engine.api.common.util;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.core.HttpHeaders;
 
@@ -97,17 +98,27 @@ public class DetailHelperTest extends Assert {
                        new boolean[] {false, false});
     }
 
-    private void doTestIncludes(String details, String[] rels, boolean[] expected) throws Exception {
+    @Test
+    public void testMainIncludedByDefault() throws Exception {
+        doTestIncludes(
+            "",
+            new String[] { "main" },
+            new boolean[] { true }
+        );
+    }
+
+    private void doTestIncludes(String spec, String[] rels, boolean[] expected) throws Exception {
 
         HttpHeaders httpheaders = createMock(HttpHeaders.class);
         List<String> requestHeaders = new ArrayList<String>();
         expect(httpheaders.getRequestHeader("Accept")).andReturn(requestHeaders).anyTimes();
-        requestHeaders.add(ACCEPTABLE + details);
+        requestHeaders.add(ACCEPTABLE + spec);
 
         replay(httpheaders);
 
         for (int i = 0; i < rels.length; i++) {
-            assertEquals(expected[i], DetailHelper.include(httpheaders, rels[i]));
+            Set<String> details = DetailHelper.getDetails(httpheaders, null);
+            assertEquals(expected[i], details.contains(rels[i]));
         }
 
         verify(httpheaders);

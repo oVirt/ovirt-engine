@@ -7,12 +7,10 @@ import java.util.List;
 import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 
 import org.ovirt.engine.api.common.util.DetailHelper;
-import org.ovirt.engine.api.common.util.DetailHelper.Detail;
 import org.ovirt.engine.api.common.util.QueryHelper;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.AuthorizedKey;
@@ -495,26 +493,25 @@ public class BackendVmResource extends
 
     @Override
     protected VM deprecatedPopulate(VM model, org.ovirt.engine.core.common.businessentities.VM entity) {
-        Set<Detail> details = DetailHelper.getDetails(getHttpHeaders());
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         parent.addInlineDetails(details, model);
-        addStatistics(model, entity, uriInfo, httpHeaders);
+        if (details.contains("statistics")) {
+            addStatistics(model, entity, uriInfo);
+        }
         parent.setPayload(model);
         parent.setBallooning(model);
         parent.setCertificateInfo(model);
         return model;
     }
 
-    VM addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+    private void addStatistics(VM model, org.ovirt.engine.core.common.businessentities.VM entity, UriInfo ui) {
+        model.setStatistics(new Statistics());
+        VmStatisticalQuery query = new VmStatisticalQuery(newModel(model.getId()));
+        List<Statistic> statistics = query.getStatistics(entity);
+        for (Statistic statistic : statistics) {
+            LinkHelper.addLinks(ui, statistic, query.getParentType());
         }
-        return model;
+        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     protected class UpdateParametersProvider implements

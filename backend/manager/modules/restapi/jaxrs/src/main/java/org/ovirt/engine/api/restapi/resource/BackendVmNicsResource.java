@@ -2,11 +2,10 @@ package org.ovirt.engine.api.restapi.resource;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.HttpHeaders;
 import javax.ws.rs.core.Response;
-import javax.ws.rs.core.UriInfo;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.api.common.util.DetailHelper;
@@ -130,21 +129,22 @@ public class BackendVmNicsResource extends BackendNicsResource implements VmNics
 
     @Override
     protected NIC deprecatedPopulate(NIC model, VmNetworkInterface entity) {
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
         addReportedDevices(model, entity);
-        return addStatistics(model, entity, uriInfo, httpHeaders);
-    }
-
-    NIC addStatistics(NIC model, VmNetworkInterface entity, UriInfo ui, HttpHeaders httpHeaders) {
-        if (DetailHelper.include(httpHeaders, "statistics")) {
-            model.setStatistics(new Statistics());
-            NicStatisticalQuery query = new NicStatisticalQuery(newModel(model.getId()));
-            List<Statistic> statistics = query.getStatistics(entity);
-            for (Statistic statistic : statistics) {
-                LinkHelper.addLinks(ui, statistic, query.getParentType());
-            }
-            model.getStatistics().getStatistics().addAll(statistics);
+        if (details.contains("statistics")) {
+            addStatistics(model, entity);
         }
         return model;
+    }
+
+    public void addStatistics(NIC model, VmNetworkInterface entity) {
+        model.setStatistics(new Statistics());
+        NicStatisticalQuery query = new NicStatisticalQuery(newModel(model.getId()));
+        List<Statistic> statistics = query.getStatistics(entity);
+        for (Statistic statistic : statistics) {
+            LinkHelper.addLinks(uriInfo, statistic, query.getParentType());
+        }
+        model.getStatistics().getStatistics().addAll(statistics);
     }
 
     void addReportedDevices(NIC model, VmNetworkInterface entity) {

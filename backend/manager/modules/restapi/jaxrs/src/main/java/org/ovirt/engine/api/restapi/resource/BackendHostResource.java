@@ -55,7 +55,6 @@ import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.queries.VdsIdParametersBase;
 import org.ovirt.engine.core.compat.Guid;
 
-
 public class BackendHostResource extends AbstractBackendActionableResource<Host, VDS> implements
         HostResource {
 
@@ -397,9 +396,9 @@ public class BackendHostResource extends AbstractBackendActionableResource<Host,
 
     @Override
     protected Host deprecatedPopulate(Host model, VDS entity) {
-        Host host = parent.addStatistics(model, entity, uriInfo, httpHeaders);
-        parent.addCertificateInfo(host);
-        return host;
+        parent.addStatistics(model, entity);
+        parent.addCertificateInfo(model);
+        return model;
     }
 
     public BackendHostsResource getParent() {
