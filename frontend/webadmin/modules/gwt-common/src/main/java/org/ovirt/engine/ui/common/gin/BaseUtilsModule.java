@@ -1,5 +1,6 @@
 package org.ovirt.engine.ui.common.gin;
 
+import org.ovirt.engine.ui.common.presenter.PluginActionButtonHandler;
 import org.ovirt.engine.ui.common.utils.ConsoleOptionsFrontendPersisterImpl;
 import org.ovirt.engine.ui.common.utils.ConsoleUtilsImpl;
 import org.ovirt.engine.ui.uicommonweb.ConsoleOptionsFrontendPersister;
@@ -14,6 +15,7 @@ public class BaseUtilsModule extends AbstractGinModule {
     protected void configure() {
         bind(ConsoleOptionsFrontendPersister.class).to(ConsoleOptionsFrontendPersisterImpl.class).in(Singleton.class);
         bind(ConsoleUtils.class).to(ConsoleUtilsImpl.class).in(Singleton.class);
+        bind(PluginActionButtonHandler.class).in(Singleton.class);
     }
 
 }

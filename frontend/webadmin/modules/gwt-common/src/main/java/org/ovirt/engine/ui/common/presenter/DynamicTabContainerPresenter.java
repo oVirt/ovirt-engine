@@ -15,7 +15,6 @@ import com.gwtplatform.mvp.client.RequestTabsHandler;
 import com.gwtplatform.mvp.client.TabContainerPresenter;
 import com.gwtplatform.mvp.client.TabPanel;
 import com.gwtplatform.mvp.client.TabView;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.Proxy;
 import com.gwtplatform.mvp.client.proxy.RevealContentHandler;
 import com.gwtplatform.mvp.client.proxy.TabContentProxy;
@@ -84,21 +83,28 @@ public abstract class DynamicTabContainerPresenter<V extends TabView & DynamicTa
         return tabContentSlot;
     }
 
-    @ProxyEvent
-    public void onRedrawDynamicTabContainer(RedrawDynamicTabContainerEvent event) {
-        if (requestTabsEventType == event.getRequestTabsEventType()) {
-            Scheduler.get().scheduleDeferred(new ScheduledCommand() {
-                @Override
-                public void execute() {
-                    // Remove all tabs
-                    getView().removeTabs();
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getEventBus().addHandler(RedrawDynamicTabContainerEvent.getType(),
+                new RedrawDynamicTabContainerEvent.RedrawDynamicTabContainerHandler() {
 
-                    // Re-add tabs in response to RequestTabsEvent
-                    RequestTabsEvent.fire(DynamicTabContainerPresenter.this,
-                                requestTabsEventType, DynamicTabContainerPresenter.this);
+            @Override
+            public void onRedrawDynamicTabContainer(RedrawDynamicTabContainerEvent event) {
+                if (requestTabsEventType == event.getRequestTabsEventType()) {
+                    Scheduler.get().scheduleDeferred(new ScheduledCommand() {
+                        @Override
+                        public void execute() {
+                            // Remove all tabs
+                            getView().removeTabs();
+
+                            // Re-add tabs in response to RequestTabsEvent
+                            RequestTabsEvent.fire(DynamicTabContainerPresenter.this,
+                                        requestTabsEventType, DynamicTabContainerPresenter.this);
+                        }
+                    });
                 }
-            });
-        }
+            }
+        }));
     }
-
 }
