@@ -49,6 +49,8 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
 
     public UpdateVdsGroupCommand(T parameters) {
         this(parameters, null);
+
+        updateMigrateOnError();
     }
 
     public UpdateVdsGroupCommand(T parameters, CommandContext commandContext) {

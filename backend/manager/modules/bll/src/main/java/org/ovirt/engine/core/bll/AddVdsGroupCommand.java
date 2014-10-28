@@ -32,6 +32,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
 
     public AddVdsGroupCommand(T parameters) {
         super(parameters);
+
+        updateMigrateOnError();
     }
 
     @Override
