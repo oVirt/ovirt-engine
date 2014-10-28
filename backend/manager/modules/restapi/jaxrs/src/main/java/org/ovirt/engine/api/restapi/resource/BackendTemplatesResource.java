@@ -4,9 +4,11 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 
 import javax.ws.rs.core.Response;
 
+import org.ovirt.engine.api.common.util.DetailHelper;
 import org.ovirt.engine.api.model.Console;
 import org.ovirt.engine.api.model.Disk;
 import org.ovirt.engine.api.model.Template;
@@ -161,22 +163,33 @@ public class BackendTemplatesResource
     }
 
     protected Templates mapCollection(List<VmTemplate> entities) {
-        // Fill VmInit for entities - the search query no join the VmInit to Templates
-        IdsQueryParameters params = new IdsQueryParameters();
-        List<Guid> ids = Entities.getIds(entities);
-        params.setId(ids);
-        VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
-        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
-            List<VmInit> vmInits = queryReturnValue.getReturnValue();
-            Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
-            for (VmTemplate template : entities) {
-                template.setVmInit(initMap.get(template.getId()));
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
+        boolean includeData = details.contains(DetailHelper.MAIN);
+        boolean includeSize = details.contains("size");
+
+        if (includeData) {
+            // Fill VmInit for entities - the search query no join the VmInit to Templates
+            IdsQueryParameters params = new IdsQueryParameters();
+            List<Guid> ids = Entities.getIds(entities);
+            params.setId(ids);
+            VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
+            if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+                List<VmInit> vmInits = queryReturnValue.getReturnValue();
+                Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
+                for (VmTemplate template : entities) {
+                    template.setVmInit(initMap.get(template.getId()));
+                }
             }
         }
 
         Templates collection = new Templates();
-        for (VmTemplate entity : entities) {
-            collection.getTemplates().add(addLinks(populate(map(entity), entity)));
+        if (includeData) {
+            for (VmTemplate entity : entities) {
+                collection.getTemplates().add(addLinks(populate(map(entity), entity)));
+            }
+        }
+        if (includeSize) {
+            collection.setSize((long) entities.size());
         }
         return collection;
     }

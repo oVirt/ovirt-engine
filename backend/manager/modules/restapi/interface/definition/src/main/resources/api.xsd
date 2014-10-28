@@ -1215,7 +1215,17 @@
      <xs:complexContent>
       <xs:extension base="ActionableResource">
         <xs:sequence>
+          <!-- The "size" of the collection is the actual number of items
+               returned as a result. For example, when using the "max"
+               parameter the set of returned items may be different than
+               the total. -->
+          <xs:element name="size" type="xs:unsignedInt" minOccurs="0"/>
+
+          <!-- The "total" is the total number of items that match the
+               restrictions given by the caller, regardless of the value
+               of the "max" parameter. -->
           <xs:element name="total" type="xs:unsignedInt" minOccurs="0"/>
+
           <xs:element name="active" type="xs:unsignedInt" minOccurs="0"/>
         </xs:sequence>
       </xs:extension>
