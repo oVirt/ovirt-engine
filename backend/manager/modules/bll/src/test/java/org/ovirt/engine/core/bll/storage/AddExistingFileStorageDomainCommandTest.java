@@ -9,7 +9,6 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 import org.junit.Before;
@@ -30,7 +29,6 @@ import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainInfoVDSCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.HSMGetStorageDomainsListVDSCommandParameters;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -96,8 +94,6 @@ public class AddExistingFileStorageDomainCommandTest {
         StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
         doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
                 any(HSMGetStorageDomainInfoVDSCommandParameters.class));
-        doReturn(Collections.singletonList(sdStatic.getId())).when(command).executeHSMGetStorageDomainsList(
-                any(HSMGetStorageDomainsListVDSCommandParameters.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
     }
@@ -114,12 +110,24 @@ public class AddExistingFileStorageDomainCommandTest {
     public void testNonExistingStorageDomain() {
         when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
 
-        doReturn(Collections.emptyList()).when(command).executeHSMGetStorageDomainsList(
-                any(HSMGetStorageDomainsListVDSCommandParameters.class));
+        doReturn(null).when(command).executeHSMGetStorageDomainInfo(
+                any(HSMGetStorageDomainInfoVDSCommandParameters.class));
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST);
     }
+
+    @Test
+    public void testSwitchStorageDomainType() {
+        when(command.getStorageDomainStaticDAO().get(any(Guid.class))).thenReturn(null);
+
+        StorageDomainStatic sdStatic = command.getStorageDomain().getStorageStaticData();
+        doReturn(new Pair<>(sdStatic, sdStatic.getId())).when(command).executeHSMGetStorageDomainInfo(
+                any(HSMGetStorageDomainInfoVDSCommandParameters.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
+    }
+
 
     private static StorageDomainStatic getStorageDomain() {
         StorageDomainStatic storageDomain = new StorageDomainStatic();
