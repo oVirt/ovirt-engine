@@ -319,16 +319,19 @@ public class DisksAllocationModel extends EntityModel
             return;
         }
 
+        boolean isModelValid = true;
         for (DiskModel diskModel : getDisks()) {
             ListModel diskStorageDomains = diskModel.getStorageDomain();
             if (!diskStorageDomains.getItems().iterator().hasNext() || diskStorageDomains.getSelectedItem() == null) {
                 diskModel.getStorageDomain().getInvalidityReasons().add(
                         constants.storageDomainMustBeSpecifiedInvalidReason());
                 diskModel.getStorageDomain().setIsValid(false);
-                setIsValid(false);
+                isModelValid = false;
             }
             diskModel.getAlias().validateEntity(new IValidation[] { new NotEmptyValidation(), new I18NNameValidation() });
+            isModelValid = isModelValid && diskModel.getAlias().getIsValid();
         }
+        setIsValid(isModelValid);
     }
 
     public void setIsVolumeFormatAvailable(boolean isVolumeFormatAvailable) {

@@ -2625,8 +2625,10 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
 
         setValidTab(TabName.HOST_TAB, isValidTab(TabName.HOST_TAB) && getMigrationDowntime().getIsValid());
 
+        boolean diskAliasesValid = getDisksAllocationModel().getIsValid();
+
         setValidTab(TabName.RESOURCE_ALLOCATION_TAB, isValidTab(TabName.RESOURCE_ALLOCATION_TAB)
-                && getCpuSharesAmount().getIsValid());
+                && getCpuSharesAmount().getIsValid() && diskAliasesValid);
 
         setValidTab(TabName.BOOT_OPTIONS_TAB, getCdImage().getIsValid() && getKernel_path().getIsValid());
         boolean vmInitIsValid = getVmInitModel().validate();
