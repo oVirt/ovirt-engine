@@ -31,6 +31,7 @@ public final class AsyncTaskFactory {
         if (asyncTask == null || asyncTask.getActionParameters() == null) {
             asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
                     AsyncTaskStatusEnum.running,
+                    Guid.Empty,
                     creationInfo.getVdsmTaskId(),
                     creationInfo.getStepId(),
                     creationInfo.getStoragePoolID(),
