@@ -93,7 +93,7 @@ public class CidrAnnotationTest {
 
     }
 
-    private class CidrContainer {
+    private static class CidrContainer {
         @Cidr
         private final String cidr;
 
