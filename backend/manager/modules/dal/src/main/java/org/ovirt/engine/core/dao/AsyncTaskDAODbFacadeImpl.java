@@ -64,6 +64,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             AsyncTask entity = new AsyncTask();
             entity.setresult(AsyncTaskResultEnum.forValue(rs.getInt("result")));
             entity.setstatus(AsyncTaskStatusEnum.forValue(rs.getInt("status")));
+            entity.setUserId(getGuidDefaultEmpty(rs, "user_id"));
             entity.setTaskId(getGuidDefaultEmpty(rs, "task_id"));
             entity.setVdsmTaskId(getGuid(rs, "vdsm_task_id"));
             entity.setStepId(getGuid(rs, "step_id"));
@@ -94,6 +95,7 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
             addValue("result", task.getresult());
             addValue("status", task.getstatus());
             addValue("vdsm_task_id", task.getVdsmTaskId());
+            addValue("user_id", task.getUserId());
             addValue("task_id", task.getTaskId());
             addValue("step_id", task.getStepId());
             addValue("command_id", task.getCommandId());
@@ -204,6 +206,20 @@ public class AsyncTaskDAODbFacadeImpl extends BaseDAODbFacade implements AsyncTa
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
                 .addValue("entity_id", entityId);
         return getCallsHandler().executeReadList("GetAsyncTasksIdsByEntityId", IdRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public List<Guid> getAsyncTaskIdsByUser(Guid userId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("user_id", userId);
+        return getCallsHandler().executeReadList("GetAsyncTasksIdsByUserId", IdRowMapper.instance, parameterSource);
+    }
+
+    @Override
+    public List<Guid> getVdsmTaskIdsByUser(Guid userId) {
+        MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
+                .addValue("user_id", userId);
+        return getCallsHandler().executeReadList("GetVdsmTasksIdsByUserId", IdRowMapper.instance, parameterSource);
     }
 
     @Override

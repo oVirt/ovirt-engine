@@ -295,6 +295,7 @@ public class CoCoAsyncTaskHelper {
         }
         AsyncTask asyncTask = new AsyncTask(AsyncTaskResultEnum.success,
                 AsyncTaskStatusEnum.running,
+                command.getUserId(),
                 asyncTaskCreationInfo.getVdsmTaskId(),
                 asyncTaskCreationInfo.getStepId(),
                 asyncTaskCreationInfo.getStoragePoolID(),

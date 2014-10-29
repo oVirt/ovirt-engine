@@ -14,6 +14,7 @@ public class AsyncTask implements Serializable {
     private static final long serialVersionUID = 5913365704117183118L;
     private AsyncTaskResultEnum result;
     private AsyncTaskStatusEnum status;
+    private Guid userId;
     private Guid vdsmTaskId;
     private Guid storagePoolId;
     private Guid taskId;
@@ -28,6 +29,7 @@ public class AsyncTask implements Serializable {
     public AsyncTask() {
         result = AsyncTaskResultEnum.success;
         status = AsyncTaskStatusEnum.unknown;
+        userId = Guid.Empty;
         vdsmTaskId = Guid.Empty;
         commandId = Guid.Empty;
         rootCommandId = Guid.Empty;
@@ -37,6 +39,7 @@ public class AsyncTask implements Serializable {
 
     public AsyncTask(AsyncTaskResultEnum result,
                      AsyncTaskStatusEnum status,
+                     Guid userId,
                      Guid vdsmTaskId,
                      Guid stepId,
                      Guid storagePoolId,
@@ -45,6 +48,7 @@ public class AsyncTask implements Serializable {
                      CommandEntity childCmdEntity) {
         this.result = result;
         this.status = status;
+        this.userId = userId;
         this.vdsmTaskId = vdsmTaskId;
         this.stepId = stepId;
         this.startTime = new Date();
@@ -255,5 +259,13 @@ public class AsyncTask implements Serializable {
 
     public void setChildCmdEntity(CommandEntity childCmdEntity) {
         this.childCmdEntity = childCmdEntity;
+    }
+
+    public Guid getUserId() {
+        return userId;
+    }
+
+    public void setUserId(Guid userId) {
+        this.userId = userId;
     }
 }
