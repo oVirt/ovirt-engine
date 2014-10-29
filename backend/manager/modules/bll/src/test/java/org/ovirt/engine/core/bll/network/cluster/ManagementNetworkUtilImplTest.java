@@ -163,4 +163,12 @@ public class ManagementNetworkUtilImplTest {
         assertEquals(expected, actual);
     }
 
+    /**
+     * Test method for {@link ManagementNetworkUtilImpl#getDefaultManagementNetworkName()}.
+     */
+    @Test
+    public void testGetDefaultManagementNetworkName() throws Exception {
+        assertEquals(TEST_NETWORK_NAME, underTest.getDefaultManagementNetworkName());
+    }
+
 }

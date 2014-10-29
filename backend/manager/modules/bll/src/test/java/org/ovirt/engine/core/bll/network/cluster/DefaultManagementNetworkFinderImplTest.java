@@ -4,16 +4,13 @@ import java.util.Arrays;
 import java.util.Collections;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.common.businessentities.network.Network;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertSame;
@@ -26,26 +23,25 @@ public class DefaultManagementNetworkFinderImplTest {
 
     private static final Guid TEST_DC_ID = Guid.Empty;
 
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, DEFAULT_ENGINE_NETWORK_NAME));
-
     @Mock
     private NetworkDao mockNetworkDao;
     @Mock
     private Network mockNetwork;
     @Mock
     private Network mockDefaultEngineNetwork;
+    @Mock
+    private ManagementNetworkUtil mockManagementNetworkUtil;
 
     private DefaultManagementNetworkFinderImpl underTest;
 
     @Before
     public void setUp() {
-        underTest = new DefaultManagementNetworkFinderImpl(mockNetworkDao);
+        underTest = new DefaultManagementNetworkFinderImpl(mockNetworkDao, mockManagementNetworkUtil);
     }
 
     @Test
     public void testFindDefaultManagementNetworkDefault() throws Exception {
+        when(mockManagementNetworkUtil.getDefaultManagementNetworkName()).thenReturn(DEFAULT_ENGINE_NETWORK_NAME);
         when(mockNetworkDao.getByNameAndDataCenter(DEFAULT_ENGINE_NETWORK_NAME, TEST_DC_ID)).thenReturn(mockDefaultEngineNetwork);
 
         final Network actual = underTest.findDefaultManagementNetwork(TEST_DC_ID);

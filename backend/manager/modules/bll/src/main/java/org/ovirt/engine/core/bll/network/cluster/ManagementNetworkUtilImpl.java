@@ -9,6 +9,8 @@ import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.NetworkClusterId;
+import org.ovirt.engine.core.common.config.Config;
+import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
@@ -58,5 +60,17 @@ final class ManagementNetworkUtilImpl implements ManagementNetworkUtil {
     public boolean isManagementNetwork(String networkName, Guid clusterId) {
         final Network managementNetwork = getManagementNetwork(clusterId);
         return managementNetwork != null && managementNetwork.getName().equals(networkName);
+    }
+
+    /**
+     * Retrieves the default management network name from the {@link Config}.
+     * <p/>Should be used in very rare cases. {@link #getManagementNetwork(Guid)} provides more appropriate solution
+     * for vast majority of the cases.
+     *
+     * @return the default management network name.
+     */
+    @Override
+    public String getDefaultManagementNetworkName() {
+        return Config.getValue(ConfigValues.DefaultManagementNetwork);
     }
 }

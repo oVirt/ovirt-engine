@@ -20,17 +20,13 @@ public class NetworkUtilsTest {
 
     private static final String IFACE_NAME = "eth1";
 
-    private static final String MANAGEMENT_NETWORK = "mgmt";
-
     private static final int DEFAULT_MTU = 1500;
 
     @Rule
     public RandomUtilsSeedingRule rusr = new RandomUtilsSeedingRule();
 
     @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, MANAGEMENT_NETWORK),
-            MockConfigRule.mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
+    public MockConfigRule mcr = new MockConfigRule(MockConfigRule.mockConfig(ConfigValues.DefaultMTU, DEFAULT_MTU));
 
     @Test
     public void calculateNetworkImplementationDetailsNoNetworkName() throws Exception {

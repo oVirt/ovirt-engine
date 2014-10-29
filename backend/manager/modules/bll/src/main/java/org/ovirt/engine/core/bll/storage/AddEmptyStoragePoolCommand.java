@@ -3,7 +3,10 @@ package org.ovirt.engine.core.bll.storage;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.inject.Inject;
+
 import org.ovirt.engine.core.bll.AddVdsGroupCommand;
+import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VersionSupport;
@@ -18,10 +21,13 @@ import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter> extends
         StoragePoolManagementCommandBase<T> {
+
+    @Inject
+    private ManagementNetworkUtil managementNetworkUtil;
+
     public AddEmptyStoragePoolCommand(T parameters) {
         super(parameters);
     }
@@ -64,7 +70,7 @@ public class AddEmptyStoragePoolCommand<T extends StoragePoolManagementParameter
     private void addDefaultNetworks() {
         Network net = new Network();
         net.setId(Guid.newGuid());
-        net.setName(NetworkUtils.getDefaultManagementNetworkName());
+        net.setName(managementNetworkUtil.getDefaultManagementNetworkName());
         net.setDescription(AddVdsGroupCommand.DefaultNetworkDescription);
         net.setDataCenterId(getStoragePool().getId());
         net.setVmNetwork(true);

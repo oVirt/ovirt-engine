@@ -49,4 +49,13 @@ public interface ManagementNetworkUtil {
      *         false otherwise
      */
     boolean isManagementNetwork(String networkName, Guid clusterId);
+
+    /**
+     * Retrieves the default management network name from the {@link org.ovirt.engine.core.common.config.Config}.
+     * Should be used in very rare cases - {@link #getManagementNetwork} and {@link #isManagementNetwork} methods
+     * provide more appropriate solution for vast majority of the cases.
+     *
+     * @return the default management network name.
+     */
+    String getDefaultManagementNetworkName();
 }

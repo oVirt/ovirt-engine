@@ -22,17 +22,6 @@ import org.ovirt.engine.core.common.utils.ObjectUtils;
 public final class NetworkUtils {
     public static final String OS_REFERENCE_TO_MACHINE_NAME = "HOSTNAME";
 
-    /**
-     * Retrieves the default management network name from the {@link Config}.
-     * Should be used in very rare cases. <code>ManagementNetworkUtil</code> provides more appropriate solution for vast
-     * majority of the cases.
-     *
-     * @return the default management network name.
-     */
-    public static String getDefaultManagementNetworkName() {
-        return Config.<String> getValue(ConfigValues.DefaultManagementNetwork);
-    }
-
     public static Integer getDefaultMtu() {
         return Config.<Integer> getValue(ConfigValues.DefaultMTU);
     }

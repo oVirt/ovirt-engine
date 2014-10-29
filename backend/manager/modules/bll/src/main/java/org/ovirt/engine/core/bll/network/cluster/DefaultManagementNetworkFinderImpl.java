@@ -9,18 +9,20 @@ import org.apache.commons.lang.Validate;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.NetworkUtils;
 
 @Singleton
 final class DefaultManagementNetworkFinderImpl implements DefaultManagementNetworkFinder {
 
     private final NetworkDao networkDao;
+    private final ManagementNetworkUtil managementNetworkUtil;
 
     @Inject
-    DefaultManagementNetworkFinderImpl(NetworkDao networkDao) {
+    DefaultManagementNetworkFinderImpl(NetworkDao networkDao, ManagementNetworkUtil managementNetworkUtil) {
         Validate.notNull(networkDao, "networkDao cannot be null");
+        Validate.notNull(managementNetworkUtil, "managementNetworkUtil cannot be null");
 
         this.networkDao = networkDao;
+        this.managementNetworkUtil = managementNetworkUtil;
     }
 
     /**
@@ -49,6 +51,8 @@ final class DefaultManagementNetworkFinderImpl implements DefaultManagementNetwo
     }
 
     private Network findConfigDefaultEngineManagementNetwork(Guid dataCenterId) {
-        return networkDao.getByNameAndDataCenter(NetworkUtils.getDefaultManagementNetworkName(), dataCenterId);
+        return networkDao.getByNameAndDataCenter(
+                managementNetworkUtil.getDefaultManagementNetworkName(),
+                dataCenterId);
     }
 }
