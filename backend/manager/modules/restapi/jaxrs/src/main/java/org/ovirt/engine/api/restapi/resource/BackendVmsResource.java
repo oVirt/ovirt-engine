@@ -519,27 +519,38 @@ public class BackendVmsResource extends
     }
 
     protected VMs mapCollection(List<org.ovirt.engine.core.common.businessentities.VM> entities, boolean isFiltered) {
-        // Fill VmInit for entities - the search query no join the VmInit to Vm
-        IdsQueryParameters params = new IdsQueryParameters();
-        List<Guid> ids = Entities.getIds(entities);
-        params.setId(ids);
-        VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
-        if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
-            List<VmInit> vmInits = queryReturnValue.getReturnValue();
-            Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
-            for (org.ovirt.engine.core.common.businessentities.VM vm : entities) {
-                vm.setVmInit(initMap.get(vm.getId()));
+        Set<String> details = DetailHelper.getDetails(httpHeaders, uriInfo);
+        boolean includeData = details.contains(DetailHelper.MAIN);
+        boolean includeSize = details.contains("size");
+
+        if (includeData) {
+            // Fill VmInit for entities - the search query no join the VmInit to Vm
+            IdsQueryParameters params = new IdsQueryParameters();
+            List<Guid> ids = Entities.getIds(entities);
+            params.setId(ids);
+            VdcQueryReturnValue queryReturnValue = runQuery(VdcQueryType.GetVmsInit, params);
+            if (queryReturnValue.getSucceeded() && queryReturnValue.getReturnValue() != null) {
+                List<VmInit> vmInits = queryReturnValue.getReturnValue();
+                Map<Guid, VmInit> initMap = Entities.businessEntitiesById(vmInits);
+                for (org.ovirt.engine.core.common.businessentities.VM vm : entities) {
+                    vm.setVmInit(initMap.get(vm.getId()));
+                }
             }
         }
 
         VMs collection = new VMs();
-        for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
-            VM vm = map(entity);
-         // Filtered users are not allowed to view host related information
-            if (isFiltered) {
-                removeRestrictedInfoFromVM(vm);
+        if (includeData) {
+            for (org.ovirt.engine.core.common.businessentities.VM entity : entities) {
+                VM vm = map(entity);
+                // Filtered users are not allowed to view host related information
+                if (isFiltered) {
+                    removeRestrictedInfoFromVM(vm);
+                }
+                collection.getVMs().add(addLinks(populate(vm, entity)));
             }
-            collection.getVMs().add(addLinks(populate(vm, entity)));
+        }
+        if (includeSize) {
+            collection.setSize((long) entities.size());
         }
         return collection;
     }
