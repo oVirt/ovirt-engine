@@ -10,6 +10,7 @@ PREREQUISITES
 Install the following system components:
 
  - jdk-7 / openjdk-7-jdk / icedtea-7
+ - mime-types or mailcap
  - unzip
  - openssl
  - postgresql-server postgresql
