@@ -25,10 +25,6 @@ public class QueryData {
         return query;
     }
 
-    public String getQueryForAdBroker() {
-        return query;
-    }
-
     public long getDate() {
         return date;
     }
