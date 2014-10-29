@@ -347,17 +347,6 @@ input[readonly="readonly"], input[readonly=""] {
 a.dropdown-toggle {
     line-height: 11px !important;
 }
-
-#SearchPanelView_searchStringInput {
-    height: 26px;
-    line-height: 16px;
-}
-@media screen and (-webkit-min-device-pixel-ratio:0) {
-    #SearchPanelView_searchStringInput {
-        height: 25px;
-        line-height: 15px;
-    }
-}
 .dab_dropdownImage_pfly_fix {
     position: relative !important;
     top: 6px !important;

@@ -98,33 +98,14 @@
             width: 100% !important;
         }
 
-        .searchBoxClear {
+        .searchBoxClear, .searchBoxBookmark, .searchBoxSearch {
             width: 30px;
+            height: 25px;
             background-color: #fff;
             outline: 1px gray solid;
             text-align: center;
             float: left;
-            padding-top: 2px;
-            cursor: pointer;
-        }
-
-        .searchBoxBookmark {
-            width: 30px;
-            background-color: #fff;
-            outline: 1px gray solid;
-            text-align: center;
-            float: left;
-            padding-top: 2px;
-            cursor: pointer;
-        }
-
-        .searchBoxSearch {
-            width: 30px;
-            background-color: #fff;
-            outline: 1px gray solid;
-            text-align: center;
-            float: left;
-            padding-top: 2px;
+            padding-top: 3px;
             cursor: pointer;
         }
 
