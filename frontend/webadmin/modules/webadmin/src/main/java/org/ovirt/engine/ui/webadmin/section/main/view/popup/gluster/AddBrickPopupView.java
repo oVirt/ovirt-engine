@@ -1,7 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import java.text.ParseException;
-
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeType;
@@ -35,7 +33,6 @@ import com.google.gwt.event.dom.client.ClickEvent;
 import com.google.gwt.event.dom.client.ClickHandler;
 import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
-import com.google.gwt.text.shared.Parser;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -150,13 +147,7 @@ public class AddBrickPopupView extends AbstractModelBoundPopupView<VolumeBrickMo
     }
 
     private void initEditors() {
-        volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>(), new Parser<GlusterVolumeType>() {
-            @Override
-            public GlusterVolumeType parse(CharSequence text) throws ParseException {
-                //Parser is not needed as its a read only field and value is nowhere used.
-                return null;
-            }
-        });
+        volumeTypeEditor = new EntityModelLabelEditor<GlusterVolumeType>(new EnumRenderer<GlusterVolumeType>());
         forceEditor = new EntityModelCheckBoxEditor(Align.RIGHT);
         serverEditor = new ListModelListBoxEditor<VDS>(new NullSafeRenderer<VDS>() {
             @Override

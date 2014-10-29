@@ -2,10 +2,8 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import javax.inject.Inject;
 
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -35,8 +33,6 @@ import com.google.gwt.user.client.ui.FlowPanel;
 import com.google.gwt.user.client.ui.HTMLPanel;
 import com.google.gwt.user.client.ui.HorizontalPanel;
 import com.google.gwt.user.client.ui.Widget;
-
-import java.text.ParseException;
 
 public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, ClusterListModel, ClusterGeneralModel>
         implements SubTabClusterGeneralPresenter.ViewDef, Editor<ClusterGeneralModel> {
@@ -90,15 +86,8 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
         // Inject a reference to the resources:
         this.resources = resources;
         this.form = new ClusterGeneralModelForm(modelProvider, constants);
-        glusterSwiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>(), new Parser<GlusterServiceStatus>() {
-            @Override
-            public GlusterServiceStatus parse(CharSequence text) throws ParseException {
-                if (StringHelper.isNullOrEmpty(text.toString())) {
-                    return null;
-                }
-                return GlusterServiceStatus.valueOf(text.toString().toUpperCase());
-            }
-        });
+        glusterSwiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(
+                new EnumRenderer<GlusterServiceStatus>());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         initManageGlusterSwift();
