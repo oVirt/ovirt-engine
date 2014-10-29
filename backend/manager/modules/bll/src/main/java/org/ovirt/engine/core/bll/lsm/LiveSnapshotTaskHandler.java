@@ -80,6 +80,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
         }
 
         ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), true);
+        enclosingCommand.getReturnValue().setEndActionTryAgain(false);
     }
 
     private void updateDestinationImageId(LiveMigrateDiskParameters parameters) {
@@ -114,6 +115,7 @@ public class LiveSnapshotTaskHandler implements SPMAsyncTaskHandler {
 
         ExecutionHandler.endJob(enclosingCommand.getExecutionContext(), false);
         enclosingCommand.getReturnValue().setSucceeded(true);
+        enclosingCommand.getReturnValue().setEndActionTryAgain(false);
     }
 
     @Override

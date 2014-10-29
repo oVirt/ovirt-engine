@@ -72,11 +72,13 @@ public class LiveMigrateDisksTaskHandler implements SPMAsyncTaskHandler {
 
     @Override
     public void endSuccessfully() {
+        enclosingCommand.getReturnValue().setEndActionTryAgain(false);
     }
 
     @Override
     public void endWithFailure() {
         enclosingCommand.getReturnValue().setSucceeded(true);
+        enclosingCommand.getReturnValue().setEndActionTryAgain(false);
     }
 
     @Override
