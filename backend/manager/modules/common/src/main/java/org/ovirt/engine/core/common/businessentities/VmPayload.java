@@ -7,6 +7,7 @@ import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.ObjectUtils;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
+import org.ovirt.engine.core.compat.Guid;
 
 
 public class VmPayload extends VmDevice implements Serializable {
@@ -18,10 +19,17 @@ public class VmPayload extends VmDevice implements Serializable {
     private String volumeId;
     private HashMap<String, String> files; // file data is base64-encoded
 
+    // Use the constructor with the vmid if you have it!
     public VmPayload() {
+        this.setId(new VmDeviceId(Guid.newGuid(), Guid.newGuid()));
         setDeviceType(VmDeviceType.CDROM);
         this.volumeId = null;
         this.files = new HashMap<String, String>();
+    }
+
+    public VmPayload(Guid vmid) {
+        this();
+        this.setId(new VmDeviceId(Guid.newGuid(), vmid));
     }
 
     @SuppressWarnings("unchecked")
