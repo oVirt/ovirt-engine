@@ -1,6 +1,5 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterHookStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerHook;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
@@ -9,10 +8,10 @@ import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
 import org.ovirt.engine.ui.common.widget.dialog.SimpleDialogPanel;
 import org.ovirt.engine.ui.common.widget.editor.EntityModelCellTable;
+import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelCheckBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.EntityModelRadioButtonEditor;
-import org.ovirt.engine.ui.common.widget.editor.ListModelListBoxEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelLabelEditor;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextAreaLabelEditor;
 import org.ovirt.engine.ui.common.widget.renderer.EnumRenderer;
@@ -34,8 +33,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
 import com.google.gwt.user.client.ui.VerticalPanel;
 import com.google.inject.Inject;
-
-import java.text.ParseException;
 
 public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopupView<GlusterHookResolveConflictsModel> implements GlusterHookResolveConflictsPopupPresenterWidget.ViewDef {
 
@@ -183,17 +180,7 @@ public class GlusterHookResolveConflictsPopupView extends AbstractModelBoundPopu
     private void initEditors() {
         contentSourcesTable = new EntityModelCellTable<ListModel>(false, true);
 
-        statusEditor = new EntityModelLabelEditor<GlusterHookStatus>(new EnumRenderer<GlusterHookStatus>(), new Parser<GlusterHookStatus>() {
-            @Override
-            public GlusterHookStatus parse(CharSequence text) throws ParseException {
-                if(text == null || text.toString().isEmpty()) {
-                    return null;
-                }
-                else {
-                    return GlusterHookStatus.valueOf(text.toString().toUpperCase());
-                }
-            }
-        });
+        statusEditor = new EntityModelLabelEditor<GlusterHookStatus>(new EnumRenderer<GlusterHookStatus>());
 
         resolveContentConflict = new EntityModelCheckBoxEditor(Align.RIGHT);
         useContentSourceEditor = new ListModelListBoxEditor<GlusterServerHook>(new NullSafeRenderer<GlusterServerHook>() {

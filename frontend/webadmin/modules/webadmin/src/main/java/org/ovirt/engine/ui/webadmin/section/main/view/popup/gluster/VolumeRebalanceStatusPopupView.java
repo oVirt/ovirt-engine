@@ -1,10 +1,7 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.gluster;
 
-import java.text.ParseException;
 import java.util.Date;
 
-import com.google.gwt.text.shared.AbstractRenderer;
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeTaskStatusForHost;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
@@ -31,6 +28,7 @@ import org.ovirt.engine.ui.webadmin.widget.table.column.RebalanceFileSizeColumn;
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
 import com.google.gwt.event.shared.EventBus;
+import com.google.gwt.text.shared.AbstractRenderer;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.Label;
@@ -232,16 +230,6 @@ public class VolumeRebalanceStatusPopupView extends AbstractModelBoundPopupView<
                     return constants.unAvailablePropertyLabel();
                 }
                 return GlusterRebalanceDateTimeRenderer.getLocalizedDateTimeFormat().format(entity);
-            }
-        }, new Parser<Date>() {
-            @Override
-            public Date parse(CharSequence text) throws ParseException {
-                if(text == null || text.toString().isEmpty()) {
-                    return null;
-                }
-                else {
-                    return new Date(Date.parse(text.toString()));
-                }
             }
         });
     }

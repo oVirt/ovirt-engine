@@ -1,10 +1,8 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.popup.cluster;
 
-import com.google.gwt.text.shared.Parser;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServerService;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.core.common.businessentities.gluster.ServiceType;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.view.popup.AbstractModelBoundPopupView;
 import org.ovirt.engine.ui.common.widget.Align;
@@ -37,8 +35,6 @@ import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.cellview.client.Column;
 import com.google.gwt.user.client.ui.Label;
 import com.google.inject.Inject;
-
-import java.text.ParseException;
 
 public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<ManageGlusterSwiftModel> implements ManageGlusterSwiftPopupPresenterWidget.ViewDef {
 
@@ -98,15 +94,7 @@ public class ManageGlusterSwiftPopupView extends AbstractModelBoundPopupView<Man
     }
 
     private void initEditors(ApplicationConstants constants) {
-        swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>(), new Parser<GlusterServiceStatus>() {
-            @Override
-            public GlusterServiceStatus parse(CharSequence text) throws ParseException {
-                if (StringHelper.isNullOrEmpty(text.toString())) {
-                    return null;
-                }
-                return GlusterServiceStatus.valueOf(text.toString().toUpperCase());
-            }
-        });
+        swiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(new EnumRenderer<GlusterServiceStatus>());
         startSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         stopSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
         restartSwift = new EntityModelRadioButtonEditor("swift_action", Align.RIGHT); //$NON-NLS-1$
