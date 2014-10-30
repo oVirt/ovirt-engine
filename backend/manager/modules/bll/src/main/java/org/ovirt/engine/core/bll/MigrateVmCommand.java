@@ -477,4 +477,9 @@ public class MigrateVmCommand<T extends MigrateVmParameters> extends RunVmComman
 
         return permissionList;
     }
+
+    @Override
+    public void onPowerringUp() {
+        // nothing to do
+    }
 }

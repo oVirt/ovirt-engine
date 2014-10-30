@@ -30,7 +30,6 @@ import org.ovirt.engine.core.common.businessentities.StorageServerConnections;
 import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -356,23 +355,6 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
      */
     private VdsMonitor getMonitor(Guid vdsId) {
         return ResourceManager.getInstance().GetVdsManager(vdsId).getVdsMonitor();
-    }
-
-    /**
-     * Since this callback is called by the VdsUpdateRunTimeInfo thread, we don't want it
-     * to fetch the VM using {@link #getVm()}, as the thread that invokes {@link #rerun()},
-     * which runs in parallel, is doing setVm(null) to refresh the VM, and because of this
-     * race we might end up with null VM. so we fetch the static part of the VM from the DB.
-     *
-     * XXX: This is never executed when part of MigrateVmCommand and the decreasePendingVms
-     *      is called from runningSucceeded as a workaround.
-     *      See VdsEventListener.processOnVmPoweringUp for more information.
-     */
-    @Override
-    public void onPowerringUp() {
-        VmStatic vmStatic = getVmStaticDAO().get(getVmId());
-        VmHandler.decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
-                vmStatic.getMinAllocatedMem(), vmStatic.getName());
     }
 
     @Override

@@ -8,6 +8,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.job.ExecutionContext;
@@ -45,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.InitializationType;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
@@ -1125,5 +1127,18 @@ public class RunVmCommand<T extends RunVmParams> extends RunVmCommandBase<T>
     // initial white list (null == all hosts)
     protected List<Guid> getVdsWhiteList() {
         return null;
+    }
+
+    /**
+     * Since this callback is called by the VdsUpdateRunTimeInfo thread, we don't want it
+     * to fetch the VM using {@link #getVm()}, as the thread that invokes {@link #rerun()},
+     * which runs in parallel, is doing setVm(null) to refresh the VM, and because of this
+     * race we might end up with null VM. so we fetch the static part of the VM from the DB.
+     */
+    @Override
+    public void onPowerringUp() {
+        VmStatic vmStatic = getVmStaticDAO().get(getVmId());
+        VmHandler.decreasePendingVms(getCurrentVdsId(), vmStatic.getNumOfCpus(),
+                vmStatic.getMinAllocatedMem(), vmStatic.getName());
     }
 }
