@@ -63,7 +63,7 @@
     <subsystem xmlns="urn:jboss:domain:logging:1.1">
 
       <custom-handler name="ovirt-logger" class="org.ovirt.engine.core.logger.LoggerHandler" module="org.ovirt.engine.core.logger">
-        <level name="DEBUG"/>
+        <level name="ALL"/>
       </custom-handler>
 
       <!-- All the application server messages go here: -->
@@ -78,7 +78,7 @@
 
       <!-- Only the engine messages go here: -->
       <file-handler name="ENGINE" autoflush="true">
-        <level name="INFO"/>
+        <level name="ALL"/>
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
@@ -88,7 +88,7 @@
 
       <!-- Console -->
       <console-handler name="CONSOLE" autoflush="true">
-        <level name="INFO"/>
+        <level name="ALL"/>
         <formatter>
           <pattern-formatter pattern="%d %-5p [%c] (%t) %s%E%n"/>
         </formatter>
