@@ -206,6 +206,9 @@ public class ExtensionsManager extends Observable {
                             Base.ContextKeys.LOCALE,
                             Locale.getDefault().toString()
                     ).mput(
+                            Base.ContextKeys.CONFIGURATION_FILE,
+                            entry.file == null ? null : entry.file.getAbsolutePath()
+                    ).mput(
                             Base.ContextKeys.CONFIGURATION,
                             props
                     ).mput(
