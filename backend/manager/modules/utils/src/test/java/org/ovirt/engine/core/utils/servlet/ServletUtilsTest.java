@@ -19,6 +19,7 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
+import java.net.URISyntaxException;
 
 import javax.imageio.ImageIO;
 import javax.servlet.ServletContext;
@@ -27,9 +28,16 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import javax.servlet.http.HttpSession;
 
+import org.junit.Before;
 import org.junit.Test;
 
 public class ServletUtilsTest {
+    private String canReadFileName;
+
+    @Before
+    public void setup() throws IOException, URISyntaxException {
+        canReadFileName = this.getClass().getResource("small_file.txt").toURI().toASCIIString().replaceAll("file:", "");
+    }
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#canReadFile(java.io.File)}.
@@ -48,7 +56,7 @@ public class ServletUtilsTest {
         file = new File("/etc/securetty");
         assertFalse("We should not be able to read this file.", ServletUtils.canReadFile(file));
         //Exists and we can read.
-        file = new File("/etc/hosts");
+        file = new File(canReadFileName);
         assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
     }
 
@@ -57,7 +65,7 @@ public class ServletUtilsTest {
      */
     @Test
     public void testWriteFileToStream() {
-        File file = new File("/etc/hosts");
+        File file = new File(canReadFileName);
         long hostSize = file.length();
         assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
         ByteArrayOutputStream out = new ByteArrayOutputStream(4096);
@@ -107,7 +115,7 @@ public class ServletUtilsTest {
      */
     @Test
     public void testGetFileSize() {
-        File file = new File("/etc/hosts");
+        File file = new File(canReadFileName);
         long hostsSize = file.length();
         assertTrue("We should be able to read this file.", ServletUtils.canReadFile(file));
         assertEquals("Values should match", hostsSize, ServletUtils.getFileSize(file));
@@ -134,19 +142,21 @@ public class ServletUtilsTest {
      */
     @Test
     public void testGetFileFromString_NullPath() {
-        File file = new File("/etc/hosts");
+        File file = new File(canReadFileName);
         File testFile = ServletUtils.makeFileFromSanePath(null, file);
         assertEquals("new file should be same as old file", file, testFile);
     }
 
     /**
      * Test method for {@link org.ovirt.engine.core.utils.servlet.ServletUtils#makeFileFromSanePath(java.lang.String, java.io.File)}.
+     * @throws URISyntaxException
      */
     @Test
-    public void testGetFileFromString_Happy() {
-        File file = new File("/etc");
-        File testFile = ServletUtils.makeFileFromSanePath("hosts", file);
-        assertEquals("new file should be same as old file", new File("/etc/hosts"), testFile);
+    public void testGetFileFromString_Happy() throws URISyntaxException {
+        String path = this.getClass().getResource(".").toURI().toASCIIString().replaceAll("file:", "");
+        File file = new File(path);
+        File testFile = ServletUtils.makeFileFromSanePath("small_file.txt", file);
+        assertEquals("new file should be same as old file", new File(canReadFileName), testFile);
     }
 
     /**

@@ -28,7 +28,7 @@ public class ServletUtils {
     static {
         // Load the system wide MIME types map:
         try {
-            mimeMap = new MimetypesFileTypeMap("/etc/mime.types");
+            mimeMap = new MimetypesFileTypeMap(System.getProperty("org.ovirt.engine.mime.types", "/etc/mime.types"));
         }
         catch (IOException exception) {
             log.error("Can't load system mime types file.", exception);
@@ -121,7 +121,7 @@ public class ServletUtils {
                 // Send metadata
                 String mime = defaultType;
                 if (mime == null) {
-                    mime = mimeMap.getContentType(file);
+                    mime = getMimeMap().getContentType(file);
                 }
                 response.setContentType(mime);
                 response.setContentLength((int) getFileSize(file));
