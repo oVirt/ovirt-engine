@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.bll.provider;
 
-import java.security.KeyStore;
 import java.security.cert.Certificate;
 import java.util.Collections;
 import java.util.List;
@@ -57,24 +56,8 @@ public class ImportProviderCertificateChainCommand<P extends ProviderParameters>
 
     private void saveChainToTrustStore(List<? extends Certificate> chain) {
         if (chain != null && chain.size() > 0) {
-            KeyStore ks = null;
             try {
-                ks = ExternalTrustStoreInitializer.getTrustStore();
-            } catch (Throwable e) {
-                handleException(e);
-            }
-
-            try {
-                // In case there is only one certificate, we insert it.
-                // Otherwise, we need to insert the entire chain except the end certificate (the end certificate here is the first one)
-                int firstCertificateIndex = chain.size() == 1 ? 0 : 1;
-                for (int certIndex = firstCertificateIndex; certIndex < chain.size(); ++certIndex) {
-                    Certificate certificate = chain.get(certIndex);
-                    String alias = Guid.newGuid().toString();
-                    ks.setCertificateEntry(alias, certificate);
-                }
-
-                ExternalTrustStoreInitializer.setTrustStore(ks);
+                ExternalTrustStoreInitializer.addCertificate(chain.get(chain.size()-1));
                 setSucceeded(true);
             } catch (Throwable e) {
                 handleException(e);

@@ -14,7 +14,6 @@ import org.ovirt.engine.core.bll.gluster.GlusterJobsManager;
 import org.ovirt.engine.core.bll.job.ExecutionHandler;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
 import org.ovirt.engine.core.bll.pm.PmHealthCheckManager;
-import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
 import org.ovirt.engine.core.bll.scheduling.MigrationHandler;
 import org.ovirt.engine.core.bll.scheduling.SchedulingManager;
 import org.ovirt.engine.core.bll.storage.StoragePoolStatusHandler;
@@ -86,8 +85,6 @@ public class InitBackendServicesOnStartupBean implements InitBackendServicesOnSt
             StoragePoolStatusHandler.init();
 
             GlusterJobsManager.init();
-
-            ExternalTrustStoreInitializer.init();
 
             try {
                 log.info("Init VM custom properties utilities");
