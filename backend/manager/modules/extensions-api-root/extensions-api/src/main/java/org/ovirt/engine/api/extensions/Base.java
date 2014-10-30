@@ -200,6 +200,10 @@ public class Base {
         /** Extension instance name. */
         public static final ExtKey INSTANCE_NAME = new ExtKey("EXTENSION_INSTANCE_NAME", String.class, "65c67ff6-aeca-4bd5-a245-8674327f011b");
         /**
+         * Extension configuration file.
+         */
+        public static final ExtKey CONFIGURATION_FILE = new ExtKey("EXTENSION_CONFIGURATION_FILE", String.class, "4fb0ffd3-983c-4f3f-98ff-9660bd67af6a");
+        /**
          * Extension configuration.
          * Extension configuration as loaded.
          * @see ConfigKeys
