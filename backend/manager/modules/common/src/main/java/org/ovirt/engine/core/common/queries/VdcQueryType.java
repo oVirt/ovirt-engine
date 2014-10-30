@@ -280,7 +280,7 @@ public enum VdcQueryType implements Serializable {
     GetoVirtISOs,
 
     // Async Tasks
-    GetTasksStatusesByTasksIDs,
+    GetTasksStatusesByTasksIDs(VdcQueryAuthType.User),
 
     // Quota
     GetQuotaByStoragePoolId,
