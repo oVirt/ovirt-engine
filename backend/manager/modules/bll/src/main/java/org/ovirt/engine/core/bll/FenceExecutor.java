@@ -242,10 +242,7 @@ public class FenceExecutor {
 
     private String getManagementOptions(FenceAgentOrder order) {
         String managementOptions = "";
-        ArchitectureType architectureType = null;
-        if (_vds.getCpuName() != null) {
-            architectureType =  _vds.getCpuName().getArchitecture();
-        }
+        ArchitectureType architectureType = VdsArchitectureHelper.getArchitecture(_vds.getStaticData());
         if (order == FenceAgentOrder.Primary) {
             managementOptions = VdsFenceOptions.getDefaultAgentOptions(_vds.getPmType(), _vds.getPmOptions(), architectureType);
         }
