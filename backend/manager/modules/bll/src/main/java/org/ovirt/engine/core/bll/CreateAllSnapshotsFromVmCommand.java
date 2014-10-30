@@ -7,7 +7,6 @@ import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.memory.LiveSnapshotMemoryImageBuilder;
 import org.ovirt.engine.core.bll.memory.MemoryImageBuilder;
@@ -429,8 +428,10 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     private void handleVdsLiveSnapshotFailure(VdcBLLException e) {
-        log.warn("Could not perform live snapshot due to error, VM will still be configured to the new created snapshot: {}",
-                ExceptionUtils.getMessage(e));
+        log.warn("Could not perform live snapshot due to error, VM will still be configured to the new created"
+                        + " snapshot: {}",
+                e.getMessage());
+        log.debug("Exception", e);
         addCustomValue("SnapshotName", getSnapshotName());
         addCustomValue("VmName", getVmName());
         updateCallStackFromThrowable(e);

@@ -1,6 +1,5 @@
 package org.ovirt.engine.core.utils.log;
 
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.utils.log.Logged.LogLevel;
 import org.slf4j.Logger;
 
@@ -125,7 +124,7 @@ public class LoggedUtils {
         Logged logged = getAnnotation(obj);
         if (logged != null && isLogLevelOn(log, logged.errorLevel())) {
             log(log, logged.errorLevel(), ERROR_LOG, determineMessage(log, logged, obj),
-                    ExceptionUtils.getMessage(t), id);
+                    t.getMessage(), id);
             log.error("Exception", t);
         }
     }

@@ -21,7 +21,6 @@ import javax.interceptor.Interceptors;
 
 import org.apache.commons.collections.KeyValue;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.aaa.AuthenticationProfileRepository;
 import org.ovirt.engine.api.extensions.aaa.Acct;
 import org.ovirt.engine.core.aaa.AcctUtils;
@@ -160,8 +159,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
                 try {
                     Thread.sleep(waitBetweenInterval);
                 } catch (InterruptedException e) {
-                    log.warn("Failed to wait between connection polling attempts. " +
-                            "Original exception is: {}", ExceptionUtils.getMessage(e));
+                    log.warn("Failed to wait between connection polling attempts", e);
                 }
             }
 

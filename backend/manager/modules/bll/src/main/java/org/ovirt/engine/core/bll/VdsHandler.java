@@ -4,7 +4,6 @@ import java.lang.reflect.Field;
 import java.util.Arrays;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.backendinterfaces.BaseHandler;
 import org.ovirt.engine.core.common.businessentities.EditableField;
 import org.ovirt.engine.core.common.businessentities.EditableOnVdsStatus;
@@ -83,7 +82,7 @@ public class VdsHandler extends BaseHandler {
                     vds.getId(),
                     vds.getName(),
                     vds.getHostOs(),
-                    ExceptionUtils.getMessage(e));
+                    e.getMessage());
             log.debug("Exception", e);
         }
         return null;

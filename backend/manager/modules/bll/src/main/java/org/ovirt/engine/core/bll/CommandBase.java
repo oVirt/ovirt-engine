@@ -18,7 +18,6 @@ import javax.transaction.SystemException;
 import javax.transaction.Transaction;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.aaa.SessionDataContainer;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.context.CompensationContext;
@@ -599,9 +598,7 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
      *            The exception to log.
      */
     protected void logExceptionAndCompensate(Exception e) {
-        log.error("Exception while wrapping-up compensation in endAction: {}.",
-                ExceptionUtils.getMessage(e));
-        log.error("Exception", e);
+        log.error("Exception while wrapping-up compensation in endAction", e);
         compensate();
     }
 

@@ -17,7 +17,6 @@ import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.commons.lang.ObjectUtils;
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.businessentities.CpuStatistics;
@@ -575,9 +574,9 @@ public class VdsUpdateRunTimeInfo {
     private void logFailureMessage(String messagePrefix, RuntimeException ex) {
         log.error("{} vds={}({}): {}",
                 messagePrefix,
-                ExceptionUtils.getMessage(ex),
                 _vds.getName(),
-                _vds.getId());
+                _vds.getId(),
+                ex.getMessage());
     }
 
     protected IVdsEventListener getVdsEventListener() {

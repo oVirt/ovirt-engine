@@ -7,7 +7,6 @@ import java.util.Map;
 import java.util.regex.Matcher;
 
 import org.apache.commons.lang.StringUtils;
-import org.apache.commons.lang.exception.ExceptionUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.InstallVdsParameters;
@@ -80,7 +79,7 @@ public class UpgradeOvirtNodeInternalCommand<T extends InstallVdsParameters> ext
                     log.error(
                         "Cannot get canonical path to '{}': {}",
                         iso.getName(),
-                        ExceptionUtils.getMessage(e)
+                        e.getMessage()
                     );
                     log.debug("Exception", e);
                 }
