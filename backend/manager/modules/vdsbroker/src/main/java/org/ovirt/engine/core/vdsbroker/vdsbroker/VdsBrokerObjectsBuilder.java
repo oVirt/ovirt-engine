@@ -508,6 +508,8 @@ public class VdsBrokerObjectsBuilder {
 
         if (xmlRpcStruct.containsKey(VdsProperties.liveSnapshotSupport)) {
             vds.setLiveSnapshotSupport(AssignBoolValue(xmlRpcStruct, VdsProperties.liveSnapshotSupport));
+        } else {
+            vds.setLiveSnapshotSupport(true); // for backward compatibility's sake
         }
         if (xmlRpcStruct.containsKey(VdsProperties.liveMergeSupport)) {
             vds.setLiveMergeSupport(AssignBoolValue(xmlRpcStruct, VdsProperties.liveMergeSupport));
