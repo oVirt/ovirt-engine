@@ -107,17 +107,7 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
          */
         if (getRunVdssList().size() < Config.<Integer> getValue(ConfigValues.MaxRerunVmOnVdsCount)
                 && getVm().getStatus() != VMStatus.Paused) {
-            // restore CanDoAction value to false so CanDoAction checks will run again
-            getReturnValue().setCanDoAction(false);
-            if (getExecutionContext() != null) {
-                Job job = getExecutionContext().getJob();
-                if (job != null) {
-                    // mark previous steps as fail
-                    JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
-                }
-            }
-            insertAsyncTaskPlaceHolders();
-            executeAction();
+            reexecuteCommand();
 
             // if there was no rerun attempt in the previous executeAction call and the command
             // wasn't done because canDoAction check returned false..
@@ -130,6 +120,20 @@ public abstract class RunVmCommandBase<T extends VmOperationParameterBase> exten
         } else {
             runningFailed();
         }
+    }
+
+    protected void reexecuteCommand() {
+        // restore CanDoAction value to false so CanDoAction checks will run again
+        getReturnValue().setCanDoAction(false);
+        if (getExecutionContext() != null) {
+            Job job = getExecutionContext().getJob();
+            if (job != null) {
+                // mark previous steps as fail
+                JobRepositoryFactory.getJobRepository().closeCompletedJobSteps(job.getId(), JobExecutionStatus.FAILED);
+            }
+        }
+        insertAsyncTaskPlaceHolders();
+        executeAction();
     }
 
     protected void runningFailed() {
