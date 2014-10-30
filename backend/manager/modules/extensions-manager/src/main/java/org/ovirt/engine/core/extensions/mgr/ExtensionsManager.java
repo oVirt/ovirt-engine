@@ -32,7 +32,8 @@ import org.slf4j.LoggerFactory;
  */
 public class ExtensionsManager extends Observable {
 
-    private static final Logger logger = LoggerFactory.getLogger(ExtensionsManager.class);
+    private static final Logger log = LoggerFactory.getLogger(ExtensionsManager.class);
+    private static final Logger traceLog = LoggerFactory.getLogger(ExtensionsManager.class.getName() + ".trace");
 
     public static final ExtKey TRACE_LOG_CONTEXT_KEY = new ExtKey("EXTENSION_MANAGER_TRACE_LOG",
             Logger.class,
@@ -121,9 +122,6 @@ public class ExtensionsManager extends Observable {
             return file != null ? file.getAbsolutePath() : "N/A";
         }
     }
-
-    private static final Logger log = LoggerFactory.getLogger(ExtensionsManager.class.getName());
-    private static final Logger traceLog = LoggerFactory.getLogger(ExtensionsManager.class.getName() + ".trace");
 
     private static final Map<String, BindingsLoader> bindingsLoaders = new HashMap<String, BindingsLoader>() {
         {
@@ -222,14 +220,14 @@ public class ExtensionsManager extends Observable {
                             splitString(props.getProperty(Base.ConfigKeys.PROVIDES, ""))
                     );
 
-            logger.info("Loading extension '{}'", entry.name);
+            log.info("Loading extension '{}'", entry.name);
             ExtMap output = entry.extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
                             Base.InvokeCommands.LOAD
                             )
                     );
-            logger.info("Extension '{}' loaded", entry.name);
+            log.info("Extension '{}' loaded", entry.name);
 
             entry.extension.getContext().put(
                     TRACE_LOG_CONTEXT_KEY,
@@ -307,14 +305,14 @@ public class ExtensionsManager extends Observable {
                     extensionName));
         }
         try {
-            logger.info("Initializing extension '{}'", entry.name);
+            log.info("Initializing extension '{}'", entry.name);
             ExtMap output = entry.extension.invoke(
                     new ExtMap().mput(
                             Base.InvokeKeys.COMMAND,
                             Base.InvokeCommands.INITIALIZE
                             )
                     );
-            logger.info("Extension '{}' initialized", entry.name);
+            log.info("Extension '{}' initialized", entry.name);
         } catch (Exception ex) {
             log.error("Error in activating extension '{}': {}", entry.name, ex.getMessage());
             if (log.isDebugEnabled()) {
