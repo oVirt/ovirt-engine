@@ -1495,6 +1495,10 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Network Interface already belongs to the bond.")
     String NETWORK_INTERFACE_ALREADY_IN_BOND();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Multiple network attachments (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_LIST}) references same network (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_ENTITY}).")
+    String ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY();
+
+
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
 
