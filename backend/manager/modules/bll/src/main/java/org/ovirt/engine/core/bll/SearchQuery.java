@@ -219,7 +219,7 @@ public class SearchQuery<P extends SearchParameters> extends QueriesCommandBase<
                     runInternalQuery(VdcQueryType.GetAvailableNamespaces, new VdcQueryParametersBase()).getReturnValue();
             namespaces = namespacesMap.get(data.getAuthz());
         }
-        return namespaces;
+        return namespaces == null ? Collections.<String> emptyList() : namespaces;
     }
 
     private List<DbUser> searchDbUsers() {
