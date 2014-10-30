@@ -747,6 +747,10 @@ public class LinkHelper {
     private static Collection getCollection(BaseResource model, Class<? extends BaseResource> suggestedParentType) {
         ParentToCollectionMap collections = TYPES.get(model.getClass());
 
+        if (collections == null) {
+            return null;
+        }
+
         if (suggestedParentType != null) {
             for (Entry<Class<? extends BaseResource>, Collection> entry : collections.entrySet()) {
                 if (entry.getKey().equals(suggestedParentType)) {
