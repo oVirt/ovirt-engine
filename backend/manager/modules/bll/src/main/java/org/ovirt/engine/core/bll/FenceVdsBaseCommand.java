@@ -590,7 +590,7 @@ public abstract class FenceVdsBaseCommand<T extends FenceVdsActionParameters> ex
         // subsequent 'on' command issued during this delay will be overridden by the actual shutdown
         String agent = (order == FenceAgentOrder.Primary) ? getVds().getPmType() : getVds().getPmSecondaryType();
         String options =  (order == FenceAgentOrder.Primary) ? getVds().getPmOptions() : getVds().getPmSecondaryOptions();
-        ArchitectureType architectureType = (getVds().getCpuName() != null) ? getVds().getCpuName().getArchitecture() : null;
+        ArchitectureType architectureType = VdsArchitectureHelper.getArchitecture(getVds().getStaticData());
         options = VdsFenceOptions.getDefaultAgentOptions(agent, options, architectureType);
         HashMap<String, String> optionsMap = VdsStatic.pmOptionsStringToMap(options);
         String powerWaitParamSettings = FenceConfigHelper.getFenceConfigurationValue(ConfigValues.FencePowerWaitParam.name(), ConfigCommon.defaultConfigurationVersion);
