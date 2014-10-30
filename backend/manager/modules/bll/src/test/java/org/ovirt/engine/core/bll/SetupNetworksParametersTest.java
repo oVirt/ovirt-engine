@@ -19,8 +19,8 @@ import org.ovirt.engine.core.utils.MockConfigRule;
 public class SetupNetworksParametersTest {
 
     @ClassRule
-    public static MockConfigRule mcr = new MockConfigRule(mockConfig(ConfigValues.DefaultManagementNetwork, "ovirtmgmt"),
-            mockConfig(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds, 100));
+    public static MockConfigRule mcr =
+            new MockConfigRule(mockConfig(ConfigValues.NetworkConnectivityCheckTimeoutInSeconds, 100));
 
     @Test
     public void validateParameters() {

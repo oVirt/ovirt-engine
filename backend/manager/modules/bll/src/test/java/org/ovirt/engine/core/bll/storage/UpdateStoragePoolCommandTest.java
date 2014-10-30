@@ -75,6 +75,7 @@ public class UpdateStoragePoolCommandTest {
     private NetworkDao networkDao;
     @Mock
     private ManagementNetworkUtil managementNetworkUtil;
+
     private final List<Network> allDcNetworks = new ArrayList<>();
 
     @Before

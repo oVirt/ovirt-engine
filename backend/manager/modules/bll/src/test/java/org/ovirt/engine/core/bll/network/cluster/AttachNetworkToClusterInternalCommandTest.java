@@ -1,7 +1,6 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import org.junit.Before;
-import org.junit.Rule;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Matchers;
@@ -12,14 +11,12 @@ import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.VdsGroupDAO;
 import org.ovirt.engine.core.dao.network.NetworkClusterDao;
 import org.ovirt.engine.core.dao.network.NetworkDao;
-import org.ovirt.engine.core.utils.MockConfigRule;
 import org.springframework.dao.DataIntegrityViolationException;
 
 import static org.junit.Assert.assertEquals;
@@ -69,10 +66,6 @@ public class AttachNetworkToClusterInternalCommandTest {
     private NetworkDao mockNetworkDao;
 
     private AttachNetworkToClusterInternalCommand<AttachNetworkToVdsGroupParameter> underTest;
-
-    @Rule
-    public MockConfigRule mcr = new MockConfigRule(
-            MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, "mgmt"));
 
     private VDSGroup existingGroup = new VDSGroup();
     private Network network = createNetwork();
