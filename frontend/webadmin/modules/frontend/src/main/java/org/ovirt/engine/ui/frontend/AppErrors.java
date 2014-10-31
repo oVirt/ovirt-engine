@@ -3329,6 +3329,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$detailMessage it is not a Hosted Engine host.")
     String VAR__DETAIL__NOT_HE_HOST();
 
+    @DefaultStringValue("$detailMessage it currently hosts the VM.")
+    String VAR__DETAIL__SAME_HOST();
+
     @DefaultStringValue("There are no hosts to use. Check that the cluster contains at least one host in Up state.")
     String SCHEDULING_NO_HOSTS();
 

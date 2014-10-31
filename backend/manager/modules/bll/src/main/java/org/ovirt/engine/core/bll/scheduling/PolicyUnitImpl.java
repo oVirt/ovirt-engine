@@ -17,6 +17,7 @@ import org.ovirt.engine.core.bll.scheduling.policyunits.HaReservationWeightPolic
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterFilterPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.HostedEngineHAClusterWeightPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.MemoryPolicyUnit;
+import org.ovirt.engine.core.bll.scheduling.policyunits.MigrationPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NetworkPolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneBalancePolicyUnit;
 import org.ovirt.engine.core.bll.scheduling.policyunits.NoneWeightPolicyUnit;
@@ -45,6 +46,8 @@ public class PolicyUnitImpl {
 
     public static PolicyUnitImpl getPolicyUnitImpl(PolicyUnit policyUnit) {
         switch (policyUnit.getName()) {
+        case "Migration":
+            return new MigrationPolicyUnit(policyUnit);
         case "PinToHost":
             return new PinToHostPolicyUnit(policyUnit);
         case "CPU":
