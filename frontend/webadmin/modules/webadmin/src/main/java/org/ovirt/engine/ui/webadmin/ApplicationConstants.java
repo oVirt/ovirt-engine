@@ -136,6 +136,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("View Details")
     String geoRepSessionDetails();
 
+    @DefaultStringValue("Sync")
+    String geoRepSessionSync();
+
     @DefaultStringValue("Permissions")
     String volumePermissionSubTabLabel();
 
