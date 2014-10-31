@@ -98,5 +98,14 @@ public class SubTabVolumeGeoRepView
                 return null;
             }
         });
+
+        getTable().addActionButton(
+                new WebAdminButtonDefinition<GlusterGeoRepSession>(constants
+                        .geoRepSessionSync()) {
+                    @Override
+                    protected UICommand resolveCommand() {
+                        return getDetailModel().getRefreshSessionsCommand();
+                    }
+                });
     }
 }

@@ -4,9 +4,12 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
+import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.action.gluster.GlusterVolumeParameters;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterGeoRepSession;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
+import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
@@ -24,6 +27,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
     private UICommand stopSessionCommand;
     private UICommand sessionOptionsCommand;
     private UICommand viewSessionDetailsCommand;
+    private UICommand refreshSessionsCommand;
 
 
     @Override
@@ -41,6 +45,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         setStopSessionCommand(new UICommand("stopSession", this));//$NON-NLS-1$
         setSessionOptionsCommand(new UICommand("sessionOptions", this));//$NON-NLS-1$
         setViewSessionDetailsCommand(new UICommand("viewSessionDetails", this));//$NON-NLS-1$
+        setRefreshSessionsCommand(new UICommand("refreshSessions", this));//$NON-NLS-1$
     }
 
     public UICommand getViewSessionDetailsCommand() {
@@ -89,6 +94,14 @@ public class VolumeGeoRepListModel extends SearchableListModel{
 
     public void setSessionOptionsCommand(UICommand optionsCommand) {
         this.sessionOptionsCommand = optionsCommand;
+    }
+
+    public UICommand getRefreshSessionsCommand() {
+        return refreshSessionsCommand;
+    }
+
+    public void setRefreshSessionsCommand(UICommand optionsCommand) {
+        this.refreshSessionsCommand = optionsCommand;
     }
 
     @Override
@@ -148,6 +161,7 @@ public class VolumeGeoRepListModel extends SearchableListModel{
         getStopSessionCommand().setIsAvailable(false);
         getSessionOptionsCommand().setIsAvailable(false);
         getViewSessionDetailsCommand().setIsAvailable(false);
+        getRefreshSessionsCommand().setIsAvailable(true);
     }
 
     @Override
@@ -165,11 +179,18 @@ public class VolumeGeoRepListModel extends SearchableListModel{
 
         } else if(command.equals(getViewSessionDetailsCommand())) {
 
+        } else if (command.equals(getRefreshSessionsCommand())) {
+            refreshSessions();
         }
     }
 
     private void createNewGeoRepSession() {
 
+    }
+
+    private void refreshSessions() {
+        Frontend.getInstance().runAction(VdcActionType.RefreshGeoRepSessions,
+                new GlusterVolumeParameters(getEntity().getId()));
     }
 
     @Override
