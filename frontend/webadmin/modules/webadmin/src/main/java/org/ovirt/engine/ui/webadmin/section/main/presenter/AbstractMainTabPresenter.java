@@ -8,7 +8,6 @@ import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 
 import com.google.gwt.event.shared.EventBus;
 import com.gwtplatform.mvp.client.View;
-import com.gwtplatform.mvp.client.annotations.ProxyEvent;
 import com.gwtplatform.mvp.client.proxy.PlaceManager;
 import com.gwtplatform.mvp.client.proxy.PlaceRequest;
 import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
@@ -25,7 +24,9 @@ import com.gwtplatform.mvp.client.proxy.TabContentProxyPlace;
  * @param <P>
  *            Proxy type.
  */
-public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View, P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P> {
+public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel, V extends View,
+    P extends TabContentProxyPlace<?>> extends AbstractTabPresenter<V, P>
+    implements MainModelSelectionChangeEvent.MainModelSelectionChangeHandler {
 
     protected final PlaceManager placeManager;
     protected final MainModelProvider<T, M> modelProvider;
@@ -71,7 +72,13 @@ public abstract class AbstractMainTabPresenter<T, M extends SearchableListModel,
         return modelProvider.getModel();
     }
 
-    @ProxyEvent
+    @Override
+    protected void onBind() {
+        super.onBind();
+        registerHandler(getEventBus().addHandler(MainModelSelectionChangeEvent.getType(), this));
+    }
+
+    @Override
     public void onMainModelSelectionChange(MainModelSelectionChangeEvent event) {
         if (event.getMainModel() == getModel()) {
             if (event.getMainModel().getIsAvailable()) {
