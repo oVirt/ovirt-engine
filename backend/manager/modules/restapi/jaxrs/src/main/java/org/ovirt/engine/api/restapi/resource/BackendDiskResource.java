@@ -1,12 +1,19 @@
 package org.ovirt.engine.api.restapi.resource;
 
+import java.util.ArrayList;
 import java.util.Collections;
+import java.util.List;
+import java.util.Map;
 
 import javax.ws.rs.PathParam;
 import javax.ws.rs.core.Response;
 
+import org.apache.commons.collections.CollectionUtils;
+import org.apache.commons.collections.MapUtils;
 import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.Disk;
+import org.ovirt.engine.api.model.VM;
+import org.ovirt.engine.api.model.VMs;
 import org.ovirt.engine.api.resource.ActionResource;
 import org.ovirt.engine.api.resource.AssignedPermissionsResource;
 import org.ovirt.engine.api.resource.CreationResource;
@@ -21,6 +28,7 @@ import org.ovirt.engine.core.common.action.MoveOrCopyImageGroupParameters;
 import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.queries.GetPermissionsForObjectParameters;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
 
@@ -105,6 +113,26 @@ public class BackendDiskResource extends AbstractBackendActionableResource<Disk,
 
     @Override
     protected Disk doPopulate(Disk model, org.ovirt.engine.core.common.businessentities.Disk entity) {
+        // Populate the references to the VMs that are using this disk:
+        List<org.ovirt.engine.core.common.businessentities.VM> vms = new ArrayList<>(1);
+        VdcQueryReturnValue result = runQuery(VdcQueryType.GetVmsByDiskGuid, new IdQueryParameters(entity.getId()));
+        if (result.getSucceeded()) {
+            Map<Boolean, List<org.ovirt.engine.core.common.businessentities.VM>> map = result.getReturnValue();
+            if (MapUtils.isNotEmpty(map)) {
+                for (List<org.ovirt.engine.core.common.businessentities.VM> list : map.values()) {
+                    vms.addAll(list);
+                }
+            }
+        }
+        if (CollectionUtils.isNotEmpty(vms)) {
+            VMs modelVms = new VMs();
+            for (org.ovirt.engine.core.common.businessentities.VM vm : vms) {
+                VM modelVm = new VM();
+                modelVm.setId(vm.getId().toString());
+                modelVms.getVMs().add(modelVm);
+            }
+            model.setVms(modelVms);
+        }
         return model;
     }
 }
