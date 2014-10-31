@@ -10,7 +10,7 @@
     <meta http-equiv="Content-type" content="text/html; charset=utf-8" />
     <obrand:favicon />
     <title><fmt:message key="docs.missing.title" bundle="${docs}">
-        <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
+        <fmt:param value="${requestScope['locale'].getDisplayLanguage(requestScope['locale'])}" />
         </fmt:message>
     </title>
     <obrand:stylesheets />
@@ -33,7 +33,7 @@
 
                     <div class="col-sm-12">
                         <fmt:message key="docs.missing.appears" bundle="${docs}">
-                            <fmt:param value="${requestScope['locale'].getDisplayLanguage()}" />
+                            <fmt:param value="${requestScope['locale'].getDisplayLanguage(requestScope['locale'])}" />
                         </fmt:message>
                         <fmt:message key="docs.missing.admin" bundle="${docs}" />
                     </div>
