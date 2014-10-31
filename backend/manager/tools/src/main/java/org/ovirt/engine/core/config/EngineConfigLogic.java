@@ -322,6 +322,7 @@ public class EngineConfigLogic {
         String version = parser.getVersion();
         if (StringUtils.isBlank(version)) {
             ConfigKey configKey = getConfigKey(key);
+            testIfConfigKeyCanBeFetchedOrPrinted(configKey);
             if (configKey == null) {
                 throw new RuntimeException("Error fetching " + key
                         + " value: no such entry. Please verify key name and property file support.");
@@ -545,6 +546,8 @@ public class EngineConfigLogic {
 
     public ConfigKey fetchConfigKey(String key, String version) {
         ConfigKey configKey = getConfigKey(key);
+        testIfConfigKeyCanBeFetchedOrPrinted(configKey);
+
         if (configKey == null || configKey.getKey() == null) {
             log.debug("Unable to fetch the value of {} in version {}", key, version);
             return null;
@@ -555,6 +558,12 @@ public class EngineConfigLogic {
             return getConfigDao().getKey(configKey);
         } catch (SQLException e) {
             return null;
+        }
+    }
+
+    private void testIfConfigKeyCanBeFetchedOrPrinted(ConfigKey configKey) {
+        if (configKey.isDeprecated()) {
+            throw new IllegalAccessError("Configuration key " + configKey.getKey() + " is deprecated, thus cannot get its value.");
         }
     }
 
