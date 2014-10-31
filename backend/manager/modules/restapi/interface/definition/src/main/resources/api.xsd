@@ -3507,8 +3507,15 @@
     <xs:complexContent>
       <xs:extension base="BaseResource">
         <xs:sequence>
-          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
           <xs:element ref="template" minOccurs="0" maxOccurs="1"/>
+          <!-- Rerefences to the virtual machines that are using this
+               device (a device may be used by several virtual machines,
+               for example a shared disk my be used by two or more
+               virtual machines simultaneously): -->
+          <xs:element ref="vms" minOccurs="0" maxOccurs="1"/>
+
+          <!-- Don't use this element, use "vms" instead: -->
+          <xs:element ref="vm" minOccurs="0" maxOccurs="1"/>
         </xs:sequence>
       </xs:extension>
     </xs:complexContent>
