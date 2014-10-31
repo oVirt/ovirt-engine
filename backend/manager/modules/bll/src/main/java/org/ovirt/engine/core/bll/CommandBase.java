@@ -649,6 +649,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             if (hasStepsToRevert()) {
                 getCurrentTaskHandler().endWithFailure();
                 revertPreviousHandlers();
+            } else {
+                // since no handlers have been run we don't have to retry endAction
+                getReturnValue().setEndActionTryAgain(false);
             }
             startPollingAsyncTasks();
         } else {
