@@ -29,6 +29,9 @@ import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
+import org.ovirt.engine.core.common.businessentities.VmDevice;
+import org.ovirt.engine.core.common.businessentities.VmDeviceGeneralType;
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.core.common.businessentities.VmTemplateStatus;
 import org.ovirt.engine.core.common.config.Config;
@@ -467,6 +470,7 @@ public class OvfDataUpdater {
      * Loads additional need template data for it's ovf
      */
     protected void loadTemplateData(VmTemplate template) {
+        setManagedVideoDevices(template);
         if (template.getInterfaces() == null || template.getInterfaces().isEmpty()) {
             template.setInterfaces(getVmNetworkInterfaceDao()
                     .getAllForTemplate(template.getId()));
@@ -477,6 +481,7 @@ public class OvfDataUpdater {
      * Loads additional need vm data for it's ovf
      */
     protected void loadVmData(VM vm) {
+        setManagedVideoDevices(vm.getStaticData());
         if (vm.getInterfaces().isEmpty()) {
             vm.setInterfaces(getVmNetworkInterfaceDao().getAllForVm(vm.getId()));
         }
@@ -487,6 +492,20 @@ public class OvfDataUpdater {
             } else {
                 vm.setVmtName(VmTemplateHandler.BLANK_VM_TEMPLATE_NAME);
             }
+        }
+    }
+
+    private void setManagedVideoDevices(VmBase vmBase) {
+        Map<Guid, VmDevice> managedDeviceMap = vmBase.getManagedDeviceMap();
+        if (managedDeviceMap == null) {
+            managedDeviceMap = new HashMap<Guid, VmDevice>();
+        }
+        List<VmDevice> devices =
+                DbFacade.getInstance()
+                        .getVmDeviceDao()
+                        .getVmDeviceByVmIdAndType(vmBase.getId(), VmDeviceGeneralType.VIDEO);
+        for (VmDevice device : devices) {
+            managedDeviceMap.put(device.getDeviceId(), device);
         }
     }
 
