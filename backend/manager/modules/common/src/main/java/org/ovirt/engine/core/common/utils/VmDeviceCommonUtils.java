@@ -178,17 +178,17 @@ public class VmDeviceCommonUtils {
      * @return
      */
     private static int setNetworkBootOrder(VM vm, List<VmDevice> devices, int bootOrder) {
-        for (VmDevice pluggedInterface : sortInterfacesByName(vm, getPluggedInterfaces(devices))) {
+        for (VmDevice pluggedInterface : sortInterfacesByName(vm, getPluggedManagedInterfaces(devices))) {
             pluggedInterface.setBootOrder(++bootOrder);
         }
 
         return bootOrder;
     }
 
-    private static List<VmDevice> getPluggedInterfaces(List<VmDevice> devices) {
+    private static List<VmDevice> getPluggedManagedInterfaces(List<VmDevice> devices) {
         List<VmDevice> result = new ArrayList<VmDevice>();
         for (VmDevice device : devices) {
-            if (isBridge(device) && device.getIsPlugged()) {
+            if (isBridge(device) && device.getIsPlugged() && device.getIsManaged()) {
                 result.add(device);
             }
         }
