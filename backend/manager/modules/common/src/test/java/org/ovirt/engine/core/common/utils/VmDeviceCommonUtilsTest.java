@@ -48,6 +48,7 @@ public class VmDeviceCommonUtilsTest {
         List<VmNetworkInterface> interfaces = new LinkedList<VmNetworkInterface>();
 
         VmDevice nic1 = createNetworkInterface(true, NIC_1_NAME, interfaces);
+        VmDevice unmanagedNic = createUnmanagedNetworkInterface(true);
         VmDevice nic2 = createNetworkInterface(true, NIC_2_NAME, interfaces);
         VmDevice nonBootableNic = createNetworkInterface(false, "", interfaces);
 
@@ -65,7 +66,7 @@ public class VmDeviceCommonUtilsTest {
         // ordered according to their names and not according to their position in the list
         VmDeviceCommonUtils.updateVmDevicesBootOrder(
                 vm,
-                Arrays.asList(bootableDisk, nic2, cd, nic1, nonBootableDisk),
+                Arrays.asList(bootableDisk, nic2, cd, nic1, nonBootableDisk, unmanagedNic),
                 false);
 
         int index = 1;
@@ -73,6 +74,7 @@ public class VmDeviceCommonUtilsTest {
         assertEquals("Wrong boot order for nic1", index++, nic1.getBootOrder());
         assertEquals("Wrong boot order for nic2", index++, nic2.getBootOrder());
         assertEquals("Wrong boot order for non bootable nic", 0, nonBootableNic.getBootOrder());
+        assertEquals("Wrong boot order for unmanaged nic", 0, unmanagedNic.getBootOrder());
         assertEquals("Wrong boot order for bootable disk", index++, bootableDisk.getBootOrder());
         assertEquals("Wrong boot order for non bootable disk", 0, nonBootableDisk.getBootOrder());
     }
@@ -80,17 +82,29 @@ public class VmDeviceCommonUtilsTest {
     private VmDevice createNetworkInterface(boolean plugged, String name,
             List<VmNetworkInterface> interfaces) {
         Guid id = Guid.newGuid();
-        VmDevice device = new VmDevice();
-        device.setType(VmDeviceGeneralType.INTERFACE);
-        device.setDevice(VmDeviceType.BRIDGE.getName());
-        device.setIsPlugged(plugged);
-        device.setId(new VmDeviceId(id, null));
 
         VmNetworkInterface vmNic = new VmNetworkInterface();
         vmNic.setId(id);
         vmNic.setName(name);
         interfaces.add(vmNic);
 
+        VmDevice device = createNetworkInterfaceDevice(plugged, id);
+        device.setIsManaged(true);
+        return device;
+    }
+
+    private VmDevice createUnmanagedNetworkInterface(boolean plugged) {
+        VmDevice device = createNetworkInterfaceDevice(plugged, Guid.newGuid());
+        device.setIsManaged(false);
+        return device;
+    }
+
+    private VmDevice createNetworkInterfaceDevice(boolean plugged, Guid id) {
+        VmDevice device = new VmDevice();
+        device.setType(VmDeviceGeneralType.INTERFACE);
+        device.setDevice(VmDeviceType.BRIDGE.getName());
+        device.setIsPlugged(plugged);
+        device.setId(new VmDeviceId(id, null));
         return device;
     }
 
