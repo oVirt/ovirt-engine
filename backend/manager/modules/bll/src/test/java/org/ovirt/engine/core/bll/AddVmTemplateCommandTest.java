@@ -12,7 +12,9 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.junit.Before;
 import org.junit.ClassRule;
@@ -164,6 +166,52 @@ public class AddVmTemplateCommandTest {
         cmd.getParameters().setName("aa-??bb");
         assertFalse("Pattern-based name should not be supported for Template", cmd.validateInputs());
     }
+
+
+    @Test
+    public void testOneEmptyDiskAlias() {
+        Map<Guid, DiskImage> diskInfoDestinationMap = new HashMap<>();
+        DiskImage disk1 = new DiskImage();
+        disk1.setDiskAlias("");
+
+        diskInfoDestinationMap.put(Guid.newGuid(), disk1);
+        cmd.diskInfoDestinationMap = diskInfoDestinationMap;
+        assertFalse(cmd.isDisksAliasNotEmpty());
+    }
+
+    @Test
+    public void testOneOfManyEmptyDiskAlias() {
+        Map<Guid, DiskImage> diskInfoDestinationMap = new HashMap<>();
+        DiskImage disk1 = new DiskImage();
+        DiskImage disk2 = new DiskImage();
+
+        disk1.setDiskAlias("");
+        disk2.setDiskAlias("disk");
+
+        diskInfoDestinationMap.put(Guid.newGuid(), disk1);
+        diskInfoDestinationMap.put(Guid.newGuid(), disk2);
+        cmd.diskInfoDestinationMap = diskInfoDestinationMap;
+        assertFalse(cmd.isDisksAliasNotEmpty());
+    }
+
+
+    @Test
+    public void testDiskAliasNotEmpty() {
+        Map<Guid, DiskImage> diskInfoDestinationMap = new HashMap<>();
+
+        DiskImage disk1 = new DiskImage();
+        DiskImage disk2 = new DiskImage();
+
+        disk1.setDiskAlias("disk");
+        disk2.setDiskAlias("disk");
+
+        diskInfoDestinationMap.put(Guid.newGuid(), disk1);
+        diskInfoDestinationMap.put(Guid.newGuid(), disk2);
+        cmd.diskInfoDestinationMap = diskInfoDestinationMap;
+
+        assertTrue(cmd.isDisksAliasNotEmpty());
+    }
+
 
     private void setupForStorageTests() {
         doReturn(true).when(cmd).validateVmNotDuringSnapshot();
