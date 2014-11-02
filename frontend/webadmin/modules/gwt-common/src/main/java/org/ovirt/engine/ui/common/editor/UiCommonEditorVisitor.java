@@ -73,8 +73,11 @@ public class UiCommonEditorVisitor<M extends Model> extends EditorVisitor {
         final UiCommonEditor<T> functionalEditor = getFunctionalEditor(currentLeafEditor);
 
         if (functionalEditor != null) {
-            // Set tab index
-            functionalEditor.setTabIndex(++tabIndexCounter);
+
+            // Set tab index, unless it's being set manually (i.e. already been set)
+            if (functionalEditor.getTabIndex() <= 0) {
+                functionalEditor.setTabIndex(++tabIndexCounter);
+            }
 
             // Add key press handler
             functionalEditor.addKeyPressHandler(new KeyPressHandler() {

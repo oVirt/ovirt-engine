@@ -88,22 +88,22 @@
                         <div class="form-group">
                             <div class="col-sm-8 col-md-8"></div>
                             <div class="col-sm-4 col-md-4">
-                                <b:ListBox ui:field="localeBox"/>
+                                <b:ListBox ui:field="localeBox" tabIndex="1" />
                             </div>
                         </div>
 
-                        <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" />
+                        <ge:StringEntityModelTextBoxEditor ui:field="userNameEditor" usePatternFly="true" tabIndex="2" />
 
-                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" />
+                        <ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" usePatternFly="true" tabIndex="3" />
 
-                        <e:ListModelListBoxEditor ui:field="profileEditor" usePatternFly="true" />
+                        <e:ListModelListBoxEditor ui:field="profileEditor" usePatternFly="true" tabIndex="4" />
 
                         <div>
                             <div class="col-xs-8 col-sm-offset-2 col-sm-6 col-md-offset-2 col-md-6">
-                                <ge:EntityModelCheckBoxEditor ui:field="connectAutomaticallyEditor" usePatternFly="true" />
+                                <ge:EntityModelCheckBoxEditor ui:field="connectAutomaticallyEditor" usePatternFly="true" tabIndex="5" />
                             </div>
                             <div class="col-xs-4 col-sm-4 col-md-4 submit {style.loginButtonContainer}">
-                                <w:PatternflyUiCommandButton ui:field="loginButton" addStyleNames="btn-primary btn-lg" />
+                                <w:PatternflyUiCommandButton ui:field="loginButton" addStyleNames="btn-primary btn-lg" tabIndex="6" />
                            </div>
                         </div>
                     </form>

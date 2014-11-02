@@ -25,9 +25,13 @@ public class PatternflyUiCommandButton extends AbstractUiCommandButton {
         return button;
     }
 
+    public void setTabIndex(int tabIndex) {
+        button.getElement().setTabIndex(tabIndex);
+    }
+
     @Override
     public int setTabIndexes(int nextTabIndex) {
-        //TODO: Implement focusable on the button so we can set tab index on this.
-        return nextTabIndex;
+        setTabIndex(nextTabIndex);
+        return ++nextTabIndex;
     }
 }
