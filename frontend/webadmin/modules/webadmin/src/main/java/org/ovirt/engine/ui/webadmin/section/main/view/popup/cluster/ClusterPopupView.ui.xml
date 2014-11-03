@@ -167,9 +167,9 @@
                                 <ge:StringEntityModelTextBoxEditor ui:field="nameEditor" />
                                 <ge:StringEntityModelTextBoxEditor ui:field="descriptionEditor" />
                                 <ge:StringEntityModelTextBoxEditor ui:field="commentEditor" />
+                                <e:ListModelListBoxEditor ui:field="architectureEditor" />
                                 <e:ListModelListBoxEditor ui:field="cpuEditor" />
                                 <e:ListModelListBoxEditor ui:field="versionEditor" />
-                                <e:ListModelListBoxEditor ui:field="architectureEditor" />
                                 <g:VerticalPanel ui:field="servicesCheckboxPanel">
                                     <ge:EntityModelCheckBoxEditor ui:field="enableOvirtServiceEditor"  addStyleNames="cpv_enableOvirtService_pfly_fix"/>
                                     <ge:EntityModelCheckBoxEditor ui:field="enableGlusterServiceEditor" addStyleNames="cpv_enableGlusterService_pfly_fix" />

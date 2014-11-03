@@ -701,14 +701,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
         importGlusterExplanationLabel.setVisible(object.getEnableGlusterService().getEntity()
                 && object.getIsNew());
 
-        object.getCPU().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
-            @Override
-            public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isCpuNameBlank = object.getCPU().getSelectedItem() == null;
-                architectureEditor.setVisible(isCpuNameBlank && ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
-            }
-        });
-
         object.getVersionSupportsCpuThreads().getEntityChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {

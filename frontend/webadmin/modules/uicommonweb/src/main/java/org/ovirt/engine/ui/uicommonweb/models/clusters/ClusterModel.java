@@ -37,6 +37,7 @@ import org.ovirt.engine.ui.uicommonweb.models.ApplicationModeHelper;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.HasValidatedTabs;
 import org.ovirt.engine.ui.uicommonweb.models.ListModel;
+import org.ovirt.engine.ui.uicommonweb.models.FilteredListModel;
 import org.ovirt.engine.ui.uicommonweb.models.TabName;
 import org.ovirt.engine.ui.uicommonweb.models.ValidationCompleteEvent;
 import org.ovirt.engine.ui.uicommonweb.models.vms.SerialNumberPolicyModel;
@@ -209,14 +210,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         privateDataCenter = value;
     }
 
-    private ListModel<ServerCpu> privateCPU;
+    private FilteredListModel<ServerCpu> privateCPU;
 
-    public ListModel<ServerCpu> getCPU()
+    public FilteredListModel<ServerCpu> getCPU()
     {
         return privateCPU;
     }
 
-    public void setCPU(ListModel<ServerCpu> value)
+    public void setCPU(FilteredListModel<ServerCpu> value)
     {
         privateCPU = value;
     }
@@ -474,6 +475,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         privateVersionSupportsCpuThreads = value;
     }
 
+    /**
+     * Mutually exclusive Resilience policy radio button
+     * @see #privateMigrateOnErrorOption_YES
+     * @see #privateMigrateOnErrorOption_HA_ONLY
+     */
     private EntityModel<Boolean> privateMigrateOnErrorOption_NO;
 
     public EntityModel<Boolean> getMigrateOnErrorOption_NO()
@@ -486,6 +492,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         privateMigrateOnErrorOption_NO = value;
     }
 
+    /**
+     * Mutually exclusive Resilience policy radio button
+     * @see #privateMigrateOnErrorOption_NO
+     * @see #privateMigrateOnErrorOption_HA_ONLY
+     */
     private EntityModel<Boolean> privateMigrateOnErrorOption_YES;
 
     public EntityModel<Boolean> getMigrateOnErrorOption_YES()
@@ -498,6 +509,11 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         privateMigrateOnErrorOption_YES = value;
     }
 
+    /**
+     * Mutually exclusive Resilience policy radio button
+     * @see #privateMigrateOnErrorOption_YES
+     * @see #privateMigrateOnErrorOption_NO
+     */
     private EntityModel<Boolean> privateMigrateOnErrorOption_HA_ONLY;
 
     public EntityModel<Boolean> getMigrateOnErrorOption_HA_ONLY()
@@ -1106,18 +1122,19 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         getDataCenter().getSelectedItemChangedEvent().addListener(this);
         getDataCenter().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
 
-        setCPU(new ListModel<ServerCpu>());
+        setArchitecture(new ListModel<ArchitectureType>());
+        getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
+
+        setCPU(new FilteredListModel<ServerCpu>());
         getCPU().setIsAvailable(ApplicationModeHelper.getUiMode() != ApplicationMode.GlusterOnly);
         getCPU().getSelectedItemChangedEvent().addListener(this);
+
         setVersion(new ListModel<Version>());
         getVersion().getSelectedItemChangedEvent().addListener(this);
         setMigrateOnErrorOption(MigrateOnErrorOptions.YES);
 
         getRngRandomSourceRequired().setEntity(false);
         getRngHwrngSourceRequired().setEntity(false);
-
-        setArchitecture(new ListModel<ArchitectureType>());
-        getArchitecture().setIsAvailable(ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly));
 
         setValidTab(TabName.GENERAL_TAB, true);
         setIsResiliencePolicyTabAvailable(true);
@@ -1299,7 +1316,6 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             }
         };
         AsyncDataProvider.getInstance().getDataCenterList(_asyncQuery);
-
     }
 
     @Override
@@ -1322,6 +1338,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
             }
             else if (sender == getCPU()) {
                 CPU_SelectedItemChanged(args);
+            }
+            else if (sender == getArchitecture()) {
+                architectureSelectedItemChanged(args);
             }
         }
         else if (ev.matchesDefinition(EntityModel.entityChangedEventDefinition))
@@ -1380,6 +1399,27 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
                 }
             }
         }
+    }
+
+    private void architectureSelectedItemChanged(EventArgs args) {
+        filterCpuTypeByArchitecture();
+    }
+
+    private void filterCpuTypeByArchitecture() {
+        final ArchitectureType selectedArchitecture = getArchitecture().getSelectedItem();
+        final FilteredListModel.Filter<ServerCpu> filter = selectedArchitecture == null
+                || selectedArchitecture.equals(ArchitectureType.undefined)
+                ? null
+                : new FilteredListModel.Filter<ServerCpu>() {
+
+                    @Override
+                    public boolean filter(ServerCpu cpu) {
+                        final ArchitectureType cpuArchitecture = cpu.getArchitecture();
+                        final boolean showCpu = selectedArchitecture.equals(cpuArchitecture);
+                        return showCpu;
+                }
+        };
+        getCPU().filterItems(filter);
     }
 
     private void CPU_SelectedItemChanged(EventArgs args) {
@@ -1544,6 +1584,9 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
 
     private void populateCPUList(ClusterModel clusterModel, List<ServerCpu> cpus, boolean canChangeArchitecture)
     {
+        // disable CPU Architecture-Type filtering
+        getArchitecture().getSelectedItemChangedEvent().removeListener(this);
+
         ServerCpu oldSelectedCpu = clusterModel.getCPU().getSelectedItem();
 
         clusterModel.getCPU().setItems(cpus);
@@ -1574,6 +1617,14 @@ public class ClusterModel extends EntityModel<VDSGroup> implements HasValidatedT
         } else {
             getArchitecture().setSelectedItem(ArchitectureType.undefined);
         }
+
+        // enable CPU Architecture-Type filtering
+        initCpuArchTypeFiltering();
+    }
+
+    private void initCpuArchTypeFiltering() {
+        filterCpuTypeByArchitecture();
+        getArchitecture().getSelectedItemChangedEvent().addListener(this);
     }
 
     private void initSupportedArchitectures(ClusterModel clusterModel) {
