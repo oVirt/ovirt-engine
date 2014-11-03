@@ -18,78 +18,19 @@ package org.ovirt.engine.api.restapi.resource.externalhostproviders;
 
 import static org.ovirt.engine.api.restapi.resource.externalhostproviders.BackendExternalHostProvidersResource.SUB_COLLECTIONS;
 
-import javax.ws.rs.core.Response;
-
-import org.ovirt.engine.api.model.Action;
 import org.ovirt.engine.api.model.ExternalHostProvider;
-import org.ovirt.engine.api.resource.ExternalProviderCertificatesResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalComputeResourcesResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalDiscoveredHostsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostGroupsResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostProviderResource;
 import org.ovirt.engine.api.resource.externalhostproviders.ExternalHostsResource;
-import org.ovirt.engine.api.restapi.resource.AbstractBackendActionableResource;
-import org.ovirt.engine.api.restapi.resource.BackendExternalProviderCertificatesResource;
-import org.ovirt.engine.api.restapi.resource.BackendExternalProviderHelper;
-import org.ovirt.engine.core.common.action.ProviderParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
-import org.ovirt.engine.core.common.action.VdcActionType;
-import org.ovirt.engine.core.common.businessentities.Provider;
-import org.ovirt.engine.core.common.queries.IdQueryParameters;
-import org.ovirt.engine.core.common.queries.VdcQueryType;
-import org.ovirt.engine.core.compat.Guid;
+import org.ovirt.engine.api.restapi.resource.AbstractBackendExternalProviderResource;
 
-public class BackendExternalHostProviderResource extends
-        AbstractBackendActionableResource<ExternalHostProvider, Provider> implements
-        ExternalHostProviderResource {
+public class BackendExternalHostProviderResource
+        extends AbstractBackendExternalProviderResource<ExternalHostProvider>
+        implements ExternalHostProviderResource {
     public BackendExternalHostProviderResource(String id) {
-        super(id, ExternalHostProvider.class, Provider.class, SUB_COLLECTIONS);
-    }
-
-    @Override
-    public ExternalHostProvider get() {
-        return performGet(VdcQueryType.GetProviderById, new IdQueryParameters(guid));
-    }
-
-    @Override
-    public ExternalHostProvider update(ExternalHostProvider incoming) {
-        return performUpdate(
-            incoming,
-            new QueryIdResolver<Guid>(VdcQueryType.GetProviderById, IdQueryParameters.class),
-            VdcActionType.UpdateProvider,
-            new UpdateParametersProvider()
-        );
-    }
-
-    protected class UpdateParametersProvider implements ParametersProvider<ExternalHostProvider, Provider> {
-        @Override
-        public VdcActionParametersBase getParameters(ExternalHostProvider incoming, Provider entity) {
-            return new ProviderParameters(map(incoming, entity));
-        }
-    }
-
-    @Override
-    protected ExternalHostProvider doPopulate(ExternalHostProvider model, Provider entity) {
-        return model;
-    }
-
-    @Override
-    public Response testConnectivity(Action action) {
-        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
-        ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.TestProviderConnectivity, parameters);
-    }
-
-    @Override
-    public Response importCertificates(Action action) {
-        Provider provider = BackendExternalProviderHelper.getProvider(this, id);
-        ProviderParameters parameters = new ProviderParameters(provider);
-        return performAction(VdcActionType.ImportProviderCertificateChain, parameters);
-    }
-
-    @Override
-    public ExternalProviderCertificatesResource getCertificates() {
-        return inject(new BackendExternalProviderCertificatesResource(id));
+        super(id, ExternalHostProvider.class, SUB_COLLECTIONS);
     }
 
     @Override
