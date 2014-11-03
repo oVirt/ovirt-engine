@@ -35,6 +35,7 @@ public final class VdsProperties {
     public static final String cpu_cores = "cpuCores";
     public static final String cpu_sockets = "cpuSockets";
     public static final String cpu_model = "cpuModel";
+    public static final String online_cpus = "onlineCpus";
     public static final String cpu_speed_mh = "cpuSpeed";
     public static final String if_total_speed = "eth0Speed";
     public static final String kvm_enabled = "kvmEnabled";

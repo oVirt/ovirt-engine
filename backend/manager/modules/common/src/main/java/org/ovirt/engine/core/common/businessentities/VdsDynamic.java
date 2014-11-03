@@ -29,6 +29,8 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     private String cpu_model;
 
+    private String onlineCpus;
+
     private BigDecimal cpu_speed_mh;
 
     private String if_total_speed;
@@ -232,6 +234,14 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
 
     public void setcpu_model(String value) {
         this.cpu_model = value;
+    }
+
+    public String getOnlineCpus() {
+        return this.onlineCpus;
+    }
+
+    public void setOnlineCpus(String value) {
+        this.onlineCpus = value;
     }
 
     public Double getcpu_speed_mh() {
@@ -671,6 +681,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
         result = prime * result + ((cpu_model == null) ? 0 : cpu_model.hashCode());
         result = prime * result + ((cpu_sockets == null) ? 0 : cpu_sockets.hashCode());
         result = prime * result + ((cpu_speed_mh == null) ? 0 : cpu_speed_mh.hashCode());
+        result = prime * result + ((onlineCpus == null) ? 0 : onlineCpus.hashCode());
         result = prime * result + ((guest_overhead == null) ? 0 : guest_overhead.hashCode());
         result = prime * result + ((hooksStr == null) ? 0 : hooksStr.hashCode());
         result = prime * result + ((host_os == null) ? 0 : host_os.hashCode());
@@ -743,6 +754,7 @@ public class VdsDynamic implements BusinessEntityWithStatus<Guid, VDSStatus> {
                 && ObjectUtils.objectsEqual(cpu_model, other.cpu_model)
                 && ObjectUtils.objectsEqual(cpu_sockets, other.cpu_sockets)
                 && ObjectUtils.objectsEqual(cpu_speed_mh, other.cpu_speed_mh)
+                && ObjectUtils.objectsEqual(onlineCpus, other.onlineCpus)
                 && ObjectUtils.objectsEqual(guest_overhead, other.guest_overhead)
                 && ObjectUtils.objectsEqual(hooksStr, other.hooksStr)
                 && ObjectUtils.objectsEqual(host_os, other.host_os)

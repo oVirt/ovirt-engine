@@ -787,7 +787,7 @@ SELECT     vds_groups.vds_group_id as vds_group_id, vds_groups.name as vds_group
                       vds_statistics.ha_local_maintenance as ha_local_maintenance, vds_static.disable_auto_pm as disable_auto_pm, vds_dynamic.controlled_by_pm_policy as controlled_by_pm_policy, vds_statistics.boot_time as boot_time,
                       vds_dynamic.kdump_status as kdump_status, vds_dynamic.selinux_enforce_mode as selinux_enforce_mode,
                       vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported, vds_dynamic.is_live_snapshot_supported as is_live_snapshot_supported, vds_static.protocol as protocol,
-                      vds_dynamic.is_live_merge_supported as is_live_merge_supported
+                      vds_dynamic.is_live_merge_supported as is_live_merge_supported, vds_dynamic.online_cpus as online_cpus
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN
@@ -835,7 +835,8 @@ spm_status, vds_dynamic.supported_cluster_levels, vds_dynamic.supported_engines,
                       vds_dynamic.auto_numa_balancing as auto_numa_balancing, vds_dynamic.is_numa_supported as is_numa_supported,
                       vds_dynamic.supported_rng_sources as supported_rng_sources,
                       vds_dynamic.is_live_snapshot_supported as is_live_snapshot_supported, vds_static.protocol as protocol,
-                      vds_dynamic.is_live_merge_supported as is_live_merge_supported
+                      vds_dynamic.is_live_merge_supported as is_live_merge_supported,
+                      vds_dynamic.online_cpus as online_cpus
 FROM         vds_groups INNER JOIN
 vds_static ON vds_groups.vds_group_id = vds_static.vds_group_id INNER JOIN
 vds_dynamic ON vds_static.vds_id = vds_dynamic.vds_id INNER JOIN

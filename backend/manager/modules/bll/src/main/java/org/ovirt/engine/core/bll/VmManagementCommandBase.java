@@ -125,6 +125,24 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
 
         int maxvCPU = vmStatic.getNumOfCpus();
 
+        VDS dedicatedVds = null;
+
+        // can not check if no dedicated vds was configured
+        if (vmStatic.getDedicatedVmForVds() != null) {
+            dedicatedVds = getVds(vmStatic.getDedicatedVmForVds());
+        } else {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
+        }
+
+        Collection<Integer> onlinePcpus = new HashSet<>();
+
+        if (dedicatedVds.getOnlineCpus() != null) {
+            String[] onlinePcpusStr = dedicatedVds.getOnlineCpus().split(",");
+
+            for (String Pcpu : onlinePcpusStr) {
+                onlinePcpus.add(Integer.parseInt(Pcpu));
+            }
+        }
 
         for (String rule : rules) {
             // [0] vcpu, [1] pcpu
@@ -149,21 +167,23 @@ public class VmManagementCommandBase<T extends VmManagementParametersBase> exten
                 return failCanDoAction(VdcBllMessages.VM_PINNING_PINNED_TO_NO_CPU);
             }
 
-            // can not check if no dedicated vds was configured
-            if (vmStatic.getDedicatedVmForVds() != null) {
-                VDS dedicatedVds = getVds(vmStatic.getDedicatedVmForVds());
-                // check only from cluster version 3.2
-                if (dedicatedVds != null &&
-                        dedicatedVds.getVdsGroupCompatibilityVersion() != null &&
-                        dedicatedVds.getVdsGroupCompatibilityVersion().compareTo(Version.v3_2) >= 0 &&
-                        dedicatedVds.getCpuThreads() != null) {
+            // check only from cluster version 3.2
+            if (dedicatedVds.getVdsGroupCompatibilityVersion() != null &&
+                    dedicatedVds.getVdsGroupCompatibilityVersion().compareTo(Version.v3_2) >= 0) {
+
+                if (dedicatedVds.getOnlineCpus() != null) {
+                    for (Integer pCPU : currPcpus) {
+                        if (!onlinePcpus.contains(pCPU)) {
+                            // ERROR maps to a non existent or offline pcpu
+                            return failCanDoAction(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST);
+                        }
+                    }
+                } else if (dedicatedVds.getCpuThreads() != null) {
                     if (Collections.max(currPcpus) >= dedicatedVds.getCpuThreads()) {
                         // ERROR maps to a non existent pcpu
                         return failCanDoAction(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST);
                     }
                 }
-            } else {
-                return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_CANNOT_BE_PINNED_TO_CPU_WITH_UNDEFINED_HOST);
             }
         }
 

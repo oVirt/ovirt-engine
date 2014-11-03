@@ -1551,6 +1551,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Logical CPU Cores")
     String logicalCores();
 
+    @DefaultStringValue("Online Logical CPU Cores")
+    String onlineCores();
+
     @DefaultStringValue("CPU Model")
     String cpuModelHostGeneral();
 

@@ -3047,6 +3047,7 @@
         <column>supported_rng_sources</column>
         <column>is_live_snapshot_supported</column>
         <column>is_live_merge_supported</column>
+        <column>online_cpus</column>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e6</value>
             <value>3</value>
@@ -3100,6 +3101,7 @@
             <value>RANDOM</value>
             <value>true</value>
             <value>true</value>
+            <value>0,1,2,3</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e7</value>
@@ -3154,6 +3156,7 @@
             <value></value>
             <value>false</value>
             <value>false</value>
+            <value>0,2,4</value>
         </row>
         <row>
             <value>afce7a39-8e8c-4819-ba9c-796d316592e8</value>
@@ -3208,6 +3211,7 @@
             <value>HWRNG</value>
             <value>false</value>
             <value>false</value>
+            <value>0,8,16,24,32</value>
         </row>
         <row>
             <value>23f6d691-5dfb-472b-86dc-9e1d2d3c18f3</value>
@@ -3262,6 +3266,7 @@
             <value>RANDOM</value>
             <value>true</value>
             <value>true</value>
+            <value>0,128</value>
         </row>
         <row>
             <value>2001751e-549b-4e7a-aff6-32d36856c125</value>
@@ -3316,6 +3321,7 @@
             <value>RANDOM,HWRNG</value>
             <value>true</value>
             <value>true</value>
+            <value>0,1,2,3,4,5,6,7,8</value>
         </row>
     </table>
 
