@@ -787,6 +787,7 @@ select fn_db_add_config_value('AttestationFirstStageSize','10','general');
 select fn_db_add_config_value('MaxAverageNetworkQoSValue','1024','general');
 select fn_db_add_config_value('MaxPeakNetworkQoSValue','2048','general');
 select fn_db_add_config_value('MaxBurstNetworkQoSValue','10240','general');
+select fn_db_add_config_value('MaxHostNetworkQosShares', '100', 'general');
 select fn_db_add_config_value('UserMessageOfTheDay','','general');
 select fn_db_add_config_value('QoSInboundAverageDefaultValue','10','general');
 select fn_db_add_config_value('QoSInboundPeakDefaultValue','10','general');

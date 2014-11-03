@@ -1567,6 +1567,10 @@ public enum ConfigValues {
     MaxBurstNetworkQoSValue,
 
     @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("100")
+    MaxHostNetworkQosShares,
+
+    @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("10")
     QoSInboundAverageDefaultValue,
 
