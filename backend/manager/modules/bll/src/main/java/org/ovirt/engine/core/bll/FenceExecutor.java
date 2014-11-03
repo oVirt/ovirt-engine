@@ -69,6 +69,10 @@ public class FenceExecutor {
     }
 
     public boolean findProxyHost() {
+        return findProxyHost(skippedProxyHostId);
+    }
+
+    public boolean findProxyHost(Guid exclude) {
         PMProxyOptions proxyOption=null;
         final Guid NO_VDS = Guid.Empty;
         int count;
@@ -104,10 +108,10 @@ public class FenceExecutor {
             // available on new host.
             if (_vds.getId().equals(NO_VDS)) {
                 // try first to find a Host in UP status
-                proxyHost = getFenceProxy(true, false, proxyOption);
+                proxyHost = getFenceProxy(true, false, proxyOption, exclude);
                 // trying other Hosts that are not in UP since they can be a proxy for fence operations
                 if (proxyHost == null) {
-                    proxyHost = getFenceProxy(false, false, proxyOption);
+                    proxyHost = getFenceProxy(false, false, proxyOption, exclude);
                 }
                 if (proxyHost != null) {
                     proxyHostId = proxyHost.getId();
@@ -118,9 +122,9 @@ public class FenceExecutor {
                 // If can not find a proxy host retry and delay between retries
                 // as configured.
                 while (count < retries) {
-                    proxyHost = getFenceProxy(true, true, proxyOption);
+                    proxyHost = getFenceProxy(true, true, proxyOption, exclude);
                     if (proxyHost == null) {
-                        proxyHost = getFenceProxy(false, true, proxyOption);
+                        proxyHost = getFenceProxy(false, true, proxyOption, exclude);
                     }
                     if (proxyHost != null) {
                         proxyHostId = proxyHost.getId();
@@ -153,13 +157,6 @@ public class FenceExecutor {
             logProxySelection(proxyHost.getName(), proxyOption.createLogEntry(proxyHost), _action.name());
         }
         return !NO_VDS.equals(proxyHostId);
-    }
-
-    private synchronized boolean findProxyHostExcluding(Guid exludedHostId) {
-        skippedProxyHostId = exludedHostId;
-        boolean res = findProxyHost();
-        skippedProxyHostId=null;
-        return res;
     }
 
     private void logProxySelection(String proxy, String origin, String command) {
@@ -197,9 +194,13 @@ public class FenceExecutor {
             // if fence failed, retry with another proxy
             if (!retValue.getSucceeded()) {
                 log.warn("Fencing operation failed with proxy host '{}', trying another proxy...", proxyHostId);
-                if (!findProxyHostExcluding(proxyHostId)) {
+                Guid failedProxyHostId = proxyHostId;
+                if (!findProxyHost(proxyHostId)) {
                     log.warn("Failed to find other proxy to re-run failed fence operation, retrying with the same proxy...");
                     findProxyHost();
+                }
+                else {
+                    skippedProxyHostId = failedProxyHostId;
                 }
                 retValue = runFenceAction(_action, order);
             }
@@ -323,14 +324,14 @@ public class FenceExecutor {
                  || vdsDynamic.getStatus() == VDSStatus.NonResponsive);
     }
 
-    private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions) {
+    private VDS getFenceProxy(final boolean onlyUpHost, final boolean filterSelf, final PMProxyOptions proxyOptions, Guid exclude) {
         List<VDS> hosts = DbFacade.getInstance().getVdsDao().getAll();
         synchronized (this) {
-            // If a skippedProxyHostId was given, try to use another proxy
-            if (skippedProxyHostId != null) {
+            // If a exclude was given, try to use another proxy
+            if (exclude != null) {
                 Iterator<VDS> iter = hosts.iterator();
                 while (iter.hasNext()) {
-                    if (iter.next().getId().equals(skippedProxyHostId)) {
+                    if (iter.next().getId().equals(exclude)) {
                         iter.remove();
                         break;
                     }
