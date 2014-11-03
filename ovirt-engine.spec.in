@@ -58,6 +58,14 @@
 %endif
 
 %if 0%{?rhel}
+%if 0%{?rhel} >= 7
+%global ovirt_install_systemd 1
+%global ovirt_install_systemv 0
+%global ovirt_install_poms 1
+%global ovirt_require_maven 1
+%global ovirt_provides_jboss 1
+%global jboss ovirt-engine-jboss-as >= 7.1.1
+%else
 %global ovirt_install_systemd 0
 %global ovirt_install_systemv 1
 %global ovirt_install_poms 0
@@ -79,6 +87,7 @@
 	[ -n "${_jpath}" ] && echo "${_jpath}" >> "${_filelist}" \
 	%{nil}
 
+%endif
 %endif
 
 %global ovirt_product_name oVirt Engine
@@ -182,7 +191,11 @@ Source0:	http://resources.ovirt.org/pub/ovirt-master-snapshot/src/@PACKAGE_NAME@
 BuildArch:	noarch
 
 %if 0%{?rhel}
+%if 0%{?rhel} >= 7
+BuildRequires:	java-devel >= 1.7.0
+%else
 BuildRequires:	java7-devel
+%endif
 %endif
 %if 0%{?fedora}
 BuildRequires:	java-devel >= 1.7.0
