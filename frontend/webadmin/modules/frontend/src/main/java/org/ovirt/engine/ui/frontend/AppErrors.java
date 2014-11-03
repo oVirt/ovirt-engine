@@ -1498,6 +1498,14 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Multiple network attachments (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_LIST}) references same network (${ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY_ENTITY}).")
     String ACTION_TYPE_FAILED_NETWORK_ATTACHMENTS_REFERENCES_SAME_NETWORK_DUPLICATELY();
 
+    @DefaultStringValue("Cannot ${action} ${type}. The given network interface does not exist on specified host.")
+    String NIC_NOT_EXISTS_ON_HOST();
+
+    @DefaultStringValue("Neither bond nor vlan can be slave.")
+    String NETWORK_INTERFACE_BOND_OR_VLAN_CANNOT_BE_SLAVE();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Cannot create Network Attachment directly on slave or vlan interface.")
+    String CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN();
 
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
