@@ -1,5 +1,7 @@
 package org.ovirt.engine.core.bll;
 
+import org.junit.After;
+import org.junit.Before;
 import org.ovirt.engine.core.bll.tasks.AsyncTaskState;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertTrue;
@@ -11,7 +13,6 @@ import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 import java.sql.Connection;
 import java.util.Collections;
 
-import org.junit.BeforeClass;
 import org.junit.ClassRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -77,8 +78,8 @@ public class BackwardCompatibilityTaskCreationTest {
     @ClassRule
     public static MockEJBStrategyRule ejbRule = new MockEJBStrategyRule(BeanType.SCHEDULER, mock(SchedulerUtil.class));
 
-    @BeforeClass
-    public static void beforeClass() {
+    @Before
+    public void before() {
         ejbRule.mockResource(ContainerManagedResourceType.DATA_SOURCE, mock(Connection.class));
         DbFacade dbFacade = spy(new DbFacade());
         DbFacadeLocator.setDbFacade(dbFacade);
@@ -88,6 +89,11 @@ public class BackwardCompatibilityTaskCreationTest {
         CommandEntityDao cmdEntityDao = mock(CommandEntityDao.class);
         when(dbFacade.getCommandEntityDao()).thenReturn(cmdEntityDao);
         when(cmdEntityDao.getAll()).thenReturn(Collections.EMPTY_LIST);
+    }
+
+    @After
+    public void after() {
+        DbFacadeLocator.setDbFacade(null);
     }
 
     @SuppressWarnings({ "unchecked", "rawtypes"})
