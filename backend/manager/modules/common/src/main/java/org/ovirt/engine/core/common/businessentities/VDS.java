@@ -124,6 +124,7 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
         vds.setCpuCores(getCpuCores());
         vds.setCpuThreads(getCpuThreads());
         vds.setCpuModel(getCpuModel());
+        vds.setOnlineCpus(getOnlineCpus());
         vds.setCpuSpeedMh(getCpuSpeedMh());
         vds.setIfTotalSpeed(getIfTotalSpeed());
         vds.setKvmEnabled(getKvmEnabled());
@@ -467,6 +468,14 @@ public class VDS extends IVdcQueryable implements Serializable, BusinessEntityWi
 
     public void setCpuModel(String value) {
         this.mVdsDynamic.setcpu_model(value);
+    }
+
+    public String getOnlineCpus() {
+        return this.mVdsDynamic.getOnlineCpus();
+    }
+
+    public void setOnlineCpus(String value) {
+        this.mVdsDynamic.setOnlineCpus(value);
     }
 
     public Double getCpuSpeedMh() {

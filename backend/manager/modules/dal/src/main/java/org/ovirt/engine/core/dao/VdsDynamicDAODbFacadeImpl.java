@@ -46,6 +46,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
             entity.setcpu_cores((Integer) rs.getObject("cpu_cores"));
             entity.setCpuThreads((Integer) rs.getObject("cpu_threads"));
             entity.setcpu_model(rs.getString("cpu_model"));
+            entity.setOnlineCpus(rs.getString("online_cpus"));
             entity.setcpu_speed_mh(rs.getDouble("cpu_speed_mh"));
             entity.setif_total_speed(rs.getString("if_total_speed"));
             entity.setkvm_enabled((Boolean) rs.getObject("kvm_enabled"));
@@ -211,6 +212,7 @@ public class VdsDynamicDAODbFacadeImpl extends MassOperationsGenericDaoDbFacade<
                 .addValue("cpu_cores", vds.getcpu_cores())
                 .addValue("cpu_threads", vds.getCpuThreads())
                 .addValue("cpu_model", vds.getcpu_model())
+                .addValue("online_cpus", vds.getOnlineCpus())
                 .addValue("cpu_speed_mh", vds.getcpu_speed_mh())
                 .addValue("if_total_speed", vds.getif_total_speed())
                 .addValue("kvm_enabled", vds.getkvm_enabled())

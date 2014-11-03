@@ -43,6 +43,7 @@ public class VmManagementCommandBaseTest {
         vmStatic.setDedicatedVmForVds(Guid.Empty);
         final VDS dedicatedVds = new VDS();
         dedicatedVds.setCpuThreads(16);
+        dedicatedVds.setOnlineCpus("0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15");
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_2);
 
         doReturn(dedicatedVds).when(test).getVds(Guid.Empty);
@@ -124,6 +125,21 @@ public class VmManagementCommandBaseTest {
         if (canDoActionMessages.size() > 0) {
             Assert.assertEquals(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
         }
+
+        // additional tests for CPUs disabled on-the-fly
+        dedicatedVds.setOnlineCpus("0,1,2,4,5,6,7,8,9,10,11,12,13,14,15");
+
+        Assert.assertFalse("use of disabled cpu", test.isCpuPinningValid("0#3", vmStatic));
+        Assert.assertTrue(canDoActionMessages.size() > 0);
+        if (canDoActionMessages.size() > 0) {
+            Assert.assertEquals(VdcBllMessages.VM_PINNING_PCPU_DOES_NOT_EXIST.toString(), canDoActionMessages.get(0));
+        }
+
+        // additional tests for CPUs disabled on-the-fly
+        dedicatedVds.setOnlineCpus("0,4,8,16,24,32,40,48,56,64,68,72,76,80,84");
+
+        Assert.assertTrue("use of cpu with a id larger than the number of CPU threads",
+                test.isCpuPinningValid("0#84", vmStatic));
 
         // making sure cluster < 3.2 does not get validated on pCPU as we cant tell the number for sure
         dedicatedVds.setVdsGroupCompatibilityVersion(Version.v3_1);

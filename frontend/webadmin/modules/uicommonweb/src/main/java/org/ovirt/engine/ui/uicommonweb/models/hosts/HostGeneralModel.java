@@ -843,6 +843,21 @@ public class HostGeneralModel extends EntityModel
         }
     }
 
+    private String onlineCores;
+
+    public String getOnlineCores() {
+        return onlineCores;
+    }
+
+    public void setOnlineCores(String value) {
+        if (onlineCores == null && value == null) {
+            return;
+        } if (onlineCores == null || !onlineCores.equals(value)) {
+            onlineCores = value;
+            onPropertyChanged(new PropertyChangedEventArgs("onlineCores")); //$NON-NLS-1$
+        }
+    }
+
     private String selinuxEnforceMode;
 
     public String getSelinuxEnforceMode() {
@@ -987,6 +1002,8 @@ public class HostGeneralModel extends EntityModel
         } else {
             setLogicalCores(vds.getCpuThreads());
         }
+
+        setOnlineCores(vds.getOnlineCpus());
     }
 
     private void updateAlerts()

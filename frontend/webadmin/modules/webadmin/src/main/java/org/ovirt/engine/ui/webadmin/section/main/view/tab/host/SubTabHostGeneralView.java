@@ -63,6 +63,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     BooleanTextBoxLabel memoryPageSharing = new BooleanTextBoxLabel(constants.active(), constants.inactive());
     NullableNumberTextBoxLabel<Integer> activeVms = new NullableNumberTextBoxLabel<Integer>();
     NullableNumberTextBoxLabel<Integer> logicalCores = new NullableNumberTextBoxLabel<Integer>();
+    TextBoxLabel onlineCores = new TextBoxLabel();
     TextBoxLabel spmPriority = new TextBoxLabel();
     TextBoxLabel hostedEngineHa = new TextBoxLabel();
     FullDateTimeLabel bootTime = new FullDateTimeLabel();
@@ -150,6 +151,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.spmPriority(), spmPriority, 0, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.activeVmsHostGeneral(), activeVms, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.logicalCores(), logicalCores, 1).withAutoPlacement());
+        formBuilder.addFormItem(new FormItem(constants.onlineCores(), onlineCores, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.bootTimeHostGeneral(), bootTime, 1).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.hostedEngineHaHostGeneral(), hostedEngineHa, 1, virtSupported).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.isciInitNameHostGeneral(), iScsiInitiatorName, 1, virtSupported).withAutoPlacement());
