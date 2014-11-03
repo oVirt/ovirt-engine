@@ -157,9 +157,15 @@ class FileLocations(object):
         DATADIR,
         'virtio-win',
     )
+
     RHEV_GUEST_TOOLS_DIR = os.path.join(
         DATADIR,
         'rhev-guest-tools-iso',
+    )
+
+    OVIRT_GUEST_TOOLS_DIR = os.path.join(
+        DATADIR,
+        'ovirt-guest-tools-iso',
     )
 
     OVIRT_SETUP_UNINSTALL_DIR = os.path.join(
@@ -418,6 +424,8 @@ class ConfigEnv(object):
     )
     def REMOTE_ENGINE_HOST_ROOT_PASSWORD(self):
         return 'OVESETUP_CONFIG/remoteEngineHostRootPassword'
+
+    ISO_PATHS_TO_UPLOAD = 'OVESETUP_CONFIG/isoPathsToUpload'
 
 
 @util.export
