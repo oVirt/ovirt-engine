@@ -543,7 +543,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
 
     protected boolean validateVM(VmValidator vmValidator) {
         return canDoSnapshot(getVm()) &&
-                validate(vmValidator.vmNotSavingRestoring());
+                validate(vmValidator.vmNotSavingRestoring()) &&
+                validate(vmValidator.validateVmStatusUsingMatrix(VdcActionType.CreateAllSnapshotsFromVm));
     }
 
     private boolean isSpecifiedDisksExist(List<DiskImage> disks) {

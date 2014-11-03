@@ -174,7 +174,8 @@ public final class VdcActionUtils {
                         VdcActionType.RunVmOnce, VdcActionType.MigrateVm, VdcActionType.ExportVm, VdcActionType.MoveVm,
                         VdcActionType.ImportVm, VdcActionType.ChangeDisk, VdcActionType.RemoveVm,
                         VdcActionType.AddVmInterface, VdcActionType.UpdateVmInterface,
-                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.RebootVm));
+                        VdcActionType.RemoveVmInterface, VdcActionType.CancelMigrateVm, VdcActionType.RebootVm,
+                        VdcActionType.CreateAllSnapshotsFromVm));
         vmMatrix.put(
                 VMStatus.Paused,
                 EnumSet.of(VdcActionType.RemoveVm, VdcActionType.HibernateVm, VdcActionType.CloneVm,

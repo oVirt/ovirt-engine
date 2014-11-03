@@ -1,5 +1,6 @@
 package org.ovirt.engine.core.bll.validator;
 
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.LinkedList;
@@ -10,6 +11,8 @@ import org.apache.commons.collections.Predicate;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.common.VdcActionUtils;
+import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.BaseDisk;
 import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -98,6 +101,18 @@ public class VmValidator {
         for (VM vm : vms) {
             if (vm.getStatus().isHibernating() || vm.getStatus() == VMStatus.RestoringState) {
                 return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_SAVING_RESTORING);
+            }
+        }
+
+        return ValidationResult.VALID;
+    }
+
+    public ValidationResult validateVmStatusUsingMatrix(VdcActionType actionType) {
+        for (VM vm : vms) {
+            if (!VdcActionUtils.canExecute(Arrays.asList(vm), VM.class,
+                    actionType)) {
+                return new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_STATUS_ILLEGAL,
+                        LocalizedVmStatus.from(vm.getStatus()));
             }
         }
 
