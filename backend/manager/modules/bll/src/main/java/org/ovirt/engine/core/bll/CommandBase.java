@@ -173,6 +173,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
             cmdContext =
                     new CommandContext(new EngineContext().withSessionId(parameters.getSessionId()))
                             .withExecutionContext(new ExecutionContext());
+        } else if (cmdContext.getEngineContext().getSessionId() == null) {
+            // Needed for SEAT mechanism - session ID is available only on parameters
+            // upon command re-instantiation (when moving between task handlers).
+            cmdContext.getEngineContext().withSessionId(parameters.getSessionId());
         }
         this.context = cmdContext;
         _parameters = parameters;
