@@ -59,13 +59,15 @@ public abstract class AbstractBackendReadOnlyDevicesResource<D extends BaseDevic
     protected C mapCollection(List<Q> entities, boolean addLinks) {
         C collection = instantiate(collectionType);
         List<D> list = getList(collection);
-        for (Q entity : entities) {
-            D candidate = populate(map(entity), entity);
-            if (validate(candidate)) {
-                if (addLinks) {
-                    candidate = addLinks(candidate);
+        if (entities != null) {
+            for (Q entity : entities) {
+                D candidate = populate(map(entity), entity);
+                if (validate(candidate)) {
+                    if (addLinks) {
+                        candidate = addLinks(candidate);
+                    }
+                    list.add(candidate);
                 }
-                list.add(candidate);
             }
         }
         return collection;
