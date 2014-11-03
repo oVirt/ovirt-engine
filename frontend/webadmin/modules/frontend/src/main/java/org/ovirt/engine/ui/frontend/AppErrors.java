@@ -1510,6 +1510,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Cannot create Network Attachment directly on slave or vlan interface.")
     String CANNOT_ADD_NETWORK_ATTACHMENT_ON_SLAVE_OR_VLAN();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network attachment must be specified for this request.")
+    String NETWORK_ATTACHMENT_NOT_SPECIFIED();
+
     @DefaultStringValue("Bond name must be formatted as <bondYYY>.")
     String NETWORK_INVALID_BOND_NAME();
 

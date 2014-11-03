@@ -479,7 +479,10 @@ public enum VdcActionType {
     RefreshHost(4001, ActionGroup.MANIPULATE_HOST, false, QuotaDependency.NONE),
 
     // Network Attachments
-    HostSetupNetworks(5200, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE);
+    HostSetupNetworks(5200, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    AddNetworkAttachment(5201, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    UpdateNetworkAttachment(5202, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE),
+    RemoveNetworkAttachment(5203, ActionGroup.CONFIGURE_HOST_NETWORK, QuotaDependency.NONE);
 
     private int intValue;
     private ActionGroup actionGroup;

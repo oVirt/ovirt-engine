@@ -77,6 +77,11 @@ public final class MultipleActionsRunnersFactory {
         case UpdateNetworkOnCluster:
             throw new UnsupportedOperationException("Multiple network attachments/detachments/updates should be run through ManageNetworkClustersCommand!");
 
+        case AddNetworkAttachment:
+        case UpdateNetworkAttachment:
+        case RemoveNetworkAttachment:
+            throw new UnsupportedOperationException("AddNetworkAttachment, UpdateNetworkAttachment, and RemoveNetworkAttachment cannot be run using MultipleActionsRunner");
+
         default:
             runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
