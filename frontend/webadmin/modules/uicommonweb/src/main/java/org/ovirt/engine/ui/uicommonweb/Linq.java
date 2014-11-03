@@ -81,8 +81,8 @@ public final class Linq
         @Override
         public int compare(AuditLog x, AuditLog y)
         {
-            long xid = x.getaudit_log_id();
-            long yid = y.getaudit_log_id();
+            long xid = x.getAuditLogId();
+            long yid = y.getAuditLogId();
 
             return Long.valueOf(xid).compareTo(yid);
         }

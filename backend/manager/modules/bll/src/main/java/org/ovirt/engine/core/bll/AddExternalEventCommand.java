@@ -36,8 +36,8 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
     protected void executeCommand() {
         AuditLogableBase event = new AuditLogableBase(getParameters().getEvent());
         event.setExternal(true);
-        String message = getParameters().getEvent().getmessage();
-        switch (getParameters().getEvent().getseverity()){
+        String message = getParameters().getEvent().getMessage();
+        switch (getParameters().getEvent().getSeverity()){
             case NORMAL:
                 AuditLogDirector.log(event, AuditLogType.EXTERNAL_EVENT_NORMAL, message);
                 break;
@@ -53,7 +53,7 @@ public class AddExternalEventCommand<T extends AddExternalEventParameters> exten
         }
         AuditLog auditLog = DbFacade.getInstance().getAuditLogDao().getByOriginAndCustomEventId(getParameters().getEvent().getOrigin(), getParameters().getEvent().getCustomEventId());
         if (auditLog != null) {
-            setActionReturnValue(auditLog.getaudit_log_id());
+            setActionReturnValue(auditLog.getAuditLogId());
             setSucceeded(true);
         }
     }

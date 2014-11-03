@@ -30,7 +30,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
             return failCanDoAction(VdcBllMessages.AUDIT_LOG_CANNOT_REMOVE_AUDIT_LOG_NOT_EXIST);
         }
 
-        if (!AuditLogSeverity.ALERT.equals(event.getseverity()) && OVIRT.equalsIgnoreCase(event.getOrigin())) {
+        if (!AuditLogSeverity.ALERT.equals(event.getSeverity()) && OVIRT.equalsIgnoreCase(event.getOrigin())) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_EXTERNAL_EVENT_ILLEGAL_ORIGIN);
         }
 
@@ -47,7 +47,7 @@ public class RemoveAuditLogByIdCommand<T extends RemoveAuditLogByIdParameters> e
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
         AuditLog event = getAuditLogDao().get(getParameters().getAuditLogId());
-        if (AuditLogSeverity.ALERT.equals(event.getseverity())) {
+        if (AuditLogSeverity.ALERT.equals(event.getSeverity())) {
             return Collections.singletonList(new PermissionSubject(Guid.SYSTEM,
                     VdcObjectType.System,
                     ActionGroup.AUDIT_LOG_MANAGEMENT));

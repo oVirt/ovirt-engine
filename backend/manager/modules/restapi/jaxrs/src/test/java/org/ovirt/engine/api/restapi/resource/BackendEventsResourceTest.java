@@ -87,13 +87,13 @@ public class BackendEventsResourceTest extends AbstractBackendCollectionResource
 
     protected org.ovirt.engine.core.common.businessentities.AuditLog getEntity(int index) {
         AuditLog auditLogMock = control.createMock(org.ovirt.engine.core.common.businessentities.AuditLog.class);
-        expect(auditLogMock.getaudit_log_id()).andReturn(LOG_IDS[index]).anyTimes();
-        expect(auditLogMock.getseverity()).andReturn(AuditLogSeverity.ALERT).anyTimes();
-        expect(auditLogMock.getmessage()).andReturn(MESSAGES[index]).anyTimes();
+        expect(auditLogMock.getAuditLogId()).andReturn(LOG_IDS[index]).anyTimes();
+        expect(auditLogMock.getSeverity()).andReturn(AuditLogSeverity.ALERT).anyTimes();
+        expect(auditLogMock.getMessage()).andReturn(MESSAGES[index]).anyTimes();
         expect(auditLogMock.getOrigin()).andReturn(ORIGIN_NAMES[index]).anyTimes();
         expect(auditLogMock.getCustomEventId()).andReturn(CUSTOMER_EVENT_IDS[index]).anyTimes();
-        expect(auditLogMock.getlog_type()).andReturn(AuditLogType.EXTERNAL_ALERT).anyTimes();
-        expect(auditLogMock.getlog_time()).andReturn(new Date()).anyTimes();
+        expect(auditLogMock.getLogType()).andReturn(AuditLogType.EXTERNAL_ALERT).anyTimes();
+        expect(auditLogMock.getLogTime()).andReturn(new Date()).anyTimes();
         return auditLogMock;
     }
 

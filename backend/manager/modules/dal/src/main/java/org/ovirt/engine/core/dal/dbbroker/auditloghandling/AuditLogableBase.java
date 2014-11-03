@@ -110,8 +110,8 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public AuditLogableBase(final AuditLog auditLog) {
-        this._storageDomainId = auditLog.getstorage_domain_id();
-        this._storagePoolId = auditLog.getstorage_pool_id();
+        this._storageDomainId = auditLog.getStorageDomainId();
+        this._storagePoolId = auditLog.getStoragePoolId();
         this.correlationId = auditLog.getCorrelationId();
         this.customData = auditLog.getCustomData();
         this.customEventId = auditLog.getCustomEventId();
@@ -119,15 +119,15 @@ public class AuditLogableBase extends TimeoutBase {
         this.glusterVolumeId = auditLog.getGlusterVolumeId();
         this.glusterVolumeName = auditLog.getGlusterVolumeName();
         this.jobId = auditLog.getJobId();
-        this.mUserId = auditLog.getuser_id();
-        this.mUserName = auditLog.getuser_name();
-        this.mVdsGroupId = auditLog.getvds_group_id();
-        this.mVdsId = auditLog.getvds_id();
-        this.mVdsName = auditLog.getvds_name();
-        this.mVmId = auditLog.getvm_id();
-        this.mVmName = auditLog.getvm_name();
-        this.mVmTemplateId = auditLog.getvm_template_id();
-        this.mVmTemplateName = auditLog.getvm_template_name();
+        this.mUserId = auditLog.getUserId();
+        this.mUserName = auditLog.getUserName();
+        this.mVdsGroupId = auditLog.getVdsGroupId();
+        this.mVdsId = auditLog.getVdsId();
+        this.mVdsName = auditLog.getVdsName();
+        this.mVmId = auditLog.getVmId();
+        this.mVmName = auditLog.getVmName();
+        this.mVmTemplateId = auditLog.getVmTemplateId();
+        this.mVmTemplateName = auditLog.getVmTemplateName();
         this.origin = auditLog.getOrigin();
         this.external = auditLog.isExternal();
         this.callStack = auditLog.getCallStack();

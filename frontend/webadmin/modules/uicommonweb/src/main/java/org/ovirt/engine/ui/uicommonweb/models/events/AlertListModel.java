@@ -86,7 +86,7 @@ public class AlertListModel extends SearchableListModel
 
     public void dismissAlert() {
         AuditLog auditLog = (AuditLog) getSelectedItem();
-        RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getaudit_log_id());
+        RemoveAuditLogByIdParameters params = new RemoveAuditLogByIdParameters(auditLog.getAuditLogId());
         Frontend.getInstance().runAction(VdcActionType.RemoveAuditLogById, params);
     }
 

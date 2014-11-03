@@ -78,9 +78,9 @@ public class EventPopupView extends AbstractModelBoundPopupView<EventModel> impl
         driver.edit(eventModel);
 
         AuditLog event = eventModel.getEvent();
-        eventIdLabel.asValueBox().setValue(String.valueOf(event.getlog_typeValue()));
-        eventTimeLabel.asValueBox().setValue(new FullDateTimeRenderer().render(event.getlog_time()));
-        eventMessageTextArea.asValueBox().setValue(event.getmessage());
+        eventIdLabel.asValueBox().setValue(String.valueOf(event.getLogTypeValue()));
+        eventTimeLabel.asValueBox().setValue(new FullDateTimeRenderer().render(event.getLogTime()));
+        eventMessageTextArea.asValueBox().setValue(event.getMessage());
     }
 
     @Override

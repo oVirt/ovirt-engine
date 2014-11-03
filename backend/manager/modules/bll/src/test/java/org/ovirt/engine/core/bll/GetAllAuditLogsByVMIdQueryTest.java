@@ -24,7 +24,7 @@ public class GetAllAuditLogsByVMIdQueryTest extends AbstractUserQueryTest<IdQuer
 
         // Set up the expected result
         AuditLog expectedResult = new AuditLog();
-        expectedResult.setvm_id(vmId);
+        expectedResult.setVmId(vmId);
 
         // Mock the DAOs
         AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);

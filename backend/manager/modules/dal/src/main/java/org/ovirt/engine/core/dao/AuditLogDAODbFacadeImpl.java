@@ -111,26 +111,26 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
 
     private MapSqlParameterSource getSqlMapper(AuditLog event) {
         return getCustomMapSqlParameterSource()
-                .addValue("audit_log_id", event.getaudit_log_id())
-                .addValue("log_time", event.getlog_time())
-                .addValue("log_type", event.getlog_type())
-                .addValue("log_type_name", event.getlog_type_name())
-                .addValue("severity", event.getseverity())
-                .addValue("message", event.getmessage())
-                .addValue("user_id", event.getuser_id())
-                .addValue("user_name", event.getuser_name())
-                .addValue("vds_id", event.getvds_id())
-                .addValue("vds_name", event.getvds_name())
-                .addValue("vm_id", event.getvm_id())
-                .addValue("vm_name", event.getvm_name())
-                .addValue("vm_template_id", event.getvm_template_id())
-                .addValue("vm_template_name", event.getvm_template_name())
-                .addValue("storage_pool_id", event.getstorage_pool_id())
-                .addValue("storage_pool_name", event.getstorage_pool_name())
-                .addValue("storage_domain_id", event.getstorage_domain_id())
-                .addValue("storage_domain_name", event.getstorage_domain_name())
-                .addValue("vds_group_id", event.getvds_group_id())
-                .addValue("vds_group_name", event.getvds_group_name())
+                .addValue("audit_log_id", event.getAuditLogId())
+                .addValue("log_time", event.getLogTime())
+                .addValue("log_type", event.getLogType())
+                .addValue("log_type_name", event.getLogTypeName())
+                .addValue("severity", event.getSeverity())
+                .addValue("message", event.getMessage())
+                .addValue("user_id", event.getUserId())
+                .addValue("user_name", event.getUserName())
+                .addValue("vds_id", event.getVdsId())
+                .addValue("vds_name", event.getVdsName())
+                .addValue("vm_id", event.getVmId())
+                .addValue("vm_name", event.getVmName())
+                .addValue("vm_template_id", event.getVmTemplateId())
+                .addValue("vm_template_name", event.getVmTemplateName())
+                .addValue("storage_pool_id", event.getStoragePoolId())
+                .addValue("storage_pool_name", event.getStoragePoolName())
+                .addValue("storage_domain_id", event.getStorageDomainId())
+                .addValue("storage_domain_name", event.getStorageDomainName())
+                .addValue("vds_group_id", event.getVdsGroupId())
+                .addValue("vds_group_name", event.getVdsGroupName())
                 .addValue("correlation_id", event.getCorrelationId())
                 .addValue("job_id", event.getJobId())
                 .addValue("quota_id", event.getQuotaId())
@@ -207,28 +207,28 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
         public AuditLog mapRow(ResultSet rs, int rowNum)
                 throws SQLException {
             AuditLog entity = new AuditLog();
-            entity.setaudit_log_id(rs.getLong("audit_log_id"));
-            entity.setlog_time(DbFacadeUtils.fromDate(rs
+            entity.setAuditLogId(rs.getLong("audit_log_id"));
+            entity.setLogTime(DbFacadeUtils.fromDate(rs
                     .getTimestamp("log_time")));
-            entity.setlog_type(AuditLogType.forValue(rs.getInt("log_type")));
-            entity.setseverity(AuditLogSeverity.forValue(rs
+            entity.setLogType(AuditLogType.forValue(rs.getInt("log_type")));
+            entity.setSeverity(AuditLogSeverity.forValue(rs
                     .getInt("severity")));
-            entity.setmessage(rs.getString("message"));
-            entity.setuser_id(getGuid(rs, "user_id"));
-            entity.setuser_name(rs.getString("user_name"));
-            entity.setvds_id(getGuid(rs, "vds_id"));
-            entity.setvds_name(rs.getString("vds_name"));
-            entity.setvm_id(getGuid(rs, "vm_id"));
-            entity.setvm_name(rs.getString("vm_name"));
-            entity.setvm_template_id(getGuid(rs, "vm_template_id"));
-            entity.setvm_template_name(rs.getString("vm_template_name"));
-            entity.setstorage_pool_id(getGuid(rs, "storage_pool_id"));
-            entity.setstorage_pool_name(rs.getString("storage_pool_name"));
-            entity.setstorage_domain_id(getGuid(rs, "storage_domain_id"));
-            entity.setstorage_domain_name(rs
+            entity.setMessage(rs.getString("message"));
+            entity.setUserId(getGuid(rs, "user_id"));
+            entity.setUserName(rs.getString("user_name"));
+            entity.setVdsId(getGuid(rs, "vds_id"));
+            entity.setVdsName(rs.getString("vds_name"));
+            entity.setVmId(getGuid(rs, "vm_id"));
+            entity.setVmName(rs.getString("vm_name"));
+            entity.setVmTemplateId(getGuid(rs, "vm_template_id"));
+            entity.setVmTemplateName(rs.getString("vm_template_name"));
+            entity.setStoragePoolId(getGuid(rs, "storage_pool_id"));
+            entity.setStoragePoolName(rs.getString("storage_pool_name"));
+            entity.setStorageDomainId(getGuid(rs, "storage_domain_id"));
+            entity.setStorageDomainName(rs
                     .getString("storage_domain_name"));
-            entity.setvds_group_id(getGuid(rs, "vds_group_id"));
-            entity.setvds_group_name(rs
+            entity.setVdsGroupId(getGuid(rs, "vds_group_id"));
+            entity.setVdsGroupName(rs
                     .getString("vds_group_name"));
             entity.setCorrelationId(rs.getString("correlation_id"));
             entity.setJobId(getGuid(rs, "job_id"));

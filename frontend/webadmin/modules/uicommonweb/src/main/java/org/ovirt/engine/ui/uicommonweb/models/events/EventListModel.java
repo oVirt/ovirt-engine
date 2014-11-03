@@ -172,7 +172,7 @@ public class EventListModel extends ListWithDetailsModel
         SearchParameters params = new SearchParameters(applySortOptions(getSearchString()), SearchType.AuditLog,
                 isCaseSensitiveSearch());
         params.setMaxCount(getSearchPageSize());
-        params.setSearchFrom(getLastEvent() != null ? getLastEvent().getaudit_log_id() : 0);
+        params.setSearchFrom(getLastEvent() != null ? getLastEvent().getAuditLogId() : 0);
         params.setRefresh(false);
 
         Frontend.getInstance().runQuery(VdcQueryType.Search, params, query);

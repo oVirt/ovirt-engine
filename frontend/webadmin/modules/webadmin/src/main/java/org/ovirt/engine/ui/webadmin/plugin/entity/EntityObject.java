@@ -123,7 +123,7 @@ public final class EntityObject extends JsMutableObjectWithProperties {
         // Event
         else if (businessEntity instanceof AuditLog) {
             obj.setValueAsString("correlationId", ((AuditLog) businessEntity).getCorrelationId()); //$NON-NLS-1$
-            obj.setValueAsString("message", ((AuditLog) businessEntity).getmessage()); //$NON-NLS-1$
+            obj.setValueAsString("message", ((AuditLog) businessEntity).getMessage()); //$NON-NLS-1$
             obj.setValueAsString("callStack", ((AuditLog) businessEntity).getCallStack()); //$NON-NLS-1$
             obj.setValueAsString("customEventId", String.valueOf(((AuditLog) businessEntity).getCustomEventId())); //$NON-NLS-1$
             obj.setValueAsString("toString", ((AuditLog) businessEntity).toStringForLogging()); //$NON-NLS-1$

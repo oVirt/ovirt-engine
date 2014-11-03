@@ -48,224 +48,231 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String callStack;
 
     public AuditLog() {
-        logType = AuditLogType.UNASSIGNED.getValue();
-        severity = AuditLogSeverity.NORMAL.getValue();
-        origin = "oVirt";
-        customEventId = -1;
-        eventFloodInSec = 30;
-        customData = "";
+        this(AuditLogType.UNASSIGNED, AuditLogSeverity.NORMAL);
     }
 
-    public AuditLog(AuditLogType al_type, AuditLogSeverity al_severity, String al_msg, Guid al_user_id,
-            String al_user_name, Guid al_vm_id, String al_vm_name, Guid al_vds_id, String al_vds_name,
-            Guid al_vmt_id, String al_vmt_name) {
-        this();
-        logTime = new Date();
-        logType = al_type.getValue();
-        severity = al_severity.getValue();
-        message = al_msg;
-        userId = al_user_id;
-        userName = al_user_name;
-        vmId = al_vm_id;
-        vmName = al_vm_name;
-        vdsId = al_vds_id;
-        vdsName = al_vds_name;
-        vmTemplateId = al_vmt_id;
-        vmTemplateName = al_vmt_name;
+    public AuditLog(AuditLogType type, AuditLogSeverity severity) {
+        this.logType = type.getValue();
+        this.severity = severity.getValue();
+        this.origin = "oVirt";
+        this.customEventId = -1;
+        this.eventFloodInSec = 30;
+        this.customData = "";
+        this.logTime = new Date();
     }
 
-    public AuditLog(AuditLogType al_type,
-            AuditLogSeverity al_severity,
-            String al_msg,
-            Guid al_user_id,
-            String al_user_name,
-            Guid al_vm_id,
-            String al_vm_name,
-            Guid al_vds_id,
-            String al_vds_name,
-            Guid al_vmt_id,
-            String al_vmt_name,
+    public AuditLog(AuditLogType type,
+            AuditLogSeverity severity,
+            String message,
+            Guid userId,
+            String userName,
+            Guid vmId,
+            String vmName,
+            Guid vdsId,
+            String vdsName,
+            Guid vmTemplateId,
+            String vmTemplateName) {
+        this(type, severity);
+        this.message = message;
+        this.userId = userId;
+        this.userName = userName;
+        this.vmId = vmId;
+        this.vmName = vmName;
+        this.vdsId = vdsId;
+        this.vdsName = vdsName;
+        this.vmTemplateId = vmTemplateId;
+        this.vmTemplateName = vmTemplateName;
+    }
+
+    public AuditLog(AuditLogType type,
+            AuditLogSeverity severity,
+            String message,
+            Guid userId,
+            String userName,
+            Guid vmId,
+            String vmName,
+            Guid vdsId,
+            String vdsName,
+            Guid vmTemplateId,
+            String vmTemplateName,
             String origin,
             int customEventId,
             int eventFloogInSec,
             String customData) {
-        this(al_type,
-                al_severity,
-                al_msg,
-                al_user_id,
-                al_user_name,
-                al_vm_id,
-                al_vm_name,
-                al_vds_id,
-                al_vds_name,
-                al_vmt_id,
-                al_vmt_name);
+        this(type,
+                severity,
+                message,
+                userId,
+                userName,
+                vmId,
+                vmName,
+                vdsId,
+                vdsName,
+                vmTemplateId,
+                vmTemplateName);
         this.origin = origin;
         this.customEventId = customEventId;
         this.eventFloodInSec = eventFloogInSec;
         this.customData = customData;
     }
-    public long getaudit_log_id() {
-        return this.auditLogId;
+
+    public long getAuditLogId() {
+        return auditLogId;
     }
 
-    public void setaudit_log_id(long value) {
-        this.auditLogId = value;
+    public void setAuditLogId(long auditLogId) {
+        this.auditLogId = auditLogId;
     }
 
-    public Date getlog_time() {
-        return this.logTime;
+    public Date getLogTime() {
+        return logTime;
     }
 
-    public void setlog_time(Date value) {
-        this.logTime = value;
+    public void setLogTime(Date logTime) {
+        this.logTime = logTime;
     }
 
-    public String getmessage() {
-        return this.message;
+    public String getMessage() {
+        return message;
     }
 
-    public void setmessage(String value) {
-        this.message = value;
+    public void setMessage(String message) {
+        this.message = message;
     }
 
-    public Guid getuser_id() {
-        return this.userId;
+    public Guid getUserId() {
+        return userId;
     }
 
-    public void setuser_id(Guid value) {
-        this.userId = value;
+    public void setUserId(Guid userId) {
+        this.userId = userId;
     }
 
-    public String getuser_name() {
-        return this.userName;
+    public String getUserName() {
+        return userName;
     }
 
-    public void setuser_name(String value) {
-        this.userName = value;
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public Guid getQuotaId() {
-        return this.quotaId;
+        return quotaId;
     }
 
-    public void setQuotaId(Guid value) {
-        this.quotaId = value;
+    public void setQuotaId(Guid quotaId) {
+        this.quotaId = quotaId;
     }
 
     public String getQuotaName() {
-        return this.quotaName;
+        return quotaName;
     }
 
-    public void setQuotaName(String value) {
-        this.quotaName = value;
+    public void setQuotaName(String quotaName) {
+        this.quotaName = quotaName;
     }
 
-    public Guid getvds_id() {
-        return this.vdsId;
+    public Guid getVdsId() {
+        return vdsId;
     }
 
-    public void setvds_id(Guid value) {
-        this.vdsId = value;
+    public void setVdsId(Guid vdsId) {
+        this.vdsId = vdsId;
     }
 
-    public String getvds_name() {
-        return this.vdsName;
+    public String getVdsName() {
+        return vdsName;
     }
 
-    public void setvds_name(String value) {
-        this.vdsName = value;
+    public void setVdsName(String vdsName) {
+        this.vdsName = vdsName;
     }
 
-    public Guid getvm_template_id() {
-        return this.vmTemplateId;
+    public Guid getVmTemplateId() {
+        return vmTemplateId;
     }
 
-    public void setvm_template_id(Guid value) {
-        this.vmTemplateId = value;
+    public void setVmTemplateId(Guid vmTemplateId) {
+        this.vmTemplateId = vmTemplateId;
     }
 
-    public String getvm_template_name() {
-        return this.vmTemplateName;
+    public String getVmTemplateName() {
+        return vmTemplateName;
     }
 
-    public void setvm_template_name(String value) {
-        this.vmTemplateName = value;
+    public void setVmTemplateName(String vmTemplateName) {
+        this.vmTemplateName = vmTemplateName;
     }
 
-    public Guid getvm_id() {
-        return this.vmId;
+    public Guid getVmId() {
+        return vmId;
     }
 
-    public void setvm_id(Guid value) {
-        this.vmId = value;
+    public void setVmId(Guid vmId) {
+        this.vmId = vmId;
     }
 
-    public String getvm_name() {
-        return this.vmName;
+    public String getVmName() {
+        return vmName;
     }
 
-    public void setvm_name(String value) {
-        this.vmName = value;
+    public void setVmName(String vmName) {
+        this.vmName = vmName;
     }
 
-    public Guid getstorage_pool_id() {
+    public Guid getStoragePoolId() {
         return storagePoolId;
     }
 
-    public void setstorage_pool_id(Guid value) {
-        storagePoolId = value;
+    public void setStoragePoolId(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
     }
 
-    public String getstorage_pool_name() {
+    public String getStoragePoolName() {
         return storagePoolName;
     }
 
-    public void setstorage_pool_name(String value) {
-        storagePoolName = value;
+    public void setStoragePoolName(String storagePoolName) {
+        this.storagePoolName = storagePoolName;
     }
 
-    public Guid getstorage_domain_id() {
+    public Guid getStorageDomainId() {
         return storageDomainId;
     }
 
-    public void setstorage_domain_id(Guid value) {
-        storageDomainId = value;
+    public void setStorageDomainId(Guid storageDomainId) {
+        this.storageDomainId = storageDomainId;
     }
 
-
-
-    public String getstorage_domain_name() {
+    public String getStorageDomainName() {
         return storageDomainName;
     }
 
-    public void setstorage_domain_name(String value) {
-        storageDomainName = value;
+    public void setStorageDomainName(String storageDomainName) {
+        this.storageDomainName = storageDomainName;
     }
 
-
-
-    public Guid getvds_group_id() {
+    public Guid getVdsGroupId() {
         return vdsGroupId;
     }
 
-    public void setvds_group_id(Guid value) {
-        vdsGroupId = value;
+    public void setVdsGroupId(Guid vdsGroupId) {
+        this.vdsGroupId = vdsGroupId;
     }
 
-    public String getvds_group_name() {
+    public String getVdsGroupName() {
         return vdsGroupName;
     }
 
-    public void setvds_group_name(String value) {
-        vdsGroupName = value;
+    public void setVdsGroupName(String vdsGroupName) {
+        this.vdsGroupName = vdsGroupName;
     }
 
-    public AuditLogType getlog_type() {
+    public AuditLogType getLogType() {
         return AuditLogType.forValue(logType);
     }
 
-    public void setlog_type(AuditLogType value) {
+    public void setLogType(AuditLogType value) {
         logType = value.getValue();
     }
 
@@ -273,69 +280,69 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     // We dont have the AuditLogType enumeration synchronized,
     // WSDL formatter set the enumeration value according to its string value
     // (enums are strings in WSDL)
-    public int getlog_typeValue() {
-        return getlog_type().getValue();
+    public int getLogTypeValue() {
+        return getLogType().getValue();
     }
 
-    public void setlog_typeValue(int value) {
+    public void setLogTypeValue(int value) {
         // Do nothing, this is mockup (WSDL need setter)
     }
 
-    public String getlog_type_name() {
-        return getlog_type().name();
+    public String getLogTypeName() {
+        return getLogType().name();
     }
 
-    public AuditLogSeverity getseverity() {
+    public AuditLogSeverity getSeverity() {
         return AuditLogSeverity.forValue(severity);
     }
 
-    public void setseverity(AuditLogSeverity value) {
-        severity = value.getValue();
+    public void setSeverity(AuditLogSeverity severity) {
+        this.severity = severity.getValue();
     }
 
     @Override
     public Object getQueryableId() {
-        return getaudit_log_id();
-    }
-
-    public void setProcessed(boolean processed) {
-        this.processed = processed;
+        return getAuditLogId();
     }
 
     public boolean isProcessed() {
         return processed;
     }
 
-    public void setCorrelationId(String correlationId) {
-        this.correlationId = correlationId;
+    public void setProcessed(boolean processed) {
+        this.processed = processed;
     }
 
     public String getCorrelationId() {
         return correlationId;
     }
 
-    public void setJobId(Guid jobId) {
-        this.jobId = jobId;
+    public void setCorrelationId(String correlationId) {
+        this.correlationId = correlationId;
     }
 
     public Guid getJobId() {
         return jobId;
     }
 
+    public void setJobId(Guid jobId) {
+        this.jobId = jobId;
+    }
+
     public Guid getGlusterVolumeId() {
         return glusterVolumeId;
     }
 
-    public void setGlusterVolumeId(Guid value) {
-        glusterVolumeId = value;
+    public void setGlusterVolumeId(Guid glusterVolumeId) {
+        this.glusterVolumeId = glusterVolumeId;
     }
 
     public String getGlusterVolumeName() {
         return glusterVolumeName;
     }
 
-    public void setGlusterVolumeName(String value) {
-        glusterVolumeName = value;
+    public void setGlusterVolumeName(String glusterVolumeName) {
+        this.glusterVolumeName = glusterVolumeName;
     }
 
     public String getOrigin() {
@@ -402,32 +409,40 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.quotaEnforcementType = quotaEnforcementType;
     }
 
+    public String getCallStack() {
+        return callStack;
+    }
+
+    public void setCallStack(String callStack) {
+        this.callStack = callStack;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
         int result = 1;
         result = prime * result + (int) (auditLogId ^ (auditLogId >>> 32));
-        result = prime * result + ((logTime == null) ? 0 : logTime.hashCode());
+        result = prime * result + (logTime == null ? 0 : logTime.hashCode());
         result = prime * result + logType;
-        result = prime * result + ((message == null) ? 0 : message.hashCode());
-        result = prime * result + ((storageDomainId == null) ? 0 : storageDomainId.hashCode());
-        result = prime * result + ((storagePoolId == null) ? 0 : storagePoolId.hashCode());
+        result = prime * result + (message == null ? 0 : message.hashCode());
+        result = prime * result + (storageDomainId == null ? 0 : storageDomainId.hashCode());
+        result = prime * result + (storagePoolId == null ? 0 : storagePoolId.hashCode());
         result = prime * result + severity;
-        result = prime * result + ((userId == null) ? 0 : userId.hashCode());
-        result = prime * result + ((vdsId == null) ? 0 : vdsId.hashCode());
-        result = prime * result + ((quotaId == null) ? 0 : quotaId.hashCode());
-        result = prime * result + ((vmId == null) ? 0 : vmId.hashCode());
-        result = prime * result + ((vmTemplateId == null) ? 0 : vmTemplateId.hashCode());
+        result = prime * result + (userId == null ? 0 : userId.hashCode());
+        result = prime * result + (vdsId == null ? 0 : vdsId.hashCode());
+        result = prime * result + (quotaId == null ? 0 : quotaId.hashCode());
+        result = prime * result + (vmId == null ? 0 : vmId.hashCode());
+        result = prime * result + (vmTemplateId == null ? 0 : vmTemplateId.hashCode());
         result = prime * result + (processed ? 1231 : 1237);
-        result = prime * result + ((correlationId == null) ? 0 : correlationId.hashCode());
-        result = prime * result + ((jobId == null) ? 0 : jobId.hashCode());
-        result = prime * result + ((origin == null) ? 0 : origin.hashCode());
+        result = prime * result + (correlationId == null ? 0 : correlationId.hashCode());
+        result = prime * result + (jobId == null ? 0 : jobId.hashCode());
+        result = prime * result + (origin == null ? 0 : origin.hashCode());
         result = prime * result + customEventId;
         result = prime * result + eventFloodInSec;
-        result = prime * result + ((customData == null) ? 0 : customData.hashCode());
+        result = prime * result + (customData == null ? 0 : customData.hashCode());
         result = prime * result + (external ? 1231 : 1237);
         result = prime * result + (deleted ? 1231 : 1237);
-        result = prime * result + ((callStack == null) ? 0 : callStack.hashCode());
+        result = prime * result + (callStack == null ? 0 : callStack.hashCode());
         return result;
     }
 
@@ -436,10 +451,7 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         if (this == obj) {
             return true;
         }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
+        if (!(obj instanceof AuditLog)) {
             return false;
         }
         AuditLog other = (AuditLog) obj;
@@ -465,14 +477,6 @@ public class AuditLog extends IVdcQueryable implements Serializable {
                 && external == other.external
                 && deleted == other.deleted
                 && ObjectUtils.objectsEqual(callStack, other.callStack));
-    }
-
-    public String getCallStack() {
-        return callStack;
-    }
-
-    public void setCallStack(String callStack) {
-        this.callStack = callStack;
     }
 
     public String toStringForLogging() {

@@ -24,52 +24,52 @@ public class EventMapper {
     @Mapping(from = AuditLog.class, to = Event.class)
     public static Event map(AuditLog entity, Event event) {
         Event model = event != null ? event : new Event();
-        model.setId(String.valueOf(entity.getaudit_log_id()));
-        model.setCode(entity.getlog_type().getValue());
-        model.setSeverity(map(entity.getseverity(), null).value());
+        model.setId(String.valueOf(entity.getAuditLogId()));
+        model.setCode(entity.getLogType().getValue());
+        model.setSeverity(map(entity.getSeverity(), null).value());
         model.setTime(TypeConversionHelper.toXMLGregorianCalendar(entity
-                .getlog_time(), null));
-        model.setDescription(entity.getmessage());
+                .getLogTime(), null));
+        model.setDescription(entity.getMessage());
 
-        if (entity.getuser_id() != null
-                && !entity.getuser_id().equals(Guid.Empty)) {
+        if (entity.getUserId() != null
+                && !entity.getUserId().equals(Guid.Empty)) {
             User user = new User();
-            user.setId(entity.getuser_id().toString());
+            user.setId(entity.getUserId().toString());
             model.setUser(user);
         }
-        if (entity.getvm_id() != null && !entity.getvm_id().equals(Guid.Empty)) {
+        if (entity.getVmId() != null && !entity.getVmId().equals(Guid.Empty)) {
             VM vm = new VM();
-            vm.setId(entity.getvm_id().toString());
+            vm.setId(entity.getVmId().toString());
             model.setVm(vm);
         }
-        if (entity.getstorage_domain_id() != null
-                && !entity.getstorage_domain_id().equals(Guid.Empty)) {
+        if (entity.getStorageDomainId() != null
+                && !entity.getStorageDomainId().equals(Guid.Empty)) {
             StorageDomain sd = new StorageDomain();
-            sd.setId(entity.getstorage_domain_id().toString());
+            sd.setId(entity.getStorageDomainId().toString());
             model.setStorageDomain(sd);
         }
-        if (entity.getvds_id() != null
-                && !entity.getvds_id().equals(Guid.Empty)) {
+        if (entity.getVdsId() != null
+                && !entity.getVdsId().equals(Guid.Empty)) {
             Host host = new Host();
-            host.setId(entity.getvds_id().toString());
+            host.setId(entity.getVdsId().toString());
             model.setHost(host);
         }
-        if (entity.getvm_template_id() != null
-                && !entity.getvm_template_id().equals(Guid.Empty)) {
+        if (entity.getVmTemplateId() != null
+                && !entity.getVmTemplateId().equals(Guid.Empty)) {
             Template template = new Template();
-            template.setId(entity.getvm_template_id().toString());
+            template.setId(entity.getVmTemplateId().toString());
             model.setTemplate(template);
         }
-        if (entity.getvds_group_id() != null
-                && !entity.getvds_group_id().equals(Guid.Empty)) {
+        if (entity.getVdsGroupId() != null
+                && !entity.getVdsGroupId().equals(Guid.Empty)) {
             Cluster cluster = new Cluster();
-            cluster.setId(entity.getvds_group_id().toString());
+            cluster.setId(entity.getVdsGroupId().toString());
             model.setCluster(cluster);
         }
-        if (entity.getstorage_pool_id() != null
-                && !entity.getstorage_pool_id().equals(Guid.Empty)) {
+        if (entity.getStoragePoolId() != null
+                && !entity.getStoragePoolId().equals(Guid.Empty)) {
             DataCenter dataCenter = new DataCenter();
-            dataCenter.setId(entity.getstorage_pool_id().toString());
+            dataCenter.setId(entity.getStoragePoolId().toString());
             model.setDataCenter(dataCenter);
         }
         if (StringUtils.isNotEmpty(entity.getCorrelationId())) {
@@ -89,37 +89,37 @@ public class EventMapper {
     @Mapping(from = Event.class, to = AuditLog.class)
     public static AuditLog map(Event event, AuditLog entity) {
         AuditLog auditLog = (entity != null) ? entity : new AuditLog();
-        auditLog.setseverity(map(event.getSeverity(), null));
-        auditLog.setlog_time(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
+        auditLog.setSeverity(map(event.getSeverity(), null));
+        auditLog.setLogTime(event.isSetTime() ? event.getTime().toGregorianCalendar().getTime()
                 : new Date((Calendar.getInstance().getTimeInMillis())));
-        auditLog.setmessage(event.getDescription());
+        auditLog.setMessage(event.getDescription());
         Guid guid = (event.isSetUser()) ? GuidUtils.asGuid(event.getUser().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setuser_id(guid);
+            auditLog.setUserId(guid);
         }
         guid = (event.isSetVm()) ? GuidUtils.asGuid(event.getVm().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setvm_id(guid);
+            auditLog.setVmId(guid);
         }
         guid = (event.isSetStorageDomain()) ? GuidUtils.asGuid(event.getStorageDomain().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setstorage_domain_id(guid);
+            auditLog.setStorageDomainId(guid);
         }
         guid = (event.isSetHost()) ? GuidUtils.asGuid(event.getHost().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setvds_id(guid);
+            auditLog.setVdsId(guid);
         }
         guid = (event.isSetTemplate()) ? GuidUtils.asGuid(event.getTemplate().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setvm_template_id(guid);
+            auditLog.setVmTemplateId(guid);
         }
         guid = (event.isSetCluster()) ? GuidUtils.asGuid(event.getCluster().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setvds_group_id(guid);
+            auditLog.setVdsGroupId(guid);
         }
         guid = (event.isSetDataCenter()) ? GuidUtils.asGuid(event.getDataCenter().getId()) : Guid.Empty;
         if (!guid.equals(Guid.Empty)) {
-            auditLog.setstorage_pool_id(guid);
+            auditLog.setStoragePoolId(guid);
         }
         if (event.isSetCorrelationId()) {
             auditLog.setCorrelationId(event.getCorrelationId());

@@ -11,7 +11,7 @@ public class AuditLogSeverityColumn extends ImageResourceColumn<AuditLog> {
 
     @Override
     public ImageResource getValue(AuditLog log) {
-        switch (log.getseverity()) {
+        switch (log.getSeverity()) {
         case NORMAL:
             return getCommonResources().logNormalImage();
         case WARNING:

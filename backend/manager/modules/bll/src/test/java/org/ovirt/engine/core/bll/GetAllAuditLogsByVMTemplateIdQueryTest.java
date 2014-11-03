@@ -25,7 +25,7 @@ public class GetAllAuditLogsByVMTemplateIdQueryTest
 
         // Set up the expected result
         AuditLog expectedResult = new AuditLog();
-        expectedResult.setvm_template_id(vmTemplateId);
+        expectedResult.setVmTemplateId(vmTemplateId);
 
         // Mock the DAOs
         AuditLogDAO auditLogDAOMock = mock(AuditLogDAO.class);

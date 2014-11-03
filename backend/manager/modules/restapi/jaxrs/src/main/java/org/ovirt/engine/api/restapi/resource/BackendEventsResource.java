@@ -62,7 +62,7 @@ EventsResource {
         try {
             Long longId = Long.valueOf(id);
             for (AuditLog auditLog : getBackendCollection()) {
-                if (auditLog.getaudit_log_id() == longId)
+                if (auditLog.getAuditLogId() == longId)
                     return addLinks(map(auditLog));
             }
             return notFound();

@@ -38,7 +38,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
-                return object.getlog_time();
+                return object.getLogTime();
             }
         };
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
@@ -47,7 +47,7 @@ public class EventListModelTable<T extends EventListModel> extends AbstractModel
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
-                return object.getmessage();
+                return object.getMessage();
             }
         };
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);

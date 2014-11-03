@@ -146,12 +146,12 @@ public final class AuditLogDirector {
                     auditLogable.getVmTemplateName());
         }
         if (auditLog != null) {
-            auditLog.setstorage_domain_id(auditLogable.getStorageDomainId());
-            auditLog.setstorage_domain_name(auditLogable.getStorageDomainName());
-            auditLog.setstorage_pool_id(auditLogable.getStoragePoolId());
-            auditLog.setstorage_pool_name(auditLogable.getStoragePoolName());
-            auditLog.setvds_group_id(auditLogable.getVdsGroupId());
-            auditLog.setvds_group_name(auditLogable.getVdsGroupName());
+            auditLog.setStorageDomainId(auditLogable.getStorageDomainId());
+            auditLog.setStorageDomainName(auditLogable.getStorageDomainName());
+            auditLog.setStoragePoolId(auditLogable.getStoragePoolId());
+            auditLog.setStoragePoolName(auditLogable.getStoragePoolName());
+            auditLog.setVdsGroupId(auditLogable.getVdsGroupId());
+            auditLog.setVdsGroupName(auditLogable.getVdsGroupName());
             auditLog.setCorrelationId(auditLogable.getCorrelationId());
             auditLog.setJobId(auditLogable.getJobId());
             auditLog.setGlusterVolumeId(auditLogable.getGlusterVolumeId());

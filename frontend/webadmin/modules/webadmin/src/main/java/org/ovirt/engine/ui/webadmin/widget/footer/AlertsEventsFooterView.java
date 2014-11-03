@@ -367,7 +367,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
-                return object.getlog_time();
+                return object.getLogTime();
             }
         };
         table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
@@ -375,7 +375,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
-                return object.getmessage();
+                return object.getMessage();
             }
         };
         table.addColumn(messageColumn, constants.messageEvent());
@@ -387,7 +387,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
-                return object.getlog_time();
+                return object.getLogTime();
             }
         };
         table.addColumn(logTimeColumn, constants.timeEvent(), "160px"); //$NON-NLS-1$
@@ -397,7 +397,7 @@ public class AlertsEventsFooterView extends Composite implements AlertCountChang
         TextColumnWithTooltip<AuditLog> messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
-                return object.getmessage();
+                return object.getMessage();
             }
         };
         table.addColumn(messageColumn, constants.messageEvent());

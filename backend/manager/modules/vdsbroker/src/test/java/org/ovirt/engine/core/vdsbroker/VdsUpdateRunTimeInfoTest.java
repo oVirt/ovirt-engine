@@ -134,7 +134,7 @@ public class VdsUpdateRunTimeInfoTest {
             @Override
             protected void auditLog(AuditLogableBase auditLogable, AuditLogType logType) {
                 AuditLog al = new AuditLog();
-                al.setlog_type(logType);
+                al.setLogType(logType);
                 mockAuditLogDao.save(al);
             }
 

@@ -37,14 +37,14 @@ public class RemoveAuditLogByIdCommandTest {
 
     private AuditLog getEventWithOvirtOrigin() {
         AuditLog auditLog = new AuditLog();
-        auditLog.setaudit_log_id(EVENT_ID_2);
+        auditLog.setAuditLogId(EVENT_ID_2);
         auditLog.setOrigin(OVIRT_ORIGIN);
         return auditLog;
     }
 
     private AuditLog getEventWithExternalOrigin() {
         AuditLog auditLog = new AuditLog();
-        auditLog.setaudit_log_id(EVENT_ID_3);
+        auditLog.setAuditLogId(EVENT_ID_3);
         auditLog.setOrigin(EXTERNAL_ORIGIN);
         return auditLog;
     }

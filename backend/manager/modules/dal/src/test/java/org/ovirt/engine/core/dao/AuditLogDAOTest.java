@@ -50,23 +50,23 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
 
         // create some test data
         newAuditLog = new AuditLog();
-        newAuditLog.setaudit_log_id(44000);
-        newAuditLog.setuser_id(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
-        newAuditLog.setuser_name("userportal3");
-        newAuditLog.setvm_id(VM_ID);
-        newAuditLog.setvm_name(VM_NAME);
-        newAuditLog.setvm_template_id(VM_TEMPLATE_ID);
-        newAuditLog.setvm_template_name(VM_TEMPLATE_NAME);
-        newAuditLog.setvds_id(VDS_ID);
-        newAuditLog.setvds_name("magenta-vdsc");
-        newAuditLog.setlog_time(EXPECTED_DATE_FORMAT.parse("2010-12-22 14:00:00"));
-        newAuditLog.setlog_type(AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
-        newAuditLog.setseverity(AuditLogSeverity.ERROR);
-        newAuditLog.setmessage("Critical, Low disk space.  domain has 1 GB of free space");
-        newAuditLog.setstorage_pool_id(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
-        newAuditLog.setstorage_pool_name("rhel6.iscsi");
-        newAuditLog.setstorage_domain_id(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
-        newAuditLog.setstorage_domain_name("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk");
+        newAuditLog.setAuditLogId(44000);
+        newAuditLog.setUserId(new Guid("9bf7c640-b620-456f-a550-0348f366544b"));
+        newAuditLog.setUserName("userportal3");
+        newAuditLog.setVmId(VM_ID);
+        newAuditLog.setVmName(VM_NAME);
+        newAuditLog.setVmTemplateId(VM_TEMPLATE_ID);
+        newAuditLog.setVmTemplateName(VM_TEMPLATE_NAME);
+        newAuditLog.setVdsId(VDS_ID);
+        newAuditLog.setVdsName("magenta-vdsc");
+        newAuditLog.setLogTime(EXPECTED_DATE_FORMAT.parse("2010-12-22 14:00:00"));
+        newAuditLog.setLogType(AuditLogType.IRS_DISK_SPACE_LOW_ERROR);
+        newAuditLog.setSeverity(AuditLogSeverity.ERROR);
+        newAuditLog.setMessage("Critical, Low disk space.  domain has 1 GB of free space");
+        newAuditLog.setStoragePoolId(new Guid("6d849ebf-755f-4552-ad09-9a090cda105d"));
+        newAuditLog.setStoragePoolName("rhel6.iscsi");
+        newAuditLog.setStorageDomainId(new Guid("72e3a666-89e1-4005-a7ca-f7548004a9ab"));
+        newAuditLog.setStorageDomainName("fDMzhE-wx3s-zo3q-Qcxd-T0li-yoYU-QvVePk");
         newAuditLog.setQuotaId(FixturesTool.DEFAULT_QUOTA_GENERAL);
         newAuditLog.setQuotaName("General Quota");
         newAuditLog.setGlusterVolumeId(new Guid("0e0abdbc-2a0f-4df0-8b99-cc577a7a9bb5"));
@@ -222,8 +222,8 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         assertEquals("Wrong number of results", expectedResults, results.size());
 
         for (AuditLog auditLog : results) {
-            assertEquals("Wrong name of VM in result", VM_NAME, auditLog.getvm_name());
-            assertEquals("Wrong template name of VM in result", VM_TEMPLATE_NAME, auditLog.getvm_template_name());
+            assertEquals("Wrong name of VM in result", VM_NAME, auditLog.getVmName());
+            assertEquals("Wrong template name of VM in result", VM_TEMPLATE_NAME, auditLog.getVmTemplateName());
         }
     }
 
@@ -274,7 +274,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testSave() {
-        Date newAuditLogDateCuttoff = newAuditLog.getlog_time();
+        Date newAuditLogDateCuttoff = newAuditLog.getLogTime();
         newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
         int countBefore = dao.getAllAfterDate(newAuditLogDateCuttoff).size();
 
@@ -293,15 +293,15 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testLongMessageSave() {
-        Date newAuditLogDateCuttoff = newAuditLog.getlog_time();
+        Date newAuditLogDateCuttoff = newAuditLog.getLogTime();
         newAuditLogDateCuttoff.setTime(newAuditLogDateCuttoff.getTime() - 1);
         List<AuditLog> before = dao.getAllAfterDate(newAuditLogDateCuttoff);
 
         // generate a value that is longer than the max configured.
         char[] fill = new char[Config.<Integer> getValue(ConfigValues.MaxAuditLogMessageLength) + 1];
         Arrays.fill(fill, '0');
-        newAuditLog.setaudit_log_id(45000);
-        newAuditLog.setmessage(new String(fill));
+        newAuditLog.setAuditLogId(45000);
+        newAuditLog.setMessage(new String(fill));
         newAuditLog.setExternal(true);
         dao.save(newAuditLog);
 
@@ -311,7 +311,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         assertEquals(1, after.size());
         AuditLog result = after.get(0);
         assertNotNull(result);
-        assertTrue(result.getmessage().endsWith("..."));
+        assertTrue(result.getMessage().endsWith("..."));
     }
 
     /**
@@ -319,9 +319,9 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
      */
     @Test
     public void testRemove() {
-        dao.remove(existingAuditLog.getaudit_log_id());
+        dao.remove(existingAuditLog.getAuditLogId());
 
-        AuditLog result = dao.get(existingAuditLog.getaudit_log_id());
+        AuditLog result = dao.get(existingAuditLog.getAuditLogId());
 
         assertTrue(result.isDeleted());
     }

@@ -26,28 +26,28 @@ public abstract class ExternalEventCommandBase<T extends VdcActionParametersBase
 
     protected List<PermissionSubject> getPermissionList(AuditLog event){
         List<PermissionSubject> permissionList = new ArrayList<PermissionSubject>();
-        if (event.getstorage_domain_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getstorage_domain_id().toString()),
+        if (event.getStorageDomainId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getStorageDomainId().toString()),
                 VdcObjectType.Storage, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
-        if (event.getstorage_pool_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getstorage_pool_id().toString()),
+        if (event.getStoragePoolId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getStoragePoolId().toString()),
                 VdcObjectType.StoragePool, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
-        if (event.getuser_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getuser_id().toString()),
+        if (event.getUserId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getUserId().toString()),
                 VdcObjectType.User, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
-        if (event.getvds_group_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getvds_group_id().toString()),
+        if (event.getVdsGroupId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getVdsGroupId().toString()),
                 VdcObjectType.VdsGroups, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
-        if (event.getvm_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getvm_id().toString()),
+        if (event.getVmId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getVmId().toString()),
                 VdcObjectType.VM, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
-        if (event.getvm_template_id() != null) {
-            permissionList.add(new PermissionSubject(new Guid(event.getvm_template_id().toString()),
+        if (event.getVmTemplateId() != null) {
+            permissionList.add(new PermissionSubject(new Guid(event.getVmTemplateId().toString()),
                 VdcObjectType.VmTemplate, ActionGroup.INJECT_EXTERNAL_EVENTS));
         }
         if (permissionList.isEmpty()) { // Global Event

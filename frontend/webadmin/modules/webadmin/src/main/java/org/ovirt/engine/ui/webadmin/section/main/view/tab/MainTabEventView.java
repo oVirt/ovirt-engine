@@ -121,7 +121,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         TextColumnWithTooltip<AuditLog> logTimeColumn = new FullDateTimeColumn<AuditLog>() {
             @Override
             protected Date getRawValue(AuditLog object) {
-                return object.getlog_time();
+                return object.getLogTime();
             }
         };
         logTimeColumn.makeSortable(AuditLogConditionFieldAutoCompleter.TIME);
@@ -130,7 +130,7 @@ public class MainTabEventView extends AbstractMainTabTableView<AuditLog, EventLi
         messageColumn = new TextColumnWithTooltip<AuditLog>() {
             @Override
             public String getValue(AuditLog object) {
-                return object.getmessage();
+                return object.getMessage();
             }
         };
         messageColumn.makeSortable(AuditLogConditionFieldAutoCompleter.MESSAGE);
@@ -152,7 +152,7 @@ class AdvancedViewColumns {
     public static final TextColumnWithTooltip<AuditLog> logTypeColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
-            return String.valueOf(object.getlog_typeValue());
+            return String.valueOf(object.getLogTypeValue());
         }
     };
 
@@ -163,7 +163,7 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getuser_name();
+            return object.getUserName();
         }
     };
 
@@ -174,7 +174,7 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getvds_name();
+            return object.getVdsName();
         }
     };
 
@@ -185,7 +185,7 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getvm_name();
+            return object.getVmName();
         }
     };
 
@@ -196,7 +196,7 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getvm_template_name();
+            return object.getVmTemplateName();
         }
     };
 
@@ -207,7 +207,7 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getstorage_pool_name();
+            return object.getStoragePoolName();
         }
     };
 
@@ -218,14 +218,14 @@ class AdvancedViewColumns {
 
         @Override
         public String getValue(AuditLog object) {
-            return object.getstorage_domain_name();
+            return object.getStorageDomainName();
         }
     };
 
     public static final TextColumnWithTooltip<AuditLog> clusterColumn = new TextColumnWithTooltip<AuditLog>() {
         @Override
         public String getValue(AuditLog object) {
-            return object.getvds_group_name();
+            return object.getVdsGroupName();
         }
     };
 
