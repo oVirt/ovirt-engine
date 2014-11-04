@@ -81,8 +81,14 @@ public class DbUserDAODbFacadeImpl extends BaseDAODbFacade implements DbUserDAO 
 
     @Override
     public DbUser get(Guid id) {
+        return get(id, false);
+    }
+
+    @Override
+    public DbUser get(Guid id, boolean isFiltered) {
         MapSqlParameterSource parameterSource = getCustomMapSqlParameterSource()
-                .addValue("user_id", id);
+                .addValue("user_id", id)
+                .addValue("is_filtered", isFiltered);
 
         return getCallsHandler().executeRead("GetUserByUserId", DbUserRowMapper.instance, parameterSource);
     }
