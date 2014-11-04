@@ -783,10 +783,10 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Changes done to the Networking configuration are temporary until explicitly saved.\n\nAre you sure you want to make the changes persistent?")
     String areYouSureYouWantToMakeTheChangesPersistentMsg();
 
-    @DefaultStringValue("Are you sure you want to Detach the following storage(s)?")
+    @DefaultStringValue("Are you sure you want to detach the following storage(s)?")
     String areYouSureYouWantDetachFollowingStoragesMsg();
 
-    @DefaultStringValue("Are you sure you want to Detach from the user the following Virtual Machine(s)")
+    @DefaultStringValue("Are you sure you want to detach from the user the following Virtual Machine(s)")
     String areYouSureYouWantDetachFromUserFollowingVmsMsg();
 
     @DefaultStringValue("Disks already exist on all available Storage Domains.")
@@ -801,7 +801,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("There are No Data Centers to which the Storage Domain can be attached")
     String thereAreNoDataCenterStorageDomainAttachedMsg();
 
-    @DefaultStringValue("Are you sure you want to Detach Storage from the following Data Center?")
+    @DefaultStringValue("Are you sure you want to detach Storage from the following Data Center(s)?")
     String areYouSureYouWantDetachStorageFromDcsMsg();
 
     @DefaultStringValue("There is no Data Storage Domain to import the Template into. Please attach a Data Storage Domain to the Template's Data Center.")
