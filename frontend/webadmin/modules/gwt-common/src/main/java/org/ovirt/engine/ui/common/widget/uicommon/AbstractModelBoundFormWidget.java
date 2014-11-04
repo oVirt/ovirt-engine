@@ -50,8 +50,7 @@ public abstract class AbstractModelBoundFormWidget<T extends EntityModel> extend
 
     public void setElementId(String elementId) {
         this.getElement().setId(elementId);
-        // set id prefix for any children that need it
-        this.formPanel.setElementIdPrefix(elementId);
+        formPanel.setElementId(elementId);
     }
 
 }

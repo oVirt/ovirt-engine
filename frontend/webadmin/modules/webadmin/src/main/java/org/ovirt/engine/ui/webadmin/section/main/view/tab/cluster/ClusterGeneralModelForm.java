@@ -1,7 +1,6 @@
 package org.ovirt.engine.ui.webadmin.section.main.view.tab.cluster;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
-import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
 import org.ovirt.engine.ui.common.uicommon.model.ModelProvider;
 import org.ovirt.engine.ui.common.widget.form.FormItem;
 import org.ovirt.engine.ui.common.widget.form.FormItem.DefaultValueCondition;
@@ -23,10 +22,6 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     interface Driver extends SimpleBeanEditorDriver<ClusterGeneralModel, ClusterGeneralModelForm> {
     }
 
-    interface ViewIdHandler extends ElementIdHandler<ClusterGeneralModelForm> {
-        ViewIdHandler idHandler = GWT.create(ViewIdHandler.class);
-    }
-
     TextBoxLabel name = new TextBoxLabel();
     TextBoxLabel description = new TextBoxLabel();
     TextBoxLabel dataCenterName = new TextBoxLabel();
@@ -42,12 +37,21 @@ public class ClusterGeneralModelForm extends AbstractModelBoundFormWidget<Cluste
     TextBoxLabel emulatedMachine = new TextBoxLabel();
     TextBoxLabel numberOfVms = new TextBoxLabel();
 
+    private final ApplicationConstants constants;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public ClusterGeneralModelForm(ModelProvider<ClusterGeneralModel> modelProvider,
             final ApplicationConstants constants) {
         super(modelProvider, 3, 6);
-        ViewIdHandler.idHandler.generateAndSetIds(this);
+        this.constants = constants;
+    }
+
+    /**
+     * Initialize the form. Call this after ID has been set on the form,
+     * so that form fields can use the ID as their prefix.
+     */
+    public void initialize() {
         cpuThreads = new BooleanLabel(constants.yes(), constants.no());
         memoryOverCommit = new PercentLabel<Integer>();
         resiliencePolicy = new ResiliencePolicyLabel(constants);

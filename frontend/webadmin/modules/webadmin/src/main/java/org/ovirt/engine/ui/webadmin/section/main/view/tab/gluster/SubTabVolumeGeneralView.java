@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterVolumeEntity;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -36,6 +37,7 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
     }
 
     @UiField(provided = true)
+    @WithElementId
     GeneralFormPanel formPanel;
 
     TextBoxLabel name = new TextBoxLabel();
@@ -62,6 +64,8 @@ public class SubTabVolumeGeneralView extends AbstractSubTabFormView<GlusterVolum
 
         initWidget(formPanel);
         driver.initialize(this);
+
+        generateIds();
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 7);

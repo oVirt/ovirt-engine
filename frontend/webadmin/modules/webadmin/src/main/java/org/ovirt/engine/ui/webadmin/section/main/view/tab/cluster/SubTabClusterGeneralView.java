@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterServiceStatus;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.UiCommandButton;
@@ -57,6 +58,7 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
     @UiField(provided = true)
     @Ignore
+    @WithElementId
     ClusterGeneralModelForm form;
 
     FormBuilder formBuilder;
@@ -90,11 +92,20 @@ public class SubTabClusterGeneralView extends AbstractSubTabFormView<VDSGroup, C
 
         // Inject a reference to the resources:
         this.resources = resources;
+
         this.form = new ClusterGeneralModelForm(modelProvider, constants);
+
+        // generate ids
+        generateIds();
+
+        // init form
+        form.initialize();
+
         glusterSwiftStatusEditor = new EntityModelLabelEditor<GlusterServiceStatus>(
                 new EnumRenderer<GlusterServiceStatus>());
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
         initManageGlusterSwift();
         localize();
         addStyles();

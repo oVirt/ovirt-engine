@@ -9,6 +9,7 @@ import org.ovirt.engine.core.common.businessentities.VDS;
 import org.ovirt.engine.core.common.businessentities.VdsTransparentHugePagesState;
 import org.ovirt.engine.core.common.mode.ApplicationMode;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -102,6 +103,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
     EnumTextBoxLabel<VdsTransparentHugePagesState> automaticLargePage = new EnumTextBoxLabel<VdsTransparentHugePagesState>();
 
     @UiField(provided = true)
+    @WithElementId
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
@@ -139,6 +141,8 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
 
+        generateIds();
+
         boolean virtSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.VirtOnly);
         boolean glusterSupported = ApplicationModeHelper.isModeSupported(ApplicationMode.GlusterOnly);
 
@@ -170,6 +174,7 @@ public class SubTabHostGeneralView extends AbstractSubTabFormView<VDS, HostListM
         formBuilder.addFormItem(new FormItem(constants.autoLargePagesHostGeneral(), automaticLargePage, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.selinuxModeGeneral(), selinuxEnforceMode, 2).withAutoPlacement());
         formBuilder.addFormItem(new FormItem(constants.liveSnapshotSupportHostGeneral(), liveSnapshotSupport, 2).withAutoPlacement());
+
     }
 
     @Override

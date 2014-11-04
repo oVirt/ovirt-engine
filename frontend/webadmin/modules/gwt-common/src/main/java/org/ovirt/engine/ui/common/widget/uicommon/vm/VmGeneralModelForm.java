@@ -43,10 +43,21 @@ public class VmGeneralModelForm extends AbstractModelBoundFormWidget<VmGeneralMo
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
+    private final CommonApplicationConstants constants;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public VmGeneralModelForm(ModelProvider<VmGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 8);
+        this.constants = constants;
+    }
+
+    /**
+     * Initialize the form. Call this after ID has been set on the form,
+     * so that form fields can use the ID as their prefix.
+     */
+    public void initialize() {
+
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
         driver.initialize(this);

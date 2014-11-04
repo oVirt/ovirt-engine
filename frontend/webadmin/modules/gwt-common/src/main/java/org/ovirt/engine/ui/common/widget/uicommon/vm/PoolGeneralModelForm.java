@@ -31,10 +31,21 @@ public class PoolGeneralModelForm extends AbstractModelBoundFormWidget<PoolGener
     @Ignore
     TextBoxLabel monitorCount = new TextBoxLabel();
 
+    private final CommonApplicationConstants constants;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public PoolGeneralModelForm(ModelProvider<PoolGeneralModel> modelProvider, CommonApplicationConstants constants) {
         super(modelProvider, 3, 5);
+        this.constants = constants;
+    }
+
+    /**
+     * Initialize the form. Call this after ID has been set on the form,
+     * so that form fields can use the ID as their prefix.
+     */
+    public void initialize() {
+
         driver.initialize(this);
 
         formBuilder.addFormItem(new FormItem(constants.namePoolGeneral(), name, 0, 0));

@@ -1,6 +1,7 @@
 package org.ovirt.engine.ui.userportal.section.main.view.tab.extended.vm;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.uicommon.vm.PoolGeneralModelForm;
 import org.ovirt.engine.ui.uicommonweb.models.pools.PoolGeneralModel;
@@ -29,6 +30,7 @@ public class SubTabExtendedPoolGeneralView extends
     }
 
     @UiField(provided = true)
+    @WithElementId
     PoolGeneralModelForm form;
 
     @Inject
@@ -38,6 +40,10 @@ public class SubTabExtendedPoolGeneralView extends
         super(modelProvider);
         form = new PoolGeneralModelForm(modelProvider, constants);
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
+        generateIds();
+
+        form.initialize();
     }
 
     @Override

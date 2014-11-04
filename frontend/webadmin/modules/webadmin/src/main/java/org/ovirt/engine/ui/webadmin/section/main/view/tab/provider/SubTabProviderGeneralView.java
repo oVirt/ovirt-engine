@@ -5,6 +5,7 @@ import javax.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -47,6 +48,7 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
     TextBoxLabel url = new TextBoxLabel();
 
     @UiField(provided = true)
+    @WithElementId
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
@@ -60,6 +62,8 @@ public class SubTabProviderGeneralView extends AbstractSubTabFormView<Provider, 
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+
+        generateIds();
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 4);

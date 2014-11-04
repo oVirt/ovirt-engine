@@ -3,6 +3,7 @@ package org.ovirt.engine.ui.webadmin.section.main.view.tab.storage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -71,6 +72,7 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
     TextBoxLabel timeout = new TextBoxLabel();
 
     @UiField(provided = true)
+    @WithElementId
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
@@ -87,6 +89,8 @@ public class SubTabStorageGeneralView extends AbstractSubTabFormView<StorageDoma
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+
+        generateIds();
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 1, 12);

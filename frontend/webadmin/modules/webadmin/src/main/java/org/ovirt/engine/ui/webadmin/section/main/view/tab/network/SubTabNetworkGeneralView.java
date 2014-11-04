@@ -4,6 +4,7 @@ import javax.inject.Inject;
 
 import org.ovirt.engine.core.common.businessentities.network.NetworkView;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.uicommon.model.DetailModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractSubTabFormView;
 import org.ovirt.engine.ui.common.widget.form.FormBuilder;
@@ -51,6 +52,7 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
     TextBoxLabel externalId = new TextBoxLabel();
 
     @UiField(provided = true)
+    @WithElementId
     GeneralFormPanel formPanel;
 
     FormBuilder formBuilder;
@@ -66,6 +68,8 @@ public class SubTabNetworkGeneralView extends AbstractSubTabFormView<NetworkView
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         driver.initialize(this);
+
+        generateIds();
 
         // Build a form using the FormBuilder
         formBuilder = new FormBuilder(formPanel, 2, 4);

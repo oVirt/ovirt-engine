@@ -65,6 +65,8 @@ public class SubTabVirtualMachineGeneralView extends AbstractSubTabFormView<VM, 
         clearAlerts();
 
         generateIds();
+
+        form.initialize();
     }
 
     @Override

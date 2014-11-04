@@ -22,7 +22,6 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
 
     public AbstractSubTabFormView(DetailModelProvider<M, D> modelProvider) {
         this.modelProvider = modelProvider;
-        generateIds();
     }
 
     protected D getDetailModel() {
@@ -35,6 +34,15 @@ public abstract class AbstractSubTabFormView<T, M extends ListWithDetailsModel, 
         return null;
     }
 
+    /**
+     * Call this to invoke the Element ID Framework's annotation processor.
+     * This will set IDs on all elements annotated with {@link WithElementId}.
+     * Only call after UIBinder.createAndBindUi() is called -- otherwise elements
+     * may still be null and thus cannot have an ID set.
+     * <p>
+     * A typical implementation is:
+     * <pre>ViewIdHandler.idHandler.generateAndSetIds(this);</pre>
+     */
     protected abstract void generateIds();
 
 }

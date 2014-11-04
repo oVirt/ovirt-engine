@@ -39,11 +39,22 @@ public class TemplateGeneralModelForm extends AbstractModelBoundFormWidget<Templ
     @Ignore
     TextBoxLabel isStateless = new TextBoxLabel();
 
+    private final CommonApplicationConstants constants;
+
     private final Driver driver = GWT.create(Driver.class);
 
     public TemplateGeneralModelForm(ModelProvider<TemplateGeneralModel> modelProvider,
             CommonApplicationConstants constants) {
         super(modelProvider, 3, 6);
+        this.constants = constants;
+    }
+
+    /**
+     * Initialize the form. Call this after ID has been set on the form,
+     * so that form fields can use the ID as their prefix.
+     */
+    public void initialize() {
+
         driver.initialize(this);
         isHighlyAvailable = new BooleanLabel(constants.yes(), constants.no());
 
