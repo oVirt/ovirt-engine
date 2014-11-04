@@ -1602,7 +1602,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("SELinux mode")
     String selinuxModeGeneral();
 
-    @DefaultStringValue("Live Snapsnot Support")
+    @DefaultStringValue("Live Snapshot Support")
     String liveSnapshotSupportHostGeneral();
 
     // Storage
