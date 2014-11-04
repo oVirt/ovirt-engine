@@ -22,6 +22,15 @@ public interface DbUserDAO extends DAO, SearchDAO<DbUser> {
     DbUser get(Guid id);
 
     /**
+     * Retrieves the suser with the specified id.
+     *
+     * @param id the id of user
+     * @param isFiltered user level / admin level
+     * @return the user, or <code>null</code> if the id was invalid
+     */
+    DbUser get(Guid id, boolean isFiltered);
+
+    /**
      * Retrieves a user by username.
      *
      * @param username

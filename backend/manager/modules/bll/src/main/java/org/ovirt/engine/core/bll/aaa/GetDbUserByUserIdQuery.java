@@ -14,6 +14,6 @@ public class GetDbUserByUserIdQuery<P extends IdQueryParameters>
     protected void executeQueryCommand() {
         getQueryReturnValue().setReturnValue(
                 DbFacade.getInstance().getDbUserDao()
-                        .get((getParameters()).getId()));
+                        .get((getParameters()).getId(), getParameters().isFiltered()));
     }
 }

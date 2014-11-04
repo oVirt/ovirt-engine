@@ -161,12 +161,14 @@ LANGUAGE plpgsql;
 
 
 
-Create or replace FUNCTION GetUserByUserId(v_user_id UUID) RETURNS SETOF users STABLE
+Create or replace FUNCTION GetUserByUserId(v_user_id UUID, v_is_filtered BOOLEAN) RETURNS SETOF users STABLE
    AS $procedure$
 BEGIN
       RETURN QUERY SELECT users.*
       FROM users
-      WHERE user_id = v_user_id;
+      WHERE user_id = v_user_id AND (NOT v_is_filtered OR
+                                     EXISTS (SELECT 1 FROM  users u, user_db_users_permissions_view p
+                                             WHERE  u.user_id = v_user_id AND u.user_id = p.ad_element_id));
 END; $procedure$
 LANGUAGE plpgsql;
 
