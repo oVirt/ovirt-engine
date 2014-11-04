@@ -80,6 +80,8 @@ public abstract class AbstractGlusterBrokerCommand<P extends VdsIdVDSCommandPara
         case GlusterVolumeGeoRepSessionStopFailed:
         case GlusterSnapshotException:
         case GlusterSnapshotInfoFailedException:
+        case GlusterSnapshotDeleteVolumeFailedException:
+        case GlusterSnapshotDeleteFailedException:
 
             // Capture error from gluster command and record failure
             getVDSReturnValue().setVdsError(new VDSError(returnStatus, getReturnStatus().mMessage));

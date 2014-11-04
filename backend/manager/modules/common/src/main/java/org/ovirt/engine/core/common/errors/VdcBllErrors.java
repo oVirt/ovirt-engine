@@ -410,6 +410,8 @@ public enum VdcBllErrors {
     GlusterVolumeGeoRepStatusDetailFailed(4600),
     GlusterVolumeGeoRepSyncFailed(4601),
     GlusterSnapshotException(4700),
+    GlusterSnapshotDeleteVolumeFailedException(4702),
+    GlusterSnapshotDeleteFailedException(4703),
     GlusterSnapshotInfoFailedException(4708),
 
     UnicodeArgumentException(4900),
