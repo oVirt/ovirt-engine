@@ -137,7 +137,8 @@ public class AuditLogDAODbFacadeImpl extends BaseDAODbFacade implements AuditLog
                 .addValue("quota_name", event.getQuotaName())
                 .addValue("gluster_volume_id", event.getGlusterVolumeId())
                 .addValue("gluster_volume_name", event.getGlusterVolumeName())
-                .addValue("call_stack", event.getCallStack());
+                .addValue("call_stack", event.getCallStack())
+                .addValue("repeatable", event.isRepeatable());
     }
 
     private MapSqlParameterSource getExternalEventSqlMapper(AuditLog event) {

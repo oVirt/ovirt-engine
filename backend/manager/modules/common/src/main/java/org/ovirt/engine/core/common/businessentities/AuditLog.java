@@ -47,6 +47,15 @@ public class AuditLog extends IVdcQueryable implements Serializable {
     private String quotaEnforcementType;
     private String callStack;
 
+    /**
+     * If set to {@code true}, it allows storing to db multiple alerts of the same type for the same host.
+     * By default it's set to {@code false}, to ignore (not save) them (backward compatibility). It affects
+     * only alerts as other severities are logged always.
+     *
+     * It's not persisted in db, because it's used only to determine if alert should be stored or not.
+     */
+    boolean repeatable;
+
     public AuditLog() {
         this(AuditLogType.UNASSIGNED, AuditLogSeverity.NORMAL);
     }
@@ -59,6 +68,7 @@ public class AuditLog extends IVdcQueryable implements Serializable {
         this.eventFloodInSec = 30;
         this.customData = "";
         this.logTime = new Date();
+        this.repeatable = false;
     }
 
     public AuditLog(AuditLogType type,
@@ -415,6 +425,14 @@ public class AuditLog extends IVdcQueryable implements Serializable {
 
     public void setCallStack(String callStack) {
         this.callStack = callStack;
+    }
+
+    public boolean isRepeatable() {
+        return repeatable;
+    }
+
+    public void setRepeatable(boolean repeatable) {
+        this.repeatable = repeatable;
     }
 
     @Override

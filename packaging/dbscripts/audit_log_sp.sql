@@ -28,7 +28,8 @@ Create or replace FUNCTION InsertAuditLog(INOUT v_audit_log_id INTEGER ,
     v_job_id UUID,
     v_gluster_volume_id UUID,
     v_gluster_volume_name VARCHAR(1000),
-    v_call_stack text)
+    v_call_stack text,
+    v_repeatable BOOLEAN)
    AS $procedure$
    DECLARE
    v_min_alret_severity  INTEGER;
@@ -42,7 +43,7 @@ INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_
 
          v_audit_log_id := CURRVAL('audit_log_seq');
       else
-         if (not exists(select audit_log_id from audit_log where vds_name = v_vds_name and log_type = v_log_type and not deleted)) then
+         if (v_repeatable OR not exists(select audit_log_id from audit_log where vds_name = v_vds_name and log_type = v_log_type and not deleted)) then
 
 INSERT INTO audit_log(LOG_TIME, log_type, log_type_name, severity,message, user_id, USER_NAME, vds_id, VDS_NAME, vm_id, VM_NAME,vm_template_id,VM_TEMPLATE_NAME,storage_pool_id,STORAGE_POOL_NAME,storage_domain_id,STORAGE_DOMAIN_NAME,vds_group_id,vds_group_name, correlation_id, job_id, quota_id, quota_name, gluster_volume_id, gluster_volume_name, call_stack)
 			VALUES(v_log_time, v_log_type, v_log_type_name, v_severity, v_message, v_user_id, v_user_name, v_vds_id, v_vds_name, v_vm_id, v_vm_name,v_vm_template_id,v_vm_template_name,v_storage_pool_id,v_storage_pool_name,v_storage_domain_id,v_storage_domain_name,v_vds_group_id,v_vds_group_name, v_correlation_id, v_job_id, v_quota_id, v_quota_name, v_gluster_volume_id, v_gluster_volume_name, v_call_stack);

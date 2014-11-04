@@ -27,6 +27,7 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
     private static final String VM_NAME = "rhel5-pool-50";
     private static final String VM_TEMPLATE_NAME = "1";
     private static final Guid VDS_ID = new Guid("afce7a39-8e8c-4819-ba9c-796d316592e6");
+    private static final String VDS_NAME = "magenta-vdsc";
     private static final Guid VM_ID = new Guid("77296e00-0cad-4e5a-9299-008a7b6f4354");
     private static final Guid VM_TEMPLATE_ID = new Guid("1b85420c-b84c-4f29-997e-0eb674b40b79");
     private static final long EXISTING_ENTRY_ID = 44291;
@@ -324,5 +325,73 @@ public class AuditLogDAOTest extends BaseDAOTestCase {
         AuditLog result = dao.get(existingAuditLog.getAuditLogId());
 
         assertTrue(result.isDeleted());
+    }
+
+
+    private int getAlertCount(AuditLog entry, List<AuditLog> results) {
+        int count = 0;
+        if (results != null) {
+            for (AuditLog al : results) {
+                if (al.getSeverity() == entry.getSeverity()
+                        && al.getVdsId().equals(entry.getVdsId())
+                        && al.getLogType() == entry.getLogType()) {
+                    count++;
+                }
+            }
+        }
+        return count;
+    }
+
+    /**
+     * Checks if multiple alerts of the same type for the same host are ignored if repeatable is set to {@code false}
+     */
+    @Test
+    public void testMultipleAlertsWithSameTypeAndHostAreIgnored() {
+        AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
+        entry.setVdsId(VDS_ID);
+        entry.setVdsName(VDS_NAME);
+        entry.setMessage("Testing alert");
+
+        // test if no alert of the same type for the same host exists
+        assertEquals(0, getAlertCount(entry, dao.getAll(null, false)));
+
+        dao.save(entry);
+
+        // test if 1st alert was stored in db
+        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+
+        // try to store 2nd alert in db
+        entry.setLogTime(new Date());
+        dao.save(entry);
+
+        // test if 2nd alert was ignored
+        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+    }
+
+    /**
+     * Checks if multiple alerts of the same type for the same host are saved if repeatable is set to {@code true}
+     */
+    @Test
+    public void testMultipleAlertsWithSameTypeAndHostAreSavedIfRepeatableTrue() {
+        AuditLog entry = new AuditLog(AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY, AuditLogSeverity.ALERT);
+        entry.setVdsId(VDS_ID);
+        entry.setVdsName(VDS_NAME);
+        entry.setMessage("Testing alert");
+        entry.setRepeatable(true);
+
+        // test if no alert of the same type for the same host exists
+        assertEquals(0, getAlertCount(entry, dao.getAll(null, false)));
+
+        dao.save(entry);
+
+        // test if 1st alert was stored in db
+        assertEquals(1, getAlertCount(entry, dao.getAll(null, false)));
+
+        // try to save 2nd alert
+        entry.setLogTime(new Date());
+        dao.save(entry);
+
+        // test if 2nd alert was also stored in db
+        assertEquals(2, getAlertCount(entry, dao.getAll(null, false)));
     }
 }

@@ -97,10 +97,17 @@ public class AuditLogableBase extends TimeoutBase {
     private String quotaNameForLog;
     private String callStack;
 
+    /**
+     * @see org.ovirt.engine.core.common.businessentities.AuditLog#repeatable
+     */
+    private boolean repeatable;
+
     public AuditLogableBase() {
+        repeatable = false;
     }
 
     public AuditLogableBase(final Guid vdsId) {
+        this();
         mVdsId = vdsId;
     }
 
@@ -110,6 +117,7 @@ public class AuditLogableBase extends TimeoutBase {
     }
 
     public AuditLogableBase(final AuditLog auditLog) {
+        this(auditLog.getVdsId(), auditLog.getVmId());
         this._storageDomainId = auditLog.getStorageDomainId();
         this._storagePoolId = auditLog.getStoragePoolId();
         this.correlationId = auditLog.getCorrelationId();
@@ -122,9 +130,7 @@ public class AuditLogableBase extends TimeoutBase {
         this.mUserId = auditLog.getUserId();
         this.mUserName = auditLog.getUserName();
         this.mVdsGroupId = auditLog.getVdsGroupId();
-        this.mVdsId = auditLog.getVdsId();
         this.mVdsName = auditLog.getVdsName();
-        this.mVmId = auditLog.getVmId();
         this.mVmName = auditLog.getVmName();
         this.mVmTemplateId = auditLog.getVmTemplateId();
         this.mVmTemplateName = auditLog.getVmTemplateName();
@@ -821,5 +827,13 @@ public class AuditLogableBase extends TimeoutBase {
         if (throwable != null) {
             setCallStack(ExceptionUtils.getStackTrace(throwable));
         }
+    }
+
+    public boolean isRepeatable() {
+        return repeatable;
+    }
+
+    public void setRepeatable(boolean repeatable) {
+        this.repeatable = repeatable;
     }
 }

@@ -160,6 +160,7 @@ public final class AuditLogDirector {
             auditLog.setQuotaId(auditLogable.getQuotaIdForLog());
             auditLog.setQuotaName(auditLogable.getQuotaNameForLog());
             auditLog.setCallStack(auditLogable.getCallStack());
+            auditLog.setRepeatable(auditLogable.isRepeatable());
             getDbFacadeInstance().getAuditLogDao().save(auditLog);
             String logMessage;
             if (!"".equals(loggerString)) {
