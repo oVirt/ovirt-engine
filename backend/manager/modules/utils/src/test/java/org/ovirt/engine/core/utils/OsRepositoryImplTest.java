@@ -11,9 +11,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
 import org.junit.Assert;
-
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
@@ -26,6 +24,8 @@ public class OsRepositoryImplTest {
 
     private static MapBackedPreferences preferences;
 
+    public static final String SYSPREP_INF = "sysprep.inf";
+    public static final String UNATTEND_XML = "unattend.xml";
     public static final String NETWORK_DEVICES = "e100,pv";
     public static final String DISK_HOTPLUGGABLE_INTERFACES = "VirtIO_SCSI, VirtIO";
     public static final String WATCH_DOG_MODELS = "model1, model2";
@@ -62,8 +62,13 @@ public class OsRepositoryImplTest {
         preferences.node("/os/rhel8/derivedFrom").put("value", "rhel7");
         preferences.node("/os/windows_8/id").put("value", "20");
         preferences.node("/backwardCompatibility").put("Windows8", "20");
+        preferences.node("/os/windows_7/id").put("value", "11");
+        preferences.node("/os/windows_7/sysprepFileName").put("value", UNATTEND_XML);
         preferences.node("/os/windows_7/devices/hyperv/enabled").put("value", "true");
         preferences.node("/os/windows_8/cpu/unsupported").put("value", "conroe, opteron_g1");
+        preferences.node("/os/windows_8/sysprepFileName").put("value", UNATTEND_XML);
+        preferences.node("/os/windows_xp/id").put("value", "1");
+        preferences.node("/os/windows_xp/sysprepFileName").put("value", SYSPREP_INF);
         OsRepositoryImpl.INSTANCE.init(preferences);
     }
 
@@ -186,6 +191,13 @@ public class OsRepositoryImplTest {
     @Test
     public void testGetSysprepPath() throws Exception {
         assertTrue(OsRepositoryImpl.INSTANCE.getSysprepPath(777, null).equals(PATH_TO_SYSPREP));
+    }
+
+    @Test
+    public void testGetSysprepFileName() throws Exception {
+        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(1, null).equals(SYSPREP_INF));
+        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(11, null).equals(UNATTEND_XML));
+        assertTrue(OsRepositoryImpl.INSTANCE.getSysprepFileName(20, null).equals(UNATTEND_XML));
     }
 
     @Test

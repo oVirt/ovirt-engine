@@ -2,15 +2,13 @@ package org.ovirt.engine.core.common.osinfo;
 
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.Set;
-
 import java.util.List;
 import java.util.Map;
-
+import java.util.Set;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
 import org.ovirt.engine.core.compat.Version;
 
@@ -149,6 +147,15 @@ public interface OsRepository {
      * @return
      */
     public String getSysprepPath(int osId, Version version);
+
+    /**
+     * this is Windows OSs specific file name sysprep in the floppy,
+     * ie: sysprep.inf for xp and 2003 and Unattend.xml for the new sysprep xml files
+     * @param osId
+     * @param version
+     * @return
+     */
+    public String getSysprepFileName(int osId, Version version);
 
     /**
      * this Windows OSs specific product key

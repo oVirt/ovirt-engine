@@ -33,6 +33,7 @@ attribute
     | 'cpu.unsupported' stringValue
     | 'bus' busValue
     | 'sysprepPath' stringValue
+    | 'sysprepFileName' stringValue
     | 'productKey' stringValue
     | 'isTimezoneTypeInteger' booleanValue
     | resources

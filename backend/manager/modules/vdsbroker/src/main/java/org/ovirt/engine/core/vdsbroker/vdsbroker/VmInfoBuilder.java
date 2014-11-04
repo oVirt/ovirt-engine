@@ -8,7 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
-
 import org.apache.commons.codec.CharEncoding;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.lang.StringUtils;
@@ -53,7 +52,6 @@ import org.ovirt.engine.core.vdsbroker.xmlrpc.XmlRpcStringUtils;
 @SuppressWarnings({"rawtypes", "unchecked"})
 public class VmInfoBuilder extends VmInfoBuilderBase {
 
-    private static final String SYSPREP_FILE_NAME = "sysprep.inf";
     private static final String DEVICES = "devices";
     private static final String USB_BUS = "usb";
     private final static String FIRST_MASTER_MODEL = "ich9-ehci1";
@@ -545,7 +543,8 @@ public class VmInfoBuilder extends VmInfoBuilderBase {
         // The sysprep file size isn't being verified for 3.0 clusters and below, so we maintain the same behavior here.
         VmPayload vmPayload = new VmPayload();
         vmPayload.setDeviceType(VmDeviceType.FLOPPY);
-        vmPayload.getFiles().put(SYSPREP_FILE_NAME, new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
+        vmPayload.getFiles().put(getOsRepository().getSysprepFileName(vm.getOs(), vm.getVdsGroupCompatibilityVersion()),
+                new String(BASE_64.encode(sysPrepContent.getBytes()), Charset.forName(CharEncoding.UTF_8)));
 
         VmDevice vmDevice =
                 new VmDevice(new VmDeviceId(Guid.newGuid(), vm.getId()),

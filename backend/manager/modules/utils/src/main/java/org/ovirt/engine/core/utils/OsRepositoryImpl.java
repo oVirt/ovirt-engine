@@ -10,16 +10,15 @@ import java.util.Map;
 import java.util.Set;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-
+import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.businessentities.VmWatchdogType;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.osinfo.MapBackedPreferences;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.businessentities.DisplayType;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.compat.Version;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -386,6 +385,11 @@ public enum OsRepositoryImpl implements OsRepository {
     @Override
     public String getSysprepPath(int osId, Version version) {
         return EngineLocalConfig.getInstance().expandString(getValueByVersion(idToUnameLookup.get(osId), "sysprepPath", version));
+    }
+
+    @Override
+    public String getSysprepFileName(int osId, Version version) {
+        return getValueByVersion(idToUnameLookup.get(osId), "sysprepFileName", version);
     }
 
     @Override
