@@ -127,7 +127,7 @@
         }
 
         .disksPanel {
-            width: 490px;
+            width: 550px;
             margin: 10px 0;
             display: inline-table;
         }
@@ -711,7 +711,7 @@
                                 <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                             </g:HorizontalPanel>
                             <g:FlowPanel ui:field="disksPanel">
-                                <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="490px" showVolumeType="true" addStyleNames="{style.disksPanel}" />
+                                <s:DisksAllocationView ui:field="disksAllocationView" listHeight="170px" listWidth="550px" showVolumeType="true" addStyleNames="{style.disksPanel}" />
                             </g:FlowPanel>
                         </g:FlowPanel>
                     </g:FlowPanel>

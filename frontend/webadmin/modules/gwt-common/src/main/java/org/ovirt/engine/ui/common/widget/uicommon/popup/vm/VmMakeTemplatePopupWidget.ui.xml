@@ -47,7 +47,7 @@
 			<ge:StringEntityModelTextBoxEditor ui:field="templateVersionNameEditor" />
 		</g:FlowPanel>
 		<g:Label ui:field="disksAllocationLabel" addStyleNames="{style.disksAllocationLabel}" />
-		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="445px" addStyleNames="{style.disksAllocationPanel}" />
+		<w:DisksAllocationView ui:field="disksAllocationView" listHeight="145px" listWidth="475px" addStyleNames="{style.disksAllocationPanel}" />
 		<g:FlowPanel>
 			<ge:EntityModelCheckBoxEditor ui:field="isTemplatePublicEditor" />
             <ge:EntityModelCheckBoxEditor ui:field="copyVmPermissions" />

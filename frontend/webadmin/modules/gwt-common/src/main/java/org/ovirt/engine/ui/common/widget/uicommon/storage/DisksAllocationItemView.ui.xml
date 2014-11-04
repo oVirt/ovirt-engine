@@ -11,7 +11,7 @@
 		}
 		
 		.editorContentNarrow {
-			width: 85px;
+			width: 95px;
 			margin-left: 5px;
 		}
 		
