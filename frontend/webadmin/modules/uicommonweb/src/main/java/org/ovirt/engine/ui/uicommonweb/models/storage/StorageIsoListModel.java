@@ -7,6 +7,7 @@ import java.util.Comparator;
 import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
+import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -94,6 +95,10 @@ public class StorageIsoListModel extends SearchableListModel
         }
 
         StorageDomain storageDomain = (StorageDomain) getEntity();
+        if (storageDomain.getStatus() != StorageDomainStatus.Active) {
+            setItems(Collections.<StorageDomain>emptyList());
+            return;
+        }
 
         GetImagesListParameters imagesListParams = new GetImagesListParameters(storageDomain.getId(), ImageFileType.All);
         imagesListParams.setForceRefresh(true);
