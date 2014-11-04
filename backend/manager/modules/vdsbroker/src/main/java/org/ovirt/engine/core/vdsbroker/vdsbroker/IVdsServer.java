@@ -354,4 +354,8 @@ public interface IVdsServer {
     GlusterVolumeSnapshotInfoReturnForXmlRpc glusterSnapshotInfo(Guid clusterId, String volumeName);
 
     GlusterVolumeSnapshotConfigReturnForXmlRpc glusterVolumeSnapshotConfigGet(Guid clusterId, String volumeName);
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotDelete(String snapshotName);
+
+    StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName);
 }
