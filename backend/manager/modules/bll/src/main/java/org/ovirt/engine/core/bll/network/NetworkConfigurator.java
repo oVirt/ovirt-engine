@@ -12,13 +12,15 @@ import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
-import org.ovirt.engine.core.common.action.SetupNetworksParameters;
+import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.action.VdsActionParameters;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.network.IpConfiguration;
 import org.ovirt.engine.core.common.businessentities.network.Network;
+import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
@@ -49,11 +51,13 @@ public class NetworkConfigurator {
     private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
     private final VDS host;
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
+    private final Network managementNetwork;
     private CommandContext commandContext;
 
     public NetworkConfigurator(VDS host, CommandContext commandContext) {
         this.host = host;
         this.commandContext = commandContext;
+        this.managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getVdsGroupId());
     }
 
     public void createManagementNetworkIfRequired() {
@@ -61,7 +65,7 @@ public class NetworkConfigurator {
             return;
         }
 
-        final String managementNetworkName = resolveManagementNetworkName();
+        final String managementNetworkName = managementNetwork.getName();
         final String hostManagementNetworkAddress = resolveHostManagementNetworkAddress(managementNetworkName);
         final String hostIp = NetworkUtils.getHostByIp(host);
         if (hostManagementNetworkAddress != null && hostManagementNetworkAddress.equals(hostIp)) {
@@ -83,8 +87,7 @@ public class NetworkConfigurator {
 
         List<VdsNetworkInterface> interfaces = filterBondsWithoutSlaves(host.getInterfaces());
         if (interfaces.contains(nic)) {
-            nic.setNetworkName(managementNetworkName);
-            configureManagementNetwork(createSetupNetworkParams(interfaces));
+            configureManagementNetwork(createSetupNetworkParams(nic));
         } else {
             final AuditLogableBase event = createEvent();
             event.addCustomValue("InterfaceName", nic.getName());
@@ -93,12 +96,6 @@ public class NetworkConfigurator {
                     NETWORK_CONFIG_LOG_ERR);
             throw new NetworkConfiguratorException(MANAGEMENET_NETWORK_CONFIG_ERR);
         }
-    }
-
-    private String resolveManagementNetworkName() {
-        final ManagementNetworkUtil managementNetworkUtil = getManagementNetworkUtil();
-        final Network managementNetwork = managementNetworkUtil.getManagementNetwork(host.getVdsGroupId());
-        return managementNetwork.getName();
     }
 
     private String resolveHostManagementNetworkAddress(String managementNetworkName) {
@@ -168,11 +165,18 @@ public class NetworkConfigurator {
         });
     }
 
-    public SetupNetworksParameters createSetupNetworkParams(List<VdsNetworkInterface> interfaces) {
-        SetupNetworksParameters parameters = new SetupNetworksParameters();
-        parameters.setVdsId(host.getId());
-        parameters.setInterfaces(interfaces);
-        parameters.setCheckConnectivity(true);
+    public HostSetupNetworksParameters createSetupNetworkParams(VdsNetworkInterface nic) {
+        HostSetupNetworksParameters parameters = new HostSetupNetworksParameters(host.getId());
+        NetworkAttachment managementAttachment = new NetworkAttachment();
+        managementAttachment.setNetworkId(managementNetwork.getId());
+        managementAttachment.setNicId(nic.getId());
+        IpConfiguration ipConfiguration = new IpConfiguration();
+        ipConfiguration.setAddress(nic.getAddress());
+        ipConfiguration.setNetmask(nic.getSubnet());
+        ipConfiguration.setGateway(nic.getGateway());
+        ipConfiguration.setBootProtocol(nic.getBootProtocol());
+        managementAttachment.setIpConfiguration(ipConfiguration);
+        parameters.getNetworkAttachments().add(managementAttachment);
         return parameters;
     }
 
@@ -188,8 +192,6 @@ public class NetworkConfigurator {
             throw new NetworkConfiguratorException(
                     String.format("Interface %s is invalid for management network", host.getActiveNic()));
         }
-
-        final Network managementNetwork = getManagementNetworkUtil().getManagementNetwork(host.getVdsGroupId());
 
         if (managementNetwork.getName().equals(nic.getNetworkName())) {
             return null;
@@ -250,9 +252,11 @@ public class NetworkConfigurator {
         return filteredList;
     }
 
-    private void configureManagementNetwork(SetupNetworksParameters parameters) {
+    private void configureManagementNetwork(HostSetupNetworksParameters parameters) {
         VdcReturnValueBase retVal =
-                getBackend().runInternalAction(VdcActionType.SetupNetworks, parameters, cloneContextAndDetachFromParent());
+                getBackend().runInternalAction(VdcActionType.HostSetupNetworks,
+                        parameters,
+                        cloneContextAndDetachFromParent());
         if (retVal.getSucceeded()) {
             retVal =
                     getBackend().runInternalAction(VdcActionType.CommitNetworkChanges,
