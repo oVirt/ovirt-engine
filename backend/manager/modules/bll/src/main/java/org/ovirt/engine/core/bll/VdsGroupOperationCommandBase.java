@@ -154,6 +154,7 @@ public abstract class VdsGroupOperationCommandBase<T extends VdsGroupOperationPa
         if (!getVdsGroup().getFencingPolicy().isFencingEnabled()) {
             AuditLogableBase alb = new AuditLogableBase();
             alb.setVdsGroupId(getVdsGroup().getId());
+            alb.setRepeatable(true);
             AuditLogDirector.log(alb, AuditLogType.FENCING_DISABLED_IN_CLUSTER_POLICY);
         }
     }

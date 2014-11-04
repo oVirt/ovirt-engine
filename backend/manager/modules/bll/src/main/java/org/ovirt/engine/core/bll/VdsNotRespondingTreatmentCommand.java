@@ -70,9 +70,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         // check if fencing in cluster is enabled
         VDSGroup vdsGroup = getDbFacade().getVdsGroupDao().get(vds.getVdsGroupId());
         if (vdsGroup != null && !vdsGroup.getFencingPolicy().isFencingEnabled()) {
-            AuditLogDirector.log(
-                    new AuditLogableBase(vds.getId()),
-                    AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
+            AuditLogableBase alb = new AuditLogableBase(vds.getId());
+            alb.setRepeatable(true);
+            AuditLogDirector.log(alb, AuditLogType.VDS_ALERT_FENCE_DISABLED_BY_CLUSTER_POLICY);
             return true;
         }
 
@@ -160,9 +160,9 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         }
         if (skippedDueToFencingPolicy) {
             // fencing was skipped, fire an alert and suppress standard command logging
-            AuditLogDirector.log(
-                    new AuditLogableBase(getVds().getId()),
-                    AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
+            AuditLogableBase alb = new AuditLogableBase(getVds().getId());
+            alb.setRepeatable(true);
+            AuditLogDirector.log(alb, AuditLogType.VDS_ALERT_NOT_RESTARTED_DUE_TO_POLICY);
             setSucceeded(false);
             setCommandShouldBeLogged(false);
         } else {
@@ -232,6 +232,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
         AuditLogableBase auditLogable = new AuditLogableBase();
         auditLogable.addCustomValue("Percents", percents.toString());
         auditLogable.setVdsId(host.getId());
+        auditLogable.setRepeatable(true);
         AuditLogDirector.log(auditLogable, AuditLogType.VDS_ALERT_FENCE_OPERATION_SKIPPED_BROKEN_CONNECTIVITY);
     }
 }
