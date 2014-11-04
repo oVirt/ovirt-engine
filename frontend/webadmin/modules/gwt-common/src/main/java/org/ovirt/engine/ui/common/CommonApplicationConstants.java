@@ -62,7 +62,7 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Disks Allocation:")
     String disksAllocation();
 
-    @DefaultStringValue("Create as a Sub Template version")
+    @DefaultStringValue("Create as a Template Sub Version")
     String createAsSubTemplate();
 
     @DefaultStringValue("Root Template")
