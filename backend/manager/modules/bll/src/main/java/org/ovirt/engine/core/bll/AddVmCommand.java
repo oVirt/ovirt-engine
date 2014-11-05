@@ -579,7 +579,7 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
         }
 
         if (vmFromParams.isUseHostCpuFlags()
-                && vmFromParams.getMigrationSupport() == MigrationSupport.MIGRATABLE) {
+                && vmFromParams.getMigrationSupport() != MigrationSupport.PINNED_TO_HOST) {
             return failCanDoAction(VdcBllMessages.VM_HOSTCPU_MUST_BE_PINNED_TO_HOST);
         }
 
