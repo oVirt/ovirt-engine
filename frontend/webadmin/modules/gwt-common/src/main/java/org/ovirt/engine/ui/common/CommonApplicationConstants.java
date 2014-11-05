@@ -652,8 +652,8 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("Run VM on the selected host (no migration allowed)")
     String runOnSelectedHostVmPopup();
 
-    @DefaultStringValue("Use Host CPU")
-    String useHostCpu();
+    @DefaultStringValue("Pass-Through Host CPU")
+    String passThroughHostCpu();
 
     @DefaultStringValue("Allow VM migration only upon Administrator specific request (system will not trigger automatic migration of this VM)")
     String allowMigrationOnlyAdminVmPopup();
