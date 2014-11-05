@@ -116,6 +116,7 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
      * installed).
      */
     public void setConsoleClientMode(ClientConsoleMode consoleMode) {
+        ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
         this.consoleMode = consoleMode;
 
         switch (consoleMode) {
@@ -126,12 +127,15 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
                 setspice((ISpice) TypeResolver.getInstance().resolve(ISpicePlugin.class));
                 break;
             case Html5:
-                setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
+                if (consoleUtils.webBasedClientsSupported()) {
+                    setspice((ISpice) TypeResolver.getInstance().resolve(ISpiceHtml5.class));
+                } else {
+                    getLogger().debug("Cannot select SPICE-HTML5."); //$NON-NLS-1$
+                    setDefaultConsoleMode();
+                }
                 break;
             default:
-                ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().resolve(ISpicePlugin.class);
-                setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
-                        : (ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
+                setDefaultConsoleMode();
             break;
         }
 
@@ -142,10 +146,15 @@ public class SpiceConsoleModel extends ConsoleModel implements IFrontendMultiple
         }
 
         if (getEntity() != null) {
-            ConsoleUtils consoleUtils = (ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class);
             boolean isSpiceProxyDefined = consoleUtils.isSpiceProxyDefined(getEntity());
             getspice().setSpiceProxyEnabled(isSpiceProxyDefined);
         }
+    }
+
+    private void setDefaultConsoleMode() {
+        ISpicePlugin pluginSpice = (ISpicePlugin) TypeResolver.getInstance().resolve(ISpicePlugin.class);
+        setspice(pluginSpice.detectBrowserPlugin() ? pluginSpice
+                : (ISpice) TypeResolver.getInstance().resolve(ISpiceNative.class));
     }
 
     @Override

@@ -49,9 +49,10 @@ public class VncConsoleModel extends ConsoleModel {
 
         setTitle(ConstantsManager.getInstance().getConstants().VNCTitle());
 
-        boolean webSocketProxyDefined = ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).isWebSocketProxyDefined();
+        boolean webBasedClientsSupported =
+                ((ConsoleUtils) TypeResolver.getInstance().resolve(ConsoleUtils.class)).webBasedClientsSupported();
         ClientConsoleMode desiredMode = readDefaultConsoleClientMode();
-        if (desiredMode == ClientConsoleMode.NoVnc && !webSocketProxyDefined) {
+        if (desiredMode == ClientConsoleMode.NoVnc && !webBasedClientsSupported) {
             desiredMode = ClientConsoleMode.Native; // fallback
         }
         setVncImplementation(desiredMode);

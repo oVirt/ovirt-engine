@@ -1547,9 +1547,6 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("No SPICE proxy defined on system level")
     String spiceProxyCanBeEnabledOnlyWhenDefined();
 
-    @DefaultStringValue("SPICE HTML5 client can be used only if websocket proxy is configured in the engine.")
-    String spiceHtml5OnlyWhenWebsocketProxySet();
-
     @DefaultStringValue("Enable WAN Options")
     String enableWanOptions();
 
@@ -1568,8 +1565,9 @@ public interface CommonApplicationConstants extends Constants {
     @DefaultStringValue("VNC")
     String vnc();
 
-    @DefaultStringValue("Websockets Proxy must be configured in the engine.")
-    String webSocketProxyNotSet();
+    @DefaultStringValue("SPICE-HTML5 and noVNC cannot be used in Internet Explorer. " +
+            "Moreover, Websocket proxy must be configured in the engine.")
+    String webBasedClientsUnsupported();
 
     @DefaultStringValue("SPICE Options")
     String spiceOptions();

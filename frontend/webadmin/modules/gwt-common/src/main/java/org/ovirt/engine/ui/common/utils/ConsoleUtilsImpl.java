@@ -43,9 +43,14 @@ public class ConsoleUtilsImpl implements ConsoleUtils {
             !StringHelper.isNullOrEmpty(vm.getVmPoolSpiceProxy());
     }
 
+    /**
+     * HTML5-based console clients are only supported when websocket proxy is configured in the engine and run on
+     * browsers that support postMessage correctly.
+     * @return true if HTML5 console clients can be used with current engine configuration and client browser.
+     */
     @Override
-    public boolean isWebSocketProxyDefined() {
-        return configurator.isWebSocketProxyDefined();
+    public boolean webBasedClientsSupported() {
+        return configurator.isWebSocketProxyDefined() && !configurator.isClientWindowsExplorer();
     }
 
     @Override

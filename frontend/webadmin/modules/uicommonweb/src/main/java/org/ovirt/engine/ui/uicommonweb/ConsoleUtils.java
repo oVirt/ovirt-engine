@@ -14,7 +14,7 @@ public interface ConsoleUtils {
 
     public boolean isSpiceProxyDefined(VM vm);
 
-    public boolean isWebSocketProxyDefined();
+    public boolean webBasedClientsSupported();
 
     public String getRemapCtrlAltDelHotkey();
 

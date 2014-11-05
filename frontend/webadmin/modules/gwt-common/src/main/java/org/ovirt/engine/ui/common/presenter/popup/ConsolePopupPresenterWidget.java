@@ -223,9 +223,8 @@ public class ConsolePopupPresenterWidget extends AbstractModelBoundPopupPresente
             getView().setSpicePluginImplEnabled(false, constants.spicePluginNotSupportedByBrowser());
         }
 
-        getView().setSpiceHtml5ImplEnabled(consoleUtils.isWebSocketProxyDefined(), constants.spiceHtml5OnlyWhenWebsocketProxySet());
-
-        getView().setNoVncEnabled(consoleUtils.isWebSocketProxyDefined(), constants.webSocketProxyNotSet());
+        getView().setSpiceHtml5ImplEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
+        getView().setNoVncEnabled(consoleUtils.webBasedClientsSupported(), constants.webBasedClientsUnsupported());
 
         if (!consoleUtils.isBrowserPluginSupported(ConsoleProtocol.RDP)) {
             getView().setRdpPluginImplEnabled(false, constants.rdpPluginNotSupportedByBrowser());
