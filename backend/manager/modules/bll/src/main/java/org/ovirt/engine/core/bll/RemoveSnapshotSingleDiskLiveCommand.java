@@ -343,7 +343,20 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
 
     @Override
     protected void endSuccessfully() {
-        setSucceeded(true);
+        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+            Guid currentChildId = getParameters().getChildCommands().get(
+                    getParameters().getCommandStep());
+            if (!Guid.isNullOrEmpty(currentChildId)) {
+                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
+                if (command != null) {
+                    Backend.getInstance().endAction(VdcActionType.DestroyImage,
+                            command.getParameters(),
+                            cloneContextAndDetachFromParent());
+                }
+            }
+        } else {
+            setSucceeded(true);
+        }
     }
 
     public void onFailed() {
@@ -380,6 +393,25 @@ public class RemoveSnapshotSingleDiskLiveCommand<T extends RemoveSnapshotSingleD
                     getParameters().getMergeStatusReturnValue().getImagesToRemove());
         }
         endWithFailure();
+    }
+
+    @Override
+    protected void endWithFailure() {
+        if (getParameters().getCommandStep() == RemoveSnapshotSingleDiskLiveStep.DESTROY_IMAGE) {
+            Guid currentChildId = getParameters().getChildCommands().get(
+                    getParameters().getCommandStep());
+            if (!Guid.isNullOrEmpty(currentChildId)) {
+                CommandBase<?> command = CommandCoordinatorUtil.retrieveCommand(currentChildId);
+                if (command != null) {
+                    command.getParameters().setTaskGroupSuccess(false);
+                    Backend.getInstance().endAction(VdcActionType.DestroyImage,
+                            command.getParameters(),
+                            cloneContextAndDetachFromParent());
+                }
+            }
+        } else {
+            setSucceeded(true);
+        }
     }
 
     @Override
