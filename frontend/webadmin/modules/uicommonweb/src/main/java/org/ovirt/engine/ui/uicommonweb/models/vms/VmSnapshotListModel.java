@@ -5,6 +5,8 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
+
+import com.google.gwt.i18n.client.DateTimeFormat;
 import org.ovirt.engine.core.common.VdcActionUtils;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.RemoveSnapshotParameters;
@@ -50,6 +52,8 @@ import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
 @SuppressWarnings("unused")
 public class VmSnapshotListModel extends SearchableListModel
 {
+    // This constant is intendend to be exported to a generic UTILS class later on
+    private final static String DATE_FORMAT = "yyyy-MM-dd, HH:mm"; //$NON-NLS-1$
 
     private UICommand privateNewCommand;
 
@@ -359,9 +363,8 @@ public class VmSnapshotListModel extends SearchableListModel
             model.setHashName("delete_snapshot"); //$NON-NLS-1$
             model.setMessage(ConstantsManager.getInstance()
                     .getMessages()
-                    .areYouSureYouWantToDeleteSanpshot(snapshot.getCreationDate(),
+                    .areYouSureYouWantToDeleteSanpshot( DateTimeFormat.getFormat(DATE_FORMAT).format(snapshot.getCreationDate()),
                             snapshot.getDescription()));
-
             UICommand tempVar = new UICommand("OnRemove", this); //$NON-NLS-1$
             tempVar.setTitle(ConstantsManager.getInstance().getConstants().ok());
             tempVar.setIsDefault(true);
