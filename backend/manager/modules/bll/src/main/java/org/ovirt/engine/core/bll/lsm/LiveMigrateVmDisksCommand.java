@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.quota.QuotaConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.tasks.SPMAsyncTaskHandler;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
@@ -296,6 +297,11 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
     @Override
     protected boolean canDoAction() {
         setStoragePoolId(getVm().getStoragePoolId());
+
+        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getcompatibility_version(), getVds());
+        if (!validate(validator.canDoSnapshot())) {
+            return false;
+        }
 
         if (!isValidParametersList() || !checkImagesStatus() || !validateSpaceRequirements()
                 || !performVmRelatedChecks()) {

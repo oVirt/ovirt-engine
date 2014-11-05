@@ -19,6 +19,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageConsumptionParameter;
 import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsManager;
 import org.ovirt.engine.core.bll.snapshots.SnapshotsValidator;
+import org.ovirt.engine.core.bll.validator.LiveSnapshotValidator;
 import org.ovirt.engine.core.bll.storage.StoragePoolValidator;
 import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
@@ -43,11 +44,7 @@ import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
-import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
-import org.ovirt.engine.core.common.businessentities.VDS;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
@@ -541,7 +538,8 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     }
 
     protected boolean validateVM(VmValidator vmValidator) {
-        return canDoSnapshot(getVm()) &&
+        LiveSnapshotValidator validator = new LiveSnapshotValidator(getStoragePool().getcompatibility_version(), getVds());
+        return (getVm().isDown() || validate(validator.canDoSnapshot())) &&
                 validate(vmValidator.vmNotSavingRestoring());
     }
 
@@ -562,30 +560,6 @@ public class CreateAllSnapshotsFromVmCommand<T extends CreateAllSnapshotsFromVmP
     protected void setActionMessageParameters() {
         addCanDoActionMessage(VdcBllMessages.VAR__ACTION__CREATE);
         addCanDoActionMessage(VdcBllMessages.VAR__TYPE__SNAPSHOT);
-    }
-
-    private boolean canDoSnapshot(VM vm) {
-        // if live snapshot is not available, then if vm is up - snapshot is not possible so it needs to be
-        // checked if vm up or not
-        // if live snapshot is enabled, there is no need to check if vm is up since in any case snapshot is possible
-        if (!isLiveSnapshotEnabled() && !vm.isDown()) {
-            // if there is no live snapshot and the vm is up - snapshot is not possible
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_DATA_CENTER_VERSION_DOESNT_SUPPORT_LIVE_SNAPSHOT);
-        }
-        VDS vds = getVds();
-        // it is possible, even if unlikely, that the QEMU on the host does not support live snapshotting
-        if (vds != null && !vds.getLiveSnapshotSupport()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_QEMU_UNSUPPORTED_OPERATION);
-        }
-        return true;
-    }
-
-    /**
-     * @return If DC level does not support live snapshots.
-     */
-    private boolean isLiveSnapshotEnabled() {
-        return Config.<Boolean> getValue(
-                ConfigValues.LiveSnapshotEnabled, getStoragePool().getcompatibility_version().getValue());
     }
 
     @Override
