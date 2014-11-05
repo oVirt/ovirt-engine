@@ -330,4 +330,8 @@ public interface VdsServerConnector {
     public Map<String, Object> glusterSnapshotDelete(String snapshotName);
 
     public Map<String, Object> glusterVolumeSnapshotDelete(String volumeName);
+
+    public Map<String, Object> glusterSnapshotActivate(String snapshotName, boolean force);
+
+    public Map<String, Object> glusterSnapshotDeactivate(String snapshotName);
 }
