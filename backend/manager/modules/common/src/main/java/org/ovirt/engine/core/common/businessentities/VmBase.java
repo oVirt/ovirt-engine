@@ -227,6 +227,25 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private List<VmNumaNode> vNumaNodeList;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String userDefinedProperties;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String predefinedProperties;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private String customProperties;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
@@ -249,6 +268,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         spiceCopyPasteEnabled = true;
         setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vNumaNodeList = new ArrayList<VmNumaNode>();
+        customProperties = "";
     }
 
     @EditableField
@@ -389,7 +409,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.isSpiceFileTransferEnabled(),
                 vmBase.isSpiceCopyPasteEnabled(),
                 vmBase.getCpuProfileId(),
-                vmBase.getNumaTuneMode());
+                vmBase.getNumaTuneMode(),
+                vmBase.getUserDefinedProperties(),
+                vmBase.getPredefinedProperties(),
+                vmBase.getCustomProperties());
     }
 
     public VmBase(
@@ -441,7 +464,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             boolean spiceFileTransferEnabled,
             boolean spiceCopyPasteEnabled,
             Guid cpuProfileId,
-            NumaTuneMode numaTuneMode) {
+            NumaTuneMode numaTuneMode,
+            String userDefinedProperties,
+            String predefinedProperties,
+            String customProperties) {
         this();
         this.name = name;
         this.id = id;
@@ -492,6 +518,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.numaTuneMode = numaTuneMode;
         this.spiceCopyPasteEnabled = spiceCopyPasteEnabled;
         this.cpuProfileId = cpuProfileId;
+        this.userDefinedProperties = userDefinedProperties;
+        this.predefinedProperties = predefinedProperties;
+        this.customProperties = customProperties;
     }
 
     public long getDbGeneration() {
@@ -835,6 +864,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((cpuProfileId == null) ? 0 : cpuProfileId.hashCode());
         result = prime * result + ((numaTuneMode == null) ? 0 : numaTuneMode.getValue().hashCode());
         result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
+        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
+        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         return result;
     }
 
@@ -892,7 +923,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && spiceCopyPasteEnabled == other.spiceCopyPasteEnabled
                 && ObjectUtils.objectsEqual(cpuProfileId, other.cpuProfileId)
                 && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
-                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList));
+                && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList))
+                && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
+                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties);
     }
 
     public Guid getQuotaId() {
@@ -1086,6 +1119,30 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     public void setvNumaNodeList(List<VmNumaNode> vNumaNodeList) {
         this.vNumaNodeList = vNumaNodeList;
+    }
+
+    public String getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public String getPredefinedProperties() {
+        return predefinedProperties;
+    }
+
+    public void setPredefinedProperties(String predefinedProperties) {
+        this.predefinedProperties = predefinedProperties;
+    }
+
+    public String getUserDefinedProperties() {
+        return userDefinedProperties;
+    }
+
+    public void setUserDefinedProperties(String userDefinedProperties) {
+        this.userDefinedProperties = userDefinedProperties;
     }
 
 }

@@ -452,7 +452,9 @@ vm_templates.vm_guid as vmt_guid,
        vm_templates.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled,
        vm_templates.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
        vm_templates.cpu_profile_id as cpu_profile_id,
-       vm_templates.numatune_mode as numatune_mode
+       vm_templates.numatune_mode as numatune_mode,
+       vm_templates.predefined_properties as predefined_properties,
+       vm_templates.userdefined_properties as userdefined_properties
 FROM       vm_static AS vm_templates  LEFT OUTER JOIN
 vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id
 left outer JOIN
@@ -491,7 +493,9 @@ AS
                     vm_templates.serial_number_policy as serial_number_policy, vm_templates.custom_serial_number as custom_serial_number,
                     vm_templates.is_boot_menu_enabled as is_boot_menu_enabled,
                     vm_templates.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled, vm_templates.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
-                    vm_templates.cpu_profile_id as cpu_profile_id, vm_templates.numatune_mode as numatune_mode
+                    vm_templates.cpu_profile_id as cpu_profile_id, vm_templates.numatune_mode as numatune_mode,
+                    vm_templates.predefined_properties as predefined_properties, vm_templates.userdefined_properties as userdefined_properties
+
 FROM                  vm_static AS vm_templates LEFT OUTER JOIN
 	                  vds_groups ON vm_templates.vds_group_id = vds_groups.vds_group_id LEFT OUTER JOIN
                       storage_pool ON storage_pool.id = vds_groups.storage_pool_id INNER JOIN
@@ -522,7 +526,8 @@ SELECT                vm_templates_1.vm_guid AS vmt_guid, vm_templates_1.vm_name
                       vm_templates_1.is_spice_file_transfer_enabled as is_spice_file_transfer_enabled,
                       vm_templates_1.is_spice_copy_paste_enabled as is_spice_copy_paste_enabled,
                       vm_templates_1.cpu_profile_id as cpu_profile_id,
-                      vm_templates_1.numatune_mode as numatune_mode
+                      vm_templates_1.numatune_mode as numatune_mode,
+                      vm_templates_1.predefined_properties as predefined_properties, vm_templates_1.userdefined_properties as userdefined_properties
 FROM                  vm_static AS vm_templates_1 LEFT OUTER JOIN
                       vds_groups AS vds_groups_1 ON vm_templates_1.vds_group_id = vds_groups_1.vds_group_id LEFT OUTER JOIN
                       storage_pool AS storage_pool_1 ON storage_pool_1.id = vds_groups_1.storage_pool_id INNER JOIN

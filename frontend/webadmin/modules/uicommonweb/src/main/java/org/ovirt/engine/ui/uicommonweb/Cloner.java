@@ -222,6 +222,9 @@ public final class Cloner
         vm.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         vm.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         vm.setCpuProfileId(instance.getCpuProfileId());
+        vm.setPredefinedProperties(instance.getPredefinedProperties());
+        vm.setUserDefinedProperties(instance.getUserDefinedProperties());
+        vm.setCustomProperties(instance.getCustomProperties());
 
         return vm;
     }
@@ -447,6 +450,9 @@ public final class Cloner
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         obj.setCpuProfileId(instance.getCpuProfileId());
+        obj.setPredefinedProperties(instance.getPredefinedProperties());
+        obj.setUserDefinedProperties(instance.getUserDefinedProperties());
+        obj.setCustomProperties(instance.getCustomProperties());
 
         return obj;
     }
@@ -490,6 +496,9 @@ public final class Cloner
         obj.setSpiceFileTransferEnabled(instance.isSpiceFileTransferEnabled());
         obj.setSpiceCopyPasteEnabled(instance.isSpiceCopyPasteEnabled());
         obj.setCpuProfileId(instance.getCpuProfileId());
+        obj.setPredefinedProperties(instance.getPredefinedProperties());
+        obj.setUserDefinedProperties(instance.getUserDefinedProperties());
+        obj.setCustomProperties(instance.getCustomProperties());
 
         return obj;
     }

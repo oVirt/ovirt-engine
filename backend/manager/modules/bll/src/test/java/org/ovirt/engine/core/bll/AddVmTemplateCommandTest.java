@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
@@ -109,6 +110,10 @@ public class AddVmTemplateCommandTest {
             @Override
             public VM getVm() {
                 return vm;
+            }
+
+            @Override
+            public void separateCustomProperties(VmStatic parameterMasterVm) {
             }
         });
         doReturn(vmDao).when(cmd).getVmDAO();

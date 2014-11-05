@@ -13,6 +13,7 @@ import org.ovirt.engine.core.common.businessentities.SsoMethod;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmType;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacadeUtils;
 import org.springframework.jdbc.core.RowMapper;
@@ -70,7 +71,9 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
                 .addValue("is_spice_file_transfer_enabled", entity.isSpiceFileTransferEnabled())
                 .addValue("is_spice_copy_paste_enabled", entity.isSpiceCopyPasteEnabled())
                 .addValue("cpu_profile_id", entity.getCpuProfileId())
-                .addValue("numatune_mode", entity.getNumaTuneMode().getValue());
+                .addValue("numatune_mode", entity.getNumaTuneMode().getValue())
+                .addValue("predefined_properties", entity.getPredefinedProperties())
+                .addValue("userdefined_properties", entity.getUserDefinedProperties());
     }
 
     /**
@@ -125,6 +128,12 @@ public abstract class VmBaseDaoDbFacade<T extends VmBase> extends DefaultGeneric
             entity.setQuotaId(getGuid(rs, "quota_id"));
             entity.setCpuProfileId(getGuid(rs, "cpu_profile_id"));
             entity.setNumaTuneMode(NumaTuneMode.forValue(rs.getString("numatune_mode")));
+            String predefinedProperties = rs.getString("predefined_properties");
+            String userDefinedProperties = rs.getString("userdefined_properties");
+            entity.setPredefinedProperties(predefinedProperties);
+            entity.setUserDefinedProperties(userDefinedProperties);
+            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
+                    userDefinedProperties));
         }
     }
 }
