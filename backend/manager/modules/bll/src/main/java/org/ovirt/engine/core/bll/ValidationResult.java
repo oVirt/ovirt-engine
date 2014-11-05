@@ -42,26 +42,19 @@ public final class ValidationResult {
      *
      * @param message
      *            The validation failure message.
-     */
-    public ValidationResult(VdcBllMessages message) {
-        if(message == null) {
-            throw new IllegalArgumentException("message must not be null");
-        }
-        this.message = message;
-    }
-
-    /**
-     * Validation result for failure with a given message.
-     *
-     * @param message
-     *            The validation failure message.
      * @param variableReplacements
      *            Replacements for variables that appear in the message, in syntax: "$var text" where $var is the
      *            variable to be replaced, and the text is the replacement.
      */
     public ValidationResult(VdcBllMessages message, String... variableReplacements) {
-        this(message);
-        this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
+        if (message == null) {
+            throw new IllegalArgumentException("message must not be null");
+        }
+
+        this.message = message;
+        if (variableReplacements.length > 0) {
+            this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
+        }
     }
 
     /**
@@ -142,27 +135,36 @@ public final class ValidationResult {
      * Return an error if the following validation is not successful, or a valid result if it is.<br>
      * <br>
      * For example, if we want to make sure that <b>num doesn't equal 2</b> then we would do:
+     *
      * <pre>
-     *     int num = 1;
-     *     ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);</pre>
+     * int num = 1;
+     * ValidationResult.error(VdcBllMessages.ERROR_CONST).when(num == 2);
+     * </pre>
+     *
      * <br>
      * Which would return a valid result since 1 != 2.<br>
      * If we were to set <b>num = 2</b> in the example then the desired validation error would return.<br>
      * <br>
      * Conveniently, we can also check that <b>num equals 2</b> by doing:
+     *
      * <pre>
-     *     int num = 1;
-     *     ValidationResult.error(VdcBllMessages.ERROR_CONST).unless(num == 2);</pre>
+     * int num = 1;
+     * ValidationResult.error(VdcBllMessages.ERROR_CONST, &quot;$COMPARED_NUM 2&quot;).unless(num == 2);
+     * </pre>
+     *
      * <br>
      * This time the desired validation error would return since 1 != 2.<br>
      * If we were to set <b>num = 2</b> in the example then the result would be valid.<br>
+     * In addition, the replacement will contain the substitutions for the message.<br>
      *
      * @param expectedError
      *            The error we expect should the validation fail.
+     * @param replacements
+     *            The replacements to be associated with the validation result
      * @return A helper object that returns the correct validation result depending on the condition.
      */
-    public static ValidationResultBuilder failWith(VdcBllMessages expectedError) {
-        return new ValidationResultBuilder(expectedError);
+    public static ValidationResultBuilder failWith(VdcBllMessages expectedError, String... replacements) {
+        return new ValidationResultBuilder(expectedError, replacements);
     }
 
     /**
@@ -172,8 +174,8 @@ public final class ValidationResult {
 
         private ValidationResult expectedValidation;
 
-        private ValidationResultBuilder(VdcBllMessages expectedError) {
-            expectedValidation = new ValidationResult(expectedError);
+        private ValidationResultBuilder(VdcBllMessages expectedError, String[] replacements) {
+            expectedValidation = new ValidationResult(expectedError, replacements);
         }
 
         /**
