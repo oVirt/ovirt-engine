@@ -133,6 +133,7 @@ public class BasicAuthenticationFilter implements Filter {
                     outputMap.<ExtMap> get(Authn.InvokeKeys.AUTH_RECORD));
                 request.setAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY, AuthType.CREDENTIALS);
                 request.setAttribute(FiltersHelper.Constants.REQUEST_PROFILE_KEY, userProfile.profile.getName());
+                request.setAttribute(FiltersHelper.Constants.REQUEST_PASSWORD_KEY, password);
              } else {
                 if (outputMap.<Integer> get(Base.InvokeKeys.RESULT) != Base.InvokeResult.SUCCESS
                         || outputMap.<Integer> get(Authn.InvokeKeys.RESULT) != Authn.AuthResult.SUCCESS) {

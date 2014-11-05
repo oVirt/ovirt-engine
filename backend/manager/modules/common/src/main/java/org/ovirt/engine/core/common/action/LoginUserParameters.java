@@ -36,13 +36,14 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         actionType = VdcActionType.LoginUser;
     }
 
-    public LoginUserParameters(String profileName, Object authRecord, AuthType authType) {
-        this(profileName, authRecord, VdcActionType.LoginUser, authType);
+    public LoginUserParameters(String profileName, Object authRecord, String password, AuthType authType) {
+        this(profileName, authRecord, password, VdcActionType.LoginUser, authType);
     }
 
     public LoginUserParameters(
             String profileName,
             Object authRecord,
+            String password,
             VdcActionType vdcActionType,
             AuthType authType
             ) {
@@ -51,6 +52,7 @@ public class LoginUserParameters extends VdcActionParametersBase implements Seri
         this.authInfo.authType = AuthType.CREDENTIALS;
         this.profileName = profileName;
         this.actionType = vdcActionType;
+        this.authInfo.password = password;
 
     }
 
