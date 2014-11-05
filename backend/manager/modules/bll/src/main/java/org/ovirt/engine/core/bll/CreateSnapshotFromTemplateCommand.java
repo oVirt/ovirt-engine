@@ -27,6 +27,10 @@ public class CreateSnapshotFromTemplateCommand<T extends CreateSnapshotFromTempl
         setImageGroupId(Guid.newGuid());
     }
 
+    public CreateSnapshotFromTemplateCommand(Guid guid) {
+        super(guid);
+    }
+
     /**
      * Old image not have to be changed
      */
