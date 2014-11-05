@@ -20,6 +20,7 @@ public class EditAffinityGroupModel extends AffinityGroupModel {
         setHashName("edit_affinity_group"); //$NON-NLS-1$
 
         getName().setEntity(getAffinityGroup().getName());
+        getDescription().setEntity(getAffinityGroup().getDescription());
         getPositive().setEntity(getAffinityGroup().isPositive());
         getEnforcing().setEntity(getAffinityGroup().isEnforcing());
     }
