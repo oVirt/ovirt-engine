@@ -97,7 +97,7 @@ public class AddVmFromSnapshotCommandTest extends AddVmCommandTest{
         DiskImage disk = new DiskImage();
         disk.setDiskInterface(DiskInterface.VirtIO_SCSI);
         disk.setPlugged(true);
-        doReturn(Collections.singletonList(disk)).when(command).getDiskImagesFromConfiguration();
+        doReturn(Collections.singletonList(disk)).when(command).getAdjustedDiskImagesFromConfiguration();
 
         VmValidator vmValidator = spy(new VmValidator(vm));
         doReturn(vmValidator).when(command).createVmValidator(vm);
