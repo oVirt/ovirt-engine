@@ -142,7 +142,7 @@ public interface UIMessages extends com.google.gwt.i18n.client.Messages {
     String errConnectingVmUsingRdpMsg(Object errCode);
 
     @DefaultMessage("Are you sure you want to delete snapshot from {0} with description ''{1}''?")
-    String areYouSureYouWantToDeleteSanpshot(Date from, Object description);
+    String areYouSureYouWantToDeleteSanpshot(String from, Object description);
 
     @DefaultMessage("Edit Bond Interface {0}")
     String editBondInterfaceTitle(String name);
