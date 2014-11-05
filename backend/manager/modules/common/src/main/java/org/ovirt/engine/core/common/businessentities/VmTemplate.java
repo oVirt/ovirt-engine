@@ -79,7 +79,10 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
             boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled,
             Guid cpuProfileId, NumaTuneMode numaTuneMode,
-            Boolean autoConverge, Boolean migrateCompressed) {
+            Boolean autoConverge, Boolean migrateCompressed,
+            String userDefinedProperties,
+            String predefinedProperties,
+            String customProperties) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
@@ -130,7 +133,10 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
                 cpuProfileId,
                 numaTuneMode,
                 autoConverge,
-                migrateCompressed);
+                migrateCompressed,
+                userDefinedProperties,
+                predefinedProperties,
+                customProperties);
 
         diskTemplateMap = new HashMap<Guid, DiskImage>();
         diskImageMap = new HashMap<Guid, DiskImage>();

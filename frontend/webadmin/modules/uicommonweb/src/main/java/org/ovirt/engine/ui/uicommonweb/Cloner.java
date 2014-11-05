@@ -224,6 +224,9 @@ public final class Cloner
         vm.setCpuProfileId(instance.getCpuProfileId());
         vm.setAutoConverge(instance.getAutoConverge());
         vm.setMigrateCompressed(instance.getMigrateCompressed());
+        vm.setPredefinedProperties(instance.getPredefinedProperties());
+        vm.setUserDefinedProperties(instance.getUserDefinedProperties());
+        vm.setCustomProperties(instance.getCustomProperties());
 
         return vm;
     }
@@ -453,6 +456,9 @@ public final class Cloner
         obj.setCpuProfileId(instance.getCpuProfileId());
         obj.setAutoConverge(instance.getAutoConverge());
         obj.setMigrateCompressed(instance.getMigrateCompressed());
+        obj.setPredefinedProperties(instance.getPredefinedProperties());
+        obj.setUserDefinedProperties(instance.getUserDefinedProperties());
+        obj.setCustomProperties(instance.getCustomProperties());
 
         return obj;
     }
@@ -497,6 +503,9 @@ public final class Cloner
         obj.setCpuProfileId(instance.getCpuProfileId());
         obj.setAutoConverge(instance.getAutoConverge());
         obj.setMigrateCompressed(instance.getMigrateCompressed());
+        obj.setPredefinedProperties(instance.getPredefinedProperties());
+        obj.setUserDefinedProperties(instance.getUserDefinedProperties());
+        obj.setCustomProperties(instance.getCustomProperties());
 
         return obj;
     }

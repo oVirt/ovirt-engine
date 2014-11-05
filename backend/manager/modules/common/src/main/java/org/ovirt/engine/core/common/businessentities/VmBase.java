@@ -227,6 +227,25 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     @EditableField
     private List<VmNumaNode> vNumaNodeList;
 
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String userDefinedProperties;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
+    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
+    private String predefinedProperties;
+
+    @CopyOnNewVersion
+    @EditableOnVmStatusField
+    @EditableOnTemplate
+    private String customProperties;
+
     public VmBase() {
         name = "";
         interfaces = new ArrayList<VmNetworkInterface>();
@@ -249,6 +268,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         spiceCopyPasteEnabled = true;
         setNumaTuneMode(NumaTuneMode.INTERLEAVE);
         vNumaNodeList = new ArrayList<VmNumaNode>();
+        customProperties = "";
     }
 
     @EditableField
@@ -399,7 +419,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 vmBase.getCpuProfileId(),
                 vmBase.getNumaTuneMode(),
                 vmBase.getAutoConverge(),
-                vmBase.getMigrateCompressed());
+                vmBase.getMigrateCompressed(),
+                vmBase.getUserDefinedProperties(),
+                vmBase.getPredefinedProperties(),
+                vmBase.getCustomProperties());
     }
 
     public VmBase(
@@ -453,7 +476,10 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
             Guid cpuProfileId,
             NumaTuneMode numaTuneMode,
             Boolean autoConverge,
-            Boolean migrateCompressed) {
+            Boolean migrateCompressed,
+            String userDefinedProperties,
+            String predefinedProperties,
+            String customProperties) {
         this();
         this.name = name;
         this.id = id;
@@ -506,6 +532,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         this.cpuProfileId = cpuProfileId;
         this.autoConverge = autoConverge;
         this.migrateCompressed = migrateCompressed;
+        this.userDefinedProperties = userDefinedProperties;
+        this.predefinedProperties = predefinedProperties;
+        this.customProperties = customProperties;
     }
 
     public long getDbGeneration() {
@@ -851,6 +880,8 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
         result = prime * result + ((vNumaNodeList == null) ? 0 : vNumaNodeList.hashCode());
         result = prime * result + (autoConverge == null ? 0 : autoConverge.hashCode());
         result = prime * result + (migrateCompressed == null ? 0 : migrateCompressed.hashCode());
+        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
+        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         return result;
     }
 
@@ -910,7 +941,9 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
                 && ObjectUtils.objectsEqual(numaTuneMode.getValue(), other.numaTuneMode.getValue())
                 && ObjectUtils.objectsEqual(vNumaNodeList, other.vNumaNodeList))
                 && ObjectUtils.objectsEqual(autoConverge, other.autoConverge)
-                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed);
+                && ObjectUtils.objectsEqual(migrateCompressed, other.migrateCompressed)
+                && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
+                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties);
     }
 
     public Guid getQuotaId() {
@@ -1121,4 +1154,29 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
     public void setMigrateCompressed(Boolean migrateCompressed) {
         this.migrateCompressed = migrateCompressed;
     }
+
+    public String getCustomProperties() {
+        return customProperties;
+    }
+
+    public void setCustomProperties(String customProperties) {
+        this.customProperties = customProperties;
+    }
+
+    public String getPredefinedProperties() {
+        return predefinedProperties;
+    }
+
+    public void setPredefinedProperties(String predefinedProperties) {
+        this.predefinedProperties = predefinedProperties;
+    }
+
+    public String getUserDefinedProperties() {
+        return userDefinedProperties;
+    }
+
+    public void setUserDefinedProperties(String userDefinedProperties) {
+        this.userDefinedProperties = userDefinedProperties;
+    }
+
 }

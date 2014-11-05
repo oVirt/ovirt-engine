@@ -7,7 +7,6 @@ import java.util.List;
 import org.apache.commons.lang.NotImplementedException;
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
-import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.compat.Guid;
 import org.springframework.jdbc.core.RowMapper;
 import org.springframework.jdbc.core.namedparam.MapSqlParameterSource;
@@ -32,9 +31,6 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
                 .addValue("vm_name", vm.getName())
                 .addValue("vmt_guid", vm.getVmtGuid())
                 .addValue("is_initialized", vm.isInitialized())
-                .addValue("predefined_properties", vm.getPredefinedProperties())
-                .addValue("userdefined_properties",
-                        vm.getUserDefinedProperties())
                 .addValue("cpu_pinning", vm.getCpuPinning())
                 .addValue("host_cpu_flags", vm.isUseHostCpuFlags())
                 .addValue("instance_type_id", vm.getInstanceTypeId())
@@ -172,12 +168,6 @@ public class VmStaticDAODbFacadeImpl extends VmBaseDaoDbFacade<VmStatic> impleme
             entity.setName(rs.getString("vm_name"));
             entity.setVmtGuid(getGuidDefaultEmpty(rs, "vmt_guid"));
             entity.setInitialized(rs.getBoolean("is_initialized"));
-            String predefinedProperties = rs.getString("predefined_properties");
-            String userDefinedProperties = rs.getString("userdefined_properties");
-            entity.setPredefinedProperties(predefinedProperties);
-            entity.setUserDefinedProperties(userDefinedProperties);
-            entity.setCustomProperties(VmPropertiesUtils.getInstance().customProperties(predefinedProperties,
-                    userDefinedProperties));
             entity.setCpuPinning(rs.getString("cpu_pinning"));
             entity.setUseHostCpuFlags(rs.getBoolean("host_cpu_flags"));
             entity.setInstanceTypeId(Guid.createGuidFromString(rs.getString("instance_type_id")));

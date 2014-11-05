@@ -22,19 +22,6 @@ public class VmStatic extends VmBase {
 
     private Guid originalTemplateGuid;
 
-    @EditableOnVmStatusField
-    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String userDefinedProperties;
-
-    @EditableOnVmStatusField
-    @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
-    @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
-    private String predefinedProperties;
-
-    @EditableOnVmStatusField
-    private String customProperties;
-
     @EditableField
     @OvfExportOnlyField(exportOption = ExportOption.EXPORT_NON_IGNORED_VALUES)
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
@@ -59,13 +46,11 @@ public class VmStatic extends VmBase {
         setDefaultDisplayType(DisplayType.qxl);
         setVmType(VmType.Desktop);
         vmtGuid = Guid.Empty;
-        customProperties = "";
     }
 
     public VmStatic(VmStatic vmStatic) {
         this((VmBase)vmStatic);
         vmtGuid = vmStatic.getVmtGuid();
-        setCustomProperties(vmStatic.getCustomProperties());
         setInitialized(vmStatic.isInitialized());
         setUseLatestVersion(vmStatic.isUseLatestVersion());
         setInstanceTypeId(vmStatic.getInstanceTypeId());
@@ -73,30 +58,6 @@ public class VmStatic extends VmBase {
 
     public VmStatic(VmBase vmBase) {
         super(vmBase);
-    }
-
-    public String getCustomProperties() {
-        return customProperties;
-    }
-
-    public void setCustomProperties(String customProperties) {
-        this.customProperties = customProperties;
-    }
-
-    public String getPredefinedProperties() {
-        return predefinedProperties;
-    }
-
-    public void setPredefinedProperties(String predefinedProperties) {
-        this.predefinedProperties = predefinedProperties;
-    }
-
-    public String getUserDefinedProperties() {
-        return userDefinedProperties;
-    }
-
-    public void setUserDefinedProperties(String userDefinedProperties) {
-        this.userDefinedProperties = userDefinedProperties;
     }
 
     public boolean isFirstRun() {
@@ -146,8 +107,6 @@ public class VmStatic extends VmBase {
         int result = super.hashCode();
         result = prime * result + (initialized ? 1231 : 1237);
         result = prime * result + ((getName() == null) ? 0 : getName().hashCode());
-        result = prime * result + ((predefinedProperties == null) ? 0 : predefinedProperties.hashCode());
-        result = prime * result + ((userDefinedProperties == null) ? 0 : userDefinedProperties.hashCode());
         result = prime * result + ((vmtGuid == null) ? 0 : vmtGuid.hashCode());
         result = prime * result + (useHostCpuFlags ? 1231 : 1237);
         result = prime * result + ((instanceTypeId == null) ? 0 : instanceTypeId.hashCode());
@@ -173,8 +132,6 @@ public class VmStatic extends VmBase {
         VmStatic other = (VmStatic) obj;
         return (initialized == other.initialized
                 && ObjectUtils.objectsEqual(getName(), other.getName())
-                && ObjectUtils.objectsEqual(predefinedProperties, other.predefinedProperties)
-                && ObjectUtils.objectsEqual(userDefinedProperties, other.userDefinedProperties)
                 && ObjectUtils.objectsEqual(vmtGuid, other.vmtGuid)
                 && useHostCpuFlags == other.useHostCpuFlags
                 && ObjectUtils.objectsEqual(instanceTypeId, other.instanceTypeId)

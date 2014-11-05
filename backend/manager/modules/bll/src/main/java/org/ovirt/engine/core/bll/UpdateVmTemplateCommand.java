@@ -29,6 +29,7 @@ import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.dal.dbbroker.DbFacade;
@@ -45,8 +46,15 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         setVmTemplateId(getVmTemplate().getId());
         setVdsGroupId(getVmTemplate().getVdsGroupId());
         if (getVdsGroup() != null) {
+            mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
             setStoragePoolId(getVdsGroup().getStoragePoolId() != null ? getVdsGroup().getStoragePoolId()
                     : Guid.Empty);
+            getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getcompatibility_version(),
+                    parameters.getVmTemplateData());
+            if (mOldTemplate != null) {
+                getVmPropertiesUtils().separateCustomPropertiesToUserAndPredefined(getVdsGroup().getcompatibility_version(),
+                        mOldTemplate);
+            }
         }
         VmHandler.updateDefaultTimeZone(parameters.getVmTemplateData());
     }
@@ -63,7 +71,7 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
             return failCanDoAction(VdcBllMessages.VMT_CANNOT_EDIT_BLANK_TEMPLATE);
         }
         boolean returnValue = false;
-        mOldTemplate = DbFacade.getInstance().getVmTemplateDao().get(getVmTemplate().getId());
+
         if (mOldTemplate == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_TEMPLATE_DOES_NOT_EXIST);
         }
@@ -167,6 +175,13 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
 
         if (getParameters().getVmTemplateData().getMinAllocatedMem() > getParameters().getVmTemplateData().getMemSizeMb()) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_MIN_MEMORY_CANNOT_EXCEED_MEMORY_SIZE);
+        }
+
+        if (!getVmPropertiesUtils().validateVmProperties(
+                getVdsGroup().getcompatibility_version(),
+                getParameters().getVmTemplateData().getCustomProperties(),
+                getReturnValue().getCanDoActionMessages())) {
+            return false;
         }
 
         return returnValue;
@@ -349,6 +364,10 @@ public class UpdateVmTemplateCommand<T extends UpdateVmTemplateParameters> exten
         }
         return validate(CpuProfileHelper.setAndValidateCpuProfile(getVmTemplate(),
                 getVdsGroup().getcompatibility_version()));
+    }
+
+    private VmPropertiesUtils getVmPropertiesUtils() {
+        return VmPropertiesUtils.getInstance();
     }
 
 }

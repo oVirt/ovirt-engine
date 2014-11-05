@@ -62,7 +62,9 @@ Create or replace FUNCTION InsertVmTemplate(v_child_count INTEGER,
  v_cpu_profile_id UUID,
  v_numatune_mode VARCHAR(20),
  v_is_auto_converge BOOLEAN,
- v_is_migrate_compressed BOOLEAN)
+ v_is_migrate_compressed BOOLEAN,
+ v_predefined_properties VARCHAR(4000),
+ v_userdefined_properties VARCHAR(4000))
 
 RETURNS VOID
    AS $procedure$
@@ -138,7 +140,9 @@ INTO vm_static(
     cpu_profile_id,
     numatune_mode,
     is_auto_converge,
-    is_migrate_compressed)
+    is_migrate_compressed,
+    predefined_properties,
+    userdefined_properties)
 VALUES(
     v_child_count,
     v_creation_date,
@@ -196,7 +200,9 @@ VALUES(
     v_cpu_profile_id,
     v_numatune_mode,
     v_is_auto_converge,
-    v_is_migrate_compressed);
+    v_is_migrate_compressed,
+    v_predefined_properties,
+    v_userdefined_properties);
 -- perform deletion from vm_ovf_generations to ensure that no record exists when performing insert to avoid PK violation.
 DELETE FROM vm_ovf_generations gen WHERE gen.vm_guid = v_vmt_guid;
 INSERT INTO vm_ovf_generations(vm_guid, storage_pool_id)
@@ -264,7 +270,9 @@ Create or replace FUNCTION UpdateVmTemplate(v_child_count INTEGER,
  v_cpu_profile_id UUID,
  v_numatune_mode VARCHAR(20),
  v_is_auto_converge BOOLEAN,
- v_is_migrate_compressed BOOLEAN)
+ v_is_migrate_compressed BOOLEAN,
+ v_predefined_properties VARCHAR(4000),
+v_userdefined_properties VARCHAR(4000))
 RETURNS VOID
 
 	--The [vm_templates] table doesn't have a timestamp column. Optimistic concurrency logic cannot be generated
@@ -294,7 +302,8 @@ BEGIN
       is_boot_menu_enabled = v_is_boot_menu_enabled,
       is_spice_file_transfer_enabled = v_is_spice_file_transfer_enabled, is_spice_copy_paste_enabled = v_is_spice_copy_paste_enabled, cpu_profile_id = v_cpu_profile_id,
       numatune_mode = v_numatune_mode,
-      is_auto_converge = v_is_auto_converge, is_migrate_compressed = v_is_migrate_compressed
+      is_auto_converge = v_is_auto_converge, is_migrate_compressed = v_is_migrate_compressed,
+      predefined_properties = v_predefined_properties,userdefined_properties = v_userdefined_properties
       WHERE vm_guid = v_vmt_guid
       AND   entity_type = v_template_type;
 

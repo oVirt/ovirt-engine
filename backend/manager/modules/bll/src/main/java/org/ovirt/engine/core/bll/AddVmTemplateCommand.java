@@ -61,6 +61,7 @@ import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateEntity;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.backendcompat.CommandExecutionStatus;
@@ -117,6 +118,8 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                 parameters.setConsoleEnabled(false);
             }
             VmHandler.updateDefaultTimeZone(parameterMasterVm);
+
+            separateCustomProperties(parameterMasterVm);
         }
         if (getVm() != null) {
             updateVmDevices();
@@ -131,6 +134,15 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
             setStoragePoolId(getVdsGroup().getStoragePoolId());
         }
         updateDiskInfoDestinationMap();
+    }
+
+    protected void separateCustomProperties(VmStatic parameterMasterVm) {
+        if (getVdsGroup() != null) {
+            // Parses the custom properties field that was filled by frontend to
+            // predefined and user defined fields
+            VmPropertiesUtils.getInstance().separateCustomPropertiesToUserAndPredefined(
+                    getVdsGroup().getcompatibility_version(), parameterMasterVm);
+        }
     }
 
     public AddVmTemplateCommand(T parameters) {
@@ -361,6 +373,13 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
         // Disallow cross-DC template creation
         if (!getStoragePoolId().equals(getVdsGroup().getStoragePoolId())) {
             addCanDoActionMessage(VdcBllMessages.VDS_CLUSTER_ON_DIFFERENT_STORAGE_POOL);
+            return false;
+        }
+
+        if (!VmPropertiesUtils.getInstance().validateVmProperties(
+                getVdsGroup().getcompatibility_version(),
+                getParameters().getMasterVm().getCustomProperties(),
+                getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
@@ -611,7 +630,10 @@ public class AddVmTemplateCommand<T extends AddVmTemplateParameters> extends VmT
                         getParameters().getMasterVm().getCpuProfileId(),
                         getParameters().getMasterVm().getNumaTuneMode(),
                         getParameters().getMasterVm().getAutoConverge(),
-                        getParameters().getMasterVm().getMigrateCompressed()));
+                        getParameters().getMasterVm().getMigrateCompressed(),
+                        getParameters().getMasterVm().getUserDefinedProperties(),
+                        getParameters().getMasterVm().getPredefinedProperties(),
+                        getParameters().getMasterVm().getCustomProperties()));
         DbFacade.getInstance().getVmTemplateDao().save(getVmTemplate());
         getCompensationContext().snapshotNewEntity(getVmTemplate());
         setActionReturnValue(getVmTemplate().getId());

@@ -6,7 +6,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.utils.exceptions.InitializationException;
@@ -115,11 +115,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
      *
      * @return map containing the VM custom properties
      */
-    public Map<String, String> getVMProperties(Version version, VmStatic vmStatic) {
-        separateCustomPropertiesToUserAndPredefined(version, vmStatic);
+    public Map<String, String> getVMProperties(Version version, VmBase vmBase) {
+        separateCustomPropertiesToUserAndPredefined(version, vmBase);
         Map<String, String> map = new HashMap<String, String>();
-        getPredefinedProperties(version, vmStatic, map);
-        getUserDefinedProperties(version, vmStatic, map);
+        getPredefinedProperties(version, vmBase, map);
+        getUserDefinedProperties(version, vmBase, map);
 
         return map;
     }
@@ -128,13 +128,13 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return allVmProperties;
     }
 
-    private void getPredefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {
-        String predefinedProperties = vmStatic.getPredefinedProperties();
+    private void getPredefinedProperties(Version version, VmBase vmBase, Map<String, String> propertiesMap) {
+        String predefinedProperties = vmBase.getPredefinedProperties();
         getVMProperties(version, propertiesMap, predefinedProperties);
     }
 
-    private void getUserDefinedProperties(Version version, VmStatic vmStatic, Map<String, String> propertiesMap) {
-        String UserDefinedProperties = vmStatic.getUserDefinedProperties();
+    private void getUserDefinedProperties(Version version, VmBase vmBase, Map<String, String> propertiesMap) {
+        String UserDefinedProperties = vmBase.getUserDefinedProperties();
         getVMProperties(version, propertiesMap, UserDefinedProperties);
     }
 
@@ -200,11 +200,11 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
         return result.toString();
     }
 
-    public void separateCustomPropertiesToUserAndPredefined(Version version, VmStatic vmStatic) {
-        String customProperties = vmStatic.getCustomProperties();
+    public void separateCustomPropertiesToUserAndPredefined(Version version, VmBase vmBase) {
+        String customProperties = vmBase.getCustomProperties();
         VMCustomProperties properties = parseProperties(version, customProperties);
-        vmStatic.setPredefinedProperties(properties.getPredefinedProperties());
-        vmStatic.setUserDefinedProperties(properties.getUseDefinedProperties());
+        vmBase.setPredefinedProperties(properties.getPredefinedProperties());
+        vmBase.setUserDefinedProperties(properties.getUseDefinedProperties());
     }
 
     /**
