@@ -17,9 +17,12 @@ import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
+import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
+import org.ovirt.engine.core.common.businessentities.VolumeFormat;
+import org.ovirt.engine.core.common.businessentities.VolumeType;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
@@ -83,15 +86,31 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
         return (getSnapshot() != null) ? getSnapshot().getVmId() : Guid.Empty;
     }
 
-    protected Collection<DiskImage> getDiskImagesFromConfiguration() {
+    @Override
+    protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
         if (diskImagesFromConfiguration == null) {
             diskImagesFromConfiguration =
                     ImagesHandler.filterImageDisks(vmFromConfiguration.getDiskMap().values(),
                             false,
                             true,
                             true);
+            adjustDisksImageConfiguration(diskImagesFromConfiguration);
         }
         return diskImagesFromConfiguration;
+    }
+
+    private void adjustDisksImageConfiguration(Collection<DiskImage> diskImages) {
+        for (DiskImage diskImage : diskImages) {
+            // Adjust disk image configuration if needed.
+            if ( diskImage.getVolumeType().equals(VolumeType.Sparse) && diskImage.getVolumeFormat().equals(VolumeFormat.RAW) &&
+                    getDestintationDomainTypeFromDisk(diskImage).isBlockDomain()) {
+                diskImage.setvolumeFormat(VolumeFormat.COW);
+            }
+        }
+    }
+
+    private StorageType getDestintationDomainTypeFromDisk(DiskImage diskImage) {
+        return destStorages.get(diskInfoDestinationMap.get(diskImage.getId()).getStorageIds().get(0)).getStorageStaticData().getStorageType();
     }
 
     @Override
@@ -131,7 +150,7 @@ public class AddVmFromSnapshotCommand<T extends AddVmFromSnapshotParameters> ext
 
         VmValidator vmValidator = createVmValidator(vmFromConfiguration);
         if (Boolean.FALSE.equals(getParameters().isVirtioScsiEnabled()) &&
-                !validate(vmValidator.canDisableVirtioScsi(getDiskImagesFromConfiguration()))) {
+                !validate(vmValidator.canDisableVirtioScsi(getAdjustedDiskImagesFromConfiguration()))) {
             return false;
         }
 

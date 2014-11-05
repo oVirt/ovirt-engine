@@ -317,10 +317,10 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
      * @return
      */
     protected Collection<DiskImage> getDiskImagesToBeCloned() {
-        return getDiskImagesFromConfiguration();
+        return getAdjustedDiskImagesFromConfiguration();
     }
 
-    protected abstract Collection<DiskImage> getDiskImagesFromConfiguration();
+    protected abstract Collection<DiskImage> getAdjustedDiskImagesFromConfiguration();
 
     protected DiskImage getDiskImageToRemoveByParam(MoveOrCopyImageGroupParameters param) {
         Guid imageGroupId = param.getDestImageGroupId();
@@ -396,9 +396,9 @@ public abstract class AddVmAndCloneImageCommand<T extends AddVmParameters> exten
     protected boolean addVmImages() {
         int numberOfStartedCopyTasks = 0;
         try {
-            if (!getDiskImagesFromConfiguration().isEmpty()) {
+            if (!getAdjustedDiskImagesFromConfiguration().isEmpty()) {
                 lockEntities();
-                for (DiskImage diskImage : getDiskImagesFromConfiguration()) {
+                for (DiskImage diskImage : getAdjustedDiskImagesFromConfiguration()) {
                     // For illegal image check if it was snapshot as illegal (therefore
                     // still exists at DB, or was it erased after snapshot - therefore the
                     // query returned to UI an illegal image)

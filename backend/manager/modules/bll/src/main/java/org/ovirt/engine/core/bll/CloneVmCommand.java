@@ -88,7 +88,8 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
         return locks;
     }
 
-    protected Collection<DiskImage> getDiskImagesFromConfiguration() {
+    @Override
+    protected Collection<DiskImage> getAdjustedDiskImagesFromConfiguration() {
         VdcQueryReturnValue vdcReturnValue = runInternalQuery(
                 VdcQueryType.GetAllDisksByVmId,
                 new IdQueryParameters(oldVmId));
@@ -151,7 +152,7 @@ public class CloneVmCommand<T extends CloneVmParameters> extends AddVmAndCloneIm
 
     private void fillDisksToParameters() {
 
-        for (Disk image : getDiskImagesFromConfiguration()) {
+        for (Disk image : getAdjustedDiskImagesFromConfiguration()) {
                 diskInfoDestinationMap.put(image.getId(), (DiskImage) image);
         }
 
