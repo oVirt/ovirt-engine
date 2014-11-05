@@ -563,10 +563,14 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         boolean exceptionOccurred = false;
         try {
             if (isEndSuccessfully()) {
-                setCommandStatus(CommandStatus.SUCCEEDED);
+                if (getCallBack() == null) {
+                    setCommandStatus(CommandStatus.SUCCEEDED);
+                }
                 internalEndSuccessfully();
             } else {
-                setCommandStatus(CommandStatus.FAILED);
+                if (getCallBack() == null) {
+                    setCommandStatus(CommandStatus.FAILED);
+                }
                 internalEndWithFailure();
             }
         } catch (RuntimeException e) {
