@@ -49,6 +49,7 @@ public class LoginFilter implements Filter {
                                 LoginUserParameters(
                                         profileName,
                                         authRecord,
+                                        (String)request.getAttribute(FiltersHelper.Constants.REQUEST_PASSWORD_KEY),
                                         loginAsAdmin ? VdcActionType.LoginAdminUser : VdcActionType.LoginUser,
                                         (AuthType)request.getAttribute(FiltersHelper.Constants.REQUEST_AUTH_TYPE_KEY)
                                )
