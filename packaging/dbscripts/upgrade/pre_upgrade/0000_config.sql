@@ -950,7 +950,7 @@ select fn_db_update_config_value('MaxNumOfVmCpus','160','3.1');
 select fn_db_update_config_value('MaxNumOfVmCpus','160','3.2');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.0');
 select fn_db_update_config_value('MigrationSupportForNativeUsb','false','3.1');
-select fn_db_update_config_value('MinimalETLVersion','3.5.0','general');
+select fn_db_update_config_value('MinimalETLVersion','3.6.0','general');
 select fn_db_update_config_value('OvirtInitialSupportedIsoVersion','2.5.5:5.8','general');
 select fn_db_update_config_value('OvirtIsoPrefix','^ovirt-node-iso-([0-9].*)\.iso$:^rhevh-([0-9].*)\.iso$','general');
 select fn_db_update_config_value('OvirtNodeOS','^ovirt.*$:^rhev.*$','general');
