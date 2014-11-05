@@ -277,34 +277,6 @@ public enum ConfigValues {
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("3")
     MaxRerunVmOnVdsCount,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrepXPPath,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrep2K3Path,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrep2K8Path,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrep2K8x64Path,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrep2K8R2Path,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrepWindows7Path,
-    @Reloadable
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrepWindows7x64Path,
     @TypeConverterAttribute(Integer.class)
     @DefaultValueAttribute("1000")
     MaxVmsInPool,
@@ -1291,23 +1263,11 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows8Path,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
     ProductKeyWindows8,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")
-    SysPrepWindows8x64Path,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
     ProductKeyWindows8x64,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("")
-    SysPrepWindows2012x64Path,
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("")

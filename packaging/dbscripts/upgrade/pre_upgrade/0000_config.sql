@@ -632,19 +632,8 @@ select fn_db_add_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4
 select fn_db_add_config_value('SupportForceCreateVG','false','3.0');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.0');
 select fn_db_add_config_value('SupportForceExtendVG','false','3.1');
-select fn_db_add_config_value('SysPrep2K3Path','/etc/ovirt-engine/sysprep/sysprep.2k3','general');
-select fn_db_add_config_value('SysPrep2K8Path','/etc/ovirt-engine/sysprep/sysprep.2k8x86','general');
-select fn_db_add_config_value('SysPrep2K8R2Path','/etc/ovirt-engine/sysprep/sysprep.2k8','general');
-select fn_db_add_config_value('SysPrep2K8x64Path','/etc/ovirt-engine/sysprep/sysprep.2k8','general');
 select fn_db_add_config_value('SysPrepDefaultPassword','','general');
 select fn_db_add_config_value('SysPrepDefaultUser','','general');
-select fn_db_add_config_value('SysPrepWindows7Path','/etc/ovirt-engine/sysprep/sysprep.w7','general');
-select fn_db_add_config_value('SysPrepWindows7x64Path','/etc/ovirt-engine/sysprep/sysprep.w7x64','general');
-select fn_db_add_config_value('SysPrepWindows8Path','/etc/ovirt-engine/sysprep/sysprep.w8','general');
-select fn_db_add_config_value('SysPrepWindows8x64Path','/etc/ovirt-engine/sysprep/sysprep.w8x64','general');
-select fn_db_add_config_value('SysPrepWindows2012x64Path','/etc/ovirt-engine/sysprep/sysprep.2k12x64','general');
---Handling Path to an XP machine Sys-Prep file.
-select fn_db_add_config_value('SysPrepXPPath','/etc/ovirt-engine/sysprep/sysprep.xp','general');
 select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','general');
 select fn_db_add_config_value('TimeoutToResetVdsInSeconds','60','general');
 select fn_db_add_config_value('DelayResetForSpmInSeconds','20','general');
@@ -1161,6 +1150,16 @@ select fn_db_delete_config_value('UknownTaskPrePollingLapse','general');
 select fn_db_delete_config_value('GlusterAysncTasksSupport','3.0,3.1,3.2,3.3');
 select fn_db_delete_config_value('NormalizedMgmgNetworkEnabled','3.0,3.1,3.2');
 select fn_db_delete_config_value('HotPlugCpuEnabled','3.0,3.1,3.2,3.3,3.4,3.5');
+select fn_db_delete_config_value('SysPrepXPPath','general');
+select fn_db_delete_config_value('SysPrep2K3Path','general');
+select fn_db_delete_config_value('SysPrep2K8Path','general');
+select fn_db_delete_config_value('SysPrep2K8R2Path','general');
+select fn_db_delete_config_value('SysPrep2K8x64Path','general');
+select fn_db_delete_config_value('SysPrepWindows7Path','general');
+select fn_db_delete_config_value('SysPrepWindows7x64Path','general');
+select fn_db_delete_config_value('SysPrepWindows8Path','general');
+select fn_db_delete_config_value('SysPrepWindows8x64Path','general');
+select fn_db_delete_config_value('SysPrepWindows2012x64Path','general');
 ------------------------------------------------------------------------------------
 --                  Split config section
 -- The purpose of this section is to treat config option that was once
