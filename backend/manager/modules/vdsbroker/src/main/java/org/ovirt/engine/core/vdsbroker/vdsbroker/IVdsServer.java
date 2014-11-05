@@ -358,4 +358,8 @@ public interface IVdsServer {
     StatusOnlyReturnForXmlRpc glusterSnapshotDelete(String snapshotName);
 
     StatusOnlyReturnForXmlRpc glusterVolumeSnapshotDelete(String volumeName);
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotActivate(String snapshotName, boolean force);
+
+    StatusOnlyReturnForXmlRpc glusterSnapshotDeactivate(String snapshotName);
 }
