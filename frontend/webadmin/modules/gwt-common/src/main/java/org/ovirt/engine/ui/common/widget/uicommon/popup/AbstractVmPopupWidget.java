@@ -1393,7 +1393,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         hostTab.setLabel(constants.hostVmPopup());
         isAutoAssignEditor.setLabel(constants.anyHostInClusterVmPopup());
         // specificHostEditor.setLabel("Specific");
-        hostCpuEditor.setLabel(constants.useHostCpu());
+        hostCpuEditor.setLabel(constants.passThroughHostCpu());
         cpuPinning.setLabel(constants.cpuPinningLabel());
 
         // numa
