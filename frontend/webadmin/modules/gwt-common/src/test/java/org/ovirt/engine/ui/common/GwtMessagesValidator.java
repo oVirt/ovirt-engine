@@ -1,12 +1,15 @@
 package org.ovirt.engine.ui.common;
 
 import java.io.File;
-import java.io.FileReader;
+import java.io.FileInputStream;
 import java.io.FilenameFilter;
 import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.Reader;
 import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.net.URISyntaxException;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashSet;
@@ -46,13 +49,16 @@ public class GwtMessagesValidator {
                     .toURI().toASCIIString().replaceAll("file:", ""));
             List<Method> messagesMethods = Arrays.asList(classUnderTest.getMethods());
 
-            for (File localeFile : getMessagesPropertiesFiles(messagesDir, classUnderTest.getSimpleName())) {
-                PropertiesFileInfo.properties = loadProperties(localeFile);
-                PropertiesFileInfo.fileName = localeFile.getName();
+            File[] propertiesFiles = getMessagesPropertiesFiles(messagesDir, classUnderTest.getSimpleName());
+            if (propertiesFiles != null) {
+                for (File localeFile : propertiesFiles) {
+                    PropertiesFileInfo.properties = loadProperties(localeFile);
+                    PropertiesFileInfo.fileName = localeFile.getName();
 
-                for (Method method : messagesMethods) {
-                    checkForMissingDefault(method, errors);
-                    checkPlaceHolders(method, errors);
+                    for (Method method : messagesMethods) {
+                        checkForMissingDefault(method, errors);
+                        checkPlaceHolders(method, errors);
+                    }
                 }
             }
         } else {
@@ -137,11 +143,16 @@ public class GwtMessagesValidator {
 
     private static Properties loadProperties(File localeFile) throws IOException {
         Properties properties = new Properties();
-        FileReader fr = null;
+        Reader fr = null;
+        FileInputStream fis = null;
         try {
-            fr = new FileReader(localeFile);
+            fis = new FileInputStream(localeFile);
+            fr = new InputStreamReader(fis, StandardCharsets.UTF_8);
             properties.load(fr);
         } finally {
+            if (fis != null) {
+                fis.close();
+            }
             if (fr != null) {
                 fr.close();
             }

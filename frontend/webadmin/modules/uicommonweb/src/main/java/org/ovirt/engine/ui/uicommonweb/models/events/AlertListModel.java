@@ -50,6 +50,7 @@ public class AlertListModel extends SearchableListModel
 
     @Override
     public void executeCommand(UICommand command) {
+        super.executeCommand(command);
         if (command == getDismissCommand())
         {
             dismissAlert();

@@ -35,7 +35,6 @@ public class VdcOperationManagerTest {
     @SuppressWarnings("unchecked")
     @Before
     public void setUp() throws Exception {
-        final VdcReturnValueBase result = new VdcReturnValueBase();
         testManager = new VdcOperationManager(mockOperationProcessor);
         final VdcReturnValueBase loginResult = new VdcReturnValueBase();
         LoginUserParameters params = new LoginUserParameters("test", "test", //$NON-NLS-1$ //$NON-NLS-2$

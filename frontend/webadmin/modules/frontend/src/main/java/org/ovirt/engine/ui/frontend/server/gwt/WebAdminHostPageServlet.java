@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -106,17 +108,18 @@ public class WebAdminHostPageServlet extends GwtDynamicHostPageServlet {
     }
 
     @Override
-    protected MessageDigest getMd5Digest(HttpServletRequest request) throws NoSuchAlgorithmException {
+    protected MessageDigest getMd5Digest(HttpServletRequest request) throws NoSuchAlgorithmException,
+        UnsupportedEncodingException {
         MessageDigest digest = super.getMd5Digest(request);
 
         // Update based on applicationMode object
-        digest.update(request.getAttribute(ATTR_APPLICATION_MODE).toString().getBytes());
+        digest.update(request.getAttribute(ATTR_APPLICATION_MODE).toString().getBytes(StandardCharsets.UTF_8));
 
         // Update based on pluginDefinitions array
-        digest.update(request.getAttribute(ATTR_PLUGIN_DEFS).toString().getBytes());
+        digest.update(request.getAttribute(ATTR_PLUGIN_DEFS).toString().getBytes(StandardCharsets.UTF_8));
 
         // Update based on engineSessionTimeout object
-        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes());
+        digest.update(request.getAttribute(ATTR_ENGINE_SESSION_TIMEOUT).toString().getBytes(StandardCharsets.UTF_8));
 
         // Update based on report URL parameters.
         digest.update(request.getAttribute(ATTR_ENGINE_REPORTS_BASE_URL).toString().getBytes());

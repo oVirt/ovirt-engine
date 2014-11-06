@@ -15,6 +15,8 @@ import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -105,13 +107,14 @@ public class WebAdminHostPageServletTest extends AbstractGwtDynamicHostPageServl
     }
 
     @Test
-    public void testGetMd5Digest_WithExtraObjects_WithoutUserInfoObject() throws NoSuchAlgorithmException {
+    public void testGetMd5Digest_WithExtraObjects_WithoutUserInfoObject() throws NoSuchAlgorithmException,
+        UnsupportedEncodingException {
         MessageDigest result = testServlet.getMd5Digest(mockRequest);
         assertEquals(result, mockDigest);
         verify(mockDigest, atLeast(3)).update(byteArrayCaptor.capture());
-        assertArrayEquals(SELECTOR_SCRIPT.getBytes(), byteArrayCaptor.getAllValues().get(0));
-        assertArrayEquals(APPLICATION_MODE.getBytes(), byteArrayCaptor.getAllValues().get(1));
-        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(), byteArrayCaptor.getAllValues().get(2));
+        assertArrayEquals(SELECTOR_SCRIPT.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(0));
+        assertArrayEquals(APPLICATION_MODE.getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(1));
+        assertArrayEquals(mockPluginDefinitionsArray.toString().getBytes(StandardCharsets.UTF_8), byteArrayCaptor.getAllValues().get(2));
     }
 
     @Test

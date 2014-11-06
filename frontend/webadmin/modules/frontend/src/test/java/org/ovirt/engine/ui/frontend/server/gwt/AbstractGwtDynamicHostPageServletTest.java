@@ -17,6 +17,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
@@ -208,7 +209,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     @Test
-    public void testGetMd5Digest_WithoutUserInfoObject() throws NoSuchAlgorithmException {
+    public void testGetMd5Digest_WithoutUserInfoObject() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest result = testServlet.getMd5Digest(mockRequest);
         assertEquals(result, mockDigest);
         verify(mockDigest, atLeast(1)).update(byteArrayCaptor.capture());
@@ -216,7 +217,7 @@ public abstract class AbstractGwtDynamicHostPageServletTest<T extends GwtDynamic
     }
 
     @Test
-    public void testGetMd5Digest_WithUserInfoObject() throws NoSuchAlgorithmException {
+    public void testGetMd5Digest_WithUserInfoObject() throws NoSuchAlgorithmException, UnsupportedEncodingException {
         String userInfo = "{ \"foo\": \"bar\" }"; //$NON-NLS-1$
         when(mockUserInfoObject.toString()).thenReturn(userInfo);
         when(mockRequest.getAttribute(GwtDynamicHostPageServlet.

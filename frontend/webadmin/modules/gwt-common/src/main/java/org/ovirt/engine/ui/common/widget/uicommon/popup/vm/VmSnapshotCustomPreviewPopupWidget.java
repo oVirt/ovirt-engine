@@ -1,26 +1,10 @@
 package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
-import com.google.gwt.cell.client.Cell.Context;
-import com.google.gwt.cell.client.FieldUpdater;
-import com.google.gwt.core.client.GWT;
-import com.google.gwt.dom.client.BrowserEvents;
-import com.google.gwt.dom.client.NativeEvent;
-import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.resources.client.ImageResource;
-import com.google.gwt.safehtml.shared.SafeHtml;
-import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
-import com.google.gwt.safehtml.shared.SafeHtmlUtils;
-import com.google.gwt.uibinder.client.UiBinder;
-import com.google.gwt.uibinder.client.UiField;
-import com.google.gwt.user.cellview.client.Column;
-import com.google.gwt.user.client.ui.AbstractImagePrototype;
-import com.google.gwt.user.client.ui.FlowPanel;
-import com.google.gwt.user.client.ui.HTML;
-import com.google.gwt.user.client.ui.Label;
-import com.google.gwt.user.client.ui.SimplePanel;
-import com.google.gwt.user.client.ui.SplitLayoutPanel;
-import com.google.gwt.view.client.CellPreviewEvent;
-import com.google.gwt.view.client.NoSelectionModel;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.ImageStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
@@ -46,10 +30,27 @@ import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
 import org.ovirt.engine.ui.uicompat.IEventListener;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Date;
-import java.util.List;
+import com.google.gwt.cell.client.Cell.Context;
+import com.google.gwt.cell.client.FieldUpdater;
+import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.BrowserEvents;
+import com.google.gwt.dom.client.NativeEvent;
+import com.google.gwt.editor.client.SimpleBeanEditorDriver;
+import com.google.gwt.resources.client.ImageResource;
+import com.google.gwt.safehtml.shared.SafeHtml;
+import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
+import com.google.gwt.safehtml.shared.SafeHtmlUtils;
+import com.google.gwt.uibinder.client.UiBinder;
+import com.google.gwt.uibinder.client.UiField;
+import com.google.gwt.user.cellview.client.Column;
+import com.google.gwt.user.client.ui.AbstractImagePrototype;
+import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.gwt.user.client.ui.HTML;
+import com.google.gwt.user.client.ui.Label;
+import com.google.gwt.user.client.ui.SimplePanel;
+import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.gwt.view.client.CellPreviewEvent;
+import com.google.gwt.view.client.NoSelectionModel;
 
 public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupWidget<PreviewSnapshotModel> {
 
@@ -175,6 +176,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
                 constants.vmConfiguration()), "30px"); //$NON-NLS-1$
 
         previewTable.addColumn(new CheckboxColumn<SnapshotModel>(new FieldUpdater<SnapshotModel, Boolean>() {
+            @Override
             public void update(int index, SnapshotModel snapshotModel, Boolean value) {
                 previewSnapshotModel.getSnapshotModel().getMemory().setEntity(value);
                 refreshTable(previewTable);
@@ -183,7 +185,7 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
         }) {
             @Override
             public Boolean getValue(SnapshotModel snapshotModel) {
-                return (Boolean) snapshotModel.getMemory().getEntity();
+                return snapshotModel.getMemory().getEntity();
 
             }
 
@@ -284,7 +286,12 @@ public class VmSnapshotCustomPreviewPopupWidget extends AbstractModelBoundPopupW
     private void updateWarnings() {
         List<DiskImage> selectedDisks = previewSnapshotModel.getSelectedDisks();
         List<DiskImage> disksOfSelectedSnapshot = previewSnapshotModel.getSnapshotModel().getEntity().getDiskImages();
-        List<DiskImage> disksOfActiveSnapshot = previewSnapshotModel.getActiveSnapshotModel().getEntity().getDiskImages();
+        List<DiskImage> disksOfActiveSnapshot;
+        if (previewSnapshotModel.getActiveSnapshotModel() != null) {
+            disksOfActiveSnapshot = previewSnapshotModel.getActiveSnapshotModel().getEntity().getDiskImages();
+        } else {
+            disksOfActiveSnapshot = Collections.emptyList();
+        }
 
         boolean isIncludeAllDisksOfSnapshot = selectedDisks.containsAll(disksOfSelectedSnapshot);
         boolean isIncludeMemory = previewSnapshotModel.getSnapshotModel().getMemory().getEntity();

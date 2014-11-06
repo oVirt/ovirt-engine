@@ -9,7 +9,7 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.net.URL;
 import java.net.URLClassLoader;
-import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -319,7 +319,7 @@ public class BrandingTheme {
 
         try (
             InputStream in = new FileInputStream(fileName);
-            Reader reader = new InputStreamReader(in, Charset.forName("UTF-8"));
+            Reader reader = new InputStreamReader(in, StandardCharsets.UTF_8);
             BufferedReader bufferedReader= new BufferedReader(reader);
         ){
             String currentLine;

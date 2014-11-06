@@ -1,6 +1,8 @@
 package org.ovirt.engine.ui.frontend.server.gwt;
 
 import java.io.IOException;
+import java.io.UnsupportedEncodingException;
+import java.nio.charset.StandardCharsets;
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.Locale;
@@ -263,7 +265,8 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
         return obj;
     }
 
-    protected String getMd5Sum(HttpServletRequest request) throws NoSuchAlgorithmException {
+    protected String getMd5Sum(HttpServletRequest request) throws NoSuchAlgorithmException,
+        UnsupportedEncodingException {
         return (new HexBinaryAdapter()).marshal(getMd5Digest(request).digest());
     }
 
@@ -278,14 +281,15 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
      * string representation of the MD5 sum.
      * @throws NoSuchAlgorithmException If the method cannot create the digest
      * object.
+     * @throws UnsupportedEncodingException
      */
     protected MessageDigest getMd5Digest(final HttpServletRequest request)
-            throws NoSuchAlgorithmException {
+            throws NoSuchAlgorithmException, UnsupportedEncodingException {
         MessageDigest digest = createMd5Digest();
         for (MD5Attributes attribute: MD5Attributes.values()) {
             if (request.getAttribute(attribute.getKey()) != null) {
                 digest.update(request.getAttribute(attribute.getKey()).
-                        toString().getBytes());
+                        toString().getBytes(StandardCharsets.UTF_8));
             }
         }
         return digest;
