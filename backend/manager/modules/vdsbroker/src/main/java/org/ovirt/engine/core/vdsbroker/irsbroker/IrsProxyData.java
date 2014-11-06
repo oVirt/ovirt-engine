@@ -1240,7 +1240,7 @@ public class IrsProxyData {
         if (tempData.getLastCheck() > Config
                 .<Double> getValue(ConfigValues.MaxStorageVdsTimeoutCheckSec)) {
             if (isLog) {
-                log.error("Domain '{}' check timeot '{}' is too big",
+                log.error("Domain '{}' check timeout '{}' is too big",
                         getDomainIdTuple(tempData.getDomainId()),
                         tempData.getLastCheck());
             }
