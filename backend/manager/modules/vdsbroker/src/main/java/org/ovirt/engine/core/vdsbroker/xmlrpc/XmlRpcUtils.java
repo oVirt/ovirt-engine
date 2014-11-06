@@ -1,11 +1,17 @@
 package org.ovirt.engine.core.vdsbroker.xmlrpc;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationHandler;
 import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
 import java.lang.reflect.UndeclaredThrowableException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.concurrent.Callable;
 import java.util.concurrent.FutureTask;
 import java.util.concurrent.TimeUnit;
@@ -21,10 +27,12 @@ import org.apache.commons.httpclient.params.HttpMethodParams;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
 import org.apache.commons.lang.StringUtils;
+import org.apache.xmlrpc.XmlRpcException;
 import org.apache.xmlrpc.XmlRpcRequest;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.apache.xmlrpc.client.XmlRpcClientConfigImpl;
 import org.apache.xmlrpc.client.XmlRpcClientException;
+import org.apache.xmlrpc.client.XmlRpcClientRequestImpl;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransport;
 import org.apache.xmlrpc.client.XmlRpcCommonsTransportFactory;
 import org.apache.xmlrpc.client.XmlRpcTransport;
@@ -39,12 +47,14 @@ import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
 import org.ovirt.engine.core.vdsbroker.vdsbroker.FutureCall;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 public class XmlRpcUtils {
 
     private static final String HTTP = "http://";
     private static final String HTTPS = "https://";
     private static final Logger log = LoggerFactory.getLogger(XmlRpcUtils.class);
+    private static final Set<String> SUPPORTED_METHODS_FOR_LONG_CONVERSION = new HashSet<String>(Arrays.asList(""));
     static {
         if (Config.<Boolean> getValue(ConfigValues.EncryptHostCommunication)) {
             URL keystoreUrl;
@@ -268,6 +278,31 @@ public class XmlRpcUtils {
             if (StringUtils.isNotBlank(correlationId)) {
                 method.setRequestHeader(FLOW_ID_HEADER_NAME, correlationId);
             }
+        }
+
+        @Override
+        protected ReqWriter newReqWriter(XmlRpcRequest pRequest)
+                throws XmlRpcException, IOException, SAXException {
+            if (SUPPORTED_METHODS_FOR_LONG_CONVERSION.contains(pRequest.getMethodName())) {
+                pRequest =
+                        new XmlRpcClientRequestImpl(pRequest.getConfig(),
+                                pRequest.getMethodName(),
+                                normalizeLongs(pRequest));
+            }
+            return super.newReqWriter(pRequest);
+        }
+
+        private Object[] normalizeLongs(XmlRpcRequest request) {
+            List<Object> result = new ArrayList<>();
+            for (int i = 0; i < request.getParameterCount(); i++) {
+                Object object = request.getParameter(i);
+                if (Long.class.isInstance(object)) {
+                    result.add(object.toString());
+                    continue;
+                }
+                result.add(object);
+            }
+            return result.toArray();
         }
     };
 
