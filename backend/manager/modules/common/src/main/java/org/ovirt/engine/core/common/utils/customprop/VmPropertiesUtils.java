@@ -215,4 +215,13 @@ public class VmPropertiesUtils extends CustomPropertiesUtils {
     public String getVmPropSpec() {
         return VALIDATION_STR;
     }
+
+    public boolean validateVmProperties(Version version, String properties, List<String> message) {
+        List<ValidationError> validationErrors = validateVmProperties(version, properties);
+        if (!validationErrors.isEmpty()) {
+            handleCustomPropertiesError(validationErrors, message);
+            return false;
+        }
+        return true;
+    }
 }

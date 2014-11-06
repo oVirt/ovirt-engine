@@ -172,7 +172,7 @@ public class AddVmCommandTest {
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
-        doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
+        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
         assertTrue("vm could not be added", cmd.canAddVm(reasons, Arrays.asList(createStorageDomain(domainSizeGB))));
     }
@@ -362,7 +362,7 @@ public class AddVmCommandTest {
         AddVmFromTemplateCommand<AddVmFromTemplateParameters> result = spy(concrete);
         doReturn(true).when(result).checkNumberOfMonitors();
         doReturn(createVmTemplate()).when(result).getVmTemplate();
-        doReturn(Collections.emptyList()).when(result).validateCustomProperties(any(VmStatic.class));
+        doReturn(true).when(result).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
         mockDAOs(result);
         mockBackend(result);
         initCommandMethods(result);
@@ -703,7 +703,7 @@ public class AddVmCommandTest {
         final int domainSizeGB = 20;
         final int sizeRequired = 5;
         AddVmCommand<VmManagementParametersBase> cmd = setupCanAddVmTests(domainSizeGB, sizeRequired);
-        doReturn(Collections.emptyList()).when(cmd).validateCustomProperties(any(VmStatic.class));
+        doReturn(true).when(cmd).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
         doReturn(true).when(cmd).validateSpaceRequirements();
 
         cmd.getParameters().setBalloonEnabled(true);
