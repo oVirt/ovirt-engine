@@ -44,7 +44,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.compat.Guid;
 import org.ovirt.engine.core.compat.Version;
 import org.ovirt.engine.core.dao.DiskDao;
@@ -369,7 +368,7 @@ public class UpdateVmCommandTest {
     }
 
     private void mockValidateCustomProperties() {
-        doReturn(Collections.<ValidationError> emptyList()).when(command).validateCustomProperties(any(VmStatic.class));
+        doReturn(true).when(command).validateCustomProperties(any(VmStatic.class), any(ArrayList.class));
     }
 
     private void mockValidatePciAndIdeLimit() {

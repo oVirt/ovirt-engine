@@ -41,7 +41,6 @@ import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.IsVmDuringInitiatingVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -174,17 +173,10 @@ public class RunVmValidator {
     protected boolean validateVmProperties(VM vm, String runOnceCustomProperties, List<String> messages) {
         String customProperties = runOnceCustomProperties != null ?
                 runOnceCustomProperties : vm.getCustomProperties();
-        List<ValidationError> validationErrors =
-                getVmPropertiesUtils().validateVmProperties(
+        return getVmPropertiesUtils().validateVmProperties(
                         vm.getVdsGroupCompatibilityVersion(),
-                        customProperties);
-
-        if (!validationErrors.isEmpty()) {
-            getVmPropertiesUtils().handleCustomPropertiesError(validationErrors, messages);
-            return false;
-        }
-
-        return true;
+                        customProperties,
+                        messages);
     }
 
     protected ValidationResult validateBootSequence(VM vm, BootSequence runOnceBootSequence,

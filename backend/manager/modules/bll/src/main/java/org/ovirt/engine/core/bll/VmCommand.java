@@ -32,7 +32,6 @@ import org.ovirt.engine.core.common.errors.VdcBllMessages;
 import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.vdscommands.DeleteImageGroupVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
@@ -391,10 +390,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
         return permissionList;
     }
 
-    protected List<ValidationError> validateCustomProperties(VmStatic vmStaticFromParams) {
+    protected boolean validateCustomProperties(VmStatic vmStaticFromParams, List<String> reasons) {
         return VmPropertiesUtils.getInstance().validateVmProperties(
                 getVdsGroup().getcompatibility_version(),
-                vmStaticFromParams.getCustomProperties());
+                vmStaticFromParams.getCustomProperties(),
+                reasons);
     }
 
     /**

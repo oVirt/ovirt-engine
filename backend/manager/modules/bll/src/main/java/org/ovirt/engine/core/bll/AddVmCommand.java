@@ -79,7 +79,6 @@ import org.ovirt.engine.core.common.osinfo.OsRepository;
 import org.ovirt.engine.core.common.utils.Pair;
 import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.common.utils.VmDeviceType;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.CreateVm;
 import org.ovirt.engine.core.compat.Guid;
@@ -285,9 +284,7 @@ public class AddVmCommand<T extends AddVmParameters> extends VmManagementCommand
             return false;
         }
 
-        List<ValidationError> validationErrors = validateCustomProperties(vmStaticFromParams);
-        if (!validationErrors.isEmpty()) {
-            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors, reasons);
+        if (!validateCustomProperties(vmStaticFromParams, reasons)) {
             return false;
         }
 

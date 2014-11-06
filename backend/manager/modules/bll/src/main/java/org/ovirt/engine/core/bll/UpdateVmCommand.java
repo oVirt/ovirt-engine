@@ -61,7 +61,6 @@ import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.common.utils.Pair;
-import org.ovirt.engine.core.common.utils.customprop.ValidationError;
 import org.ovirt.engine.core.common.utils.customprop.VmPropertiesUtils;
 import org.ovirt.engine.core.common.validation.group.UpdateVm;
 import org.ovirt.engine.core.compat.DateTime;
@@ -474,10 +473,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
             }
         }
 
-        List<ValidationError> validationErrors = validateCustomProperties(vmFromParams.getStaticData());
-        if (!validationErrors.isEmpty()) {
-            VmPropertiesUtils.getInstance().handleCustomPropertiesError(validationErrors,
-                    getReturnValue().getCanDoActionMessages());
+        if (!validateCustomProperties(vmFromParams.getStaticData(), getReturnValue().getCanDoActionMessages())) {
             return false;
         }
 
