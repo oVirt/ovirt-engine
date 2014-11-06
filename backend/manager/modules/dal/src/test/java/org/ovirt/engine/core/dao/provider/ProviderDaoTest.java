@@ -27,6 +27,7 @@ public class ProviderDaoTest extends BaseGenericDaoTestCase<Guid, Provider<?>, P
         additionalProperties.setTenantName("10ant");
         additionalProperties.setPluginType(OpenstackNetworkPluginType.LINUX_BRIDGE.name());
         provider.setAdditionalProperties(additionalProperties);
+        provider.setAuthUrl("http://keystone-server:35357/v2.0/");
         return provider;
     }
 

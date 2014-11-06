@@ -14,8 +14,6 @@ import org.ovirt.engine.core.common.businessentities.OpenStackImageProviderPrope
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.ProviderType;
 import org.ovirt.engine.core.common.businessentities.TenantProviderProperties;
-import org.ovirt.engine.core.common.queries.ConfigurationValues;
-import org.ovirt.engine.core.compat.StringHelper;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
@@ -49,9 +47,6 @@ public class ProviderModel extends Model {
     private static final String CMD_CANCEL_IMPORT = "CancelImport"; //$NON-NLS-1$
     private static final String EMPTY_ERROR_MESSAGE = ""; //$NON-NLS-1$
 
-    private final String keystoneUrl =
-            (String) AsyncDataProvider.getInstance().getConfigValuePreConverted(ConfigurationValues.KeystoneAuthUrl);
-
     protected final SearchableListModel sourceListModel;
     private final VdcActionType action;
     protected final Provider provider;
@@ -66,6 +61,7 @@ public class ProviderModel extends Model {
     private ListModel<ProviderType> type;
     private UICommand testCommand;
     private EntityModel<String> testResult = new EntityModel<String>();
+    private EntityModel<String> authUrl = new EntityModel<String>();
 
     private NeutronAgentModel neutronAgentModel = new NeutronAgentModel();
     private String certificate;
@@ -134,9 +130,13 @@ public class ProviderModel extends Model {
         return getType().getSelectedItem() == ProviderType.OPENSTACK_IMAGE;
     }
 
-    private boolean isTypeTenantAware() {
+    private boolean isTypeTenantOrAuthUrlAware() {
         ProviderType type = getType().getSelectedItem();
         return type == ProviderType.OPENSTACK_NETWORK || type == ProviderType.OPENSTACK_IMAGE;
+    }
+
+    public EntityModel<String> getAuthUrl() {
+        return authUrl;
     }
 
     private boolean isTypeRequiresAuthentication() {
@@ -170,6 +170,7 @@ public class ProviderModel extends Model {
                 getUsername().setIsChangable(authenticationRequired);
                 getPassword().setIsChangable(authenticationRequired);
                 getTenantName().setIsChangable(authenticationRequired);
+                getAuthUrl().setIsChangable(authenticationRequired);
             }
         });
         setType(new ListModel<ProviderType>() {
@@ -189,9 +190,10 @@ public class ProviderModel extends Model {
         getType().getSelectedItemChangedEvent().addListener(new IEventListener<EventArgs>() {
             @Override
             public void eventRaised(Event<? extends EventArgs> ev, Object sender, EventArgs args) {
-                boolean isTenant = isTypeTenantAware();
-                getTenantName().setIsAvailable(isTenant);
-                if (isTenant) {
+                boolean isTenantOrAuthUrlAware = isTypeTenantOrAuthUrlAware();
+                getTenantName().setIsAvailable(isTenantOrAuthUrlAware);
+                getAuthUrl().setIsAvailable(isTenantOrAuthUrlAware);
+                if (isTenantOrAuthUrlAware) {
                     TenantProviderProperties properties = (TenantProviderProperties) provider.getAdditionalProperties();
                     getTenantName().setEntity(properties == null ? null : properties.getTenantName());
                 }
@@ -239,13 +241,16 @@ public class ProviderModel extends Model {
         getUsername().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getPassword().validateEntity(new IValidation[] { new NotEmptyValidation() });
         getTenantName().validateEntity(new IValidation[] { new NotEmptyValidation()} );
+        getAuthUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
         getUrl().validateEntity(new IValidation[] { new NotEmptyValidation(),
                 new UrlValidation(Uri.SCHEME_HTTP, Uri.SCHEME_HTTPS) });
 
         return getUrl().getIsValid() &&
                 getUsername().getIsValid() &&
                 getPassword().getIsValid() &&
-                getTenantName().getIsValid();
+                getTenantName().getIsValid() &&
+                getAuthUrl().getIsValid();
     }
 
     private void cancel() {
@@ -277,6 +282,7 @@ public class ProviderModel extends Model {
                 }
                 properties.setTenantName(getTenantName().getEntity());
             }
+            provider.setAuthUrl(getAuthUrl().getEntity());
         } else {
             provider.setUsername(null);
             provider.setPassword(null);
@@ -286,6 +292,7 @@ public class ProviderModel extends Model {
                     properties.setTenantName(null);
                 }
             }
+            provider.setAuthUrl(null);
         }
     }
 
@@ -441,8 +448,6 @@ public class ProviderModel extends Model {
         if (result == null || !result.getSucceeded()) {
             if (result != null) {
                 errorMessage = Frontend.getInstance().translateVdcFault(result.getFault());
-            } else if ((Boolean) requiresAuthentication.getEntity() && StringHelper.isNullOrEmpty(keystoneUrl)) {
-                errorMessage = ConstantsManager.getInstance().getConstants().noAuthUrl();
             } else {
                 errorMessage = ConstantsManager.getInstance().getConstants().testFailedUnknownErrorMsg();
             }

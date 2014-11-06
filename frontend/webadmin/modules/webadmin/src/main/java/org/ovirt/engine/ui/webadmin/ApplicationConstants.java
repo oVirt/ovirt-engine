@@ -3289,6 +3289,9 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("Username")
     String usernameProvider();
 
+    @DefaultStringValue("Authentication URL")
+    String authUrlProvider();
+
     @DefaultStringValue("Password")
     String passwordProvider();
 

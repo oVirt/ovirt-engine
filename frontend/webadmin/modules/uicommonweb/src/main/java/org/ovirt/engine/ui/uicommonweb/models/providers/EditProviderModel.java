@@ -45,6 +45,7 @@ public class EditProviderModel extends ProviderModel {
         getRequiresAuthentication().setEntity(provider.isRequiringAuthentication());
         getUsername().setEntity(provider.getUsername());
         getPassword().setEntity(provider.getPassword());
+        getAuthUrl().setEntity(provider.getAuthUrl());
 
         if (isTypeOpenStackNetwork()) {
             getNeutronAgentModel().init(provider);

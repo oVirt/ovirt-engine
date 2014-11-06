@@ -51,6 +51,8 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
     @Valid
     private P additionalProperties;
 
+    private String authUrl;
+
     @Override
     public String getName() {
         return name;
@@ -139,6 +141,14 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
         return getId();
     }
 
+    public String getAuthUrl() {
+        return authUrl;
+    }
+
+    public void setAuthUrl(String authUrl) {
+        this.authUrl = authUrl;
+    }
+
     @Override
     public int hashCode() {
         final int prime = 31;
@@ -153,6 +163,7 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
         result = prime * result + ((getUsername() == null) ? 0 : getUsername().hashCode());
         result = prime * result + ((getCustomProperties() == null) ? 0 : getCustomProperties().hashCode());
         result = prime * result + ((getAdditionalProperties() == null) ? 0 : getAdditionalProperties().hashCode());
+        result = prime * result + ((getAuthUrl() == null) ? 0 : getAuthUrl().hashCode());
         return result;
     }
 
@@ -230,6 +241,13 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
         } else if (!getAdditionalProperties().equals(other.getAdditionalProperties())) {
             return false;
         }
+        if (getAuthUrl() == null) {
+            if (other.getAuthUrl() != null) {
+                return false;
+            }
+        } else if (!getAuthUrl().equals(other.getAuthUrl())) {
+            return false;
+        }
         return true;
     }
 
@@ -256,6 +274,8 @@ public class Provider<P extends AdditionalProperties> extends IVdcQueryable impl
                 .append(getCustomProperties())
                 .append(", additionalProperties=")
                 .append(getAdditionalProperties())
+                .append(", authUrl=")
+                .append(getAuthUrl())
                 .append("]");
         return builder.toString();
     }

@@ -68,7 +68,8 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
                 .addValue("auth_username", entity.getUsername())
                 .addValue("auth_password", DbFacadeUtils.encryptPassword(entity.getPassword()))
                 .addValue("custom_properties",
-                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()));
+                        SerializationFactory.getSerializer().serialize(entity.getCustomProperties()))
+                .addValue("auth_url", entity.getAuthUrl());
     }
 
     @Override
@@ -110,6 +111,7 @@ public class ProviderDaoDbFacadeImpl extends DefaultGenericDaoDbFacade<Provider<
             entity.setCustomProperties(SerializationFactory.getDeserializer()
                     .deserialize(rs.getString("custom_properties"), HashMap.class));
             entity.setAdditionalProperties(mapAdditionalProperties(rs, entity));
+            entity.setAuthUrl(rs.getString("auth_url"));
 
             return entity;
         }

@@ -31,8 +31,6 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageFormatType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.businessentities.VolumeFormat;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.compat.Guid;
@@ -170,7 +168,7 @@ public class OpenStackImageProviderProxy implements ProviderProxy {
     private OpenStackTokenProvider getTokenProvider() {
         if (tokenProvider == null && getProvider().isRequiringAuthentication()) {
             String tenantName = provider.getAdditionalProperties().getTenantName();
-            tokenProvider = new KeystoneTokenProvider(Config.<String> getValue(ConfigValues.KeystoneAuthUrl),
+            tokenProvider = new KeystoneTokenProvider(getProvider().getAuthUrl(),
                     getProvider().getUsername(), getProvider().getPassword()).getProviderByTenant(tenantName);
         }
         return tokenProvider;

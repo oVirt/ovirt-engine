@@ -22,8 +22,6 @@ import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.businessentities.network.VmNic;
 import org.ovirt.engine.core.common.businessentities.network.VnicProfile;
-import org.ovirt.engine.core.common.config.Config;
-import org.ovirt.engine.core.common.config.ConfigValues;
 import org.ovirt.engine.core.common.errors.VdcBLLException;
 import org.ovirt.engine.core.common.errors.VdcBllErrors;
 import org.ovirt.engine.core.utils.NetworkUtils;
@@ -68,7 +66,7 @@ public class OpenstackNetworkProviderProxy implements NetworkProviderProxy {
             if (provider.isRequiringAuthentication()) {
                 final String tenantName = provider.getAdditionalProperties().getTenantName();
                 final KeystoneTokenProvider keystoneTokenProvider =
-                        new KeystoneTokenProvider(Config.<String> getValue(ConfigValues.KeystoneAuthUrl),
+                        new KeystoneTokenProvider(provider.getAuthUrl(),
                                 provider.getUsername(),
                                 provider.getPassword());
 

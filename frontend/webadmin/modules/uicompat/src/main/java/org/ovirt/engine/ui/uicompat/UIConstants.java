@@ -2098,9 +2098,6 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Change Provider URL")
     String providerUrlWarningTitle();
 
-    @DefaultStringValue("No authentication URL found; please configure one using the 'engine-config' utility, then restart the engine service.")
-    String noAuthUrl();
-
     @DefaultStringValue("Import Networks")
     String importNetworksTitle();
 

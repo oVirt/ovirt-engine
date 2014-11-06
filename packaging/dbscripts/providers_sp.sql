@@ -19,7 +19,8 @@ Create or replace FUNCTION InsertProvider(
     v_custom_properties TEXT,
     v_tenant_name VARCHAR DEFAULT NULL,
     v_plugin_type VARCHAR DEFAULT NULL,
-    v_agent_configuration TEXT DEFAULT NULL)
+    v_agent_configuration TEXT DEFAULT NULL,
+    v_auth_url TEXT DEFAULT NULL)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -35,7 +36,8 @@ BEGIN
         custom_properties,
         tenant_name,
         plugin_type,
-        agent_configuration)
+        agent_configuration,
+        auth_url)
     VALUES(
         v_id,
         v_name,
@@ -48,7 +50,8 @@ BEGIN
         v_custom_properties,
         v_tenant_name,
         v_plugin_type,
-        v_agent_configuration);
+        v_agent_configuration,
+        v_auth_url);
 END; $procedure$
 LANGUAGE plpgsql;
 
@@ -68,7 +71,8 @@ Create or replace FUNCTION UpdateProvider(
     v_custom_properties TEXT,
     v_tenant_name VARCHAR DEFAULT NULL,
     v_plugin_type VARCHAR DEFAULT NULL,
-    v_agent_configuration TEXT DEFAULT NULL)
+    v_agent_configuration TEXT DEFAULT NULL,
+    v_auth_url TEXT DEFAULT NULL)
 RETURNS VOID
 AS $procedure$
 BEGIN
@@ -84,7 +88,8 @@ BEGIN
            tenant_name = v_tenant_name,
            plugin_type = v_plugin_type,
            _update_date = NOW(),
-           agent_configuration = v_agent_configuration
+           agent_configuration = v_agent_configuration,
+           auth_url = v_auth_url
     WHERE  id = v_id;
 END; $procedure$
 LANGUAGE plpgsql;

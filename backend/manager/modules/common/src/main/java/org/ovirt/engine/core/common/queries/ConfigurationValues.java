@@ -133,7 +133,6 @@ public enum ConfigurationValues {
     IscsiMultipathingSupported,
     BootMenuSupported(ConfigAuthType.User),
     MixedDomainTypesInDataCenter,
-    KeystoneAuthUrl,
     VirtIoRngDeviceSupported(ConfigAuthType.User),
     ClusterRequiredRngSourcesDefault(ConfigAuthType.User),
     SpiceFileTransferToggleSupported(ConfigAuthType.User),

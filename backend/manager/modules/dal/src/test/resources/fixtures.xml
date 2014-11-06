@@ -1098,6 +1098,7 @@
         <column>tenant_name</column>
         <column>plugin_type</column>
         <column>agent_configuration</column>
+        <column>auth_url</column>
         <row>
             <value>1115c1c6-cb15-4832-b2a4-023770607111</value>
             <value>provider</value>
@@ -1110,6 +1111,7 @@
             <value>bubu</value>
             <value>LINUX_BRIDGE</value>
             <value>{"messagingConfiguration" : {"brokerTpe" : "QPID", "address" : "test", "port" : 5672, "username" : null, "password" : null}, "networkMappings" : ""}</value>
+            <value>http://keystone-server:35357/v2.0/</value>
         </row>
     </table>
 

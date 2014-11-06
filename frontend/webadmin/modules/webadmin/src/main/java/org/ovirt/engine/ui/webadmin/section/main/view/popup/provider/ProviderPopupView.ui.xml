@@ -71,6 +71,7 @@
 										<ge:StringEntityModelTextBoxEditor ui:field="usernameEditor" addStyleNames="{style.authField}" />
 										<ge:StringEntityModelPasswordBoxEditor ui:field="passwordEditor" addStyleNames="{style.authField}" />
 										<ge:StringEntityModelTextBoxEditor ui:field="tenantNameEditor" addStyleNames="{style.authField}" />
+                                        <ge:StringEntityModelTextBoxEditor ui:field="authUrlEditor" addStyleNames="{style.authField}" />
 									</g:FlowPanel>
 								</g:FlowPanel>
 								<g:FlowPanel>

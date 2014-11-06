@@ -99,6 +99,11 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
     StringEntityModelTextBoxEditor tenantNameEditor;
 
     @UiField
+    @Path(value = "authUrl.entity")
+    @WithElementId
+    StringEntityModelTextBoxEditor authUrlEditor;
+
+    @UiField
     @Path(value = "pluginType.selectedItem")
     @WithElementId
     ListModelSuggestBoxEditor pluginTypeEditor;
@@ -153,6 +158,7 @@ public class ProviderPopupView extends AbstractModelBoundPopupView<ProviderModel
         passwordEditor.setLabel(constants.passwordProvider());
         tenantNameEditor.setLabel(constants.tenantName());
         pluginTypeEditor.setLabel(constants.pluginType());
+        authUrlEditor.setLabel(constants.authUrlProvider());
 
         // Agent configuration tab
         agentConfigurationTab.setLabel(constants.providerPopupAgentConfigurationTabLabel());

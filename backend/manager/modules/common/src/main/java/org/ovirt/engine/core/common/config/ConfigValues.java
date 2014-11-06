@@ -1455,10 +1455,6 @@ public enum ConfigValues {
 
     @TypeConverterAttribute(String.class)
     @DefaultValueAttribute("Auto")
-    KeystoneAuthUrl,
-
-    @TypeConverterAttribute(String.class)
-    @DefaultValueAttribute("Auto")
     ClientModeSpiceDefault,
 
     @TypeConverterAttribute(String.class)
