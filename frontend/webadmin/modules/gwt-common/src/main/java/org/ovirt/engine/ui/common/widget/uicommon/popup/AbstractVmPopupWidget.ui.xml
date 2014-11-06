@@ -561,7 +561,7 @@
                                  </g:HorizontalPanel>
                               </g:FlowPanel>
                         </g:FlowPanel>
-                        <ge:EntityModelDetachableWidget ui:field="isSmartcardEnabledEditorWithDetachable" addStyleNames="{style.floatLeft} avmpw_smartcard_pfly_fix" />
+                        <ge:EntityModelCheckBoxEditor ui:field="isSmartcardEnabledEditor" addStyleNames="{style.floatLeft} avmpw_smartcard_pfly_fix" />
                         <g:Label ui:field="nativeUsbWarningMessage" text="{constants.nativeUsbSupportWarning}" addStyleNames="{style.warningMessageLabel}" />
 
                         <g:Label ui:field="ssoMethodLabel" text="{constants.ssoMethod}" addStyleNames="{style.sectionLabel} {style.floatLeft} {style.fullWidth}" />
@@ -575,8 +575,8 @@
                             <ge:EntityModelCheckBoxEditor ui:field="allowConsoleReconnectEditor" addStyleNames="{style.checkboxWithLongLabel}" />
                         </g:FlowPanel>
 
-                        <ge:EntityModelDetachableWidget ui:field="isSoundcardEnabledEditorWithDetachable" addStyleNames="{style.checkboxWithLongLabel}" />
-                        <ge:EntityModelDetachableWidget ui:field="isConsoleDeviceEnabledEditorWithDetachable" addStyleNames="{style.checkboxWithLongLabel}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="isSoundcardEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
+                        <ge:EntityModelCheckBoxEditor ui:field="isConsoleDeviceEnabledEditor" addStyleNames="{style.checkboxWithLongLabel}" />
 
                         <w:EntityModelWidgetWithInfo ui:field="spiceProxyEnabledCheckboxWithInfoIcon" />
                         <ge:StringEntityModelTextBoxEditor ui:field="spiceProxyEditor" />
@@ -643,11 +643,7 @@
 
                         </g:FlowPanel>
                         <g:FlowPanel addStyleNames="{style.sectionPanel}, {style.floatLeft}" ui:field="watchdogPanel">
-                            <ge:DetachableLabel ui:field="watchdogLabel" contentWidgetStyleName="{style.sectionLabel}">
-                                <ge:decorated>
-                                    <g:Label text="{constants.watchdog}" />
-                                </ge:decorated>
-                            </ge:DetachableLabel>
+                            <g:Label text="{constants.watchdog}" addStyleNames="{style.sectionLabel}"/>
                             <e:ListModelListBoxEditor ui:field="watchdogModelEditor" />
                             <e:ListModelListBoxEditor ui:field="watchdogActionEditor" />
                         </g:FlowPanel>
@@ -707,7 +703,7 @@
                                 <g:Label addStyleNames="{style.sectionLabel}" text="{constants.disksAllocation}" />
                             </g:HorizontalPanel>
                             <g:HorizontalPanel addStyleNames="{style.floatLeft}">
-                                <ge:EntityModelDetachableWidget ui:field="isVirtioScsiEnabledWithDetachable" addStyleNames="{style.checkbox}" />
+                                <ge:EntityModelCheckBoxEditor ui:field="isVirtioScsiEnabled" addStyleNames="{style.checkbox}" />
                                 <d:InfoIcon ui:field="isVirtioScsiEnabledInfoIcon" addStyleNames="{style.infoIcon}" visible="false"/>
                             </g:HorizontalPanel>
                             <g:FlowPanel ui:field="disksPanel">
@@ -749,7 +745,7 @@
             <t:DialogTab ui:field="rngDeviceTab">
                 <t:content>
                     <g:FlowPanel addStyleNames="{style.sectionPanel}">
-                        <w:EntityModelDetachableWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
+                        <w:EntityModelWidgetWithInfo ui:field="isRngEnabledCheckboxWithInfoIcon" addStyleNames="{style.checkbox}" />
                         <g:FlowPanel ui:field="rngPanel">
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngPeriodEditor"/>
                             <ge:IntegerEntityModelTextBoxEditor ui:field="rngBytesEditor" />

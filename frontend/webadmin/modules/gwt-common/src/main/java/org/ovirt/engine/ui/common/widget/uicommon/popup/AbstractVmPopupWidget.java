@@ -298,13 +298,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("ssoMethodGuestAgent")
     public EntityModelRadioButtonEditor ssoMethodGuestAgent;
 
+    @UiField(provided = true)
     @Path(value = "isSoundcardEnabled.entity")
     @WithElementId("isSoundcardEnabled")
     public EntityModelCheckBoxEditor isSoundcardEnabledEditor;
-
-    @UiField(provided = true)
-    @Ignore
-    public EntityModelDetachableWidget isSoundcardEnabledEditorWithDetachable;
 
     @UiField(provided = true)
     @Path("copyPermissions.entity")
@@ -478,26 +475,20 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("isRunAndPause")
     public EntityModelCheckBoxEditor isRunAndPauseEditor;
 
+    @UiField(provided = true)
     @Path(value = "isSmartcardEnabled.entity")
     @WithElementId("isSmartcardEnabled")
     public EntityModelCheckBoxEditor isSmartcardEnabledEditor;
-
-    @UiField(provided = true)
-    public EntityModelDetachableWidget isSmartcardEnabledEditorWithDetachable;
 
     @UiField(provided = true)
     @Path(value = "allowConsoleReconnect.entity")
     @WithElementId("allowConsoleReconnect")
     public EntityModelCheckBoxEditor allowConsoleReconnectEditor;
 
-
+    @UiField(provided = true)
     @Path(value = "isConsoleDeviceEnabled.entity")
     @WithElementId("isConsoleDeviceEnabled")
     public EntityModelCheckBoxEditor isConsoleDeviceEnabledEditor;
-
-    @UiField(provided = true)
-    @Ignore
-    public EntityModelDetachableWidget isConsoleDeviceEnabledEditorWithDetachable;
 
     @UiField
     @Path(value = "spiceProxy.entity")
@@ -532,7 +523,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     @UiField(provided = true)
     @WithElementId
-    public EntityModelDetachableWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
+    public EntityModelWidgetWithInfo<String> isRngEnabledCheckboxWithInfoIcon;
 
     @UiField
     @Ignore
@@ -698,10 +689,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("watchdogModel")
     public ListModelListBoxEditor<VmWatchdogType> watchdogModelEditor;
 
-    @UiField
-    @Ignore
-    public DetachableLabel watchdogLabel;
-
     @UiField(provided = true)
     @Path(value = "watchdogAction.selectedItem")
     @WithElementId("watchdogAction")
@@ -750,13 +737,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("provisioningClone")
     public EntityModelRadioButtonEditor provisioningCloneEditor;
 
+    @UiField(provided = true)
     @Path(value = "isVirtioScsiEnabled.entity")
     @WithElementId("isVirtioScsiEnabled")
     public EntityModelCheckBoxEditor isVirtioScsiEnabled;
-
-    @UiField(provided = true)
-    @Ignore
-    public EntityModelDetachableWidget isVirtioScsiEnabledWithDetachable;
 
     @UiField(provided = true)
     @Ignore
@@ -979,18 +963,14 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
 
     private void initDetachableFields() {
         detachableMemSizeEditor = new EntityModelDetachableWidgetWithLabel(memSizeEditor);
-        isSmartcardEnabledEditorWithDetachable = new EntityModelDetachableWidget(isSmartcardEnabledEditor, Align.RIGHT);
-        isSoundcardEnabledEditorWithDetachable = new EntityModelDetachableWidget(isSoundcardEnabledEditor, Align.RIGHT);
-        isConsoleDeviceEnabledEditorWithDetachable = new EntityModelDetachableWidget(isConsoleDeviceEnabledEditor, Align.RIGHT);
         isHighlyAvailableEditorWithDetachable = new EntityModelDetachableWidget(isHighlyAvailableEditor, Align.RIGHT);
         overrideMigrationDowntimeEditorWithDetachable = new EntityModelDetachableWidget(overrideMigrationDowntimeEditor, Align.RIGHT);
         overrideMigrationDowntimeEditor.getContentWidgetContainer().getElement().getStyle().setWidth(20, Unit.PX);
-        isVirtioScsiEnabledWithDetachable = new EntityModelDetachableWidget(isVirtioScsiEnabled, Align.RIGHT);
         migrationModeEditorWithDetachable = new EntityModelDetachableWidget(migrationModeEditor, Align.RIGHT);
 
         StringEntityModelLabel rnglabel = new StringEntityModelLabel();
         rnglabel.setText(constants.rngDevEnabled());
-        isRngEnabledCheckboxWithInfoIcon = new EntityModelDetachableWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
+        isRngEnabledCheckboxWithInfoIcon = new EntityModelWidgetWithInfo<String>(rnglabel, isRngEnabledEditor);
         isRngEnabledCheckboxWithInfoIcon.setExplanation(SafeHtmlUtils.fromTrustedString(constants.rngDevExplanation()));
     }
 
@@ -1999,18 +1979,12 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 totalvCPUsEditorWithInfoIcon,
                 numOfSocketsEditorWithDetachable,
                 corePerSocketEditorWithDetachable,
-                isSmartcardEnabledEditorWithDetachable,
-                isConsoleDeviceEnabledEditorWithDetachable,
-                isSoundcardEnabledEditorWithDetachable,
                 isHighlyAvailableEditorWithDetachable,
                 priorityLabelWithDetachable,
                 migrationModeEditorWithDetachable,
                 memAllocationLabel,
-                isVirtioScsiEnabledWithDetachable,
                 detachableMemSizeEditor,
-                overrideMigrationDowntimeEditorWithDetachable,
-                watchdogLabel,
-                isRngEnabledCheckboxWithInfoIcon
+                overrideMigrationDowntimeEditorWithDetachable
         );
     }
 
@@ -2031,13 +2005,10 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
                 numOfMonitorsLabel,
                 numOfMonitorsEditor,
                 isSingleQxlEnabledEditor,
-                isSmartcardEnabledEditorWithDetachable,
                 ssoMethodLabel,
                 ssoMethodNone,
                 ssoMethodGuestAgent,
                 expander,
-                isSoundcardEnabledEditorWithDetachable,
-                isConsoleDeviceEnabledEditorWithDetachable,
                 spiceProxyEnabledCheckboxWithInfoIcon,
                 spiceProxyEditor,
 

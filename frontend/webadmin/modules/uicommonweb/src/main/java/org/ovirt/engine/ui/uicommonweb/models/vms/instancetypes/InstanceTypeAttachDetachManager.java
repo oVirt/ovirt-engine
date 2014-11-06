@@ -143,30 +143,18 @@ public class InstanceTypeAttachDetachManager implements IEventListener<EventArgs
      */
     private void initDetachableFields() {
         detachableModels = Arrays.asList(
-                new Model[]{
+                new Model[] {
                         model.getMemSize(),
                         model.getTotalCPUCores(),
                         model.getNumOfSockets(),
                         model.getCoresPerSocket(),
-                        model.getIsSmartcardEnabled(),
-                        model.getIsSoundcardEnabled(),
-                        model.getIsConsoleDeviceEnabled(),
                         model.getIsHighlyAvailable(),
                         model.getMigrationMode(),
                         model.getOverrideMigrationDowntime(),
                         model.getMigrationDowntime(),
-                        model.getIsHighlyAvailable(),
                         model.getPriority(),
-                        model.getWatchdogModel(),
-                        model.getWatchdogAction(),
                         model.getMinAllocatedMemory(),
                         model.getMemoryBalloonDeviceEnabled(),
-                        model.getIsVirtioScsiEnabled(),
-                        model.getIsRngEnabled(),
-                        model.getRngBytes(),
-                        model.getRngPeriod(),
-                        model.getRngSourceRandom(),
-                        model.getRngSourceHwrng()
                 }
         );
 
