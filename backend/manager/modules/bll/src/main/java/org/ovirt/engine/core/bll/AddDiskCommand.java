@@ -502,12 +502,18 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
     private AuditLogType getExecuteAuditLogTypeValue(boolean successful) {
         boolean isVmNameExist = StringUtils.isNotEmpty(getVmName());
         if (successful) {
+            if (isInternalExecution()) {
+                return AuditLogType.ADD_DISK_INTERNAL;
+            }
             if (isVmNameExist) {
                 return AuditLogType.USER_ADD_DISK_TO_VM;
             } else {
                 return AuditLogType.USER_ADD_DISK;
             }
         } else {
+            if (isInternalExecution()) {
+                return AuditLogType.ADD_DISK_INTERNAL_FAILURE;
+            }
             if (isVmNameExist) {
                 return AuditLogType.USER_FAILED_ADD_DISK_TO_VM;
             } else {
