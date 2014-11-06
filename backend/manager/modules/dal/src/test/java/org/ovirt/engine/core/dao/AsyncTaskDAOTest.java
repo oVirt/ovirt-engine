@@ -62,8 +62,8 @@ public class AsyncTaskDAOTest extends BaseDAOTestCase {
         newAsyncTask.setresult(AsyncTaskResultEnum.success);
         newAsyncTask.setActionParameters(params);
         newAsyncTask.setTaskParameters(taskParams);
-        newAsyncTask.setCommandId(Guid.newGuid());
-        newAsyncTask.setRootCommandId(Guid.newGuid());
+        newAsyncTask.setCommandId(FixturesTool.COMMAND_ID);
+        newAsyncTask.setRootCommandId(FixturesTool.ROOT_COMMAND_ID);
         newAsyncTask.setTaskType(AsyncTaskType.copyImage);
         newAsyncTask.setStoragePoolId(Guid.newGuid());
 
