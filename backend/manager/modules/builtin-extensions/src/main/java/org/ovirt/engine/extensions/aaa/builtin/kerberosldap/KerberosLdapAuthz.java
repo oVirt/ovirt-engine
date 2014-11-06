@@ -81,7 +81,7 @@ public class KerberosLdapAuthz implements Extension {
     public KerberosLdapAuthz() {
     }
 
-    public ExtMap queryGroups(ExtMap input, ExtMap output) {
+    public ExtMap queryGroups(ExtMap input, ExtMap output) throws Exception {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchGroups);
         queryData.setDomain(getDirectoryName());
@@ -96,6 +96,9 @@ public class KerberosLdapAuthz implements Extension {
                         false,
                         false)
                 );
+        if (!ldapResult.getSucceeded()) {
+            throw new Exception(ldapResult.getExceptionString());
+        }
         List<LdapGroup> ldapGroups = (List<LdapGroup>) ldapResult.getReturnValue();
         List<ExtMap> results = new ArrayList<>();
         for (LdapGroup ldapGroup : ldapGroups) {
@@ -104,7 +107,7 @@ public class KerberosLdapAuthz implements Extension {
         return output.mput(Authz.InvokeKeys.QUERY_RESULT, results);
     }
 
-    public ExtMap queryUsers(ExtMap input, ExtMap output) {
+    public ExtMap queryUsers(ExtMap input, ExtMap output) throws Exception {
         LdapQueryData queryData = new LdapQueryDataImpl();
         queryData.setLdapQueryType(LdapQueryType.searchUsers);
         queryData.setDomain(getDirectoryName());
@@ -121,6 +124,9 @@ public class KerberosLdapAuthz implements Extension {
 
                 )
         );
+        if (!ldapResult.getSucceeded()) {
+            throw new Exception(ldapResult.getExceptionString());
+        }
         List<LdapUser> ldapUsers = (List<LdapUser>) ldapResult.getReturnValue();
         List<ExtMap> results = new ArrayList<>();
         for (LdapUser ldapUser : ldapUsers) {
@@ -195,7 +201,7 @@ public class KerberosLdapAuthz implements Extension {
 
     }
 
-    private void doQueryExecute(ExtMap input, ExtMap output) {
+    private void doQueryExecute(ExtMap input, ExtMap output) throws Exception {
         Opaque opaque = input.<Opaque> get(Authz.InvokeKeys.QUERY_OPAQUE);
         if (opaque.getQueryInfo() == null) {
             output.mput(Authz.InvokeKeys.QUERY_RESULT, null);
