@@ -135,13 +135,20 @@ public class RemoveVmCommand<T extends RemoveVmParameters> extends VmCommand<T> 
         for (String memoryState : memoryStates) {
             VdcReturnValueBase retVal = runInternalAction(
                     VdcActionType.RemoveMemoryVolumes,
-                    new RemoveMemoryVolumesParameters(memoryState, getVmId()), cloneContextAndDetachFromParent());
+                    buildRemoveMemoryVolumesParameters(memoryState, getVmId()),
+                    cloneContextAndDetachFromParent());
 
             if (!retVal.getSucceeded()) {
                 log.error("Failed to remove memory volumes while removing vm '{}' (volumes: '{}')",
                         getVmId(), memoryState);
             }
         }
+    }
+
+    private RemoveMemoryVolumesParameters buildRemoveMemoryVolumesParameters(String memoryState, Guid vmId) {
+        RemoveMemoryVolumesParameters params = new RemoveMemoryVolumesParameters(memoryState, vmId);
+        params.setEntityInfo(getParameters().getEntityInfo());
+        return params;
     }
 
     @Override

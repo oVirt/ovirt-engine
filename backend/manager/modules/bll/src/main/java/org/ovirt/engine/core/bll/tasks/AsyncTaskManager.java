@@ -378,7 +378,8 @@ public final class AsyncTaskManager {
     }
 
     private boolean isCurrentTaskLookedFor(Guid id, SPMTask task) {
-        return (task instanceof CommandAsyncTask) && id.equals(task.getParameters().getEntityInfo().getId())
+        return (task instanceof CommandAsyncTask) && task.getParameters().getEntityInfo() != null &&
+                id.equals(task.getParameters().getEntityInfo().getId())
                 && (task.getState() != AsyncTaskState.Cleared)
                 && (task.getState() != AsyncTaskState.ClearFailed);
     }
