@@ -101,20 +101,24 @@ public abstract class LdapBrokerCommandBase extends BrokerCommandBase {
     @Override
     public LdapReturnValueBase execute() {
         boolean exceptionOccurred = true;
+        DirectorySearcher directorySearcher = null;
         try {
             log.debug("Running LDAP command: {}", getClass().getName());
             String loginNameForKerberos =
                     LdapBrokerUtils.modifyLoginNameForKerberos(getLoginName(), getAuthenticationDomain(), configuration);
             LdapCredentials ldapCredentials = new LdapCredentials(loginNameForKerberos, getPassword());
-            DirectorySearcher directorySearcher = new DirectorySearcher(configuration, ldapCredentials);
+            directorySearcher = new DirectorySearcher(configuration, ldapCredentials);
             executeQuery(directorySearcher);
             exceptionOccurred = directorySearcher.getException() != null;
-        }
- finally {
+        } finally {
             if (exceptionOccurred) {
                 log.error("Failed to run command {}. Domain is {}. User is {}.",
                         getClass().getSimpleName(), getDomain(), getLoginName());
-                _ldapReturnValue.setExceptionString(VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name());
+                _ldapReturnValue.setExceptionString(
+                        directorySearcher != null ?
+                                directorySearcher.getException().getMessage() :
+                                VdcBllMessages.FAILED_TO_RUN_LDAP_QUERY.name()
+                );
                 _ldapReturnValue.setSucceeded(false);
             }
         }
