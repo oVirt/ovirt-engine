@@ -2579,6 +2579,11 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
                     });
 
             getComment().validateEntity(new IValidation[] { new SpecialAsciiI18NOrNoneValidation() });
+
+            setValidTab(TabName.GENERAL_TAB, isValidTab(TabName.GENERAL_TAB)
+                    && getName().getIsValid()
+                    && getDescription().getIsValid()
+                    && getComment().getIsValid());
         }
 
 
