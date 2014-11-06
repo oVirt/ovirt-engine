@@ -7,6 +7,7 @@ import org.ovirt.engine.api.model.CPU;
 import org.ovirt.engine.api.model.Cluster;
 import org.ovirt.engine.api.model.CpuProfile;
 import org.ovirt.engine.api.model.CpuTopology;
+import org.ovirt.engine.api.model.CustomProperties;
 import org.ovirt.engine.api.model.DisplayType;
 import org.ovirt.engine.api.model.Domain;
 import org.ovirt.engine.api.model.HighAvailability;
@@ -14,6 +15,7 @@ import org.ovirt.engine.api.model.Usb;
 import org.ovirt.engine.api.model.UsbType;
 import org.ovirt.engine.api.model.VmBase;
 import org.ovirt.engine.api.model.VmType;
+import org.ovirt.engine.api.restapi.utils.CustomPropertiesParser;
 import org.ovirt.engine.api.restapi.utils.GuidUtils;
 import org.ovirt.engine.api.restapi.utils.UsbMapperUtils;
 import org.ovirt.engine.core.common.businessentities.OriginType;
@@ -160,6 +162,9 @@ public class VmBaseMapper {
         if (model.isSetMigration()) {
             MigrationOptionsMapper.copyMigrationOptions(model.getMigration(), entity);
         }
+        if (model.isSetCustomProperties()) {
+            entity.setCustomProperties(CustomPropertiesParser.parse(model.getCustomProperties().getCustomProperty()));
+        }
     }
 
     protected static void mapVmBaseEntityToModel(VmBase model, org.ovirt.engine.core.common.businessentities.VmBase entity) {
@@ -238,6 +243,11 @@ public class VmBaseMapper {
         }
 
         model.setMigration(MigrationOptionsMapper.map(entity, null));
+        if (!StringUtils.isEmpty(entity.getCustomProperties())) {
+            CustomProperties hooks = new CustomProperties();
+            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
+            model.setCustomProperties(hooks);
+        }
     }
 
     @Mapping(from = OriginType.class, to = String.class)

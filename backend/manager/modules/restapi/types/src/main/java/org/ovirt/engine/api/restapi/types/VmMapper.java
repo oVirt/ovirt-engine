@@ -126,6 +126,7 @@ public class VmMapper extends VmBaseMapper {
         staticVm.setCpuProfileId(entity.getCpuProfileId());
         staticVm.setAutoConverge(entity.getAutoConverge());
         staticVm.setMigrateCompressed(entity.getMigrateCompressed());
+        staticVm.setCustomProperties(entity.getCustomProperties());
         return staticVm;
     }
 
@@ -172,9 +173,6 @@ public class VmMapper extends VmBaseMapper {
         if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetGuaranteed()) {
             Long memGuaranteed = vm.getMemoryPolicy().getGuaranteed() / BYTES_PER_MB;
             staticVm.setMinAllocatedMem(memGuaranteed.intValue());
-        }
-        if (vm.isSetCustomProperties()) {
-            staticVm.setCustomProperties(CustomPropertiesParser.parse(vm.getCustomProperties().getCustomProperty()));
         }
         if (vm.isSetQuota() && vm.getQuota().isSetId()) {
             staticVm.setQuotaId(GuidUtils.asGuid(vm.getQuota().getId()));
@@ -405,11 +403,6 @@ public class VmMapper extends VmBaseMapper {
         MemoryPolicy policy = new MemoryPolicy();
         policy.setGuaranteed((long)entity.getMinAllocatedMem() * (long)BYTES_PER_MB);
         model.setMemoryPolicy(policy);
-        if (!StringUtils.isEmpty(entity.getCustomProperties())) {
-            CustomProperties hooks = new CustomProperties();
-            hooks.getCustomProperty().addAll(CustomPropertiesParser.parse(entity.getCustomProperties(), false));
-            model.setCustomProperties(hooks);
-        }
         if (entity.getQuotaId()!=null) {
             Quota quota = new Quota();
             quota.setId(entity.getQuotaId().toString());
