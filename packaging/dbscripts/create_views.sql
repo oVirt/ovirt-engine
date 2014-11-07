@@ -221,7 +221,7 @@ FROM
            null AS device_size
     FROM images_storage_domain_view
     INNER JOIN storage_for_image_view ON images_storage_domain_view.image_guid = storage_for_image_view.image_id
-    UNION ALL
+    UNION
     SELECT 1 AS disk_storage_type,
            null AS storage_id, -- Storage domain fields
            null AS storage_path,
