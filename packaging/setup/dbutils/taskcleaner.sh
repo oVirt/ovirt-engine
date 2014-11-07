@@ -1,18 +1,23 @@
 #!/bin/sh
 ###############################################################################################################
-# The purpose of this utility is to display and clean asynchronous tasks and corresponding
+# The purpose of this utility is to display and clean asynchronous tasks or commands and corresponding
 # Job steps/Compensation data.
 # The utility enables to
 # Display
 #     All async tasks
 #     Only Zombie tasks
+#     All commands
+#     All commands with tasks
+#     Only Commands with zombie tasks
 # Delete
 #     All tasks
 #     All Zombie tasks
 #     A task related to a given task id
 #     A Zombie task related to a given task id
+#     A Command with zombie tasks given a command Id
 #     All tasks related to a given command id
 #     All Zombie tasks related to a given command id
+#     All Commands with zombie tasks
 #  Flags may be added (-C, -J) to specify if Job Steps & Compensation data
 #  should be cleaned as well.
 ###############################################################################################################
@@ -24,6 +29,26 @@ cleanup() {
 }
 trap cleanup 0
 dbfunc_init
+
+#Using two variables for sql commands in order to control command priority where data should be removed first from
+#business_entity_snapshot and step table before removing it from the async_tasks table.
+CMD1="";
+CMD2="";
+TASK_ID=""
+COMMAND_ID=""
+ZOMBIES_ONLY=
+ZOMBIE_COMMANDS_ONLY=
+COMMANDS_WITH_RUNNING_TASKS_ONLY=
+ALL_COMMANDS=
+CLEAR_ALL=
+CLEAR_COMMANDS=
+CLEAR_COMPENSATION=
+CLEAR_JOB_STEPS=
+CLEAR_JOB_STEPS_AND_COMPENSATION=
+QUITE_MODE=
+VERSION=
+TASKS_FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
+COMMANDS_FIELDS="command_id,command_type,root_command_id,command_parameters,command_params_class,created_at,status,return_value,return_value_class,job_id,step_id,executed"
 
 usage() {
     cat << __EOF__
@@ -38,8 +63,12 @@ Usage: $0 [options]
     -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
+    -T            - Removes/Displays all commands that have running tasks (available from version 3.5)
+    -o            - Removes/Displays all commands. (available from version 3.5)
     -z            - Removes/Displays a Zombie task.
     -R            - Removes all tasks (use with -z to clear only zombie tasks).
+    -r            - Removes all commands (use with -T to clear only those with running tasks. Use with -Z to clear only commands with zombie tasks. Available from version 3.5)
+    -Z            - Removes/Displays a command with zombie tasks (available from version 3.5)
     -C            - Clear related compensation entries.
     -J            - Clear related Job Steps.
     -A            - Clear all Job Steps and compensation entries.
@@ -48,21 +77,7 @@ Usage: $0 [options]
 __EOF__
 }
 
-#Using two variables for sql commands in order to control command priority where data should be removed first from
-#business_entity_snapshot and step table before removing it from the async_tasks table.
-CMD1="";
-CMD2="";
-TASK_ID=""
-COMMAND_ID=""
-ZOMBIES_ONLY=
-CLEAR_ALL=
-CLEAR_COMPENSATION=
-CLEAR_JOB_STEPS=
-CLEAR_JOB_STEPS_AND_COMPENSATION=
-QUITE_MODE=
-FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
-
-while getopts hvl:s:p:u:d:t:c:zRCJAq option; do
+while getopts hvl:s:p:u:d:t:c:zZrRCJAToq option; do
 	case "${option}" in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
@@ -75,7 +90,11 @@ while getopts hvl:s:p:u:d:t:c:zRCJAq option; do
 		t) TASK_ID="${OPTARG}";;
 		c) COMMAND_ID="${OPTARG}";;
 		z) ZOMBIES_ONLY=1;;
+		Z) ZOMBIE_COMMANDS_ONLY=1;;
+		T) COMMANDS_WITH_RUNNING_TASKS_ONLY=1;;
+		o) ALL_COMMANDS=1;;
 		R) CLEAR_ALL=1;;
+		r) CLEAR_COMMANDS=1;;
 		C) CLEAR_COMPENSATION=1;;
 		J) CLEAR_JOB_STEPS=1;;
 		A) CLEAR_JOB_STEPS_AND_COMPENSATION=1;;
@@ -98,6 +117,14 @@ __EOF__
 
 [ -n "${DBFUNC_DB_USER}" ] || die "Please specify user name"
 [ -n "${DBFUNC_DB_DATABASE}" ] || die "Please specify database"
+
+dbfunc_psql_die --command="select exists (select * from information_schema.tables where table_schema = 'public' and table_name = 'command_entities');" | grep "t"
+VERSION=$?
+if [[ $VERSION = 0 ]]; then
+	VERSION="3.5"
+else
+	VERSION="3.4"
+fi
 
 if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${CLEAR_COMPENSATION}" -o -n "${CLEAR_JOB_STEPS}" ]; then #delete operations block
 	if [ -n "${TASK_ID}" ]; then
@@ -228,12 +255,43 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
 		die "Please specify task"
 	fi
 elif [ -n "${ZOMBIES_ONLY}" ]; then #only display operations block
-	CMD1="SELECT ${FIELDS} FROM GetAsyncTasksZombies();"
+	CMD1="SELECT ${TASKS_FIELDS} FROM GetAsyncTasksZombies();"
+elif [ -n "${ALL_COMMANDS}" ]; then #only display commands
+	if [[ $VERSION = "3.5" ]]; then
+		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommands();"
+	else
+		die "This option is available only from version 3.5"
+	fi
+elif [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
+	if [[ $VERSION = "3.5" ]]; then
+		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithRunningTasks();"
+	else
+		die "This option is available only from version 3.5"
+	fi
+elif [ -n "${CLEAR_COMMANDS}" ]; then
+	if [[ $VERSION = "3.5" ]]; then
+		if [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
+			CMD1="SELECT DeleteAllCommandsWithRunningTasks();"
+		elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
+			CMD1="SELECT DeleteAllCommandsWithZombieTasks();"
+		else
+			CMD1="SELECT DeleteAllCommands();"
+		fi
+	else
+		die "This option is available only from version 3.5"
+	fi
+elif [ -n "${ZOMBIE_COMMANDS_ONLY}" ]; then
+	if [[ $VERSION = "3.5" ]]; then
+		CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithZombieTasks();"
+	else
+		die "This option is available only from version 3.5"
+	fi
 else
-	CMD1="SELECT ${FIELDS} FROM GetAllFromasync_tasks();"
+	CMD1="SELECT ${TASKS_FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
 # Install taskcleaner procedures
 dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
 # Execute
+
 dbfunc_psql_die --command="${CMD1}${CMD2}"
