@@ -33,6 +33,9 @@ public class ShutdownVmCommand<T extends ShutdownVmParameters> extends StopVmCom
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        if (shouldSkipCommandExecutionCached()) {
+            return logCommandExecutionSkipped("Shutdown VM");
+        }
         if (getSuspendedVm()) {
             return getSucceeded() ? AuditLogType.USER_STOP_SUSPENDED_VM : AuditLogType.USER_STOP_SUSPENDED_VM_FAILED;
         } else {
