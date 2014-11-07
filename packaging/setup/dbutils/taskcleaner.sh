@@ -1,11 +1,13 @@
 #!/bin/sh
 ###############################################################################################################
-# The purpose of this utility is to display and clean asynchronous tasks and corresponding
+# The purpose of this utility is to display and clean asynchronous tasks or commands and corresponding
 # Job steps/Compensation data.
 # The utility enables to
 # Display
 #     All async tasks
 #     Only Zombie tasks
+#     All commands
+#     All commands with tasks
 # Delete
 #     All tasks
 #     All Zombie tasks
@@ -38,8 +40,11 @@ Usage: $0 [options]
     -d DATABASE   - The database name                         (def. ${DBFUNC_DB_DATABASE})
     -t TASK_ID    - Removes a task by its Task ID.
     -c COMMAND_ID - Removes all tasks related to the given Command Id.
+    -T            - Removes/Displays all commands that have running tasks.
+    -o            - Removes/Displays all commands.
     -z            - Removes/Displays a Zombie task.
     -R            - Removes all tasks (use with -z to clear only zombie tasks).
+    -r            - Removes all commands (use with -T to clear only those with running tasks).
     -C            - Clear related compensation entries.
     -J            - Clear related Job Steps.
     -A            - Clear all Job Steps and compensation entries.
@@ -55,14 +60,18 @@ CMD2="";
 TASK_ID=""
 COMMAND_ID=""
 ZOMBIES_ONLY=
+COMMANDS_WITH_RUNNING_TASKS_ONLY=
+ALL_COMMANDS=
 CLEAR_ALL=
+CLEAR_COMMANDS=
 CLEAR_COMPENSATION=
 CLEAR_JOB_STEPS=
 CLEAR_JOB_STEPS_AND_COMPENSATION=
 QUITE_MODE=
-FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
+TASKS_FIELDS="task_id,task_type,status,started_at,result,action_type as command_type,command_id,step_id,storage_pool_id as DC"
+COMMANDS_FIELDS="command_id,command_type,root_command_id,command_parameters,command_params_class,created_at,status,return_value,return_value_class,job_id,step_id,executed"
 
-while getopts hvl:s:p:u:d:t:c:zRCJAq option; do
+while getopts hvl:s:p:u:d:t:c:zrRCJAToq option; do
 	case "${option}" in
 		\?) usage; exit 1;;
 		h) usage; exit 0;;
@@ -75,7 +84,10 @@ while getopts hvl:s:p:u:d:t:c:zRCJAq option; do
 		t) TASK_ID="${OPTARG}";;
 		c) COMMAND_ID="${OPTARG}";;
 		z) ZOMBIES_ONLY=1;;
+		T) COMMANDS_WITH_RUNNING_TASKS_ONLY=1;;
+		o) ALL_COMMANDS=1;;
 		R) CLEAR_ALL=1;;
+		r) CLEAR_COMMANDS=1;;
 		C) CLEAR_COMPENSATION=1;;
 		J) CLEAR_JOB_STEPS=1;;
 		A) CLEAR_JOB_STEPS_AND_COMPENSATION=1;;
@@ -227,13 +239,24 @@ if [ "${TASK_ID}" != "" -o "${COMMAND_ID}" != "" -o -n "${CLEAR_ALL}" -o -n "${C
 	else
 		die "Please specify task"
 	fi
+elif [ -n "${CLEAR_COMMANDS}" ]; then
+	if [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then
+		CMD1="SELECT DeleteAllCommandsWithRunningTasks();"
+	else
+		CMD1="SELECT DeleteAllCommands();"
+	fi
 elif [ -n "${ZOMBIES_ONLY}" ]; then #only display operations block
-	CMD1="SELECT ${FIELDS} FROM GetAsyncTasksZombies();"
+	CMD1="SELECT ${TASKS_FIELDS} FROM GetAsyncTasksZombies();"
+elif [ -n "${ALL_COMMANDS}" ]; then #only display commands
+	CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommands();"
+elif [ -n "${COMMANDS_WITH_RUNNING_TASKS_ONLY}" ]; then #only display commands with tasks
+	CMD1="SELECT ${COMMANDS_FIELDS} FROM GetAllCommandsWithRunningTasks();"
 else
-	CMD1="SELECT ${FIELDS} FROM GetAllFromasync_tasks();"
+	CMD1="SELECT ${TASKS_FIELDS} FROM GetAllFromasync_tasks();"
 fi
 
 # Install taskcleaner procedures
 dbfunc_psql_die --file="$(dirname "$0")/taskcleaner_sp.sql" > /dev/null
 # Execute
+
 dbfunc_psql_die --command="${CMD1}${CMD2}"
