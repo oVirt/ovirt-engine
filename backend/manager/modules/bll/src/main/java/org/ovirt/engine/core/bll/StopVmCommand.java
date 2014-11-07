@@ -29,6 +29,9 @@ public class StopVmCommand<T extends StopVmParameters> extends StopVmCommandBase
 
     @Override
     public AuditLogType getAuditLogTypeValue() {
+        if (shouldSkipCommandExecutionCached()) {
+            return logCommandExecutionSkipped("Stop VM");
+        }
         if (getSuspendedVm()) {
             return getSucceeded() ? AuditLogType.USER_STOP_SUSPENDED_VM : AuditLogType.USER_STOP_SUSPENDED_VM_FAILED;
         } else {

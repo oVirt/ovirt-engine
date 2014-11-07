@@ -11,6 +11,7 @@ import org.ovirt.engine.core.bll.quota.QuotaStorageDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsDependent;
 import org.ovirt.engine.core.bll.quota.QuotaVdsGroupConsumptionParameter;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
+import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RemoveVmHibernationVolumesParameters;
 import org.ovirt.engine.core.common.action.StopVmParametersBase;
@@ -56,6 +57,10 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
 
     @Override
     protected boolean canDoAction() {
+        if (shouldSkipCommandExecutionCached()) {
+            return true;
+        }
+
         if (getVm() == null) {
             return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_VM_NOT_FOUND);
         }
@@ -255,5 +260,16 @@ public abstract class StopVmCommandBase<T extends StopVmParametersBase> extends 
     @Override
     public void addQuotaPermissionSubject(List<PermissionSubject> quotaPermissionList) {
         //
+    }
+
+    @Override
+    protected  boolean shouldSkipCommandExecution() {
+        return getVm() != null && getVm().getStatus() == VMStatus.Down;
+    }
+
+    protected AuditLogType logCommandExecutionSkipped(String actionName) {
+        addCustomValue("Action", actionName);
+        addCustomValue("VmStatus", getVm().getStatus().name());
+        return AuditLogType.VM_ALREADY_IN_REQUESTED_STATUS;
     }
 }

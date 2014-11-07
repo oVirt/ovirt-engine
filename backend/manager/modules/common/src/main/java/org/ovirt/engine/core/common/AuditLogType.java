@@ -167,6 +167,7 @@ public enum AuditLogType {
     USER_STOP_VM(33), // User issued stopVm command
     USER_STOP_SUSPENDED_VM(111),
     USER_STOP_SUSPENDED_VM_FAILED(112, AuditLogSeverity.ERROR),
+    VM_ALREADY_IN_REQUESTED_STATUS(254),
     USER_FAILED_STOP_VM(56, AuditLogSeverity.ERROR),
     USER_ADD_VM(34),
     USER_ADD_VM_STARTED(37),
