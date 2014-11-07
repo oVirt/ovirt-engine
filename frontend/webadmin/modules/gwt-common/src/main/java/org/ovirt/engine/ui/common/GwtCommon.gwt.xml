@@ -8,6 +8,7 @@
     <inherits name="com.google.gwt.inject.Inject" />
 
     <inherits name="org.gwtbootstrap3.GwtBootstrap3NoTheme"/>
+    <inherits name="com.google.gwt.uibinder.GinUiBinder" />
 
     <!-- Inherit GWTP MVP module with automatic EntryPoint support -->
     <inherits name="com.gwtplatform.mvp.MvpWithEntryPoint" />

@@ -10,22 +10,7 @@
   <packaging>jar</packaging>
   <name>oVirt GWT UI common infrastructure</name>
   <dependencies>
-    <!-- Google Web Toolkit dependencies -->
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-user</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>com.google.gwt</groupId>
-      <artifactId>gwt-dev</artifactId>
-    </dependency>
-    <!-- GWT wrapper for Bootstrap framework -->
-    <dependency>
-      <groupId>org.gwtbootstrap3</groupId>
-      <artifactId>gwtbootstrap3</artifactId>
-      <version>${gwtbootstrap3.version}</version>
-      <scope>provided</scope>
-    </dependency>
+    <!-- IMPORTANT: GWTP dependencies must appear on classpath before GWT otherwise the GinUiBinder won't work -->
     <!-- GWTP MVP component -->
     <dependency>
       <groupId>com.gwtplatform</groupId>
@@ -56,6 +41,22 @@
       <groupId>com.google.gwt.inject</groupId>
       <artifactId>gin</artifactId>
       <version>${gin.version}</version>
+      <scope>provided</scope>
+    </dependency>
+    <!-- Google Web Toolkit dependencies -->
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-user</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>com.google.gwt</groupId>
+      <artifactId>gwt-dev</artifactId>
+    </dependency>
+    <!-- GWT wrapper for Bootstrap framework -->
+    <dependency>
+      <groupId>org.gwtbootstrap3</groupId>
+      <artifactId>gwtbootstrap3</artifactId>
+      <version>${gwtbootstrap3.version}</version>
       <scope>provided</scope>
     </dependency>
     <!-- oVirt dependencies -->

@@ -319,7 +319,7 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
     @WithElementId("copyTemplatePermissions")
     public EntityModelCheckBoxEditor copyTemplatePermissionsEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     @WithElementId("serialNumberPolicy")
     public SerialNumberPolicyWidget serialNumberPolicyEditor;
@@ -932,7 +932,6 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         priorityEditor = new EntityModelCellTable<ListModel<EntityModel<Integer>>>(
                 (Resources) GWT.create(ButtonCellTableResources.class));
         disksAllocationView = new DisksAllocationView(constants);
-        serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, applicationTemplates, messages, resources, new ModeSwitchingVisibilityRenderer());
         spiceFileTransferEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
         spiceCopyPasteEnabledEditor = new EntityModelCheckBoxEditor(Align.RIGHT, new ModeSwitchingVisibilityRenderer());
 
@@ -943,6 +942,8 @@ public abstract class AbstractVmPopupWidget extends AbstractModeSwitchingPopupWi
         initDetachableFields();
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
+
+        serialNumberPolicyEditor.setRenderer(new ModeSwitchingVisibilityRenderer());
 
         expander.initWithContent(expanderContent.getElement());
         vcpusAdvancedParameterExpander.initWithContent(vcpusAdvancedParameterExpanderContent.getElement());

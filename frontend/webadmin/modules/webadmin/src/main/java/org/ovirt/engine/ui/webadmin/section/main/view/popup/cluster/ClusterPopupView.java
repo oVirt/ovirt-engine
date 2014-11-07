@@ -328,7 +328,7 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
     @WithElementId
     EntityModelRadioButtonEditor allowOverbookingEditor;
 
-    @UiField(provided = true)
+    @UiField
     @Ignore
     @WithElementId("serialNumberPolicy")
     SerialNumberPolicyWidget serialNumberPolicyEditor;
@@ -399,17 +399,11 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
     private final ApplicationTemplates templates;
 
-    private final ApplicationResources resources;
-
-    private final EventBus eventBus;
-
     @Inject
     public ClusterPopupView(EventBus eventBus, ApplicationResources resources, ApplicationConstants constants, ApplicationMessages messages, ApplicationTemplates templates) {
         super(eventBus, resources);
         this.messages = messages;
         this.templates = templates;
-        this.resources = resources;
-        this.eventBus = eventBus;
         initListBoxEditors(constants);
         initRadioButtonEditors();
         initCheckBoxEditors();
@@ -417,6 +411,8 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
         ViewIdHandler.idHandler.generateAndSetIds(this);
+
+        serialNumberPolicyEditor.setRenderer(new VisibilityRenderer.SimpleVisibilityRenderer());
 
         addStyles();
         localize(constants);
@@ -531,8 +527,6 @@ public class ClusterPopupView extends AbstractTabbedModelBoundPopupView<ClusterM
 
         guarantyResourcesEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
         allowOverbookingEditor = new EntityModelRadioButtonEditor("4"); //$NON-NLS-1$
-
-        serialNumberPolicyEditor = new SerialNumberPolicyWidget(eventBus, templates, messages, resources, new VisibilityRenderer.SimpleVisibilityRenderer());
     }
 
     private void initListBoxEditors(ApplicationConstants constants) {

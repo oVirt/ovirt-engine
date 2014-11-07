@@ -2,11 +2,11 @@ package org.ovirt.engine.ui.common.widget.uicommon.popup.vm;
 
 import com.google.gwt.core.client.GWT;
 import com.google.gwt.editor.client.SimpleBeanEditorDriver;
-import com.google.gwt.event.shared.EventBus;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.uibinder.client.UiBinder;
 import com.google.gwt.uibinder.client.UiField;
 import com.google.gwt.user.client.ui.FlowPanel;
+import com.google.inject.Inject;
 import org.ovirt.engine.core.common.businessentities.SerialNumberPolicy;
 import org.ovirt.engine.ui.common.CommonApplicationMessages;
 import org.ovirt.engine.ui.common.CommonApplicationResources;
@@ -37,9 +37,9 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     }
 
     interface Style extends CssResource {
+
         String serialNumberPolicy();
     }
-
     @UiField
     public Style style;
 
@@ -58,13 +58,13 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
     @Path("customSerialNumber.entity")
     public StringEntityModelTextBoxOnlyEditor customSerialNumber;
 
-    public SerialNumberPolicyWidget(EventBus eventBus,
-                                    CommonApplicationTemplates applicationTemplates,
-                                    CommonApplicationMessages applicationMessages,
-                                    CommonApplicationResources applicationResources,
-                                    VisibilityRenderer visibilityRenderer) {
-        overrideSerialNumberPolicy = new EntityModelCheckBoxEditor(Align.RIGHT, visibilityRenderer, false);
-        serialNumberPolicy = new EnumRadioEditor<SerialNumberPolicy>(SerialNumberPolicy.class);
+    @Inject
+    public SerialNumberPolicyWidget(
+            CommonApplicationTemplates applicationTemplates,
+            CommonApplicationMessages applicationMessages,
+            CommonApplicationResources applicationResources) {
+        overrideSerialNumberPolicy = new EntityModelCheckBoxEditor(Align.RIGHT);
+        serialNumberPolicy = new EnumRadioEditor<>(SerialNumberPolicy.class);
         serialNumberInfoIcon = new InfoIcon(applicationTemplates.italicText(applicationMessages.serialNumberInfo()), applicationResources);
 
         initWidget(ViewUiBinder.uiBinder.createAndBindUi(this));
@@ -86,5 +86,9 @@ public class SerialNumberPolicyWidget extends AbstractModelBoundPopupWidget<Seri
 
     public void setCheckboxStyle(String checkboxStyle) {
         overrideSerialNumberPolicy.addStyleName(checkboxStyle);
+    }
+
+    public void setRenderer(VisibilityRenderer renderer) {
+        overrideSerialNumberPolicy.setRenderer(renderer);
     }
 }

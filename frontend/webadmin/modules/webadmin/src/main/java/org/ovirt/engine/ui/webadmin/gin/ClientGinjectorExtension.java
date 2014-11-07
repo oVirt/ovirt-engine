@@ -160,7 +160,7 @@ import com.gwtplatform.mvp.client.annotations.DefaultGatekeeper;
 /**
  * WebAdmin {@code Ginjector} extension interface.
  */
-public interface ClientGinjectorExtension {
+public interface ClientGinjectorExtension extends WebAdminGinUiBinderWidgets {
 
     // Core GWTP components
 

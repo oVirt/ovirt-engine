@@ -79,7 +79,7 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
      */
     private boolean keepTitleOnSetEnabled = false;
 
-    private final VisibilityRenderer renderer;
+    private VisibilityRenderer renderer;
 
     private boolean usePatternFly;
 
@@ -327,5 +327,13 @@ public abstract class AbstractValidatedWidgetWithLabel<T, W extends EditorWidget
 
     public void setKeepTitleOnSetEnabled(boolean keepTitleOnSetEnabled) {
         this.keepTitleOnSetEnabled = keepTitleOnSetEnabled;
+    }
+
+    public VisibilityRenderer getRenderer() {
+        return renderer;
+    }
+
+    public void setRenderer(VisibilityRenderer renderer) {
+        this.renderer = renderer;
     }
 }
