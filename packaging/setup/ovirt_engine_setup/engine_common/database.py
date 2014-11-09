@@ -622,7 +622,9 @@ class OvirtUtils(base.Base):
         name,
         queryprefix,
         defaultdbenvkeys,
-        show_create_msg=False
+        show_create_msg=False,
+        note=None,
+        credsfile=None,
     ):
         interactive = None in (
             self.environment[self._dbenvkeys['host']],
@@ -632,30 +634,44 @@ class OvirtUtils(base.Base):
             self.environment[self._dbenvkeys['password']],
         )
 
-        if interactive and show_create_msg:
-            self.dialog.note(
-                text=_(
-                    "\n"
-                    "ATTENTION\n"
-                    "\n"
-                    "Manual action required.\n"
-                    "Please create database for ovirt-engine use. "
-                    "Use the following commands as an example:\n"
-                    "\n"
-                    "create role {user} with login encrypted password '{user}'"
-                    ";\n"
-                    "create database {database} owner {user}\n"
-                    " template template0\n"
-                    " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
-                    " lc_ctype 'en_US.UTF-8';\n"
-                    "\n"
-                    "Make sure that database can be accessed remotely.\n"
-                    "\n"
+        if interactive:
+            if note is None and credsfile:
+                note = _(
+                    "\nPlease provide the following credentials for the "
+                    "{name} database.\nThey should be found on the {name} "
+                    "server in '{credsfile}'.\n\n"
                 ).format(
-                    user=defaultdbenvkeys['user'],
-                    database=defaultdbenvkeys['database'],
-                ),
-            )
+                    name=name,
+                    credsfile=credsfile,
+                )
+
+            if note:
+                self.dialog.note(text=note)
+
+            if show_create_msg:
+                self.dialog.note(
+                    text=_(
+                        "\n"
+                        "ATTENTION\n"
+                        "\n"
+                        "Manual action required.\n"
+                        "Please create database for ovirt-engine use. "
+                        "Use the following commands as an example:\n"
+                        "\n"
+                        "create role {user} with login encrypted password "
+                        "'{user}';\n"
+                        "create database {database} owner {user}\n"
+                        " template template0\n"
+                        " encoding 'UTF8' lc_collate 'en_US.UTF-8'\n"
+                        " lc_ctype 'en_US.UTF-8';\n"
+                        "\n"
+                        "Make sure that database can be accessed remotely.\n"
+                        "\n"
+                    ).format(
+                        user=defaultdbenvkeys['user'],
+                        database=defaultdbenvkeys['database'],
+                    ),
+                )
 
         connectionValid = False
         while not connectionValid:
