@@ -1,4 +1,2 @@
 -- Create index
-CREATE INDEX IDX_images_images_group_id on images(image_group_id);
-
-
+select fn_db_create_index('IDX_images_images_group_id', 'images', 'image_group_id', '');
