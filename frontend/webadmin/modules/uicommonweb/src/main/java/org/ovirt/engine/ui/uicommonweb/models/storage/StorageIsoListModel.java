@@ -8,6 +8,7 @@ import org.ovirt.engine.core.common.businessentities.ImageFileType;
 import org.ovirt.engine.core.common.businessentities.RepoImage;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
+import org.ovirt.engine.core.common.businessentities.StorageDomainType;
 import org.ovirt.engine.core.common.businessentities.StorageType;
 import org.ovirt.engine.core.common.queries.GetImagesListParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
@@ -95,7 +96,7 @@ public class StorageIsoListModel extends SearchableListModel
         }
 
         StorageDomain storageDomain = (StorageDomain) getEntity();
-        if (storageDomain.getStatus() != StorageDomainStatus.Active) {
+        if (storageDomain.getStorageDomainType() == StorageDomainType.ISO && storageDomain.getStatus() != StorageDomainStatus.Active) {
             setItems(Collections.<StorageDomain>emptyList());
             return;
         }
