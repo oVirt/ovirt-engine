@@ -52,6 +52,7 @@ import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DiskInterface;
 import org.ovirt.engine.core.common.businessentities.Entities;
 import org.ovirt.engine.core.common.businessentities.ImageDbOperationScope;
+import org.ovirt.engine.core.common.businessentities.ImageOperation;
 import org.ovirt.engine.core.common.businessentities.Snapshot;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotStatus;
 import org.ovirt.engine.core.common.businessentities.Snapshot.SnapshotType;
@@ -794,7 +795,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryDumpImage(Guid containerID,
             Guid storageId, Guid imageId, Guid volumeId) {
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
-                imageId, volumeId, imageId, volumeId, storageId, getMoveOrCopyImageOperation());
+                imageId, volumeId, imageId, volumeId, storageId, ImageOperation.Copy);
         params.setParentCommand(getActionType());
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
         params.setForceOverride(getParameters().getForceOverride());
@@ -817,7 +818,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private MoveOrCopyImageGroupParameters buildMoveOrCopyImageGroupParametersForMemoryConfImage(Guid containerID,
             Guid storageId, Guid imageId, Guid volumeId) {
         MoveOrCopyImageGroupParameters params = new MoveOrCopyImageGroupParameters(containerID,
-                imageId, volumeId, imageId, volumeId, storageId, getMoveOrCopyImageOperation());
+                imageId, volumeId, imageId, volumeId, storageId, ImageOperation.Copy);
         params.setParentCommand(getActionType());
         // This volume is always of type 'sparse' and format 'cow' so no need to convert,
         // and there're no snapshots for it so no reason to use copy collapse
@@ -855,7 +856,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 newDiskIdForDisk.get(disk.getId()).getImageId(),
                 disk.getId(),
                 disk.getImageId(),
-                destinationDomain, getMoveOrCopyImageOperation());
+                destinationDomain, ImageOperation.Copy);
         params.setParentCommand(getActionType());
         params.setUseCopyCollapse(getParameters().getCopyCollapse());
         params.setCopyVolumeType(CopyVolumeType.LeafVol);
@@ -1217,7 +1218,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
-            getBackend().endAction(getImagesActionType(),
+            getBackend().endAction(VdcActionType.CopyImageGroup,
                     p,
                     getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
         }
