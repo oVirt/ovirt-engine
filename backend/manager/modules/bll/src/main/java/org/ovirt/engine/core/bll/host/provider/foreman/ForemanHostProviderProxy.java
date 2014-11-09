@@ -27,6 +27,7 @@ import org.apache.commons.httpclient.methods.PutMethod;
 import org.apache.commons.httpclient.methods.RequestEntity;
 import org.apache.commons.httpclient.protocol.Protocol;
 import org.apache.commons.httpclient.protocol.ProtocolSocketFactory;
+import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.host.provider.HostProviderProxy;
 import org.ovirt.engine.core.bll.provider.BaseProviderProxy;
 import org.ovirt.engine.core.bll.provider.ExternalTrustStoreInitializer;
@@ -350,7 +351,9 @@ public class ForemanHostProviderProxy extends BaseProviderProxy implements HostP
 
             // after post request the return value is HTTP_MOVED_TEMP on success
             if (result != HttpURLConnection.HTTP_OK && result != HttpURLConnection.HTTP_MOVED_TEMP) {
-                throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE);
+                ForemanErrorWrapper ferr = objectMapper.readValue(httpMethod.getResponseBody(), ForemanErrorWrapper.class);
+                String err = StringUtils.join(ferr.getForemanError().getFull_messages(), ", ");
+                throw new VdcBLLException(VdcBllErrors.PROVIDER_FAILURE, err);
             }
         } catch (HttpException e) {
             handleException(e);
