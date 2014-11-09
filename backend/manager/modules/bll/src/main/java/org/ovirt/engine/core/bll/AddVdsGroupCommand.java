@@ -93,8 +93,8 @@ public class AddVdsGroupCommand<T extends VdsGroupOperationParameters> extends
             addCanDoActionMessage(VdcBllMessages.VDS_GROUP_CANNOT_DO_ACTION_NAME_IN_USE);
             result = false;
         } else if (getVdsGroup().supportsVirtService()
-                && !CpuFlagsManagerHandler.CheckIfCpusExist(getVdsGroup().getcpu_name(),
-                        getVdsGroup().getcompatibility_version())) {
+                && !CpuFlagsManagerHandler.checkIfCpusExist(getVdsGroup().getcpu_name(),
+                getVdsGroup().getcompatibility_version())) {
             // cpu check required only if the cluster supports Virt service
             addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CPU_NOT_FOUND);
             result = false;

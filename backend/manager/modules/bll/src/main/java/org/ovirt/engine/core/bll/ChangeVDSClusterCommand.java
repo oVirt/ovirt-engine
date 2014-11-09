@@ -116,7 +116,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
             return false;
         }
 
-        vds.setCpuName(CpuFlagsManagerHandler.FindMaxServerCpuByFlags(vds.getCpuFlags(),
+        vds.setCpuName(CpuFlagsManagerHandler.findMaxServerCpuByFlags(vds.getCpuFlags(),
                 getTargetCluster().getcompatibility_version()));
 
 

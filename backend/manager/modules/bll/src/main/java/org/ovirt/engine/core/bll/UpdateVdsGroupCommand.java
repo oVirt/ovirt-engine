@@ -397,13 +397,13 @@ public class UpdateVdsGroupCommand<T extends VdsGroupOperationParameters> extend
     }
 
     protected boolean checkIfCpusSameManufacture(VDSGroup group) {
-        return CpuFlagsManagerHandler.CheckIfCpusSameManufacture(group.getcpu_name(),
+        return CpuFlagsManagerHandler.checkIfCpusSameManufacture(group.getcpu_name(),
                 getVdsGroup().getcpu_name(),
                 getVdsGroup().getcompatibility_version());
     }
 
     protected boolean checkIfCpusExist() {
-        return CpuFlagsManagerHandler.CheckIfCpusExist(getVdsGroup().getcpu_name(),
+        return CpuFlagsManagerHandler.checkIfCpusExist(getVdsGroup().getcpu_name(),
                 getVdsGroup().getcompatibility_version());
     }
 

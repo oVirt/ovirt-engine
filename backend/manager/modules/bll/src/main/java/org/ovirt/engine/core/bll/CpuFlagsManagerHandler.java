@@ -25,7 +25,7 @@ public final class CpuFlagsManagerHandler {
     private static Map<Version, CpuFlagsManager> _managersDictionary =
             new HashMap<Version, CpuFlagsManager>();
 
-    public static void InitDictionaries() {
+    public static void initDictionaries() {
         log.info("Start initializing dictionaries");
         _managersDictionary.clear();
         for (Version ver : Config.<HashSet<Version>> getValue(ConfigValues.SupportedClusterLevels)) {
@@ -50,7 +50,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static List<ServerCpu> AllServerCpuList(Version ver) {
+    public static List<ServerCpu> allServerCpuList(Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.getAllServerCpuList();
@@ -75,7 +75,7 @@ public final class CpuFlagsManagerHandler {
         return null;
     }
 
-    public static boolean CheckIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
+    public static boolean checkIfCpusSameManufacture(String cpuName1, String cpuName2, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusSameManufacture(cpuName1, cpuName2);
@@ -83,7 +83,7 @@ public final class CpuFlagsManagerHandler {
         return false;
     }
 
-    public static boolean CheckIfCpusExist(String cpuName, Version ver) {
+    public static boolean checkIfCpusExist(String cpuName, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.CheckIfCpusExist(cpuName);
@@ -97,7 +97,7 @@ public final class CpuFlagsManagerHandler {
      * @param flags
      * @return
      */
-    public static ServerCpu FindMaxServerCpuByFlags(String flags, Version ver) {
+    public static ServerCpu findMaxServerCpuByFlags(String flags, Version ver) {
         final CpuFlagsManager cpuFlagsManager = _managersDictionary.get(ver);
         if (cpuFlagsManager != null) {
             return cpuFlagsManager.FindMaxServerCpuByFlags(flags);

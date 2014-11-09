@@ -48,7 +48,7 @@ public class HandleVdsCpuFlagsOrClusterChangedCommand<T extends VdsActionParamet
 
         VDSGroup grp = DbFacade.getInstance().getVdsGroupDao().get(getVds().getVdsGroupId());
 
-        ServerCpu sc = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
+        ServerCpu sc = CpuFlagsManagerHandler.findMaxServerCpuByFlags(getVds().getCpuFlags(), getVds()
                 .getVdsGroupCompatibilityVersion());
 
         if (sc == null) {

@@ -16,7 +16,7 @@ public class GetHostArchitectureQuery<P extends IdQueryParameters> extends Queri
         VDS host = getDbFacade().getVdsDao().get(getParameters().getId());
 
         ServerCpu sc =
-                CpuFlagsManagerHandler.FindMaxServerCpuByFlags(host.getCpuFlags(),
+                CpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(),
                         host.getVdsGroupCompatibilityVersion());
 
         getQueryReturnValue().setReturnValue(sc == null ? ArchitectureType.undefined : sc.getArchitecture());

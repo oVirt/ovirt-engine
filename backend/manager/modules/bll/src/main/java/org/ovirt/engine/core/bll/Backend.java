@@ -201,7 +201,7 @@ public class Backend implements BackendInternal, BackendCommandObjectsHandler {
         log.info("Running ovirt-engine {}", Config.<String>getValue(ConfigValues.ProductRPMVersion));
         _resourceManger = new VDSBrokerFrontendImpl();
 
-        CpuFlagsManagerHandler.InitDictionaries();
+        CpuFlagsManagerHandler.initDictionaries();
 
         // ResourceManager res = ResourceManager.Instance;
         // Initialize the AuditLogCleanupManager

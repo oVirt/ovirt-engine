@@ -30,7 +30,8 @@ public class CpuLevelFilterPolicyUnit extends PolicyUnitImpl {
         if (StringUtils.isNotEmpty(vm.getCpuName())) {
             List<VDS> hostsToRunOn = new ArrayList<VDS>();
             for (VDS host : hosts) {
-                ServerCpu cpu = CpuFlagsManagerHandler.FindMaxServerCpuByFlags(host.getCpuFlags(), host.getVdsGroupCompatibilityVersion());
+                ServerCpu cpu = CpuFlagsManagerHandler.findMaxServerCpuByFlags(host.getCpuFlags(),
+                        host.getVdsGroupCompatibilityVersion());
                 String hostCpuName = cpu == null ? null : cpu.getCpuName();
                 if (StringUtils.isNotEmpty(hostCpuName)) {
                     int compareResult = CpuFlagsManagerHandler.compareCpuLevels(vm.getCpuName(), hostCpuName, vm.getVdsGroupCompatibilityVersion());
