@@ -106,6 +106,17 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             }
         }
 
+        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
+            @Override
+            public Void runInTransaction() {
+                AddVdsStaticToDb();
+                AddVdsDynamicToDb();
+                AddVdsStatisticsToDb();
+                getCompensationContext().stateChanged();
+                return null;
+            }
+        });
+
         if (getParameters().getAddProvisioned()) {
             if (getParameters().getComputeResource() == null) {
                 log.error("Failed to provision: Compute resource cannot be empty");
@@ -132,17 +143,6 @@ public class AddVdsCommand<T extends AddVdsActionParameters> extends VdsCommand<
             logable.addCustomValue("HostGroupName", getParameters().getHostGroup().getName());
             AuditLogDirector.log(logable, AuditLogType.VDS_PROVISION);
         }
-
-        TransactionSupport.executeInNewTransaction(new TransactionMethod<Void>() {
-            @Override
-            public Void runInTransaction() {
-                AddVdsStaticToDb();
-                AddVdsDynamicToDb();
-                AddVdsStatisticsToDb();
-                getCompensationContext().stateChanged();
-                return null;
-            }
-        });
 
         // set vds spm id
         if (getVdsGroup().getStoragePoolId() != null) {
