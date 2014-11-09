@@ -268,8 +268,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             setDescription(getVmName());
         }
 
-        if (!checkStoragePool()) {
-            return false;
+        if (getStoragePool() == null) {
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_POOL_NOT_EXIST);
         }
 
         Set<Guid> destGuids = new HashSet<Guid>(imageToDestinationDomainMap.values());
@@ -1174,6 +1174,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         fillMacAddressIfMissing(iface);
         iface.setVmTemplateId(null);
         iface.setVmId(getVmId());
+    }
+
+    private void fillMacAddressIfMissing(VmNic iface) {
+        if (StringUtils.isEmpty(iface.getMacAddress())
+                && getMacPool().getAvailableMacsCount() > 0) {
+            iface.setMacAddress(getMacPool().allocateNewMac());
+        }
     }
 
     private void addVmDynamic() {

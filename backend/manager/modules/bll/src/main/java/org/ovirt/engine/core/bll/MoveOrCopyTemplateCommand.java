@@ -409,13 +409,6 @@ public class MoveOrCopyTemplateCommand<T extends MoveOrCopyParameters> extends S
         return permissionCheckSubject;
     }
 
-    protected void fillMacAddressIfMissing(VmNic iface) {
-        if (StringUtils.isEmpty(iface.getMacAddress())
-                && (getMacPool().getAvailableMacsCount() >= 1)) {
-            iface.setMacAddress(getMacPool().allocateNewMac());
-        }
-    }
-
     protected boolean validateMacAddress(List<VmNic> ifaces) {
         int freeMacs = 0;
         for (VmNic iface : ifaces) {
