@@ -1,9 +1,8 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.PostZeroHandler;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.RestoreFromSnapshotParameters;
@@ -122,7 +121,7 @@ public class RestoreFromSnapshotCommand<T extends RestoreFromSnapshotParameters>
         catch (VdcBLLException e) {
             // Set fault for parent command RestoreAllSnapshotCommand to use, if decided to fail the command.
             getReturnValue().setFault(new VdcFault(e, e.getVdsError().getCode()));
-            log.info(String.format("%1$s Image not exist in Irs", getDiskImage().getImageId()));
+            log.info("Image '{}' not exist in Irs", getDiskImage().getImageId());
         }
         return vdsReturnValue;
     }

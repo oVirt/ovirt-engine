@@ -134,7 +134,7 @@ public class VdsNotRespondingTreatmentCommand<T extends FenceVdsActionParameters
                 long difference = System.currentTimeMillis() - getParameters().getLastUpdate();
                 if (difference < interval) {
                     int sleepMs = (int)(interval - difference);
-                    log.info(String.format("Sleeping %s ms before proceeding with fence execution", sleepMs));
+                    log.info("Sleeping {} ms before proceeding with fence execution", sleepMs);
                     ThreadUtils.sleep(sleepMs);
                 }
             }

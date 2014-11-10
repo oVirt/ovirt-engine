@@ -29,7 +29,7 @@ public class GetVmConfigurationBySnapshotQuery<P extends IdQueryParameters> exte
         VM vm = null;
 
         if (snapshot == null) {
-            log.error(String.format("Snapshot %1$s does not exist", getParameters().getId()));
+            log.error("Snapshot '{}' does not exist", getParameters().getId());
         }
         else {
             vm = snapshotVmConfigurationHelper.getVmFromConfiguration(

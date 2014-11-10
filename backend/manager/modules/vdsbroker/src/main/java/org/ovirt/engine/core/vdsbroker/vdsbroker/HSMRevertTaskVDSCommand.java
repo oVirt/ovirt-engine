@@ -20,7 +20,7 @@ public class HSMRevertTaskVDSCommand<P extends HSMTaskGuidBaseVDSCommandParamete
 
         switch (returnStatus) {
         case UnknownTask:
-            log.error(String.format("Trying to revert unknown task: %1$s", getParameters().getTaskId()));
+            log.error("Trying to revert unknown task '{}'", getParameters().getTaskId());
             return;
         }
         super.proceedProxyReturnValue();
