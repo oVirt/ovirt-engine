@@ -421,6 +421,25 @@ begin
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- Creates an index on an existing table, if there is no WHERE condition, the last argument should be empty ('')
+-- Example : Table T with columns a,b and c
+-- fn_db_create_index('T_INDEX', 'T', 'a,b', ''); ==> Creates an index named T_INDEX on table T (a,b)
+create or replace FUNCTION fn_db_create_index(v_index_name varchar(128), v_table_name varchar(128), v_column_names text, v_where_predicate text)
+returns void
+AS $procedure$
+DECLARE
+    v_sql TEXT;
+BEGIN
+    v_sql := 'DROP INDEX ' || ' IF EXISTS ' || v_index_name || '; CREATE INDEX ' || v_index_name || ' ON ' || v_table_name || '(' || v_column_names || ')';
+    IF v_where_predicate = '' THEN
+        v_sql := v_sql || ';';
+    ELSE
+        v_sql := v_sql || ' WHERE ' || v_where_predicate || ';';
+    END IF;
+    EXECUTE v_sql;
+END; $procedure$
+LANGUAGE plpgsql;
+
 -- Unlocks a specific disk
 create or replace FUNCTION fn_db_unlock_disk(v_id UUID)
 returns void
