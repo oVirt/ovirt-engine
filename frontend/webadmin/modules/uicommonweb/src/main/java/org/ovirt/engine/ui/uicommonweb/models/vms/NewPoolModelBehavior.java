@@ -88,6 +88,7 @@ public class NewPoolModelBehavior extends PoolModelBehaviorBase {
         setupWindowModelFrom(template);
         doChangeDefautlHost(template.getDedicatedVmForVds());
         updateRngDevice(template.getId());
+        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
     }
 
     @Override

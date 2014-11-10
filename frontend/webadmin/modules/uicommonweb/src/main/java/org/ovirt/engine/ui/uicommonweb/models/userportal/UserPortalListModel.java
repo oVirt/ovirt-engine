@@ -598,6 +598,8 @@ public class UserPortalListModel extends AbstractUserPortalListModel {
                 new UICommand("Cancel", this) //$NON-NLS-1$
                 .setTitle(ConstantsManager.getInstance().getConstants().cancel())
                 .setIsCancel(true));
+
+        windowModel.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
     }
 
     private void onNewTemplate()

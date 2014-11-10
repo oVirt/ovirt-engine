@@ -12,7 +12,6 @@ public class VmSpecificUnitToVmBuilder extends BaseSyncBuilder<UnitVmModel, VM> 
     @Override
     protected void build(UnitVmModel model, VM vm) {
         vm.setVmtGuid(model.getTemplate().getSelectedItem().getId());
-        vm.setCustomProperties(model.getCustomPropertySheet().serialize());
         vm.setInstanceTypeId(model.getInstanceTypes().getSelectedItem().getId());
     }
 }

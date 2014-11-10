@@ -82,6 +82,7 @@ public class ExistingPoolModelBehavior extends PoolModelBehaviorBase {
         getModel().setIsDisksAvailable(true);
         VmTemplate template = getModel().getTemplate().getSelectedItem();
         updateRngDevice(template.getId());
+        getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
     }
 
     @Override

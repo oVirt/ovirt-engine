@@ -146,6 +146,7 @@ public class NewVmModelBehavior extends VmModelBehaviorBase {
             }
 
             updateQuotaByCluster(template.getQuotaId(), template.getQuotaName());
+            getModel().getCustomPropertySheet().deserialize(template.getCustomProperties());
 
             getModel().getVmInitModel().init(template);
             getModel().getVmInitEnabled().setEntity(template.getVmInit() != null);

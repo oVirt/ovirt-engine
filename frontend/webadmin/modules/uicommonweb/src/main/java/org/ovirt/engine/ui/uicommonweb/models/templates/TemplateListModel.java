@@ -455,6 +455,7 @@ public class TemplateListModel extends VmBaseListModel<VmTemplate> implements IS
         model.setHelpTag(HelpTag.edit_template);
         model.setHashName("edit_template"); //$NON-NLS-1$
         model.getVmType().setSelectedItem(template.getVmType());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getCustomPropertiesList());
 
         model.initialize(this.getSystemTreeSelectedItem());
 

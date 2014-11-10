@@ -282,6 +282,8 @@ public class NewTemplateVmModelBehavior extends VmModelBehaviorBase<UnitVmModel>
             updateCpuProfile(getModel().getSelectedCluster().getId(), getModel().getSelectedCluster()
                     .getcompatibility_version(), vm.getCpuProfileId());
         }
+        updateCustomPropertySheet();
+        getModel().getCustomPropertySheet().deserialize(vm.getCustomProperties());
     }
 
     @Override
