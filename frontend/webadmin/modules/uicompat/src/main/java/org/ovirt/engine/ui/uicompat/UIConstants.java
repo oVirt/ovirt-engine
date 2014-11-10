@@ -127,6 +127,9 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Clone Virtual Machine")
     String cloneVmTitle();
 
+    @DefaultStringValue("VM's LUN(s) will not be cloned.")
+    String cloneVmLunsWontBeCloned();
+
     // Tag
     @DefaultStringValue("Root")
     String rootTag();

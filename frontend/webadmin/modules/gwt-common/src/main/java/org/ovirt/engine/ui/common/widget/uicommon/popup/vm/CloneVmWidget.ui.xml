@@ -4,10 +4,17 @@
              xmlns:ge="urn:import:org.ovirt.engine.ui.common.widget.editor.generic">
 
     <ui:style>
+        .messagePanel {
+            color: #CD2127;
+            height: 30px;
+            padding: 15px 5px;
+            width: 100%
+        }
     </ui:style>
 
     <g:FlowPanel>
         <ge:StringEntityModelTextBoxEditor ui:field="cloneNameEditor" />
+        <g:FlowPanel ui:field="messagePanel" addStyleNames="{style.messagePanel}" />
     </g:FlowPanel>
 
 </ui:UiBinder>

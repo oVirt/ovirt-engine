@@ -2,10 +2,12 @@ package org.ovirt.engine.ui.uicommonweb.models.vms;
 
 import org.ovirt.engine.core.common.action.CloneVmParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
+import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.INewAsyncCallback;
+import org.ovirt.engine.ui.uicommonweb.Linq;
 import org.ovirt.engine.ui.uicommonweb.dataprovider.AsyncDataProvider;
 import org.ovirt.engine.ui.uicommonweb.models.EntityModel;
 import org.ovirt.engine.ui.uicommonweb.models.Model;
@@ -13,9 +15,12 @@ import org.ovirt.engine.ui.uicommonweb.validation.I18NNameValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.IValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.LengthValidation;
 import org.ovirt.engine.ui.uicommonweb.validation.NotEmptyValidation;
+import org.ovirt.engine.ui.uicompat.ConstantsManager;
 import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 import org.ovirt.engine.ui.uicompat.UIConstants;
+
+import java.util.ArrayList;
 
 public class CloneVmModel extends Model {
 
@@ -30,6 +35,20 @@ public class CloneVmModel extends Model {
         this.constants = constants;
 
         cloneName = new EntityModel<String>();
+    }
+
+    @Override
+    public void initialize() {
+        AsyncDataProvider.getInstance().getVmDiskList(new AsyncQuery(this, new INewAsyncCallback() {
+            @Override
+            public void onSuccess(Object target, Object returnValue) {
+                ArrayList<Disk> disks = (ArrayList<Disk>) returnValue;
+
+                if (!Linq.filterDisksByStorageType(disks, Disk.DiskStorageType.LUN).isEmpty()) {
+                    setMessage(ConstantsManager.getInstance().getConstants().cloneVmLunsWontBeCloned());
+                }
+            }
+        }), vm.getId());
     }
 
     public EntityModel<String> getCloneName() {

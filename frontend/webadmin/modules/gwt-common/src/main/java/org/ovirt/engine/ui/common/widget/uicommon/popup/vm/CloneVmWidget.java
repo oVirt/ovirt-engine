@@ -11,6 +11,10 @@ import org.ovirt.engine.ui.common.idhandler.WithElementId;
 import org.ovirt.engine.ui.common.widget.editor.generic.StringEntityModelTextBoxEditor;
 import org.ovirt.engine.ui.common.widget.uicommon.popup.AbstractModelBoundPopupWidget;
 import org.ovirt.engine.ui.uicommonweb.models.vms.CloneVmModel;
+import org.ovirt.engine.ui.uicompat.Event;
+import org.ovirt.engine.ui.uicompat.IEventListener;
+import org.ovirt.engine.ui.uicompat.PropertyChangedEventArgs;
+import com.google.gwt.user.client.ui.Label;
 
 public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
 
@@ -34,6 +38,10 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     @WithElementId("cloneName")
     StringEntityModelTextBoxEditor cloneNameEditor;
 
+    @UiField
+    @WithElementId("Message")
+    FlowPanel messagePanel;
+
     public CloneVmWidget(CommonApplicationConstants constants) {
         this.constants = constants;
 
@@ -44,6 +52,14 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
         localize();
     }
 
+    public void appendMessage(String message) {
+        if (message == null) {
+            return;
+        }
+
+        messagePanel.add(new Label(message));
+    }
+
     private void localize() {
         cloneNameEditor.setLabel(constants.clonedVmName());
     }
@@ -51,6 +67,16 @@ public class CloneVmWidget extends AbstractModelBoundPopupWidget<CloneVmModel> {
     @Override
     public void edit(final CloneVmModel object) {
         driver.edit(object);
+
+        object.getPropertyChangedEvent().addListener(new IEventListener<PropertyChangedEventArgs>() {
+            @Override
+            public void eventRaised(Event<? extends PropertyChangedEventArgs> ev, Object sender, PropertyChangedEventArgs args) {
+                String propName = args.propertyName;
+                if ("Message".equals(propName)) { //$NON-NLS-1$
+                    appendMessage(object.getMessage());
+                }
+            }
+        });
     }
 
     @Override
