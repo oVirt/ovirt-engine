@@ -1327,6 +1327,7 @@ public class VmListModel extends VmBaseListModel<VM> implements ISupportSystemTr
         model.setHashName("new_template"); //$NON-NLS-1$
         model.setIsNew(true);
         model.getVmType().setSelectedItem(vm.getVmType());
+        model.setCustomPropertiesKeysList(AsyncDataProvider.getInstance().getCustomPropertiesList());
 
         model.initialize(getSystemTreeSelectedItem());
 

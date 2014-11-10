@@ -34,5 +34,6 @@ public class CoreUnitToVmBaseBuilder extends HwOnlyCoreUnitToVmBaseBuilder {
         vm.setSpiceCopyPasteEnabled(model.getSpiceCopyPasteEnabled().getEntity());
         vm.setAutoConverge(model.getAutoConverge().getSelectedItem());
         vm.setMigrateCompressed(model.getMigrateCompressed().getSelectedItem());
+        vm.setCustomProperties(model.getCustomPropertySheet().serialize());
     }
 }
