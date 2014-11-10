@@ -105,7 +105,7 @@ import org.slf4j.LoggerFactory;
 
 @DisableInPrepareMode
 @NonTransactiveCommandAttribute(forceCompensation = true)
-public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTemplateCommand<T>
+public class ImportVmCommand<T extends ImportVmParameters> extends ImportVmCommandBase<T>
         implements QuotaStorageDependent, TaskHandlerCommand<T> {
 
     private static final Logger log = LoggerFactory.getLogger(ImportVmCommand.class);
@@ -762,7 +762,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         });
     }
 
-    @Override
     protected void moveOrCopyAllImageGroups() {
         moveOrCopyAllImageGroups(getVm().getId(),
                 ImagesHandler.filterImageDisks(getVm().getDiskMap().values(), false, false, true));
@@ -836,7 +835,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return params;
     }
 
-    @Override
     protected void moveOrCopyAllImageGroups(Guid containerID, Iterable<DiskImage> disks) {
         for (DiskImage disk : disks) {
             VdcReturnValueBase vdcRetValue = runInternalActionWithTasksContext(
@@ -1224,7 +1222,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
      }
 
-    @Override
     protected void endActionOnAllImageGroups() {
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
             p.setTaskGroupSuccess(getParameters().getTaskGroupSuccess());
@@ -1254,7 +1251,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         }
     }
 
-    private void removeVmSnapshots() {
+    @Override
+    protected void removeVmSnapshots() {
         Guid vmId = getVmId();
         Set<String> memoryStates = snapshotsManager.removeSnapshots(vmId);
         for (String memoryState : memoryStates) {
@@ -1382,7 +1380,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         return list;
     }
 
-    @Override
     protected List<DiskImage> getImages() {
         return getVm().getImages();
     }

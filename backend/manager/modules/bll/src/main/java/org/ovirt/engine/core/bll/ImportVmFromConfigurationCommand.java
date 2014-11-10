@@ -57,7 +57,7 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
             if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData, getImages()))) {
                 return false;
             }
-            setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());
+            setImagesWithStoragePoolId(getParameters().getStoragePoolId(), getVm().getImages());
         }
         return super.canDoAction();
     }

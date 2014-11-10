@@ -12,7 +12,7 @@ import org.ovirt.engine.core.bll.ImagesHandler;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolPerDcSingleton;
-import org.ovirt.engine.core.common.action.MoveOrCopyParameters;
+import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
@@ -33,7 +33,7 @@ import org.ovirt.engine.core.dao.StoragePoolDAO;
 
 public class ImportValidator {
 
-    private MoveOrCopyParameters params;
+    private ImportVmParameters params;
 
     private StoragePool cachedStoragePool;
     private StorageDomain cachedStorageDomain;
@@ -41,7 +41,7 @@ public class ImportValidator {
     private static final Pattern VALIDATE_MAC_ADDRESS =
             Pattern.compile(MacAddressValidationPatterns.UNICAST_MAC_ADDRESS_FORMAT);
 
-    public ImportValidator(MoveOrCopyParameters params) {
+    public ImportValidator(ImportVmParameters params) {
         this.params = params;
     }
 

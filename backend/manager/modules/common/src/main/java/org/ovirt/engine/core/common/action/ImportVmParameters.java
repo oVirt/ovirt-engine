@@ -9,7 +9,7 @@ import org.ovirt.engine.core.common.businessentities.Disk;
 import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.compat.Guid;
 
-public class ImportVmParameters extends MoveVmParameters implements Serializable {
+public class ImportVmParameters extends VmOperationParameterBase implements Serializable {
     private static final long serialVersionUID = -6514416097090370831L;
 
     @Valid
@@ -19,6 +19,16 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
     private Guid vdsGroupId;
     private Map<Guid, Disk> diskMap;
 
+    private Guid storagePoolId;
+    private Map<Guid, Guid> imageToDestinationDomainMap;
+    private boolean imagesExistOnTargetStorageDomain;
+    private Guid cpuProfileId;
+    private boolean copyCollapse;
+    private boolean forceOverride;
+    private Guid containerId;
+    private Guid storageDomainId;
+    private boolean importAsNewEntity;
+
     public ImportVmParameters() {
         sourceDomainId = Guid.Empty;
         destDomainId = Guid.Empty;
@@ -26,12 +36,13 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     public ImportVmParameters(VM vm, Guid sourceStorageDomainId, Guid destStorageDomainId, Guid storagePoolId,
             Guid vdsGroupId) {
-        super(vm.getId(), destStorageDomainId);
+        super(vm.getId());
+        containerId = vm.getId();
         sourceDomainId = sourceStorageDomainId;
         destDomainId = destStorageDomainId;
         setVm(vm);
         setStorageDomainId(destStorageDomainId);
-        setStoragePoolId(storagePoolId);
+        this.setStoragePoolId(storagePoolId);
         setVdsGroupId(vdsGroupId);
     }
 
@@ -73,6 +84,78 @@ public class ImportVmParameters extends MoveVmParameters implements Serializable
 
     public void setDiskMap(Map<Guid, Disk> diskMap) {
         this.diskMap = diskMap;
+    }
+
+    public Guid getStoragePoolId() {
+        return storagePoolId;
+    }
+
+    public void setStoragePoolId(Guid storagePoolId) {
+        this.storagePoolId = storagePoolId;
+    }
+
+    public Guid getStorageDomainId() {
+        return storageDomainId;
+    }
+
+    public void setStorageDomainId(Guid storageDomainId) {
+        this.storageDomainId = storageDomainId;
+    }
+
+    public Map<Guid, Guid> getImageToDestinationDomainMap() {
+        return imageToDestinationDomainMap;
+    }
+
+    public void setImageToDestinationDomainMap(Map<Guid, Guid> imageToDestinationDomainMap) {
+        this.imageToDestinationDomainMap = imageToDestinationDomainMap;
+    }
+
+    public boolean isImagesExistOnTargetStorageDomain() {
+        return imagesExistOnTargetStorageDomain;
+    }
+
+    public void setImagesExistOnTargetStorageDomain(boolean imagesExistOnTargetStorageDomain) {
+        this.imagesExistOnTargetStorageDomain = imagesExistOnTargetStorageDomain;
+    }
+
+    public Guid getCpuProfileId() {
+        return cpuProfileId;
+    }
+
+    public void setCpuProfileId(Guid cpuProfileId) {
+        this.cpuProfileId = cpuProfileId;
+    }
+
+    public boolean getCopyCollapse() {
+        return copyCollapse;
+    }
+
+    public void setCopyCollapse(boolean copyCollapse) {
+        this.copyCollapse = copyCollapse;
+    }
+
+    public boolean getForceOverride() {
+        return forceOverride;
+    }
+
+    public void setForceOverride(boolean forceOverride) {
+        this.forceOverride = forceOverride;
+    }
+
+    public Guid getContainerId() {
+        return containerId;
+    }
+
+    public void setContainerId(Guid containerId) {
+        this.containerId = containerId;
+    }
+
+    public boolean isImportAsNewEntity() {
+        return importAsNewEntity;
+    }
+
+    public void setImportAsNewEntity(boolean importAsNewEntity) {
+        this.importAsNewEntity = importAsNewEntity;
     }
 
 }
