@@ -131,6 +131,8 @@ public class VdsUpdateRunTimeInfo {
     private boolean refreshedCapabilities = false;
     private static Map<Guid, Long> hostDownTimes = new HashMap<>();
     private boolean vdsMaintenanceTimeoutOccurred;
+    /** Pairs of VM and the ID of the VDS it should be destroyed from */
+    private final List<Pair<VM, Guid>> vmsToDestroy = new LinkedList<>();
 
     private static final Log log = LogFactory.getLog(VdsUpdateRunTimeInfo.class);
 
@@ -581,6 +583,7 @@ public class VdsUpdateRunTimeInfo {
                                     : "unknown");
                 }
             }
+            getVdsEventListener().destroyVms(vmsToDestroy);
             // rerun all vms from rerun list
             for (Guid vm_guid : _vmsToRerun) {
                 log.errorFormat("Rerun vm {0}. Called from vds {1}", vm_guid, _vds.getName());
@@ -1672,21 +1675,7 @@ public class VdsUpdateRunTimeInfo {
             // exit status that's OK, otherwise..
             if (vmDynamic != null && vmDynamic.getExitStatus() != VmExitStatus.Normal) {
                 if (curVm.getMigratingToVds() != null) {
-                    DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
-                            new DestroyVmVDSCommand<DestroyVmVDSCommandParameters>
-                            (new DestroyVmVDSCommandParameters(new Guid(curVm.getMigratingToVds().toString()),
-                                    curVm.getId(),
-                                    true,
-                                    false,
-                                    0));
-                    destroyCmd.execute();
-                    if (destroyCmd.getVDSReturnValue().getSucceeded()) {
-                        log.infoFormat("Stopped migrating vm: {0} on vds: {1}", curVm.getName(),
-                                curVm.getMigratingToVds());
-                    } else {
-                        log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", curVm.getName(),
-                                curVm.getMigratingToVds(), destroyCmd.getVDSReturnValue().getExceptionString());
-                    }
+                    vmsToDestroy.add(new Pair(curVm, curVm.getMigratingToVds()));
                 }
                 // set vm status to down if source vm crushed
                 ResourceManager.getInstance().InternalSetVmStatus(curVm,

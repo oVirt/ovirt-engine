@@ -46,6 +46,7 @@ import org.ovirt.engine.core.common.businessentities.StorageDomainStatic;
 import org.ovirt.engine.core.common.businessentities.StoragePool;
 import org.ovirt.engine.core.common.businessentities.StoragePoolStatus;
 import org.ovirt.engine.core.common.businessentities.VDS;
+import org.ovirt.engine.core.common.businessentities.VM;
 import org.ovirt.engine.core.common.businessentities.VmDynamic;
 import org.ovirt.engine.core.common.businessentities.VmStatic;
 import org.ovirt.engine.core.common.businessentities.gluster.GlusterBrickEntity;
@@ -59,6 +60,7 @@ import org.ovirt.engine.core.common.eventqueue.EventResult;
 import org.ovirt.engine.core.common.eventqueue.EventType;
 import org.ovirt.engine.core.common.locks.LockingGroup;
 import org.ovirt.engine.core.common.utils.Pair;
+import org.ovirt.engine.core.common.vdscommands.DestroyVmVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.DisconnectStoragePoolVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.SetVmTicketVDSCommandParameters;
 import org.ovirt.engine.core.common.vdscommands.StartSpiceVDSCommandParameters;
@@ -80,6 +82,7 @@ import org.ovirt.engine.core.utils.lock.LockManagerFactory;
 import org.ovirt.engine.core.utils.log.Log;
 import org.ovirt.engine.core.utils.log.LogFactory;
 import org.ovirt.engine.core.utils.threadpool.ThreadPoolUtil;
+import org.ovirt.engine.core.vdsbroker.DestroyVmVDSCommand;
 import org.ovirt.engine.core.vdsbroker.MonitoringStrategyFactory;
 import org.ovirt.engine.core.vdsbroker.ResourceManager;
 import org.ovirt.engine.core.vdsbroker.irsbroker.IrsBrokerCommand;
@@ -513,6 +516,31 @@ public class VdsEventListener implements IVdsEventListener {
                     if (qos != null && qos.getCpuLimit() != null) {
                         ResourceManager.getInstance().runVdsCommand(VDSCommandType.UpdateVmPolicy,
                                 new UpdateVmPolicyVDSParams(vdsId, vmId, qos.getCpuLimit().intValue()));
+                    }
+                }
+            }
+        });
+    }
+
+    @Override
+    public void destroyVms(final List<Pair<VM, Guid>> vmsToDestroy) {
+        if (vmsToDestroy.isEmpty()) {
+            return;
+        }
+
+        ThreadPoolUtil.execute(new Runnable() {
+            @Override
+            public void run() {
+                for (Pair<VM, Guid> vmToDestroy : vmsToDestroy) {
+                    DestroyVmVDSCommand<DestroyVmVDSCommandParameters> destroyCmd =
+                            new DestroyVmVDSCommand<>
+                    (new DestroyVmVDSCommandParameters(vmToDestroy.getSecond(), vmToDestroy.getFirst().getId(), true, false, 0));
+                    destroyCmd.execute();
+                    if (destroyCmd.getVDSReturnValue().getSucceeded()) {
+                        log.infoFormat("Stopped migrating vm: {0} on vds: {1}", vmToDestroy.getFirst().getName(), vmToDestroy.getSecond());
+                    } else {
+                        log.infoFormat("Could not stop migrating vm: {0} on vds: {1}, Error: {2}", vmToDestroy.getFirst().getName(),
+                                vmToDestroy.getSecond(), destroyCmd.getVDSReturnValue().getExceptionString());
                     }
                 }
             }
