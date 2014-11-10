@@ -46,6 +46,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
 
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
     private Snapshot cachedSnapshot;
+    private List<DiskImage> imagesToPreview;
 
     /**
      * Constructor for command creation when compensation is applied on startup
@@ -123,7 +124,7 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
         snapshotsManager.attempToRestoreVmConfigurationFromSnapshot(getVm(),
                 getDstSnapshot(),
                 getSnapshotDao().getId(getVm().getId(), SnapshotType.ACTIVE),
-                getParameters().getDisks(),
+                getImagesToPreview(),
                 getCompensationContext(), getVm().getVdsGroupCompatibilityVersion(), getCurrentUser());
     }
 
@@ -217,8 +218,13 @@ public class TryBackToAllSnapshotsOfVmCommand<T extends TryBackToAllSnapshotsOfV
     }
 
     private List<DiskImage> getImagesToPreview() {
-        return getParameters().getDisks() != null ? getParameters().getDisks() :
-                getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
+        if (imagesToPreview == null) {
+            imagesToPreview = getParameters().getDisks() != null ? getParameters().getDisks() :
+                    getDbFacade().getDiskImageDao().getAllSnapshotsForVmSnapshot(getDstSnapshot().getId());
+            // Filter out shareable/nonsnapable disks
+            imagesToPreview = ImagesHandler.filterImageDisks(imagesToPreview, true, true, false);
+        }
+        return imagesToPreview;
     }
 
     /**
