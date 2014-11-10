@@ -6,13 +6,12 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 import static org.junit.Assert.assertTrue;
 import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.anyCollection;
 import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.eq;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.doReturn;
-import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
-import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.ovirt.engine.core.utils.MockConfigRule.mockConfig;
 
@@ -34,7 +33,7 @@ import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.ovirt.engine.core.bll.network.macpoolmanager.MacPoolManagerStrategy;
-import org.ovirt.engine.core.bll.validator.MultipleStorageDomainsValidator;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
 import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
@@ -83,9 +82,6 @@ public class ImportVmCommandTest {
     @Mock
     private MacPoolManagerStrategy macPoolManagerStrategy;
 
-    @Mock
-    private MultipleStorageDomainsValidator multipleSdValidator;
-
     @Before
     public void setUp() {
         // init the injector with the osRepository instance
@@ -102,27 +98,19 @@ public class ImportVmCommandTest {
     @Test
     public void insufficientDiskSpaceWithCollapse() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
+        when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
-        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     @Test
     public void insufficientDiskSpaceWithSnapshots() {
-        ImportVmParameters parameters = createParameters();
-        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(parameters);
-        parameters.setCopyCollapse(false);
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
+        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
+        when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(
+                new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
     }
 
     void addBalloonToVm(VM vm) {
@@ -171,25 +159,21 @@ public class ImportVmCommandTest {
     }
 
     @Test
-    public void sufficientDiskSpace() {
-        final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        CanDoActionTestUtils.runAndAssertCanDoActionSuccess(command);
-        verify(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        verify(multipleSdValidator, never()).allDomainsHaveSpaceForNewDisks(anyList());
-    }
-
-    @Test
     public void lowThresholdStorageSpace() {
         final ImportVmCommand<ImportVmParameters> command = setupDiskSpaceTest(createParameters());
-        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN)).
-                when(multipleSdValidator).allDomainsWithinThresholds();
+        when(command.getImportValidator().validateSpaceRequirements(anyCollection())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
                 VdcBllMessages.ACTION_TYPE_FAILED_DISK_SPACE_LOW_ON_STORAGE_DOMAIN);
     }
 
     private ImportVmCommand<ImportVmParameters> setupDiskSpaceTest(ImportVmParameters parameters) {
-        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(parameters));
+        final ImportValidator validator = spy(new ImportValidator(parameters));
+        ImportVmCommand<ImportVmParameters> cmd = spy(new ImportVmCommand<ImportVmParameters>(parameters) {
+            @Override
+            protected ImportValidator getImportValidator() {
+                return validator;
+            }
+        });
         parameters.setCopyCollapse(true);
         doReturn(true).when(cmd).validateNoDuplicateVm();
         doReturn(true).when(cmd).validateVdsCluster();
@@ -213,12 +197,8 @@ public class ImportVmCommandTest {
             image.setStorageIds(sdIds);
         }
 
-        doReturn(mockCreateDiskDummiesForSpaceValidations()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
-        doReturn(multipleSdValidator).when(cmd).createMultipleStorageDomainsValidator(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForClonedDisks(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsHaveSpaceForDisksWithSnapshots(anyList());
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsWithinThresholds();
-        doReturn(ValidationResult.VALID).when(multipleSdValidator).allDomainsExistAndActive();
+        doReturn(Collections.<DiskImage>emptyList()).when(cmd).createDiskDummiesForSpaceValidations(anyList());
+
         return cmd;
     }
 

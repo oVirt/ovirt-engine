@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import static org.mockito.Matchers.any;
 import static org.mockito.Matchers.anyInt;
+import static org.mockito.Matchers.anyList;
 import static org.mockito.Matchers.anyMap;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
@@ -14,6 +15,7 @@ import java.nio.charset.Charset;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -24,9 +26,12 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
 import org.ovirt.engine.core.common.businessentities.ArchitectureType;
+import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DisplayType;
+import org.ovirt.engine.core.common.businessentities.IVdcQueryable;
 import org.ovirt.engine.core.common.businessentities.OvfEntityData;
 import org.ovirt.engine.core.common.businessentities.StorageDomain;
 import org.ovirt.engine.core.common.businessentities.StorageDomainStatus;
@@ -55,6 +60,7 @@ public class ImportVMFromConfigurationCommandTest {
     private StoragePool storagePool;
 
     private ImportVmFromConfigurationCommand<ImportVmParameters> cmd;
+    private ImportValidator validator;
 
     @ClassRule
     public static MockConfigRule mcr = new MockConfigRule(
@@ -99,6 +105,8 @@ public class ImportVMFromConfigurationCommandTest {
         doReturn(storagePool).when(cmd).getStoragePool();
         doReturn(Boolean.TRUE).when(cmd).canDoActionAfterCloneVm(anyMap());
         doReturn(Boolean.TRUE).when(cmd).canDoActionBeforeCloneVm(anyMap());
+
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(ValidationResult.VALID);
         CanDoActionTestUtils.runAndAssertCanDoActionSuccess(cmd);
     }
 
@@ -114,6 +122,7 @@ public class ImportVMFromConfigurationCommandTest {
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         doReturn(storageDomain).when(cmd).getStorageDomain();
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2);
     }
@@ -126,7 +135,7 @@ public class ImportVMFromConfigurationCommandTest {
 
         // Mock Storage Domain.
         final StorageDomainDAO dao = mock(StorageDomainDAO.class);
-        doReturn(dao).when(cmd).getStorageDomainDAO();
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL2));
         when(dao.getForStoragePool(storageDomainId, storagePoolId)).thenReturn(storageDomain);
 
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
@@ -145,6 +154,7 @@ public class ImportVMFromConfigurationCommandTest {
         ovfEntity.setOvfData("This is not a valid XML");
         initCommand(ovfEntity);
         when(unregisteredOVFDataDao.getByEntityIdAndStorageDomain(vmId, storageDomainId)).thenReturn(ovfEntity);
+        when(validator.validateUnregisteredEntity(any(IVdcQueryable.class), any(OvfEntityData.class), anyList())).thenReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED));
         CanDoActionTestUtils.runAndAssertCanDoActionFailure(cmd,
                 VdcBllMessages.ACTION_TYPE_FAILED_OVF_CONFIGURATION_NOT_SUPPORTED);
     }
@@ -172,9 +182,16 @@ public class ImportVMFromConfigurationCommandTest {
             public VDSGroup getVdsGroup() {
                 return vdsGroup;
             }
+
+            @Override
+            protected List<DiskImage> getImages() {
+                return Collections.emptyList();
+            }
         });
+        validator = spy(new ImportValidator(parameters));
+        doReturn(validator).when(cmd).getImportValidator();
         mockStoragePool();
-        doReturn(storagePool).when(cmd).getStoragePool();
+        doReturn(storagePool).when(validator).getStoragePool();
     }
 
     private void initUnregisteredOVFData(OvfEntityData resultOvfEntityData) {

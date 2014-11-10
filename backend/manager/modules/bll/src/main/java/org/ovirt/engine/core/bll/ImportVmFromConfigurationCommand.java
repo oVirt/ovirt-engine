@@ -9,6 +9,7 @@ import java.util.Map;
 
 import org.apache.commons.lang.StringUtils;
 import org.ovirt.engine.core.bll.context.CommandContext;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AttachDetachVmDiskParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -52,7 +53,8 @@ public class ImportVmFromConfigurationCommand<T extends ImportVmParameters> exte
     @Override
     protected boolean canDoAction() {
         if (isImagesAlreadyOnTarget()) {
-            if (!validateUnregisteredEntity(vmFromConfiguration, ovfEntityData)) {
+            ImportValidator importValidator = getImportValidator();
+            if (!validate(importValidator.validateUnregisteredEntity(vmFromConfiguration, ovfEntityData, getImages()))) {
                 return false;
             }
             setImagesWithStoragePoolId(getStorageDomain().getStoragePoolId(), getVm().getImages());

@@ -27,6 +27,7 @@ import org.ovirt.engine.core.bll.tasks.TaskHandlerCommand;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.bll.utils.VmDeviceUtils;
 import org.ovirt.engine.core.bll.validator.DiskImagesValidator;
+import org.ovirt.engine.core.bll.validator.ImportValidator;
 import org.ovirt.engine.core.bll.validator.StorageDomainValidator;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
@@ -115,6 +116,8 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     private final List<String> macsAdded = new ArrayList<String>();
     private final SnapshotsManager snapshotsManager = new SnapshotsManager();
 
+    private ImportValidator importValidator;
+
     public ImportVmCommand(T parameters) {
         this(parameters, null);
     }
@@ -173,6 +176,13 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
 
     public ImportVmCommand(T parameters, CommandContext commandContext) {
         super(parameters, commandContext);
+    }
+
+    protected ImportValidator getImportValidator() {
+        if (importValidator == null) {
+            importValidator = new ImportValidator(getParameters());
+        }
+        return importValidator;
     }
 
     @Override
@@ -467,7 +477,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             return false;
         }
 
-        if (!validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVm().getInterfaces()))) {
+        if (!validate(getImportValidator().validateMacAddress(Entities.<VmNic, VmNetworkInterface> upcast(getVm().getInterfaces())))) {
             return false;
         }
 
@@ -498,7 +508,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
                 return false;
             }
         }
-        return validateSpaceRequirements(dummiesDisksList);
+        return validate(getImportValidator().validateSpaceRequirements(dummiesDisksList));
     }
 
     /**
@@ -639,7 +649,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
     }
 
     protected boolean checkTemplateInStorageDomain() {
-        boolean retValue = verifyDisksIfNeeded();
+        boolean retValue = validate(getImportValidator().verifyDisks(imageList, imageToDestinationDomainMap));
         if (retValue && !VmTemplateHandler.BLANK_VM_TEMPLATE_ID.equals(getVm().getVmtGuid())
                 && !getParameters().getCopyCollapse()) {
             List<StorageDomain> domains = runInternalQuery(VdcQueryType.GetStorageDomainsByVmTemplateId,
@@ -656,13 +666,6 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
         return retValue;
-    }
-
-    private boolean verifyDisksIfNeeded() {
-        if (!getParameters().isImportAsNewEntity() && !isImagesAlreadyOnTarget()) {
-            return checkIfDisksExist(imageList);
-        }
-        return true;
     }
 
     private boolean templateExists() {
