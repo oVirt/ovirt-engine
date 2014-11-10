@@ -65,7 +65,7 @@ public class MacAddressRangeUtils {
         return result;
     }
 
-    private static LongRange clipRange(Range range) {
+    public static LongRange clipRange(Range range) {
         long rangeEnd = range.getMaximumLong();
         long rangeStart = range.getMinimumLong();
 
@@ -75,7 +75,7 @@ public class MacAddressRangeUtils {
             trimmingOccurred = true;
         }
 
-        final long trimmedRangeEnd = Math.min(rangeStart + Integer.MAX_VALUE, rangeEnd);
+        final long trimmedRangeEnd = Math.min(rangeStart + Integer.MAX_VALUE - 1, rangeEnd);
         if (rangeEnd != trimmedRangeEnd) {
             rangeEnd = trimmedRangeEnd;
             trimmingOccurred = true;

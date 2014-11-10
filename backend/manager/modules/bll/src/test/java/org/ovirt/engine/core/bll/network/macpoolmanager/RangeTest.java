@@ -5,8 +5,10 @@ import static org.junit.Assert.assertThat;
 
 import java.util.List;
 
+import org.apache.commons.lang.math.LongRange;
 import org.junit.Before;
 import org.junit.Test;
+import org.ovirt.engine.core.utils.MacAddressRangeUtils;
 
 public class RangeTest {
 
@@ -107,5 +109,27 @@ public class RangeTest {
     @Test(expected = IllegalStateException.class)
     public void testAllocateMacNoEnoughMacs() throws Exception {
         rangeOf10Macs.allocateMacs(NUMBER_OF_MACS + 1);
+    }
+
+    @Test
+    public void testRangeStartAndRangeStopAreInclusive() throws Exception {
+        assertThat(new Range(MAC_FROM_RANGE, MAC_FROM_RANGE).getAvailableCount(), is(1));
+    }
+
+    @Test
+    public void testRangeCanContainOnlyIntSizeNumberOfElements() throws Exception {
+        LongRange longRange = MacAddressRangeUtils.clipRange(new LongRange(0, Long.MAX_VALUE));
+        Range range = new Range(longRange.getMinimumLong(), longRange.getMaximumLong());
+        assertThat(range.getAvailableCount(), is(Integer.MAX_VALUE));
+    }
+
+    @Test(expected = IllegalArgumentException.class)
+    public void testTooBigRange() throws Exception {
+        new Range(0, Integer.MAX_VALUE);
+    }
+
+    @Test
+    public void testMaxSizeRange() throws Exception {
+        new Range(0, Integer.MAX_VALUE - 1);
     }
 }

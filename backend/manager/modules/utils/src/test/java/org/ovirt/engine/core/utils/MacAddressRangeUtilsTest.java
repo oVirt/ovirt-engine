@@ -43,7 +43,7 @@ public class MacAddressRangeUtilsTest {
         String start = "00:1a:4a:01:00:00";
         String end = "00:FF:FF:FF:FF:FF";
         final long expectedStart = MacAddressRangeUtils.macToLong(start);
-        final long expectedEnd = MacAddressRangeUtils.macToLong(start) + Integer.MAX_VALUE;
+        final long expectedEnd = MacAddressRangeUtils.macToLong(start) + Integer.MAX_VALUE - 1;
 
         testRange(start, end, expectedStart, expectedEnd);
     }

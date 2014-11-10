@@ -4,6 +4,8 @@ import java.util.ArrayList;
 import java.util.BitSet;
 import java.util.List;
 
+import org.apache.commons.lang.Validate;
+
 class Range {
     private final long rangeStart;
     private final long rangeEnd;
@@ -20,7 +22,13 @@ class Range {
         this.rangeStart = rangeStart;
         this.rangeEnd = rangeEnd;
 
-        int numberOfMacs = (int) (rangeEnd - rangeStart) + 1;
+        long numberOfMacsLong =  (rangeEnd - rangeStart) + 1;
+        Validate.isTrue(numberOfMacsLong <= Integer.MAX_VALUE,
+                String.format("Range too big; Range shouldn't be bigger than %1$s, but passed one "
+                        + "contains %2$s elements.", Integer.MAX_VALUE, numberOfMacsLong));
+
+        int numberOfMacs = (int) numberOfMacsLong;
+
         this.availableMacsCount = numberOfMacs;
         this.usedMacs = new BitSet(numberOfMacs);
     }
