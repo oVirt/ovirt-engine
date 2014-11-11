@@ -114,6 +114,7 @@ public enum VdcActionType {
     UnlabelNetwork(164, ActionGroup.CONFIGURE_STORAGE_POOL_NETWORK, false, QuotaDependency.NONE),
     LabelNic(165, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
     UnlabelNic(166, ActionGroup.CONFIGURE_HOST_NETWORK, false, QuotaDependency.NONE),
+    PropagateLabeledNetworksToClusterHosts(167, false, QuotaDependency.NONE),
 
     // NUMA
     AddVmNumaNodes(170, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
@@ -207,11 +208,13 @@ public enum VdcActionType {
     AddVdsGroup(704, ActionGroup.CREATE_CLUSTER, false, QuotaDependency.NONE),
     UpdateVdsGroup(705, ActionGroup.EDIT_CLUSTER_CONFIGURATION, false, QuotaDependency.NONE),
     RemoveVdsGroup(706, ActionGroup.DELETE_CLUSTER, false, QuotaDependency.NONE),
+    AttachNetworkToClusterInternal(707, false, QuotaDependency.NONE),
     AttachNetworkToVdsGroup(708, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
     DetachNetworkToVdsGroup(709, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
+    DetachNetworkFromClusterInternal(710, false, QuotaDependency.NONE),
     UpdateNetworkOnCluster(711, ActionGroup.CONFIGURE_CLUSTER_NETWORK, false, QuotaDependency.NONE),
-    AttachNetworksToCluster(712, false, QuotaDependency.NONE),
-    DetachNetworksFromCluster(713, false, QuotaDependency.NONE),
+
+    ManageNetworkClusters(712, ActionGroup.ASSIGN_CLUSTER_NETWORK, false, QuotaDependency.NONE),
 
     /**
      * MultiLevelAdministration

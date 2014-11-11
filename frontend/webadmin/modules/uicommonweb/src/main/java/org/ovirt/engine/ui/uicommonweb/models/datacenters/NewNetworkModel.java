@@ -5,13 +5,11 @@ import java.util.List;
 
 import org.ovirt.engine.core.common.action.AddExternalSubnetParameters;
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.Provider;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
-import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.businessentities.network.ProviderNetwork;
 import org.ovirt.engine.core.common.queries.ConfigurationValues;
@@ -174,24 +172,20 @@ public class NewNetworkModel extends NetworkModel {
         }
 
         Guid networkId = getNetwork().getId() == null ? networkGuid : getNetwork().getId();
-        ArrayList<VdcActionParametersBase> actionParameters1 =
-                new ArrayList<VdcActionParametersBase>();
+        List<NetworkCluster> networkAttachments = new ArrayList<>();
 
-        for (NetworkClusterModel networkClusterModel : getClustersToAttach())
-        {
-            Network tempVar = new Network();
-            tempVar.setId(networkId);
-            tempVar.setName(getNetwork().getName());
-
+        for (NetworkClusterModel networkClusterModel : getClustersToAttach()) {
             // Init default NetworkCluster values (required, display, status)
             NetworkCluster networkCluster = new NetworkCluster();
+            networkCluster.setNetworkId(networkId);
+            networkCluster.setClusterId(networkClusterModel.getEntity().getId());
             networkCluster.setRequired(networkClusterModel.isRequired());
-            tempVar.setCluster(networkCluster);
-
-            actionParameters1.add(new AttachNetworkToVdsGroupParameter(networkClusterModel.getEntity(), tempVar));
+            networkAttachments.add(networkCluster);
         }
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup, actionParameters1);
+        Frontend.getInstance().runAction(
+                VdcActionType.ManageNetworkClusters,
+                new ManageNetworkClustersParameters(networkAttachments));
 
         ProviderNetwork providedBy = getNetwork().getProvidedBy();
         if (getExport().getEntity() && getCreateSubnet().getEntity() && providedBy != null) {
@@ -205,7 +199,7 @@ public class NewNetworkModel extends NetworkModel {
 
     public ArrayList<NetworkClusterModel> getClustersToAttach()
     {
-        ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<NetworkClusterModel>();
+        ArrayList<NetworkClusterModel> clusterToAttach = new ArrayList<>();
 
         for (NetworkClusterModel networkClusterModel : getNetworkClusterList().getItems()) {
             if (networkClusterModel.isAttached()) {

@@ -1,6 +1,8 @@
 package org.ovirt.engine.core.utils.linq;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.LinkedList;
@@ -81,6 +83,34 @@ public class LinqUtils {
         return map;
     }
 
+    /**
+     * Maps the input collection by the given mapper and groups the result values by key.
+     * Similar to {@link #toMap} method but allows multiple values to be mapped to the same key with no loss of data.
+     *
+     * @param collection the input collection
+     * @param mapper the mapper
+     * @param <IN> type of the input collection
+     * @param <KEY> key type of the output Map
+     * @param <VALUE> value type of the output Map
+     * @return the transformed Map
+     */
+    public static <IN, KEY, VALUE> Map<KEY, List<VALUE>> toMultiMap(Collection<IN> collection, Mapper<IN, KEY, VALUE> mapper) {
+        final Map<KEY, List<VALUE>> map = new HashMap<>();
+        for (IN in : collection) {
+            final KEY key = mapper.createKey(in);
+            final List<VALUE> values;
+            if (map.containsKey(key)) {
+                values = map.get(key);
+            } else {
+                values = new ArrayList<>();
+                map.put(key, values);
+            }
+            values.add(mapper.createValue(in));
+        }
+
+        return map;
+    }
+
     public static <VALUE> VALUE aggregate(Collection<VALUE> values, Aggregator<VALUE> aggregator) {
         boolean first = true;
         VALUE aggregate = null;
@@ -94,5 +124,31 @@ public class LinqUtils {
             }
         }
         return aggregate;
+    }
+
+    /**
+     * Creates the opposite {@link Predicate} to the given one.
+     *
+     * @param predicate the given {@link Predicate}.
+     * @param <T>       the type of the objects the {@link Predicate} deals with.
+     * @return the opposite {@link Predicate} to the given one.
+     */
+    public static <T> Predicate<T> not(Predicate<T> predicate) {
+        return new NotPredicate<>(predicate);
+    }
+
+    /**
+     * Concatenates the input collections into a single {@link Collection}.
+     * Note: The change to the result {@link Collection} has no impact on the input collections.
+     *
+     * @param collections the input collections.
+     * @return the new concatenated {@link Collection}.
+     */
+    public static <T> Collection<T> concat(Collection<? extends T>... collections) {
+        final List<T> result = new LinkedList<>();
+        for (Collection<? extends T> collection : collections) {
+            result.addAll(collection);
+        }
+        return result;
     }
 }

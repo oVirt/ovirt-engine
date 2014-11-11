@@ -1,6 +1,7 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
 import org.ovirt.engine.core.bll.VdsGroupCommandBase;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
@@ -9,9 +10,12 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
 
     private Network persistedNetwork;
 
+    protected NetworkClusterCommandBase(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
+    }
+
     protected NetworkClusterCommandBase(T parameters) {
         super(parameters);
-        setVdsGroupId(parameters.getVdsGroupId());
     }
 
     protected NetworkCluster getNetworkCluster() {
@@ -37,10 +41,13 @@ public abstract class NetworkClusterCommandBase<T extends NetworkClusterParamete
 
     protected boolean validateAttachment(NetworkClusterValidatorBase validator) {
         final Network network = getPersistedNetwork();
-        return validate(validator.managementNetworkRequired(network))
-               && validate(validator.managementNetworkNotExternal(network))
-               && validate(validator.managementNetworkChange())
-               && validate(validator.migrationPropertySupported())
-               && (!network.isExternal() || validateExternalNetwork(validator));
+
+        boolean result = validate(validator.managementNetworkRequired(network));
+        result = result && validate(validator.managementNetworkNotExternal(network));
+        result = result && validate(validator.managementNetworkChange());
+        result = result && validate(validator.migrationPropertySupported());
+        result = result && (!getPersistedNetwork().isExternal() || validateExternalNetwork(validator));
+
+        return result;
     }
 }

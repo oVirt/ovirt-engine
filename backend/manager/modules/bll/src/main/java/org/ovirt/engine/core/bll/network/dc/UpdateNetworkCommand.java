@@ -17,8 +17,8 @@ import org.ovirt.engine.core.bll.RenamedEntityInfoProvider;
 import org.ovirt.engine.core.bll.ValidationResult;
 import org.ovirt.engine.core.bll.common.predicates.VmNetworkCanBeUpdatedPredicate;
 import org.ovirt.engine.core.bll.context.CommandContext;
-import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.NetworkParametersBuilder;
+import org.ovirt.engine.core.bll.network.AddNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.RemoveNetworkParametersBuilder;
 import org.ovirt.engine.core.bll.network.cluster.NetworkClusterHelper;
 import org.ovirt.engine.core.bll.network.cluster.NetworkHelper;
@@ -342,7 +342,7 @@ public class UpdateNetworkCommand<T extends AddNetworkStoragePoolParameters> ext
 
     }
 
-    private class SyncNetworkParametersBuilder extends NetworkParametersBuilder{
+    private class SyncNetworkParametersBuilder extends NetworkParametersBuilder {
 
         public SyncNetworkParametersBuilder(CommandContext commandContext) {
             super(commandContext);

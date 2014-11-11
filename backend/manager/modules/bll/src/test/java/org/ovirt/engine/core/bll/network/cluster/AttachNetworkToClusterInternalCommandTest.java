@@ -1,12 +1,5 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertTrue;
-import static org.mockito.Matchers.any;
-import static org.mockito.Mockito.doThrow;
-import static org.mockito.Mockito.when;
-
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -29,38 +22,75 @@ import org.ovirt.engine.core.dao.network.NetworkDao;
 import org.ovirt.engine.core.utils.MockConfigRule;
 import org.springframework.dao.DataIntegrityViolationException;
 
-@RunWith(MockitoJUnitRunner.class)
-public class AttachNetworkToVdsGroupCommandTest {
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.when;
 
-    private VDSGroup existingGroup = new VDSGroup();
-    private Network network = createNetwork();
-    private AttachNetworkToVdsGroupParameter param;
-    private AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter> command;
+@RunWith(MockitoJUnitRunner.class)
+public class AttachNetworkToClusterInternalCommandTest {
+
+    /**
+     * Since the command isn't in the same package as AuditLogableBase which defines the DAO accessors they
+     * cannot be spied from here. Instead, will override them manually.
+     */
+    private class TestAttachNetworkToClusterCommand extends
+                                                   AttachNetworkToClusterInternalCommand<AttachNetworkToVdsGroupParameter> {
+
+        private TestAttachNetworkToClusterCommand(AttachNetworkToVdsGroupParameter parameters) {
+            super(parameters);
+        }
+
+        @Override
+        public VdsGroupDAO getVdsGroupDAO() {
+            return mockVdsGroupDAO;
+        }
+
+        @Override
+        protected NetworkClusterDao getNetworkClusterDAO() {
+            return mockNetworkClusterDao;
+        }
+
+        @Override
+        protected NetworkDao getNetworkDAO() {
+            return mockNetworkDao;
+        }
+    }
+
+    @Mock
+    private NetworkClusterDao mockNetworkClusterDao;
+
+    @Mock
+    private VdsGroupDAO mockVdsGroupDAO;
+
+    @Mock
+    private NetworkDao mockNetworkDao;
+
+    private AttachNetworkToClusterInternalCommand<AttachNetworkToVdsGroupParameter> underTest;
 
     @Rule
     public MockConfigRule mcr = new MockConfigRule(
             MockConfigRule.mockConfig(ConfigValues.DefaultManagementNetwork, "mgmt"));
 
-    @Mock
-    NetworkClusterDao networkClusterDAO;
-
-    @Mock
-    VdsGroupDAO vdsGroupDAO;
-
-    @Mock
-    NetworkDao networkDao;
+    private VDSGroup existingGroup = new VDSGroup();
+    private Network network = createNetwork();
+    private AttachNetworkToVdsGroupParameter param;
 
     @Before
     public void setup() {
         existingGroup.setCompatibilityVersion(Version.v3_1);
-        createCommand();
+        param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroup(), getNetwork());
+
+        underTest = new TestAttachNetworkToClusterCommand(param);
     }
 
     @Test
     public void networkExists() {
         simulateVdsGroupExists();
-        when(networkDao.get(any(Guid.class))).thenReturn(getNetwork());
-        when(networkClusterDAO.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
+        when(mockNetworkDao.get(any(Guid.class))).thenReturn(getNetwork());
+        when(mockNetworkClusterDao.get(param.getNetworkCluster().getId())).thenReturn(param.getNetworkCluster());
         assertCanDoActionFailure(VdcBllMessages.NETWORK_ALREADY_ATTACHED_TO_CLUSTER.toString());
     }
 
@@ -89,32 +119,6 @@ public class AttachNetworkToVdsGroupCommandTest {
         return network;
     }
 
-    @SuppressWarnings("serial")
-    public void createCommand() {
-        param = new AttachNetworkToVdsGroupParameter(getExistingVdsGroupId(), getNetwork());
-
-        command = new AttachNetworkToVdsGroupCommand<AttachNetworkToVdsGroupParameter>(param) {
-            // Since the command isn't in the same package as AuditLogableBase which defines the DAO accessors they
-            // cannot be spied from here.
-            // Instead, will override them manually.
-
-            @Override
-            public VdsGroupDAO getVdsGroupDAO() {
-                return vdsGroupDAO;
-            }
-
-            @Override
-            protected NetworkClusterDao getNetworkClusterDAO() {
-                return networkClusterDAO;
-            }
-
-            @Override
-            protected NetworkDao getNetworkDAO() {
-                return networkDao;
-            }
-        };
-    }
-
     private void simulateVdsGroupExists() {
         dbFacadeReturnVdsGroup();
     }
@@ -128,39 +132,39 @@ public class AttachNetworkToVdsGroupCommandTest {
     }
 
     private void dbFacadeReturnNoVdsGroup() {
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(null);
+        when(mockVdsGroupDAO.get(any(Guid.class))).thenReturn(null);
     }
 
     private void dbFacadeReturnVdsGroup() {
-        when(vdsGroupDAO.get(any(Guid.class))).thenReturn(existingGroup);
+        when(mockVdsGroupDAO.get(any(Guid.class))).thenReturn(existingGroup);
     }
 
     private void dbFacadeThrowOnNetworkClusterSave() {
-        doThrow(new DataIntegrityViolationException("test violations")).when(networkClusterDAO)
-                .save(Matchers.<NetworkCluster> any(NetworkCluster.class));
+        doThrow(new DataIntegrityViolationException("test violations")).when(mockNetworkClusterDao)
+                .save(Matchers.any(NetworkCluster.class));
     }
 
     private Network getNetwork() {
         return network;
     }
 
-    private VDSGroup getExistingVdsGroupId() {
+    private VDSGroup getExistingVdsGroup() {
         return existingGroup;
     }
 
     private void assertCanDoActionFailure(final String messageToVerify) {
-        assertFalse(command.canDoAction());
-        assertTrue(command.getReturnValue().getCanDoActionMessages().contains(messageToVerify));
+        assertFalse(underTest.canDoAction());
+        assertTrue(underTest.getReturnValue().getCanDoActionMessages().contains(messageToVerify));
     }
 
     private void assertExecuteActionFailure() {
         try {
-            command.executeCommand();
+            underTest.executeCommand();
         } catch (Exception expected) {
             // An exception is expected here
         }
 
-        assertFalse(command.getReturnValue().getSucceeded());
-        assertEquals(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, command.getAuditLogTypeValue());
+        assertFalse(underTest.getReturnValue().getSucceeded());
+        assertEquals(AuditLogType.NETWORK_ATTACH_NETWORK_TO_VDS_GROUP_FAILED, underTest.getAuditLogTypeValue());
     }
 }

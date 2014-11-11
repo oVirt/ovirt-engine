@@ -2,9 +2,9 @@ package org.ovirt.engine.ui.uicommonweb.models.clusters;
 
 import java.util.ArrayList;
 
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
-import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.action.VdcActionParametersBase;
+import java.util.List;
+
+import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.ui.frontend.Frontend;
@@ -13,19 +13,17 @@ import org.ovirt.engine.ui.uicommonweb.models.ListModel;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.uicompat.Event;
 import org.ovirt.engine.ui.uicompat.EventArgs;
-import org.ovirt.engine.ui.uicompat.FrontendMultipleActionAsyncResult;
+import org.ovirt.engine.ui.uicompat.FrontendActionAsyncResult;
 import org.ovirt.engine.ui.uicompat.IEventListener;
-import org.ovirt.engine.ui.uicompat.IFrontendMultipleActionAsyncCallback;
+import org.ovirt.engine.ui.uicompat.IFrontendActionAsyncCallback;
 
 public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
     private final SearchableListModel<?> sourceListModel;
     private final UICommand okCommand;
     private final UICommand cancelCommand;
-    private boolean needsAttach;
-    private boolean needsDetach;
-    private boolean needsUpdate;
     private ClusterNetworkModel managementNetwork;
+    private boolean needsAnyChange;
 
     public ClusterNetworkManageModel(SearchableListModel<?> sourceListModel) {
         this.sourceListModel = sourceListModel;
@@ -107,9 +105,9 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
 
     private void onManage() {
         Iterable<ClusterNetworkModel> manageList = getItems();
-        final ArrayList<VdcActionParametersBase> toAttach = new ArrayList<VdcActionParametersBase>();
-        final ArrayList<VdcActionParametersBase> toDetach = new ArrayList<VdcActionParametersBase>();
-        final ArrayList<VdcActionParametersBase> toUpdate = new ArrayList<VdcActionParametersBase>();
+        final List<NetworkCluster> toAttach = new ArrayList<>();
+        final List<NetworkCluster> toDetach = new ArrayList<>();
+        final List<NetworkCluster> toUpdate = new ArrayList<>();
 
         for (ClusterNetworkModel manageModel : manageList) {
             NetworkCluster networkCluster = manageModel.getOriginalNetworkCluster();
@@ -122,73 +120,64 @@ public class ClusterNetworkManageModel extends ListModel<ClusterNetworkModel> {
             // Attachment wasn't changed- check if needs update
             if (wasAttached && !needsDetach) {
                 if ((manageModel.isRequired() != networkCluster.isRequired())
-                        || (manageModel.isDisplayNetwork() != networkCluster.isDisplay())
-                        || (manageModel.isMigrationNetwork() != networkCluster.isMigration())) {
+                        || manageModel.isDisplayNetwork() != networkCluster.isDisplay()
+                        || manageModel.isMigrationNetwork() != networkCluster.isMigration()
+                        || manageModel.isManagement() != networkCluster.isManagement()) {
                     needsUpdate = true;
-                    networkCluster.setRequired(manageModel.isRequired());
-                    networkCluster.setDisplay(manageModel.isDisplayNetwork());
-                    networkCluster.setMigration(manageModel.isMigrationNetwork());
+                    copyRoles(manageModel, networkCluster);
                 }
             }
 
             if (needsAttach) {
-                toAttach.add(new AttachNetworkToVdsGroupParameter(manageModel.getCluster(), manageModel.getEntity()));
+                toAttach.add(createNetworkCluster(manageModel));
             }
 
             if (needsDetach) {
-                toDetach.add(new AttachNetworkToVdsGroupParameter(manageModel.getCluster(), manageModel.getEntity()));
+                toDetach.add(networkCluster);
             }
 
             if (needsUpdate) {
-                toUpdate.add(new NetworkClusterParameters(networkCluster));
+                toUpdate.add(networkCluster);
             }
         }
 
         startProgress(null);
-        needsAttach = !toAttach.isEmpty();
-        needsDetach = !toDetach.isEmpty();
-        needsUpdate = !toUpdate.isEmpty();
-        if (needsAttach) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.AttachNetworkToVdsGroup,
-                    toAttach,
-                    new IFrontendMultipleActionAsyncCallback() {
+        needsAnyChange = !(toAttach.isEmpty() && toDetach.isEmpty() && toUpdate.isEmpty());
 
-                @Override
-                public void executed(FrontendMultipleActionAsyncResult result) {
-                    needsAttach = false;
-                    doFinish();
-                }
-            });
-        }
-        if (needsDetach) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.DetachNetworkToVdsGroup,
-                    toDetach,
-                    new IFrontendMultipleActionAsyncCallback() {
-
-                @Override
-                public void executed(FrontendMultipleActionAsyncResult result) {
-                    needsDetach = false;
-                    doFinish();
-                }
-            });
-        }
-        if (needsUpdate) {
-            Frontend.getInstance().runMultipleAction(VdcActionType.UpdateNetworkOnCluster,
-                    toUpdate,
-                    new IFrontendMultipleActionAsyncCallback() {
-
-                @Override
-                public void executed(FrontendMultipleActionAsyncResult result) {
-                    needsUpdate = false;
-                    doFinish();
-                }
-            });
+        if (needsAnyChange) {
+            Frontend.getInstance()
+                    .runAction(VdcActionType.ManageNetworkClusters,
+                            new ManageNetworkClustersParameters(toAttach, toDetach, toUpdate),
+                            new IFrontendActionAsyncCallback() {
+                                @Override
+                                public void executed(FrontendActionAsyncResult result) {
+                                    needsAnyChange = false;
+                                    doFinish();
+                                }
+                            });
         }
         doFinish();
     }
 
+    private void copyRoles(ClusterNetworkModel manageModel, NetworkCluster networkCluster) {
+        networkCluster.setRequired(manageModel.isRequired());
+        networkCluster.setDisplay(manageModel.isDisplayNetwork());
+        networkCluster.setMigration(manageModel.isMigrationNetwork());
+        networkCluster.setManagement(manageModel.isManagement());
+    }
+
+    private NetworkCluster createNetworkCluster(ClusterNetworkModel manageModel) {
+        final NetworkCluster networkCluster = new NetworkCluster();
+
+        networkCluster.setClusterId(manageModel.getCluster().getId());
+        networkCluster.setNetworkId(manageModel.getEntity().getId());
+        copyRoles(manageModel, networkCluster);
+
+        return networkCluster;
+    }
+
     private void doFinish() {
-        if (needsAttach || needsDetach || needsUpdate) {
+        if (needsAnyChange) {
             return;
         }
 

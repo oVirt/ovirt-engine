@@ -72,28 +72,13 @@ public final class MultipleActionsRunnersFactory {
         }
 
         case AttachNetworkToVdsGroup:
-            runner =
-                    new NetworkClusterAttachmentActionRunner(actionType,
-                            parameters,
-                            isInternal,
-                            commandContext,
-                            VdcActionType.AttachNetworksToCluster);
-            break;
+        case DetachNetworkToVdsGroup:
+        case UpdateNetworkOnCluster:
+            throw new UnsupportedOperationException("Multiple network attachments/detachments/updates should be run through ManageNetworkClustersCommand!");
 
-        case DetachNetworkToVdsGroup: {
-            runner =
-                    new NetworkClusterAttachmentActionRunner(actionType,
-                            parameters,
-                            isInternal,
-                            commandContext,
-                            VdcActionType.DetachNetworksFromCluster);
-            break;
-        }
-
-        default: {
+        default:
             runner = new MultipleActionsRunner(actionType, parameters, commandContext, isInternal);
             break;
-        }
         }
         return runner;
     }

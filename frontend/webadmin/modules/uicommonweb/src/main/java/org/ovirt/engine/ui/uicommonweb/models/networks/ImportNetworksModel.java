@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 import org.ovirt.engine.core.common.action.AddNetworkStoragePoolParameters;
-import org.ovirt.engine.core.common.action.AttachNetworkToVdsGroupParameter;
+import org.ovirt.engine.core.common.action.ManageNetworkClustersParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -296,16 +296,18 @@ public class ImportNetworksModel extends Model {
     }
 
     private void attachNetworkToClusters(final Network network, Collection<VDSGroup> clusters, final boolean publicUse) {
-        NetworkCluster networkCluster = new NetworkCluster();
-        networkCluster.setRequired(false);
-        network.setCluster(networkCluster);
-        List<VdcActionParametersBase> parameters = new LinkedList<VdcActionParametersBase>();
+        List<NetworkCluster> networkAttachments = new LinkedList<>();
         for (VDSGroup cluster : clusters) {
-            parameters.add(new AttachNetworkToVdsGroupParameter(cluster, network));
+            final NetworkCluster networkCluster = new NetworkCluster();
+            networkCluster.setClusterId(cluster.getId());
+            networkCluster.setNetworkId(network.getId());
+            networkCluster.setRequired(false);
+            networkAttachments.add(networkCluster);
         }
 
-        Frontend.getInstance().runMultipleActions(VdcActionType.AttachNetworkToVdsGroup,
-                parameters,
+        Frontend.getInstance().runAction(
+                VdcActionType.ManageNetworkClusters,
+                new ManageNetworkClustersParameters(networkAttachments),
                 new IFrontendActionAsyncCallback() {
 
                     @Override

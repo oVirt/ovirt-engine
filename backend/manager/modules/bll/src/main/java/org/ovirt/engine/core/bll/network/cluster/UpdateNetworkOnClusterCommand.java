@@ -1,17 +1,15 @@
 package org.ovirt.engine.core.bll.network.cluster;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.inject.Inject;
 
 import org.ovirt.engine.core.bll.ValidationResult;
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.network.cluster.helper.DisplayNetworkClusterHelper;
 import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
-import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.NetworkClusterParameters;
-import org.ovirt.engine.core.common.businessentities.ActionGroup;
 import org.ovirt.engine.core.common.businessentities.network.Network;
 import org.ovirt.engine.core.common.businessentities.network.NetworkCluster;
 import org.ovirt.engine.core.common.errors.VdcBllMessages;
@@ -24,10 +22,30 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
     @Inject
     private ManagementNetworkUtil managementNetworkUtil;
 
+    @Inject
+    private UpdateNetworkClusterPermissionsChecker permissionsChecker;
+
+    private Network managementNetwork;
     private NetworkCluster oldNetworkCluster;
 
     public UpdateNetworkOnClusterCommand(T parameters) {
         super(parameters);
+    }
+
+    public UpdateNetworkOnClusterCommand(T parameters, CommandContext cmdContext) {
+        super(parameters, cmdContext);
+    }
+
+    private void setManagementNetwork(Network managementNetwork) {
+        this.managementNetwork = managementNetwork;
+    }
+
+    private Network getManagementNetwork() {
+        if (managementNetwork == null) {
+            setManagementNetwork(managementNetworkUtil.getManagementNetwork(getVdsGroupId()));
+        }
+
+        return managementNetwork;
     }
 
     private NetworkCluster getOldNetworkCluster() {
@@ -110,10 +128,11 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
 
     @Override
     public List<PermissionSubject> getPermissionCheckSubjects() {
-        List<PermissionSubject> permissions = super.getPermissionCheckSubjects();
-        Guid networkId = getNetworkCluster() == null ? null : getNetworkCluster().getNetworkId();
-        permissions.add(new PermissionSubject(networkId, VdcObjectType.Network, ActionGroup.ASSIGN_CLUSTER_NETWORK));
-        return permissions;
+        return permissionsChecker.findPermissionCheckSubjects(getNetworkId(), getVdsGroupId(), getActionType());
+    }
+
+    private Guid getNetworkId() {
+        return getNetworkCluster() == null ? null : getNetworkCluster().getNetworkId();
     }
 
     /**
@@ -121,17 +140,7 @@ public class UpdateNetworkOnClusterCommand<T extends NetworkClusterParameters> e
      */
     @Override
     protected boolean checkPermissions(final List<PermissionSubject> permSubjects) {
-        List<String> messages = new ArrayList<String>();
-
-        for (PermissionSubject permSubject : permSubjects) {
-            messages.clear();
-            if (checkSinglePermission(permSubject, messages)) {
-                return true;
-            }
-        }
-
-        getReturnValue().getCanDoActionMessages().addAll(messages);
-        return false;
+        return permissionsChecker.checkPermissions(this, permSubjects);
     }
 
     private UpdateNetworkClusterValidator createNetworkClusterValidator() {

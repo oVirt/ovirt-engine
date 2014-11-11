@@ -1690,6 +1690,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Management network has to be not external one.")
     String ACTION_TYPE_FAILED_MANAGEMENT_NETWORK_CANNOT_BE_EXTERNAL();
 
+    @DefaultStringValue("Cannot ${action} ${type}. Network cluster ${NetworkCluster} appears more then once.")
+    String ACTION_TYPE_FAILED_DUPLICATE_NETWORK_CLUSTER_INPUT();
+
     @DefaultStringValue("Cannot ${action} ${type}. Migration network is not supported for this cluster version.")
     String ACTION_TYPE_FAILED_MIGRATION_NETWORK_IS_NOT_SUPPORTED();
 
