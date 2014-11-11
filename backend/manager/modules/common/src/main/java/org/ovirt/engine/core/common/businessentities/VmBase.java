@@ -156,7 +156,7 @@ public class VmBase extends IVdcQueryable implements BusinessEntity<Guid>, Namea
 
     @CopyOnNewVersion
     @EditableField
-    @Pattern(regexp = ValidationUtils.ISO_SUFFIX_PATTERN, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
+    @Pattern(regexp = ValidationUtils.ISO_SUFFIX_PATTERN, flags = {Pattern.Flag.CASE_INSENSITIVE}, message = "ACTION_TYPE_FAILED_INVALID_CDROM_DISK_FORMAT")
     @Size(max = BusinessEntitiesDefinitions.GENERAL_MAX_SIZE)
     private String isoPath;
 
