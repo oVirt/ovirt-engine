@@ -21,7 +21,7 @@ public final class MultipleActionsRunnersFactory {
                                                                     boolean isInternal, CommandContext commandContext) {
         MultipleActionsRunner runner;
         switch (actionType) {
-        case DeactivateStorageDomain: {
+        case DeactivateStorageDomainWithOvfUpdate: {
             runner = new DeactivateStorageDomainsMultipleActionRunner(actionType, parameters, commandContext, isInternal);
             break;
         }

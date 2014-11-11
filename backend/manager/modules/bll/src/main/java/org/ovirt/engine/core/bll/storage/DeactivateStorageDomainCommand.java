@@ -69,7 +69,8 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected LockProperties applyLockProperties(LockProperties lockProperties) {
-        return lockProperties.withScope(Scope.Execution);
+        Scope scope = getParameters().isSkipLock() ? Scope.None : Scope.Execution;
+        return lockProperties.withScope(scope);
     }
 
     protected void setNewMaster(StorageDomain value) {
@@ -104,6 +105,10 @@ public class DeactivateStorageDomainCommand<T extends StorageDomainPoolParameter
 
     @Override
     protected boolean canDoAction() {
+        if (getParameters().isSkipChecks()) {
+            return true;
+        }
+
         if (!(checkStorageDomain())) {
             return false;
         }

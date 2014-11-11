@@ -64,12 +64,12 @@ public abstract class Disk extends BaseDisk {
         return readOnly;
     }
 
-    public void setReadOnly(Boolean readOnly) {
-        this.readOnly = readOnly;
-    }
-
     public String getLogicalName() {
         return logicalName;
+    }
+
+    public void setReadOnly(Boolean readOnly) {
+        this.readOnly = readOnly;
     }
 
     public void setLogicalName(String logicalName) {

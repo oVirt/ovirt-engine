@@ -7,7 +7,8 @@ import org.ovirt.engine.core.bll.utils.PermissionSubject;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddImageFromScratchParameters;
 import org.ovirt.engine.core.common.action.CreateOvfStoresForStorageDomainCommandParameters;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
+import org.ovirt.engine.core.common.action.ProcessOvfUpdateForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionParametersBase;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
@@ -29,18 +30,16 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
         super(parameters, commandContext);
     }
 
-
     @Override
     protected void executeCommand() {
         for (int i = 0; i < getParameters().getStoresCount(); i++) {
-            StorageDomainParametersBase storageDomainParametersBase = new StorageDomainParametersBase(getParameters().getStoragePoolId(),
-                    getParameters().getStorageDomainId());
-            storageDomainParametersBase.setParentCommand(getActionType());
-            storageDomainParametersBase.setParentParameters(getParameters());
+            CreateOvfVolumeForStorageDomainCommandParameters parameters = createCreateOvfVolumeForStorageDomainParams();
+
             VdcReturnValueBase vdcReturnValueBase =
                     runInternalAction(VdcActionType.CreateOvfVolumeForStorageDomain,
-                            storageDomainParametersBase);
-            getReturnValue().getVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
+                            parameters);
+
+            getReturnValue().getInternalVdsmTaskIdList().addAll(vdcReturnValueBase.getInternalVdsmTaskIdList());
         }
 
         setSucceeded(true);
@@ -64,9 +63,9 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
     private void endCommandOperations() {
         boolean atleastOneSucceeded = false;
         for (VdcActionParametersBase p : getParameters().getImagesParameters()) {
+            Guid diskId = ((AddImageFromScratchParameters) p).getDiskInfo().getId();
             if (p.getTaskGroupSuccess()) {
                 atleastOneSucceeded = true;
-                Guid diskId = ((AddImageFromScratchParameters) p).getDiskInfo().getId();
 
                 StorageDomainOvfInfo storageDomainOvfInfoDb =
                         getStorageDomainOvfInfoDao()
@@ -86,6 +85,7 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
                 getBackend().endAction(p.getCommandType(),
                         p,
                         getContext().clone().withoutCompensationContext().withoutExecutionContext().withoutLock());
+                addCustomValue("DiskId", diskId.toString());
                 AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             }
         }
@@ -94,9 +94,34 @@ public class CreateOvfStoresForStorageDomainCommand<T extends CreateOvfStoresFor
             // if we'd have the possibility to know whether we failed because of failure to acquire locks as there's an
             // update in progress, we could
             // try again (avoid setSucceeded(true) in that scenario).
-            getBackend().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain, getParameters());
+            VdcReturnValueBase returnValue = getBackend().runInternalAction(VdcActionType.ProcessOvfUpdateForStorageDomain, createProcessOvfUpdateForDomainParams());
+            getReturnValue().getInternalVdsmTaskIdList().addAll(returnValue.getInternalVdsmTaskIdList());
         }
+
         setSucceeded(true);
+    }
+
+    private ProcessOvfUpdateForStorageDomainCommandParameters createProcessOvfUpdateForDomainParams() {
+        ProcessOvfUpdateForStorageDomainCommandParameters params = new ProcessOvfUpdateForStorageDomainCommandParameters(getParameters().getStoragePoolId(), getParameters().getStorageDomainId());
+        params.setSkipDomainChecks(getParameters().isSkipDomainChecks());
+        params.setParentCommand(getParameters().getParentCommand());
+        params.setParentParameters(getParameters().getParentParameters());
+        return params;
+    }
+
+    public CreateOvfVolumeForStorageDomainCommandParameters createCreateOvfVolumeForStorageDomainParams() {
+        CreateOvfVolumeForStorageDomainCommandParameters parameters = new CreateOvfVolumeForStorageDomainCommandParameters(getParameters().getStoragePoolId(),
+                getParameters().getStorageDomainId());
+        parameters.setSkipDomainChecks(getParameters().isSkipDomainChecks());
+        if (hasParentCommand()) {
+            parameters.setParentCommand(getParameters().getParentCommand());
+            parameters.setParentParameters(getParameters().getParentParameters());
+        } else {
+            parameters.setParentCommand(getActionType());
+            parameters.setParentParameters(getParameters());
+        }
+
+        return parameters;
     }
 
     protected StorageDomainOvfInfoDao getStorageDomainOvfInfoDao() {

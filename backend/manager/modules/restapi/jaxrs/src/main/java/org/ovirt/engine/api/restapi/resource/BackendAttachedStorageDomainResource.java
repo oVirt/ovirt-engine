@@ -42,7 +42,7 @@ public class BackendAttachedStorageDomainResource
 
     @Override
     public Response deactivate(Action action) {
-        return doAction(VdcActionType.DeactivateStorageDomain,
+        return doAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate,
                         new StorageDomainPoolParametersBase(guid, dataCenterId),
                         action);
     }

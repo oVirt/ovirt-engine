@@ -300,32 +300,32 @@ public final class VdcActionUtils {
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.ActivateStorageDomain));
         storageDomainMatrix.put(
                 StorageDomainStatus.Inactive,
-                EnumSet.of(VdcActionType.DeactivateStorageDomain));
+                EnumSet.of(VdcActionType.DeactivateStorageDomainWithOvfUpdate));
         storageDomainMatrix.put(
                 StorageDomainStatus.Locked,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool,
-                        VdcActionType.DeactivateStorageDomain, VdcActionType.ActivateStorageDomain));
+                        VdcActionType.DeactivateStorageDomainWithOvfUpdate, VdcActionType.ActivateStorageDomain));
         storageDomainMatrix.put(
                 StorageDomainStatus.Unattached,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool,
-                        VdcActionType.DeactivateStorageDomain, VdcActionType.ActivateStorageDomain));
+                        VdcActionType.DeactivateStorageDomainWithOvfUpdate, VdcActionType.ActivateStorageDomain));
         storageDomainMatrix.put(
                 StorageDomainStatus.Uninitialized,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool,
-                        VdcActionType.DeactivateStorageDomain, VdcActionType.ActivateStorageDomain));
+                        VdcActionType.DeactivateStorageDomainWithOvfUpdate, VdcActionType.ActivateStorageDomain));
         storageDomainMatrix.put(
                 StorageDomainStatus.Unknown,
-                EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.DeactivateStorageDomain));
+                EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.DeactivateStorageDomainWithOvfUpdate));
         storageDomainMatrix.put(
                 StorageDomainStatus.Maintenance,
-                EnumSet.of(VdcActionType.DeactivateStorageDomain));
+                EnumSet.of(VdcActionType.DeactivateStorageDomainWithOvfUpdate));
         storageDomainMatrix.put(
                 StorageDomainStatus.PreparingForMaintenance,
-                EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.DeactivateStorageDomain));
+                EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.DeactivateStorageDomainWithOvfUpdate));
         storageDomainMatrix.put(
                 StorageDomainStatus.Detaching,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool,
-                        VdcActionType.DeactivateStorageDomain, VdcActionType.ActivateStorageDomain));
+                        VdcActionType.DeactivateStorageDomainWithOvfUpdate, VdcActionType.ActivateStorageDomain));
         storageDomainMatrix.put(
                 StorageDomainStatus.Activating,
                 EnumSet.of(VdcActionType.DetachStorageDomainFromPool, VdcActionType.ActivateStorageDomain));

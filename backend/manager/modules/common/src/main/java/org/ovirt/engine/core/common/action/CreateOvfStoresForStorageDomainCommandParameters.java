@@ -4,6 +4,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 public class CreateOvfStoresForStorageDomainCommandParameters extends StorageDomainParametersBase {
     private int storesCount;
+    private boolean skipDomainChecks;
 
     public CreateOvfStoresForStorageDomainCommandParameters() {
     }
@@ -19,5 +20,13 @@ public class CreateOvfStoresForStorageDomainCommandParameters extends StorageDom
 
     public void setStoresCount(int storesCount) {
         this.storesCount = storesCount;
+    }
+
+    public boolean isSkipDomainChecks() {
+        return skipDomainChecks;
+    }
+
+    public void setSkipDomainChecks(boolean skipDomainChecks) {
+        this.skipDomainChecks = skipDomainChecks;
     }
 }

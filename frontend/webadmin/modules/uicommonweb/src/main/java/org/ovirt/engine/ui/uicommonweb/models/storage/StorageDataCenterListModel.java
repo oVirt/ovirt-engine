@@ -596,7 +596,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, list,
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, list,
                 new IFrontendMultipleActionAsyncCallback() {
                     @Override
                     public void executed(FrontendMultipleActionAsyncResult result) {
@@ -672,7 +672,7 @@ public class StorageDataCenterListModel extends SearchableListModel<StorageDomai
                 && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.ActivateStorageDomain));
 
         getMaintenanceCommand().setIsExecutionAllowed(items.size() == 1
-                && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomain));
+                && VdcActionUtils.canExecute(items, StorageDomain.class, VdcActionType.DeactivateStorageDomainWithOvfUpdate));
 
         getAttachCommand().setIsExecutionAllowed(getEntity() != null
                 && (getEntity().getStorageDomainSharedStatus() == StorageDomainSharedStatus.Unattached || getEntity().getStorageDomainType() == StorageDomainType.ISO));

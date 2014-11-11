@@ -750,6 +750,10 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
         rollbackQuota();
     }
 
+    protected boolean hasParentCommand() {
+        return getParameters().getParentCommand() != VdcActionType.Unknown;
+    }
+
     private boolean internalCanDoAction() {
         boolean returnValue = false;
         try {

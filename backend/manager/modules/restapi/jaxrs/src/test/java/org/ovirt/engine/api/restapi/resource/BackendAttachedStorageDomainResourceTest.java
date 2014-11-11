@@ -120,7 +120,7 @@ public class BackendAttachedStorageDomainResourceTest
 
     @Test
     public void testDeactivate() throws Exception {
-        setUriInfo(setUpActionExpectations(VdcActionType.DeactivateStorageDomain,
+        setUriInfo(setUpActionExpectations(VdcActionType.DeactivateStorageDomainWithOvfUpdate,
                                            StorageDomainPoolParametersBase.class,
                                            new String[] { "StorageDomainId", "StoragePoolId" },
                                            new Object[] { STORAGE_DOMAIN_ID, DATA_CENTER_ID }));
