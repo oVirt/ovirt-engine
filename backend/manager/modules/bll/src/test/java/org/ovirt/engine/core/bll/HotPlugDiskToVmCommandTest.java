@@ -154,7 +154,7 @@ public class HotPlugDiskToVmCommandTest {
         assertFalse(command.canDoAction());
         assertTrue(command.getReturnValue()
                 .getCanDoActionMessages()
-                .contains(VdcBllMessages.ACTION_TYPE_FAILED_GUEST_OS_VERSION_IS_NOT_SUPPORTED.toString()));
+                .contains(VdcBllMessages.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED.toString()));
     }
 
     @Test

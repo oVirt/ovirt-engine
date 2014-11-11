@@ -487,6 +487,11 @@ public abstract class VmCommand<T extends VmOperationParameterBase> extends Comm
      * @return
      */
     protected boolean isDiskSupportedForPlugUnPlug(Disk disk) {
+        if (disk.getDiskInterface() == DiskInterface.IDE) {
+            addCanDoActionMessageVariable("diskAlias", disk.getDiskAlias());
+            addCanDoActionMessageVariable("vmName", getVm().getName());
+            return failCanDoAction(VdcBllMessages.HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED);
+        }
         Set<String> diskHotpluggableInterfaces = osRepository.getDiskHotpluggableInterfaces(getVm().getOs(),
                 getVm().getVdsGroupCompatibilityVersion());
 

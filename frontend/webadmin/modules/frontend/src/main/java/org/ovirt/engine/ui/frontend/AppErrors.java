@@ -2594,6 +2594,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
     String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();
 
+    @DefaultStringValue("Cannot ${action} ${diskAlias} to ${vmName}. Hot plugging a disk to an IDE interface is not supported.")
+    String HOT_PLUG_IDE_DISK_IS_NOT_SUPPORTED();
+
     @DefaultStringValue("Cannot ${action} ${type}. Link state is set to 'Down' on the virtual machine's interface, this is not supported for clusters of version ${clusterVersion}.")
     String UNLINKING_IS_NOT_SUPPORTED();
 
