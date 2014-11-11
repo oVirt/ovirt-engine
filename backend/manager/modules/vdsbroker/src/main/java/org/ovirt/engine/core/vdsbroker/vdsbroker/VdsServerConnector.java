@@ -112,7 +112,7 @@ public interface VdsServerConnector {
 
     public Map<String, Object> getStorageDomainInfo(String sdUUID);
 
-    public Map<String, Object> getStorageDomainsList(String spUUID, int domainType, int poolType, String path);
+    public Map<String, Object> getStorageDomainsList(String spUUID, int domainType, String poolType, String path);
 
     public Map<String, Object> getIsoList(String spUUID);
 

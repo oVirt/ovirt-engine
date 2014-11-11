@@ -576,7 +576,7 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
-    public StorageDomainListReturnForXmlRpc getStorageDomainsList(String sdUUID, int domainType, int poolType,
+    public StorageDomainListReturnForXmlRpc getStorageDomainsList(String sdUUID, int domainType, String poolType,
             String path) {
         try {
             Map<String, Object> xmlRpcReturnValue = vdsServer.getStorageDomainsList(sdUUID, domainType, poolType, path);
