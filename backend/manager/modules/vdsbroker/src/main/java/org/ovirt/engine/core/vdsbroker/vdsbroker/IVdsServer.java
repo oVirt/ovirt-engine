@@ -134,7 +134,7 @@ public interface IVdsServer {
 
     OneStorageDomainInfoReturnForXmlRpc getStorageDomainInfo(String sdUUID);
 
-    StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID, int domainType, int poolType, String path);
+    StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID, int domainType, String poolType, String path);
 
     FileStatsReturnForXmlRpc getIsoList(String spUUID);
 

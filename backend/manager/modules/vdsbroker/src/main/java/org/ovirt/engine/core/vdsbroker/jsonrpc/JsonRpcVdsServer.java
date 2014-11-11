@@ -664,7 +664,7 @@ public class JsonRpcVdsServer implements IVdsServer {
     @Override
     public StorageDomainListReturnForXmlRpc getStorageDomainsList(String spUUID,
             int domainType,
-            int poolType,
+            String poolType,
             String path) {
         JsonRpcRequest request =
                 new RequestBuilder("Host.getStorageDomains").withParameter("storagepoolID", spUUID)
