@@ -40,16 +40,17 @@ public class GetTemplatesFromExportDomainQuery<P extends GetAllFromExportDomainQ
                     templateDisksMap.put(vmTemplate, templateDisks);
                 }
             } catch (OvfReaderException ex) {
-                auditLogOvfLoadError(ex.getName());
+                auditLogOvfLoadError(ex.getName(), ex.getMessage());
             }
         }
 
         return templateDisksMap;
     }
 
-    private void auditLogOvfLoadError(String machineName) {
+    private void auditLogOvfLoadError(String machineName, String errorMessage) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("Template", machineName);
+        logable.addCustomValue("ErrorMessage", errorMessage);
         AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_TEMPLATE);
 
     }

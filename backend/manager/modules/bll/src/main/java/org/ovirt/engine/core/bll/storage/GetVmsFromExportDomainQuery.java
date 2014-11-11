@@ -34,16 +34,17 @@ public class GetVmsFromExportDomainQuery<P extends GetAllFromExportDomainQueryPa
                     vms.add(ovfHelper.readVmFromOvf(ovf));
                 }
             } catch (OvfReaderException ex) {
-                auditLogOvfLoadError(ex.getName());
+                auditLogOvfLoadError(ex.getName(), ex.getMessage());
             }
         }
 
         return vms;
     }
 
-    private void auditLogOvfLoadError(String machineName) {
+    private void auditLogOvfLoadError(String machineName, String errorMessage) {
         AuditLogableBase logable = new AuditLogableBase();
         logable.addCustomValue("ImportedVmName", machineName);
+        logable.addCustomValue("ErrorMessage", errorMessage);
         AuditLogDirector.log(logable, AuditLogType.IMPORTEXPORT_FAILED_TO_IMPORT_VM);
     }
 }
