@@ -2,6 +2,7 @@ package org.ovirt.engine.core.common.businessentities;
 
 import java.io.Serializable;
 
+import javax.persistence.Cacheable;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
@@ -15,6 +16,7 @@ import org.ovirt.engine.core.compat.Guid;
 
 @Entity
 @Table(name = "bookmarks")
+@Cacheable(true)
 @NamedQuery(name = "Bookmark.byName", query = "select b FROM Bookmark b WHERE b.name = :name")
 public class Bookmark extends IVdcQueryable implements Serializable, BusinessEntity<Guid> {
     private static final long serialVersionUID = 8177640907822845847L;
