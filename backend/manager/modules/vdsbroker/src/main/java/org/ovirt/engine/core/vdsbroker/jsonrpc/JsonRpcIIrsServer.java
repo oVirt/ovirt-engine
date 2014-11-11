@@ -163,12 +163,14 @@ public class JsonRpcIIrsServer implements IIrsServer {
     public VolumeListReturnForXmlRpc reconcileVolumeChain(String spUUID, String sdUUID, String imgGUID,
             String leafVolUUID) {
         JsonRpcRequest request =
-                new RequestBuilder("VM.reconcileVolumeChain").withParameter("storagepoolID", spUUID)
+                new RequestBuilder("Image.reconcileVolumeChain").withParameter("storagepoolID", spUUID)
                         .withParameter("storagedomainID", sdUUID)
                         .withParameter("imageID", imgGUID)
                         .withParameter("leafVolID", leafVolUUID)
                         .build();
-        Map<String, Object> response = new FutureMap(this.client, request);
+        Map<String, Object> response =
+                new FutureMap(this.client, request).withResponseKey("volumes")
+                        .withResponseType(Object[].class);
         return new VolumeListReturnForXmlRpc(response);
     }
 
