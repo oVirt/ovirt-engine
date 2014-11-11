@@ -1,15 +1,14 @@
 package org.ovirt.engine.core.bll;
 
-import org.ovirt.engine.core.bll.context.CommandContext;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 
+import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.storage.StorageDomainCommandBase;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.action.AddDiskParameters;
-import org.ovirt.engine.core.common.action.StorageDomainParametersBase;
+import org.ovirt.engine.core.common.action.CreateOvfVolumeForStorageDomainCommandParameters;
 import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VdcReturnValueBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
@@ -27,7 +26,7 @@ import org.ovirt.engine.core.utils.ovf.OvfInfoFileConstants;
 
 @InternalCommandAttribute
 @NonTransactiveCommandAttribute
-public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParametersBase> extends StorageDomainCommandBase<T> {
+public class CreateOvfVolumeForStorageDomainCommand<T extends CreateOvfVolumeForStorageDomainCommandParameters> extends StorageDomainCommandBase<T> {
     public CreateOvfVolumeForStorageDomainCommand(T parameters, CommandContext cmdContext) {
         super(parameters, cmdContext);
         setStorageDomainId(getParameters().getStorageDomainId());
@@ -41,12 +40,12 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
     @Override
 
     protected void executeCommand() {
-        DiskImage createdDisk = createDisk(getStorageDomainId());
         AddDiskParameters diskParameters = new AddDiskParameters(null, createDisk(getStorageDomainId()));
         diskParameters.setStorageDomainId(getStorageDomainId());
         diskParameters.setParentCommand(getParameters().getParentCommand());
         diskParameters.setParentParameters(getParameters().getParentParameters());
         diskParameters.setShouldRemainIllegalOnFailedExecution(true);
+        diskParameters.setSkipDomainCheck(getParameters().isSkipDomainChecks());
         VdcReturnValueBase vdcReturnValueBase =
                 runInternalActionWithTasksContext(VdcActionType.AddDisk, diskParameters);
         Guid createdId = (Guid)vdcReturnValueBase.getActionReturnValue();
@@ -56,8 +55,8 @@ public class CreateOvfVolumeForStorageDomainCommand<T extends StorageDomainParam
         }
 
         if (!vdcReturnValueBase.getSucceeded()) {
-            addCustomValue("DiskAlias", createdDisk.getDiskAlias());
             if (createdId != null) {
+                addCustomValue("DiskId", createdId.toString());
                 AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_FAILED);
             } else {
                 AuditLogDirector.log(this, AuditLogType.CREATE_OVF_STORE_FOR_STORAGE_DOMAIN_INITIATE_FAILED);

@@ -426,6 +426,11 @@ public abstract class StorageDomainCommandBase<T extends StorageDomainParameters
         });
     }
 
+    protected void changeDomainStatusWithCompensation(StoragePoolIsoMap map, StorageDomainStatus compensateStatus, StorageDomainStatus newStatus) {
+        map.setStatus(compensateStatus);
+        changeStorageDomainStatusInTransaction(map, newStatus);
+    }
+
     private StorageDomainStatus getStorageDomainStatus() {
         StorageDomainStatus status = null;
         if (getStorageDomain() != null) {

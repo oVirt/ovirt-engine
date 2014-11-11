@@ -184,7 +184,7 @@ public class AddDiskCommand<T extends AddDiskParameters> extends AbstractDiskVmC
         StorageDomainValidator storageDomainValidator = createStorageDomainValidator();
         // vm agnostic checks
         returnValue =
-                validate(storageDomainValidator.isDomainExistAndActive()) &&
+                (getParameters().isSkipDomainCheck() || validate(storageDomainValidator.isDomainExistAndActive())) &&
                 !isShareableDiskOnGlusterDomain() &&
                 checkImageConfiguration() &&
                 validate(storageDomainValidator.hasSpaceForNewDisk(getDiskImageInfo())) &&

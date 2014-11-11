@@ -51,8 +51,8 @@ public class VdcActionUtilsTest {
                 { downVm, VdcActionType.MigrateVm, false },
                 { upVds, VdcActionType.RefreshHostCapabilities, true },
                 { downVds, VdcActionType.RefreshHostCapabilities, false },
-                { upStorageDomain, VdcActionType.DeactivateStorageDomain, true },
-                { downStorageDomain, VdcActionType.DeactivateStorageDomain, false },
+                { upStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, true },
+                { downStorageDomain, VdcActionType.DeactivateStorageDomainWithOvfUpdate, false },
                 { new StoragePool(), VdcActionType.UpdateStoragePool, true }
         });
     }

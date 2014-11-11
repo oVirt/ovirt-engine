@@ -37,6 +37,7 @@ public enum StepEnum {
     CLONE_IMAGE_STRUCTURE(AsyncTaskType.cloneImageStructure),
     SYNC_IMAGE_DATA(AsyncTaskType.syncImageData),
     DOWNLOAD_IMAGE(AsyncTaskType.downloadImage),
+    DOWNLOAD_IMAGE_FROM_STREAM(AsyncTaskType.downloadImageFromStream),
     UNKNOWN(AsyncTaskType.unknown);
 
     /**

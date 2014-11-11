@@ -228,7 +228,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         final ConfirmationModel confirmationModel = (ConfirmationModel) getWindow();
         confirmationModel.startProgress(null);
 
-        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomain, pb, new IFrontendMultipleActionAsyncCallback() {
+        Frontend.getInstance().runMultipleAction(VdcActionType.DeactivateStorageDomainWithOvfUpdate, pb, new IFrontendMultipleActionAsyncCallback() {
             @Override
             public void executed(FrontendMultipleActionAsyncResult result) {
                 confirmationModel.stopProgress();
@@ -760,7 +760,7 @@ public class DataCenterStorageListModel extends SearchableListModel
         getMaintenanceCommand().setIsExecutionAllowed(selectedItems.size() == 1
                 && VdcActionUtils.canExecute(selectedItems,
                 StorageDomain.class,
-                VdcActionType.DeactivateStorageDomain));
+                VdcActionType.DeactivateStorageDomainWithOvfUpdate));
     }
 
     @Override
