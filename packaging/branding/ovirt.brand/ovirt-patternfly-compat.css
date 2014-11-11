@@ -273,12 +273,6 @@ div.avw_contentWidget_pfly_fix {
     margin-bottom: 0;
     padding-bottom: 0;
 }
-.rv_image_pfly_fix {
-    position: relative;
-    top: -5px;
-    margin-right: 5px;
-    margin-left: 15px !important;
-}
 .footerButton_pfly_fix {
     height: 22px;
 }

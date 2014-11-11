@@ -12,9 +12,10 @@
 
         .imageStyle {
             vertical-align: bottom;
-            height: 30px;
-            line-height: 25px;
-            margin-left: 10px;
+            position: relative;
+            top: -5px;
+            margin-right: 5px;
+            margin-left: 15px;
         }
     </ui:style>
 
@@ -22,9 +23,9 @@
         <g:HorizontalPanel>
             <g:Label ui:field="showLabel" addStyleNames="{style.labelStyle} rv_showLabel_pfly_fix"/>
             <g:RadioButton name="rolesRadioButton" ui:field="allRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
-            <g:Image resource='{resources.adminImage}' addStyleNames="{style.imageStyle} rv_image_pfly_fix"/>
+            <g:Image resource='{resources.adminImage}' addStyleNames="{style.imageStyle}"/>
             <g:RadioButton name="rolesRadioButton" ui:field="adminRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
-            <g:Image resource='{resources.userImage}' addStyleNames="{style.imageStyle} rv_image_pfly_fix"/>
+            <g:Image resource='{resources.userImage}' addStyleNames="{style.imageStyle}"/>
             <g:RadioButton name="rolesRadioButton" ui:field="userRolesRadioButton" addStyleNames="rv_radio_pfly_fix"/>
         </g:HorizontalPanel>
         <g:SimplePanel ui:field="rolesTabContent" height="495px" />
