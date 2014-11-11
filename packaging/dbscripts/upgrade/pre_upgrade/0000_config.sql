@@ -881,7 +881,7 @@ select fn_db_update_config_value('IPTablesConfig','
 :FORWARD ACCEPT [0:0]
 :OUTPUT ACCEPT [0:0]
 -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
-
+-A INPUT -p icmp -j ACCEPT
 -A INPUT -i lo -j ACCEPT
 # vdsm
 -A INPUT -p tcp --dport @VDSM_PORT@ -j ACCEPT
