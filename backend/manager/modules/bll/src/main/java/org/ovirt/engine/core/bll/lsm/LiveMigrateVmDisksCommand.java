@@ -480,7 +480,10 @@ public class LiveMigrateVmDisksCommand<T extends LiveMigrateVmDisksParameters> e
 
     private boolean performVmRelatedChecks() {
         VmValidator vmValidator = createVmValidator();
-        return validate(vmValidator.vmNotRunningStateless()) && isVmNotInPreview();
+        SnapshotsValidator snapshotValidator = createSnapshotsValidator();
+        return validate(vmValidator.vmNotRunningStateless()) &&
+               validate(snapshotValidator.vmNotDuringSnapshot(getVmId())) &&
+               isVmNotInPreview();
     }
 
     protected VmValidator createVmValidator() {

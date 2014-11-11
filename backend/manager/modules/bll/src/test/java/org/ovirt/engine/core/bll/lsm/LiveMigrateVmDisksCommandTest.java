@@ -303,6 +303,20 @@ public class LiveMigrateVmDisksCommandTest {
     }
 
     @Test
+    public void canDoActionVmDuringSnapshot() {
+        createParameters();
+        initDiskImage(diskImageGroupId, diskImageId);
+        initVm(VMStatus.Up, null, diskImageId);
+        when(snapshotDao.exists(any(Guid.class), eq(Snapshot.SnapshotStatus.LOCKED))).thenReturn(true);
+
+        doReturn(new ValidationResult(VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT)).when(snapshotsValidator)
+                .vmNotDuringSnapshot(any(Guid.class));
+
+        CanDoActionTestUtils.runAndAssertCanDoActionFailure(command,
+                VdcBllMessages.ACTION_TYPE_FAILED_VM_IS_DURING_SNAPSHOT);
+    }
+
+    @Test
     public void canDoActionVmHavingDeviceSnapshotsPluggedToOtherVmsThatAreNotDown() {
         createParameters();
         initDiskImage(diskImageGroupId, diskImageId);
@@ -399,5 +413,6 @@ public class LiveMigrateVmDisksCommandTest {
         doReturn(ValidationResult.VALID).when(vmValidator).vmNotRunningStateless();
         doReturn(ValidationResult.VALID).when(diskValidator).isDiskPluggedToVmsThatAreNotDown(anyBoolean(), anyList());
         doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotInPreview(any(Guid.class));
+        doReturn(ValidationResult.VALID).when(snapshotsValidator).vmNotDuringSnapshot(any(Guid.class));
     }
 }
