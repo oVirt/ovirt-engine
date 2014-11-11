@@ -35,8 +35,7 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                 .RunVdsCommand(
                         VDSCommandType.HSMGetStorageDomainsList,
                         new HSMGetStorageDomainsListVDSCommandParameters(getParameters()
-                                .getVdsId(), Guid.Empty, getParameters()
-                                .getStorageType(), getParameters()
+                                .getVdsId(), Guid.Empty, null, getParameters()
                                 .getStorageDomainType(), getParameters().getPath()));
         if (vdsReturnValue.getSucceeded()) {
             ArrayList<Guid> guidsFromIrs = (ArrayList<Guid>) vdsReturnValue.getReturnValue();
@@ -61,6 +60,13 @@ public class GetExistingStorageDomainListQuery<P extends GetExistingStorageDomai
                         domain.setStorageStaticData(domainFromIrs.getFirst());
                         if (getParameters().getStorageFormatType() == null
                                 || getParameters().getStorageFormatType() == domain.getStorageFormat()) {
+                            if (domain.getStorageType().getValue() != getParameters().getStorageType().getValue()) {
+                                log.warnFormat("The storage type of domain {0} has been changed from {1} to {2}",
+                                        domain.getStorageName(),
+                                        domain.getStorageType().toString(),
+                                        getParameters().getStorageType().toString());
+                                domain.setStorageType(getParameters().getStorageType());
+                            }
                             returnValue.add(domain);
                         }
                     }
