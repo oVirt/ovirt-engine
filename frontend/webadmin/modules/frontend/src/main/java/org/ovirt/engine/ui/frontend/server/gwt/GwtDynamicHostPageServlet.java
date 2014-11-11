@@ -121,7 +121,11 @@ public abstract class GwtDynamicHostPageServlet extends HttpServlet {
                 getLoggedInUser(getEngineSessionId(request));
         if (loggedInUser != null) {
             request.setAttribute(MD5Attributes.ATTR_USER_INFO.getKey(), getUserInfoObject(loggedInUser));
-            request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(request.getSession().getId()));
+            String ssoToken = (String)
+                    request.getSession().getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+            if (ssoToken != null) {
+                request.setAttribute(MD5Attributes.ATTR_SSO_TOKEN.getKey(), getValueObject(ssoToken));
+            }
         }
 
         try {
