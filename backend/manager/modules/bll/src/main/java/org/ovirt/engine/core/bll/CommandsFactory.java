@@ -81,8 +81,8 @@ public final class CommandsFactory {
     private static <P extends VdcActionParametersBase> CommandBase<P> instantiateCommand(VdcActionType action, P parameters, CommandContext commandContext)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         return commandContext == null ?
-                (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass()).newInstance(parameters)
-                : (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), COMMAND_SUFFIX),
+                (CommandBase<P>) findCommandConstructor(getCommandClass(action.name()), parameters.getClass()).newInstance(parameters)
+                : (CommandBase<P>) findCommandConstructor(getCommandClass(action.name()),
                         parameters.getClass(),
                         commandContext.getClass()).newInstance(parameters, commandContext);
     }
@@ -153,11 +153,13 @@ public final class CommandsFactory {
     }
 
     public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters) {
-        return ReflectionUtils.findConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass()) != null;
+        return ReflectionUtils.findConstructor(getCommandClass(action.name()), parameters.getClass()) != null;
     }
 
     public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters, CommandContext cmdContext) {
-        return ReflectionUtils.findConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass(), cmdContext.getClass()) != null;
+        return ReflectionUtils.findConstructor(getCommandClass(action.name()),
+                parameters.getClass(),
+                cmdContext.getClass()) != null;
     }
 
     private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {
