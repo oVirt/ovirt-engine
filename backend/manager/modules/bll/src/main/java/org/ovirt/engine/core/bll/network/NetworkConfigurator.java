@@ -4,12 +4,12 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 import org.ovirt.engine.core.bll.Backend;
 import org.ovirt.engine.core.bll.context.CommandContext;
 import org.ovirt.engine.core.bll.interfaces.BackendInternal;
 import org.ovirt.engine.core.bll.network.cluster.ManagementNetworkUtil;
+import org.ovirt.engine.core.bll.network.host.HostSetupNetworkPoller;
 import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.HostSetupNetworksParameters;
@@ -24,12 +24,8 @@ import org.ovirt.engine.core.common.businessentities.network.NetworkAttachment;
 import org.ovirt.engine.core.common.businessentities.network.VdsNetworkInterface;
 import org.ovirt.engine.core.common.config.Config;
 import org.ovirt.engine.core.common.config.ConfigValues;
-import org.ovirt.engine.core.common.interfaces.FutureVDSCall;
 import org.ovirt.engine.core.common.vdscommands.CollectHostNetworkDataVdsCommandParameters;
-import org.ovirt.engine.core.common.vdscommands.FutureVDSCommandType;
 import org.ovirt.engine.core.common.vdscommands.VDSCommandType;
-import org.ovirt.engine.core.common.vdscommands.VDSReturnValue;
-import org.ovirt.engine.core.common.vdscommands.VdsIdVDSCommandParametersBase;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogDirector;
 import org.ovirt.engine.core.dal.dbbroker.auditloghandling.AuditLogableBase;
 import org.ovirt.engine.core.di.Injector;
@@ -47,7 +43,6 @@ public class NetworkConfigurator {
     private static final int VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS = 120;
     private static final String MANAGEMENET_NETWORK_CONFIG_ERR = "Failed to configure management network";
     private static final String NETWORK_CONFIG_LOG_ERR = "Failed to configure management network: {0}";
-    private static final long POLLING_BREAK_IN_MILLIS = 500;
     private static final Logger log = LoggerFactory.getLogger(NetworkConfigurator.class);
     private final VDS host;
     private final AuditLogDirector auditLogDirector = new AuditLogDirector();
@@ -111,46 +106,21 @@ public class NetworkConfigurator {
         return Injector.get(ManagementNetworkUtil.class);
     }
 
-    public boolean pollVds() {
-        try {
-            FutureVDSCall<VDSReturnValue> task =
-                    Backend.getInstance().getResourceManager().runFutureVdsCommand(FutureVDSCommandType.Poll,
-                            new VdsIdVDSCommandParametersBase(host.getId()));
-            VDSReturnValue returnValue =
-                    task.get(Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout), TimeUnit.SECONDS);
-
-            if (returnValue.getSucceeded()) {
-                return true;
-            }
-        } catch (Exception e) {
-            // ignore failure until VDSM become responsive
-        }
-        return false;
-    }
-
     public boolean awaitVdsmResponse() {
         final int checks =
                 VDSM_RESPONSIVENESS_PERIOD_IN_SECONDS
                         / Config.<Integer> getValue(ConfigValues.SetupNetworksPollingTimeout);
+        HostSetupNetworkPoller poller = new HostSetupNetworkPoller();
         for (int i = 0; i < checks; i++) {
-            if (pollVds()) {
+            if (poller.poll(host.getId())) {
                 log.info("Engine managed to communicate with VDSM agent on host '{}' ('{}')",
                         host.getName(),
                         host.getId());
                 return true;
-            } else {
-                delayPolling();
             }
         }
-        return false;
-    }
 
-    private void delayPolling() {
-        try {
-            Thread.sleep(POLLING_BREAK_IN_MILLIS);
-        } catch (InterruptedException e) {
-            // ignore exception
-        }
+        return false;
     }
 
     public void refreshNetworkConfiguration() {
