@@ -246,6 +246,7 @@ public class UnitVmModel extends Model implements HasValidatedTabs {
             getHostCpu().setIsChangable(false);
             getMigrationMode().setIsChangable(false);
             getCpuPinning().setIsChangable(false);
+            getMigrationDowntime().setIsChangable(false);
 
             // ==Resource Allocation Tab==
             getMinAllocatedMemory().setIsChangable(false);
