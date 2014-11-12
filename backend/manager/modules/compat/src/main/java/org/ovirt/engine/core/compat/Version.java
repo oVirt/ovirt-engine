@@ -15,6 +15,7 @@ public class Version implements Comparable<Version>, Serializable {
     private int build;
     private int revision;
 
+    // please note that versions must be in sync with dbscripts/common_sp.sql::fn_db_add_config_value_for_versions_up_to
     public static final Version v3_0 = new Version(3, 0);
     public static final Version v3_1 = new Version(3, 1);
     public static final Version v3_2 = new Version(3, 2);

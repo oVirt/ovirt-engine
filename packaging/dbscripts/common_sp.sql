@@ -601,3 +601,21 @@ v_sep := '';
 END; $procedure$
 LANGUAGE plpgsql;
 
+-- sets the v_val value for v_option_name in vdc_options for all versions before and up to v_version including v_version
+-- please note that versions must be insync with  org.ovirt.engine.core.compat.Version
+create or replace FUNCTION  fn_db_add_config_value_for_versions_up_to(v_option_name varchar(100), v_val varchar(4000), v_version varchar(40))
+returns void
+AS $procedure$
+declare
+    m   varchar;
+    arr varchar[] := array['3.0', '3.1', '3.2', '3.3', '3.4', '3.5', '3.6'];
+begin
+    FOREACH m IN ARRAY arr
+    LOOP
+        perform fn_db_add_config_value(v_option_name, v_val, m);
+        EXIT WHEN  m = v_version;
+    END LOOP;
+END; $procedure$
+LANGUAGE plpgsql;
+
+
