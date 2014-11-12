@@ -22,7 +22,7 @@ import org.slf4j.LoggerFactory;
 public final class CommandsFactory {
     private static final Logger log = LoggerFactory.getLogger(CommandsFactory.class);
     private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
-    private static final String CommandSuffix = "Command";
+    private static final String COMMAND_SUFFIX = "Command";
     private static final String QUERY_SUFFIX = "Query";
     private static final String CTOR_MISMATCH =
             "could not find matching constructor for Command class {0}";
@@ -81,8 +81,8 @@ public final class CommandsFactory {
     private static <P extends VdcActionParametersBase> CommandBase<P> instantiateCommand(VdcActionType action, P parameters, CommandContext commandContext)
             throws InstantiationException, IllegalAccessException, IllegalArgumentException, InvocationTargetException {
         return commandContext == null ?
-                (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()).newInstance(parameters)
-                : (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), CommandSuffix),
+                (CommandBase<P>)findCommandConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass()).newInstance(parameters)
+                : (CommandBase<P>) findCommandConstructor(getCommandClass(action.name(), COMMAND_SUFFIX),
                         parameters.getClass(),
                         commandContext.getClass()).newInstance(parameters, commandContext);
     }
@@ -145,7 +145,7 @@ public final class CommandsFactory {
     }
 
     public static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name) {
-        return getCommandClass(name, CommandSuffix);
+        return getCommandClass(name, COMMAND_SUFFIX);
     }
 
     public static Class<CommandBase<? extends VdcActionParametersBase>> getQueryClass(String name) {
@@ -153,11 +153,11 @@ public final class CommandsFactory {
     }
 
     public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters) {
-        return ReflectionUtils.findConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass()) != null;
+        return ReflectionUtils.findConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass()) != null;
     }
 
     public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters, CommandContext cmdContext) {
-        return ReflectionUtils.findConstructor(getCommandClass(action.name(), CommandSuffix), parameters.getClass(), cmdContext.getClass()) != null;
+        return ReflectionUtils.findConstructor(getCommandClass(action.name(), COMMAND_SUFFIX), parameters.getClass(), cmdContext.getClass()) != null;
     }
 
     private static Class<CommandBase<? extends VdcActionParametersBase>> getCommandClass(String name, String suffix) {
