@@ -3174,6 +3174,7 @@
           <xs:element ref="instance_type" minOccurs="0" maxOccurs="1"/>
           <xs:element name="start_time" type="xs:dateTime" minOccurs="0"/>
           <xs:element name="stop_time" type="xs:dateTime" minOccurs="0"/>
+          <xs:element name="run_once" type="xs:boolean" minOccurs="0" maxOccurs="1" />
           <xs:element name="custom_properties" type="CustomProperties" minOccurs="0"/>
           <xs:element name="payloads" type="Payloads" minOccurs="0"/>
           <xs:element name="statistics" type="Statistics" minOccurs="0" maxOccurs="1"/>

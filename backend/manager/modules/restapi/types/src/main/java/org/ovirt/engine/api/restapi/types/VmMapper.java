@@ -360,6 +360,7 @@ public class VmMapper extends VmBaseMapper {
                 model.setStartTime(DateMapper.map(entity.getLastStartTime(), null));
             }
 
+            model.setRunOnce(entity.isRunOnce());
             model.getDisplay().setAddress(entity.getDisplayIp());
             Integer displayPort = entity.getDisplay();
             model.getDisplay().setPort(displayPort==null || displayPort==-1 ? null : displayPort);
