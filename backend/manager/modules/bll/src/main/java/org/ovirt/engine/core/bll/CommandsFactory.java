@@ -125,7 +125,7 @@ public final class CommandsFactory {
     public static QueriesCommandBase<?> createQueryCommand(VdcQueryType query, VdcQueryParametersBase parameters, EngineContext engineContext) {
         Class<?> type = null;
         try {
-            type = getCommandClass(query.name(), QueryPrefix);
+            type = getQueryClass(query.name());
             QueriesCommandBase<?> result;
             if (engineContext == null) {
                 result =
