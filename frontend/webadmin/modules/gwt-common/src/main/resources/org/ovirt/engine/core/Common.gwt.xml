@@ -308,6 +308,7 @@
 		<!-- Backend Validation framework -->
 		<include name="common/validation/annotation/HostnameOrIp.java" />
 		<include name="common/validation/group/**" />
+		<include name="common/utils/IpAddressConverter.java"/>
 		<include name="common/validation/CidrValidator.java"/>
 
 		<!-- Gluster -->

@@ -1,18 +1,17 @@
 package org.ovirt.engine.core.common.utils;
 
+import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
+import org.ovirt.engine.core.common.businessentities.VmPool;
+
+import javax.validation.ConstraintViolation;
+import javax.validation.Validation;
+import javax.validation.Validator;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
-
-import javax.validation.ConstraintViolation;
-import javax.validation.Validation;
-import javax.validation.Validator;
-
-import org.ovirt.engine.core.common.businessentities.BusinessEntitiesDefinitions;
-import org.ovirt.engine.core.common.businessentities.VmPool;
 
 public class ValidationUtils {
 
@@ -23,16 +22,20 @@ public class ValidationUtils {
     public static final String ONLY_ASCII_OR_NONE = "[\\p{ASCII}]*";
     public static final String NO_SPECIAL_CHARACTERS_WITH_DOT = "[0-9a-zA-Z-_\\.]+";
     public static final String NO_TRIMMING_WHITE_SPACES_PATTERN = "^$|\\S.*\\S";
-    public static final String IP_PATTERN =
-            "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\b$|^$";
-    public static final String CIDR_FORMAT_PATTERN =
-            "^\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)(?:/(?:3[0-2]|[12]?[0-9]))$";
+    public static final String IP_PATTERN_NON_EMPTY =
+            "\\b((25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)\\.){3}(25[0-5]|2[0-4]\\d|[01]\\d\\d|\\d?\\d)";
+    public static final String IP_PATTERN = "^" + IP_PATTERN_NON_EMPTY + "$|^$";
+    public static final String SUBNET_PREFIX_PATTERN = "(?:3[0-2]|[12]?[0-9])";
+    public static final String CIDR_FORMAT_PATTERN = "^" + IP_PATTERN_NON_EMPTY + "/" + SUBNET_PREFIX_PATTERN + "$";
     public static final String ISO_SUFFIX = ".iso";
     public static final String ISO_SUFFIX_PATTERN = "^$|^.+\\.iso$";
 
-    /** the mask will be replaced with zero-padded number in the generated names of the VMs in the pool,
-     * see NameForVmInPoolGeneratorTest PoolNameValidationTest for valid and invalid expressions of this pattern */
-    public static final String POOL_NAME_PATTERN = "^[\\p{L}0-9._-]+[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]*$|^[\\p{L}0-9._-]*[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]+$";
+    /**
+     * the mask will be replaced with zero-padded number in the generated names of the VMs in the pool, see
+     * NameForVmInPoolGeneratorTest PoolNameValidationTest for valid and invalid expressions of this pattern
+     */
+    public static final String POOL_NAME_PATTERN = "^[\\p{L}0-9._-]+[" + VmPool.MASK_CHARACTER
+            + "]*[\\p{L}0-9._-]*$|^[\\p{L}0-9._-]*[" + VmPool.MASK_CHARACTER + "]*[\\p{L}0-9._-]+$";
 
     private static final Validator validator = Validation.buildDefaultValidatorFactory().getValidator();
 
