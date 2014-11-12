@@ -229,6 +229,8 @@ public interface VdsmErrors extends ConstantsWithLookup {
 
     String noVM();
 
+    String HOT_PLUG_MEM();
+
     String noVmType();
 
     String outOfMem();

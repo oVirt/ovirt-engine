@@ -188,6 +188,7 @@ public enum VDSCommandType {
     CreateBrick("org.ovirt.engine.core.vdsbroker.gluster"),
 
     SetNumberOfCpus("org.ovirt.engine.core.vdsbroker"),
+    SetAmountOfMemory("org.ovirt.engine.core.vdsbroker"),
     UpdateVmPolicy("org.ovirt.engine.core.vdsbroker"),
     GetVmsFromExternalProvider("org.ovirt.engine.core.vdsbroker.vdsbroker"),
     List("org.ovirt.engine.core.vdsbroker.vdsbroker"),           // get a list of VMs with status only

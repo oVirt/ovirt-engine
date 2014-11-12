@@ -1705,6 +1705,18 @@ public class JsonRpcVdsServer implements IVdsServer {
         return new StatusOnlyReturnForXmlRpc(response);
     }
 
+    @Override
+    public StatusOnlyReturnForXmlRpc hotplugMemory(Map info) {
+        JsonRpcRequest request =
+                new RequestBuilder("VM.hotplugMemory")
+                        .withParameter("vmID", getVmId(info))
+                        .withParameter("params", info)
+                        .build();
+        Map<String, Object> response =
+                new FutureMap(this.client, request);
+        return new StatusOnlyReturnForXmlRpc(response);
+    }
+
     @SuppressWarnings("rawtypes")
     @Override
     public StatusOnlyReturnForXmlRpc updateVmPolicy(Map params) {

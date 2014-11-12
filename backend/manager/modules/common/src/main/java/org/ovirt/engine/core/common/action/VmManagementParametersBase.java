@@ -311,5 +311,4 @@ public class VmManagementParametersBase extends VmOperationParameterBase impleme
     public Map<GraphicsType, GraphicsDevice> getGraphicsDevices() {
         return graphicsDevices;
     }
-
 }

@@ -373,6 +373,8 @@ public interface VdsServerConnector {
 
     public Map<String, Object> setNumberOfCpus(String vmId, String numberOfCpus);
 
+    public Map<String, Object> hotplugMemory(Map<String, Object> info);
+
     public Map<String, Object> updateVmPolicy(Map info);
 
     public Map<String, Object> getExternalVMs(String uri, String username, String password);

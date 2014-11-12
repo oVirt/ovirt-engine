@@ -43,6 +43,7 @@ public enum VdcActionType {
     HotUnPlugDiskFromVm(183, ActionGroup.CONFIGURE_VM_STORAGE, false, QuotaDependency.NONE),
     HotSetNumberOfCpus(184, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.VDS_GROUP, true),
     VmSlaPolicy(185, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.NONE),
+    HotSetAmountOfMemory(186, ActionGroup.EDIT_VM_PROPERTIES, false, QuotaDependency.VDS_GROUP, true),
     ChangeFloppy(35, QuotaDependency.NONE),
     ImportVm(36, ActionGroup.IMPORT_EXPORT_VM, QuotaDependency.STORAGE),
     RemoveVmFromImportExport(37, ActionGroup.DELETE_VM, QuotaDependency.NONE),

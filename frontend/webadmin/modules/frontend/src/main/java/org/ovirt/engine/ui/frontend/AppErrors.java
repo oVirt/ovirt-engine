@@ -1045,6 +1045,9 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("$action hot set cpus")
     String VAR__ACTION__HOT_SET_CPUS();
 
+    @DefaultStringValue("$action hot set memory")
+    String VAR__ACTION__HOT_SET_MEMORY();
+
     @DefaultStringValue("$action log on")
     String VAR__ACTION__LOGON();
 
@@ -2794,6 +2797,18 @@ public interface AppErrors extends ConstantsWithLookup {
 
     @DefaultStringValue("Hot un-plugging a CPU is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
     String HOT_UNPLUG_CPU_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Hot plugging memory is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
+    String HOT_PLUG_MEMORY_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Hot un-plugging memory is not supported for cluster version ${clusterVersion} and architecture ${architecture}.")
+    String HOT_UNPLUG_MEMORY_IS_NOT_SUPPORTED();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Exceeded maximum number of available memory slots: ${maxMemSlots}.")
+    String ACTION_TYPE_FAILED_NO_MORE_MEMORY_SLOTS();
+
+    @DefaultStringValue("Cannot ${action} ${type}. Plugged memory must be multiplication of ${multiplicationSize}.")
+    String ACTION_TYPE_FAILED_MEMORY_MUST_BE_MULTIPLICATION();
 
     @DefaultStringValue("Cannot ${action} ${type}. Activation/Deactivation of Disk Snapshot is not supported for clusters of version ${clusterVersion}.")
     String HOT_PLUG_DISK_SNAPSHOT_IS_NOT_SUPPORTED();

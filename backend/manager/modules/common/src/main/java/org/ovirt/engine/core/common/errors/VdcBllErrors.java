@@ -60,6 +60,7 @@ public enum VdcBllErrors {
     V2V_NO_SUCH_OVF(67),
     V2V_JOB_NOT_DONE(68),
     V2V_JOB_ALREADY_EXIST(69),
+    HOT_PLUG_MEM(70),
     recovery(99),
     GeneralException(100),
     StorageException(200),

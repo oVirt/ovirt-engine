@@ -30,6 +30,7 @@ public enum VmDeviceType {
     VIRTIOSCSI("virtio-scsi"),
     VIRTIOSERIAL("virtio-serial"),
     HOST_DEVICE("hostdev"),
+    MEMORY("memory"),
     OTHER("other", "0"),
     UNKNOWN("unknown", "-1");
 

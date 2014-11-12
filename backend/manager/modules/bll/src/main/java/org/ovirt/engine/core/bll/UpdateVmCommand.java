@@ -32,6 +32,7 @@ import org.ovirt.engine.core.common.AuditLogType;
 import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.VdcObjectType;
 import org.ovirt.engine.core.common.action.HotSetNumerOfCpusParameters;
+import org.ovirt.engine.core.common.action.HotSetAmountOfMemoryParameters;
 import org.ovirt.engine.core.common.action.LockProperties;
 import org.ovirt.engine.core.common.action.LockProperties.Scope;
 import org.ovirt.engine.core.common.action.PlugAction;
@@ -157,6 +158,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         // save user selected value for hotplug before overriding with db values (when updating running vm)
         int cpuPerSocket = newVmStatic.getCpuPerSocket();
         int numOfSockets = newVmStatic.getNumOfSockets();
+        int memSizeMb = newVmStatic.getMemSizeMb();
 
         if (newVmStatic.getCreationDate().equals(DateTime.getMinValue())) {
             newVmStatic.setCreationDate(new Date());
@@ -174,6 +176,7 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         updateVmNumaNodes();
         if (isHotSetEnabled()) {
             hotSetCpus(cpuPerSocket, numOfSockets);
+            hotSetMemory(memSizeMb);
         }
         final List<Guid> oldIconIds = IconUtils.updateVmIcon(
                 oldVm.getStaticData(), newVmStatic, getParameters().getVmLargeIcon());
@@ -281,12 +284,52 @@ public class UpdateVmCommand<T extends VmManagementParametersBase> extends VmMan
         }
     }
 
+    private void hotSetMemory(int newAmountOfMemory) {
+        int currentMemory = getVm().getMemSizeMb();
+
+        if (getVm().getStatus() == VMStatus.Up && currentMemory != newAmountOfMemory) {
+            HotSetAmountOfMemoryParameters params =
+                    new HotSetAmountOfMemoryParameters(
+                            newVmStatic,
+                            currentMemory < newAmountOfMemory ? PlugAction.PLUG : PlugAction.UNPLUG,
+                            // We always use node 0, auto-numa should handle the allocation
+                            0);
+
+            VdcReturnValueBase setAmountOfMemoryResult =
+                    runInternalAction(
+                            VdcActionType.HotSetAmountOfMemory,
+                            params, cloneContextAndDetachFromParent());
+            newVmStatic.setMemSizeMb(setAmountOfMemoryResult.getSucceeded() ? newAmountOfMemory : currentMemory);
+            auditLogHotSetMemCandos(params, setAmountOfMemoryResult);
+        }
+    }
+
+    /**
+     * add audit log msg for failed hot set in case error was in CDA
+     * otherwise internal command will audit log the result
+     * @param params
+     */
     private void auditLogHotSetCpusCandos(HotSetNumerOfCpusParameters params) {
         if (!setNumberOfCpusResult.getCanDoAction()) {
             AuditLogableBase logable = new HotSetNumberOfCpusCommand<>(params);
             List<String> canDos = getBackend().getErrorsTranslator().
                     TranslateErrorText(setNumberOfCpusResult.getCanDoActionMessages());
             logable.addCustomValue(HotSetNumberOfCpusCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
+            auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
+        }
+    }
+
+    /**
+     * add audit log msg for failed hot set in case error was in CDA
+     * otherwise internal command will audit log the result
+     * @param params
+     */
+    private void auditLogHotSetMemCandos(HotSetAmountOfMemoryParameters params, VdcReturnValueBase setAmountOfMemoryResult) {
+        if (!setAmountOfMemoryResult.getCanDoAction()) {
+            AuditLogableBase logable = new HotSetAmountOfMemoryCommand<>(params);
+            List<String> canDos = getBackend().getErrorsTranslator().
+                    TranslateErrorText(setAmountOfMemoryResult.getCanDoActionMessages());
+            logable.addCustomValue(HotSetAmountOfMemoryCommand.LOGABLE_FIELD_ERROR_MESSAGE, StringUtils.join(canDos, ","));
             auditLogDirector.log(logable, AuditLogType.FAILED_HOT_SET_NUMBER_OF_CPUS);
         }
     }

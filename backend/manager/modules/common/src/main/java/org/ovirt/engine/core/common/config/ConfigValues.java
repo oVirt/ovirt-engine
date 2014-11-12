@@ -2187,6 +2187,10 @@ public enum ConfigValues {
     @DefaultValueAttribute("16")
     MaxMemorySlots,
 
+    @TypeConverterAttribute(Integer.class)
+    @DefaultValueAttribute("256")
+    HotPlugMemoryMultiplicationSizeMb,
+
     Invalid
 
 }

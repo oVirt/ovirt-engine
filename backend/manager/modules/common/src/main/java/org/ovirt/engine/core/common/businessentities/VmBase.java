@@ -79,7 +79,7 @@ public class VmBase implements IVdcQueryable, BusinessEntity<Guid>, Nameable, Co
     private String comment;
 
     @CopyOnNewVersion
-    @EditableOnVmStatusField
+    @EditableOnVmStatusField(isHotsetAllowed = true)
     @EditableOnTemplate
     private int memSizeMb;
 

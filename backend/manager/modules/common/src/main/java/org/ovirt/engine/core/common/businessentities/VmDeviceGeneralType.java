@@ -77,6 +77,11 @@ public enum VmDeviceGeneralType {
     HOSTDEV,
 
     /**
+     * A memory device
+     */
+    MEMORY,
+
+    /**
      * Unknown device
      */
     UNKNOWN;

@@ -396,6 +396,8 @@ public interface IVdsServer {
 
     StatusOnlyReturnForXmlRpc setNumberOfCpus(String vmId, String numberOfCpus);
 
+    StatusOnlyReturnForXmlRpc hotplugMemory(Map info);
+
     StatusOnlyReturnForXmlRpc updateVmPolicy(Map info);
 
     VMListReturnForXmlRpc getExternalVmList(String uri, String username, String password);

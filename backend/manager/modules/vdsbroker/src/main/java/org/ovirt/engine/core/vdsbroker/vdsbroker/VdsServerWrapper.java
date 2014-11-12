@@ -1641,6 +1641,15 @@ public class VdsServerWrapper implements IVdsServer {
     }
 
     @Override
+    public StatusOnlyReturnForXmlRpc hotplugMemory(Map info) {
+        try {
+            return new StatusOnlyReturnForXmlRpc(vdsServer.hotplugMemory(info));
+        } catch (UndeclaredThrowableException ute) {
+            throw new XmlRpcRunTimeException(ute);
+        }
+    }
+
+    @Override
     public StatusOnlyReturnForXmlRpc updateVmPolicy(Map info) {
         try {
             return new StatusOnlyReturnForXmlRpc(vdsServer.updateVmPolicy(info));
