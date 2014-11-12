@@ -23,7 +23,7 @@ public final class CommandsFactory {
     private static final Logger log = LoggerFactory.getLogger(CommandsFactory.class);
     private static final String CLASS_NAME_FORMAT = "%1$s.%2$s%3$s";
     private static final String CommandSuffix = "Command";
-    private static final String QueryPrefix = "Query";
+    private static final String QUERY_SUFFIX = "Query";
     private static final String CTOR_MISMATCH =
             "could not find matching constructor for Command class {0}";
     private static final String CTOR_NOT_FOUND_FOR_PARAMETERS =
@@ -149,7 +149,7 @@ public final class CommandsFactory {
     }
 
     public static Class<CommandBase<? extends VdcActionParametersBase>> getQueryClass(String name) {
-        return getCommandClass(name, QueryPrefix);
+        return getCommandClass(name, QUERY_SUFFIX);
     }
 
     public static <P extends VdcActionParametersBase> boolean hasConstructor(VdcActionType action, P parameters) {
