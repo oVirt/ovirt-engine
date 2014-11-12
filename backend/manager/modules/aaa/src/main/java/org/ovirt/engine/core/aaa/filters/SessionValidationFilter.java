@@ -3,6 +3,7 @@ package org.ovirt.engine.core.aaa.filters;
 import java.io.IOException;
 
 import javax.naming.InitialContext;
+import javax.naming.NamingException;
 import javax.servlet.Filter;
 import javax.servlet.FilterChain;
 import javax.servlet.FilterConfig;
@@ -24,6 +25,18 @@ public class SessionValidationFilter implements Filter {
 
     private static final Logger log = LoggerFactory.getLogger(SessionValidationFilter.class);
 
+    private boolean isSessionValid(String session) throws NamingException {
+        InitialContext ctx = new InitialContext();
+        try {
+            VdcQueryReturnValue returnValue =
+                    FiltersHelper.getBackend(ctx)
+                            .runPublicQuery(VdcQueryType.ValidateSession,
+                                    new VdcQueryParametersBase(session));
+            return returnValue.getSucceeded();
+        } finally {
+            ctx.close();
+        }
+    }
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -34,26 +47,23 @@ public class SessionValidationFilter implements Filter {
             ServletException {
         boolean doFilter = false;
         try {
+            String requestEngineSession = (String)request.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+            if (requestEngineSession != null) {
+                if (!isSessionValid(requestEngineSession)) {
+                    request.removeAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
+                }
+            }
+
             HttpSession httpSession = ((HttpServletRequest) request).getSession(false);
             if (httpSession != null) {
-                String engineSession =
-                        (String) httpSession.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
-                InitialContext ctx = null;
+                String engineSession = (String) httpSession.getAttribute(SessionConstants.HTTP_SESSION_ENGINE_SESSION_ID_KEY);
                 if (engineSession != null) {
-                    ctx = new InitialContext();
-                    try {
-                        VdcQueryReturnValue returnValue =
-                                FiltersHelper.getBackend(ctx)
-                                        .runPublicQuery(VdcQueryType.ValidateSession,
-                                                new VdcQueryParametersBase(engineSession));
-                        if (!returnValue.getSucceeded()) {
-                            httpSession.invalidate();
-                        }
-                    } finally {
-                        ctx.close();
+                    if (!isSessionValid(engineSession)) {
+                        httpSession.invalidate();
                     }
                 }
             }
+
             doFilter = true;
         } catch (Exception ex) {
             log.error("An error has occurred while session validation.", ex);

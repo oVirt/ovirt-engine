@@ -43,6 +43,15 @@ limitations under the License.
     </filter-mapping>
 
     <filter>
+        <filter-name>EngineSessionTokenAuthenticationFilter</filter-name>
+        <filter-class>org.ovirt.engine.core.aaa.filters.EngineSessionTokenAuthenticationFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>EngineSessionTokenAuthenticationFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
         <filter-name>SessionValidationFilter</filter-name>
         <filter-class>org.ovirt.engine.core.aaa.filters.SessionValidationFilter</filter-class>
     </filter>

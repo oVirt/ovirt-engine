@@ -23,6 +23,7 @@ public class FiltersHelper {
         public static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
         public static final String HEADER_PREFER = "Prefer";
         public static final String HEADER_JSESSIONID_COOKIE = "JSESSIONID";
+        public static final String HEADER_ENGINE_AUTH_TOKEN = "OVIRT-INTERNAL-ENGINE-AUTH-TOKEN";
     }
 
     public static BackendLocal getBackend(Context context) {
@@ -55,6 +56,24 @@ public class FiltersHelper {
             }
         }
         return false;
+    }
+
+    public static String getTokenInstance(String content) {
+        return String.format("0|%s", content);
+    }
+
+    public static String getTokenContent(String token) {
+        String s[] = token.split("\\|", 2);
+        if (s.length != 2) {
+            throw new IllegalArgumentException("Invalid session token format");
+        }
+        if (!"0".equals(s[0])) {
+            throw new IllegalArgumentException("Invalid session token version");
+        }
+        if (s[1].isEmpty()) {
+            throw new IllegalArgumentException("Invalid session token format");
+        }
+        return s[1];
     }
 
 }

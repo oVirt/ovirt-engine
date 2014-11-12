@@ -153,6 +153,7 @@ public enum VdcQueryType implements Serializable {
     GetDbUserByUserId(VdcQueryAuthType.User),
     GetDbUserByUserNameAndDomain(VdcQueryAuthType.User),
     GetUserBySessionId(VdcQueryAuthType.User),
+    GetEngineSessionIdToken(VdcQueryAuthType.User),
 
     // Directory queries:
     GetDirectoryUserById(VdcQueryAuthType.User),
