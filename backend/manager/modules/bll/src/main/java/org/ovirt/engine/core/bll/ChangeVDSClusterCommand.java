@@ -328,9 +328,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
         // condition.
         try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(sourceClusterId)) {
-            String hostName =
-                    (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
-                            : getVds().getHostName();
             VDS runningHostInSourceCluster = getClusterUtils().getUpServer(sourceClusterId);
             if (runningHostInSourceCluster == null) {
                 log.error("Cannot remove host from source cluster, no host in Up status found in source cluster");
@@ -342,7 +339,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                     runVdsCommand(
                             VDSCommandType.RemoveGlusterServer,
                             new RemoveGlusterServerVDSParameters(runningHostInSourceCluster.getId(),
-                                    hostName,
+                                    getVds().getHostName(),
                                     false));
             if (!returnValue.getSucceeded()) {
                 handleVdsError(returnValue);
@@ -358,9 +355,6 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
         // are unpredictable. Hence locking the cluster to ensure the sync job does not lead to race
         // condition.
         try (EngineLock lock = GlusterUtil.getInstance().acquireGlusterLockWait(targetClusterId)) {
-            String hostName =
-                    (getVds().getHostName().isEmpty()) ? getVds().getManagementIp()
-                            : getVds().getHostName();
             VDS runningHostInTargetCluster = getClusterUtils().getUpServer(targetClusterId);
             if (runningHostInTargetCluster == null) {
                 log.error("Cannot add host to target cluster, no host in Up status found in target cluster");
@@ -372,7 +366,7 @@ public class ChangeVDSClusterCommand<T extends ChangeVDSClusterParameters> exten
                     runVdsCommand(
                             VDSCommandType.AddGlusterServer,
                             new AddGlusterServerVDSParameters(runningHostInTargetCluster.getId(),
-                                    hostName));
+                                    getVds().getHostName()));
             if (!returnValue.getSucceeded()) {
                 handleVdsError(returnValue);
                 errorType = AuditLogType.GLUSTER_SERVER_ADD_FAILED;
