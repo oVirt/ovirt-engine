@@ -54,7 +54,6 @@ public final class CommandsFactory {
     private static ConcurrentMap<String, Class<CommandBase<? extends VdcActionParametersBase>>> commandsCache =
             new ConcurrentHashMap<>(VdcActionType.values().length);
 
-    @SuppressWarnings("unchecked")
     public static <P extends VdcActionParametersBase> CommandBase<P> createCommand(VdcActionType action, P parameters) {
         return createCommand(action, parameters, null);
     }
