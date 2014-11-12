@@ -14,12 +14,12 @@ import org.ovirt.engine.core.common.interfaces.BackendLocal;
 public class FiltersHelper {
 
     public static class Constants {
-        public final static String REQUEST_AUTH_RECORD_KEY = "ovirt_aaa_auth_record";
-        public final static String REQUEST_SCHEMES_KEY = "ovirt_aaa_schemes";
-        public final static String REQUEST_PROFILE_KEY = "ovirt_aaa_profile";
-        public final static String REQUEST_AUTH_TYPE_KEY = "ovirt_aaa_auth_type";
+        public static final String REQUEST_AUTH_RECORD_KEY = "ovirt_aaa_auth_record";
+        public static final String REQUEST_SCHEMES_KEY = "ovirt_aaa_schemes";
+        public static final String REQUEST_PROFILE_KEY = "ovirt_aaa_profile";
+        public static final String REQUEST_AUTH_TYPE_KEY = "ovirt_aaa_auth_type";
         public static final String REQUEST_PASSWORD_KEY = "ovirt_aaa_password";
-        public final static String HEADER_AUTHORIZATION = "Authorization";
+        public static final String HEADER_AUTHORIZATION = "Authorization";
         public static final String HEADER_WWW_AUTHENTICATE = "WWW-Authenticate";
         public static final String HEADER_PREFER = "Prefer";
         public static final String HEADER_JSESSIONID_COOKIE = "JSESSIONID";
