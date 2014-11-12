@@ -275,6 +275,9 @@ class Plugin(plugin.PluginBase):
 
     @plugin.event(
         stage=plugin.Stages.STAGE_CLOSEUP,
+        before=(
+            osetupcons.Stages.DIALOG_TITLES_S_SUMMARY,
+        ),
         condition=lambda self: self._enabled,
     )
     def _closeup(self):
