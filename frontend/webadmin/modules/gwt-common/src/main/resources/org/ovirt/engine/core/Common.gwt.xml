@@ -310,6 +310,7 @@
 		<include name="common/validation/group/**" />
 		<include name="common/utils/IpAddressConverter.java"/>
 		<include name="common/validation/CidrValidator.java"/>
+		<include name="common/validation/MaskValidator.java"/>
 
 		<!-- Gluster -->
 		<include name="common/businessentities/gluster/GlusterVolumeEntity.java" />

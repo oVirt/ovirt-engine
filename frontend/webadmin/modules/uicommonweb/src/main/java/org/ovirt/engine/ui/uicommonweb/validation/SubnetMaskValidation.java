@@ -1,80 +1,72 @@
 package org.ovirt.engine.ui.uicommonweb.validation;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-
+import org.ovirt.engine.core.common.validation.MaskValidator;
 import org.ovirt.engine.ui.uicompat.ConstantsManager;
 
-public class SubnetMaskValidation extends RegexValidation
+import java.util.Arrays;
+
+public class SubnetMaskValidation implements IValidation
 {
-    private final static Set<Integer> CORRECT_RANGE = new HashSet<Integer>();
-    private final static List<String> reasons = new ArrayList<String>();
-
-    static {
-        CORRECT_RANGE.add(128);
-        CORRECT_RANGE.add(192);
-        CORRECT_RANGE.add(224);
-        CORRECT_RANGE.add(240);
-        CORRECT_RANGE.add(248);
-        CORRECT_RANGE.add(252);
-        CORRECT_RANGE.add(254);
-        CORRECT_RANGE.add(255);
-        CORRECT_RANGE.add(0);
-
-        reasons.add(ConstantsManager.getInstance().getConstants().subnetMaskIsNotValid());
-    }
+    private final boolean isPrefixAllowed;
 
     public SubnetMaskValidation() {
-        setExpression("^" + IpAddressValidation.IP_ADDRESS_REGEX + "$"); //$NON-NLS-1$ $NON-NLS-2$
-        setMessage(ConstantsManager.getInstance().getConstants().thisFieldMustContainSubnetInFormatMsg());
+        this.isPrefixAllowed = false;
+    }
+
+    public SubnetMaskValidation(boolean isPrefixSupported) {
+        this.isPrefixAllowed = isPrefixSupported;
+    }
+
+    protected String getSubnetBadFormatMessage() {
+        return isPrefixAllowed ? getBadPrefixOrNetmaskFormatMessage() : getBadNetmaskFormatMessage();
+
+    }
+
+    protected String getBadPrefixOrNetmaskFormatMessage() {
+        return ConstantsManager.getInstance()
+                .getConstants()
+                .thisFieldMustContainValidPrefixOrNetmask();
+    }
+
+    protected String getBadNetmaskFormatMessage() {
+        return ConstantsManager.getInstance()
+                .getConstants()
+                .thisFieldMustContainValidNetmask();
+    }
+
+    protected String getInvalidMask() {
+        return ConstantsManager.getInstance().getConstants().inValidNetmask();
     }
 
     @Override
     public ValidationResult validate(Object value) {
-        ValidationResult ipValidation = super.validate(value);
-        if (!ipValidation.getSuccess()) {
-            return ipValidation;
-        }
+        assert value == null || value instanceof String : "This validation must be run on a String!";//$NON-NLS-1$
+        String mask = (String) value;
 
-        ValidationResult result = new ValidationResult();
-        if (value instanceof String) {
-            result.setSuccess(validateNetMask((String) value));
-            result.setReasons(reasons);
-        }
-
-        return result;
-    }
-
-    private boolean validateNetMask(String mask) {
-        // values[0] can be 128, 192, 224, 240, 248, 252, 254, 255
-        // values[1] can be 128, 192, 224, 240, 248, 252, 254, 255 if values[0] is 255, else values[1] must be 0
-        // values[2] can be 128, 192, 224, 240, 248, 252, 254, 255 if values[1] is 255, else values[2] must be 0
-        // values[3] can be 128, 192, 224, 240, 248, 252, 254, 255 if values[2] is 255, else values[3] must be 0
-
-        String[] split = mask.split("\\."); //$NON-NLS-1$
-        assert split.length == 4;
-        int[] values = new int[split.length];
-
-        for (int i = 0; i < split.length; i++) {
-            int value;
-            try {
-                value = Integer.valueOf(split[i]);
-            } catch (NumberFormatException e) {
-                return false;
+        if (getMaskValidator().isValidNetmaskFormat(mask)) {
+            if (!getMaskValidator().isNetmaskValid(mask)) {
+                return failWith(getInvalidMask());
+            }
+        } else {
+            if (isPrefixAllowed) {
+                if (!getMaskValidator().isPrefixValid(mask)) {
+                    return failWith(getBadPrefixOrNetmaskFormatMessage());
+                }
+            } else {
+                return failWith(getBadNetmaskFormatMessage());
             }
 
-            if (!(CORRECT_RANGE.contains(value))) {
-                return false;
-            }
-            values[i] = value;
         }
 
-        if ((values[0] == 0) || (values[0] != 255 && values[1] != 0) || (values[1] != 255 && values[2] != 0)
-                || (values[2] != 255 && values[3] != 0)) {
-            return false;
-        }
-        return true;
+        return new ValidationResult();
     }
+
+    private ValidationResult failWith(String errorMessage) {
+        return new ValidationResult(false, Arrays.asList(errorMessage));
+    }
+
+    MaskValidator getMaskValidator() {
+        return MaskValidator.getInstance();
+    }
+
 }

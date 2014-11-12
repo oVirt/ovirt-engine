@@ -966,8 +966,14 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("This field can be empty or contain an IP address in format xxx.xxx.xxx.xxx")
     String emptyOrValidIPaddressInFormatMsg();
 
-    @DefaultStringValue("This field must contain a subnet in format xxx.xxx.xxx.xxx")
-    String thisFieldMustContainSubnetInFormatMsg();
+    @DefaultStringValue("This field must contain a subnet in either of the following formats:\n\txxx.xxx.xxx.xxx where xxx is between 0 and 255.\n\txx where xx is between 0-32")
+    String thisFieldMustContainValidPrefixOrNetmask();
+
+    @DefaultStringValue("This field must contain a subnet of the following format:\n\txxx.xxx.xxx.xxx where xxx is between 0 and 255")
+    String thisFieldMustContainValidNetmask();
+
+    @DefaultStringValue("Invalid mask value")
+    String inValidNetmask();
 
     @DefaultStringValue("This field must contain a CIDR in format xxx.xxx.xxx.xxx/yy, where xxx is between 0 and 255 and yy is between 0 and 32.")
     String thisFieldMustContainCidrInFormatMsg();

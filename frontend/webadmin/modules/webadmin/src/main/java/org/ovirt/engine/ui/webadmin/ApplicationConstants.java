@@ -2627,7 +2627,7 @@ public interface ApplicationConstants extends CommonApplicationConstants {
     @DefaultStringValue("IP")
     String ipHostPopup();
 
-    @DefaultStringValue("Subnet Mask")
+    @DefaultStringValue("Netmask / Routing Prefix")
     String subnetMaskHostPopup();
 
     @DefaultStringValue("Gateway")

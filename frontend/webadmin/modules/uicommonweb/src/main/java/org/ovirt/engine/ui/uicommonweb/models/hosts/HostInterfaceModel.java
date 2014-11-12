@@ -297,12 +297,12 @@ public class HostInterfaceModel extends EntityModel
         setQosModel(new HostNetworkQosParametersModel());
         setCustomPropertiesModel(new KeyValueModel());
 
-        setIsToSync(new EntityModel<Boolean>(){
+        setIsToSync(new EntityModel<Boolean>() {
             @Override
             public void setEntity(Boolean value) {
                 super.setEntity(value);
-                if (getIsToSync().getIsChangable()){
-                    if (!value){
+                if (getIsToSync().getIsChangable()) {
+                    if (!value) {
                         revertChanges();
                     }
                     setBootProtocolsAvailable(value);
@@ -415,7 +415,8 @@ public class HostInterfaceModel extends EntityModel
         if (getIsStaticAddress())
         {
             getAddress().validateEntity(new IValidation[] { new NotEmptyValidation(), new IpAddressValidation() });
-            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(), new SubnetMaskValidation() });
+            getSubnet().validateEntity(new IValidation[] { new NotEmptyValidation(),
+                    new SubnetMaskValidation(isSetupNetworkMode()) });
             getGateway().validateEntity(new IValidation[] { new IpAddressValidation(true) });
         }
 
