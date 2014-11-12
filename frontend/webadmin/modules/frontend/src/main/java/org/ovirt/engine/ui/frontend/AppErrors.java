@@ -3099,7 +3099,7 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. QoS cannot be configured such that Peak is set lower than Average, but it was configured so on the following network(s): ${ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE_LIST}.")
     String ACTION_TYPE_FAILED_HOST_NETWORK_QOS_PEAK_LOWER_THAN_AVERAGE();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range.")
+    @DefaultStringValue("Cannot ${action} ${type}. Values are out of range\n(Legal range is: ${range}).")
     String ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES();
 
     @DefaultStringValue("Cannot ${action} ${type}. Invalid data center")
