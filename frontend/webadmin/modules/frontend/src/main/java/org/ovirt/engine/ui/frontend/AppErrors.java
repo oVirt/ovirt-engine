@@ -2093,6 +2093,12 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Bad format of subnet mask")
     String NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
 
+    @DefaultStringValue("Invalid subnet's prefix")
+    String UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_VALUE();
+
+    @DefaultStringValue("This field must contain a subnet in either of the following formats:\n\txxx.xxx.xxx.xxx where xxx is between 0 and 255.\n\txx where xx is between 0-32")
+    String UPDATE_NETWORK_ADDR_IN_SUBNET_BAD_FORMAT();
+
     @DefaultStringValue("Bad bond name, it must begin with the prefix 'bond' followed by a number.")
     String NETWORK_BOND_NAME_BAD_FORMAT();
 
