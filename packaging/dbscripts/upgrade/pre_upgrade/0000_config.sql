@@ -46,10 +46,7 @@ select fn_db_rename_config_key('DefaultMtu', 'DefaultMTU', 'general');
 ------------------------------------------------------------------------------------
 --                  Add configuration values section
 ------------------------------------------------------------------------------------
-select fn_db_add_config_value('AbortMigrationOnError','false','3.0');
-select fn_db_add_config_value('AbortMigrationOnError','false','3.1');
-select fn_db_add_config_value('AbortMigrationOnError','false','3.2');
-select fn_db_add_config_value('AbortMigrationOnError','false','3.3');
+select fn_db_add_config_value_for_versions_up_to('AbortMigrationOnError', 'false', '3.3');
 select fn_db_add_config_value('BootstrapMinimalVdsmVersion','4.9','general');
 select fn_db_add_config_value('CpuPinMigrationEnabled','true','general');
 select fn_db_add_config_value('CpuPinningEnabled','false','3.0');
@@ -92,8 +89,7 @@ select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.2.0,pc-1.0','3.0'
 select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.3.0,pc-1.0','3.1');
 select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0','3.2');
 select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.4.0,pc-1.0,pseries','3.3');
-select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.5.0,pc-1.0,pseries','3.4');
-select fn_db_add_config_value('ClusterEmulatedMachines','rhel6.5.0,pc-1.0,pseries','3.5');
+select fn_db_add_config_value_for_versions_up_to('ClusterEmulatedMachines','rhel6.5.0,pc-1.0,pseries','3.5');
 select fn_db_add_config_value('CpuOverCommitDurationMinutes','2','general');
 --Handling Data directory for ENGINE
 select fn_db_add_config_value('DataDir','/usr/share/engine','general');
@@ -145,50 +141,26 @@ select fn_db_add_config_value('FreeSpaceCriticalLowInGB','5','general');
 select fn_db_add_config_value('FreeSpaceLow','10','general');
 
 -- VirtIO Random Number Generator device enabled
-select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.0');
-select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.1');
-select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.2');
-select fn_db_add_config_value('VirtIoRngDeviceSupported','false','3.3');
-select fn_db_add_config_value('VirtIoRngDeviceSupported','false', '3.4');
-select fn_db_add_config_value('VirtIoRngDeviceSupported','true', '3.5');
+select fn_db_add_config_value_for_versions_up_to('VirtIoRngDeviceSupported', 'false', '3.4');
 
 -- Gluster related
-select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.0');
-select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.1');
-select fn_db_add_config_value('GlusterHooksEnabled', 'false', '3.2');
-select fn_db_add_config_value('GlusterHostUUIDSupport', 'false', '3.0');
-select fn_db_add_config_value('GlusterHostUUIDSupport', 'false', '3.1');
-select fn_db_add_config_value('GlusterHostUUIDSupport', 'false', '3.2');
-select fn_db_add_config_value('GlusterRefreshHeavyWeight', 'false', '3.0');
-select fn_db_add_config_value('GlusterRefreshHeavyWeight', 'false', '3.1');
+select fn_db_add_config_value_for_versions_up_to('GlusterHooksEnabled', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('GlusterHostUUIDSupport', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('GlusterRefreshHeavyWeight', 'false', '3.1');
 select fn_db_add_config_value('GlusterRefreshRateHooks', '7200', 'general');
 select fn_db_add_config_value('GlusterRefreshRateLight', '5', 'general');
 select fn_db_add_config_value('GlusterRefreshRateHeavy', '300', 'general');
-select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.0');
-select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.1');
-select fn_db_add_config_value('GlusterServicesEnabled', 'false', '3.2');
 select fn_db_add_config_value('GlusterSupport', 'false', '3.0');
-select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.0');
-select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.1');
-select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.2');
-select fn_db_add_config_value('GlusterSupportForceCreateVolume', 'false', '3.3');
+select fn_db_add_config_value_for_versions_up_to('GlusterSupportForceCreateVolume', 'false', '3.3');
 select fn_db_add_config_value('GlusterVolumeOptionGroupVirtValue','virt','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerUserVirtValue','36','general');
 select fn_db_add_config_value('GlusterVolumeOptionOwnerGroupVirtValue','36','general');
 select fn_db_add_config_value('GlusterRefreshRateTasks', '60', 'general');
-select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.0');
-select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.1');
-select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.2');
-select fn_db_add_config_value('GlusterAsyncTasksSupport', 'false', '3.3');
+select fn_db_add_config_value_for_versions_up_to('GlusterAsyncTasksSupport', 'false', '3.3');
 select fn_db_add_config_value('GlusterPeerStatusRetries', '2', 'general');
 select fn_db_add_config_value('GlusterTaskMinWaitForCleanupInMins', '10', 'general');
 -- Gluster Geo-replication --
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.0');
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.1');
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.2');
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.3');
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.4');
-select fn_db_add_config_value('GlusterGeoReplicationEnabled', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('GlusterGeoReplicationEnabled', 'false', '3.5');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepStatus', '300', 'general');
 select fn_db_add_config_value('GlusterRefreshRateGeoRepDiscovery', '3600', 'general');
 
@@ -203,171 +175,62 @@ select fn_db_add_config_value('HighUtilizationForPowerSave','75','general');
 select fn_db_add_config_value('HostPreparingForMaintenanceIdleTime', '300', 'general');
 select fn_db_add_config_value('HostTimeDriftInSec','300','general');
 select fn_db_add_config_value('HotPlugEnabled','false','3.0');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.0');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.1');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.2');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.3');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.4');
-select fn_db_add_config_value('HotPlugCpuSupported','{"x86_64":"true","ppc64":"false"}','3.5');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.0');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.1');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.2');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.3');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.4');
-select fn_db_add_config_value('HotUnplugCpuSupported','{"x86_64":"false","ppc64":"false"}','3.5');
+select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '3.3');
+select fn_db_add_config_value_for_versions_up_to('HotPlugCpuSupported', '{"x86_64":"true","ppc64":"false"}', '3.5');
+select fn_db_add_config_value_for_versions_up_to('HotUnplugCpuSupported', '{"x86_64":"false","ppc64":"false"}', '3.5');
 -- migration support per architecture
 select fn_db_add_config_value('IsMigrationSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- snapshot support per architecture
 select fn_db_add_config_value('IsMemorySnapshotSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
 -- suspend support per architecture
 select fn_db_add_config_value('IsSuspendSupported','{"undefined": "true", "x86_64": "true", "ppc64" : "true" }','general');
-select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.0');
-select fn_db_add_config_value('MigrationSupportForNativeUsb','false','3.1');
-select fn_db_add_config_value('NetworkLinkingSupported','false','3.0');
-select fn_db_add_config_value('NetworkLinkingSupported','false','3.1');
+select fn_db_add_config_value_for_versions_up_to('MigrationSupportForNativeUsb', 'false', '3.1');
+select fn_db_add_config_value_for_versions_up_to('NetworkLinkingSupported', 'false', '3.1');
 select fn_db_add_config_value('DisconnectPoolOnReconstruct','0,2','general');
 select fn_db_add_config_value('InitStorageSparseSizeInGB','1','general');
-select fn_db_add_config_value('TunnelMigrationEnabled','false','3.0');
-select fn_db_add_config_value('TunnelMigrationEnabled','false','3.1');
-select fn_db_add_config_value('TunnelMigrationEnabled','false','3.2');
-select fn_db_add_config_value('MigrationNetworkEnabled','false','3.0');
-select fn_db_add_config_value('MigrationNetworkEnabled','false','3.1');
-select fn_db_add_config_value('MigrationNetworkEnabled','false','3.2');
-select fn_db_add_config_value('MultipleGatewaysSupported','false','3.0');
-select fn_db_add_config_value('MultipleGatewaysSupported','false','3.1');
-select fn_db_add_config_value('MultipleGatewaysSupported','false','3.2');
-select fn_db_add_config_value('MemorySnapshotSupported','false','3.0');
-select fn_db_add_config_value('MemorySnapshotSupported','false','3.1');
-select fn_db_add_config_value('MemorySnapshotSupported','false','3.2');
+select fn_db_add_config_value_for_versions_up_to('TunnelMigrationEnabled', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('MigrationNetworkEnabled', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('MultipleGatewaysSupported', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('MemorySnapshotSupported', 'false', '3.2');
 select fn_db_add_config_value('OsRepositoryConfDir','/osinfo.conf.d','general');
-select fn_db_add_config_value('VirtIoScsiEnabled','false','3.0');
-select fn_db_add_config_value('VirtIoScsiEnabled','false','3.1');
-select fn_db_add_config_value('VirtIoScsiEnabled','false','3.2');
-select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.0');
-select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.1');
-select fn_db_add_config_value('NormalizedMgmtNetworkEnabled','false','3.2');
+select fn_db_add_config_value_for_versions_up_to('VirtIoScsiEnabled', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('NormalizedMgmtNetworkEnabled', 'false', '3.2');
 select fn_db_add_config_value('IterationsWithBalloonProblem','3','general');
-select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.0');
-select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.1');
-select fn_db_add_config_value('MomPoliciesOnHostSupported','false','3.2');
-select fn_db_add_config_value('NetworkQosSupported','false','3.0');
-select fn_db_add_config_value('NetworkQosSupported','false','3.1');
-select fn_db_add_config_value('NetworkQosSupported','false','3.2');
-select fn_db_add_config_value('StorageQosSupported','false','3.0');
-select fn_db_add_config_value('StorageQosSupported','false','3.1');
-select fn_db_add_config_value('StorageQosSupported','false','3.2');
-select fn_db_add_config_value('StorageQosSupported','false','3.3');
-select fn_db_add_config_value('StorageQosSupported','false','3.4');
-select fn_db_add_config_value('CpuQosSupported','false','3.0');
-select fn_db_add_config_value('CpuQosSupported','false','3.1');
-select fn_db_add_config_value('CpuQosSupported','false','3.2');
-select fn_db_add_config_value('CpuQosSupported','false','3.3');
-select fn_db_add_config_value('CpuQosSupported','false','3.4');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.0');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.1');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.2');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.3');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.4');
-select fn_db_add_config_value('HostNetworkQosSupported', 'false', '3.5');
-select fn_db_add_config_value('CloudInitSupported','false','3.0');
-select fn_db_add_config_value('CloudInitSupported','false','3.1');
-select fn_db_add_config_value('CloudInitSupported','false','3.2');
+select fn_db_add_config_value_for_versions_up_to('MomPoliciesOnHostSupported', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('NetworkQosSupported', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('StorageQosSupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('CpuQosSupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('HostNetworkQosSupported', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('CloudInitSupported', 'false', '3.2');
 select fn_db_add_config_value('DefaultSysprepLocale','en_US','general');
-select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.0');
-select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.1');
-select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.2');
-select fn_db_add_config_value('ImportGlanceImageAsTemplate','false','3.3');
-select fn_db_add_config_value('HotPlugDiskSnapshotSupported','false','3.0');
-select fn_db_add_config_value('HotPlugDiskSnapshotSupported','false','3.1');
-select fn_db_add_config_value('HotPlugDiskSnapshotSupported','false','3.2');
-select fn_db_add_config_value('GetFileStats','false','3.0');
-select fn_db_add_config_value('GetFileStats','false','3.1');
-select fn_db_add_config_value('GetFileStats','false','3.2');
-select fn_db_add_config_value('GetFileStats','false','3.3');
-select fn_db_add_config_value('DefaultRouteSupported','false','3.0');
-select fn_db_add_config_value('DefaultRouteSupported','false','3.1');
-select fn_db_add_config_value('DefaultRouteSupported','false','3.2');
-select fn_db_add_config_value('DefaultRouteSupported','false','3.3');
-select fn_db_add_config_value('SerialNumberPolicySupported','false','3.0');
-select fn_db_add_config_value('SerialNumberPolicySupported','false','3.1');
-select fn_db_add_config_value('SerialNumberPolicySupported','false','3.2');
-select fn_db_add_config_value('SerialNumberPolicySupported','false','3.3');
-select fn_db_add_config_value('SerialNumberPolicySupported','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('ImportGlanceImageAsTemplate', 'false', '3.3');
+select fn_db_add_config_value_for_versions_up_to('HotPlugDiskSnapshotSupported', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('GetFileStats', 'false', '3.3');
+select fn_db_add_config_value_for_versions_up_to('DefaultRouteSupported', 'false', '3.3');
+select fn_db_add_config_value_for_versions_up_to('SerialNumberPolicySupported', 'false', '3.4');
 
-select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.0');
-select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.1');
-select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.2');
-select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.3');
-select fn_db_add_config_value('OvfStoreOnAnyDomain','false','3.4');
-select fn_db_add_config_value('BootMenuSupported','false','3.0');
-select fn_db_add_config_value('BootMenuSupported','false','3.1');
-select fn_db_add_config_value('BootMenuSupported','false','3.2');
-select fn_db_add_config_value('BootMenuSupported','false','3.3');
-select fn_db_add_config_value('BootMenuSupported','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('OvfStoreOnAnyDomain', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('BootMenuSupported', 'false', '3.4');
 
-select fn_db_add_config_value('IscsiMultipathingSupported','false','3.0');
-select fn_db_add_config_value('IscsiMultipathingSupported','false','3.1');
-select fn_db_add_config_value('IscsiMultipathingSupported','false','3.2');
-select fn_db_add_config_value('IscsiMultipathingSupported','false','3.3');
+select fn_db_add_config_value_for_versions_up_to('IscsiMultipathingSupported', 'false', '3.3');
 
-select fn_db_add_config_value('ImportDataStorageDomain','false','3.0');
-select fn_db_add_config_value('ImportDataStorageDomain','false','3.1');
-select fn_db_add_config_value('ImportDataStorageDomain','false','3.2');
-select fn_db_add_config_value('ImportDataStorageDomain','false','3.3');
-select fn_db_add_config_value('ImportDataStorageDomain','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('ImportDataStorageDomain', 'false', '3.4');
 
 -- Mixed domain types in a data center support
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.0');
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.1');
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.2');
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','false','3.3');
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','true','3.4');
-select fn_db_add_config_value('MixedDomainTypesInDataCenter','true','3.5');
+select fn_db_add_config_value_for_versions_up_to('MixedDomainTypesInDataCenter', 'false', '3.3');
 
 -- default requirement for rng sources (comma-separated string of 'RANDOM' and 'HWRNG')
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.0');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.1');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.2');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.3');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.4');
-select fn_db_add_config_value('ClusterRequiredRngSourcesDefault','','3.5');
+select fn_db_add_config_value_for_versions_up_to('ClusterRequiredRngSourcesDefault', '', '3.5');
 
-select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.0');
-select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.1');
-select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.2');
-select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.3');
-select fn_db_add_config_value('SpiceCopyPasteToggleSupported','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('SpiceCopyPasteToggleSupported', 'false', '3.4');
 
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.0');
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.1');
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.2');
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.3');
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.4');
-select fn_db_add_config_value('SpiceFileTransferToggleSupported','false','3.5');
+select fn_db_add_config_value_for_versions_up_to('SpiceFileTransferToggleSupported', 'false', '3.5');
+select fn_db_add_config_value_for_versions_up_to('StoragePoolMemoryBackend', 'false', '3.4');
 
-select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.0');
-select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.1');
-select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.2');
-select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.3');
-select fn_db_add_config_value('StoragePoolMemoryBackend','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('JsonProtocolSupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('VmSlaPolicySupported', 'false', '3.4');
 
-select fn_db_add_config_value('JsonProtocolSupported','false','3.0');
-select fn_db_add_config_value('JsonProtocolSupported','false','3.1');
-select fn_db_add_config_value('JsonProtocolSupported','false','3.2');
-select fn_db_add_config_value('JsonProtocolSupported','false','3.3');
-select fn_db_add_config_value('JsonProtocolSupported','false','3.4');
-
-select fn_db_add_config_value('VmSlaPolicySupported','false','3.0');
-select fn_db_add_config_value('VmSlaPolicySupported','false','3.1');
-select fn_db_add_config_value('VmSlaPolicySupported','false','3.2');
-select fn_db_add_config_value('VmSlaPolicySupported','false','3.3');
-select fn_db_add_config_value('VmSlaPolicySupported','false','3.4');
-
-select fn_db_add_config_value('ReportedDisksLogicalNames','false','3.0');
-select fn_db_add_config_value('ReportedDisksLogicalNames','false','3.1');
-select fn_db_add_config_value('ReportedDisksLogicalNames','false','3.2');
-select fn_db_add_config_value('ReportedDisksLogicalNames','false','3.3');
-select fn_db_add_config_value('ReportedDisksLogicalNames','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('ReportedDisksLogicalNames', 'false', '3.4');
 
 select fn_db_add_config_value('AutoConvergenceSupported','false','3.0');
 select fn_db_add_config_value('AutoConvergenceSupported','false','3.1');
@@ -486,11 +349,7 @@ select fn_db_add_config_value('LDAPProviderTypes','','general');
 select fn_db_add_config_value('LeaseRetries','3','general');
 select fn_db_add_config_value('LeaseTimeSec','60','general');
 select fn_db_add_config_value('LicenseCertificateFingerPrint','5f 38 41 89 b1 33 49 0c 24 13 6b b3 e5 ba 9e c7 fd 83 80 3b','general');
-select fn_db_add_config_value('LiveMergeSupported','false','3.0');
-select fn_db_add_config_value('LiveMergeSupported','false','3.1');
-select fn_db_add_config_value('LiveMergeSupported','false','3.2');
-select fn_db_add_config_value('LiveMergeSupported','false','3.3');
-select fn_db_add_config_value('LiveMergeSupported','false','3.4');
+select fn_db_add_config_value_for_versions_up_to('LiveMergeSupported', 'false', '3.4');
 select fn_db_add_config_value('LiveSnapshotEnabled','false','3.0');
 select fn_db_add_config_value('LocalAdminPassword','123456','general');
 --Handling Enable lock policy for Storage Pool Manager on activation
@@ -508,24 +367,10 @@ select fn_db_add_config_value('MaxBlockDiskSize','8192','general');
 select fn_db_add_config_value('MaxLDAPQueryPartsNumber','100','general');
 select fn_db_add_config_value('MaxMacsCountInPool','100000','general');
 select fn_db_add_config_value('MaxNumberOfHostsInStoragePool','250','general');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.0');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.1');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.2');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.3');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.4');
-select fn_db_add_config_value('MaxNumOfCpuPerSocket','16','3.5');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfCpuPerSocket', '16', '3.5');
 select fn_db_add_config_value('MaxNumOfVmCpus','64','3.0');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.1');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.2');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.3');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.4');
-select fn_db_add_config_value('MaxNumOfVmCpus','160','3.5');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.0');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.1');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.2');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.3');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.4');
-select fn_db_add_config_value('MaxNumOfVmSockets','16','3.5');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmCpus', '160', '3.5');
+select fn_db_add_config_value_for_versions_up_to('MaxNumOfVmSockets', '16', '3.5');
 select fn_db_add_config_value('MaxRerunVmOnVdsCount','3','general');
 select fn_db_add_config_value('MaxStorageVdsDelayCheckSec','5','general');
 select fn_db_add_config_value('MaxStorageVdsTimeoutCheckSec','30','general');
@@ -547,13 +392,10 @@ select fn_db_add_config_value('SupportBridgesReportByVDSM','false','3.1');
 select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.0');
 select fn_db_add_config_value('MacAntiSpoofingFilterRulesSupported','false', '3.1');
 select fn_db_add_config_value('EnableMACAntiSpoofingFilterRules','true', 'general');
-select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.0');
-select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.1');
-select fn_db_add_config_value('GlusterFsStorageEnabled','false','3.2');
+select fn_db_add_config_value_for_versions_up_to('GlusterFsStorageEnabled', 'false', '3.2');
 select fn_db_add_config_value('MaxSchedulerWeight','1000','general');
 select fn_db_add_config_value('MTUOverrideSupported','false','3.0');
-select fn_db_add_config_value('PortMirroringSupported','false','3.0');
-select fn_db_add_config_value('PortMirroringSupported','false','3.1');
+select fn_db_add_config_value_for_versions_up_to('PortMirroringSupported', 'false', '3.1');
 select fn_db_add_config_value('SpeedOptimizationSchedulingThreshold','10','general');
 select fn_db_add_config_value('SchedulerAllowOverBooking','false','general');
 select fn_db_add_config_value('SchedulerOverBookingThreshold','10','general');
@@ -583,12 +425,7 @@ select fn_db_add_config_value('PostgresLikeSyntax','ILIKE','general');
 select fn_db_add_config_value('PostgresPagingSyntax',E' OFFSET (%1$s -1) LIMIT %2$s','general');
 select fn_db_add_config_value('PostgresPagingType','Offset','general');
 select fn_db_add_config_value('PostgresSearchTemplate',E'SELECT * FROM (%2$s) %1$s) as T1 %3$s','general');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.0');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.1');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.2');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.3');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.4');
-select fn_db_add_config_value('PredefinedVMProperties','sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$','3.5');
+select fn_db_add_config_value_for_versions_up_to('PredefinedVMProperties', 'sap_agent=^(true|false)$;sndbuf=^[0-9]+$;vhost=^(([a-zA-Z0-9_]*):(true|false))(,(([a-zA-Z0-9_]*):(true|false)))*$;viodiskcache=^(none|writeback|writethrough)$', '3.5');
 select fn_db_add_config_value('ProductRPMVersion','3.0.0.0','general');
 select fn_db_add_config_value('QuotaGraceStorage','20','general');
 select fn_db_add_config_value('QuotaGraceVdsGroup','20','general');
@@ -606,8 +443,7 @@ select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,mode
 select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64;','3.1');
 select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64;','3.2');
 select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; :IBM POWER 7 v2.0:powernv,model_POWER7_v2.0:POWER7_v2.0:ppc64; :IBM POWER 7 v2.1:powernv,model_POWER7_v2.1:POWER7_v2.1:ppc64; :IBM POWER 7 v2.3:powernv,model_POWER7_v2.3:POWER7_v2.3:ppc64; :IBM POWER 7+ v2.1:powernv,model_POWER7+_v2.1:POWER7+_v2.1:ppc64; :IBM POWER 8 v1.0:powernv,model_POWER8_v1.0:POWER8_v1.0:ppc64;','3.3');
-select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER 8:powernv,model_power8:power8:ppc64;','3.4');
-select fn_db_add_config_value('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER 8:powernv,model_power8:power8:ppc64;','3.5');
+select fn_db_add_config_value_for_versions_up_to('ServerCPUList','3:Intel Conroe Family:vmx,nx,model_Conroe:Conroe:x86_64; 4:Intel Penryn Family:vmx,nx,model_Penryn:Penryn:x86_64; 5:Intel Nehalem Family:vmx,nx,model_Nehalem:Nehalem:x86_64; 6:Intel Westmere Family:aes,vmx,nx,model_Westmere:Westmere:x86_64; 7:Intel SandyBridge Family:vmx,nx,model_SandyBridge:SandyBridge:x86_64; 8:Intel Haswell Family:vmx,nx,model_Haswell:Haswell:x86_64; 2:AMD Opteron G1:svm,nx,model_Opteron_G1:Opteron_G1:x86_64; 3:AMD Opteron G2:svm,nx,model_Opteron_G2:Opteron_G2:x86_64; 4:AMD Opteron G3:svm,nx,model_Opteron_G3:Opteron_G3:x86_64; 5:AMD Opteron G4:svm,nx,model_Opteron_G4:Opteron_G4:x86_64; 6:AMD Opteron G5:svm,nx,model_Opteron_G5:Opteron_G5:x86_64; 3:IBM POWER 8:powernv,model_power8:power8:ppc64;','3.5');
 select fn_db_add_config_value('ServerRebootTimeout','300','general');
 select fn_db_add_config_value('SetupNetworksPollingTimeout','3','general');
 -- Add shareable disk property in vdc_options to support only 3.1 version.
@@ -637,15 +473,11 @@ select fn_db_add_config_value('HostStorageConnectionAndPoolRefreshTimeInSeconds'
 select fn_db_add_config_value('SucceededJobCleanupTimeInMinutes','10','general');
 select fn_db_add_config_value('SupportedClusterLevels','3.0','general');
 select fn_db_add_config_value('SupportedStorageFormats','0,2','3.0');
-select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.1');
-select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.2');
-select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.3');
-select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.4');
-select fn_db_add_config_value('SupportedStorageFormats','0,2,3','3.5');
+select fn_db_add_config_value_for_versions_up_to('SupportedStorageFormats', '0,2,3','3.5');
 select fn_db_add_config_value('SupportedVDSMVersions','4.9,4.10,4.11,4.12,4.13,4.14','general');
+
 select fn_db_add_config_value('SupportForceCreateVG','false','3.0');
-select fn_db_add_config_value('SupportForceExtendVG','false','3.0');
-select fn_db_add_config_value('SupportForceExtendVG','false','3.1');
+select fn_db_add_config_value_for_versions_up_to('SupportForceExtendVG', 'false','3.1');
 select fn_db_add_config_value('SysPrepDefaultPassword','','general');
 select fn_db_add_config_value('SysPrepDefaultUser','','general');
 select fn_db_add_config_value('ThrottlerMaxWaitForVdsUpdateInMillis','10000','general');
@@ -657,12 +489,7 @@ select fn_db_add_config_value('EncryptHostCommunication','true','general');
 select fn_db_add_config_value('TimeToReduceFailedRunOnVdsInMinutes','30','general');
 select fn_db_add_config_value('UnknownTaskPrePollingLapse','60000','general');
 select fn_db_add_config_value('UserSessionHardLimit','600','general');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.0');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.1');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.2');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.3');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.4');
-select fn_db_add_config_value('UserDefinedVMProperties','','3.5');
+select fn_db_add_config_value_for_versions_up_to('UserDefinedVMProperties', '','3.5');
 select fn_db_add_config_value('UserRefreshRate','3600','general');
 select fn_db_add_config_value('UserSessionTimeOutInterval','30','general');
 select fn_db_add_config_value('UtilizationThresholdInPercent','80','general');
@@ -673,21 +500,15 @@ select fn_db_add_config_value('VdcVersion','3.0.0.0','general');
 select fn_db_add_config_value('VDSAttemptsToResetCount','2','general');
 select fn_db_add_config_value('VdsCertificateValidityInYears','5','general');
 select fn_db_add_config_value('vdsConnectionTimeout','2','general');
-select fn_db_add_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.0');
-select fn_db_add_config_value('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.1');
-select fn_db_add_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.2');
-select fn_db_add_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.3');
-select fn_db_add_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.4');
-select fn_db_add_config_value('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.5');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping','alom:secure=secure,port=ipport;apc:secure=secure,port=ipport,slot=port;bladecenter:secure=secure,port=ipport,slot=port;drac5:secure=secure,port=ipport;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.1');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;eps:slot=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.3');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceOptionMapping','apc:secure=secure,port=ipport,slot=port;apc_snmp:port=port;bladecenter:secure=secure,port=ipport,slot=port;cisco_ucs:secure=ssl,slot=port;drac5:secure=secure,slot=port;drac7:;eps:slot=port;hpblade:port=port;ilo:secure=ssl,port=ipport;ipmilan:;ilo2:secure=ssl,port=ipport;ilo3:;ilo4:;rsa:secure=secure,port=ipport;rsb:;wti:secure=secure,port=ipport,slot=port','3.5');
 select fn_db_add_config_value('CustomVdsFenceOptionMapping','','general');
 select fn_db_add_config_value('VdsFenceOptions','','general');
 select fn_db_add_config_value('VdsFenceOptionTypes','secure=bool,port=int,slot=int','general');
-select fn_db_add_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.0');
-select fn_db_add_config_value('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.1');
-select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,eps,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.2');
-select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,eps,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.3');
-select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.4');
-select fn_db_add_config_value('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.5');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceType','alom,apc,bladecenter,drac5,eps,ilo,ilo3,ipmilan,rsa,rsb,wti,cisco_ucs','3.1');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,eps,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.3');
+select fn_db_add_config_value_for_versions_up_to('VdsFenceType','apc,apc_snmp,bladecenter,cisco_ucs,drac5,drac7,eps,hpblade,ilo,ilo2,ilo3,ilo4,ipmilan,rsa,rsb,wti','3.5');
 select fn_db_add_config_value('CustomVdsFenceType','','general');
 select fn_db_add_config_value('vdsHeartbeatInSeconds','10','general');
 select fn_db_add_config_value('VdsLoadBalancingIntervalInMinutes','1','general');
@@ -704,11 +525,8 @@ select fn_db_add_config_value('vdsTimeout','180','general');
 --Handling Virtual Machine Domain Name
 select fn_db_add_config_value('VM32BitMaxMemorySizeInMB','20480','general');
 select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','524288','3.0');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.1');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.2');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','2097152','3.3');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','4096000','3.4');
-select fn_db_add_config_value('VM64BitMaxMemorySizeInMB','4096000','3.5');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','2097152','3.3');
+select fn_db_add_config_value_for_versions_up_to('VM64BitMaxMemorySizeInMB','4096000','3.5');
 select fn_db_add_config_value('VmGracefulShutdownMessage','System Administrator has initiated shutdown of this Virtual Machine. Virtual Machine is shutting down.','general');
 select fn_db_add_config_value('VmGracefulShutdownTimeout','30','general');
 select fn_db_add_config_value('VMMinMemorySizeInMB','256','general');
@@ -752,31 +570,16 @@ select fn_db_add_config_value('LogMinFreeSwapThresholdInMB', '256', 'general');
 select fn_db_add_config_value('LogMaxSwapUsedThresholdInPercentage', '95', 'general');
 
 -- Device Custom Properties
-select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.0');
-select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.1');
-select fn_db_add_config_value('SupportCustomDeviceProperties', 'false', '3.2');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.0');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.1');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.2');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.3');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.4');
-select fn_db_add_config_value('CustomDeviceProperties', '', '3.5');
+select fn_db_add_config_value_for_versions_up_to('SupportCustomDeviceProperties', 'false', '3.2');
+select fn_db_add_config_value_for_versions_up_to('CustomDeviceProperties', '', '3.5');
 
 -- Network Custom Properties
-select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.0');
-select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.1');
-select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.2');
-select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.3');
-select fn_db_add_config_value('NetworkCustomPropertiesSupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('NetworkCustomPropertiesSupported', 'false', '3.4');
 select fn_db_add_config_value('PreDefinedNetworkCustomProperties', $q$bridge_opts=^[^\s=]+=[^\s=]+(\s+[^\s=]+=[^\s=]+)*$$q$, '3.5'); -- tag prevents psql from escaping backslashes ('q' is arbitrary)
 select fn_db_add_config_value('UserDefinedNetworkCustomProperties', '', '3.5');
 
-select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.0');
-select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.1');
-select fn_db_add_config_value('SshSoftFencingCommand', 'service vdsmd restart', '3.2');
-select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.3');
-select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.4');
-select fn_db_add_config_value('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.5');
+select fn_db_add_config_value_for_versions_up_to('SshSoftFencingCommand', 'service vdsmd restart', '3.2');
+select fn_db_add_config_value_for_versions_up_to('SshSoftFencingCommand', '/usr/bin/vdsm-tool service-restart vdsmd', '3.5');
 
 --attestation configuration
 select fn_db_add_config_value('SecureConnectionWithOATServers','true','general');
@@ -800,9 +603,7 @@ select fn_db_add_config_value('QoSOutboundPeakDefaultValue','10','general');
 select fn_db_add_config_value('QoSOutboundBurstDefaultValue','100','general');
 
 -- single qxl pci
-select fn_db_add_config_value('SingleQxlPciEnabled','false','3.0');
-select fn_db_add_config_value('SingleQxlPciEnabled','false','3.1');
-select fn_db_add_config_value('SingleQxlPciEnabled','false','3.2');
+select fn_db_add_config_value_for_versions_up_to('SingleQxlPciEnabled','false','3.2');
 
 --external scheduler
 select fn_db_add_config_value('ExternalSchedulerServiceURL','http://localhost:18781/','general');
@@ -842,12 +643,7 @@ select fn_db_add_config_value('AlertOnNumberOfLVs','300','general');
 
 select fn_db_add_config_value('CSRFProtection','false','general');
 select fn_db_add_config_value('UsageHistoryLimit','40', 'general');
-
-select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.0');
-select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.1');
-select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.2');
-select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.3');
-select fn_db_add_config_value('SkipFencingIfSDActiveSupported', 'false', '3.4');
+select fn_db_add_config_value_for_versions_up_to('SkipFencingIfSDActiveSupported', 'false', '3.4');
 
 select fn_db_add_config_value('HostStorageLeaseAliveCheckingInterval', '90', 'general');
 
