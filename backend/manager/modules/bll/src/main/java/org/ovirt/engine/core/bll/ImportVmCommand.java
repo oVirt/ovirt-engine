@@ -194,8 +194,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
         Map<Guid, StorageDomain> domainsMap = new HashMap<Guid, StorageDomain>();
 
         if (getVdsGroup() == null) {
-            addCanDoActionMessage(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
-            return false;
+            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CLUSTER_CAN_NOT_BE_EMPTY);
         }
 
         if (!canDoActionBeforeCloneVm(domainsMap)) {
@@ -206,8 +205,7 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             initImportClonedVm();
 
             if (getVm().getInterfaces().size() > getMacPool().getAvailableMacsCount()) {
-                addCanDoActionMessage(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
-                return false;
+                return failCanDoAction(VdcBllMessages.MAC_POOL_NOT_ENOUGH_MAC_ADDRESSES);
             }
         }
 
