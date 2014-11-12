@@ -8,7 +8,7 @@ public class CpuQos extends QosBase {
     private static final long serialVersionUID = -5870254800787534586L;
 
     @ConfiguredRange(min = 1, maxConfigValue = ConfigValues.MaxCpuLimitQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_CPU_OUT_OF_RANGE_VALUES")
     private Integer cpuLimit;
 
     public CpuQos() {

@@ -17,27 +17,27 @@ public class StorageQos extends QosBase implements Serializable {
     /* All Throughput values are in MiBs per second */
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxThroughputUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxThroughput;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxReadThroughputUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxReadThroughput;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxWriteThroughputUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxWriteThroughput;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxIopsUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxIops;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxReadIopsUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxReadIops;
 
     @ConfiguredRange(min = 0, maxConfigValue = ConfigValues.MaxWriteIopsUpperBoundQosValue,
-            message = "ACTION_TYPE_FAILED_QOS_OUT_OF_RANGE_VALUES")
+            message = "ACTION_TYPE_FAILED_QOS_STORAGE_OUT_OF_RANGE_VALUES")
     private Integer maxWriteIops;
 
     public Integer getMaxThroughput() {
