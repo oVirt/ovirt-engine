@@ -2,6 +2,7 @@ package org.ovirt.engine.core.bll;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
@@ -209,23 +210,36 @@ public class ImportVmCommand<T extends ImportVmParameters> extends MoveOrCopyTem
             }
         }
 
-        boolean hasBalloon = false;
+        if (!validateBallonDevice()) {
+            return false;
+        }
 
-        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
-            if (VmDeviceCommonUtils.isMemoryBalloon(vmDevice)) {
-                hasBalloon = true;
-                break;
-            }
+        return canDoActionAfterCloneVm(domainsMap);
+    }
+
+    protected boolean validateBallonDevice() {
+        if (!isBalloonDeviceExists(getVm().getManagedVmDeviceMap().values())) {
+            return true;
         }
 
         OsRepository osRepository = SimpleDependecyInjector.getInstance().get(OsRepository.class);
-        if (hasBalloon && !osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
+        if (!osRepository.isBalloonEnabled(getVm().getStaticData().getOsId(),
                 getVdsGroup().getcompatibility_version())) {
             addCanDoActionMessageVariable("clusterArch", getVdsGroup().getArchitecture());
             return failCanDoAction(VdcBllMessages.BALLOON_REQUESTED_ON_NOT_SUPPORTED_ARCH);
         }
 
-        return canDoActionAfterCloneVm(domainsMap);
+        return true;
+    }
+
+    private boolean isBalloonDeviceExists(Collection<VmDevice> devices) {
+        for (VmDevice vmDevice : getVm().getManagedVmDeviceMap().values()) {
+            if (VmDeviceCommonUtils.isMemoryBalloon(vmDevice)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     @Override

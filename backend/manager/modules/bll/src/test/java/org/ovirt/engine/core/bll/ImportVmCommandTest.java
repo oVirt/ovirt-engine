@@ -167,7 +167,7 @@ public class ImportVmCommandTest {
         doReturn(cluster).when(c).getVdsGroup();
         osRepository.getDisplayTypes().get(0).put(Version.getLast(), Arrays.asList(DisplayType.qxl));
         when(osRepository.isBalloonEnabled(c.getParameters().getVm().getVmOsId(), cluster.getcompatibility_version())).thenReturn(true);
-        assertTrue(c.canDoAction());
+        assertTrue(c.validateBallonDevice());
     }
 
     @Test
