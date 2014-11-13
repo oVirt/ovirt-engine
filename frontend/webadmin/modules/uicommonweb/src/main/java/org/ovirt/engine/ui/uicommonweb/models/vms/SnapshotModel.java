@@ -295,11 +295,6 @@ public class SnapshotModel extends EntityModel<Snapshot>
         getSnapshotDisks().setItems(diskImages);
     }
 
-    public void updateModelBySnapshot(Snapshot snapshot) {
-        setDisks(new ArrayList<DiskImage>(snapshot.getDiskImages()));
-        getMemory().setEntity(snapshot.containsMemory());
-    }
-
     public void updateVmConfiguration(final INewAsyncCallback onUpdateAsyncCallback) {
         Snapshot snapshot = getEntity();
         if (snapshot == null) {
