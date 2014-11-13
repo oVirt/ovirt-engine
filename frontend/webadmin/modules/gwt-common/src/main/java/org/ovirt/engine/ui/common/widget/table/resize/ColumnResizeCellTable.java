@@ -2,7 +2,9 @@ package org.ovirt.engine.ui.common.widget.table.resize;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.ovirt.engine.ui.common.CommonApplicationTemplates;
 import org.ovirt.engine.ui.common.system.ClientStorage;
@@ -44,6 +46,8 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     // Prefix for keys used to store widths of individual columns
     private static final String GRID_COLUMN_WIDTH_PREFIX = "GridColumnWidth"; //$NON-NLS-1$
 
+    //This is 1px instead of 0px as 0 size columns seem to confuse the cell table.
+    private static final String HIDDEN_WIDTH = "1px"; //$NON-NLS-1$
 
     // Empty, no-width column used with resizable columns feature
     // that occupies remaining horizontal space within the table
@@ -59,10 +63,9 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
     // used to store column width preferences
     private GridController gridController;
 
-    // used to prevent default column widths from overriding persisted column widths
-    private final List<Column<T, ?>> initializedColumns = new ArrayList<Column<T, ?>>();
-
     private final CommonApplicationTemplates templates = GWT.create(CommonApplicationTemplates.class);
+
+    private final Map<Integer, Boolean> columnVisibleMap = new HashMap<Integer, Boolean>();
 
     public ColumnResizeCellTable() {
         super();
@@ -168,16 +171,6 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
         setColumnWidth(column, width);
     }
 
-    /**
-     * Removes a column.
-     */
-    @Override
-    public void removeColumn(int index) {
-        Column<T, ?> column = getColumn(index);
-        super.removeColumn(index);
-        initializedColumns.remove(column);
-    }
-
     Header<?> createHeader(Column<T, ?> column, String headerTextOrHtml, boolean allowHtml) {
         SafeHtml headerHtml = allowHtml ? SafeHtmlUtils.fromSafeConstant(headerTextOrHtml)
                 : SafeHtmlUtils.fromString(headerTextOrHtml);
@@ -228,44 +221,35 @@ public class ColumnResizeCellTable<T> extends CellTable<T> implements HasResizab
      * @param width The width of the column.
      */
     public void ensureColumnPresent(Column<T, ?> column, String headerText, boolean present, String width) {
-        boolean columnPresent = getColumnIndex(column) != -1;
-        if (present && !columnPresent) {
+        Integer index = getColumnIndex(column);
+        boolean columnPresent = index != -1;
+        if (!columnPresent) {
             // Add the column
             if (width == null) {
                 addColumnWithHtmlHeader(column, headerText);
             } else {
                 addColumnWithHtmlHeader(column, headerText, width);
             }
-        } else if (!present && columnPresent) {
-            // Remove the column
-            removeColumn(column);
+            index = getColumnIndex(column);
         }
-    }
-
-    @Override
-    public void setColumnWidth(Column<T, ?> column, String width) {
-        if (columnResizePersistenceEnabled && !initializedColumns.contains(column)) {
+        columnVisibleMap.put(index, present);
+        if (columnResizePersistenceEnabled) {
             String persistedWidth = readColumnWidth(column);
             if (persistedWidth != null) {
                 width = persistedWidth;
             }
-            initializedColumns.add(column);
+        }
+        setColumnWidth(column, width);
+    }
+
+    @Override
+    public void setColumnWidth(Column<T, ?> column, String width) {
+        Integer index = getColumnIndex(column);
+        if (columnVisibleMap.get(index) != null && !columnVisibleMap.get(index)) {
+            width = HIDDEN_WIDTH;
         }
 
         super.setColumnWidth(column, width);
-
-        if (columnResizingEnabled) {
-            int columnIndex = getColumnIndex(column);
-            TableElement tableElement = getElement().cast();
-
-            // Update body and header cell widths
-            for (TableCellElement cell : getTableBodyCells(tableElement, columnIndex)) {
-                cell.getStyle().setProperty("width", width); //$NON-NLS-1$
-            }
-            for (TableCellElement cell : getTableHeaderCells(tableElement, columnIndex)) {
-                cell.getStyle().setProperty("width", width); //$NON-NLS-1$
-            }
-        }
     }
 
     List<TableCellElement> getTableBodyCells(TableElement tableElement, int columnIndex) {
