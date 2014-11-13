@@ -1959,10 +1959,9 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     protected boolean validate(ValidationResult validationResult) {
         if (!validationResult.isValid()) {
             addCanDoActionMessage(validationResult.getMessage());
-            if (validationResult.getVariableReplacements() != null) {
-                for (String variableReplacement : validationResult.getVariableReplacements()) {
-                    addCanDoActionMessage(variableReplacement);
-                }
+
+            for (String variableReplacement : validationResult.getVariableReplacements()) {
+                addCanDoActionMessage(variableReplacement);
             }
         }
 

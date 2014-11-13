@@ -27,7 +27,7 @@ public final class ValidationResult {
     /**
      * If there are any replacements for variables in the message, they can be set here.
      */
-    private List<String> variableReplacements;
+    private final List<String> variableReplacements;
 
     /**
      * Default validation result is success with no message.
@@ -35,6 +35,7 @@ public final class ValidationResult {
      */
     private ValidationResult() {
         message = null;
+        variableReplacements = Collections.emptyList();
     }
 
     /**
@@ -52,9 +53,9 @@ public final class ValidationResult {
         }
 
         this.message = message;
-        if (variableReplacements != null) {
-            this.variableReplacements = Collections.unmodifiableList(Arrays.asList(variableReplacements));
-        }
+        this.variableReplacements = variableReplacements == null || variableReplacements.length == 0 ?
+                Collections.<String>emptyList() :
+                Collections.unmodifiableList(Arrays.asList(variableReplacements));
     }
 
     /**

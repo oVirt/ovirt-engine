@@ -428,11 +428,11 @@ public class RunVmValidator {
     protected boolean validate(ValidationResult validationResult, List<String> message) {
         if (!validationResult.isValid()) {
             message.add(validationResult.getMessage().name());
-            if (validationResult.getVariableReplacements() != null) {
-                for (String variableReplacement : validationResult.getVariableReplacements()) {
-                    message.add(variableReplacement);
-                }
+
+            for (String variableReplacement : validationResult.getVariableReplacements()) {
+                message.add(variableReplacement);
             }
+
         }
         return validationResult.isValid();
     }

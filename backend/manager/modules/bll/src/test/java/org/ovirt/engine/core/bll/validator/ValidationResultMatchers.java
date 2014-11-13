@@ -5,7 +5,6 @@ import static org.hamcrest.CoreMatchers.both;
 import static org.hamcrest.CoreMatchers.not;
 
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 import org.hamcrest.Description;
@@ -143,8 +142,7 @@ public class ValidationResultMatchers {
 
         @Override
         protected boolean matchesSafely(ValidationResult item) {
-            List<String> replacements = item.getVariableReplacements();
-            final List<String> vr = replacements == null ? Collections.<String>emptyList() : replacements;
+            final List<String> vr = item.getVariableReplacements();
             return variableReplacements.length == vr.size() && vr.containsAll(Arrays.asList(variableReplacements));
         }
 
