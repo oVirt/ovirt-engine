@@ -405,6 +405,16 @@ public class FixturesTool {
     protected static final Guid EXISTING_TASK_ID = new Guid("340fd52b-3400-4cdd-8d3f-C9d03704b0aa");
 
     /**
+     * Predefined engine session id
+     */
+    protected static final Guid EXISTING_SESSION_ID = new Guid("c61a1dec-6b5f-11e4-80d9-3c970e14c386");
+
+    /**
+     * Predefined engine group id
+     */
+    protected static final Guid EXISTING_GROUP_ID = new Guid("cd854d52-b6bf-4d74-81cd-0345d8266939");
+
+    /**
      * ID of an existing snapshot
      */
     protected static final Guid EXISTING_SNAPSHOT_ID = new Guid("a7bb24df-9fdf-4bd6-b7a9-f5ce52da0f89");

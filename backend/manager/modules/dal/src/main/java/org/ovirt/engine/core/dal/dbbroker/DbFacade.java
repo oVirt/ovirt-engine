@@ -17,6 +17,7 @@ import org.ovirt.engine.core.common.businessentities.CpuStatistics;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.DiskImageDynamic;
 import org.ovirt.engine.core.common.businessentities.DwhHistoryTimekeeping;
+import org.ovirt.engine.core.common.businessentities.EngineSession;
 import org.ovirt.engine.core.common.businessentities.FenceAgent;
 import org.ovirt.engine.core.common.businessentities.Image;
 import org.ovirt.engine.core.common.businessentities.IscsiBond;
@@ -73,6 +74,7 @@ import org.ovirt.engine.core.dao.DiskDao;
 import org.ovirt.engine.core.dao.DiskImageDAO;
 import org.ovirt.engine.core.dao.DiskImageDynamicDAO;
 import org.ovirt.engine.core.dao.DiskLunMapDao;
+import org.ovirt.engine.core.dao.EngineSessionDAO;
 import org.ovirt.engine.core.dao.EventDAO;
 import org.ovirt.engine.core.dao.ExternalVariableDao;
 import org.ovirt.engine.core.dao.FenceAgentDAO;
@@ -208,6 +210,7 @@ public class DbFacade {
             put(MacPool.class, MacPoolDao.class);
             put(DiskProfile.class, DiskProfileDao.class);
             put(FenceAgent.class, FenceAgentDAO.class);
+            put(EngineSession.class, EngineSessionDAO.class);
         }
     };
 
@@ -636,6 +639,15 @@ public class DbFacade {
      */
     public DbGroupDAO getDbGroupDao() {
         return getDao(DbGroupDAO.class);
+    }
+
+    /**
+     * Returns the singleton instance of {@link EngineSessionDAO}.
+     *
+     * @return the dao
+     */
+    public EngineSessionDAO getEngineSessionDao() {
+        return getDao(EngineSessionDAO.class);
     }
 
     /**

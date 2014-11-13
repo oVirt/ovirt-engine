@@ -210,6 +210,16 @@
         </row>
     </table>
 
+    <table name="engine_sessions">
+        <column>engine_session_id</column>
+        <column>user_id</column>
+        <column>user_name</column>
+        <row>
+            <value>c61a1dec-6b5f-11e4-80d9-3c970e14c386</value>
+            <value>9bf7c640-b620-456f-a550-0348f366544a</value>
+            <value>userportal2</value>
+        </row>
+    </table>
 
     <table name="storage_server_connections">
         <column>id</column>
