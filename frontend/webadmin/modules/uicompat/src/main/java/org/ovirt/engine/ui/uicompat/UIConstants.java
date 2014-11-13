@@ -1390,7 +1390,7 @@ public interface UIConstants extends com.google.gwt.i18n.client.Constants {
     @DefaultStringValue("Failed to retrieve existing storage domain information.")
     String failedToRetrieveExistingStorageDomainInformationMsg();
 
-    @DefaultStringValue("There is no storage domain under the specified path. Check event log for more details.")
+    @DefaultStringValue("There is no storage domain under the specified path. Check event pane for more details.")
     String thereIsNoStorageDomainUnderTheSpecifiedPathMsg();
 
     @DefaultStringValue("Importing Storage Domain...")

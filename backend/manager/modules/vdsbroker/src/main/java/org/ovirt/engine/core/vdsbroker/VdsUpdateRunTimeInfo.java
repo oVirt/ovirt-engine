@@ -465,7 +465,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     /**
-     * check if value is less than configurable threshold , if yes , generated event log message
+     * check if value is less than configurable threshold , if yes , generated event list message
      *
      * @param stat
      */
@@ -497,7 +497,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     /**
-     * check if value is less than configurable threshold , if yes , generated event log message
+     * check if value is less than configurable threshold , if yes , generated event list message
      *
      * @param stat
      */
@@ -515,7 +515,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     /**
-     * check if value is less than configurable threshold , if yes , generated event log message
+     * check if value is less than configurable threshold , if yes , generated event list message
      *
      * @param stat
      */
@@ -539,7 +539,7 @@ public class VdsUpdateRunTimeInfo {
     }
 
     /**
-     * check if value is less than configurable threshold , if yes , generated event log message
+     * check if value is less than configurable threshold , if yes , generated event list message
      *
      * @param stat
      */
