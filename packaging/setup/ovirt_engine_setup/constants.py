@@ -162,11 +162,6 @@ class FileLocations(object):
         'rhev-guest-tools-iso',
     )
 
-    OSINFO_LEGACY_SYSPREP = os.path.join(
-        OVIRT_SETUP_OSINFO_REPOSITORY_DIR,
-        '10-sysprep.properties',
-    )
-
     OVIRT_SETUP_UNINSTALL_DIR = os.path.join(
         OVIRT_SETUP_SYSCONFDIR,
         'uninstall.d'
