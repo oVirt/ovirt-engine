@@ -747,7 +747,7 @@ public class JsonRpcVdsServer implements IVdsServer {
                 new RequestBuilder("Host.getDevicesVisibility").withParameter("guidList",
                         new ArrayList<String>(Arrays.asList(devicesList))).build();
         Map<String, Object> response =
-                new FutureMap(this.client, request).withResponseKey("visibles");
+                new FutureMap(this.client, request).withResponseKey("visible");
         return new DevicesVisibilityMapReturnForXmlRpc(response);
     }
 
