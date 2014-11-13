@@ -73,10 +73,6 @@ public class AddExistingFileStorageDomainCommand<T extends StorageDomainManageme
                 new HSMGetStorageDomainInfoVDSCommandParameters(getVdsId(), getStorageDomain().getId())
         ).getReturnValue();
 
-        if (domainFromIrs.getFirst().getStorageDomainType() != getStorageDomain().getStorageDomainType()) {
-            return failCanDoAction(VdcBllMessages.ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE);
-        }
-
         return concreteCheckExistingStorageDomain(domainFromIrs);
     }
 

@@ -1330,9 +1330,6 @@ public interface AppErrors extends ConstantsWithLookup {
     @DefaultStringValue("Cannot ${action} ${type}. Storage Domain doesn't exist.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_NOT_EXIST();
 
-    @DefaultStringValue("Cannot ${action} ${type}. Cannot change Storage Domain type.")
-    String ACTION_TYPE_FAILED_CANNOT_CHANGE_STORAGE_DOMAIN_TYPE();
-
     @DefaultStringValue("Cannot ${action} ${type}. The relevant Storage Domain is inaccessible.\n-Please handle Storage Domain issues and retry the operation.")
     String ACTION_TYPE_FAILED_STORAGE_DOMAIN_STATUS_ILLEGAL();
 
