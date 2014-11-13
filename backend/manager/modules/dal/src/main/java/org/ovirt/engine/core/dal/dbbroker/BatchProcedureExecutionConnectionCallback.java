@@ -9,8 +9,6 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Timestamp;
 import java.sql.Types;
-import java.text.DateFormat;
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -165,7 +163,6 @@ public final class BatchProcedureExecutionConnectionCallback implements Connecti
         Map<String, Object> values = paramSource.getValues();
         for (Map.Entry<String, SqlCallParameter> paramOrderEntry : paramOrder.entrySet())
         {
-            DateFormat sdf = SimpleDateFormat.getDateTimeInstance();
             String paramName = paramOrderEntry.getKey();
             Object value = values.get(paramName);
             if (value == null && paramName.startsWith(DbFacade.getInstance().getDbEngineDialect().getParamNamePrefix())) {
