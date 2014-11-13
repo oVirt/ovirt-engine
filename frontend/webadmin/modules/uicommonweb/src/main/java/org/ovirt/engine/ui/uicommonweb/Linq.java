@@ -1378,6 +1378,16 @@ public final class Linq
         }
     }
 
+    public final static <T extends Disk> Collection<T> filterNonSnapableDisks(
+            Collection<Disk> source) {
+        return (Collection<T>) where(source, new IPredicate<Disk>() {
+            @Override
+            public boolean match(Disk source) {
+                return source.isAllowSnapshot();
+            }
+        });
+    }
+
     public final static <T extends Disk> Collection<T> filterDisksByStorageType(
             Collection<Disk> source, final DiskStorageType diskStorageType) {
         return (Collection<T>) where(source, new IPredicate<Disk>() {
