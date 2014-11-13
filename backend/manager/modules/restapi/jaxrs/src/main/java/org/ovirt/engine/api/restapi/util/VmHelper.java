@@ -1,5 +1,6 @@
 package org.ovirt.engine.api.restapi.util;
 
+import org.ovirt.engine.core.common.businessentities.VmRngDevice;
 import org.ovirt.engine.core.common.queries.IdQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.core.compat.Guid;
@@ -30,5 +31,19 @@ public class VmHelper extends ResourceHelper {
                 VdcQueryType.GetSoundDevices,
                 new IdQueryParameters(id),
                 "GetSoundDevices", true);
+    }
+
+    public Boolean isMemoryBalloonEnabledForEntity(Guid id) {
+        return getEntity(Boolean.class,
+                VdcQueryType.IsBalloonEnabled,
+                new IdQueryParameters(id),
+                "IsBalloonEnabled", true);
+    }
+
+    public List<VmRngDevice> getRngDevicesForEntity(Guid id) {
+        return getEntity(List.class,
+                VdcQueryType.GetRngDevice,
+                new IdQueryParameters(id),
+                "GetRngDevice", true);
     }
 }

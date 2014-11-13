@@ -71,6 +71,7 @@ import org.ovirt.engine.core.common.businessentities.MigrationSupport;
 import org.ovirt.engine.core.common.businessentities.OriginType;
 import org.ovirt.engine.core.common.businessentities.UsbPolicy;
 import org.ovirt.engine.core.common.businessentities.VMStatus;
+import org.ovirt.engine.core.common.businessentities.VmBase;
 import org.ovirt.engine.core.common.businessentities.VmInit;
 import org.ovirt.engine.core.common.businessentities.VmInitNetwork;
 import org.ovirt.engine.core.common.businessentities.VmPayload;
@@ -95,44 +96,55 @@ public class VmMapper {
     @Mapping(from = VmTemplate.class, to = VmStatic.class)
     public static VmStatic map(VmTemplate entity, VmStatic template) {
         VmStatic staticVm = template != null ? template : new VmStatic();
+
         staticVm.setId(Guid.Empty);
         staticVm.setVmtGuid(entity.getId());
         staticVm.setVdsGroupId(entity.getVdsGroupId());
-        staticVm.setMemSizeMb(entity.getMemSizeMb());
         staticVm.setOsId(entity.getOsId());
         staticVm.setNiceLevel(entity.getNiceLevel());
         staticVm.setCpuShares(entity.getCpuShares());
         staticVm.setFailBack(entity.isFailBack());
-        staticVm.setAutoStartup(entity.isAutoStartup());
         staticVm.setStateless(entity.isStateless());
         staticVm.setDeleteProtected(entity.isDeleteProtected());
         staticVm.setSsoMethod(entity.getSsoMethod());
-        staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
-        staticVm.setAutoStartup(entity.isAutoStartup());
-        staticVm.setDefaultBootSequence(entity.getDefaultBootSequence());
         staticVm.setVmType(entity.getVmType());
-        staticVm.setDefaultDisplayType(entity.getDefaultDisplayType());
         staticVm.setIsoPath(entity.getIsoPath());
-        staticVm.setNumOfSockets(entity.getNumOfSockets());
-        staticVm.setCpuPerSocket(entity.getCpuPerSocket());
         staticVm.setKernelUrl(entity.getKernelUrl());
         staticVm.setKernelParams(entity.getKernelParams());
         staticVm.setInitrdUrl(entity.getInitrdUrl());
         staticVm.setTimeZone(entity.getTimeZone());
-        staticVm.setNumOfMonitors(entity.getNumOfMonitors());
-        staticVm.setSingleQxlPci(entity.getSingleQxlPci());
         staticVm.setAllowConsoleReconnect(entity.isAllowConsoleReconnect());
-        staticVm.setPriority(entity.getPriority());
-        staticVm.setUsbPolicy(entity.getUsbPolicy());
-        staticVm.setTunnelMigration(entity.getTunnelMigration());
         staticVm.setVncKeyboardLayout(entity.getVncKeyboardLayout());
-        staticVm.setMigrationDowntime(entity.getMigrationDowntime());
         staticVm.setVmInit(entity.getVmInit());
         staticVm.setSerialNumberPolicy(entity.getSerialNumberPolicy());
         staticVm.setCustomSerialNumber(entity.getCustomSerialNumber());
         staticVm.setSpiceFileTransferEnabled(entity.isSpiceFileTransferEnabled());
         staticVm.setSpiceCopyPasteEnabled(entity.isSpiceCopyPasteEnabled());
         staticVm.setCpuProfileId(entity.getCpuProfileId());
+        return doMapVmBaseHwPartToVmStatic(entity, staticVm);
+    }
+
+    @Mapping(from = org.ovirt.engine.core.common.businessentities.InstanceType.class, to = VmStatic.class)
+    public static VmStatic map(org.ovirt.engine.core.common.businessentities.InstanceType entity, VmStatic vmStatic) {
+        return doMapVmBaseHwPartToVmStatic((VmBase) entity, vmStatic != null ? vmStatic : new VmStatic());
+    }
+
+    private static VmStatic doMapVmBaseHwPartToVmStatic(VmBase entity, VmStatic staticVm) {
+        staticVm.setMemSizeMb(entity.getMemSizeMb());
+        staticVm.setAutoStartup(entity.isAutoStartup());
+        staticVm.setSmartcardEnabled(entity.isSmartcardEnabled());
+        staticVm.setDefaultBootSequence(entity.getDefaultBootSequence());
+        staticVm.setDefaultDisplayType(entity.getDefaultDisplayType());
+        staticVm.setNumOfSockets(entity.getNumOfSockets());
+        staticVm.setCpuPerSocket(entity.getCpuPerSocket());
+        staticVm.setNumOfMonitors(entity.getNumOfMonitors());
+        staticVm.setSingleQxlPci(entity.getSingleQxlPci());
+        staticVm.setPriority(entity.getPriority());
+        staticVm.setUsbPolicy(entity.getUsbPolicy());
+        staticVm.setTunnelMigration(entity.getTunnelMigration());
+        staticVm.setMigrationSupport(entity.getMigrationSupport());
+        staticVm.setMigrationDowntime(entity.getMigrationDowntime());
+        staticVm.setMinAllocatedMem(entity.getMinAllocatedMem());
         return staticVm;
     }
 
