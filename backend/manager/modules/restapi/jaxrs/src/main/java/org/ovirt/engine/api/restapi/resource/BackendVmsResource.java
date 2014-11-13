@@ -34,9 +34,11 @@ import org.ovirt.engine.api.model.VirtIOSCSI;
 import org.ovirt.engine.api.resource.VmResource;
 import org.ovirt.engine.api.resource.VmsResource;
 import org.ovirt.engine.api.restapi.types.DiskMapper;
+import org.ovirt.engine.api.restapi.types.Mapper;
 import org.ovirt.engine.api.restapi.types.RngDeviceMapper;
 import org.ovirt.engine.api.restapi.types.VmMapper;
 import org.ovirt.engine.api.restapi.util.VmHelper;
+import org.ovirt.engine.core.common.FeatureSupported;
 import org.ovirt.engine.core.common.action.AddVmFromSnapshotParameters;
 import org.ovirt.engine.core.common.action.AddVmParameters;
 import org.ovirt.engine.core.common.action.ImportVmParameters;
@@ -45,6 +47,7 @@ import org.ovirt.engine.core.common.action.VdcActionType;
 import org.ovirt.engine.core.common.action.VmManagementParametersBase;
 import org.ovirt.engine.core.common.businessentities.DiskImage;
 import org.ovirt.engine.core.common.businessentities.Entities;
+import org.ovirt.engine.core.common.businessentities.InstanceType;
 import org.ovirt.engine.core.common.businessentities.VDSGroup;
 import org.ovirt.engine.core.common.businessentities.VdsStatic;
 import org.ovirt.engine.core.common.businessentities.VmDevice;
@@ -65,6 +68,7 @@ import org.ovirt.engine.core.common.queries.NameQueryParameters;
 import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
 import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
 import org.ovirt.engine.core.common.queries.VdcQueryType;
+import org.ovirt.engine.core.common.utils.SimpleDependecyInjector;
 import org.ovirt.engine.core.compat.Guid;
 
 public class BackendVmsResource extends
@@ -107,8 +111,20 @@ public class BackendVmsResource extends
             } else {
                 validateParameters(vm, "template.id|name");
                 Guid templateId = getTemplateId(vm.getTemplate());
-                VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm,
-                        getMapper(VmTemplate.class, VmStatic.class).map(lookupTemplate(templateId), null));
+
+                VmTemplate templateEntity = lookupTemplate(templateId);
+                VmStatic builtFromTemplate = getMapper(VmTemplate.class, VmStatic.class).map(templateEntity, null);
+
+                VmStatic builtFromInstanceType = null;
+                org.ovirt.engine.core.common.businessentities.InstanceType instanceTypeEntity = null;
+                if (vm.isSetInstanceType() && (vm.getInstanceType().isSetId() || vm.getInstanceType().isSetName())) {
+                    Mapper<org.ovirt.engine.core.common.businessentities.InstanceType, VmStatic> instanceTypeMapper = getMapper(org.ovirt.engine.core.common.businessentities.InstanceType.class, VmStatic.class);
+                    instanceTypeEntity = lookupInstanceType(getTemplateId(vm.getInstanceType()));
+                    builtFromInstanceType = instanceTypeMapper.map(instanceTypeEntity, builtFromTemplate);
+                    builtFromInstanceType.setInstanceTypeId(getTemplateId(vm.getInstanceType()));
+                }
+
+                VmStatic staticVm = getMapper(VM.class, VmStatic.class).map(vm, builtFromInstanceType != null ? builtFromInstanceType : builtFromTemplate);
                 if (namedCluster(vm)) {
                     staticVm.setVdsGroupId(getClusterId(vm));
                 }
@@ -150,16 +166,12 @@ public class BackendVmsResource extends
                                 .getId())
                                 : Guid.Empty;
 
-                if (vm.isSetInstanceType() && (vm.getInstanceType().isSetId() || vm.getInstanceType().isSetName())) {
-                    staticVm.setInstanceTypeId(getTemplateId(vm.getInstanceType()));
-                }
-
                 if (vm.isSetDisks() && vm.getDisks().isSetClone() && vm.getDisks().isClone()) {
-                    response = cloneVmFromTemplate(staticVm, vm, templateId);
+                    response = cloneVmFromTemplate(staticVm, vm, templateEntity, instanceTypeEntity, cluster);
                 } else if (Guid.Empty.equals(templateId)) {
-                    response = addVmFromScratch(staticVm, vm, storageDomainId);
+                    response = addVmFromScratch(staticVm, vm, storageDomainId, instanceTypeEntity, cluster);
                 } else {
-                    response = addVm(staticVm, vm, storageDomainId, templateId);
+                    response = addVm(staticVm, vm, storageDomainId, templateEntity, instanceTypeEntity, cluster);
                 }
             }
         }
@@ -191,9 +203,9 @@ public class BackendVmsResource extends
             prepareImagesForCloneFromSnapshotParams(vm.getDisks(), diskImagesByImageId);
         }
         return cloneVmFromSnapshot(vmConfiguration,
-                        vm,
-                        snapshotId,
-                        diskImagesByImageId);
+                vm,
+                snapshotId,
+                diskImagesByImageId);
     }
 
     private Response removeRestrictedInfoFromResponse(Response response) {
@@ -316,35 +328,88 @@ public class BackendVmsResource extends
                                 new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
     }
 
-    private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, Guid templateId) {
+    private Response cloneVmFromTemplate(VmStatic staticVm, VM vm, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
-        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
         params.setVmPayload(getPayload(vm));
-        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
-                vm.getVirtioScsi().isEnabled() : null);
-        if(vm.isSetSoundcardEnabled()) {
-            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
-        } else {
-            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, templateId).isEmpty());
-        }
 
-        params.setBalloonEnabled(vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning() ?
-                vm.getMemoryPolicy().isBallooning() : null);
-
-        params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
-                ? vm.getConsole().isEnabled()
-                : !getConsoleDevicesForEntity(templateId).isEmpty());
-
-        if (vm.isSetRngDevice()) {
-            params.setUpdateRngDevice(true);
-            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
-        }
+        addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
 
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
         return performCreate(VdcActionType.AddVmFromTemplate,
-                               params,
-                               new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
+                params,
+                new QueryIdResolver<Guid>(VdcQueryType.GetVmByVmId, IdQueryParameters.class));
+    }
+
+    private void addDevicesToParams(AddVmParameters params, VM vm, VmTemplate template, InstanceType instanceType, int osId, VDSGroup cluster) {
+        Guid templateId = template != null ? template.getId() : null;
+        Guid instanceTypeId = instanceType != null ? instanceType.getId() : null;
+
+        if (vm.isSetVirtioScsi()) {
+            params.setVirtioScsiEnabled(vm.getVirtioScsi().isEnabled());
+        } else {
+            // it is not defined on the template
+            params.setVirtioScsiEnabled(instanceTypeId != null ? !VmHelper.getVirtioScsiControllersForEntity(this, instanceTypeId).isEmpty() : null);
+        }
+
+        if(vm.isSetSoundcardEnabled()) {
+            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
+        } else if (instanceTypeId != null || templateId != null) {
+            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId).isEmpty());
+        }
+
+        if (vm.isSetMemoryPolicy()) {
+            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
+        } else if (shouldCopyDevice(SimpleDependecyInjector.getInstance().get(OsRepository.class).isBalloonEnabled(osId, cluster.getcompatibility_version()), templateId, instanceTypeId)) {
+            // it is not defined on the template
+            params.setBalloonEnabled(instanceTypeId != null ? !VmHelper.isMemoryBalloonEnabledForEntity(this, instanceTypeId) : null);
+        }
+
+        if (vm.isSetConsole()) {
+            params.setConsoleEnabled(vm.getConsole().isEnabled());
+        } else if (instanceTypeId != null || templateId != null) {
+            params.setConsoleEnabled(instanceTypeId != null ? !getConsoleDevicesForEntity(instanceTypeId).isEmpty() : null);
+        }
+
+        if (vm.isSetRngDevice()) {
+            params.setUpdateRngDevice(true);
+            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
+        } else if (instanceTypeId != null || templateId != null) {
+            List<VmRngDevice> devices = VmHelper.getRngDevicesForEntity(this, instanceTypeId != null ? instanceTypeId : templateId);
+            if (devices != null && !devices.isEmpty()) {
+                boolean supported = cluster.getRequiredRngSources().contains(devices.get(0).getSource()) && FeatureSupported.virtIoRngSupported(cluster.getcompatibility_version());
+                if (shouldCopyDevice(supported, templateId, instanceTypeId)) {
+                    params.setUpdateRngDevice(true);
+                    params.setRngDevice(!devices.isEmpty() ? devices.iterator().next() : null);
+                }
+            }
+        }
+    }
+
+    /**
+     * Returns true if the device should be copied from the template or instance type
+     * If the instance type is selected, than the device will be copied from the instance type only if the device is compatible with the cluster and os
+     * If the instance type is not set and the template is set, than it is copied from the template (e.g. the cluster compatibility is not checked since the template lives in a cluster)
+     */
+    private boolean shouldCopyDevice(boolean isCompatibleWithCluster, Guid templateId, Guid instanceTypeId) {
+        if (instanceTypeId == null && templateId == null) {
+            // nothing to copy from
+            return false;
+        }
+
+        if (instanceTypeId == null && templateId != null) {
+            // template is set and is not overridden by instance type, copy device config
+            return true;
+        }
+
+        if (instanceTypeId != null && isCompatibleWithCluster) {
+            // copy from instance type and the device is compatible with cluster, copy
+            return true;
+        }
+
+        // not compatible with the cluster, do not copy from instance type
+        return false;
     }
 
     private HashMap<Guid, DiskImage> getDisksToClone(Disks disks, Guid templateId) {
@@ -380,33 +445,14 @@ public class BackendVmsResource extends
         return (DiskImage)getMapper(Disk.class, org.ovirt.engine.core.common.businessentities.Disk.class).map(entity, template);
     }
 
-    protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, Guid templateId) {
+    protected Response addVm(VmStatic staticVm, VM vm, Guid storageDomainId, VmTemplate template, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setVmPayload(getPayload(vm));
-        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
-            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        }
         params.setStorageDomainId(storageDomainId);
-        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), templateId));
+        params.setDiskInfoDestinationMap(getDisksToClone(vm.getDisks(), template.getId()));
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         setupCloneTemplatePermissions(vm, params);
-
-        params.setConsoleEnabled(vm.isSetConsole() && vm.getConsole().isSetEnabled()
-                ? vm.getConsole().isEnabled()
-                : !getConsoleDevicesForEntity(templateId).isEmpty());
-
-        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
-                vm.getVirtioScsi().isEnabled() : null);
-        if(vm.isSetSoundcardEnabled()) {
-            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
-        } else {
-            params.setSoundDeviceEnabled(!VmHelper.getSoundDevicesForEntity(this, templateId).isEmpty());
-        }
-
-        if (vm.isSetRngDevice()) {
-            params.setUpdateRngDevice(true);
-            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
-        }
+        addDevicesToParams(params, vm, template, instanceType, staticVm.getOsId(), cluster);
 
         return performCreate(VdcActionType.AddVm,
                                params,
@@ -419,29 +465,13 @@ public class BackendVmsResource extends
         }
     }
 
-    protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId) {
+    protected Response addVmFromScratch(VmStatic staticVm, VM vm, Guid storageDomainId, InstanceType instanceType, VDSGroup cluster) {
         AddVmParameters params = new AddVmParameters(staticVm);
         params.setDiskInfoList(mapDisks(vm.getDisks()));
         params.setVmPayload(getPayload(vm));
-        if (vm.isSetMemoryPolicy() && vm.getMemoryPolicy().isSetBallooning()) {
-            params.setBalloonEnabled(vm.getMemoryPolicy().isBallooning());
-        }
         params.setMakeCreatorExplicitOwner(shouldMakeCreatorExplicitOwner());
         params.setStorageDomainId(storageDomainId);
-        params.setVirtioScsiEnabled(vm.isSetVirtioScsi() && vm.getVirtioScsi().isSetEnabled() ?
-                vm.getVirtioScsi().isEnabled() : null);
-        if(vm.isSetSoundcardEnabled()) {
-            params.setSoundDeviceEnabled(vm.isSoundcardEnabled());
-        }
-
-        if (vm.isSetConsole() && vm.getConsole().isSetEnabled()) {
-            params.setConsoleEnabled(vm.getConsole().isEnabled());
-        }
-
-        if (vm.isSetRngDevice()) {
-            params.setUpdateRngDevice(true);
-            params.setRngDevice(RngDeviceMapper.map(vm.getRngDevice(), null));
-        }
+        addDevicesToParams(params, vm, null, instanceType, staticVm.getOsId(), cluster);
 
         return performCreate(VdcActionType.AddVmFromScratch,
                                params,
@@ -600,6 +630,10 @@ public class BackendVmsResource extends
 
     public VmTemplate lookupTemplate(Guid id) {
         return getEntity(VmTemplate.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
+    }
+
+    public org.ovirt.engine.core.common.businessentities.InstanceType lookupInstanceType(Guid id) {
+        return getEntity(org.ovirt.engine.core.common.businessentities.InstanceType.class, VdcQueryType.GetVmTemplate, new GetVmTemplateParameters(id), "GetVmTemplate");
     }
 
     private VDSGroup lookupCluster(Guid id) {
