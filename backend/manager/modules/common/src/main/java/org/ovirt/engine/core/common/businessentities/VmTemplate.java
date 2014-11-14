@@ -79,7 +79,7 @@ public class VmTemplate extends VmBase implements BusinessEntityWithStatus<Guid,
             SerialNumberPolicy serialNumberPolicy, String customSerialNumber,
             boolean bootMenuEnabled, boolean spiceFIleTransferEnabled, boolean spiceCopyPasteEnabled,
             Guid cpuProfileId, NumaTuneMode numaTuneMode,
-            boolean autoConverge, boolean migrateCompressed) {
+            Boolean autoConverge, Boolean migrateCompressed) {
         super(name,
                 vmtGuid,
                 vdsGroupId,
