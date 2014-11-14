@@ -58,22 +58,7 @@ public class MultipleActionsRunner {
 
         ArrayList<VdcReturnValueBase> returnValues = new ArrayList<VdcReturnValueBase>();
         try {
-            VdcReturnValueBase returnValue;
-            for (VdcActionParametersBase parameter : getParameters()) {
-                parameter.setMultipleAction(true);
-                returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
-                if (returnValue == null) {
-                    CommandBase<?> command = isInternal ?
-                            CommandsFactory.createCommand(actionType, parameter, commandContext.clone()
-                                    .withoutCompensationContext()) :
-                                    CommandsFactory.createCommand(actionType, parameter);
-
-                    command.setInternalExecution(isInternal);
-                    getCommands().add(command);
-                } else {
-                    returnValues.add(returnValue);
-                }
-            }
+            initCommandsAndReturnValues(returnValues);
 
             invokeCommands(returnValues);
         } catch (RuntimeException e) {
@@ -81,6 +66,25 @@ public class MultipleActionsRunner {
             log.error("Exception", e);
         }
         return returnValues;
+    }
+
+    private void initCommandsAndReturnValues(ArrayList<VdcReturnValueBase> returnValues) {
+        VdcReturnValueBase returnValue;
+        for (VdcActionParametersBase parameter : getParameters()) {
+            parameter.setMultipleAction(true);
+            returnValue = ExecutionHandler.evaluateCorrelationId(parameter);
+            if (returnValue == null) {
+                CommandBase<?> command = isInternal ?
+                        CommandsFactory.createCommand(actionType, parameter, commandContext.clone()
+                                .withoutCompensationContext()) :
+                                CommandsFactory.createCommand(actionType, parameter);
+
+                command.setInternalExecution(isInternal);
+                getCommands().add(command);
+            } else {
+                returnValues.add(returnValue);
+            }
+        }
     }
 
     private void invokeCommands(ArrayList<VdcReturnValueBase> returnValues) {
