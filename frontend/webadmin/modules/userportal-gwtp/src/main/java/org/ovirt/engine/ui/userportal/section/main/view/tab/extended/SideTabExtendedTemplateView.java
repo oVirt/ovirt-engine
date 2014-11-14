@@ -2,6 +2,7 @@ package org.ovirt.engine.ui.userportal.section.main.view.tab.extended;
 
 import org.ovirt.engine.core.common.businessentities.VmTemplate;
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.uicommonweb.UICommand;
 import org.ovirt.engine.ui.uicommonweb.models.userportal.UserPortalTemplateListModel;
@@ -38,8 +39,9 @@ public class SideTabExtendedTemplateView extends AbstractSideTabWithDetailsView<
             UserPortalTemplateListProvider provider,
             ApplicationTemplates templates,
             ApplicationConstants constants,
-            ApplicationResources applicationResources) {
-        super(provider, applicationResources);
+            ApplicationResources applicationResources,
+            ClientStorage clientStorage) {
+        super(provider, applicationResources, clientStorage);
         ViewIdHandler.idHandler.generateAndSetIds(this);
         initTable(templates, constants);
     }

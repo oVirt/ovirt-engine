@@ -1,8 +1,10 @@
 package org.ovirt.engine.ui.userportal.section.main.view;
 
 import org.ovirt.engine.ui.common.idhandler.WithElementId;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.uicommon.model.SearchableTableModelProvider;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.view.SubTabHelper;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.models.SearchableListModel;
 import org.ovirt.engine.ui.userportal.ApplicationResources;
@@ -22,23 +24,31 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
     @WithElementId
     public final SimpleActionTable<T> table;
 
-    private static final int subTabPanelHeight = 300;
-
-    private ExtendedViewSplitLayoutPanel splitPanel;
+    private final ExtendedViewSplitLayoutPanel splitPanel;
     private final SimplePanel subTabPanelContainer = new SimplePanel();
+    private final ClientStorage clientStorage;
     private boolean subTabPanelVisible;
 
     public AbstractSideTabWithDetailsView(
             SearchableTableModelProvider<T, M> modelProvider,
-            ApplicationResources applicationResources) {
+            ApplicationResources applicationResources, final ClientStorage clientStorage) {
         this.modelProvider = modelProvider;
         this.table = createActionTable();
         this.table.showRefreshButton();
+        this.clientStorage = clientStorage;
 
         applicationResources.sideTabWithDetailsViewStyle().ensureInjected();
         subTabPanelContainer.setStyleName(applicationResources.sideTabWithDetailsViewStyle().detailsContentPanel());
 
-        splitPanel = new ExtendedViewSplitLayoutPanel(applicationResources.extendedViewSplitterSnap());
+        splitPanel = new ExtendedViewSplitLayoutPanel(applicationResources.extendedViewSplitterSnap()) {
+            @Override
+            public void onResize() {
+                super.onResize();
+                if (subTabPanelVisible) {
+                    SubTabHelper.storeSubTabHeight(clientStorage, subTabPanelContainer);
+                }
+            }
+        };
 
         initWidget(splitPanel);
         initSplitPanel();
@@ -80,7 +90,7 @@ public abstract class AbstractSideTabWithDetailsView<T, M extends SearchableList
             splitPanel.clear();
 
             if (subTabPanelVisible) {
-                splitPanel.addSouth(subTabPanelContainer, subTabPanelHeight);
+                splitPanel.addSouth(subTabPanelContainer, SubTabHelper.getSubTabHeight(clientStorage, splitPanel));
                 splitPanel.add(table);
                 splitPanel.init();
             } else {

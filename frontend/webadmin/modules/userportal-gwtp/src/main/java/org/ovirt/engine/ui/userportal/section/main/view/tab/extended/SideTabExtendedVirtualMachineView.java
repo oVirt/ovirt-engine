@@ -5,6 +5,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import org.ovirt.engine.ui.common.idhandler.ElementIdHandler;
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import org.ovirt.engine.ui.common.widget.table.SimpleActionTable;
 import org.ovirt.engine.ui.uicommonweb.ErrorPopupManager;
@@ -71,8 +72,9 @@ implements SideTabExtendedVirtualMachinePresenter.ViewDef {
             ApplicationResources applicationResources,
             ErrorPopupManager errorPopupManager,
             MainTabBasicListItemMessagesTranslator translator,
-            ApplicationConstants constants) {
-        super(modelProvider, applicationResources);
+            ApplicationConstants constants,
+            ClientStorage clientStorage) {
+        super(modelProvider, applicationResources, clientStorage);
         this.applicationResources = applicationResources;
         this.statusTranslator = translator;
         this.constants = constants;

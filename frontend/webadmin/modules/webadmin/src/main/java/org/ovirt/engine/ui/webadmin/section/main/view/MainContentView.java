@@ -1,23 +1,36 @@
 package org.ovirt.engine.ui.webadmin.section.main.view;
 
+import org.ovirt.engine.ui.common.system.ClientStorage;
 import org.ovirt.engine.ui.common.view.AbstractView;
+import org.ovirt.engine.ui.common.view.SubTabHelper;
 import org.ovirt.engine.ui.webadmin.section.main.presenter.MainContentPresenter;
 
 import com.google.gwt.user.client.ui.IsWidget;
 import com.google.gwt.user.client.ui.SimplePanel;
 import com.google.gwt.user.client.ui.SplitLayoutPanel;
+import com.google.inject.Inject;
 
 public class MainContentView extends AbstractView implements MainContentPresenter.ViewDef {
+    private static final int SPLITTER_THICKNESS = 4;
 
-    private static final int subTabPanelMaxHeight = 300;
-
-    private final SplitLayoutPanel splitPanel = new SplitLayoutPanel(4);
+    private final SplitLayoutPanel splitPanel;
     private final SimplePanel mainTabPanelContainer = new SimplePanel();
     private final SimplePanel subTabPanelContainer = new SimplePanel();
-
+    private final ClientStorage clientStorage;
     private boolean subTabPanelVisible;
 
-    public MainContentView() {
+    @Inject
+    public MainContentView(final ClientStorage clientStorage) {
+        splitPanel = new SplitLayoutPanel(SPLITTER_THICKNESS) {
+            @Override
+            public void onResize() {
+                super.onResize();
+                if (subTabPanelVisible) {
+                    SubTabHelper.storeSubTabHeight(clientStorage, subTabPanelContainer);
+                }
+            }
+        };
+        this.clientStorage = clientStorage;
         initWidget(splitPanel);
         initSplitPanel();
     }
@@ -44,11 +57,7 @@ public class MainContentView extends AbstractView implements MainContentPresente
             splitPanel.clear();
 
             if (subTabPanelVisible) {
-                int subTabHeight = splitPanel.getOffsetHeight() / 2;
-                if (subTabHeight > subTabPanelMaxHeight) {
-                    subTabHeight = subTabPanelMaxHeight;
-                }
-                splitPanel.addSouth(subTabPanelContainer, subTabHeight);
+                splitPanel.addSouth(subTabPanelContainer, SubTabHelper.getSubTabHeight(clientStorage, splitPanel));
                 splitPanel.add(mainTabPanelContainer);
             } else {
                 splitPanel.add(mainTabPanelContainer);
