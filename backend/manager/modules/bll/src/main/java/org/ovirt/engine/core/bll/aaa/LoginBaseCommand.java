@@ -113,7 +113,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         return result;
     }
 
-    private boolean attachUserToSession(AuthenticationProfile profile, ExtMap authRecord) {
+    private boolean attachUserToSession(AuthenticationProfile profile, ExtMap authRecord, ExtMap principalRecord) {
         try {
             byte s[] = new byte[64];
             SecureRandom.getInstance("SHA1PRNG").nextBytes(s);
@@ -124,7 +124,9 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
         SessionDataContainer.getInstance().setUser(engineSessionId, getCurrentUser());
         SessionDataContainer.getInstance().refresh(engineSessionId);
         SessionDataContainer.getInstance().setAuthn(engineSessionId, profile.getAuthn());
+        SessionDataContainer.getInstance().setAuthRecord(engineSessionId, authRecord);
         SessionDataContainer.getInstance().setPrincipal(engineSessionId, authRecord.<String>get(Authn.AuthRecord.PRINCIPAL));
+        SessionDataContainer.getInstance().setPrincipalRecord(engineSessionId, principalRecord);
 
         // Add the user password to the session, as it will be needed later
         // when trying to log on to virtual machines:
@@ -316,7 +318,7 @@ public abstract class LoginBaseCommand<T extends LoginUserParameters> extends Co
                 principalRecord.<String> get(Authz.PrincipalRecord.NAME)
                 );
 
-        return attachUserToSession(profile, authRecord);
+        return attachUserToSession(profile, authRecord, principalRecord);
     }
 
     private void logEventForUser(String userName, AuditLogType auditLogType) {
