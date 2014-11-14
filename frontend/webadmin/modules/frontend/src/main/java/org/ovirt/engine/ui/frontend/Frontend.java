@@ -821,7 +821,7 @@ public class Frontend implements HasHandlers {
                     result.setCanDoActionMessages((ArrayList<String>) translateError(result));
                     callback.getDel().onSuccess(callback.getModel(), result);
                     if (getLoginHandler() != null && result.getSucceeded()) {
-                        getLoginHandler().onLoginSuccess(userName, password, profileName);
+                        getLoginHandler().onLoginSuccess();
                     }
                 }
 
