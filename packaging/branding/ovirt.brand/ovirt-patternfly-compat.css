@@ -389,7 +389,7 @@ a.dropdown-toggle {
     }
 }
 .prevPageButton_pfly_fix {
-    margin-right: 11px !important;
+    padding-right: 11px !important;
 }
 .nextPageButton_pfly_fix {
    padding-right: 25px !important;
