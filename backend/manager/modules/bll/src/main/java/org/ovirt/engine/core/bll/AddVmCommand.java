@@ -826,11 +826,9 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
                     public Void runInTransaction() {
                         copyVmDevices();
                         addDiskPermissions();
-                        if (getInstanceType() == null) {
-                            addVmPayload();
-                            updateSmartCardDevices();
-                            addVmWatchdog();
-                        }
+                        addVmPayload();
+                        updateSmartCardDevices();
+                        addVmWatchdog();
                         setActionReturnValue(getVm().getId());
                         setSucceeded(true);
                         return null;
@@ -843,9 +841,10 @@ public class AddVmCommand<T extends VmManagementParametersBase> extends VmManage
     }
 
     private void updateSmartCardDevices() {
-        // if vm smartcard settings is different from template's
+        // if vm smartcard settings is different from device source's
         // add or remove the smartcard according to user request
-        if (getVm().isSmartcardEnabled() != getVmTemplate().isSmartcardEnabled()) {
+        boolean smartcardOnDeviceSource = getInstanceTypeId() != null ? getInstanceType().isSmartcardEnabled() : getVmTemplate().isSmartcardEnabled();
+        if (getVm().isSmartcardEnabled() != smartcardOnDeviceSource) {
             VmDeviceUtils.updateSmartcardDevice(getVm().getId(), getVm().isSmartcardEnabled());
         }
     }
