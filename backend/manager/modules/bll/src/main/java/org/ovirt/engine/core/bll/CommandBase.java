@@ -2022,6 +2022,20 @@ public abstract class CommandBase<T extends VdcActionParametersBase> extends Aud
     }
 
     /**
+     * Adds one or more messages to the {@link CommandBase#canDoAction()}'s return value. This return value will be sent
+     * to the client for the detailed information of why the action can't be performed.
+     *
+     * @param messages
+     *            The messages to add.
+     */
+
+    protected final void addCanDoActionMessages(VdcBllMessages... messages) {
+        for (VdcBllMessages msg : messages) {
+            addCanDoActionMessage(msg);
+        }
+    }
+
+    /**
      * Add validation message with variable replacements and return false.
      *
      * @param message   the message to add
