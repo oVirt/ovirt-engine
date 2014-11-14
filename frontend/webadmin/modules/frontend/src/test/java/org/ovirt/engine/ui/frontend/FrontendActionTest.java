@@ -811,7 +811,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(true);
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
-        verify(mockLoginHandler).onLoginSuccess(testUser, testPassword, testProfile);
+        verify(mockLoginHandler).onLoginSuccess();
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
     }
 
@@ -841,7 +841,7 @@ public class FrontendActionTest {
         returnValue.setSucceeded(false); // Yes I know this is the default, just to be sure.
         callbackAction.getValue().onSuccess(returnValue);
         verify(mockAsyncCallback).onSuccess(model, returnValue);
-        verify(mockLoginHandler, never()).onLoginSuccess(testUser, testPassword, testProfile);
+        verify(mockLoginHandler, never()).onLoginSuccess();
         verify(mockFrontendFailureEvent, never()).raise(eq(Frontend.class), (FrontendFailureEventArgs) any());
     }
 

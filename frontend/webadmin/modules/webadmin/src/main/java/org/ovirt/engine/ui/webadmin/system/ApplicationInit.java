@@ -1,14 +1,19 @@
 package org.ovirt.engine.ui.webadmin.system;
 
 import org.ovirt.engine.core.common.mode.ApplicationMode;
+import org.ovirt.engine.core.common.queries.VdcQueryParametersBase;
+import org.ovirt.engine.core.common.queries.VdcQueryReturnValue;
+import org.ovirt.engine.core.common.queries.VdcQueryType;
 import org.ovirt.engine.ui.common.auth.AutoLoginData;
 import org.ovirt.engine.ui.common.auth.CurrentUser;
 import org.ovirt.engine.ui.common.system.BaseApplicationInit;
 import org.ovirt.engine.ui.common.system.LockInteractionManager;
 import org.ovirt.engine.ui.common.uicommon.FrontendEventsHandlerImpl;
 import org.ovirt.engine.ui.common.uicommon.FrontendFailureEventListener;
+import org.ovirt.engine.ui.frontend.AsyncQuery;
 import org.ovirt.engine.ui.frontend.Frontend;
 import org.ovirt.engine.ui.frontend.FrontendLoginHandler;
+import org.ovirt.engine.ui.frontend.INewAsyncCallback;
 import org.ovirt.engine.ui.uicommonweb.ITypeResolver;
 import org.ovirt.engine.ui.uicommonweb.ReportInit;
 import org.ovirt.engine.ui.uicommonweb.auth.CurrentUserRole;
@@ -110,17 +115,24 @@ public class ApplicationInit extends BaseApplicationInit<LoginModel> {
         super.initFrontend();
 
         ReportInit.getInstance().initHandlers(eventBus);
+
         // Configure REST API integration for UI plugin infrastructure
         frontend.setLoginHandler(new FrontendLoginHandler() {
             @Override
-            public void onLoginSuccess(final String userName, final String password, final String domain) {
+            public void onLoginSuccess() {
                 Scheduler.get().scheduleDeferred(new ScheduledCommand() {
                     @Override
                     public void execute() {
-                        final String domainToken = "@"; //$NON-NLS-1$
-                        restApiSessionManager.acquireSession(
-                                userName.contains(domainToken) ? userName : userName + domainToken + domain,
-                                password);
+                        frontend.runQuery(VdcQueryType.GetEngineSessionIdToken,
+                                new VdcQueryParametersBase(),
+                                new AsyncQuery(new INewAsyncCallback() {
+                                    @Override
+                                    public void onSuccess(Object model, Object returnValue) {
+                                        String engineAuthToken = (String) ((VdcQueryReturnValue) returnValue).getReturnValue();
+                                        restApiSessionManager.acquireSession(engineAuthToken);
+                                    }
+                                })
+                        );
                     }
                 });
             }
