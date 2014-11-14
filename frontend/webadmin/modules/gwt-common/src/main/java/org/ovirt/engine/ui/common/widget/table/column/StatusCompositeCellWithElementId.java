@@ -8,13 +8,14 @@ import org.ovirt.engine.ui.common.utils.ElementIdUtils;
 import com.google.gwt.cell.client.Cell;
 import com.google.gwt.cell.client.HasCell;
 import com.google.gwt.core.client.GWT;
+import com.google.gwt.dom.client.Element;
 import com.google.gwt.resources.client.ClientBundle;
 import com.google.gwt.resources.client.CssResource;
 import com.google.gwt.safehtml.client.SafeHtmlTemplates;
 import com.google.gwt.safehtml.shared.SafeHtml;
 import com.google.gwt.safehtml.shared.SafeHtmlBuilder;
 
-public class StatusCompositeCellWithElementId extends CompositeCellWithElementId<VM> implements CellWithElementId<VM>{
+public class StatusCompositeCellWithElementId extends CompositeCellWithElementId<VM> implements CellWithElementId<VM> {
     public interface StatusCompositeCellResources extends ClientBundle {
         @ClientBundle.Source("org/ovirt/engine/ui/common/css/StatusCompositeCell.css")
         StatusCompositeCellCss statusCompositeCellCss();
@@ -63,11 +64,21 @@ public class StatusCompositeCellWithElementId extends CompositeCellWithElementId
 
     @Override
     protected <T> void render(Cell.Context context, VM value,
-                              SafeHtmlBuilder sb, HasCell<VM, T> hasCell) {
+            SafeHtmlBuilder sb, HasCell<VM, T> hasCell) {
         Cell<T> cell = hasCell.getCell();
         if (cell instanceof HasStyleClass) {
             ((HasStyleClass) cell).setStyleClass(style.divInlineBlock());
         }
         cell.render(context, hasCell.getValue(value), sb);
+    }
+
+    @Override
+    public boolean isEditing(Context context, Element parent, VM value) {
+        return false;
+    }
+
+    @Override
+    public boolean resetFocus(Context context, Element parent, VM value) {
+        return false;
     }
 }
